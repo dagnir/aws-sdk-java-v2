@@ -43,7 +43,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 <#if shape.hasStatusCodeMember >
     <#list shape.members as memberModel>
         <#if memberModel.http.isStatusCode() >
-        ${shape.variable.variableName}Builder.${memberModel.variable.variableName}(context.getHttpResponse().getStatusCode());
+        ${shape.variable.variableName}Builder.${memberModel.setterMethodName}(context.getHttpResponse().getStatusCode());
         </#if>
     </#list>
 </#if>
@@ -51,12 +51,12 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 <#if shape.hasPayloadMember>
     <#assign explicitPayloadMember=shape.payloadMember />
     <#if explicitPayloadMember.http.isStreaming>
-        ${shape.variable.variableName}Builder.${explicitPayloadMember.variable.variableName}(context.getHttpResponse().getContent());
+        ${shape.variable.variableName}Builder.${explicitPayloadMember.setterMethodName}(context.getHttpResponse().getContent());
     <#elseif explicitPayloadMember.variable.variableType == "java.nio.ByteBuffer">
         java.io.InputStream is = context.getHttpResponse().getContent();
         if(is != null) {
             try {
-                ${shape.variable.variableName}Builder.${explicitPayloadMember.variable.variableName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.utils.IoUtils.toByteArray(is)));
+                ${shape.variable.variableName}Builder.${explicitPayloadMember.setterMethodName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.utils.IoUtils.toByteArray(is)));
             } finally {
                 software.amazon.awssdk.utils.IoUtils.closeQuietly(is, null);
             }

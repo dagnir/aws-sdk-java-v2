@@ -63,7 +63,7 @@ public class ${className} {
         try {
             <#if shape.members??>
                 <#list shape.members as member>
-                <#assign getter = shape.variable.variableName + "." + member.variable.variableName + "()" />
+                <#assign getter = shape.variable.variableName + "." + member.getterMethodName + "()" />
                 protocolMarshaller.marshall(
                 ${getter},
                 ${member.marshallerBindingFieldName});
