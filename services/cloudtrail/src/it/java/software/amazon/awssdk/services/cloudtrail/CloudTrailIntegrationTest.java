@@ -63,8 +63,8 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         deleteBucketAndAllContents(s3, BUCKET_NAME);
 
         try {
-            for (Trail trail : cloudTrail.describeTrails(DescribeTrailsRequest.builder_().build_()).trailList()) {
-                cloudTrail.deleteTrail(DeleteTrailRequest.builder_().name(trail.name()).build_());
+            for (Trail trail : cloudTrail.describeTrails(new DescribeTrailsRequest()).getTrailList()) {
+                cloudTrail.deleteTrail(new DeleteTrailRequest().withName(trail.getName()));
             }
         } catch (Exception e) {
             // Expected.
@@ -109,53 +109,53 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
 
         // create trail
         CreateTrailResult createTrailResult =
-                cloudTrail.createTrail(CreateTrailRequest.builder_()
-                                               .name(TRAIL_NAME)
-                                               .s3BucketName(BUCKET_NAME)
-                                               .includeGlobalServiceEvents(true).build_());
+                cloudTrail.createTrail(new CreateTrailRequest()
+                                               .withName(TRAIL_NAME)
+                                               .withS3BucketName(BUCKET_NAME)
+                                               .withIncludeGlobalServiceEvents(true));
 
-        assertEquals(TRAIL_NAME, createTrailResult.name());
-        assertEquals(BUCKET_NAME, createTrailResult.s3BucketName());
-        assertNull(createTrailResult.s3KeyPrefix());
-        assertTrue(createTrailResult.includeGlobalServiceEvents());
+        assertEquals(TRAIL_NAME, createTrailResult.getName());
+        assertEquals(BUCKET_NAME, createTrailResult.getS3BucketName());
+        assertNull(createTrailResult.getS3KeyPrefix());
+        assertTrue(createTrailResult.getIncludeGlobalServiceEvents());
 
         // describe trail
-        DescribeTrailsResult describeTrails = cloudTrail.describeTrails(DescribeTrailsRequest.builder_().build_());
-        assertTrue(describeTrails.trailList().size() > 0);
+        DescribeTrailsResult describeTrails = cloudTrail.describeTrails(new DescribeTrailsRequest());
+        assertTrue(describeTrails.getTrailList().size() > 0);
 
         describeTrails = cloudTrail
-                .describeTrails(DescribeTrailsRequest.builder_().trailNameList(TRAIL_NAME).build_());
-        assertTrue(describeTrails.trailList().size() == 1);
-        Trail trail = describeTrails.trailList().get(0);
+                .describeTrails(new DescribeTrailsRequest().withTrailNameList(TRAIL_NAME));
+        assertTrue(describeTrails.getTrailList().size() == 1);
+        Trail trail = describeTrails.getTrailList().get(0);
 
-        assertEquals(TRAIL_NAME, trail.name());
-        assertEquals(BUCKET_NAME, trail.s3BucketName());
-        assertNull(trail.s3KeyPrefix());
-        assertTrue(trail.includeGlobalServiceEvents());
+        assertEquals(TRAIL_NAME, trail.getName());
+        assertEquals(BUCKET_NAME, trail.getS3BucketName());
+        assertNull(trail.getS3KeyPrefix());
+        assertTrue(trail.getIncludeGlobalServiceEvents());
 
         // update the trail
         UpdateTrailResult updateTrailResult =
-                cloudTrail.updateTrail(UpdateTrailRequest.builder_()
-                                               .name(TRAIL_NAME)
-                                               .s3BucketName(BUCKET_NAME)
-                                               .includeGlobalServiceEvents(false)
-                                               .s3KeyPrefix("123").build_());
+                cloudTrail.updateTrail(new UpdateTrailRequest()
+                                               .withName(TRAIL_NAME)
+                                               .withS3BucketName(BUCKET_NAME)
+                                               .withIncludeGlobalServiceEvents(false)
+                                               .withS3KeyPrefix("123"));
 
-        assertEquals(TRAIL_NAME, updateTrailResult.name());
-        assertEquals(BUCKET_NAME, updateTrailResult.s3BucketName());
-        assertEquals("123", updateTrailResult.s3KeyPrefix());
-        assertFalse(updateTrailResult.includeGlobalServiceEvents());
+        assertEquals(TRAIL_NAME, updateTrailResult.getName());
+        assertEquals(BUCKET_NAME, updateTrailResult.getS3BucketName());
+        assertEquals("123", updateTrailResult.getS3KeyPrefix());
+        assertFalse(updateTrailResult.getIncludeGlobalServiceEvents());
 
         // start and stop the logging
-        cloudTrail.startLogging(StartLoggingRequest.builder_().name(TRAIL_NAME).build_());
-        cloudTrail.stopLogging(StopLoggingRequest.builder_().name(TRAIL_NAME).build_());
+        cloudTrail.startLogging(new StartLoggingRequest().withName(TRAIL_NAME));
+        cloudTrail.stopLogging(new StopLoggingRequest().withName(TRAIL_NAME));
 
         // delete the trail
-        cloudTrail.deleteTrail(DeleteTrailRequest.builder_().name(TRAIL_NAME).build_());
+        cloudTrail.deleteTrail(new DeleteTrailRequest().withName(TRAIL_NAME));
 
         // try to get the deleted trail
         DescribeTrailsResult describeTrailResult = cloudTrail
-                .describeTrails(DescribeTrailsRequest.builder_().trailNameList(TRAIL_NAME).build_());
-        assertEquals(0, describeTrailResult.trailList().size());
+                .describeTrails(new DescribeTrailsRequest().withTrailNameList(TRAIL_NAME));
+        assertEquals(0, describeTrailResult.getTrailList().size());
     }
 }

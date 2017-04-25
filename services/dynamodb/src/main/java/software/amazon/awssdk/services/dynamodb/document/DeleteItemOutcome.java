@@ -40,7 +40,7 @@ public class DeleteItemOutcome {
      */
     public Item getItem() {
         Map<String, Object> attributes =
-                InternalUtils.toSimpleMapValue(result.attributes());
+                InternalUtils.toSimpleMapValue(result.getAttributes());
         Item item = Item.fromMap(attributes);
         return item;
     }

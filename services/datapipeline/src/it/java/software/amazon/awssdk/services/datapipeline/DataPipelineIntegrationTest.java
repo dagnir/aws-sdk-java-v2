@@ -60,7 +60,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         try {
-            dataPipeline.deletePipeline(DeletePipelineRequest.builder_().pipelineId(pipelineId).build_());
+            dataPipeline.deletePipeline(new DeletePipelineRequest().withPipelineId(pipelineId));
         } catch (Exception e) {
             // Do nothing.
         }
@@ -70,115 +70,115 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
     public void testPipelineOperations() throws InterruptedException {
         // Create a pipeline.
         CreatePipelineResult createPipelineResult = dataPipeline.createPipeline(
-                CreatePipelineRequest.builder_().name(PIPELINE_NAME).uniqueId(PIPELINE_ID)
-                                           .description(PIPELINE_DESCRIPTION).build_());
-        pipelineId = createPipelineResult.pipelineId();
+                new CreatePipelineRequest().withName(PIPELINE_NAME).withUniqueId(PIPELINE_ID)
+                                           .withDescription(PIPELINE_DESCRIPTION));
+        pipelineId = createPipelineResult.getPipelineId();
         assertNotNull(pipelineId);
 
 
         // Invalid field
-        PipelineObject pipelineObject = PipelineObject.builder_()
-                .id(OBJECT_ID + "1")
-                .name(OBJECT_NAME)
-                .fields(Field.builder_()
-                        .key(INVALID_KEY)
-                        .stringValue(FIELD_VALUE)
-                        .build_())
-                .build_();
+        PipelineObject pipelineObject = new PipelineObject();
+        pipelineObject.setId(OBJECT_ID + "1");
+        pipelineObject.setName(OBJECT_NAME);
+        Field field = new Field();
+        field.setKey(INVALID_KEY);
+        field.setStringValue(FIELD_VALUE);
+        pipelineObject.setFields(Arrays.asList(field));
+
         ValidatePipelineDefinitionResult validatePipelineDefinitionResult =
-                dataPipeline.validatePipelineDefinition(ValidatePipelineDefinitionRequest.builder_().pipelineId(pipelineId)
-                                                                                      .pipelineObjects(pipelineObject).build_());
-        assertTrue(validatePipelineDefinitionResult.errored());
-        assertNotNull(validatePipelineDefinitionResult.validationErrors());
-        assertTrue(validatePipelineDefinitionResult.validationErrors().size() > 0);
-        assertNotNull(validatePipelineDefinitionResult.validationErrors().get(0));
-        assertNotNull(validatePipelineDefinitionResult.validationWarnings());
-        assertEquals(0, validatePipelineDefinitionResult.validationWarnings().size());
+                dataPipeline.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
+                                                                                      .withPipelineObjects(pipelineObject));
+        assertTrue(validatePipelineDefinitionResult.getErrored());
+        assertNotNull(validatePipelineDefinitionResult.getValidationErrors());
+        assertTrue(validatePipelineDefinitionResult.getValidationErrors().size() > 0);
+        assertNotNull(validatePipelineDefinitionResult.getValidationErrors().get(0));
+        assertNotNull(validatePipelineDefinitionResult.getValidationWarnings());
+        assertEquals(0, validatePipelineDefinitionResult.getValidationWarnings().size());
 
         // Valid field
-        pipelineObject = PipelineObject.builder_()
-                .id(OBJECT_ID)
-                .name(OBJECT_NAME)
-                .fields(Field.builder_()
-                        .key(VALID_KEY)
-                        .stringValue(FIELD_VALUE).build_())
-                .build_();
+        pipelineObject = new PipelineObject();
+        pipelineObject.setId(OBJECT_ID);
+        pipelineObject.setName(OBJECT_NAME);
+        field = new Field();
+        field.setKey(VALID_KEY);
+        field.setStringValue(FIELD_VALUE);
+        pipelineObject.setFields(Arrays.asList(field));
 
         // Validate pipeline definition.
         validatePipelineDefinitionResult =
-                dataPipeline.validatePipelineDefinition(ValidatePipelineDefinitionRequest.builder_().pipelineId(pipelineId)
-                                                                                      .pipelineObjects(pipelineObject).build_());
-        assertFalse(validatePipelineDefinitionResult.errored());
-        assertNotNull(validatePipelineDefinitionResult.validationErrors());
-        assertEquals(0, validatePipelineDefinitionResult.validationErrors().size());
-        assertNotNull(validatePipelineDefinitionResult.validationWarnings());
-        assertEquals(0, validatePipelineDefinitionResult.validationWarnings().size());
+                dataPipeline.validatePipelineDefinition(new ValidatePipelineDefinitionRequest().withPipelineId(pipelineId)
+                                                                                      .withPipelineObjects(pipelineObject));
+        assertFalse(validatePipelineDefinitionResult.getErrored());
+        assertNotNull(validatePipelineDefinitionResult.getValidationErrors());
+        assertEquals(0, validatePipelineDefinitionResult.getValidationErrors().size());
+        assertNotNull(validatePipelineDefinitionResult.getValidationWarnings());
+        assertEquals(0, validatePipelineDefinitionResult.getValidationWarnings().size());
 
         // Put pipeline definition.
         PutPipelineDefinitionResult putPipelineDefinitionResult =
-                dataPipeline.putPipelineDefinition(PutPipelineDefinitionRequest.builder_().pipelineId(pipelineId)
-                                                                            .pipelineObjects(pipelineObject).build_());
-        assertFalse(putPipelineDefinitionResult.errored());
-        assertNotNull(putPipelineDefinitionResult.validationErrors());
-        assertEquals(0, putPipelineDefinitionResult.validationErrors().size());
-        assertNotNull(putPipelineDefinitionResult.validationWarnings());
-        assertEquals(0, putPipelineDefinitionResult.validationWarnings().size());
+                dataPipeline.putPipelineDefinition(new PutPipelineDefinitionRequest().withPipelineId(pipelineId)
+                                                                            .withPipelineObjects(pipelineObject));
+        assertFalse(putPipelineDefinitionResult.getErrored());
+        assertNotNull(putPipelineDefinitionResult.getValidationErrors());
+        assertEquals(0, putPipelineDefinitionResult.getValidationErrors().size());
+        assertNotNull(putPipelineDefinitionResult.getValidationWarnings());
+        assertEquals(0, putPipelineDefinitionResult.getValidationWarnings().size());
 
         // Get pipeline definition.
         GetPipelineDefinitionResult getPipelineDefinitionResult =
-                dataPipeline.getPipelineDefinition(GetPipelineDefinitionRequest.builder_().pipelineId(pipelineId).build_());
-        assertEquals(1, getPipelineDefinitionResult.pipelineObjects().size());
-        assertEquals(OBJECT_ID, getPipelineDefinitionResult.pipelineObjects().get(0).id());
-        assertEquals(OBJECT_NAME, getPipelineDefinitionResult.pipelineObjects().get(0).name());
-        assertEquals(1, getPipelineDefinitionResult.pipelineObjects().get(0).fields().size());
-        assertTrue(getPipelineDefinitionResult.pipelineObjects().get(0).fields()
-                                              .contains(Field.builder_().key(VALID_KEY).stringValue(FIELD_VALUE).build_()));
+                dataPipeline.getPipelineDefinition(new GetPipelineDefinitionRequest().withPipelineId(pipelineId));
+        assertEquals(1, getPipelineDefinitionResult.getPipelineObjects().size());
+        assertEquals(OBJECT_ID, getPipelineDefinitionResult.getPipelineObjects().get(0).getId());
+        assertEquals(OBJECT_NAME, getPipelineDefinitionResult.getPipelineObjects().get(0).getName());
+        assertEquals(1, getPipelineDefinitionResult.getPipelineObjects().get(0).getFields().size());
+        assertTrue(getPipelineDefinitionResult.getPipelineObjects().get(0).getFields()
+                                              .contains(new Field().withKey(VALID_KEY).withStringValue(FIELD_VALUE)));
 
         // Activate a pipeline.
         ActivatePipelineResult activatePipelineResult =
-                dataPipeline.activatePipeline(ActivatePipelineRequest.builder_().pipelineId(pipelineId).build_());
+                dataPipeline.activatePipeline(new ActivatePipelineRequest().withPipelineId(pipelineId));
         assertNotNull(activatePipelineResult);
 
         // List pipeline.
-        ListPipelinesResult listPipelinesResult = dataPipeline.listPipelines(ListPipelinesRequest.builder_().build_());
-        assertTrue(listPipelinesResult.pipelineIdList().size() > 0);
-        assertNotNull(pipelineId, listPipelinesResult.pipelineIdList().get(0).id());
-        assertNotNull(PIPELINE_NAME, listPipelinesResult.pipelineIdList().get(0).name());
+        ListPipelinesResult listPipelinesResult = dataPipeline.listPipelines(new ListPipelinesRequest());
+        assertTrue(listPipelinesResult.getPipelineIdList().size() > 0);
+        assertNotNull(pipelineId, listPipelinesResult.getPipelineIdList().get(0).getId());
+        assertNotNull(PIPELINE_NAME, listPipelinesResult.getPipelineIdList().get(0).getName());
 
         Thread.sleep(1000 * 5);
 
         // Describe objects.
         DescribeObjectsResult describeObjectsResult =
-                dataPipeline.describeObjects(DescribeObjectsRequest.builder_().pipelineId(pipelineId).objectIds(OBJECT_ID).build_());
-        assertEquals(1, describeObjectsResult.pipelineObjects().size());
-        assertEquals(OBJECT_ID, describeObjectsResult.pipelineObjects().get(0).id());
-        assertEquals(OBJECT_NAME, describeObjectsResult.pipelineObjects().get(0).name());
-        assertTrue(describeObjectsResult.pipelineObjects().get(0).fields()
-                                        .contains(Field.builder_().key(VALID_KEY).stringValue(FIELD_VALUE).build_()));
-        assertTrue(describeObjectsResult.pipelineObjects().get(0).fields()
-                                        .contains(Field.builder_().key("@pipelineId").stringValue(pipelineId).build_()));
+                dataPipeline.describeObjects(new DescribeObjectsRequest().withPipelineId(pipelineId).withObjectIds(OBJECT_ID));
+        assertEquals(1, describeObjectsResult.getPipelineObjects().size());
+        assertEquals(OBJECT_ID, describeObjectsResult.getPipelineObjects().get(0).getId());
+        assertEquals(OBJECT_NAME, describeObjectsResult.getPipelineObjects().get(0).getName());
+        assertTrue(describeObjectsResult.getPipelineObjects().get(0).getFields()
+                                        .contains(new Field().withKey(VALID_KEY).withStringValue(FIELD_VALUE)));
+        assertTrue(describeObjectsResult.getPipelineObjects().get(0).getFields()
+                                        .contains(new Field().withKey("@pipelineId").withStringValue(pipelineId)));
 
         // Describe a pipeline.
         DescribePipelinesResult describepipelinesResult =
-                dataPipeline.describePipelines(DescribePipelinesRequest.builder_().pipelineIds(pipelineId).build_());
-        assertEquals(1, describepipelinesResult.pipelineDescriptionList().size());
-        assertEquals(PIPELINE_NAME, describepipelinesResult.pipelineDescriptionList().get(0).name());
-        assertEquals(pipelineId, describepipelinesResult.pipelineDescriptionList().get(0).pipelineId());
-        assertEquals(PIPELINE_DESCRIPTION, describepipelinesResult.pipelineDescriptionList().get(0).description());
-        assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields().size() > 0);
-        assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder_().key("name").stringValue(PIPELINE_NAME).build_()));
-        assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder_().key("@id").stringValue(pipelineId).build_()));
-        assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder_().key("uniqueId").stringValue(PIPELINE_ID).build_()));
+                dataPipeline.describePipelines(new DescribePipelinesRequest().withPipelineIds(pipelineId));
+        assertEquals(1, describepipelinesResult.getPipelineDescriptionList().size());
+        assertEquals(PIPELINE_NAME, describepipelinesResult.getPipelineDescriptionList().get(0).getName());
+        assertEquals(pipelineId, describepipelinesResult.getPipelineDescriptionList().get(0).getPipelineId());
+        assertEquals(PIPELINE_DESCRIPTION, describepipelinesResult.getPipelineDescriptionList().get(0).getDescription());
+        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields().size() > 0);
+        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields()
+                                          .contains(new Field().withKey("name").withStringValue(PIPELINE_NAME)));
+        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields()
+                                          .contains(new Field().withKey("@id").withStringValue(pipelineId)));
+        assertTrue(describepipelinesResult.getPipelineDescriptionList().get(0).getFields()
+                                          .contains(new Field().withKey("uniqueId").withStringValue(PIPELINE_ID)));
 
         // Delete a pipeline.
-        dataPipeline.deletePipeline(DeletePipelineRequest.builder_().pipelineId(pipelineId).build_());
+        dataPipeline.deletePipeline(new DeletePipelineRequest().withPipelineId(pipelineId));
         Thread.sleep(1000 * 5);
         try {
-            describepipelinesResult = dataPipeline.describePipelines(DescribePipelinesRequest.builder_().pipelineIds(pipelineId).build_());
-            if (describepipelinesResult.pipelineDescriptionList().size() > 0) {
+            describepipelinesResult = dataPipeline.describePipelines(new DescribePipelinesRequest().withPipelineIds(pipelineId));
+            if (describepipelinesResult.getPipelineDescriptionList().size() > 0) {
                 fail();
             }
         } catch (AmazonServiceException e) {

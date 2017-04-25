@@ -31,11 +31,10 @@ public class InvokeArgsAsStringTest {
 
     @Test
     public void testInvokeAsyncArgsAsString() throws IOException {
-        InvokeAsyncRequest request = InvokeAsyncRequest.builder_()
-                .invokeArgs(ARGS)
-                .build_();
+        InvokeAsyncRequest request = new InvokeAsyncRequest();
+        request.setInvokeArgs(ARGS);
 
-        InputStream stream = request.invokeArgs();
+        InputStream stream = request.getInvokeArgs();
 
         String decoded = new String(IoUtils.toByteArray(stream), StringUtils.UTF8);
 
@@ -44,11 +43,10 @@ public class InvokeArgsAsStringTest {
 
     @Test
     public void testInvokeArgsAsString() {
-        InvokeRequest request = InvokeRequest.builder_()
-                .payload(ARGS)
-                .build_();
+        InvokeRequest request = new InvokeRequest();
+        request.setPayload(ARGS);
 
-        ByteBuffer bb = request.payload();
+        ByteBuffer bb = request.getPayload();
         String decoded = StringUtils.UTF8.decode(bb).toString();
 
         Assert.assertEquals(ARGS, decoded);

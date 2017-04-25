@@ -41,8 +41,9 @@ public class RandomIdHandler extends RequestHandler2 {
             CreateBatchPredictionRequest copy =
                     (CreateBatchPredictionRequest) request;
 
-            if (copy.batchPredictionId() == null) {
-                copy = copy.toBuilder().batchPredictionId(UUID.randomUUID().toString()).build_();
+            if (copy.getBatchPredictionId() == null) {
+                copy = copy.clone();
+                copy.setBatchPredictionId(UUID.randomUUID().toString());
             }
 
             return copy;
@@ -50,8 +51,9 @@ public class RandomIdHandler extends RequestHandler2 {
             CreateDataSourceFromRDSRequest copy =
                     (CreateDataSourceFromRDSRequest) request;
 
-            if (copy.dataSourceId() == null) {
-                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build_();
+            if (copy.getDataSourceId() == null) {
+                copy = copy.clone();
+                copy.setDataSourceId(UUID.randomUUID().toString());
             }
 
             return copy;
@@ -59,8 +61,9 @@ public class RandomIdHandler extends RequestHandler2 {
             CreateDataSourceFromRedshiftRequest copy =
                     (CreateDataSourceFromRedshiftRequest) request;
 
-            if (copy.dataSourceId() == null) {
-                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build_();
+            if (copy.getDataSourceId() == null) {
+                copy = copy.clone();
+                copy.setDataSourceId(UUID.randomUUID().toString());
             }
 
             return copy;
@@ -68,8 +71,9 @@ public class RandomIdHandler extends RequestHandler2 {
             CreateDataSourceFromS3Request copy =
                     (CreateDataSourceFromS3Request) request;
 
-            if (copy.dataSourceId() == null) {
-                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build_();
+            if (copy.getDataSourceId() == null) {
+                copy = copy.clone();
+                copy.setDataSourceId(UUID.randomUUID().toString());
             }
 
             return copy;
@@ -77,16 +81,18 @@ public class RandomIdHandler extends RequestHandler2 {
             CreateEvaluationRequest copy =
                     (CreateEvaluationRequest) request;
 
-            if (copy.evaluationId() == null) {
-                copy = copy.toBuilder().evaluationId(UUID.randomUUID().toString()).build_();
+            if (copy.getEvaluationId() == null) {
+                copy = copy.clone();
+                copy.setEvaluationId(UUID.randomUUID().toString());
             }
 
             return copy;
         } else if (request instanceof CreateMLModelRequest) {
             CreateMLModelRequest copy = (CreateMLModelRequest) request;
 
-            if (copy.mLModelId() == null) {
-                copy = copy.toBuilder().mLModelId(UUID.randomUUID().toString()).build_();
+            if (copy.getMLModelId() == null) {
+                copy = copy.clone();
+                copy.setMLModelId(UUID.randomUUID().toString());
             }
 
             return copy;

@@ -41,41 +41,41 @@ public class CloudWatchEventsIntegrationTest extends AwsIntegrationTestBase {
         setUpCredentials();
         events = CloudWatchEventsClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        events.putRule(PutRuleRequest.builder_()
-                               .name(RULE_NAME)
-                               .description(RULE_DESCRIPTION)
-                               .eventPattern(EVENT_PATTERN)
-                .build_());
+        events.putRule(new PutRuleRequest()
+                               .withName(RULE_NAME)
+                               .withDescription(RULE_DESCRIPTION)
+                               .withEventPattern(EVENT_PATTERN)
+        );
 
         // By default, a newly created rule is enabled
         Assert.assertEquals(RuleState.ENABLED.toString(),
-                            events.describeRule(DescribeRuleRequest.builder_().name(RULE_NAME).build_())
-                                  .state());
+                            events.describeRule(new DescribeRuleRequest().withName(RULE_NAME))
+                                  .getState());
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-        events.deleteRule(DeleteRuleRequest.builder_().name(RULE_NAME).build_());
+        events.deleteRule(new DeleteRuleRequest().withName(RULE_NAME));
     }
 
     @Test
     public void basicTest() {
 
-        events.enableRule(EnableRuleRequest.builder_().name(RULE_NAME).build_());
+        events.enableRule(new EnableRuleRequest().withName(RULE_NAME));
 
-        DescribeRuleResult describeRuleResult = events.describeRule(DescribeRuleRequest.builder_()
-                                                                            .name(RULE_NAME).build_());
+        DescribeRuleResult describeRuleResult = events.describeRule(new DescribeRuleRequest()
+                                                                            .withName(RULE_NAME));
 
-        Assert.assertEquals(RULE_NAME, describeRuleResult.name());
-        Assert.assertEquals(RULE_DESCRIPTION, describeRuleResult.description());
+        Assert.assertEquals(RULE_NAME, describeRuleResult.getName());
+        Assert.assertEquals(RULE_DESCRIPTION, describeRuleResult.getDescription());
         Assert.assertEquals(RuleState.ENABLED.toString(),
-                            describeRuleResult.state());
+                            describeRuleResult.getState());
 
-        events.disableRule(DisableRuleRequest.builder_().name(RULE_NAME).build_());
+        events.disableRule(new DisableRuleRequest().withName(RULE_NAME));
 
         Assert.assertEquals(RuleState.DISABLED.toString(),
-                            events.describeRule(DescribeRuleRequest.builder_().name(RULE_NAME).build_())
-                                  .state());
+                            events.describeRule(new DescribeRuleRequest().withName(RULE_NAME))
+                                  .getState());
 
     }
 

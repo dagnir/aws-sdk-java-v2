@@ -50,20 +50,20 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
         client = ECSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
         CreateClusterResult result = client.createCluster(
-                CreateClusterRequest.builder_()
-                        .clusterName(CLUSTER_NAME).build_());
+                new CreateClusterRequest()
+                        .withClusterName(CLUSTER_NAME));
 
-        Assert.assertEquals(CLUSTER_NAME, result.cluster().clusterName());
-        Assert.assertNotNull(result.cluster().clusterArn());
-        Assert.assertNotNull(result.cluster().status());
+        Assert.assertEquals(CLUSTER_NAME, result.getCluster().getClusterName());
+        Assert.assertNotNull(result.getCluster().getClusterArn());
+        Assert.assertNotNull(result.getCluster().getStatus());
 
-        clusterArn = result.cluster().clusterArn();
+        clusterArn = result.getCluster().getClusterArn();
 
-        while (!client.describeClusters(DescribeClustersRequest.builder_()
-                                                .clusters(CLUSTER_NAME).build_())
-                      .clusters()
+        while (!client.describeClusters(new DescribeClustersRequest()
+                                                .withClusters(CLUSTER_NAME))
+                      .getClusters()
                       .get(0)
-                      .status().equals("ACTIVE")) {
+                      .getStatus().equals("ACTIVE")) {
 
             Thread.sleep(1000);
         }
@@ -72,54 +72,55 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
     @AfterClass
     public static void cleanup() {
         if (client != null) {
-            client.deleteCluster(DeleteClusterRequest.builder_().cluster(CLUSTER_NAME).build_());
+            client.deleteCluster(new DeleteClusterRequest().withCluster(CLUSTER_NAME));
         }
     }
 
     @Test
     public void basicTest() {
-        List<String> arns = client.listClusters(ListClustersRequest.builder_().build_()).clusterArns();
+        List<String> arns = client.listClusters(new ListClustersRequest()).getClusterArns();
         Assert.assertNotNull(arns);
         Assert.assertTrue(arns.contains(clusterArn));
 
         RegisterTaskDefinitionResult result =
-                client.registerTaskDefinition(RegisterTaskDefinitionRequest.builder_()
-                        .family("test")
-                        .containerDefinitions(ContainerDefinition.builder_()
-                                .command("command", "command", "command")
-                                .cpu(1)
-                                .entryPoint("entryPoint", "entryPoint")
-                                .image("image")
-                                .memory(1)
-                                .name("test")
-                                .portMappings(PortMapping.builder_()
-                                        .hostPort(12345)
-                                        .containerPort(6789)
-                                        .build_())
-                                .build_())
-                        .build_());
+                client.registerTaskDefinition(new RegisterTaskDefinitionRequest()
 
-        Assert.assertEquals("test", result.taskDefinition().family());
-        Assert.assertNotNull(result.taskDefinition().revision());
-        Assert.assertNotNull(result.taskDefinition().taskDefinitionArn());
+                                                      .withFamily("test")
+                                                      .withContainerDefinitions(new ContainerDefinition()
+                                                                                        .withCommand("command", "command", "command")
+                                                                                        .withCpu(1)
+                                                                                        .withEntryPoint("entryPoint", "entryPoint")
+                                                                                        .withImage("image")
+                                                                                        .withMemory(1)
+                                                                                        .withName("test")
+                                                                                        .withPortMappings(new PortMapping()
+                                                                                                                  .withHostPort(12345)
+                                                                                                                  .withContainerPort(6789)
+                                                                                                         )
+                                                                               )
+                                             );
 
-        ContainerDefinition def = result.taskDefinition()
-                                        .containerDefinitions()
+        Assert.assertEquals("test", result.getTaskDefinition().getFamily());
+        Assert.assertNotNull(result.getTaskDefinition().getRevision());
+        Assert.assertNotNull(result.getTaskDefinition().getTaskDefinitionArn());
+
+        ContainerDefinition def = result.getTaskDefinition()
+                                        .getContainerDefinitions()
                                         .get(0);
 
-        Assert.assertEquals("image", def.image());
+        Assert.assertEquals("image", def.getImage());
         Assert.assertEquals(
                 Arrays.asList("entryPoint", "entryPoint"),
-                def.entryPoint());
+                def.getEntryPoint());
 
         Assert.assertEquals(
                 Arrays.asList("command", "command", "command"),
-                def.command());
+                def.getCommand());
 
         // Can't deregister task definitions yet... :(
 
-        List<String> taskArns = client.listTaskDefinitions(ListTaskDefinitionsRequest.builder_().build_())
-                                      .taskDefinitionArns();
+        List<String> taskArns = client.listTaskDefinitions(new ListTaskDefinitionsRequest())
+                                      .getTaskDefinitionArns();
 
         Assert.assertNotNull(taskArns);
         Assert.assertFalse(taskArns.isEmpty());

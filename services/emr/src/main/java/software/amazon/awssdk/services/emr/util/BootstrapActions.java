@@ -75,16 +75,15 @@ public class BootstrapActions {
      * @return A BootstrapActionConfig to be provided when running a job flow.
      */
     public BootstrapActionConfig newRunIf(String condition, BootstrapActionConfig config) {
-        List<String> args = config.scriptBootstrapAction().args();
+        List<String> args = config.getScriptBootstrapAction().getArgs();
         args.add(0, condition);
-        args.add(1, config.scriptBootstrapAction().path());
+        args.add(1, config.getScriptBootstrapAction().getPath());
 
-        return BootstrapActionConfig.builder_()
-                .name("Run If, " + config.name())
-                .scriptBootstrapAction(ScriptBootstrapActionConfig.builder_()
-                                                   .path("s3://" + bucket + "/bootstrap-actions/run-if")
-                                                   .args(args).build_())
-                .build_();
+        return new BootstrapActionConfig()
+                .withName("Run If, " + config.getName())
+                .withScriptBootstrapAction(new ScriptBootstrapActionConfig()
+                                                   .withPath("s3://" + bucket + "/bootstrap-actions/run-if")
+                                                   .withArgs(args));
     }
 
     /**
@@ -218,12 +217,11 @@ public class BootstrapActions {
          * @return an object which can be used in a RunJobflow call.
          */
         public BootstrapActionConfig build() {
-            return BootstrapActionConfig.builder_()
-                    .name("Configure Hadoop")
-                    .scriptBootstrapAction(ScriptBootstrapActionConfig.builder_()
-                                                       .path("s3://" + bucket + "/bootstrap-actions/configure-hadoop")
-                                                       .args(args).build_())
-                    .build_();
+            return new BootstrapActionConfig()
+                    .withName("Configure Hadoop")
+                    .withScriptBootstrapAction(new ScriptBootstrapActionConfig()
+                                                       .withPath("s3://" + bucket + "/bootstrap-actions/configure-hadoop")
+                                                       .withArgs(args));
         }
     }
 
@@ -278,11 +276,11 @@ public class BootstrapActions {
                 args.add("--replace");
             }
 
-            return BootstrapActionConfig.builder_()
-                    .name("Configure Daemons")
-                    .scriptBootstrapAction(ScriptBootstrapActionConfig.builder_()
-                                                       .path("s3://" + bucket + "/bootstrap-actions/configure-daemons")
-                                                       .args(args).build_()).build_();
+            return new BootstrapActionConfig()
+                    .withName("Configure Daemons")
+                    .withScriptBootstrapAction(new ScriptBootstrapActionConfig()
+                                                       .withPath("s3://" + bucket + "/bootstrap-actions/configure-daemons")
+                                                       .withArgs(args));
         }
     }
 }

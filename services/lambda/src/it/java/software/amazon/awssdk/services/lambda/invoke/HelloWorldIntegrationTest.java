@@ -54,15 +54,11 @@ public class HelloWorldIntegrationTest extends IntegrationTestBase {
             functionZip.close();
         }
 
-        lambda.createFunction(CreateFunctionRequest.builder_()
-                .description("My cloud function")
-                .functionName(FUNCTION_NAME)
-                .code(FunctionCode.builder_().zipFile(ByteBuffer.wrap(functionBits)).build_())
-                .handler("helloworld.handler")
-                .memorySize(128)
-                .runtime(Runtime.Nodejs43)
-                .timeout(10)
-                .role(lambdaServiceRoleArn).build_());
+        lambda.createFunction(new CreateFunctionRequest().withDescription("My cloud function")
+                                                         .withFunctionName(FUNCTION_NAME)
+                                                         .withCode(new FunctionCode().withZipFile(ByteBuffer.wrap(functionBits)))
+                                                         .withHandler("helloworld.handler").withMemorySize(128).withRuntime(Runtime.Nodejs43).withTimeout(10)
+                                                         .withRole(lambdaServiceRoleArn));
 
         invoker = LambdaInvokerFactory.builder()
                                       .lambdaClient(lambda)
@@ -71,7 +67,7 @@ public class HelloWorldIntegrationTest extends IntegrationTestBase {
 
     @After
     public void deleteFunction() {
-        lambda.deleteFunction(DeleteFunctionRequest.builder_().functionName(FUNCTION_NAME).build_());
+        lambda.deleteFunction(new DeleteFunctionRequest().withFunctionName(FUNCTION_NAME));
     }
 
     @Test

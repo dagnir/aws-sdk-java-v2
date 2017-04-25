@@ -47,20 +47,13 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         String subnetId_1 = getSubnetIdInVpc(vpcId, US_EAST_1B);
 
         String dsId = dsClient
-                .createDirectory(CreateDirectoryRequest.builder_()
-                        .description("This is my directory!")
-                        .name("AWS.Java.SDK.Directory")
-                        .shortName("md")
-                        .password("My.Awesome.Password.2015")
-                        .size(DirectorySize.Small)
-                        .vpcSettings(DirectoryVpcSettings.builder_()
-                                .vpcId(vpcId)
-                                .subnetIds(subnetId_0, subnetId_1)
-                                .build_())
-                        .build_())
-                .directoryId();
+                .createDirectory(new CreateDirectoryRequest().withDescription("This is my directory!")
+                                                             .withName("AWS.Java.SDK.Directory").withShortName("md").withPassword("My.Awesome.Password.2015")
+                                                             .withSize(DirectorySize.Small).withVpcSettings(
+                                new DirectoryVpcSettings().withVpcId(vpcId).withSubnetIds(subnetId_0, subnetId_1)))
+                .getDirectoryId();
 
-        dsClient.deleteDirectory(DeleteDirectoryRequest.builder_().directoryId(dsId).build_());
+        dsClient.deleteDirectory(new DeleteDirectoryRequest().withDirectoryId(dsId));
     }
 
     private String getVpcId() {
@@ -87,7 +80,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void describeDirectories_InvalidNextToken_ThrowsExceptionWithRequestIdPresent() {
         try {
-            dsClient.describeDirectories(DescribeDirectoriesRequest.builder_().nextToken("invalid").build_());
+            dsClient.describeDirectories(new DescribeDirectoriesRequest().withNextToken("invalid"));
         } catch (InvalidNextTokenException e) {
             assertNotNull(e.getRequestId());
         }

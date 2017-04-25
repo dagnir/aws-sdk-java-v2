@@ -64,11 +64,11 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         IntegrationTestBase.setUp();
-        CreateApplicationRequest createRequest = CreateApplicationRequest.builder_()
-                .applicationName(APP_NAME).build_();
+        CreateApplicationRequest createRequest = new CreateApplicationRequest()
+                .withApplicationName(APP_NAME);
         CreateApplicationResult createResult = codeDeploy
                 .createApplication(createRequest);
-        applicationId = createResult.applicationId();
+        applicationId = createResult.getApplicationId();
         assertNotNull(applicationId);
     }
 
@@ -78,8 +78,8 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         if (applicationId != null) {
-            codeDeploy.deleteApplication(DeleteApplicationRequest.builder_()
-                                                 .applicationName(APP_NAME).build_());
+            codeDeploy.deleteApplication(new DeleteApplicationRequest()
+                                                 .withApplicationName(APP_NAME));
         }
     }
 
@@ -89,8 +89,8 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testListApplication() {
-        ListApplicationsResult listResult = codeDeploy.listApplications(ListApplicationsRequest.builder_().build_());
-        List<String> applicationList = listResult.applications();
+        ListApplicationsResult listResult = codeDeploy.listApplications(new ListApplicationsRequest());
+        List<String> applicationList = listResult.getApplications();
         assertTrue(applicationList.size() >= 1);
         assertTrue(applicationList.contains(APP_NAME));
     }
@@ -102,11 +102,11 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     @Test
     public void testGetApplication() {
         GetApplicationResult getResult = codeDeploy
-                .getApplication(GetApplicationRequest.builder_()
-                                        .applicationName(APP_NAME).build_());
-        ApplicationInfo applicationInfo = getResult.application();
-        assertEquals(applicationId, applicationInfo.applicationId());
-        assertEquals(APP_NAME, applicationInfo.applicationName());
+                .getApplication(new GetApplicationRequest()
+                                        .withApplicationName(APP_NAME));
+        ApplicationInfo applicationInfo = getResult.getApplication();
+        assertEquals(applicationId, applicationInfo.getApplicationId());
+        assertEquals(APP_NAME, applicationInfo.getApplicationName());
     }
 
     /**
@@ -117,9 +117,9 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     @Test
     public void testCreateDeploymentGroup() {
         try {
-            codeDeploy.createDeploymentGroup(CreateDeploymentGroupRequest.builder_()
-                                                     .applicationName(APP_NAME).deploymentGroupName(
-                            DEPLOYMENT_GROUP_NAME).build_());
+            codeDeploy.createDeploymentGroup(new CreateDeploymentGroupRequest()
+                                                     .withApplicationName(APP_NAME).withDeploymentGroupName(
+                            DEPLOYMENT_GROUP_NAME));
             fail("Create Deployment group should fail as it requires a service role ARN to be specified");
         } catch (Exception ace) {
             assertTrue(ace instanceof AmazonServiceException);

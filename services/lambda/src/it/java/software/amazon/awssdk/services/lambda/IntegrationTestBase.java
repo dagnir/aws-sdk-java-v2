@@ -81,7 +81,7 @@ public class IntegrationTestBase extends AwsTestBase {
         iam.deleteRole(new DeleteRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME));
 
         if (kinesis != null) {
-            kinesis.deleteStream(DeleteStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).build_());
+            kinesis.deleteStream(new DeleteStreamRequest().withStreamName(KINESIS_STREAM_NAME));
         }
     }
 
@@ -126,22 +126,22 @@ public class IntegrationTestBase extends AwsTestBase {
     protected static void createKinesisStream() {
         kinesis = KinesisClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        kinesis.createStream(CreateStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).shardCount(1).build_());
+        kinesis.createStream(new CreateStreamRequest().withStreamName(KINESIS_STREAM_NAME).withShardCount(1));
 
-        StreamDescription description = kinesis.describeStream(DescribeStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).build_())
-                .streamDescription();
-        streamArn = description.streamARN();
+        StreamDescription description = kinesis.describeStream(new DescribeStreamRequest().withStreamName(KINESIS_STREAM_NAME))
+                .getStreamDescription();
+        streamArn = description.getStreamARN();
 
         // Wait till stream is active (less than a minute)
-        while (!StreamStatus.ACTIVE.toString().equals(description.streamStatus())) {
+        while (!StreamStatus.ACTIVE.toString().equals(description.getStreamStatus())) {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
                 // Ignored or expected.
             }
 
-            description = kinesis.describeStream(DescribeStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).build_())
-                    .streamDescription();
+            description = kinesis.describeStream(new DescribeStreamRequest().withStreamName(KINESIS_STREAM_NAME))
+                    .getStreamDescription();
         }
     }
 
