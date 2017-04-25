@@ -20,32 +20,21 @@ import static software.amazon.awssdk.codegen.poet.PoetUtils.makeJavadocPoetFrien
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.AmazonWebServiceResult;
-import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
-import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 
@@ -59,15 +48,13 @@ public class AwsServiceModel implements ClassSpec {
             .addStatement("super($N)", "message")
             .build();
 
-    private static final Set<String> RESERVED_METHOD_NAMES = Arrays.stream(Object.class.getMethods())
-            .map(Method::getName)
-            .collect(Collectors.toSet());
-
     private final IntermediateModel intermediateModel;
     private final ShapeModel shapeModel;
     private final PoetExtensions poetExtensions;
     private final TypeProvider typeProvider;
     private final ShapeModelSpec shapeModelSpec;
+    private final ShapeInterfaceProvider interfaceProvider;
+    private final ModelMethodOverrides modelMethodOverrides;
 
     public AwsServiceModel(IntermediateModel intermediateModel, ShapeModel shapeModel) {
         this.intermediateModel = intermediateModel;
@@ -75,6 +62,8 @@ public class AwsServiceModel implements ClassSpec {
         this.poetExtensions = new PoetExtensions(this.intermediateModel);
         this.typeProvider = new TypeProvider(this.poetExtensions);
         this.shapeModelSpec = new ShapeModelSpec(this.shapeModel, typeProvider);
+        this.interfaceProvider = new AwsShapeInterfaceProvider(this.intermediateModel, this.shapeModel);
+        this.modelMethodOverrides = new ModelMethodOverrides(this.poetExtensions);
     }
 
     @Override
@@ -86,8 +75,6 @@ public class AwsServiceModel implements ClassSpec {
                 .addMethods(modelClassMethods())
                 .addFields(shapeModelSpec.fields())
                 .addTypes(nestedModelClassTypes());
-
-        errorIfGetterMethodsConflict();
 
         if (shapeModel.getDocumentation() != null) {
             specBuilder.addJavadoc(escapeJavadoc(shapeModel.getDocumentation()));
@@ -102,73 +89,31 @@ public class AwsServiceModel implements ClassSpec {
     }
 
     private List<TypeName> modelSuperInterfaces() {
-        List<TypeName> superInterfaces = new ArrayList<>();
-
-        switch (shapeModel.getShapeType()) {
-            case Request:
-            case Model:
-                Stream.of(Serializable.class, Cloneable.class)
-                        .map(ClassName::get)
-                        .forEach(superInterfaces::add);
-                break;
-            default:
-                break;
-        }
-
-        if (implementStructuredPojoInterface()) {
-            superInterfaces.add(ClassName.get(StructuredPojo.class));
-        }
-
-        return superInterfaces;
+        return interfaceProvider.interfacesToImplement().stream()
+                .map(ClassName::get)
+                .collect(Collectors.toList());
     }
 
     private TypeName modelSuperClass() {
-        switch (shapeModel.getShapeType()) {
-            case Request:
-                return ClassName.get(AmazonWebServiceRequest.class);
-            case Response: {
-                String responseClassFqcn;
-                if ((responseClassFqcn = intermediateModel.getCustomizationConfig()
-                        .getCustomResponseMetadataClassName()) != null) {
-                    return PoetUtils.classNameFromFqcn(responseClassFqcn);
-                }
-                return ParameterizedTypeName.get(ClassName.get(AmazonWebServiceResult.class),
-                        ClassName.get(ResponseMetadata.class));
-            }
-            case Exception: {
-                String customExceptionBase;
-                if ((customExceptionBase = intermediateModel.getCustomizationConfig()
-                        .getSdkModeledExceptionBaseClassName()) != null) {
-                    return poetExtensions.getModelClass(customExceptionBase);
-                }
-                return poetExtensions.getModelClass(intermediateModel.getMetadata().getSyncInterface() + "Exception");
-            }
-            case Model:
-            default:
-                return TypeName.OBJECT;
-        }
+        return ClassName.get(interfaceProvider.baseClassToExtend());
     }
 
     private List<MethodSpec> modelClassMethods() {
         List<MethodSpec> methodSpecs = new ArrayList<>();
 
         switch (shapeModel.getShapeType()) {
-            case Model:
-            case Request:
-            case Response:
-                methodSpecs.addAll(memberGetters());
-                methodSpecs.add(builderCtor());
-                methodSpecs.add(builderMethod());
-                methodSpecs.add(toBuilderMethod());
-                methodSpecs.add(hashCodeMethod());
-                methodSpecs.add(equalsMethod());
-                methodSpecs.add(cloneMethod());
-                methodSpecs.add(toStringMethod());
-                break;
             case Exception:
                 methodSpecs.add(EXCEPTION_CTOR);
                 break;
             default:
+                methodSpecs.addAll(memberGetters());
+                methodSpecs.add(builderCtor());
+                methodSpecs.add(builderMethod());
+                methodSpecs.add(toBuilderMethod());
+                methodSpecs.add(modelMethodOverrides.hashCodeMethod(shapeModel));
+                methodSpecs.add(modelMethodOverrides.equalsMethod(shapeModel));
+                methodSpecs.add(modelMethodOverrides.cloneMethod(className()));
+                methodSpecs.add(modelMethodOverrides.toStringMethod(shapeModel));
                 break;
         }
 
@@ -208,29 +153,12 @@ public class AwsServiceModel implements ClassSpec {
         return nestedClasses;
     }
 
-    private void errorIfGetterMethodsConflict() {
-        List<String> conflictingMethods = memberGetters().stream()
-                .map(m -> m.name)
-                .filter(this::isMemberMethodConflicting)
-                .collect(Collectors.toList());
-
-        if (!conflictingMethods.isEmpty()) {
-            String msg = String.format("Shape '%s' contains members whose generated getters would conflict with" +
-                            " member methods from its superclass and/or superinterfaces: [%s]. Address this by customizing the" +
-                            " member name(s) in the customization file for this service module.",
-                    shapeModel.getShapeName(),
-                    conflictingMethods.stream().collect(Collectors.joining(", ")));
-
-            throw new IllegalStateException(msg);
-        }
-    }
-
     private TypeSpec builderClass() {
         return new ModelBuilderSpec(intermediateModel, shapeModel, shapeModelSpec, typeProvider, poetExtensions).poetSpec();
     }
 
     private boolean implementStructuredPojoInterface() {
-        return shapeModel.getShapeType() == ShapeType.Model && intermediateModel.getMetadata().isJsonProtocol();
+        return interfaceProvider.shouldImplementInterface(StructuredPojo.class);
     }
 
     private MethodSpec structuredPojoMarshallMethod(ShapeModel shapeModel) {
@@ -273,107 +201,10 @@ public class AwsServiceModel implements ClassSpec {
                 .build();
     }
 
-    private MethodSpec hashCodeMethod() {
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("hashCode")
-                .returns(int.class)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addStatement("int hashCode = 1");
-
-        members().forEach(m ->
-                methodBuilder.addStatement("hashCode = 31 * hashCode + (($N() == null)? 0 : $N().hashCode())",
-                m.getGetterMethodName(), m.getGetterMethodName()));
-
-
-        methodBuilder.addStatement("return hashCode");
-
-        return methodBuilder.build();
-    }
-
-    private MethodSpec equalsMethod() {
-        ClassName className = className();
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("equals")
-                .returns(boolean.class)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(Object.class, "obj")
-
-                .beginControlFlow("if (this == obj)")
-                .addStatement("return true")
-                .endControlFlow()
-
-                .beginControlFlow("if (obj == null)")
-                .addStatement("return false")
-                .endControlFlow()
-
-                .beginControlFlow("if (!(obj instanceof $T))", className)
-                .addStatement("return false")
-                .endControlFlow()
-
-                .addStatement("$T other = ($T) obj", className, className);
-
-        members().forEach(m -> {
-            String getterName = m.getGetterMethodName();
-            methodBuilder.beginControlFlow("if (other.$N() == null ^ this.$N() == null)", getterName, getterName)
-                    .addStatement("return false")
-                    .endControlFlow()
-
-                    .beginControlFlow("if (other.$N() != null && !other.$N().equals(this.$N()))", getterName, getterName,
-                            getterName)
-                    .addStatement("return false")
-                    .endControlFlow();
-        });
-
-        methodBuilder.addStatement("return true");
-
-        return methodBuilder.build();
-    }
-
-    private MethodSpec toStringMethod() {
-        MethodSpec.Builder toStringMethodBuilder = MethodSpec.methodBuilder("toString")
-                .returns(String.class)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addStatement("$T sb = new $T()", StringBuilder.class, StringBuilder.class)
-                .addStatement("sb.append(\"{\")");
-
-        members().forEach(m -> {
-            String getterName = m.getGetterMethodName();
-            toStringMethodBuilder.beginControlFlow("if ($N() != null)", getterName)
-                    .addStatement("sb.append(\"$N: \").append($N()).append(\",\")", m.getName(), getterName)
-                    .endControlFlow();
-        });
-
-        toStringMethodBuilder.addStatement("sb.append(\"}\")");
-        toStringMethodBuilder.addStatement("return sb.toString()");
-
-        return toStringMethodBuilder.build();
-    }
-
-    private MethodSpec cloneMethod() {
-        ClassName className = className();
-        return MethodSpec.methodBuilder("clone")
-                .returns(className)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .beginControlFlow("try")
-                .addStatement("return ($T) super.clone()", className)
-                .endControlFlow()
-                .beginControlFlow("catch ($T e)", Exception.class)
-                .addStatement("throw new IllegalStateException(\"Got a $N from Object.clone() even though we're Cloneable!\", e)",
-                        CloneNotSupportedException.class.getSimpleName())
-                .endControlFlow()
-                .build();
-    }
-
     private List<MemberModel> members() {
         if (shapeModel.getMembers() != null) {
             return shapeModel.getMembers();
         }
         return Collections.emptyList();
-    }
-
-    private boolean isMemberMethodConflicting(String methodName) {
-        return RESERVED_METHOD_NAMES.contains(methodName);
     }
 }
