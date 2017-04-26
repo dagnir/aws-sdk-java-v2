@@ -43,7 +43,6 @@ class ShapeModelSpec {
                 .collect(Collectors.toList());
     }
 
-
     public FieldSpec asField(MemberModel memberModel) {
         return FieldSpec.builder(typeProvider.getStorageType(memberModel), memberModel.getVariable().getVariableName())
                 .addModifiers(Modifier.PRIVATE)

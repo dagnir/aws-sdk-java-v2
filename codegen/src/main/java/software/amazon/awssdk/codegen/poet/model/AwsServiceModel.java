@@ -33,6 +33,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
@@ -95,6 +96,18 @@ public class AwsServiceModel implements ClassSpec {
     }
 
     private TypeName modelSuperClass() {
+        // We need to special case Exception for now because we need the
+        // generated model to extend the right class name, whereas
+        // InterfaceProvider is limited (right now) to returning Class<?>
+        // instances that are currently available on the classpath.
+        if (shapeModel.getShapeType() == ShapeType.Exception) {
+            String customExceptionBase;
+            if ((customExceptionBase = intermediateModel.getCustomizationConfig()
+                    .getSdkModeledExceptionBaseClassName()) != null) {
+                return poetExtensions.getModelClass(customExceptionBase);
+            }
+            return poetExtensions.getModelClass(intermediateModel.getMetadata().getSyncInterface() + "Exception");
+        }
         return ClassName.get(interfaceProvider.baseClassToExtend());
     }
 

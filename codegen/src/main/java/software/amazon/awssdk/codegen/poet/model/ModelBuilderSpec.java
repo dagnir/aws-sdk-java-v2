@@ -48,8 +48,11 @@ class ModelBuilderSpec implements ClassSpec {
     private final TypeProvider typeProvider;
     private final PoetExtensions poetExtensions;
 
-    public ModelBuilderSpec(IntermediateModel intermediateModel, ShapeModel shapeModel,
-                            ShapeModelSpec shapeModelSpec, TypeProvider typeProvider, PoetExtensions poetExtensions) {
+    public ModelBuilderSpec(IntermediateModel intermediateModel,
+                            ShapeModel shapeModel,
+                            ShapeModelSpec shapeModelSpec,
+                            TypeProvider typeProvider,
+                            PoetExtensions poetExtensions) {
         this.intermediateModel = intermediateModel;
         this.shapeModel = shapeModel;
         this.shapeModelSpec = shapeModelSpec;
