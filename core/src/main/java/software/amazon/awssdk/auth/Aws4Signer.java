@@ -294,7 +294,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
                                // This would optionally double url-encode the resource path
                                .append(getCanonicalizedResourcePath(path, doubleUrlEncode))
                                .append(SignerConstants.LINE_SEPARATOR)
-                               .append(getCanonicalizedQueryString(request))
+                               .append(getCanonicalizedQueryString(request.getParameters()))
                                .append(SignerConstants.LINE_SEPARATOR)
                                .append(getCanonicalizedHeaderString(request))
                                .append(SignerConstants.LINE_SEPARATOR)

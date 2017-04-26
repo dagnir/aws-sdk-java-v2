@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.http.apache.internal.impl;
 
+import static software.amazon.awssdk.utils.StringUtils.isNotBlank;
 import static software.amazon.awssdk.utils.StringUtils.lowerCase;
 
 import java.net.URI;
@@ -60,15 +61,7 @@ public class ApacheHttpRequestFactory {
                 .getResourcePath(), true);
         String encodedParams = SdkHttpUtils.encodeParameters(request);
 
-        /*
-         * For all non-POST requests, and any POST requests that already have a
-         * payload, we put the encoded params directly in the URI, otherwise,
-         * we'll put them in the POST request's payload.
-         */
-        boolean requestHasNoPayload = request.getContent() != null;
-        boolean requestIsPost = request.getHttpMethod() == SdkHttpMethod.POST;
-        boolean putParamsInUri = !requestIsPost || requestHasNoPayload;
-        if (encodedParams != null && putParamsInUri) {
+        if (isNotBlank(encodedParams)) {
             uri += "?" + encodedParams;
         }
 
@@ -131,38 +124,24 @@ public class ApacheHttpRequestFactory {
                                        HttpEntityEnclosingRequestBase entityEnclosingRequest,
                                        String encodedParams) {
 
-        if (SdkHttpMethod.POST == request.getHttpMethod()) {
-            /*
-             * If there isn't any payload content to include in this request,
-             * then try to include the POST parameters in the query body,
-             * otherwise, just use the query string. For all AWS Query services,
-             * the best behavior is putting the params in the request body for
-             * POST requests, but we can't do that for S3.
-             */
-            if (request.getContent() == null && encodedParams != null) {
-                entityEnclosingRequest.setEntity(ApacheUtils.newStringEntity(encodedParams));
-            } else {
-                entityEnclosingRequest.setEntity(new RepeatableInputStreamRequestEntity(request));
+        /*
+         * We should never reuse the entity of the previous request, since
+         * reading from the buffered entity will bypass reading from the
+         * original request content. And if the content contains InputStream
+         * wrappers that were added for validation-purpose (e.g.
+         * Md5DigestCalculationInputStream), these wrappers would never be
+         * read and updated again after AmazonHttpClient resets it in
+         * preparation for the retry. Eventually, these wrappers would
+         * return incorrect validation result.
+         */
+        if (request.getContent() != null) {
+            HttpEntity entity = new RepeatableInputStreamRequestEntity(request);
+            if (request.getHeaders().get(HttpHeaders.CONTENT_LENGTH) == null) {
+                entity = ApacheUtils.newBufferedHttpEntity(entity);
             }
-        } else {
-            /*
-             * We should never reuse the entity of the previous request, since
-             * reading from the buffered entity will bypass reading from the
-             * original request content. And if the content contains InputStream
-             * wrappers that were added for validation-purpose (e.g.
-             * Md5DigestCalculationInputStream), these wrappers would never be
-             * read and updated again after AmazonHttpClient resets it in
-             * preparation for the retry. Eventually, these wrappers would
-             * return incorrect validation result.
-             */
-            if (request.getContent() != null) {
-                HttpEntity entity = new RepeatableInputStreamRequestEntity(request);
-                if (request.getHeaders().get(HttpHeaders.CONTENT_LENGTH) == null) {
-                    entity = ApacheUtils.newBufferedHttpEntity(entity);
-                }
-                entityEnclosingRequest.setEntity(entity);
-            }
+            entityEnclosingRequest.setEntity(entity);
         }
+
         return entityEnclosingRequest;
     }
 

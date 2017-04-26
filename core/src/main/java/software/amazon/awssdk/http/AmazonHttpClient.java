@@ -47,6 +47,7 @@ import software.amazon.awssdk.http.pipeline.stages.LastResetInputStreamStage;
 import software.amazon.awssdk.http.pipeline.stages.MakeHttpRequestStage;
 import software.amazon.awssdk.http.pipeline.stages.MergeCustomHeadersStage;
 import software.amazon.awssdk.http.pipeline.stages.MergeCustomQueryParamsStage;
+import software.amazon.awssdk.http.pipeline.stages.MoveParametersToBodyStage;
 import software.amazon.awssdk.http.pipeline.stages.ReportRequestContentLengthStage;
 import software.amazon.awssdk.http.pipeline.stages.RetryableStage;
 import software.amazon.awssdk.http.pipeline.stages.SigningStage;
@@ -431,6 +432,7 @@ public class AmazonHttpClient implements AutoCloseable {
                         .then(ApplyUserAgentStage::new)
                         .then(MergeCustomHeadersStage::new)
                         .then(MergeCustomQueryParamsStage::new)
+                        .then(MoveParametersToBodyStage::new)
                         .then(ReportRequestContentLengthStage::new)
                         .then(RequestPipelineBuilder
                                       .first(SigningStage::new)
