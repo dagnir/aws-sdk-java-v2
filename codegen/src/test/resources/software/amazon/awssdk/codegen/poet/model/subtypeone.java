@@ -6,7 +6,7 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.SubTypeOneMarshaller;
 
-public class SubTypeOne implements Cloneable, StructuredPojo, Serializable {
+public class SubTypeOne implements Cloneable, Serializable, StructuredPojo {
     private String subTypeOneMember;
 
     private SubTypeOne(Builder builder) {

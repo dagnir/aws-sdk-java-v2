@@ -3,7 +3,7 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 import java.io.Serializable;
 import software.amazon.awssdk.AmazonWebServiceResult;
 
-public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult implements Serializable, Cloneable {
+public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult implements Cloneable, Serializable {
     private OperationWithNoInputOrOutputResult(Builder builder) {
     }
 

@@ -10,7 +10,7 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.RecursiveStructTypeMarshaller;
 
-public class RecursiveStructType implements Serializable, Cloneable, StructuredPojo {
+public class RecursiveStructType implements Cloneable, Serializable, StructuredPojo {
     private String noRecurse;
 
     private RecursiveStructType recursiveStruct;

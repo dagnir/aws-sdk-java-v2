@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceResult;
 
-public class NestedContainersResult extends AmazonWebServiceResult implements Serializable, Cloneable {
+public class NestedContainersResult extends AmazonWebServiceResult implements Cloneable, Serializable {
     private List<List<String>> listOfListsOfStrings;
 
     private List<List<List<String>>> listOfListOfListsOfStrings;

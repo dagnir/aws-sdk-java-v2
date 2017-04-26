@@ -6,7 +6,7 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.SimpleStructMarshaller;
 
-public class SimpleStruct implements Serializable, Cloneable, StructuredPojo {
+public class SimpleStruct implements Cloneable, Serializable, StructuredPojo {
     private String stringMember;
 
     private SimpleStruct(Builder builder) {

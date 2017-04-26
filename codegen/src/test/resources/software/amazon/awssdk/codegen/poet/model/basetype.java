@@ -6,7 +6,7 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.BaseTypeMarshaller;
 
-public class BaseType implements Serializable, Cloneable, StructuredPojo {
+public class BaseType implements Cloneable, Serializable, StructuredPojo {
     private String baseMember;
 
     private BaseType(Builder builder) {

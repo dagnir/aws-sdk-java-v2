@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public class AllTypesRequest extends AmazonWebServiceRequest implements Serializable, Cloneable {
+public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneable, Serializable {
     private String stringMember;
 
     private Integer integerMember;

@@ -25,6 +25,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
@@ -91,6 +92,7 @@ public class AwsServiceModel implements ClassSpec {
 
     private List<TypeName> modelSuperInterfaces() {
         return interfaceProvider.interfacesToImplement().stream()
+                .sorted(Comparator.comparing(Class::getSimpleName))
                 .map(ClassName::get)
                 .collect(Collectors.toList());
     }

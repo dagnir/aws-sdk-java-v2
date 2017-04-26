@@ -7,7 +7,7 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.StructWithNestedBlobTypeMarshaller;
 
-public class StructWithNestedBlobType implements Serializable, Cloneable, StructuredPojo {
+public class StructWithNestedBlobType implements  Cloneable, Serializable, StructuredPojo {
     private ByteBuffer nestedBlob;
 
     private StructWithNestedBlobType(Builder builder) {

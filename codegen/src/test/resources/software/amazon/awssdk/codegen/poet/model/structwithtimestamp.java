@@ -7,7 +7,7 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.StructWithTimestampMarshaller;
 
-public class StructWithTimestamp implements Serializable, Cloneable, StructuredPojo {
+public class StructWithTimestamp implements Cloneable, Serializable, StructuredPojo {
     private Date nestedTimestamp;
 
     private StructWithTimestamp(Builder builder) {
