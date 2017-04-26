@@ -15,17 +15,15 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
-import static software.amazon.awssdk.codegen.poet.PoetUtils.makeJavadocPoetFriendly;
-
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.lang.model.element.Modifier;
 
@@ -81,7 +79,7 @@ class ModelBuilderSpec implements ClassSpec {
             shapeModel.getMembers().forEach(m -> {
                 String name = m.getVariable().getVariableName();
                 copyBuilderCtor.addStatement("this.$N = model.$N", name, name);
-                builderClassBuilder.addMethods(fluentSetters(m, className()));
+                builderClassBuilder.addMethods(fluentSetters(m));
             });
         }
 
@@ -106,85 +104,102 @@ class ModelBuilderSpec implements ClassSpec {
         return poetExtensions.getModelClass(shapeModel.getShapeName());
     }
 
-    private List<MethodSpec> fluentSetters(MemberModel memberModel, TypeName returnType) {
-        final String methodName = memberModel.getSetterMethodName();
-        final FieldSpec field = shapeModelSpec.asField(memberModel);
-        List<MethodSpec> memberSetters = new ArrayList<>();
-
-        final String javadoc = makeJavadocPoetFriendly(memberModel.getFluentSetterDocumentation());
-
+    private List<MethodSpec> fluentSetters(MemberModel memberModel) {
         if (memberModel.isList()) {
-            ListModel listModel = memberModel.getListModel();
-            TypeName listMemberType = typeProvider.getStorageType(listModel.getListMemberModel());
-            memberSetters.add(copySetter(memberModel, ParameterizedTypeName.get(typeProvider.listImplClassName(), listMemberType),
-                    javadoc));
-
-            memberSetters.add(varargToListSetter(memberModel, listMemberType, javadoc));
-
-            // If this is a list of enums
-            if (memberModel.getEnumType() != null) {
-                TypeName enumType = poetExtensions.getModelClass(memberModel.getEnumType());
-                memberSetters.add(enumVarargToListSetter(field.name, enumType, javadoc));
-            }
+            return listMemberSetters(memberModel);
         } else if (memberModel.isMap()) {
-            MethodSpec.Builder assignmentSetter = MethodSpec.methodBuilder(methodName)
+            return mapMemberSetters(memberModel);
+        }
+        return nonCollectionSetters(memberModel);
+    }
+
+    private List<MethodSpec> listMemberSetters(MemberModel memberModel) {
+        List<MethodSpec> setters = new ArrayList<>();
+        ListModel listModel = memberModel.getListModel();
+        TypeName listMemberType = typeProvider.getStorageType(listModel.getListMemberModel());
+        String javadoc = PoetUtils.makeJavadocPoetFriendly(memberModel.getFluentSetterDocumentation());
+
+        setters.add(copySetter(memberModel, ParameterizedTypeName.get(typeProvider.listImplClassName(), listMemberType),
+                javadoc));
+
+        setters.add(varargToListSetter(memberModel, listMemberType, javadoc));
+
+        // If this is a list of enums
+        if (memberModel.getEnumType() != null) {
+            TypeName enumType = poetExtensions.getModelClass(memberModel.getEnumType());
+            setters.add(enumVarargToListSetter(memberModel, enumType, javadoc));
+        }
+
+        return setters;
+    }
+
+    private List<MethodSpec> mapMemberSetters(MemberModel memberModel) {
+        String javadoc = PoetUtils.makeJavadocPoetFriendly(memberModel.getFluentSetterDocumentation());
+        String memberName = memberModel.getVariable().getVariableName();
+        MethodSpec.Builder assignmentSetter = MethodSpec.methodBuilder(memberModel.getSetterMethodName())
+                .addJavadoc(javadoc)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(className())
+                .addParameter(typeProvider.getStorageType(memberModel), memberName)
+                .addStatement("this.$N = new $T<>($N)", memberName, typeProvider.mapImplClassName(), memberName)
+                .addStatement("return this");
+
+        return Collections.singletonList(assignmentSetter.build());
+    }
+
+    private List<MethodSpec> nonCollectionSetters(MemberModel memberModel) {
+        List<MethodSpec> setters = new ArrayList<>();
+        String methodName = memberModel.getSetterMethodName();
+        String javadoc = PoetUtils.makeJavadocPoetFriendly(memberModel.getFluentSetterDocumentation());
+        String memberName = memberModel.getVariable().getVariableName();
+        TypeName memberTypeName = typeProvider.getStorageType(memberModel);
+
+        setters.add(MethodSpec.methodBuilder(methodName)
+                .addJavadoc(javadoc)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(memberTypeName, memberName)
+                .returns(className())
+                .addStatement("this.$N = $N", memberName, memberName)
+                .addStatement("return this")
+                .build());
+
+        if (memberModel.getEnumType() != null) {
+            setters.add(MethodSpec.methodBuilder(methodName)
                     .addJavadoc(javadoc)
                     .addModifiers(Modifier.PUBLIC)
-                    .returns(returnType)
-                    .addParameter(field.type, field.name)
-                    // FIXME
-                    .addStatement("this.$N = new $T<>($N)", field, typeProvider.mapImplClassName(), field)
-                    .addStatement("return this");
-
-            memberSetters.add(assignmentSetter.build());
-
-        } else {
-            memberSetters.add(MethodSpec.methodBuilder(methodName)
-                    .addJavadoc(javadoc)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(field.type, field.name)
-                    .returns(returnType)
-                    .addStatement("this.$N = $N", field.name, field.name)
+                    .returns(className())
+                    .addParameter(poetExtensions.getModelClass(memberModel.getEnumType()), memberName)
+                    .addStatement("this.$N = $N.toString()", memberName, memberName)
                     .addStatement("return this")
                     .build());
+        }
 
-            if (memberModel.getEnumType() != null) {
-                memberSetters.add(MethodSpec.methodBuilder(methodName)
+        List<ConvenienceTypeOverload> convenienceOverloads;
+        if ((convenienceOverloads = intermediateModel.getCustomizationConfig()
+                .getConvenienceTypeOverloads()) != null) {
+            for (ConvenienceTypeOverload c : convenienceOverloads) {
+                if (!c.accepts(shapeModel, memberModel)) {
+                    continue;
+                }
+
+                TypeName convenienceParamType = typeProvider.getTypeNameForSimpleType(c.getConvenienceType());
+                setters.add(MethodSpec.methodBuilder(methodName)
                         .addJavadoc(javadoc)
                         .addModifiers(Modifier.PUBLIC)
-                        .returns(returnType)
-                        .addParameter(poetExtensions.getModelClass(memberModel.getEnumType()), field.name)
-                        .addStatement("this.$N = $N.toString()", field, field.name)
+                        .returns(className())
+                        .addParameter(convenienceParamType, memberName)
+                        .addStatement("this.$N = new $T().adapt($N)", memberName,
+                                PoetUtils.classNameFromFqcn(c.getTypeAdapterFqcn()), memberName)
                         .addStatement("return this")
                         .build());
             }
-
-            List<ConvenienceTypeOverload> convenienceOverloads;
-            if ((convenienceOverloads = intermediateModel.getCustomizationConfig()
-                    .getConvenienceTypeOverloads()) != null) {
-                for (ConvenienceTypeOverload c : convenienceOverloads) {
-                    if (!c.accepts(shapeModel, memberModel)) {
-                        continue;
-                    }
-
-                    TypeName convenienceParamType = typeProvider.getTypeNameForSimpleType(c.getConvenienceType());
-                    memberSetters.add(MethodSpec.methodBuilder(methodName)
-                            .addJavadoc(javadoc)
-                            .addModifiers(Modifier.PUBLIC)
-                            .returns(returnType)
-                            .addParameter(convenienceParamType, field.name)
-                            .addStatement("this.$N = new $T().adapt($N)", field,
-                                    PoetUtils.classNameFromFqcn(c.getTypeAdapterFqcn()), field.name)
-                            .addStatement("return this")
-                            .build());
-                }
-            }
         }
 
-        return memberSetters;
+        return setters;
     }
 
-    private MethodSpec enumVarargToListSetter(String fieldName, TypeName enumTypeName, String javadoc) {
+    private MethodSpec enumVarargToListSetter(MemberModel memberModel, TypeName enumTypeName, String javadoc) {
+        String fieldName = memberModel.getVariable().getVariableName();
         return MethodSpec.methodBuilder(fieldName)
                 .addJavadoc(javadoc)
                 .addModifiers(Modifier.PUBLIC)

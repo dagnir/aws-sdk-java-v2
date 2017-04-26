@@ -40,7 +40,6 @@ public class AwsModelSpecTest {
     @BeforeClass
     public static void setUp() throws URISyntaxException, IOException {
         serviceModelFile = new File(AwsModelSpecTest.class.getResource("service-2.json").getFile());
-        System.out.println(serviceModelFile);
         intermediateModel = new IntermediateModelBuilder(
                 C2jModels.builder()
                         .serviceModel(ModelLoaderUtils.loadModel(ServiceModel.class, serviceModelFile))
