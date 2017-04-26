@@ -119,7 +119,7 @@ class ModelBuilderSpec implements ClassSpec {
             memberSetters.add(copySetter(memberModel, ParameterizedTypeName.get(typeProvider.listImplClassName(), listMemberType),
                     javadoc));
 
-            memberSetters.add(varargToListSetter(field.name, listMemberType, javadoc));
+            memberSetters.add(varargToListSetter(memberModel, listMemberType, javadoc));
 
             // If this is a list of enums
             if (memberModel.getEnumType() != null) {
@@ -220,8 +220,9 @@ class ModelBuilderSpec implements ClassSpec {
                 .build();
     }
 
-    private MethodSpec varargToListSetter(String fieldName, TypeName listMemberType, String javadoc) {
-        return MethodSpec.methodBuilder(fieldName)
+    private MethodSpec varargToListSetter(MemberModel memberModel, TypeName listMemberType, String javadoc) {
+        String fieldName = memberModel.getVariable().getVariableName();
+        return MethodSpec.methodBuilder(memberModel.getSetterMethodName())
                 .addJavadoc(javadoc)
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(ArrayTypeName.of(listMemberType), fieldName).varargs(true)

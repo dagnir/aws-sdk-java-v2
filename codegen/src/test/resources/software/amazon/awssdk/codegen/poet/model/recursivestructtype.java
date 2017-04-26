@@ -205,7 +205,7 @@ public class RecursiveStructType implements Cloneable, Serializable, StructuredP
          * @param recursiveList
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder recursiveList(RecursiveStructType... recursiveList) {
+        public Builder setRecursiveList(RecursiveStructType... recursiveList) {
             if (this.recursiveList == null) {
                 this.recursiveList = new ArrayList<>(recursiveList.length);
             }

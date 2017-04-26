@@ -181,7 +181,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
      * {@code position}, and calling {@code get} methods on this rather than directly on the returned {@code ByteBuffer}
      * . Doing so will ensure that anyone else using the {@code ByteBuffer} will not be affected by changes to the
      * {@code position}. </p>
-     * 
+     *
      * @return
      */
     public ByteBuffer getBlobArg() {
@@ -642,7 +642,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param simpleList
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder simpleList(String... simpleList) {
+        public Builder setSimpleList(String... simpleList) {
             if (this.simpleList == null) {
                 this.simpleList = new ArrayList<>(simpleList.length);
             }
@@ -671,7 +671,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param listOfMaps
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder listOfMaps(Map<String, String>... listOfMaps) {
+        public Builder setListOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
                 this.listOfMaps = new ArrayList<>(listOfMaps.length);
             }
@@ -700,7 +700,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param listOfStructs
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder listOfStructs(SimpleStruct... listOfStructs) {
+        public Builder setListOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
                 this.listOfStructs = new ArrayList<>(listOfStructs.length);
             }
@@ -809,7 +809,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param listOfBlobs
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder listOfBlobs(ByteBuffer... listOfBlobs) {
+        public Builder setListOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
                 this.listOfBlobs = new ArrayList<>(listOfBlobs.length);
             }

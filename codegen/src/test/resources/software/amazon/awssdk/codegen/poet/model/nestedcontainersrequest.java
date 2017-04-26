@@ -156,7 +156,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
          * @param listOfListsOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder listOfListsOfStrings(List<String>... listOfListsOfStrings) {
+        public Builder setListOfListsOfStrings(List<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
             }
@@ -185,7 +185,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
          * @param listOfListOfListsOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder listOfListOfListsOfStrings(List<List<String>>... listOfListOfListsOfStrings) {
+        public Builder setListOfListOfListsOfStrings(List<List<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);
             }
