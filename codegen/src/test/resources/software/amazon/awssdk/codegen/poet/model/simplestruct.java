@@ -6,32 +6,32 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.SimpleStructMarshaller;
 
-public class SimpleStruct implements Cloneable, Serializable, StructuredPojo {
-    private String stringMember;
+public class SimpleStruct implements Serializable, Cloneable, StructuredPojo {
+    private final String stringMember;
 
-    private SimpleStruct(Builder builder) {
+    private SimpleStruct(BeanStyleBuilder builder) {
         this.stringMember = builder.stringMember;
     }
 
     /**
      * turn
      */
-    public String getStringMember() {
+    public String stringMember() {
         return stringMember;
     }
 
-    public static Builder builder_() {
-        return new Builder();
+    public Builder toBuilder() {
+        return new BeanStyleBuilder(this);
     }
 
-    public Builder toBuilder() {
-        return new Builder(this);
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((getStringMember() == null) ? 0 : getStringMember().hashCode());
+        hashCode = 31 * hashCode + ((stringMember() == null) ? 0 : stringMember().hashCode());
         return hashCode;
     }
 
@@ -47,10 +47,10 @@ public class SimpleStruct implements Cloneable, Serializable, StructuredPojo {
             return false;
         }
         SimpleStruct other = (SimpleStruct) obj;
-        if (other.getStringMember() == null ^ this.getStringMember() == null) {
+        if (other.stringMember() == null ^ this.stringMember() == null) {
             return false;
         }
-        if (other.getStringMember() != null && !other.getStringMember().equals(this.getStringMember())) {
+        if (other.stringMember() != null && !other.stringMember().equals(this.stringMember())) {
             return false;
         }
         return true;
@@ -70,8 +70,8 @@ public class SimpleStruct implements Cloneable, Serializable, StructuredPojo {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (getStringMember() != null) {
-            sb.append("StringMember: ").append(getStringMember()).append(",");
+        if (stringMember() != null) {
+            sb.append("StringMember: ").append(stringMember()).append(",");
         }
         sb.append("}");
         return sb.toString();
@@ -83,26 +83,42 @@ public class SimpleStruct implements Cloneable, Serializable, StructuredPojo {
         SimpleStructMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public static class Builder {
-        private String stringMember;
-
-        private Builder() {
-        }
-
-        private Builder(SimpleStruct model) {
-            this.stringMember = model.stringMember;
-        }
-
+    public interface Builder {
         /**
          *
          * @param stringMember
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder setStringMember(String stringMember) {
+        Builder stringMember(String stringMember);
+
+        SimpleStruct build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
+        private String stringMember;
+
+        private BeanStyleBuilder() {
+        }
+
+        private BeanStyleBuilder(SimpleStruct model) {
+            this.stringMember = model.stringMember;
+        }
+
+        @Override
+        public Builder stringMember(String stringMember) {
             this.stringMember = stringMember;
             return this;
         }
 
+        /**
+         *
+         * @param stringMember
+         */
+        public void setStringMember(String stringMember) {
+            this.stringMember = stringMember;
+        }
+
+        @Override
         public SimpleStruct build_() {
             return new SimpleStruct(this);
         }

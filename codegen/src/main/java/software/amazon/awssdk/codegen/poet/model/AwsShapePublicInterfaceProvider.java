@@ -15,6 +15,10 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,35 +26,39 @@ import java.util.stream.Stream;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResult;
-import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.protocol.StructuredPojo;
 
-public class AwsShapeInterfaceProvider implements ShapeInterfaceProvider {
+public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
     private final IntermediateModel intermediateModel;
     private final ShapeModel shapeModel;
+    private final PoetExtensions poetExtensions;
 
-    public AwsShapeInterfaceProvider(IntermediateModel intermediateModel, ShapeModel shapeModel) {
+    public AwsShapePublicInterfaceProvider(IntermediateModel intermediateModel, ShapeModel shapeModel) {
         this.intermediateModel = intermediateModel;
         this.shapeModel = shapeModel;
+        this.poetExtensions = new PoetExtensions(intermediateModel);
     }
 
     @Override
     public boolean shouldImplementInterface(Class<?> iface) {
-        return interfacesToImplement().contains(iface);
+        return interfacesToImplement().contains(ClassName.get(iface));
     }
 
     @Override
-    public Set<Class<?>> interfacesToImplement() {
-        Set<Class<?>> superInterfaces = new HashSet<>();
+    public Set<TypeName> interfacesToImplement() {
+        Set<TypeName> superInterfaces = new HashSet<>();
 
         switch (shapeModel.getShapeType()) {
             case Request:
             case Model:
             case Response:
                 Stream.of(Serializable.class, Cloneable.class)
+                        .map(ClassName::get)
                         .forEach(superInterfaces::add);
                 break;
             default:
@@ -58,7 +66,7 @@ public class AwsShapeInterfaceProvider implements ShapeInterfaceProvider {
         }
 
         if (implementStructuredPojoInterface()) {
-            superInterfaces.add(StructuredPojo.class);
+            superInterfaces.add(ClassName.get(StructuredPojo.class));
         }
 
         return superInterfaces;
@@ -66,21 +74,31 @@ public class AwsShapeInterfaceProvider implements ShapeInterfaceProvider {
     }
 
     @Override
-    public Class<?> baseClassToExtend() {
+    public TypeName baseClassToExtend() {
         switch (shapeModel.getShapeType()) {
             case Request:
-                return AmazonWebServiceRequest.class;
+                return ClassName.get(AmazonWebServiceRequest.class);
             case Response:
-                return AmazonWebServiceResult.class;
+                return ParameterizedTypeName.get(AmazonWebServiceResult.class, ResponseMetadata.class);
             case Exception:
-                return SdkClientException.class;
+                return exceptionBaseClass();
             case Model:
             default:
-                return Object.class;
+                return ClassName.OBJECT;
         }
     }
 
-    boolean implementStructuredPojoInterface() {
+    private TypeName exceptionBaseClass() {
+        String customExceptionBase;
+        if ((customExceptionBase = intermediateModel.getCustomizationConfig()
+                .getSdkModeledExceptionBaseClassName()) != null) {
+            return poetExtensions.getModelClass(customExceptionBase);
+        }
+        return poetExtensions.getModelClass(intermediateModel.getMetadata().getSyncInterface() + "Exception");
+
+    }
+
+    private boolean implementStructuredPojoInterface() {
         return intermediateModel.getMetadata().isJsonProtocol() && shapeModel.getShapeType() == ShapeType.Model;
     }
 }

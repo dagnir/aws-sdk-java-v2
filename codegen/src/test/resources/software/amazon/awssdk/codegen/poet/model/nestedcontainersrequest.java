@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public class NestedContainersRequest extends AmazonWebServiceRequest implements Cloneable, Serializable {
-    private List<List<String>> listOfListsOfStrings;
+public class NestedContainersRequest extends AmazonWebServiceRequest implements Serializable, Cloneable {
+    private final List<List<String>> listOfListsOfStrings;
 
-    private List<List<List<String>>> listOfListOfListsOfStrings;
+    private final List<List<List<String>>> listOfListOfListsOfStrings;
 
-    private Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings;
+    private final Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings;
 
-    private NestedContainersRequest(Builder builder) {
+    private NestedContainersRequest(BeanStyleBuilder builder) {
         this.listOfListsOfStrings = builder.listOfListsOfStrings;
         this.listOfListOfListsOfStrings = builder.listOfListOfListsOfStrings;
         this.mapOfStringToListOfListsOfStrings = builder.mapOfStringToListOfListsOfStrings;
@@ -23,39 +23,39 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
     /**
      * turn
      */
-    public List<List<String>> getListOfListsOfStrings() {
+    public List<List<String>> listOfListsOfStrings() {
         return listOfListsOfStrings;
     }
 
     /**
      * turn
      */
-    public List<List<List<String>>> getListOfListOfListsOfStrings() {
+    public List<List<List<String>>> listOfListOfListsOfStrings() {
         return listOfListOfListsOfStrings;
     }
 
     /**
      * turn
      */
-    public Map<String, List<List<String>>> getMapOfStringToListOfListsOfStrings() {
+    public Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings() {
         return mapOfStringToListOfListsOfStrings;
     }
 
-    public static Builder builder_() {
-        return new Builder();
+    public Builder toBuilder() {
+        return new BeanStyleBuilder(this);
     }
 
-    public Builder toBuilder() {
-        return new Builder(this);
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((getListOfListsOfStrings() == null) ? 0 : getListOfListsOfStrings().hashCode());
-        hashCode = 31 * hashCode + ((getListOfListOfListsOfStrings() == null) ? 0 : getListOfListOfListsOfStrings().hashCode());
+        hashCode = 31 * hashCode + ((listOfListsOfStrings() == null) ? 0 : listOfListsOfStrings().hashCode());
+        hashCode = 31 * hashCode + ((listOfListOfListsOfStrings() == null) ? 0 : listOfListOfListsOfStrings().hashCode());
         hashCode = 31 * hashCode
-                + ((getMapOfStringToListOfListsOfStrings() == null) ? 0 : getMapOfStringToListOfListsOfStrings().hashCode());
+                + ((mapOfStringToListOfListsOfStrings() == null) ? 0 : mapOfStringToListOfListsOfStrings().hashCode());
         return hashCode;
     }
 
@@ -71,24 +71,24 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
             return false;
         }
         NestedContainersRequest other = (NestedContainersRequest) obj;
-        if (other.getListOfListsOfStrings() == null ^ this.getListOfListsOfStrings() == null) {
+        if (other.listOfListsOfStrings() == null ^ this.listOfListsOfStrings() == null) {
             return false;
         }
-        if (other.getListOfListsOfStrings() != null && !other.getListOfListsOfStrings().equals(this.getListOfListsOfStrings())) {
+        if (other.listOfListsOfStrings() != null && !other.listOfListsOfStrings().equals(this.listOfListsOfStrings())) {
             return false;
         }
-        if (other.getListOfListOfListsOfStrings() == null ^ this.getListOfListOfListsOfStrings() == null) {
+        if (other.listOfListOfListsOfStrings() == null ^ this.listOfListOfListsOfStrings() == null) {
             return false;
         }
-        if (other.getListOfListOfListsOfStrings() != null
-                && !other.getListOfListOfListsOfStrings().equals(this.getListOfListOfListsOfStrings())) {
+        if (other.listOfListOfListsOfStrings() != null
+                && !other.listOfListOfListsOfStrings().equals(this.listOfListOfListsOfStrings())) {
             return false;
         }
-        if (other.getMapOfStringToListOfListsOfStrings() == null ^ this.getMapOfStringToListOfListsOfStrings() == null) {
+        if (other.mapOfStringToListOfListsOfStrings() == null ^ this.mapOfStringToListOfListsOfStrings() == null) {
             return false;
         }
-        if (other.getMapOfStringToListOfListsOfStrings() != null
-                && !other.getMapOfStringToListOfListsOfStrings().equals(this.getMapOfStringToListOfListsOfStrings())) {
+        if (other.mapOfStringToListOfListsOfStrings() != null
+                && !other.mapOfStringToListOfListsOfStrings().equals(this.mapOfStringToListOfListsOfStrings())) {
             return false;
         }
         return true;
@@ -108,41 +108,69 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (getListOfListsOfStrings() != null) {
-            sb.append("ListOfListsOfStrings: ").append(getListOfListsOfStrings()).append(",");
+        if (listOfListsOfStrings() != null) {
+            sb.append("ListOfListsOfStrings: ").append(listOfListsOfStrings()).append(",");
         }
-        if (getListOfListOfListsOfStrings() != null) {
-            sb.append("ListOfListOfListsOfStrings: ").append(getListOfListOfListsOfStrings()).append(",");
+        if (listOfListOfListsOfStrings() != null) {
+            sb.append("ListOfListOfListsOfStrings: ").append(listOfListOfListsOfStrings()).append(",");
         }
-        if (getMapOfStringToListOfListsOfStrings() != null) {
-            sb.append("MapOfStringToListOfListsOfStrings: ").append(getMapOfStringToListOfListsOfStrings()).append(",");
+        if (mapOfStringToListOfListsOfStrings() != null) {
+            sb.append("MapOfStringToListOfListsOfStrings: ").append(mapOfStringToListOfListsOfStrings()).append(",");
         }
         sb.append("}");
         return sb.toString();
     }
 
-    public static class Builder {
-        private List<List<String>> listOfListsOfStrings;
-
-        private List<List<List<String>>> listOfListOfListsOfStrings;
-
-        private Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings;
-
-        private Builder() {
-        }
-
-        private Builder(NestedContainersRequest model) {
-            this.listOfListsOfStrings = model.listOfListsOfStrings;
-            this.listOfListOfListsOfStrings = model.listOfListOfListsOfStrings;
-            this.mapOfStringToListOfListsOfStrings = model.mapOfStringToListOfListsOfStrings;
-        }
+    public interface Builder {
+        /**
+         *
+         * @param listOfListsOfStrings
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfListsOfStrings(List<List<String>> listOfListsOfStrings);
 
         /**
          *
          * @param listOfListsOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder setListOfListsOfStrings(List<List<String>> listOfListsOfStrings) {
+        Builder listOfListsOfStrings(List<String>... listOfListsOfStrings);
+
+        /**
+         *
+         * @param listOfListOfListsOfStrings
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfListOfListsOfStrings(List<List<List<String>>> listOfListOfListsOfStrings);
+
+        /**
+         *
+         * @param listOfListOfListsOfStrings
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfListOfListsOfStrings(List<List<String>>... listOfListOfListsOfStrings);
+
+        NestedContainersRequest build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
+        private List<List<String>> listOfListsOfStrings;
+
+        private List<List<List<String>>> listOfListOfListsOfStrings;
+
+        private Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings;
+
+        private BeanStyleBuilder() {
+        }
+
+        private BeanStyleBuilder(NestedContainersRequest model) {
+            this.listOfListsOfStrings = model.listOfListsOfStrings;
+            this.listOfListOfListsOfStrings = model.listOfListOfListsOfStrings;
+            this.mapOfStringToListOfListsOfStrings = model.mapOfStringToListOfListsOfStrings;
+        }
+
+        @Override
+        public Builder listOfListsOfStrings(List<List<String>> listOfListsOfStrings) {
             if (listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = null;
             } else {
@@ -151,14 +179,10 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
             return this;
         }
 
-        /**
-         *
-         * @param listOfListsOfStrings
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setListOfListsOfStrings(List<String>... listOfListsOfStrings) {
+        @Override
+        public Builder listOfListsOfStrings(List<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
-                this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
+                this.listOfListsOfStrings = new ArrayList<List<String>>(listOfListsOfStrings.length);
             }
             for (List<String> ele : listOfListsOfStrings) {
                 this.listOfListsOfStrings.add(ele);
@@ -168,10 +192,31 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
 
         /**
          *
-         * @param listOfListOfListsOfStrings
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param listOfListsOfStrings
          */
-        public Builder setListOfListOfListsOfStrings(List<List<List<String>>> listOfListOfListsOfStrings) {
+        public void setListOfListsOfStrings(List<List<String>> listOfListsOfStrings) {
+            if (listOfListsOfStrings == null) {
+                this.listOfListsOfStrings = null;
+            } else {
+                this.listOfListsOfStrings = new ArrayList<List<String>>(listOfListsOfStrings);
+            }
+        }
+
+        /**
+         *
+         * @param listOfListsOfStrings
+         */
+        public void setListOfListsOfStrings(List<String>... listOfListsOfStrings) {
+            if (this.listOfListsOfStrings == null) {
+                this.listOfListsOfStrings = new ArrayList<List<String>>(listOfListsOfStrings.length);
+            }
+            for (List<String> ele : listOfListsOfStrings) {
+                this.listOfListsOfStrings.add(ele);
+            }
+        }
+
+        @Override
+        public Builder listOfListOfListsOfStrings(List<List<List<String>>> listOfListOfListsOfStrings) {
             if (listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = null;
             } else {
@@ -180,14 +225,10 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
             return this;
         }
 
-        /**
-         *
-         * @param listOfListOfListsOfStrings
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setListOfListOfListsOfStrings(List<List<String>>... listOfListOfListsOfStrings) {
+        @Override
+        public Builder listOfListOfListsOfStrings(List<List<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
-                this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);
+                this.listOfListOfListsOfStrings = new ArrayList<List<List<String>>>(listOfListOfListsOfStrings.length);
             }
             for (List<List<String>> ele : listOfListOfListsOfStrings) {
                 this.listOfListOfListsOfStrings.add(ele);
@@ -197,14 +238,54 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
 
         /**
          *
-         * @param mapOfStringToListOfListsOfStrings
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param listOfListOfListsOfStrings
          */
-        public Builder setMapOfStringToListOfListsOfStrings(Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings) {
-            this.mapOfStringToListOfListsOfStrings = new HashMap<>(mapOfStringToListOfListsOfStrings);
+        public void setListOfListOfListsOfStrings(List<List<List<String>>> listOfListOfListsOfStrings) {
+            if (listOfListOfListsOfStrings == null) {
+                this.listOfListOfListsOfStrings = null;
+            } else {
+                this.listOfListOfListsOfStrings = new ArrayList<List<List<String>>>(listOfListOfListsOfStrings);
+            }
+        }
+
+        /**
+         *
+         * @param listOfListOfListsOfStrings
+         */
+        public void setListOfListOfListsOfStrings(List<List<String>>... listOfListOfListsOfStrings) {
+            if (this.listOfListOfListsOfStrings == null) {
+                this.listOfListOfListsOfStrings = new ArrayList<List<List<String>>>(listOfListOfListsOfStrings.length);
+            }
+            for (List<List<String>> ele : listOfListOfListsOfStrings) {
+                this.listOfListOfListsOfStrings.add(ele);
+            }
+        }
+
+        @Override
+        public Builder mapOfStringToListOfListsOfStrings(Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings) {
+            if (mapOfStringToListOfListsOfStrings == null) {
+                this.mapOfStringToListOfListsOfStrings = null;
+            } else {
+                this.mapOfStringToListOfListsOfStrings = new HashMap<String, List<List<String>>>(
+                        mapOfStringToListOfListsOfStrings);
+            }
             return this;
         }
 
+        /**
+         *
+         * @param mapOfStringToListOfListsOfStrings
+         */
+        public void setMapOfStringToListOfListsOfStrings(Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings) {
+            if (mapOfStringToListOfListsOfStrings == null) {
+                this.mapOfStringToListOfListsOfStrings = null;
+            } else {
+                this.mapOfStringToListOfListsOfStrings = new HashMap<String, List<List<String>>>(
+                        mapOfStringToListOfListsOfStrings);
+            }
+        }
+
+        @Override
         public NestedContainersRequest build_() {
             return new NestedContainersRequest(this);
         }

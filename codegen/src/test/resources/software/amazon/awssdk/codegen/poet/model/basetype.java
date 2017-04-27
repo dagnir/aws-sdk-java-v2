@@ -6,32 +6,32 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.BaseTypeMarshaller;
 
-public class BaseType implements Cloneable, Serializable, StructuredPojo {
-    private String baseMember;
+public class BaseType implements Serializable, Cloneable, StructuredPojo {
+    private final String baseMember;
 
-    private BaseType(Builder builder) {
+    private BaseType(BeanStyleBuilder builder) {
         this.baseMember = builder.baseMember;
     }
 
     /**
      * turn
      */
-    public String getBaseMember() {
+    public String baseMember() {
         return baseMember;
     }
 
-    public static Builder builder_() {
-        return new Builder();
+    public Builder toBuilder() {
+        return new BeanStyleBuilder(this);
     }
 
-    public Builder toBuilder() {
-        return new Builder(this);
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((getBaseMember() == null) ? 0 : getBaseMember().hashCode());
+        hashCode = 31 * hashCode + ((baseMember() == null) ? 0 : baseMember().hashCode());
         return hashCode;
     }
 
@@ -47,10 +47,10 @@ public class BaseType implements Cloneable, Serializable, StructuredPojo {
             return false;
         }
         BaseType other = (BaseType) obj;
-        if (other.getBaseMember() == null ^ this.getBaseMember() == null) {
+        if (other.baseMember() == null ^ this.baseMember() == null) {
             return false;
         }
-        if (other.getBaseMember() != null && !other.getBaseMember().equals(this.getBaseMember())) {
+        if (other.baseMember() != null && !other.baseMember().equals(this.baseMember())) {
             return false;
         }
         return true;
@@ -70,8 +70,8 @@ public class BaseType implements Cloneable, Serializable, StructuredPojo {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (getBaseMember() != null) {
-            sb.append("BaseMember: ").append(getBaseMember()).append(",");
+        if (baseMember() != null) {
+            sb.append("BaseMember: ").append(baseMember()).append(",");
         }
         sb.append("}");
         return sb.toString();
@@ -83,26 +83,42 @@ public class BaseType implements Cloneable, Serializable, StructuredPojo {
         BaseTypeMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public static class Builder {
-        private String baseMember;
-
-        private Builder() {
-        }
-
-        private Builder(BaseType model) {
-            this.baseMember = model.baseMember;
-        }
-
+    public interface Builder {
         /**
          *
          * @param baseMember
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder setBaseMember(String baseMember) {
+        Builder baseMember(String baseMember);
+
+        BaseType build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
+        private String baseMember;
+
+        private BeanStyleBuilder() {
+        }
+
+        private BeanStyleBuilder(BaseType model) {
+            this.baseMember = model.baseMember;
+        }
+
+        @Override
+        public Builder baseMember(String baseMember) {
             this.baseMember = baseMember;
             return this;
         }
 
+        /**
+         *
+         * @param baseMember
+         */
+        public void setBaseMember(String baseMember) {
+            this.baseMember = baseMember;
+        }
+
+        @Override
         public BaseType build_() {
             return new BaseType(this);
         }

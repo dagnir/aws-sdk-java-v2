@@ -6,32 +6,32 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.SubTypeOneMarshaller;
 
-public class SubTypeOne implements Cloneable, Serializable, StructuredPojo {
-    private String subTypeOneMember;
+public class SubTypeOne implements Serializable, Cloneable, StructuredPojo {
+    private final String subTypeOneMember;
 
-    private SubTypeOne(Builder builder) {
+    private SubTypeOne(BeanStyleBuilder builder) {
         this.subTypeOneMember = builder.subTypeOneMember;
     }
 
     /**
      * turn
      */
-    public String getSubTypeOneMember() {
+    public String subTypeOneMember() {
         return subTypeOneMember;
     }
 
-    public static Builder builder_() {
-        return new Builder();
+    public Builder toBuilder() {
+        return new BeanStyleBuilder(this);
     }
 
-    public Builder toBuilder() {
-        return new Builder(this);
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((getSubTypeOneMember() == null) ? 0 : getSubTypeOneMember().hashCode());
+        hashCode = 31 * hashCode + ((subTypeOneMember() == null) ? 0 : subTypeOneMember().hashCode());
         return hashCode;
     }
 
@@ -47,10 +47,10 @@ public class SubTypeOne implements Cloneable, Serializable, StructuredPojo {
             return false;
         }
         SubTypeOne other = (SubTypeOne) obj;
-        if (other.getSubTypeOneMember() == null ^ this.getSubTypeOneMember() == null) {
+        if (other.subTypeOneMember() == null ^ this.subTypeOneMember() == null) {
             return false;
         }
-        if (other.getSubTypeOneMember() != null && !other.getSubTypeOneMember().equals(this.getSubTypeOneMember())) {
+        if (other.subTypeOneMember() != null && !other.subTypeOneMember().equals(this.subTypeOneMember())) {
             return false;
         }
         return true;
@@ -70,8 +70,8 @@ public class SubTypeOne implements Cloneable, Serializable, StructuredPojo {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (getSubTypeOneMember() != null) {
-            sb.append("SubTypeOneMember: ").append(getSubTypeOneMember()).append(",");
+        if (subTypeOneMember() != null) {
+            sb.append("SubTypeOneMember: ").append(subTypeOneMember()).append(",");
         }
         sb.append("}");
         return sb.toString();
@@ -83,26 +83,42 @@ public class SubTypeOne implements Cloneable, Serializable, StructuredPojo {
         SubTypeOneMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public static class Builder {
-        private String subTypeOneMember;
-
-        private Builder() {
-        }
-
-        private Builder(SubTypeOne model) {
-            this.subTypeOneMember = model.subTypeOneMember;
-        }
-
+    public interface Builder {
         /**
          *
          * @param subTypeOneMember
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder setSubTypeOneMember(String subTypeOneMember) {
+        Builder subTypeOneMember(String subTypeOneMember);
+
+        SubTypeOne build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
+        private String subTypeOneMember;
+
+        private BeanStyleBuilder() {
+        }
+
+        private BeanStyleBuilder(SubTypeOne model) {
+            this.subTypeOneMember = model.subTypeOneMember;
+        }
+
+        @Override
+        public Builder subTypeOneMember(String subTypeOneMember) {
             this.subTypeOneMember = subTypeOneMember;
             return this;
         }
 
+        /**
+         *
+         * @param subTypeOneMember
+         */
+        public void setSubTypeOneMember(String subTypeOneMember) {
+            this.subTypeOneMember = subTypeOneMember;
+        }
+
+        @Override
         public SubTypeOne build_() {
             return new SubTypeOne(this);
         }

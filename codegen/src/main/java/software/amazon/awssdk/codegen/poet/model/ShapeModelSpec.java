@@ -38,15 +38,24 @@ class ShapeModelSpec {
     }
 
     public List<FieldSpec> fields() {
+        return fields(Modifier.PRIVATE, Modifier.FINAL);
+    }
+
+    public List<FieldSpec> fields(Modifier... modifiers) {
         return members().stream()
-                .map(this::asField)
+                .map(m -> asField(m, modifiers))
                 .collect(Collectors.toList());
     }
 
-    public FieldSpec asField(MemberModel memberModel) {
-        return FieldSpec.builder(typeProvider.getStorageType(memberModel), memberModel.getVariable().getVariableName())
-                .addModifiers(Modifier.PRIVATE)
-                .build();
+    public FieldSpec asField(MemberModel memberModel, Modifier... modifiers) {
+        FieldSpec.Builder builder = FieldSpec.builder(typeProvider.type(memberModel),
+                memberModel.getVariable().getVariableName());
+
+        if (modifiers != null) {
+            builder.addModifiers(modifiers);
+        }
+
+        return builder.build();
     }
 
     private List<MemberModel> members() {

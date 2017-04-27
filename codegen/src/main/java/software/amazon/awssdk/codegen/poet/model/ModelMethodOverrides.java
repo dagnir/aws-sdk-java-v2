@@ -48,23 +48,23 @@ public class ModelMethodOverrides {
 
                 .beginControlFlow("if (!(obj instanceof $T))", className)
                 .addStatement("return false")
-                .endControlFlow()
+                .endControlFlow();
 
-                .addStatement("$T other = ($T) obj", className, className);
-
-        if (shapeModel.getMembers() != null) {
-            shapeModel.getMembers().forEach(m -> {
-                String getterName = m.getGetterMethodName();
-                methodBuilder.beginControlFlow("if (other.$N() == null ^ this.$N() == null)", getterName, getterName)
-                        .addStatement("return false")
-                        .endControlFlow()
-
-                        .beginControlFlow("if (other.$N() != null && !other.$N().equals(this.$N()))", getterName, getterName,
-                                getterName)
-                        .addStatement("return false")
-                        .endControlFlow();
-            });
+        if (!shapeModel.getMembers().isEmpty()) {
+            methodBuilder.addStatement("$T other = ($T) obj", className, className);
         }
+
+        shapeModel.getMembers().forEach(m -> {
+            String getterName = m.getFluentGetterMethodName();
+            methodBuilder.beginControlFlow("if (other.$N() == null ^ this.$N() == null)", getterName, getterName)
+                    .addStatement("return false")
+                    .endControlFlow()
+
+                    .beginControlFlow("if (other.$N() != null && !other.$N().equals(this.$N()))", getterName, getterName,
+                            getterName)
+                    .addStatement("return false")
+                    .endControlFlow();
+        });
 
         methodBuilder.addStatement("return true");
 
@@ -79,14 +79,12 @@ public class ModelMethodOverrides {
                 .addStatement("$T sb = new $T()", StringBuilder.class, StringBuilder.class)
                 .addStatement("sb.append(\"{\")");
 
-        if (shapeModel.getMembers() != null) {
-            shapeModel.getMembers().forEach(m -> {
-                String getterName = m.getGetterMethodName();
-                toStringMethodBuilder.beginControlFlow("if ($N() != null)", getterName)
-                        .addStatement("sb.append(\"$N: \").append($N()).append(\",\")", m.getName(), getterName)
-                        .endControlFlow();
-            });
-        }
+        shapeModel.getMembers().forEach(m -> {
+            String getterName = m.getFluentGetterMethodName();
+            toStringMethodBuilder.beginControlFlow("if ($N() != null)", getterName)
+                    .addStatement("sb.append(\"$N: \").append($N()).append(\",\")", m.getName(), getterName)
+                    .endControlFlow();
+        });
 
         toStringMethodBuilder.addStatement("sb.append(\"}\")");
         toStringMethodBuilder.addStatement("return sb.toString()");
@@ -116,11 +114,9 @@ public class ModelMethodOverrides {
                 .addModifiers(Modifier.PUBLIC)
                 .addStatement("int hashCode = 1");
 
-        if (shapeModel.getMembers() != null) {
-            shapeModel.getMembers().forEach(m ->
-                    methodBuilder.addStatement("hashCode = 31 * hashCode + (($N() == null)? 0 : $N().hashCode())",
-                            m.getGetterMethodName(), m.getGetterMethodName()));
-        }
+        shapeModel.getMembers().forEach(m ->
+                methodBuilder.addStatement("hashCode = 31 * hashCode + (($N() == null)? 0 : $N().hashCode())",
+                        m.getFluentGetterMethodName(), m.getFluentGetterMethodName()));
 
         methodBuilder.addStatement("return hashCode");
 

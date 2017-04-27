@@ -29,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.protocol.MarshallingInfo;
 import software.amazon.awssdk.runtime.transform.PathMarshallers;
-import software.amazon.awssdk.utils.StringUtils;
 
 public class MemberModel extends DocumentationModel {
 
@@ -42,12 +41,6 @@ public class MemberModel extends DocumentationModel {
     private VariableModel variable;
 
     private VariableModel setterModel;
-
-    private String getterMethodName;
-
-    private String setterMethodName;
-
-    private String fluentSetterMethodName;
 
     private ReturnTypeModel getterModel;
 
@@ -66,6 +59,14 @@ public class MemberModel extends DocumentationModel {
     private boolean idempotencyToken;
 
     private ShapeModel shape;
+
+    private String fluentGetterMethodName;
+
+    private String fluentSetterMethodName;
+
+    private String beanStyleGetterName;
+
+    private String beanStyleSetterName;
 
     public String getName() {
         return name;
@@ -132,27 +133,66 @@ public class MemberModel extends DocumentationModel {
         return this;
     }
 
+    // TODO: Remove when all marshallers switch over to new style
     public String getGetterMethodName() {
-        return getterMethodName;
+        return getBeanStyleGetterMethodName();
     }
 
+    // TODO: Remove when all marshallers switch over to new style
     public void setGetterMethodName(String getterMethodName) {
-        this.getterMethodName = getterMethodName;
+        setBeanStyleGetterMethodName(getterMethodName);
     }
 
-    public MemberModel withGetterMethodName(String getterMethodName) {
-        setGetterMethodName(getterMethodName);
+    public String getFluentGetterMethodName() {
+        return fluentGetterMethodName;
+    }
+
+    public void setFluentGetterMethodName(String fluentGetterMethodName) {
+        this.fluentGetterMethodName = fluentGetterMethodName;
+    }
+
+    public MemberModel withFluentGetterMethodName(String getterMethodName) {
+        setFluentGetterMethodName(getterMethodName);
         return this;
     }
 
+    public String getBeanStyleGetterMethodName() {
+        return beanStyleGetterName;
+    }
+
+    public void setBeanStyleGetterMethodName(String beanStyleGetterName) {
+        this.beanStyleGetterName = beanStyleGetterName;
+    }
+
+    public MemberModel withBeanStyleGetterMethodName(String beanStyleGetterName) {
+        this.beanStyleGetterName = beanStyleGetterName;
+        return this;
+    }
+
+    public String getBeanStyleSetterMethodName() {
+        return beanStyleSetterName;
+    }
+
+    public void setBeanStyleSetterMethodName(String beanStyleSetterName) {
+        this.beanStyleSetterName = beanStyleSetterName;
+    }
+
+    public MemberModel withBeanStyleSetterMethodName(String beanStyleSetterName) {
+        this.beanStyleSetterName = beanStyleSetterName;
+        return this;
+    }
+
+    // TODO: Remove when all marshallers switch over to new style
     public String getSetterMethodName() {
-        return setterMethodName;
+        return getBeanStyleSetterMethodName();
     }
 
+    // TODO: Remove when all marshallers switch over to new style
     public void setSetterMethodName(String setterMethodName) {
-        this.setterMethodName = setterMethodName;
+        setBeanStyleGetterMethodName(setterMethodName);
     }
 
+    // TODO: Remove when all marshallers switch over to new style
     public MemberModel withSetterMethodName(String setterMethodName) {
         setSetterMethodName(setterMethodName);
         return this;

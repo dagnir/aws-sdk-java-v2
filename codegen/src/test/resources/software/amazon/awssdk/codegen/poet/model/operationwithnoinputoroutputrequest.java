@@ -3,16 +3,16 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 import java.io.Serializable;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest implements Cloneable, Serializable {
-    private OperationWithNoInputOrOutputRequest(Builder builder) {
-    }
-
-    public static Builder builder_() {
-        return new Builder();
+public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest implements Serializable, Cloneable {
+    private OperationWithNoInputOrOutputRequest(BeanStyleBuilder builder) {
     }
 
     public Builder toBuilder() {
-        return new Builder(this);
+        return new BeanStyleBuilder(this);
+    }
+
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
@@ -32,7 +32,6 @@ public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest
         if (!(obj instanceof OperationWithNoInputOrOutputRequest)) {
             return false;
         }
-        OperationWithNoInputOrOutputRequest other = (OperationWithNoInputOrOutputRequest) obj;
         return true;
     }
 
@@ -54,13 +53,18 @@ public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest
         return sb.toString();
     }
 
-    public static class Builder {
-        private Builder() {
+    public interface Builder {
+        OperationWithNoInputOrOutputRequest build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
+        private BeanStyleBuilder() {
         }
 
-        private Builder(OperationWithNoInputOrOutputRequest model) {
+        private BeanStyleBuilder(OperationWithNoInputOrOutputRequest model) {
         }
 
+        @Override
         public OperationWithNoInputOrOutputRequest build_() {
             return new OperationWithNoInputOrOutputRequest(this);
         }

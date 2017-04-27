@@ -158,21 +158,28 @@ public class DefaultNamingStrategy implements NamingStrategy {
     }
 
     @Override
-    public String getGetterMethodName(String memberName) {
+    public String getFluentGetterMethodName(String memberName) {
+        return Utils.unCapitialize(memberName);
+    }
+
+    @Override
+    public String getBeanStyleGetterMethodName(String memberName) {
         return String.format("get%s", Utils.capitialize(memberName));
+
     }
 
     @Override
     public String getSetterMethodName(String memberName) {
+        return Utils.unCapitialize(memberName);
+    }
+
+    @Override
+    public String getBeanStyleSetterMethodName(String memberName) {
         return String.format("set%s", Utils.capitialize(memberName));
     }
 
     @Override
     public String getFluentSetterMethodName(String memberName) {
-        if (Protocol.fromValue(serviceModel.getMetadata().getProtocol()) == Protocol.API_GATEWAY) {
-            return Utils.unCapitialize(memberName);
-        } else {
-            return String.format("with%s", Utils.capitialize(memberName));
-        }
+        return Utils.unCapitialize(memberName);
     }
 }

@@ -9,50 +9,50 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneable, Serializable {
-    private String stringMember;
+public class AllTypesRequest extends AmazonWebServiceRequest implements Serializable, Cloneable {
+    private final String stringMember;
 
-    private Integer integerMember;
+    private final Integer integerMember;
 
-    private Boolean booleanMember;
+    private final Boolean booleanMember;
 
-    private Float floatMember;
+    private final Float floatMember;
 
-    private Double doubleMember;
+    private final Double doubleMember;
 
-    private Long longMember;
+    private final Long longMember;
 
-    private List<String> simpleList;
+    private final List<String> simpleList;
 
-    private List<Map<String, String>> listOfMaps;
+    private final List<Map<String, String>> listOfMaps;
 
-    private List<SimpleStruct> listOfStructs;
+    private final List<SimpleStruct> listOfStructs;
 
-    private Map<String, List<Integer>> mapOfStringToIntegerList;
+    private final Map<String, List<Integer>> mapOfStringToIntegerList;
 
-    private Map<String, String> mapOfStringToString;
+    private final Map<String, String> mapOfStringToString;
 
-    private Map<String, SimpleStruct> mapOfStringToStruct;
+    private final Map<String, SimpleStruct> mapOfStringToStruct;
 
-    private Date timestampMember;
+    private final Date timestampMember;
 
-    private StructWithTimestamp structWithNestedTimestampMember;
+    private final StructWithTimestamp structWithNestedTimestampMember;
 
-    private ByteBuffer blobArg;
+    private final ByteBuffer blobArg;
 
-    private StructWithNestedBlobType structWithNestedBlob;
+    private final StructWithNestedBlobType structWithNestedBlob;
 
-    private Map<String, ByteBuffer> blobMap;
+    private final Map<String, ByteBuffer> blobMap;
 
-    private List<ByteBuffer> listOfBlobs;
+    private final List<ByteBuffer> listOfBlobs;
 
-    private RecursiveStructType recursiveStruct;
+    private final RecursiveStructType recursiveStruct;
 
-    private BaseType polymorphicTypeWithSubTypes;
+    private final BaseType polymorphicTypeWithSubTypes;
 
-    private SubTypeOne polymorphicTypeWithoutSubTypes;
+    private final SubTypeOne polymorphicTypeWithoutSubTypes;
 
-    private AllTypesRequest(Builder builder) {
+    private AllTypesRequest(BeanStyleBuilder builder) {
         this.stringMember = builder.stringMember;
         this.integerMember = builder.integerMember;
         this.booleanMember = builder.booleanMember;
@@ -79,98 +79,98 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
     /**
      * turn
      */
-    public String getStringMember() {
+    public String stringMember() {
         return stringMember;
     }
 
     /**
      * turn
      */
-    public Integer getIntegerMember() {
+    public Integer integerMember() {
         return integerMember;
     }
 
     /**
      * turn
      */
-    public Boolean getBooleanMember() {
+    public Boolean booleanMember() {
         return booleanMember;
     }
 
     /**
      * turn
      */
-    public Float getFloatMember() {
+    public Float floatMember() {
         return floatMember;
     }
 
     /**
      * turn
      */
-    public Double getDoubleMember() {
+    public Double doubleMember() {
         return doubleMember;
     }
 
     /**
      * turn
      */
-    public Long getLongMember() {
+    public Long longMember() {
         return longMember;
     }
 
     /**
      * turn
      */
-    public List<String> getSimpleList() {
+    public List<String> simpleList() {
         return simpleList;
     }
 
     /**
      * turn
      */
-    public List<Map<String, String>> getListOfMaps() {
+    public List<Map<String, String>> listOfMaps() {
         return listOfMaps;
     }
 
     /**
      * turn
      */
-    public List<SimpleStruct> getListOfStructs() {
+    public List<SimpleStruct> listOfStructs() {
         return listOfStructs;
     }
 
     /**
      * turn
      */
-    public Map<String, List<Integer>> getMapOfStringToIntegerList() {
+    public Map<String, List<Integer>> mapOfStringToIntegerList() {
         return mapOfStringToIntegerList;
     }
 
     /**
      * turn
      */
-    public Map<String, String> getMapOfStringToString() {
+    public Map<String, String> mapOfStringToString() {
         return mapOfStringToString;
     }
 
     /**
      * turn
      */
-    public Map<String, SimpleStruct> getMapOfStringToStruct() {
+    public Map<String, SimpleStruct> mapOfStringToStruct() {
         return mapOfStringToStruct;
     }
 
     /**
      * turn
      */
-    public Date getTimestampMember() {
+    public Date timestampMember() {
         return timestampMember;
     }
 
     /**
      * turn
      */
-    public StructWithTimestamp getStructWithNestedTimestampMember() {
+    public StructWithTimestamp structWithNestedTimestampMember() {
         return structWithNestedTimestampMember;
     }
 
@@ -184,86 +184,85 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
      *
      * @return
      */
-    public ByteBuffer getBlobArg() {
+    public ByteBuffer blobArg() {
         return blobArg;
     }
 
     /**
      * turn
      */
-    public StructWithNestedBlobType getStructWithNestedBlob() {
+    public StructWithNestedBlobType structWithNestedBlob() {
         return structWithNestedBlob;
     }
 
     /**
      * turn
      */
-    public Map<String, ByteBuffer> getBlobMap() {
+    public Map<String, ByteBuffer> blobMap() {
         return blobMap;
     }
 
     /**
      * turn
      */
-    public List<ByteBuffer> getListOfBlobs() {
+    public List<ByteBuffer> listOfBlobs() {
         return listOfBlobs;
     }
 
     /**
      * turn
      */
-    public RecursiveStructType getRecursiveStruct() {
+    public RecursiveStructType recursiveStruct() {
         return recursiveStruct;
     }
 
     /**
      * turn
      */
-    public BaseType getPolymorphicTypeWithSubTypes() {
+    public BaseType polymorphicTypeWithSubTypes() {
         return polymorphicTypeWithSubTypes;
     }
 
     /**
      * turn
      */
-    public SubTypeOne getPolymorphicTypeWithoutSubTypes() {
+    public SubTypeOne polymorphicTypeWithoutSubTypes() {
         return polymorphicTypeWithoutSubTypes;
     }
 
-    public static Builder builder_() {
-        return new Builder();
+    public Builder toBuilder() {
+        return new BeanStyleBuilder(this);
     }
 
-    public Builder toBuilder() {
-        return new Builder(this);
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((getStringMember() == null) ? 0 : getStringMember().hashCode());
-        hashCode = 31 * hashCode + ((getIntegerMember() == null) ? 0 : getIntegerMember().hashCode());
-        hashCode = 31 * hashCode + ((getBooleanMember() == null) ? 0 : getBooleanMember().hashCode());
-        hashCode = 31 * hashCode + ((getFloatMember() == null) ? 0 : getFloatMember().hashCode());
-        hashCode = 31 * hashCode + ((getDoubleMember() == null) ? 0 : getDoubleMember().hashCode());
-        hashCode = 31 * hashCode + ((getLongMember() == null) ? 0 : getLongMember().hashCode());
-        hashCode = 31 * hashCode + ((getSimpleList() == null) ? 0 : getSimpleList().hashCode());
-        hashCode = 31 * hashCode + ((getListOfMaps() == null) ? 0 : getListOfMaps().hashCode());
-        hashCode = 31 * hashCode + ((getListOfStructs() == null) ? 0 : getListOfStructs().hashCode());
-        hashCode = 31 * hashCode + ((getMapOfStringToIntegerList() == null) ? 0 : getMapOfStringToIntegerList().hashCode());
-        hashCode = 31 * hashCode + ((getMapOfStringToString() == null) ? 0 : getMapOfStringToString().hashCode());
-        hashCode = 31 * hashCode + ((getMapOfStringToStruct() == null) ? 0 : getMapOfStringToStruct().hashCode());
-        hashCode = 31 * hashCode + ((getTimestampMember() == null) ? 0 : getTimestampMember().hashCode());
+        hashCode = 31 * hashCode + ((stringMember() == null) ? 0 : stringMember().hashCode());
+        hashCode = 31 * hashCode + ((integerMember() == null) ? 0 : integerMember().hashCode());
+        hashCode = 31 * hashCode + ((booleanMember() == null) ? 0 : booleanMember().hashCode());
+        hashCode = 31 * hashCode + ((floatMember() == null) ? 0 : floatMember().hashCode());
+        hashCode = 31 * hashCode + ((doubleMember() == null) ? 0 : doubleMember().hashCode());
+        hashCode = 31 * hashCode + ((longMember() == null) ? 0 : longMember().hashCode());
+        hashCode = 31 * hashCode + ((simpleList() == null) ? 0 : simpleList().hashCode());
+        hashCode = 31 * hashCode + ((listOfMaps() == null) ? 0 : listOfMaps().hashCode());
+        hashCode = 31 * hashCode + ((listOfStructs() == null) ? 0 : listOfStructs().hashCode());
+        hashCode = 31 * hashCode + ((mapOfStringToIntegerList() == null) ? 0 : mapOfStringToIntegerList().hashCode());
+        hashCode = 31 * hashCode + ((mapOfStringToString() == null) ? 0 : mapOfStringToString().hashCode());
+        hashCode = 31 * hashCode + ((mapOfStringToStruct() == null) ? 0 : mapOfStringToStruct().hashCode());
+        hashCode = 31 * hashCode + ((timestampMember() == null) ? 0 : timestampMember().hashCode());
         hashCode = 31 * hashCode
-                + ((getStructWithNestedTimestampMember() == null) ? 0 : getStructWithNestedTimestampMember().hashCode());
-        hashCode = 31 * hashCode + ((getBlobArg() == null) ? 0 : getBlobArg().hashCode());
-        hashCode = 31 * hashCode + ((getStructWithNestedBlob() == null) ? 0 : getStructWithNestedBlob().hashCode());
-        hashCode = 31 * hashCode + ((getBlobMap() == null) ? 0 : getBlobMap().hashCode());
-        hashCode = 31 * hashCode + ((getListOfBlobs() == null) ? 0 : getListOfBlobs().hashCode());
-        hashCode = 31 * hashCode + ((getRecursiveStruct() == null) ? 0 : getRecursiveStruct().hashCode());
-        hashCode = 31 * hashCode + ((getPolymorphicTypeWithSubTypes() == null) ? 0 : getPolymorphicTypeWithSubTypes().hashCode());
-        hashCode = 31 * hashCode
-                + ((getPolymorphicTypeWithoutSubTypes() == null) ? 0 : getPolymorphicTypeWithoutSubTypes().hashCode());
+                + ((structWithNestedTimestampMember() == null) ? 0 : structWithNestedTimestampMember().hashCode());
+        hashCode = 31 * hashCode + ((blobArg() == null) ? 0 : blobArg().hashCode());
+        hashCode = 31 * hashCode + ((structWithNestedBlob() == null) ? 0 : structWithNestedBlob().hashCode());
+        hashCode = 31 * hashCode + ((blobMap() == null) ? 0 : blobMap().hashCode());
+        hashCode = 31 * hashCode + ((listOfBlobs() == null) ? 0 : listOfBlobs().hashCode());
+        hashCode = 31 * hashCode + ((recursiveStruct() == null) ? 0 : recursiveStruct().hashCode());
+        hashCode = 31 * hashCode + ((polymorphicTypeWithSubTypes() == null) ? 0 : polymorphicTypeWithSubTypes().hashCode());
+        hashCode = 31 * hashCode + ((polymorphicTypeWithoutSubTypes() == null) ? 0 : polymorphicTypeWithoutSubTypes().hashCode());
         return hashCode;
     }
 
@@ -279,134 +278,133 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
             return false;
         }
         AllTypesRequest other = (AllTypesRequest) obj;
-        if (other.getStringMember() == null ^ this.getStringMember() == null) {
+        if (other.stringMember() == null ^ this.stringMember() == null) {
             return false;
         }
-        if (other.getStringMember() != null && !other.getStringMember().equals(this.getStringMember())) {
+        if (other.stringMember() != null && !other.stringMember().equals(this.stringMember())) {
             return false;
         }
-        if (other.getIntegerMember() == null ^ this.getIntegerMember() == null) {
+        if (other.integerMember() == null ^ this.integerMember() == null) {
             return false;
         }
-        if (other.getIntegerMember() != null && !other.getIntegerMember().equals(this.getIntegerMember())) {
+        if (other.integerMember() != null && !other.integerMember().equals(this.integerMember())) {
             return false;
         }
-        if (other.getBooleanMember() == null ^ this.getBooleanMember() == null) {
+        if (other.booleanMember() == null ^ this.booleanMember() == null) {
             return false;
         }
-        if (other.getBooleanMember() != null && !other.getBooleanMember().equals(this.getBooleanMember())) {
+        if (other.booleanMember() != null && !other.booleanMember().equals(this.booleanMember())) {
             return false;
         }
-        if (other.getFloatMember() == null ^ this.getFloatMember() == null) {
+        if (other.floatMember() == null ^ this.floatMember() == null) {
             return false;
         }
-        if (other.getFloatMember() != null && !other.getFloatMember().equals(this.getFloatMember())) {
+        if (other.floatMember() != null && !other.floatMember().equals(this.floatMember())) {
             return false;
         }
-        if (other.getDoubleMember() == null ^ this.getDoubleMember() == null) {
+        if (other.doubleMember() == null ^ this.doubleMember() == null) {
             return false;
         }
-        if (other.getDoubleMember() != null && !other.getDoubleMember().equals(this.getDoubleMember())) {
+        if (other.doubleMember() != null && !other.doubleMember().equals(this.doubleMember())) {
             return false;
         }
-        if (other.getLongMember() == null ^ this.getLongMember() == null) {
+        if (other.longMember() == null ^ this.longMember() == null) {
             return false;
         }
-        if (other.getLongMember() != null && !other.getLongMember().equals(this.getLongMember())) {
+        if (other.longMember() != null && !other.longMember().equals(this.longMember())) {
             return false;
         }
-        if (other.getSimpleList() == null ^ this.getSimpleList() == null) {
+        if (other.simpleList() == null ^ this.simpleList() == null) {
             return false;
         }
-        if (other.getSimpleList() != null && !other.getSimpleList().equals(this.getSimpleList())) {
+        if (other.simpleList() != null && !other.simpleList().equals(this.simpleList())) {
             return false;
         }
-        if (other.getListOfMaps() == null ^ this.getListOfMaps() == null) {
+        if (other.listOfMaps() == null ^ this.listOfMaps() == null) {
             return false;
         }
-        if (other.getListOfMaps() != null && !other.getListOfMaps().equals(this.getListOfMaps())) {
+        if (other.listOfMaps() != null && !other.listOfMaps().equals(this.listOfMaps())) {
             return false;
         }
-        if (other.getListOfStructs() == null ^ this.getListOfStructs() == null) {
+        if (other.listOfStructs() == null ^ this.listOfStructs() == null) {
             return false;
         }
-        if (other.getListOfStructs() != null && !other.getListOfStructs().equals(this.getListOfStructs())) {
+        if (other.listOfStructs() != null && !other.listOfStructs().equals(this.listOfStructs())) {
             return false;
         }
-        if (other.getMapOfStringToIntegerList() == null ^ this.getMapOfStringToIntegerList() == null) {
+        if (other.mapOfStringToIntegerList() == null ^ this.mapOfStringToIntegerList() == null) {
             return false;
         }
-        if (other.getMapOfStringToIntegerList() != null
-                && !other.getMapOfStringToIntegerList().equals(this.getMapOfStringToIntegerList())) {
+        if (other.mapOfStringToIntegerList() != null && !other.mapOfStringToIntegerList().equals(this.mapOfStringToIntegerList())) {
             return false;
         }
-        if (other.getMapOfStringToString() == null ^ this.getMapOfStringToString() == null) {
+        if (other.mapOfStringToString() == null ^ this.mapOfStringToString() == null) {
             return false;
         }
-        if (other.getMapOfStringToString() != null && !other.getMapOfStringToString().equals(this.getMapOfStringToString())) {
+        if (other.mapOfStringToString() != null && !other.mapOfStringToString().equals(this.mapOfStringToString())) {
             return false;
         }
-        if (other.getMapOfStringToStruct() == null ^ this.getMapOfStringToStruct() == null) {
+        if (other.mapOfStringToStruct() == null ^ this.mapOfStringToStruct() == null) {
             return false;
         }
-        if (other.getMapOfStringToStruct() != null && !other.getMapOfStringToStruct().equals(this.getMapOfStringToStruct())) {
+        if (other.mapOfStringToStruct() != null && !other.mapOfStringToStruct().equals(this.mapOfStringToStruct())) {
             return false;
         }
-        if (other.getTimestampMember() == null ^ this.getTimestampMember() == null) {
+        if (other.timestampMember() == null ^ this.timestampMember() == null) {
             return false;
         }
-        if (other.getTimestampMember() != null && !other.getTimestampMember().equals(this.getTimestampMember())) {
+        if (other.timestampMember() != null && !other.timestampMember().equals(this.timestampMember())) {
             return false;
         }
-        if (other.getStructWithNestedTimestampMember() == null ^ this.getStructWithNestedTimestampMember() == null) {
+        if (other.structWithNestedTimestampMember() == null ^ this.structWithNestedTimestampMember() == null) {
             return false;
         }
-        if (other.getStructWithNestedTimestampMember() != null
-                && !other.getStructWithNestedTimestampMember().equals(this.getStructWithNestedTimestampMember())) {
+        if (other.structWithNestedTimestampMember() != null
+                && !other.structWithNestedTimestampMember().equals(this.structWithNestedTimestampMember())) {
             return false;
         }
-        if (other.getBlobArg() == null ^ this.getBlobArg() == null) {
+        if (other.blobArg() == null ^ this.blobArg() == null) {
             return false;
         }
-        if (other.getBlobArg() != null && !other.getBlobArg().equals(this.getBlobArg())) {
+        if (other.blobArg() != null && !other.blobArg().equals(this.blobArg())) {
             return false;
         }
-        if (other.getStructWithNestedBlob() == null ^ this.getStructWithNestedBlob() == null) {
+        if (other.structWithNestedBlob() == null ^ this.structWithNestedBlob() == null) {
             return false;
         }
-        if (other.getStructWithNestedBlob() != null && !other.getStructWithNestedBlob().equals(this.getStructWithNestedBlob())) {
+        if (other.structWithNestedBlob() != null && !other.structWithNestedBlob().equals(this.structWithNestedBlob())) {
             return false;
         }
-        if (other.getBlobMap() == null ^ this.getBlobMap() == null) {
+        if (other.blobMap() == null ^ this.blobMap() == null) {
             return false;
         }
-        if (other.getBlobMap() != null && !other.getBlobMap().equals(this.getBlobMap())) {
+        if (other.blobMap() != null && !other.blobMap().equals(this.blobMap())) {
             return false;
         }
-        if (other.getListOfBlobs() == null ^ this.getListOfBlobs() == null) {
+        if (other.listOfBlobs() == null ^ this.listOfBlobs() == null) {
             return false;
         }
-        if (other.getListOfBlobs() != null && !other.getListOfBlobs().equals(this.getListOfBlobs())) {
+        if (other.listOfBlobs() != null && !other.listOfBlobs().equals(this.listOfBlobs())) {
             return false;
         }
-        if (other.getRecursiveStruct() == null ^ this.getRecursiveStruct() == null) {
+        if (other.recursiveStruct() == null ^ this.recursiveStruct() == null) {
             return false;
         }
-        if (other.getRecursiveStruct() != null && !other.getRecursiveStruct().equals(this.getRecursiveStruct())) {
+        if (other.recursiveStruct() != null && !other.recursiveStruct().equals(this.recursiveStruct())) {
             return false;
         }
-        if (other.getPolymorphicTypeWithSubTypes() == null ^ this.getPolymorphicTypeWithSubTypes() == null) {
+        if (other.polymorphicTypeWithSubTypes() == null ^ this.polymorphicTypeWithSubTypes() == null) {
             return false;
         }
-        if (other.getPolymorphicTypeWithSubTypes() != null
-                && !other.getPolymorphicTypeWithSubTypes().equals(this.getPolymorphicTypeWithSubTypes())) {
+        if (other.polymorphicTypeWithSubTypes() != null
+                && !other.polymorphicTypeWithSubTypes().equals(this.polymorphicTypeWithSubTypes())) {
             return false;
         }
-        if (other.getPolymorphicTypeWithoutSubTypes() == null ^ this.getPolymorphicTypeWithoutSubTypes() == null) {
+        if (other.polymorphicTypeWithoutSubTypes() == null ^ this.polymorphicTypeWithoutSubTypes() == null) {
             return false;
         }
-        if (other.getPolymorphicTypeWithoutSubTypes() != null
-                && !other.getPolymorphicTypeWithoutSubTypes().equals(this.getPolymorphicTypeWithoutSubTypes())) {
+        if (other.polymorphicTypeWithoutSubTypes() != null
+                && !other.polymorphicTypeWithoutSubTypes().equals(this.polymorphicTypeWithoutSubTypes())) {
             return false;
         }
         return true;
@@ -426,74 +424,225 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (getStringMember() != null) {
-            sb.append("StringMember: ").append(getStringMember()).append(",");
+        if (stringMember() != null) {
+            sb.append("StringMember: ").append(stringMember()).append(",");
         }
-        if (getIntegerMember() != null) {
-            sb.append("IntegerMember: ").append(getIntegerMember()).append(",");
+        if (integerMember() != null) {
+            sb.append("IntegerMember: ").append(integerMember()).append(",");
         }
-        if (getBooleanMember() != null) {
-            sb.append("BooleanMember: ").append(getBooleanMember()).append(",");
+        if (booleanMember() != null) {
+            sb.append("BooleanMember: ").append(booleanMember()).append(",");
         }
-        if (getFloatMember() != null) {
-            sb.append("FloatMember: ").append(getFloatMember()).append(",");
+        if (floatMember() != null) {
+            sb.append("FloatMember: ").append(floatMember()).append(",");
         }
-        if (getDoubleMember() != null) {
-            sb.append("DoubleMember: ").append(getDoubleMember()).append(",");
+        if (doubleMember() != null) {
+            sb.append("DoubleMember: ").append(doubleMember()).append(",");
         }
-        if (getLongMember() != null) {
-            sb.append("LongMember: ").append(getLongMember()).append(",");
+        if (longMember() != null) {
+            sb.append("LongMember: ").append(longMember()).append(",");
         }
-        if (getSimpleList() != null) {
-            sb.append("SimpleList: ").append(getSimpleList()).append(",");
+        if (simpleList() != null) {
+            sb.append("SimpleList: ").append(simpleList()).append(",");
         }
-        if (getListOfMaps() != null) {
-            sb.append("ListOfMaps: ").append(getListOfMaps()).append(",");
+        if (listOfMaps() != null) {
+            sb.append("ListOfMaps: ").append(listOfMaps()).append(",");
         }
-        if (getListOfStructs() != null) {
-            sb.append("ListOfStructs: ").append(getListOfStructs()).append(",");
+        if (listOfStructs() != null) {
+            sb.append("ListOfStructs: ").append(listOfStructs()).append(",");
         }
-        if (getMapOfStringToIntegerList() != null) {
-            sb.append("MapOfStringToIntegerList: ").append(getMapOfStringToIntegerList()).append(",");
+        if (mapOfStringToIntegerList() != null) {
+            sb.append("MapOfStringToIntegerList: ").append(mapOfStringToIntegerList()).append(",");
         }
-        if (getMapOfStringToString() != null) {
-            sb.append("MapOfStringToString: ").append(getMapOfStringToString()).append(",");
+        if (mapOfStringToString() != null) {
+            sb.append("MapOfStringToString: ").append(mapOfStringToString()).append(",");
         }
-        if (getMapOfStringToStruct() != null) {
-            sb.append("MapOfStringToStruct: ").append(getMapOfStringToStruct()).append(",");
+        if (mapOfStringToStruct() != null) {
+            sb.append("MapOfStringToStruct: ").append(mapOfStringToStruct()).append(",");
         }
-        if (getTimestampMember() != null) {
-            sb.append("TimestampMember: ").append(getTimestampMember()).append(",");
+        if (timestampMember() != null) {
+            sb.append("TimestampMember: ").append(timestampMember()).append(",");
         }
-        if (getStructWithNestedTimestampMember() != null) {
-            sb.append("StructWithNestedTimestampMember: ").append(getStructWithNestedTimestampMember()).append(",");
+        if (structWithNestedTimestampMember() != null) {
+            sb.append("StructWithNestedTimestampMember: ").append(structWithNestedTimestampMember()).append(",");
         }
-        if (getBlobArg() != null) {
-            sb.append("BlobArg: ").append(getBlobArg()).append(",");
+        if (blobArg() != null) {
+            sb.append("BlobArg: ").append(blobArg()).append(",");
         }
-        if (getStructWithNestedBlob() != null) {
-            sb.append("StructWithNestedBlob: ").append(getStructWithNestedBlob()).append(",");
+        if (structWithNestedBlob() != null) {
+            sb.append("StructWithNestedBlob: ").append(structWithNestedBlob()).append(",");
         }
-        if (getBlobMap() != null) {
-            sb.append("BlobMap: ").append(getBlobMap()).append(",");
+        if (blobMap() != null) {
+            sb.append("BlobMap: ").append(blobMap()).append(",");
         }
-        if (getListOfBlobs() != null) {
-            sb.append("ListOfBlobs: ").append(getListOfBlobs()).append(",");
+        if (listOfBlobs() != null) {
+            sb.append("ListOfBlobs: ").append(listOfBlobs()).append(",");
         }
-        if (getRecursiveStruct() != null) {
-            sb.append("RecursiveStruct: ").append(getRecursiveStruct()).append(",");
+        if (recursiveStruct() != null) {
+            sb.append("RecursiveStruct: ").append(recursiveStruct()).append(",");
         }
-        if (getPolymorphicTypeWithSubTypes() != null) {
-            sb.append("PolymorphicTypeWithSubTypes: ").append(getPolymorphicTypeWithSubTypes()).append(",");
+        if (polymorphicTypeWithSubTypes() != null) {
+            sb.append("PolymorphicTypeWithSubTypes: ").append(polymorphicTypeWithSubTypes()).append(",");
         }
-        if (getPolymorphicTypeWithoutSubTypes() != null) {
-            sb.append("PolymorphicTypeWithoutSubTypes: ").append(getPolymorphicTypeWithoutSubTypes()).append(",");
+        if (polymorphicTypeWithoutSubTypes() != null) {
+            sb.append("PolymorphicTypeWithoutSubTypes: ").append(polymorphicTypeWithoutSubTypes()).append(",");
         }
         sb.append("}");
         return sb.toString();
     }
 
-    public static class Builder {
+    public interface Builder {
+        /**
+         *
+         * @param stringMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder stringMember(String stringMember);
+
+        /**
+         *
+         * @param integerMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder integerMember(Integer integerMember);
+
+        /**
+         *
+         * @param booleanMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder booleanMember(Boolean booleanMember);
+
+        /**
+         *
+         * @param floatMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder floatMember(Float floatMember);
+
+        /**
+         *
+         * @param doubleMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder doubleMember(Double doubleMember);
+
+        /**
+         *
+         * @param longMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder longMember(Long longMember);
+
+        /**
+         *
+         * @param simpleList
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder simpleList(List<String> simpleList);
+
+        /**
+         *
+         * @param simpleList
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder simpleList(String... simpleList);
+
+        /**
+         *
+         * @param listOfMaps
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfMaps(List<Map<String, String>> listOfMaps);
+
+        /**
+         *
+         * @param listOfMaps
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfMaps(Map<String, String>... listOfMaps);
+
+        /**
+         *
+         * @param listOfStructs
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfStructs(List<SimpleStruct> listOfStructs);
+
+        /**
+         *
+         * @param listOfStructs
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfStructs(SimpleStruct... listOfStructs);
+
+        /**
+         *
+         * @param timestampMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder timestampMember(Date timestampMember);
+
+        /**
+         *
+         * @param structWithNestedTimestampMember
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder structWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember);
+
+        /**
+         *
+         * @param blobArg
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder blobArg(ByteBuffer blobArg);
+
+        /**
+         *
+         * @param structWithNestedBlob
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder structWithNestedBlob(StructWithNestedBlobType structWithNestedBlob);
+
+        /**
+         *
+         * @param listOfBlobs
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfBlobs(List<ByteBuffer> listOfBlobs);
+
+        /**
+         *
+         * @param listOfBlobs
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder listOfBlobs(ByteBuffer... listOfBlobs);
+
+        /**
+         *
+         * @param recursiveStruct
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder recursiveStruct(RecursiveStructType recursiveStruct);
+
+        /**
+         *
+         * @param polymorphicTypeWithSubTypes
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder polymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes);
+
+        /**
+         *
+         * @param polymorphicTypeWithoutSubTypes
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes);
+
+        AllTypesRequest build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
         private String stringMember;
 
         private Integer integerMember;
@@ -536,10 +685,10 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
 
         private SubTypeOne polymorphicTypeWithoutSubTypes;
 
-        private Builder() {
+        private BeanStyleBuilder() {
         }
 
-        private Builder(AllTypesRequest model) {
+        private BeanStyleBuilder(AllTypesRequest model) {
             this.stringMember = model.stringMember;
             this.integerMember = model.integerMember;
             this.booleanMember = model.booleanMember;
@@ -563,72 +712,92 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
             this.polymorphicTypeWithoutSubTypes = model.polymorphicTypeWithoutSubTypes;
         }
 
-        /**
-         *
-         * @param stringMember
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setStringMember(String stringMember) {
+        @Override
+        public Builder stringMember(String stringMember) {
             this.stringMember = stringMember;
             return this;
         }
 
         /**
          *
-         * @param integerMember
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param stringMember
          */
-        public Builder setIntegerMember(Integer integerMember) {
+        public void setStringMember(String stringMember) {
+            this.stringMember = stringMember;
+        }
+
+        @Override
+        public Builder integerMember(Integer integerMember) {
             this.integerMember = integerMember;
             return this;
         }
 
         /**
          *
-         * @param booleanMember
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param integerMember
          */
-        public Builder setBooleanMember(Boolean booleanMember) {
+        public void setIntegerMember(Integer integerMember) {
+            this.integerMember = integerMember;
+        }
+
+        @Override
+        public Builder booleanMember(Boolean booleanMember) {
             this.booleanMember = booleanMember;
             return this;
         }
 
         /**
          *
-         * @param floatMember
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param booleanMember
          */
-        public Builder setFloatMember(Float floatMember) {
+        public void setBooleanMember(Boolean booleanMember) {
+            this.booleanMember = booleanMember;
+        }
+
+        @Override
+        public Builder floatMember(Float floatMember) {
             this.floatMember = floatMember;
             return this;
         }
 
         /**
          *
-         * @param doubleMember
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param floatMember
          */
-        public Builder setDoubleMember(Double doubleMember) {
+        public void setFloatMember(Float floatMember) {
+            this.floatMember = floatMember;
+        }
+
+        @Override
+        public Builder doubleMember(Double doubleMember) {
             this.doubleMember = doubleMember;
             return this;
         }
 
         /**
          *
-         * @param longMember
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param doubleMember
          */
-        public Builder setLongMember(Long longMember) {
+        public void setDoubleMember(Double doubleMember) {
+            this.doubleMember = doubleMember;
+        }
+
+        @Override
+        public Builder longMember(Long longMember) {
             this.longMember = longMember;
             return this;
         }
 
         /**
          *
-         * @param simpleList
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param longMember
          */
-        public Builder setSimpleList(List<String> simpleList) {
+        public void setLongMember(Long longMember) {
+            this.longMember = longMember;
+        }
+
+        @Override
+        public Builder simpleList(List<String> simpleList) {
             if (simpleList == null) {
                 this.simpleList = null;
             } else {
@@ -637,14 +806,10 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
             return this;
         }
 
-        /**
-         *
-         * @param simpleList
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setSimpleList(String... simpleList) {
+        @Override
+        public Builder simpleList(String... simpleList) {
             if (this.simpleList == null) {
-                this.simpleList = new ArrayList<>(simpleList.length);
+                this.simpleList = new ArrayList<String>(simpleList.length);
             }
             for (String ele : simpleList) {
                 this.simpleList.add(ele);
@@ -654,10 +819,31 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
 
         /**
          *
-         * @param listOfMaps
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param simpleList
          */
-        public Builder setListOfMaps(List<Map<String, String>> listOfMaps) {
+        public void setSimpleList(List<String> simpleList) {
+            if (simpleList == null) {
+                this.simpleList = null;
+            } else {
+                this.simpleList = new ArrayList<String>(simpleList);
+            }
+        }
+
+        /**
+         *
+         * @param simpleList
+         */
+        public void setSimpleList(String... simpleList) {
+            if (this.simpleList == null) {
+                this.simpleList = new ArrayList<String>(simpleList.length);
+            }
+            for (String ele : simpleList) {
+                this.simpleList.add(ele);
+            }
+        }
+
+        @Override
+        public Builder listOfMaps(List<Map<String, String>> listOfMaps) {
             if (listOfMaps == null) {
                 this.listOfMaps = null;
             } else {
@@ -666,14 +852,10 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
             return this;
         }
 
-        /**
-         *
-         * @param listOfMaps
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setListOfMaps(Map<String, String>... listOfMaps) {
+        @Override
+        public Builder listOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
-                this.listOfMaps = new ArrayList<>(listOfMaps.length);
+                this.listOfMaps = new ArrayList<Map<String, String>>(listOfMaps.length);
             }
             for (Map<String, String> ele : listOfMaps) {
                 this.listOfMaps.add(ele);
@@ -683,10 +865,31 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
 
         /**
          *
-         * @param listOfStructs
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param listOfMaps
          */
-        public Builder setListOfStructs(List<SimpleStruct> listOfStructs) {
+        public void setListOfMaps(List<Map<String, String>> listOfMaps) {
+            if (listOfMaps == null) {
+                this.listOfMaps = null;
+            } else {
+                this.listOfMaps = new ArrayList<Map<String, String>>(listOfMaps);
+            }
+        }
+
+        /**
+         *
+         * @param listOfMaps
+         */
+        public void setListOfMaps(Map<String, String>... listOfMaps) {
+            if (this.listOfMaps == null) {
+                this.listOfMaps = new ArrayList<Map<String, String>>(listOfMaps.length);
+            }
+            for (Map<String, String> ele : listOfMaps) {
+                this.listOfMaps.add(ele);
+            }
+        }
+
+        @Override
+        public Builder listOfStructs(List<SimpleStruct> listOfStructs) {
             if (listOfStructs == null) {
                 this.listOfStructs = null;
             } else {
@@ -695,14 +898,10 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
             return this;
         }
 
-        /**
-         *
-         * @param listOfStructs
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setListOfStructs(SimpleStruct... listOfStructs) {
+        @Override
+        public Builder listOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
-                this.listOfStructs = new ArrayList<>(listOfStructs.length);
+                this.listOfStructs = new ArrayList<SimpleStruct>(listOfStructs.length);
             }
             for (SimpleStruct ele : listOfStructs) {
                 this.listOfStructs.add(ele);
@@ -712,90 +911,185 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
 
         /**
          *
-         * @param mapOfStringToIntegerList
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param listOfStructs
          */
-        public Builder setMapOfStringToIntegerList(Map<String, List<Integer>> mapOfStringToIntegerList) {
-            this.mapOfStringToIntegerList = new HashMap<>(mapOfStringToIntegerList);
+        public void setListOfStructs(List<SimpleStruct> listOfStructs) {
+            if (listOfStructs == null) {
+                this.listOfStructs = null;
+            } else {
+                this.listOfStructs = new ArrayList<SimpleStruct>(listOfStructs);
+            }
+        }
+
+        /**
+         *
+         * @param listOfStructs
+         */
+        public void setListOfStructs(SimpleStruct... listOfStructs) {
+            if (this.listOfStructs == null) {
+                this.listOfStructs = new ArrayList<SimpleStruct>(listOfStructs.length);
+            }
+            for (SimpleStruct ele : listOfStructs) {
+                this.listOfStructs.add(ele);
+            }
+        }
+
+        @Override
+        public Builder mapOfStringToIntegerList(Map<String, List<Integer>> mapOfStringToIntegerList) {
+            if (mapOfStringToIntegerList == null) {
+                this.mapOfStringToIntegerList = null;
+            } else {
+                this.mapOfStringToIntegerList = new HashMap<String, List<Integer>>(mapOfStringToIntegerList);
+            }
+            return this;
+        }
+
+        /**
+         *
+         * @param mapOfStringToIntegerList
+         */
+        public void setMapOfStringToIntegerList(Map<String, List<Integer>> mapOfStringToIntegerList) {
+            if (mapOfStringToIntegerList == null) {
+                this.mapOfStringToIntegerList = null;
+            } else {
+                this.mapOfStringToIntegerList = new HashMap<String, List<Integer>>(mapOfStringToIntegerList);
+            }
+        }
+
+        @Override
+        public Builder mapOfStringToString(Map<String, String> mapOfStringToString) {
+            if (mapOfStringToString == null) {
+                this.mapOfStringToString = null;
+            } else {
+                this.mapOfStringToString = new HashMap<String, String>(mapOfStringToString);
+            }
             return this;
         }
 
         /**
          *
          * @param mapOfStringToString
-         * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder setMapOfStringToString(Map<String, String> mapOfStringToString) {
-            this.mapOfStringToString = new HashMap<>(mapOfStringToString);
+        public void setMapOfStringToString(Map<String, String> mapOfStringToString) {
+            if (mapOfStringToString == null) {
+                this.mapOfStringToString = null;
+            } else {
+                this.mapOfStringToString = new HashMap<String, String>(mapOfStringToString);
+            }
+        }
+
+        @Override
+        public Builder mapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
+            if (mapOfStringToStruct == null) {
+                this.mapOfStringToStruct = null;
+            } else {
+                this.mapOfStringToStruct = new HashMap<String, SimpleStruct>(mapOfStringToStruct);
+            }
             return this;
         }
 
         /**
          *
          * @param mapOfStringToStruct
-         * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder setMapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
-            this.mapOfStringToStruct = new HashMap<>(mapOfStringToStruct);
-            return this;
+        public void setMapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
+            if (mapOfStringToStruct == null) {
+                this.mapOfStringToStruct = null;
+            } else {
+                this.mapOfStringToStruct = new HashMap<String, SimpleStruct>(mapOfStringToStruct);
+            }
         }
 
-        /**
-         *
-         * @param timestampMember
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setTimestampMember(Date timestampMember) {
+        @Override
+        public Builder timestampMember(Date timestampMember) {
             this.timestampMember = timestampMember;
             return this;
         }
 
         /**
          *
-         * @param structWithNestedTimestampMember
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param timestampMember
          */
-        public Builder setStructWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
+        public void setTimestampMember(Date timestampMember) {
+            this.timestampMember = timestampMember;
+        }
+
+        @Override
+        public Builder structWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
             this.structWithNestedTimestampMember = structWithNestedTimestampMember;
             return this;
         }
 
         /**
          *
-         * @param blobArg
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param structWithNestedTimestampMember
          */
-        public Builder setBlobArg(ByteBuffer blobArg) {
+        public void setStructWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
+            this.structWithNestedTimestampMember = structWithNestedTimestampMember;
+        }
+
+        @Override
+        public Builder blobArg(ByteBuffer blobArg) {
             this.blobArg = blobArg;
             return this;
         }
 
         /**
+         * <p>
+         * AWS SDK for Java performs a Base64 encoding on this field before sending this request to AWS service by
+         * default. Users of the SDK should not perform Base64 encoding on this field.
+         * </p>
+         * <p>
+         * Warning: ByteBuffers returned by the SDK are mutable. Changes to the content or position of the byte buffer
+         * will be seen by all objects that have a reference to this object. It is recommended to call
+         * ByteBuffer.duplicate() or ByteBuffer.asReadOnlyBuffer() before using or reading from the buffer. This
+         * behavior will be changed in a future major version of the SDK.
+         * </p>
          *
-         * @param structWithNestedBlob
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param blobArg
          */
-        public Builder setStructWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
+        public void setBlobArg(ByteBuffer blobArg) {
+            this.blobArg = blobArg;
+        }
+
+        @Override
+        public Builder structWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
             this.structWithNestedBlob = structWithNestedBlob;
             return this;
         }
 
         /**
          *
-         * @param blobMap
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param structWithNestedBlob
          */
-        public Builder setBlobMap(Map<String, ByteBuffer> blobMap) {
-            this.blobMap = new HashMap<>(blobMap);
+        public void setStructWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
+            this.structWithNestedBlob = structWithNestedBlob;
+        }
+
+        @Override
+        public Builder blobMap(Map<String, ByteBuffer> blobMap) {
+            if (blobMap == null) {
+                this.blobMap = null;
+            } else {
+                this.blobMap = new HashMap<String, ByteBuffer>(blobMap);
+            }
             return this;
         }
 
         /**
          *
-         * @param listOfBlobs
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param blobMap
          */
-        public Builder setListOfBlobs(List<ByteBuffer> listOfBlobs) {
+        public void setBlobMap(Map<String, ByteBuffer> blobMap) {
+            if (blobMap == null) {
+                this.blobMap = null;
+            } else {
+                this.blobMap = new HashMap<String, ByteBuffer>(blobMap);
+            }
+        }
+
+        @Override
+        public Builder listOfBlobs(List<ByteBuffer> listOfBlobs) {
             if (listOfBlobs == null) {
                 this.listOfBlobs = null;
             } else {
@@ -804,14 +1098,10 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
             return this;
         }
 
-        /**
-         *
-         * @param listOfBlobs
-         * @return Returns a reference to this object so that method calls can be chained together.
-         */
-        public Builder setListOfBlobs(ByteBuffer... listOfBlobs) {
+        @Override
+        public Builder listOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
-                this.listOfBlobs = new ArrayList<>(listOfBlobs.length);
+                this.listOfBlobs = new ArrayList<ByteBuffer>(listOfBlobs.length);
             }
             for (ByteBuffer ele : listOfBlobs) {
                 this.listOfBlobs.add(ele);
@@ -821,34 +1111,72 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
 
         /**
          *
-         * @param recursiveStruct
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param listOfBlobs
          */
-        public Builder setRecursiveStruct(RecursiveStructType recursiveStruct) {
+        public void setListOfBlobs(List<ByteBuffer> listOfBlobs) {
+            if (listOfBlobs == null) {
+                this.listOfBlobs = null;
+            } else {
+                this.listOfBlobs = new ArrayList<ByteBuffer>(listOfBlobs);
+            }
+        }
+
+        /**
+         *
+         * @param listOfBlobs
+         */
+        public void setListOfBlobs(ByteBuffer... listOfBlobs) {
+            if (this.listOfBlobs == null) {
+                this.listOfBlobs = new ArrayList<ByteBuffer>(listOfBlobs.length);
+            }
+            for (ByteBuffer ele : listOfBlobs) {
+                this.listOfBlobs.add(ele);
+            }
+        }
+
+        @Override
+        public Builder recursiveStruct(RecursiveStructType recursiveStruct) {
             this.recursiveStruct = recursiveStruct;
             return this;
         }
 
         /**
          *
-         * @param polymorphicTypeWithSubTypes
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param recursiveStruct
          */
-        public Builder setPolymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
+        public void setRecursiveStruct(RecursiveStructType recursiveStruct) {
+            this.recursiveStruct = recursiveStruct;
+        }
+
+        @Override
+        public Builder polymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
             this.polymorphicTypeWithSubTypes = polymorphicTypeWithSubTypes;
             return this;
         }
 
         /**
          *
-         * @param polymorphicTypeWithoutSubTypes
-         * @return Returns a reference to this object so that method calls can be chained together.
+         * @param polymorphicTypeWithSubTypes
          */
-        public Builder setPolymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
+        public void setPolymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
+            this.polymorphicTypeWithSubTypes = polymorphicTypeWithSubTypes;
+        }
+
+        @Override
+        public Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
             this.polymorphicTypeWithoutSubTypes = polymorphicTypeWithoutSubTypes;
             return this;
         }
 
+        /**
+         *
+         * @param polymorphicTypeWithoutSubTypes
+         */
+        public void setPolymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
+            this.polymorphicTypeWithoutSubTypes = polymorphicTypeWithoutSubTypes;
+        }
+
+        @Override
         public AllTypesRequest build_() {
             return new AllTypesRequest(this);
         }

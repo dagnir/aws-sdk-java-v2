@@ -22,7 +22,11 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
@@ -39,6 +43,8 @@ import software.amazon.awssdk.codegen.model.service.XmlNamespace;
 import software.amazon.awssdk.util.StringUtils;
 
 public class Utils {
+    private static final Pattern CAPITALIZE_PATTERN = Pattern.compile("^([a-z]+)([A-Z][a-z].*)");
+
 
     public static boolean isScalar(Shape shape) {
         // enums are treated as scalars in C2j.
@@ -112,19 +118,30 @@ public class Utils {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
+        StringBuilder sb = new StringBuilder(name.length());
+        int i = 0;
+        do {
+            sb.append(Character.toLowerCase(name.charAt(i++)));
+            // upper followed by lower; assume this is the beginning of a separate word and break
+            if (i < name.length() - 1 && Character.isUpperCase(name.charAt(i)) && Character.isLowerCase(name.charAt(i + 1))) {
+                break;
+            }
+        } while (i < name.length() && Character.isUpperCase(name.charAt(i)));
 
-        return name.length() < 2 ? StringUtils.lowerCase(name) : StringUtils.lowerCase(name.substring(0, 1))
-                + name.substring(1);
+        while (i < name.length()) {
+            sb.append(name.charAt(i++));
+        }
 
+        return sb.toString();
     }
 
     public static String capitialize(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
-
         return name.length() < 2 ? StringUtils.upperCase(name) : StringUtils.upperCase(name.substring(0, 1))
                 + name.substring(1);
+
     }
 
     /**

@@ -7,32 +7,32 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.transform.StructWithTimestampMarshaller;
 
-public class StructWithTimestamp implements Cloneable, Serializable, StructuredPojo {
-    private Date nestedTimestamp;
+public class StructWithTimestamp implements Serializable, Cloneable, StructuredPojo {
+    private final Date nestedTimestamp;
 
-    private StructWithTimestamp(Builder builder) {
+    private StructWithTimestamp(BeanStyleBuilder builder) {
         this.nestedTimestamp = builder.nestedTimestamp;
     }
 
     /**
      * turn
      */
-    public Date getNestedTimestamp() {
+    public Date nestedTimestamp() {
         return nestedTimestamp;
     }
 
-    public static Builder builder_() {
-        return new Builder();
+    public Builder toBuilder() {
+        return new BeanStyleBuilder(this);
     }
 
-    public Builder toBuilder() {
-        return new Builder(this);
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((getNestedTimestamp() == null) ? 0 : getNestedTimestamp().hashCode());
+        hashCode = 31 * hashCode + ((nestedTimestamp() == null) ? 0 : nestedTimestamp().hashCode());
         return hashCode;
     }
 
@@ -48,10 +48,10 @@ public class StructWithTimestamp implements Cloneable, Serializable, StructuredP
             return false;
         }
         StructWithTimestamp other = (StructWithTimestamp) obj;
-        if (other.getNestedTimestamp() == null ^ this.getNestedTimestamp() == null) {
+        if (other.nestedTimestamp() == null ^ this.nestedTimestamp() == null) {
             return false;
         }
-        if (other.getNestedTimestamp() != null && !other.getNestedTimestamp().equals(this.getNestedTimestamp())) {
+        if (other.nestedTimestamp() != null && !other.nestedTimestamp().equals(this.nestedTimestamp())) {
             return false;
         }
         return true;
@@ -71,8 +71,8 @@ public class StructWithTimestamp implements Cloneable, Serializable, StructuredP
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        if (getNestedTimestamp() != null) {
-            sb.append("NestedTimestamp: ").append(getNestedTimestamp()).append(",");
+        if (nestedTimestamp() != null) {
+            sb.append("NestedTimestamp: ").append(nestedTimestamp()).append(",");
         }
         sb.append("}");
         return sb.toString();
@@ -84,26 +84,42 @@ public class StructWithTimestamp implements Cloneable, Serializable, StructuredP
         StructWithTimestampMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public static class Builder {
-        private Date nestedTimestamp;
-
-        private Builder() {
-        }
-
-        private Builder(StructWithTimestamp model) {
-            this.nestedTimestamp = model.nestedTimestamp;
-        }
-
+    public interface Builder {
         /**
          *
          * @param nestedTimestamp
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        public Builder setNestedTimestamp(Date nestedTimestamp) {
+        Builder nestedTimestamp(Date nestedTimestamp);
+
+        StructWithTimestamp build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
+        private Date nestedTimestamp;
+
+        private BeanStyleBuilder() {
+        }
+
+        private BeanStyleBuilder(StructWithTimestamp model) {
+            this.nestedTimestamp = model.nestedTimestamp;
+        }
+
+        @Override
+        public Builder nestedTimestamp(Date nestedTimestamp) {
             this.nestedTimestamp = nestedTimestamp;
             return this;
         }
 
+        /**
+         *
+         * @param nestedTimestamp
+         */
+        public void setNestedTimestamp(Date nestedTimestamp) {
+            this.nestedTimestamp = nestedTimestamp;
+        }
+
+        @Override
         public StructWithTimestamp build_() {
             return new StructWithTimestamp(this);
         }

@@ -2,17 +2,19 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.io.Serializable;
 import software.amazon.awssdk.AmazonWebServiceResult;
+import software.amazon.awssdk.ResponseMetadata;
 
-public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult implements Cloneable, Serializable {
-    private OperationWithNoInputOrOutputResult(Builder builder) {
-    }
-
-    public static Builder builder_() {
-        return new Builder();
+public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<ResponseMetadata> implements Serializable,
+        Cloneable {
+    private OperationWithNoInputOrOutputResult(BeanStyleBuilder builder) {
     }
 
     public Builder toBuilder() {
-        return new Builder(this);
+        return new BeanStyleBuilder(this);
+    }
+
+    public static Builder builder_() {
+        return new BeanStyleBuilder();
     }
 
     @Override
@@ -32,7 +34,6 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult i
         if (!(obj instanceof OperationWithNoInputOrOutputResult)) {
             return false;
         }
-        OperationWithNoInputOrOutputResult other = (OperationWithNoInputOrOutputResult) obj;
         return true;
     }
 
@@ -54,13 +55,18 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult i
         return sb.toString();
     }
 
-    public static class Builder {
-        private Builder() {
+    public interface Builder {
+        OperationWithNoInputOrOutputResult build_();
+    }
+
+    public static class BeanStyleBuilder implements Builder {
+        private BeanStyleBuilder() {
         }
 
-        private Builder(OperationWithNoInputOrOutputResult model) {
+        private BeanStyleBuilder(OperationWithNoInputOrOutputResult model) {
         }
 
+        @Override
         public OperationWithNoInputOrOutputResult build_() {
             return new OperationWithNoInputOrOutputResult(this);
         }

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,26 +55,26 @@ class TypeProvider {
         return ClassName.get(HashMap.class);
     }
 
-    public TypeName getStorageType(MemberModel memberModel) {
+    public TypeName type(MemberModel memberModel) {
         if (memberModel.isSimple()) {
             return getTypeNameForSimpleType(memberModel.getVariable().getSimpleType());
         } else if (memberModel.isList()) {
             ListModel listModel = memberModel.getListModel();
-            return ParameterizedTypeName.get(ClassName.get(List.class), getStorageType(listModel.getListMemberModel()));
+            return ParameterizedTypeName.get(ClassName.get(List.class), type(listModel.getListMemberModel()));
         } else if (memberModel.isMap()) {
             MapModel mapModel = memberModel.getMapModel();
             TypeName keyType;
             if (mapModel.isKeySimple()) {
                 keyType = getTypeNameForSimpleType(mapModel.getKeyType());
             } else {
-                keyType = getStorageType(mapModel.getKeyModel());
+                keyType = type(mapModel.getKeyModel());
             }
 
             TypeName valueType;
             if (mapModel.isValueSimple()) {
                 valueType = getTypeNameForSimpleType(mapModel.getValueType());
             } else {
-                valueType = getStorageType(mapModel.getValueModel());
+                valueType = type(mapModel.getValueModel());
             }
             return ParameterizedTypeName.get(ClassName.get(Map.class), keyType, valueType);
         }
@@ -81,8 +82,7 @@ class TypeProvider {
     }
 
     public TypeName getTypeNameForSimpleType(String simpleType) {
-        return Stream.of(Object.class,
-                String.class,
+        return Stream.of(String.class,
                 Boolean.class,
                 Integer.class,
                 Long.class,
@@ -92,6 +92,9 @@ class TypeProvider {
                 Double.class,
                 Float.class,
                 BigDecimal.class,
+                // TODO: Revisit use of this for non-streaming binary blobs
+                // and whether we even make a distinction between streaming
+                // and non-streaming
                 ByteBuffer.class,
                 InputStream.class,
                 Date.class)
@@ -100,5 +103,9 @@ class TypeProvider {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Unsupported simple type " + simpleType));
 
+    }
+
+    public TypeName getModelClass(String name) {
+        return poetExtensions.getModelClass(name);
     }
 }

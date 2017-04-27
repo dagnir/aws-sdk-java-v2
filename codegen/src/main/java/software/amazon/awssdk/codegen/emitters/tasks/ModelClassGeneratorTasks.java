@@ -65,6 +65,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
         Metadata metadata = model.getMetadata();
 
         if (shapeModel.getShapeType() != ShapeType.Enum) {
+            // TODO: remove this check when all (un)marshallers are moved over to new model style
             if (metadata.isJsonProtocol()) {
                 ClassSpec modelSpec = new AwsServiceModel(model, shapeModel);
                 return new PoetGeneratorTask(modelClassDir, model.getFileHeader(), modelSpec);

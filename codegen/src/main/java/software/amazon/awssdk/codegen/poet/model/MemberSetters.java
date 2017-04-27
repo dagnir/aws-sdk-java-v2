@@ -15,14 +15,16 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 
-import java.util.Set;
+import java.util.List;
 
-public interface ShapeInterfaceProvider {
-    boolean shouldImplementInterface(Class<?> iface);
+interface MemberSetters {
+    List<MethodSpec> fluentDeclarations(TypeName returnType);
 
-    Set<TypeName> interfacesToImplement();
+    List<MethodSpec> fluent(TypeName returnType);
 
-    TypeName baseClassToExtend();
+    List<MethodSpec> beanStyle();
 }
+
