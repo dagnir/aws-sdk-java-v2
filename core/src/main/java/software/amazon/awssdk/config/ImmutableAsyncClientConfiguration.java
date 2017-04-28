@@ -17,7 +17,6 @@ package software.amazon.awssdk.config;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
@@ -34,21 +33,38 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 @SdkInternalApi
 public final class ImmutableAsyncClientConfiguration extends ImmutableClientConfiguration implements AsyncClientConfiguration {
     private final ExecutorService asyncExecutor;
-    private final AwsAsyncClientParams asyncClientParams;
 
     public ImmutableAsyncClientConfiguration(AsyncClientConfiguration configuration) {
         super(configuration);
+        this.asyncExecutor = configuration.asyncExecutorService();
 
-        this.asyncExecutor = require(configuration.asyncExecutorService());
-        this.asyncClientParams = new AwsAsyncClientParams() {
+        validate();
+    }
+
+    private void validate() {
+        requireField("asyncExecutorService", asyncExecutorService());
+    }
+
+    @Override
+    public ExecutorService asyncExecutorService() {
+        return asyncExecutor;
+    }
+
+    /**
+     * Convert this asynchronous client configuration into a legacy-style client params object.
+     */
+    @Deprecated
+    @ReviewBeforeRelease("We should no longer need the client params object by GA.")
+    public AwsAsyncClientParams asLegacyAsyncClientParams() {
+        return new AwsAsyncClientParams() {
             @Override
             public ExecutorService getExecutor() {
-                return require(asyncExecutorService());
+                return asyncExecutor;
             }
 
             @Override
             public AwsCredentialsProvider getCredentialsProvider() {
-                return require(credentialsProvider());
+                return credentialsProvider();
             }
 
             @Override
@@ -58,7 +74,7 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
 
             @Override
             public RequestMetricCollector getRequestMetricCollector() {
-                return require(metricsConfiguration().requestMetricCollector());
+                return metricsConfiguration().requestMetricCollector().orElse(null);
             }
 
             @Override
@@ -68,27 +84,13 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
 
             @Override
             public SignerProvider getSignerProvider() {
-                return require(securityConfiguration().signerProvider());
+                return securityConfiguration().signerProvider().orElse(null);
             }
 
             @Override
             public URI getEndpoint() {
-                return require(endpoint());
+                return endpoint();
             }
         };
-    }
-
-    @Override
-    public Optional<ExecutorService> asyncExecutorService() {
-        return Optional.ofNullable(asyncExecutor);
-    }
-
-    /**
-     * Convert this asynchronous client configuration into a legacy-style client params object.
-     */
-    @Deprecated
-    @ReviewBeforeRelease("We should no longer need the client params object by GA.")
-    public AwsAsyncClientParams toLegacyAsyncClientParams() {
-        return asyncClientParams;
     }
 }

@@ -16,11 +16,8 @@
 package software.amazon.awssdk.services.sts.auth;
 
 import java.util.Date;
-import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.auth.AnonymousAwsCredentials;
 import software.amazon.awssdk.auth.AwsSessionCredentials;
 import software.amazon.awssdk.auth.AwsSessionCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityRequest;
@@ -51,48 +48,6 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
     private int sessionDuration;
     private int refreshThreshold;
     private String subjectFromWif;
-
-    /**
-     * Constructs a new WebIdentityFederationSessionCredentialsProvider, which will use the
-     * specified 3rd-party web identity provider to make a request to the AWS
-     * Security Token Service (STS) to request short lived session credentials,
-     * which will then be returned by this class's {@link #getCredentials()}
-     * method.
-     *
-     * @param wifToken
-     *            The OAuth/OpenID token from the the Identity Provider
-     * @param wifProvider
-     *            The name of the Identity Provider (null for OpenID providers)
-     * @param roleArn
-     *            The ARN of the IAM Role that will be assumed 
-     */
-    public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn) {
-        this(wifToken, wifProvider, roleArn, new LegacyClientConfiguration());
-    }
-
-    /**
-     * Constructs a new WebIdentityFederationSessionCredentialsProvider, which will use the
-     * specified 3rd-party web identity provider to make a request to the AWS
-     * Security Token Service (STS) to request short lived session credentials,
-     * which will then be returned by this class's {@link #getCredentials()}
-     * method.
-     *
-     * @param wifToken
-     *            The OAuth/OpenID token from the the Identity Provider
-     * @param wifProvider
-     *            The name of the Identity Provider (null for OpenID providers)
-     * @param roleArn
-     *            The ARN of the IAM Role that will be assumed
-     * @param clientConfiguration
-     *            Configuration to apply to STS client created
-     */
-    public WebIdentityFederationSessionCredentialsProvider(String wifToken, String wifProvider, String roleArn,
-                                                           LegacyClientConfiguration clientConfiguration) {
-        this(wifToken, wifProvider, roleArn, STSClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()))
-                .withClientConfiguration(clientConfiguration)
-                .build());
-    }
 
     /**
      * Constructs a new WebIdentityFederationSessionCredentialsProvider, which will use the

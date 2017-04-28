@@ -60,7 +60,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setupFixture() {
-        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     private CreateTableRequest createTableRequest() {

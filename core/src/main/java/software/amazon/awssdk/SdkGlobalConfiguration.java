@@ -198,16 +198,10 @@ public class SdkGlobalConfiguration {
 
     /////////////////////// Environment Variables ///////////////////////
     /** Environment variable name for the AWS access key ID. */
-    public static final String ACCESS_KEY_ENV_VAR = "AWS_ACCESS_KEY_ID";
-
-    /** Alternate environment variable name for the AWS access key ID. */
-    public static final String ALTERNATE_ACCESS_KEY_ENV_VAR = "AWS_ACCESS_KEY";
+    public static final String ACCESS_KEY_ID_ENV_VAR = "AWS_ACCESS_KEY_ID";
 
     /** Environment variable name for the AWS secret key. */
     public static final String SECRET_KEY_ENV_VAR = "AWS_SECRET_KEY";
-
-    /** Alternate environment variable name for the AWS secret key. */
-    public static final String ALTERNATE_SECRET_KEY_ENV_VAR = "AWS_SECRET_ACCESS_KEY";
 
     /** Environment variable name for the AWS session token. */
     public static final String AWS_SESSION_TOKEN_ENV_VAR = "AWS_SESSION_TOKEN";

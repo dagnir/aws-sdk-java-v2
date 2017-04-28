@@ -19,7 +19,10 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * Factory to create instances of {@link ExecutorService}.
+ *
+ * @deprecated This is only used by the deprecated {@link AwsAsyncClientBuilder}.
  */
+@Deprecated
 public interface ExecutorFactory {
 
     /**

@@ -43,8 +43,8 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
     @Before
     public void setup() {
         ddb = DynamoDBClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
+                .region(Regions.US_WEST_2.getName())
                 .build();
         mapper = new DynamoDBMapper(ddb, DynamoDBMapperConfig.builder()
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(TABLE_NAME))

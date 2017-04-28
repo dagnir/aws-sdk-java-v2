@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,9 +47,9 @@ public class AwsJsonExceptionTest {
     @Before
     public void setupClient() {
         client = ProtocolJsonRpcClient.builder()
-                                      .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                      .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
-                                                                                           "us-east-1"))
+                                      .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                      .region("us-east-1")
+                                      .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                       .build();
     }
 

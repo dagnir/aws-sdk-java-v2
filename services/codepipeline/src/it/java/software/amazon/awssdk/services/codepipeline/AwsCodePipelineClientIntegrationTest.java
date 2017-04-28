@@ -45,7 +45,7 @@ public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = CodePipelineClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        client = CodePipelineClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /**

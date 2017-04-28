@@ -772,7 +772,7 @@ public abstract class AmazonWebServiceClient {
      *
      * @see #setRegion(Region)
      * @deprecated use {@link AwsClientBuilder#withRegion(Region)} for example:
-     * {@code AmazonSNSClientBuilder.standard().withRegion(region).build();}
+     * {@code AmazonSNSClient.builder().withRegion(region).build();}
      */
     @Deprecated
     public <T extends AmazonWebServiceClient> T withRegion(Region region) {
@@ -788,7 +788,7 @@ public abstract class AmazonWebServiceClient {
      * @param region region to set to; must not be null.
      * @see #withRegion(Region)
      * @deprecated use {@link AwsClientBuilder#withRegion(Regions)} for example:
-     * {@code AmazonSNSClientBuilder.standard().withRegion(region).build();}
+     * {@code AmazonSNSClient.builder().withRegion(region).build();}
      */
     @Deprecated
     public <T extends AmazonWebServiceClient> T withRegion(Regions region) {
@@ -805,7 +805,7 @@ public abstract class AmazonWebServiceClient {
      *
      * @see #setEndpoint(String)
      * @deprecated use {@link AwsClientBuilder#withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration)} for example:
-     * {@code AmazonSNSClientBuilder.standard()
+     * {@code AmazonSNSClient.builder()
      * .withEndpointConfiguration(new EndpointConfiguration(endpoint, signingRegion)).build();}
      */
     @Deprecated

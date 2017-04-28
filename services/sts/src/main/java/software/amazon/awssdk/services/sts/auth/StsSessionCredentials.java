@@ -69,7 +69,7 @@ public class StsSessionCredentials implements AwsRefreshableSessionCredentials {
      *            The duration, in seconds, for each session to last.
      */
     public StsSessionCredentials(AwsCredentials credentials, int sessionDurationSeconds) {
-        this.stsService = STSClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        this.stsService = STSClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
         this.sessionDurationSeconds = sessionDurationSeconds;
     }
 

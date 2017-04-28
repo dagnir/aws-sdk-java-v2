@@ -47,7 +47,7 @@ public class JsonIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        client = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         mapper = new DynamoDBMapper(
                 client,

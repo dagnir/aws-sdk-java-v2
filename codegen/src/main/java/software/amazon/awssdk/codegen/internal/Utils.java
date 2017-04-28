@@ -22,9 +22,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.stream.Stream;
-
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
@@ -82,24 +80,8 @@ public class Utils {
         return baseName;
     }
 
-    public static String getAsyncInterfaceName(String serviceName) {
-        return serviceName + Constants.ASYNC_SUFFIX;
-    }
-
-    public static String getInterfaceName(String serviceName) {
-        return serviceName + Constants.INTERFACE_NAME_SUFFIX;
-    }
-
     public static String pascalCase(String baseName) {
         return Stream.of(baseName.split("\\s+")).map(StringUtils::lowerCase).map(Utils::capitialize).collect(joining());
-    }
-
-    public static String getClientName(String interfaceName) {
-        return Constants.CLIENT_NAME_PREFIX + interfaceName;
-    }
-
-    public static String getBaseExceptionName(String serviceName) {
-        return serviceName + Constants.BASE_EXCEPTION_NAME_SUFFIX;
     }
 
     public static String getPackageName(String serviceName, CustomizationConfig customizationConfig) {

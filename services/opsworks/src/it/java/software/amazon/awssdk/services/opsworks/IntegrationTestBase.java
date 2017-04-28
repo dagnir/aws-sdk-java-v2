@@ -37,8 +37,8 @@ public class IntegrationTestBase extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
-        opsWorks = OpsWorksClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
-        elb = ElasticLoadBalancingClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        opsWorks = OpsWorksClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        elb = ElasticLoadBalancingClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         loadBalancerName = "integ-test-" + System.currentTimeMillis();
         Listener expectedListener = new Listener().withInstancePort(8080)

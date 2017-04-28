@@ -22,6 +22,7 @@ import static software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointCon
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,9 +46,9 @@ public class QueryExceptionTests {
     @Before
     public void setupClient() {
         client = ProtocolQueryClient.builder()
-                                    .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                    .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
-                                                                                         "us-east-1"))
+                                    .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                    .region("us-east-1")
+                                    .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                     .build();
     }
 

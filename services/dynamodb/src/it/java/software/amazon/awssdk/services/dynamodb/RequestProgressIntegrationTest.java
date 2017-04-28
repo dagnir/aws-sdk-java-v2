@@ -23,10 +23,8 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.config.ClientRetryConfiguration;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener.ExceptionReporter;
 import software.amazon.awssdk.event.ProgressTracker;
@@ -34,7 +32,6 @@ import software.amazon.awssdk.event.SdkProgressPublisher;
 import software.amazon.awssdk.event.request.Progress;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
-import software.amazon.awssdk.retry.RetryPolicy.RetryCondition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
@@ -119,19 +116,12 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
                 ProgressEventType.CLIENT_REQUEST_FAILED_EVENT));
         request.setGeneralProgressListener(listener);
 
-        LegacyClientConfiguration config = new LegacyClientConfiguration().withRetryPolicy(new RetryPolicy(new RetryCondition() {
-
-            @Override
-            public boolean shouldRetry(AmazonWebServiceRequest originalRequest,
-                                       AmazonClientException exception, int retriesAttempted) {
-                return false;
-            }
-
-        }, PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, 0, false));
+        RetryPolicy retryPolicy = new RetryPolicy((originalRequest, exception, retriesAttempted) -> false,
+                                                  PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, 0, false);
 
         DynamoDBClient ddb_NoRetry = DynamoDBClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withClientConfiguration(config)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .retryConfiguration(ClientRetryConfiguration.builder().retryPolicy(retryPolicy).build())
                 .build();
 
         try {
@@ -152,20 +142,12 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
                 BasicTempTable.TEMP_TABLE_NAME,
                 ImmutableMapParameter.of("foo", new AttributeValue("bar")));
 
-        // ClientConfiguration that specifies a maximum of two retries
-        LegacyClientConfiguration config = new LegacyClientConfiguration().withRetryPolicy(new RetryPolicy(new RetryCondition() {
-
-            @Override
-            public boolean shouldRetry(AmazonWebServiceRequest originalRequest,
-                                       AmazonClientException exception, int retriesAttempted) {
-                return true;
-            }
-
-        }, PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, 2, false));
+        RetryPolicy retryPolicy = new RetryPolicy((originalRequest, exception, retriesAttempted) -> true,
+                                                  PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, 2, false);
 
         DynamoDBClient ddb_OneRetry = DynamoDBClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withClientConfiguration(config)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .retryConfiguration(ClientRetryConfiguration.builder().retryPolicy(retryPolicy).build())
                 .build();
 
         ExceptionReporter listener = ExceptionReporter.wrap(new ProgressListenerWithEventCodeVerification(

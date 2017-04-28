@@ -16,13 +16,9 @@
 package software.amazon.awssdk.services.sts.auth;
 
 import java.util.concurrent.Callable;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsSessionCredentials;
 import software.amazon.awssdk.auth.AwsSessionCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResult;
@@ -44,12 +40,7 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
      */
     private final STSClient securityTokenService;
 
-    private final Callable<SessionCredentialsHolder> refreshCallable = new Callable<SessionCredentialsHolder>() {
-        @Override
-        public SessionCredentialsHolder call() throws Exception {
-            return newSession();
-        }
-    };
+    private final Callable<SessionCredentialsHolder> refreshCallable = this::newSession;
 
     /**
      * Handles the refreshing of sessions. Ideally this should be final but #setSTSClientEndpoint
@@ -59,71 +50,15 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
 
 
     /**
-     * Constructs a new StsSessionCredentialsProvider, which will use the specified long lived AWS
-     * credentials to make a request to the AWS Security Token Service (STS) to request short lived
+     * Constructs a new StsSessionCredentialsProvider, which will use the specified long-lived AWS
+     * STS client to make a request to the AWS Security Token Service (STS) to request short lived
      * session credentials, which will then be returned by this class's {@link #getCredentials()}
      * method.
      *
-     * @param longLivedCredentials The main AWS credentials for a user's account.
+     * @param securityTokenService The STS client to use for loading short-lived STS credentials.
      */
-    public StsSessionCredentialsProvider(AwsCredentials longLivedCredentials) {
-        this(longLivedCredentials, new LegacyClientConfiguration());
-    }
-
-    /**
-     * Constructs a new StsSessionCredentialsProvider, which will use the specified long lived AWS
-     * credentials to make a request to the AWS Security Token Service (STS) to request short lived
-     * session credentials, which will then be returned by this class's {@link #getCredentials()}
-     * method.
-     *
-     * @param longLivedCredentials The main AWS credentials for a user's account.
-     * @param clientConfiguration  Client configuration connection parameters.
-     */
-    public StsSessionCredentialsProvider(AwsCredentials longLivedCredentials,
-                                         LegacyClientConfiguration clientConfiguration) {
-        this(STSClient.builder().withCredentials(new AwsStaticCredentialsProvider(longLivedCredentials))
-                .withClientConfiguration(clientConfiguration).build());
-    }
-
-    /**
-     * Constructs a new StsSessionCredentialsProvider, which will use the specified credentials
-     * provider (which vends long lived AWS credentials) to make a request to the AWS Security Token
-     * Service (STS) to request short lived session credentials, which will then be returned by this
-     * class's {@link #getCredentials()} method.
-     *
-     * @param longLivedCredentialsProvider Credentials provider for the main AWS credentials for a
-     *                                     user's account.
-     */
-    public StsSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider) {
-        this(STSClient.builder().withCredentials(longLivedCredentialsProvider).build());
-    }
-
-    /**
-     * Constructs a new StsSessionCredentialsProvider, which will use the specified credentials
-     * provider (which vends long lived AWS credentials) to make a request to the AWS Security Token
-     * Service (STS) to request short lived session credentials, which will then be returned by this
-     * class's {@link #getCredentials()} method.
-     *
-     * @param longLivedCredentialsProvider Credentials provider for the main AWS credentials for a
-     *                                     user's account.
-     * @param clientConfiguration          Client configuration connection parameters.
-     */
-    public StsSessionCredentialsProvider(AwsCredentialsProvider longLivedCredentialsProvider,
-                                         LegacyClientConfiguration clientConfiguration) {
-
-        this(STSClient.builder()
-                .withCredentials(longLivedCredentialsProvider)
-                .withClientConfiguration(clientConfiguration)
-                .build());
-    }
-
-    /**
-     * Constructs a new StsSessionCredentialsProvider with the alredy configured STS client.
-     *
-     * @param sts Preconfigured STS client to use for this provider
-     */
-    public StsSessionCredentialsProvider(STSClient sts) {
-        this.securityTokenService = sts;
+    public StsSessionCredentialsProvider(STSClient securityTokenService) {
+        this.securityTokenService = securityTokenService;
         this.refreshableTask = createRefreshableTask();
     }
 

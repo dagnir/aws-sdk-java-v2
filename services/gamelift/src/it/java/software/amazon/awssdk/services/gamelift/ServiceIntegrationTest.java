@@ -38,7 +38,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        gameLift = GameLiftClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        gameLift = GameLiftClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass

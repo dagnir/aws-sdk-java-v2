@@ -15,22 +15,28 @@
 
 package software.amazon.awssdk.codegen.emitters.tasks;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
+import software.amazon.awssdk.codegen.emitters.PoetGeneratorTask;
 import software.amazon.awssdk.codegen.internal.Freemarker;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+import software.amazon.awssdk.codegen.poet.ClassSpec;
+import software.amazon.awssdk.codegen.poet.builder.SyncClientBuilderInterface;
 
 public abstract class BaseGeneratorTasks implements Iterable<GeneratorTask> {
 
+    protected final String basePackage;
     protected final IntermediateModel model;
     protected final Freemarker freemarker;
     protected final Log log;
 
     public BaseGeneratorTasks(GeneratorTaskParams dependencies) {
+        this.basePackage = dependencies.getPathProvider().getBasePackageDirectory();
         this.model = dependencies.getModel();
         this.freemarker = dependencies.getFreemarker();
         this.log = dependencies.getLog();
@@ -46,6 +52,10 @@ public abstract class BaseGeneratorTasks implements Iterable<GeneratorTask> {
      */
     protected boolean hasTasks() {
         return true;
+    }
+
+    protected final GeneratorTask createPoetGeneratorTask(ClassSpec classSpec) throws IOException {
+        return new PoetGeneratorTask(basePackage, model.getFileHeader(), classSpec);
     }
 
     protected abstract List<GeneratorTask> createTasks() throws Exception;

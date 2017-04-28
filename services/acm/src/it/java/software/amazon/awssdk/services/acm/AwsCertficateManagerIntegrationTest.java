@@ -32,7 +32,7 @@ public class AwsCertficateManagerIntegrationTest extends
 
     @BeforeClass
     public static void setUp() {
-        client = ACMClient.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
+        client = ACMClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(getCredentials())).build();
     }
 
     @Test

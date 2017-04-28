@@ -15,9 +15,11 @@
 
 package software.amazon.awssdk.services.sts.internal;
 
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
+import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleSessionCredentialsProvider;
 
 /**
@@ -25,11 +27,12 @@ import software.amazon.awssdk.services.sts.auth.StsAssumeRoleSessionCredentialsP
  * credentials profile.
  */
 public class StsProfileCredentialsService implements ProfileCredentialsService {
+    @ReviewBeforeRelease("How should the STS client be cleaned up?")
     @Override
     public AwsCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
         return new StsAssumeRoleSessionCredentialsProvider.Builder(targetRoleInfo.getRoleArn(),
                                                                    targetRoleInfo.getRoleSessionName())
-                .withLongLivedCredentialsProvider(targetRoleInfo.getLongLivedCredentialsProvider())
+                .withStsClient(STSClient.builder().credentialsProvider(targetRoleInfo.getLongLivedCredentialsProvider()).build())
                 .withExternalId(targetRoleInfo.getExternalId())
                 .build();
     }

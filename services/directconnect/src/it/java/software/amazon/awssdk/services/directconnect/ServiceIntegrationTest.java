@@ -95,7 +95,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     public void testClockSkew() {
         SdkGlobalTime.setGlobalTimeOffset(3600);
         DirectConnectClient clockSkewClient = DirectConnectClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
                 .build();
 
         clockSkewClient.describeConnections(new DescribeConnectionsRequest());

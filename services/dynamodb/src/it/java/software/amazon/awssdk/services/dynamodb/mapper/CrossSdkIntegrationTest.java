@@ -56,7 +56,7 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     // @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        dynamo = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        dynamo = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         // Create a table
         String keyName = DynamoDBMapperIntegrationTestBase.KEY_NAME;

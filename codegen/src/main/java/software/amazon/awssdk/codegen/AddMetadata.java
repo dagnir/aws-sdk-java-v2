@@ -15,11 +15,13 @@
 
 package software.amazon.awssdk.codegen;
 
+import software.amazon.awssdk.codegen.internal.Constants;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
+import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.ServiceMetadata;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
@@ -56,24 +58,28 @@ final class AddMetadata {
             packageName = AWS_PACKAGE_PREFIX + Utils.getPackageName(serviceName, customizationConfig);
         }
 
-        final String syncInterfaceName = Utils.getInterfaceName(serviceName);
-        final String asyncInterfaceName = Utils.getAsyncInterfaceName(serviceName);
-
         metadata.withApiVersion(serviceMetadata.getApiVersion())
-                .withAsyncClient(Utils.getClientName(asyncInterfaceName))
-                .withAsyncInterface(asyncInterfaceName)
+                .withAsyncClient(String.format(Constants.ASYNC_CLIENT_CLASS_NAME_PATTERN, serviceName))
+                .withAsyncInterface(String.format(Constants.ASYNC_CLIENT_INTERFACE_NAME_PATTERN, serviceName))
+                .withAsyncBuilder(String.format(Constants.ASYNC_BUILDER_CLASS_NAME_PATTERN, serviceName))
+                .withAsyncBuilderInterface(String.format(Constants.ASYNC_BUILDER_INTERFACE_NAME_PATTERN, serviceName))
+                .withBaseBuilderInterface(String.format(Constants.BASE_BUILDER_INTERFACE_NAME_PATTERN, serviceName))
+                .withBaseBuilder(String.format(Constants.BASE_BUILDER_CLASS_NAME_PATTERN, serviceName))
                 .withDocumentation(serviceModel.getDocumentation())
                 .withPackageName(packageName)
                 .withPackagePath(packageName.replace(".", "/"))
                 .withServiceAbbreviation(serviceMetadata.getServiceAbbreviation())
                 .withServiceFullName(serviceMetadata.getServiceFullName())
-                .withSyncClient(Utils.getClientName(syncInterfaceName))
-                .withSyncInterface(syncInterfaceName)
-                .withBaseExceptionName(Utils.getBaseExceptionName(serviceName))
+                .withSyncClient(String.format(Constants.SYNC_CLIENT_CLASS_NAME_PATTERN, serviceName))
+                .withSyncInterface(String.format(Constants.SYNC_CLIENT_INTERFACE_NAME_PATTERN, serviceName))
+                .withSyncBuilder(String.format(Constants.SYNC_BUILDER_CLASS_NAME_PATTERN, serviceName))
+                .withSyncBuilderInterface(String.format(Constants.SYNC_BUILDER_INTERFACE_NAME_PATTERN, serviceName))
+                .withBaseExceptionName(String.format(Constants.BASE_EXCEPTION_NAME_PATTERN, serviceName))
                 .withProtocol(Protocol.fromValue(serviceMetadata.getProtocol()))
                 .withJsonVersion(serviceMetadata.getJsonVersion())
                 .withEndpointPrefix(serviceMetadata.getEndpointPrefix())
                 .withSigningName(serviceMetadata.getSigningName())
+                .withAuthType(AuthType.fromValue(serviceMetadata.getSignatureVersion()))
                 .withRequiresApiKey(requiresApiKey(serviceModel))
                 .withUid(serviceMetadata.getUid());
 

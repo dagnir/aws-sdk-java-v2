@@ -21,12 +21,9 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
 import javax.lang.model.element.Modifier;
-
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
@@ -53,6 +50,7 @@ public class AsyncClientInterface implements ClassSpec {
                         .initializer("$S", model.getMetadata().getEndpointPrefix())
                         .build())
                 .addMethods(operations())
+                .addMethod(builder())
                 .build();
     }
 
@@ -77,5 +75,15 @@ public class AsyncClientInterface implements ClassSpec {
                 .addStatement("throw new $T()", UnsupportedOperationException.class)
                 .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata()))
                 .build();
+    }
+
+    private MethodSpec builder() {
+        ClassName builderClass = ClassName.get(basePackage, model.getMetadata().getAsyncBuilder());
+        ClassName builderInterface = ClassName.get(basePackage, model.getMetadata().getAsyncBuilderInterface());
+        return MethodSpec.methodBuilder("builder")
+                         .returns(builderInterface)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addStatement("return new $T()", builderClass)
+                         .build();
     }
 }

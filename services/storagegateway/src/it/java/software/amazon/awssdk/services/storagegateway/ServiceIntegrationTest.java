@@ -40,7 +40,7 @@ public class ServiceIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        sg = StorageGatewayClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
+        sg = StorageGatewayClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
     }
 
     @Test

@@ -16,25 +16,13 @@
 package software.amazon.awssdk.services.sqs;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.client.AwsAsyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
-import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -76,9 +64,9 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     public static SQSAsyncClient createSqsAyncClient() {
-        return SQSAsyncClientBuilder.standard()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(Regions.US_EAST_1)
+        return SQSAsyncClient.builder()
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Regions.US_EAST_1.getName())
                 .build();
     }
 
@@ -141,7 +129,7 @@ public class IntegrationTestBase extends AwsTestBase {
      */
     protected String getAccountId() {
         if (accountId == null) {
-            IAMClient iamClient = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+            IAMClient iamClient = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
             accountId = parseAccountIdFromArn(iamClient.getUser(new GetUserRequest()).getUser().getArn());
         }
         return accountId;

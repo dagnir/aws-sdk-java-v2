@@ -47,7 +47,7 @@ public class DynamoDBTestBase extends AwsTestBase {
             throw new AmazonClientException("Unable to load credential property file.", e);
         }
 
-        dynamo = DynamoDBClient.builder().withRegion(Regions.US_EAST_1).withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        dynamo = DynamoDBClient.builder().region(Regions.US_EAST_1.getName()).credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     public static DynamoDBClient getClient() {

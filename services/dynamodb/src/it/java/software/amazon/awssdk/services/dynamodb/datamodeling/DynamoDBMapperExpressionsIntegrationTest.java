@@ -98,7 +98,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
     public static void setUp() throws FileNotFoundException, IOException,
                                       InterruptedException {
         setUpCredentials();
-        client = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        client = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         mapper = new DynamoDBMapper(client);
         try {
             client.createTable(new CreateTableRequest()

@@ -47,7 +47,7 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
         setUpCredentials();
 
-        client = ECSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        client = ECSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         CreateClusterResult result = client.createCluster(
                 new CreateClusterRequest()

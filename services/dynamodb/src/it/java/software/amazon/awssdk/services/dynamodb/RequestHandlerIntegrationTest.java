@@ -33,6 +33,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
+import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
@@ -53,8 +54,8 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
         mockRequestHandler = spy(new RequestHandler2() {
         });
         ddb = DynamoDBClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRequestHandlers(mockRequestHandler)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .listenerConfiguration(ClientListenerConfiguration.builder().addRequestListener(mockRequestHandler).build())
                 .build();
     }
 
@@ -107,7 +108,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void beforeUnmarshalling_ModificationsToHttpResponse_AreReflectedInUnmarshalling() {
         final String injectedTableName = "SomeInjectedTableName";
-        DynamoDBClient ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        DynamoDBClient ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         RequestHandler2 requestHandler = new RequestHandler2() {
             @Override
             public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
@@ -135,8 +136,8 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
                 return crc32.getValue();
             }
         };
-        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRequestHandlers(requestHandler).build();
+        ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .listenerConfiguration(ClientListenerConfiguration.builder().addRequestListener(requestHandler).build()).build();
         ListTablesResult result = ddb.listTables(new ListTablesRequest());
         // Assert that the unmarshalled response contains our injected table name and not the actual
         // list of tables

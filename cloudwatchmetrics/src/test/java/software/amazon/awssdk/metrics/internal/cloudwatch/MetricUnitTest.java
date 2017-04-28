@@ -33,7 +33,7 @@ public class MetricUnitTest extends MetricUnitTestBase {
      */
     @Test
     public void testQueueUploader() throws Exception {
-        Thread t = new MetricUploaderThread(config, queue, cloudWatchClient);
+        Thread t = new MetricUploaderThread(config, queue);
         t.start();
         Thread.sleep(QUEUE_TIMEOUT_MILLI + 1000);
         assertTrue(cloudWatchClient.getMetricDatums().size() > 0);
@@ -46,6 +46,6 @@ public class MetricUnitTest extends MetricUnitTestBase {
      */
     @Test(expected=IllegalArgumentException.class)
     public void testQueueUploaderWithNullConfigInfo() throws Exception {
-        new MetricUploaderThread(null, queue, cloudWatchClient);
+        new MetricUploaderThread(null, queue);
     }
 }

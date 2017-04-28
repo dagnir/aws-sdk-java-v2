@@ -71,13 +71,13 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         s3.configureRegion(Regions.US_EAST_1);
 
         client = MarketplaceCommerceAnalyticsClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(Regions.US_EAST_1)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Regions.US_EAST_1.getName())
                 .build();
 
-        sns = SNSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
+        sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
 
-        iam = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
+        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
     }
 
     private void setupResources() throws IOException, Exception {

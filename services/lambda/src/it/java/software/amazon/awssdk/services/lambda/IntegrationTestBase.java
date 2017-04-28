@@ -64,7 +64,7 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        lambda = LambdaAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        lambda = LambdaAsyncClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         cloudFuncZip = setupFunctionZip(HELLOWORLD_JS);
 
@@ -107,7 +107,7 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     private static void createLambdaServiceRole() {
-        iam = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         CreateRoleResult result = iam.createRole(new CreateRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME)
                                                                         .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
@@ -124,7 +124,7 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     protected static void createKinesisStream() {
-        kinesis = KinesisClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        kinesis = KinesisClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         kinesis.createStream(new CreateStreamRequest().withStreamName(KINESIS_STREAM_NAME).withShardCount(1));
 

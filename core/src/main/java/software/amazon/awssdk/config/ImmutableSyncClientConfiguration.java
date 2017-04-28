@@ -31,15 +31,21 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
  */
 @SdkInternalApi
 public final class ImmutableSyncClientConfiguration extends ImmutableClientConfiguration implements SyncClientConfiguration {
-    private final AwsSyncClientParams syncClientParams;
 
     public ImmutableSyncClientConfiguration(SyncClientConfiguration configuration) {
         super(configuration);
+    }
 
-        this.syncClientParams = new AwsSyncClientParams() {
+    /**
+     * Convert this synchronous client configuration into a legacy-style client params object.
+     */
+    @Deprecated
+    @ReviewBeforeRelease("We should no longer need the client params object by GA.")
+    public AwsSyncClientParams asLegacySyncClientParams() {
+        return new AwsSyncClientParams() {
             @Override
             public AwsCredentialsProvider getCredentialsProvider() {
-                return require(credentialsProvider());
+                return credentialsProvider();
             }
 
             @Override
@@ -49,7 +55,7 @@ public final class ImmutableSyncClientConfiguration extends ImmutableClientConfi
 
             @Override
             public RequestMetricCollector getRequestMetricCollector() {
-                return require(metricsConfiguration().requestMetricCollector());
+                return metricsConfiguration().requestMetricCollector().orElse(null);
             }
 
             @Override
@@ -59,22 +65,13 @@ public final class ImmutableSyncClientConfiguration extends ImmutableClientConfi
 
             @Override
             public SignerProvider getSignerProvider() {
-                return require(securityConfiguration().signerProvider());
+                return securityConfiguration().signerProvider().orElse(null);
             }
 
             @Override
             public URI getEndpoint() {
-                return require(endpoint());
+                return endpoint();
             }
         };
-    }
-
-    /**
-     * Convert this synchronous client configuration into a legacy-style client params object.
-     */
-    @Deprecated
-    @ReviewBeforeRelease("We should no longer need the client params object by GA.")
-    public AwsSyncClientParams asLegacySyncClientParams() {
-        return syncClientParams;
     }
 }

@@ -68,7 +68,7 @@ public class SendEmptyListIntegrationTest extends AwsIntegrationTestBase {
     public void setup() {
         stackName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
         cf = CloudFormationClient.builder().standard()
-                                                   .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                                                   .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
                                                    .withRegion(Regions.US_WEST_2)
                                                    .build();
 

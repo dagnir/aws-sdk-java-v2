@@ -24,13 +24,20 @@ public class Constants {
 
     public static final String CUSTOMIZATION_CONFIG_FILE = "customization.config";
 
-    public static final String ASYNC_SUFFIX = "AsyncClient";
+    public static final String ASYNC_CLIENT_INTERFACE_NAME_PATTERN = "%sAsyncClient";
+    public static final String ASYNC_CLIENT_CLASS_NAME_PATTERN = "Default%sAsyncClient";
+    public static final String ASYNC_BUILDER_INTERFACE_NAME_PATTERN = "%sAsyncClientBuilder";
+    public static final String ASYNC_BUILDER_CLASS_NAME_PATTERN = "Default%sAsyncClientBuilder";
 
-    public static final String INTERFACE_NAME_SUFFIX = "Client";
+    public static final String SYNC_CLIENT_INTERFACE_NAME_PATTERN = "%sClient";
+    public static final String SYNC_CLIENT_CLASS_NAME_PATTERN = "Default%sClient";
+    public static final String SYNC_BUILDER_INTERFACE_NAME_PATTERN = "%sClientBuilder";
+    public static final String SYNC_BUILDER_CLASS_NAME_PATTERN = "Default%sClientBuilder";
 
-    public static final String CLIENT_NAME_PREFIX = "Default";
+    public static final String BASE_BUILDER_INTERFACE_NAME_PATTERN = "%sBaseClientBuilder";
+    public static final String BASE_BUILDER_CLASS_NAME_PATTERN = "Default%sBaseClientBuilder";
 
-    public static final String BASE_EXCEPTION_NAME_SUFFIX = "Exception";
+    public static final String BASE_EXCEPTION_NAME_PATTERN = "%sException";
 
     public static final String PROTOCOL_CONFIG_LOCATION = "/protocol-config/%s.json";
 

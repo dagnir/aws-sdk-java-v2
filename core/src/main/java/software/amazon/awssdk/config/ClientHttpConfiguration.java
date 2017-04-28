@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Configures the behavior of the AWS SDK HTTP client.
@@ -35,7 +37,8 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 @ReviewBeforeRelease("Configuration descriptions here are relatively short because it is expected that this will be "
                      + "heavily refactored for the pluggable HTTP layer. If that ends up not happening, these descriptions "
                      + "should be enhanced.")
-public final class ClientHttpConfiguration {
+public final class ClientHttpConfiguration
+        implements ToCopyableBuilder<ClientHttpConfiguration.Builder, ClientHttpConfiguration> {
     private final Map<String, List<String>> additionalHeaders;
     private final Boolean expectContinueEnabled;
 
@@ -52,6 +55,12 @@ public final class ClientHttpConfiguration {
      */
     public static Builder builder() {
         return new DefaultClientHttpConfigurationBuilder();
+    }
+
+    @Override
+    public ClientHttpConfiguration.Builder toBuilder() {
+        return builder().additionalHeaders(additionalHeaders())
+                        .expectContinueEnabled(expectContinueEnabled);
     }
 
     /**
@@ -94,7 +103,7 @@ public final class ClientHttpConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientHttpConfiguration> {
         /**
          * @see ClientHttpConfiguration#additionalHeaders().
          */
@@ -133,11 +142,6 @@ public final class ClientHttpConfiguration {
          * @see ClientHttpConfiguration#expectContinueEnabled()
          */
         Builder expectContinueEnabled(Boolean expectContinueEnabled);
-
-        /**
-         * Build a {@link ClientHttpConfiguration} from the values currently configured in this builder.
-         */
-        ClientHttpConfiguration build();
     }
 
     /**

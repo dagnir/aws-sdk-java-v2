@@ -29,7 +29,7 @@ public class ServiceCatalogIntegrationTest extends AwsIntegrationTestBase {
 
     @Before
     public void setUp() throws Exception {
-        serviceCatalog = ServiceCatalogClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        serviceCatalog = ServiceCatalogClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @Test

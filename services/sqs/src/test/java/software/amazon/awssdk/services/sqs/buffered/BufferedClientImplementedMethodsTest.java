@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.sqs.buffered;
 
+import java.lang.reflect.Modifier;
 import java.util.stream.Stream;
 import org.junit.Test;
 import software.amazon.awssdk.services.sqs.SQSAsyncClient;
@@ -24,12 +25,13 @@ public class BufferedClientImplementedMethodsTest {
     @Test
     public void allMethodsInAsyncClientInterfaceOverridenInBufferedClient() {
         Stream.of(SQSAsyncClient.class.getDeclaredMethods())
-                .forEach(m -> {
-                    try {
-                        SqsBufferedAsyncClient.class.getDeclaredMethod(m.getName(), (Class<?>[]) m.getParameterTypes());
-                    } catch (NoSuchMethodException e) {
-                        throw new AssertionError(m.getName() + " is not implemented by " + SqsBufferedAsyncClient.class);
-                    }
-                });
+              .filter(method -> !Modifier.isStatic(method.getModifiers()))
+              .forEach(m -> {
+                  try {
+                      SqsBufferedAsyncClient.class.getDeclaredMethod(m.getName(), (Class<?>[]) m.getParameterTypes());
+                  } catch (NoSuchMethodException e) {
+                      throw new AssertionError(m.getName() + " is not implemented by " + SqsBufferedAsyncClient.class);
+                  }
+              });
     }
 }

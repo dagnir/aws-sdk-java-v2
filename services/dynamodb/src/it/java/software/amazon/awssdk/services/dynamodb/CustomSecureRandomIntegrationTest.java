@@ -23,7 +23,7 @@ import java.security.SecureRandom;
 import org.junit.Test;
 import org.mockito.Mockito;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.services.dynamodb.document.DynamoDB;
+import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
@@ -33,8 +33,8 @@ public class CustomSecureRandomIntegrationTest extends AwsIntegrationTestBase {
     public void customSecureRandomConfigured_UsesCustomImplementation() {
         CustomSecureRandomImpl customSecureRandom = spy(new CustomSecureRandomImpl());
         DynamoDBClient ddb = DynamoDBClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withClientConfiguration(new LegacyClientConfiguration().withSecureRandom(customSecureRandom))
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .securityConfiguration(ClientSecurityConfiguration.builder().secureRandom(customSecureRandom).build())
                 .build();
 
         ddb.listTables(new ListTablesRequest());

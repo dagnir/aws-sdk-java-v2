@@ -99,8 +99,8 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
 
         client = MachineLearningClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(Regions.US_EAST_1)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Regions.US_EAST_1.getName())
                 .build();
     }
 

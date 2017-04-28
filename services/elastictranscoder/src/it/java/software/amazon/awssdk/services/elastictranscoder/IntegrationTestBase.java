@@ -32,8 +32,8 @@ public class IntegrationTestBase extends AwsTestBase {
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
-        ets = ElasticTranscoderClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        ets = ElasticTranscoderClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         s3 = new AmazonS3Client(credentials);
-        sns = SNSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

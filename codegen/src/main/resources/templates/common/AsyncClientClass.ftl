@@ -41,7 +41,7 @@ public class ${metadata.asyncClient} implements ${metadata.asyncInterface} {
      * @param asyncClientParams Object providing client parameters.
      */
     ${metadata.asyncClient}(AwsAsyncClientParams asyncClientParams) {
-        this.syncClient = ${metadata.syncInterface}Builder.standard().build((AwsSyncClientParams)asyncClientParams);
+        this.syncClient = new ${metadata.syncClient}(asyncClientParams);
         this.executor = asyncClientParams.getExecutor();
     }
 

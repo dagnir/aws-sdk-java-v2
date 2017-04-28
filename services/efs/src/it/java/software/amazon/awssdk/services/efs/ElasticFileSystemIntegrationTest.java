@@ -38,7 +38,7 @@ public class ElasticFileSystemIntegrationTest extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setupFixture() throws Exception {
-        client = EFSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_WEST_2).build();
+        client = EFSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_WEST_2.getName()).build();
     }
 
     @After

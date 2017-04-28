@@ -27,6 +27,6 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        client = WorkSpacesClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        client = WorkSpacesClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

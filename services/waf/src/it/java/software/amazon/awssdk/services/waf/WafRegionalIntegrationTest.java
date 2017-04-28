@@ -31,8 +31,8 @@ public class WafRegionalIntegrationTest extends AwsIntegrationTestBase {
     @Test(expected = WAFNonexistentItemException.class)
     public void smokeTest() {
         final WAFRegionalClient client = WAFRegionalClient.builder()
-                                                                 .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
-                                                                 .withRegion(Regions.US_WEST_2)
+                                                                 .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
+                                                                 .region(Regions.US_WEST_2.getName())
                                                                  .build();
 
         client.listResourcesForWebACL(new ListResourcesForWebACLRequest().withWebACLId("foo"));

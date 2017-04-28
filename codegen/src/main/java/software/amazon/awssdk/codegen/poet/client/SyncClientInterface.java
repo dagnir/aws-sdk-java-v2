@@ -75,20 +75,20 @@ public final class SyncClientInterface implements ClassSpec {
     }
 
     private MethodSpec builder() {
-        ClassName builder = ClassName.get(basePackage, model.getMetadata().getSyncInterface() + "Builder");
+        ClassName builderClass = ClassName.get(basePackage, model.getMetadata().getSyncBuilder());
+        ClassName builderInterface = ClassName.get(basePackage, model.getMetadata().getSyncBuilderInterface());
         return MethodSpec.methodBuilder("builder")
-                .returns(builder)
+                .returns(builderInterface)
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .addStatement("return $T.standard()", builder)
+                .addStatement("return new $T()", builderClass)
                 .build();
     }
 
     private MethodSpec create() {
-        ClassName builder = ClassName.get(basePackage, model.getMetadata().getSyncInterface() + "Builder");
         return MethodSpec.methodBuilder("create")
                 .returns(className)
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .addStatement("return $T.standard().build()", builder)
+                .addStatement("return builder().build()")
                 .build();
     }
 

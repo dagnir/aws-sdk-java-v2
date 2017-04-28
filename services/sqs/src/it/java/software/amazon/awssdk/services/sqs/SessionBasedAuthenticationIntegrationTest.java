@@ -16,7 +16,9 @@
 package software.amazon.awssdk.services.sqs;
 
 import org.junit.Test;
+import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
+import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.auth.StsSessionCredentialsProvider;
 
 /**
@@ -28,8 +30,9 @@ public class SessionBasedAuthenticationIntegrationTest extends IntegrationTestBa
     public void clientWithStsSessionCredentials_CanMakeCallsToSqs() throws Exception {
         setUpCredentials();
 
-        StsSessionCredentialsProvider sessionCredentials = new StsSessionCredentialsProvider(credentials);
-        SQSAsyncClient sqsClient = SQSAsyncClientBuilder.standard().withCredentials(sessionCredentials).build();
+        STSClient stsClient = STSClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        StsSessionCredentialsProvider sessionCredentials = new StsSessionCredentialsProvider(stsClient);
+        SQSAsyncClient sqsClient = SQSAsyncClient.builder().credentialsProvider(sessionCredentials).build();
         String queueUrl = createQueue(sqsClient);
         sqsClient.deleteQueue(new DeleteQueueRequest(queueUrl));
     }

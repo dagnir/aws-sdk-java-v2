@@ -17,11 +17,13 @@ package software.amazon.awssdk.protocol.reflect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
@@ -73,19 +75,11 @@ public class ClientReflector {
         try {
             // Reflectively create a builder, configure it, and then create the client.
             Object untypedBuilder = interfaceClass.getMethod("builder").invoke(null);
-
-            if (metadata.getProtocol() == Protocol.API_GATEWAY) {
-                SdkSyncClientBuilder<?, ?> builder = (SdkSyncClientBuilder<?, ?>) untypedBuilder;
-                builder.getClass()
-                       .getMethod("iamCredentials", AwsCredentialsProvider.class).invoke(builder, getMockCredentials());
-                builder.setEndpoint(getEndpoint());
-                return builder.build();
-            } else {
-                AwsClientBuilder<?, ?> builder = (AwsClientBuilder<?, ?>) untypedBuilder;
-                builder.setCredentials(getMockCredentials());
-                builder.setEndpointConfiguration(new EndpointConfiguration(getEndpoint(), "us-east-1"));
-                return builder.build();
-            }
+            ClientBuilder<?, ?> builder = (ClientBuilder<?, ?>) untypedBuilder;
+            return builder.credentialsProvider(getMockCredentials())
+                          .region("us-east-1")
+                          .endpointOverride(URI.create(getEndpoint()))
+                          .build();
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

@@ -86,7 +86,7 @@ public class MetricUnitTestBase {
     public static void setUp() throws Exception {
         cloudWatchClient = new CloudWatchTestClient();
         queue = new LinkedBlockingQueue<>(CloudWatchMetricConfig.DEFAULT_METRICS_QSIZE);
-        config = new CloudWatchMetricConfig().withQueuePollTimeoutMilli(QUEUE_TIMEOUT_MILLI);
+        config = new CloudWatchMetricConfig().withQueuePollTimeoutMilli(QUEUE_TIMEOUT_MILLI).withCloudWatchClient(cloudWatchClient);
         formQueueWithMetricData();
     }
 

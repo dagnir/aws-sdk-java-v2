@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,8 +46,8 @@ public class AccountIdDefaultValueTest {
     @Before
     public void setup() {
         glacier = GlacierClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(getEndpoint(), "us-west-2"))
+                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                .region("us-west-2").endpointOverride(URI.create(getEndpoint()))
                 .build();
     }
 

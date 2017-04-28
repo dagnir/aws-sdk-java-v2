@@ -38,8 +38,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     public void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
         route53 = Route53Client.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(Regions.US_EAST_1)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Regions.US_EAST_1.getName())
                 .build();
     }
 

@@ -41,7 +41,7 @@ public class AwsCodeCommitServiceIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws FileNotFoundException, IOException {
         setUpCredentials();
-        client = CodeCommitClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        client = CodeCommitClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
     @AfterClass

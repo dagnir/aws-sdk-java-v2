@@ -25,7 +25,7 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        ssm = SSMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        ssm = SSMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
 }

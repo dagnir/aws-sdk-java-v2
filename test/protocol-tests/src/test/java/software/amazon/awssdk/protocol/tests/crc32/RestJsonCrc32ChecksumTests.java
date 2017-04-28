@@ -23,6 +23,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -33,8 +34,8 @@ import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.config.ClientMarshallerConfiguration;
 import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesResult;
@@ -70,9 +71,10 @@ public class RestJsonCrc32ChecksumTests {
                 .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
                 .withBodyFile(JSON_BODY_GZIP)));
         ProtocolRestJsonCustomizedClient client = ProtocolRestJsonCustomizedClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         SimpleResult result = client.simple(new SimpleRequest());
@@ -87,9 +89,10 @@ public class RestJsonCrc32ChecksumTests {
                 .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
                 .withBodyFile(JSON_BODY_GZIP)));
         ProtocolRestJsonCustomizedClient client = ProtocolRestJsonCustomizedClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         client.simple(new SimpleRequest());
@@ -103,9 +106,10 @@ public class RestJsonCrc32ChecksumTests {
                 .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
                 .withBodyFile(JSON_BODY_GZIP)));
         ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         AllTypesResult result =
@@ -121,9 +125,10 @@ public class RestJsonCrc32ChecksumTests {
                 .withHeader("x-amz-crc32", JSON_BODY_GZIP_Crc32_CHECKSUM)
                 .withBodyFile(JSON_BODY_GZIP)));
         ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         client.allTypes(new AllTypesRequest());
@@ -136,9 +141,10 @@ public class RestJsonCrc32ChecksumTests {
                 .withHeader("x-amz-crc32", JSON_BODY_Crc32_CHECKSUM)
                 .withBody(JSON_BODY)));
         ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         AllTypesResult result =
@@ -154,9 +160,10 @@ public class RestJsonCrc32ChecksumTests {
                 .withBody(JSON_BODY)));
 
         ProtocolRestJsonClient client = ProtocolRestJsonClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         client.allTypes(new AllTypesRequest());

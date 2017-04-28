@@ -44,7 +44,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setupFixture() throws FileNotFoundException, IOException {
-        awsLogs = CloudWatchLogsClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        awsLogs = CloudWatchLogsClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /*

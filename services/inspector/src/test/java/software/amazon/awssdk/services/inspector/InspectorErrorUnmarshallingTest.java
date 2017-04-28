@@ -20,12 +20,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.services.inspector.model.AccessDeniedException;
 import software.amazon.awssdk.services.inspector.model.ListRulesPackagesRequest;
 
@@ -40,10 +40,10 @@ public class InspectorErrorUnmarshallingTest {
     public void setup() {
         AwsStaticCredentialsProvider credsProvider = new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid"));
         inspector = InspectorClient.builder()
-                .withCredentials(credsProvider)
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMock.port(), "us-east-1"))
-                .build();
+                                   .credentialsProvider(credsProvider)
+                                   .region("us-east-1")
+                                   .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
+                                   .build();
     }
 
     /**

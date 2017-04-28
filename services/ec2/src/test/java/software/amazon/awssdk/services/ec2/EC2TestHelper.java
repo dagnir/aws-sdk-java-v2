@@ -83,7 +83,7 @@ public class EC2TestHelper {
                 }
             }
 
-            EC2 = EC2Client.builder().withCredentials(new AwsStaticCredentialsProvider(CREDENTIALS)).build();
+            EC2 = EC2Client.builder().credentialsProvider(new AwsStaticCredentialsProvider(CREDENTIALS)).build();
         } catch (Exception exception) {
             // Ignored or expected.
         }

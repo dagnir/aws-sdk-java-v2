@@ -29,7 +29,6 @@ import java.nio.ByteBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
-import software.amazon.awssdk.services.lambda.LambdaAsyncClientBuilder;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResult;
@@ -60,7 +59,7 @@ import software.amazon.awssdk.util.StringUtils;
  * }
  * LambdaFunctions functions = LambdaInvokerFactory.builder()
  *                             .lambdaClient(AWSLambdaSyncClientBuilder.standard()
- *                                  .withCredentials(new ProfileCredentialsProvider("myprofile"))
+ *                                  .credentialsProvider(new ProfileCredentialsProvider("myprofile"))
  *                                  .build())
  *                             .build(LambdaFunctions.class);
  * Request request = new Request(...);
@@ -160,8 +159,7 @@ public final class LambdaInvokerFactory {
         }
 
         /**
-         * Sets the client to use to call AWS Lambda. If not set a default client is used (see {@link
-         * LambdaAsyncClientBuilder#defaultClient()}).
+         * Sets the client to use to call AWS Lambda. If not set a default client is used.
          *
          * @param lambda Client instance to use.
          * @return This current object for method chaining.
@@ -172,7 +170,7 @@ public final class LambdaInvokerFactory {
         }
 
         private LambdaAsyncClient resolveLambdaClient() {
-            return lambda == null ? LambdaAsyncClientBuilder.defaultClient() : lambda;
+            return lambda == null ? LambdaAsyncClient.builder().build() : lambda;
         }
 
         /**

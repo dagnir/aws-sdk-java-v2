@@ -18,6 +18,8 @@ package software.amazon.awssdk.config;
 import java.net.InetAddress;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Configures the low-level IP layer behavior of the AWS SDK client.
@@ -27,7 +29,8 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 @ReviewBeforeRelease("Configuration descriptions here are relatively short because it is expected that this will be "
                      + "heavily refactored for the pluggable HTTP layer. If that ends up not happening, these descriptions "
                      + "should be enhanced.")
-public final class ClientIpConfiguration {
+public final class ClientIpConfiguration
+        implements ToCopyableBuilder<ClientIpConfiguration.Builder, ClientIpConfiguration> {
     private final InetAddress localAddress;
 
     /**
@@ -44,6 +47,11 @@ public final class ClientIpConfiguration {
         return new DefaultClientIpConfigurationBuilder();
     }
 
+    @Override
+    public ClientIpConfiguration.Builder toBuilder() {
+        return builder().localAddress(localAddress);
+    }
+
     /**
      * The local address that the AWS client should use for communication.
      *
@@ -58,7 +66,7 @@ public final class ClientIpConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientIpConfiguration> {
         /**
          * @see ClientIpConfiguration#localAddress().
          */
@@ -70,11 +78,6 @@ public final class ClientIpConfiguration {
          * @see ClientIpConfiguration#localAddress()
          */
         Builder localAddress(InetAddress localAddress);
-
-        /**
-         * Build a {@link ClientIpConfiguration} from the values currently configured in this builder.
-         */
-        ClientIpConfiguration build();
     }
 
     /**

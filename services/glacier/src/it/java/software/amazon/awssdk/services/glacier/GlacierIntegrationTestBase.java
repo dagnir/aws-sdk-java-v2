@@ -48,7 +48,7 @@ public class GlacierIntegrationTestBase extends AwsTestBase {
 
     protected void initializeClient() throws Exception {
         setUpCredentials();
-        glacier = GlacierClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        glacier = GlacierClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }
 

@@ -33,8 +33,8 @@ public class S3LinkTest {
     public void setUp() {
         AwsCredentials credentials = new BasicAwsCredentials("mock", "mock");
         DynamoDBClient db = DynamoDBClient.builder()
-                                          .withCredentials(new AwsStaticCredentialsProvider(credentials))
-                                          .withRegion(Regions.US_WEST_2)
+                                          .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
+                                          .region(Regions.US_WEST_2.getName())
                                           .build();
         mapper = new DynamoDBMapper(db, new AwsStaticCredentialsProvider(credentials));
     }

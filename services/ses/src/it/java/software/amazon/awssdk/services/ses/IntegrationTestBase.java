@@ -53,7 +53,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
             SOURCE = DESTINATION;
         }
 
-        email = SESClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        email = SESClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     protected static void sendVerificationEmail() {

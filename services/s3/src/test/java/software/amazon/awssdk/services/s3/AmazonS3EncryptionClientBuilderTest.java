@@ -32,14 +32,14 @@ public class AmazonS3EncryptionClientBuilderTest {
         KMSClient kmsClient = mock(KMSClient.class);
         LegacyClientConfiguration clientConfig = new LegacyClientConfiguration();
 
-        AmazonS3EncryptionClientBuilder.standard()
-                                       .withCryptoConfiguration(cryptoConfig)
-                                       .withRegion("us-west-1")
-                                       .withEncryptionMaterials(encryptionMaterials)
-                                       .withKmsClient(kmsClient)
-                                       .withPathStyleAccessEnabled(true)
-                                       .withClientConfiguration(clientConfig)
-                                       .build();
+        AmazonS3EncryptionClient.encryptionBuilder()
+                                .withCryptoConfiguration(cryptoConfig)
+                                .withRegion("us-west-1")
+                                .withEncryptionMaterials(encryptionMaterials)
+                                .withKmsClient(kmsClient)
+                                .withPathStyleAccessEnabled(true)
+                                .withClientConfiguration(clientConfig)
+                                .build();
     }
 
 }

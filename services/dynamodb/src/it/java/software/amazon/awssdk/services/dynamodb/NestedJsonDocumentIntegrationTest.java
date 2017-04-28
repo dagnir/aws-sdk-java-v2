@@ -58,7 +58,7 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         ddb.createTable(new CreateTableRequest()
                 .withTableName(TABLE)

@@ -21,7 +21,7 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
- * An interface that represents all configuration required by an async AWS client in order to operate. Async AWS clients accept
+ * An interface that represents configuration only required by an async AWS client in order to operate. Async AWS clients accept
  * implementations of this interface when constructed.
  *
  * <p>Implementations of this interface are not necessarily immutable or thread safe. If thread safety is required, consider
@@ -33,5 +33,5 @@ public interface AsyncClientConfiguration extends ClientConfiguration {
      * The executor service that should be used to execute the asynchronous AWS client invocations.
      */
     @ReviewBeforeRelease("When we switch to use NIO, this configuration will likely change.")
-    Optional<ExecutorService> asyncExecutorService();
+    ExecutorService asyncExecutorService();
 }

@@ -132,10 +132,6 @@ public class MetricCollectorSupport extends MetricCollector {
         return config;
     }
 
-    public CloudWatchClient getCloudwatchClient() {
-        return uploaderThread == null ? null : uploaderThread.getCloudwatchClient();
-    }
-
     /** Always returns true. */
     @Override
     public final boolean isEnabled() {

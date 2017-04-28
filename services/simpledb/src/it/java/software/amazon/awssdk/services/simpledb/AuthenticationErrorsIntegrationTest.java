@@ -39,7 +39,7 @@ public class AuthenticationErrorsIntegrationTest extends IntegrationTestBase {
     @Test
     public void testInvalidClientTokenId() {
         SimpleDBClient client = SimpleDBClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
                 .build();
 
         try {
@@ -60,7 +60,7 @@ public class AuthenticationErrorsIntegrationTest extends IntegrationTestBase {
     public void testSignatureDoesNotMatch() {
         String accessKey = credentials.getAwsAccessKeyId();
         SimpleDBClient client = SimpleDBClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials(accessKey, "skid")))
+                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials(accessKey, "skid")))
                 .build();
         try {
             client.listDomains(new ListDomainsRequest());

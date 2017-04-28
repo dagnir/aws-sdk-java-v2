@@ -45,7 +45,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        cloudfront = CloudFrontClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        cloudfront = CloudFrontClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
         s3 = new AmazonS3Client(credentials);
     }
 

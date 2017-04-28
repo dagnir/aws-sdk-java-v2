@@ -43,9 +43,9 @@ public class WildcardCertIntegrationTest extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setup() {
-        S3 = AmazonS3ClientBuilder.standard()
+        S3 = AmazonS3Client.builder()
                                   .withRegion(Regions.US_WEST_2)
-                                  .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                                  .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
                                   .build();
         S3.createBucket(BUCKET_NAME);
     }

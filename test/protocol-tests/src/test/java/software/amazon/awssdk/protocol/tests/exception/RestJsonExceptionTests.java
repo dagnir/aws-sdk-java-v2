@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Rule;
@@ -53,9 +54,9 @@ public class RestJsonExceptionTests {
     @Before
     public void setupClient() {
         client = ProtocolRestJsonClient.builder()
-                                       .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                       .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
-                                                                                            "us-east-1"))
+                                       .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                       .region("us-east-1")
+                                       .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                        .build();
     }
 

@@ -30,6 +30,8 @@ import software.amazon.awssdk.metrics.spi.TimingInfo;
  * <p>
  * Note {@link TimingInfo} is accessible via {@link Request#getAwsRequestMetrics()} and hence is
  * omitted from the interface to reduce duplication by design.
+ * <p>
+ * TODO: This shouldn't be coupled to AWS-specific concepts
  */
 public abstract class RequestHandler2 implements IRequestHandler2 {
 

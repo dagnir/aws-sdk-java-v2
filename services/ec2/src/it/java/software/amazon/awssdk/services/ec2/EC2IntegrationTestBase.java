@@ -70,7 +70,7 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setupClients() throws IOException {
-        ec2 = EC2Client.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
+        ec2 = EC2Client.builder().credentialsProvider(new AwsStaticCredentialsProvider(getCredentials())).build();
     }
 
     /**

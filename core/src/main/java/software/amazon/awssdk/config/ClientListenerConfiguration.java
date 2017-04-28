@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.handlers.RequestHandler2;
 
 /**
@@ -26,7 +28,8 @@ import software.amazon.awssdk.handlers.RequestHandler2;
  *
  * <p>All implementations of this interface must be immutable and thread safe.</p>
  */
-public final class ClientListenerConfiguration {
+public final class ClientListenerConfiguration
+        implements ToCopyableBuilder<ClientListenerConfiguration.Builder, ClientListenerConfiguration> {
     private final List<RequestHandler2> requestListeners;
 
     /**
@@ -41,6 +44,11 @@ public final class ClientListenerConfiguration {
      */
     public static Builder builder() {
         return new DefaultClientListenerConfigurationBuilder();
+    }
+
+    @Override
+    public ClientListenerConfiguration.Builder toBuilder() {
+        return builder().requestListeners(requestListeners);
     }
 
     /**
@@ -60,7 +68,7 @@ public final class ClientListenerConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientListenerConfiguration> {
         /**
          * @see ClientListenerConfiguration#requestListeners().
          */
@@ -81,11 +89,6 @@ public final class ClientListenerConfiguration {
          * @see ClientListenerConfiguration#requestListeners()
          */
         Builder addRequestListener(RequestHandler2 requestListener);
-
-        /**
-         * Build a {@link ClientListenerConfiguration} from the values currently configured in this builder.
-         */
-        ClientListenerConfiguration build();
     }
 
     /**

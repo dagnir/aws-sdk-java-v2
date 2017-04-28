@@ -417,7 +417,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         SDKGlobalTime.setGlobalTimeOffset(3600);
         // Need to create a new client to have the time offset take affect
         CloudFormationClient clockSkewClient = CloudFormationClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
         clockSkewClient.describeStacks(new DescribeStacksRequest());
         assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
     }

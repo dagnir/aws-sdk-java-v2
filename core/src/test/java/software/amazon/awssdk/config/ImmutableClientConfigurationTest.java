@@ -23,7 +23,6 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.junit.Test;
@@ -42,6 +41,7 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 /**
  * Validate the functionality of {@link ImmutableClientConfiguration}.
  */
+@SuppressWarnings("deprecation") // Intentional use of deprecated class
 public class ImmutableClientConfigurationTest {
     private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -78,9 +78,6 @@ public class ImmutableClientConfigurationTest {
                                            .withUserAgentSuffix("userAgentSuffix")
                                            .withSecureRandom(SECURE_RANDOM)
                                            .withRetryPolicy(RETRY_POLICY)
-                                           .withThrottledRetries(true)
-                                           .withMaxErrorRetry(10)
-                                           .withMaxConsecutiveRetriesBeforeThrottling(11)
                                            .withProtocol(Protocol.HTTPS);
 
     private static final AwsSyncClientParams EXPECT_SYNC_CLIENT_PARAMS = new AwsSyncClientParams() {
@@ -153,21 +150,19 @@ public class ImmutableClientConfigurationTest {
     };
 
     @Test
-    public void legacyConfigurationTranslationShouldBeCorrect() {
-        ImmutableClientConfiguration config = new ImmutableClientConfiguration(new InitializedConfiguration()) {};
-        assertLegacyConfigurationMatches(EXPECTED_LEGACY_CONFIGURATION, config.asLegacyConfiguration());
-    }
-
-    @Test
     public void syncParamsTranslationShouldBeCorrect() {
         ImmutableSyncClientConfiguration config = new ImmutableSyncClientConfiguration(new InitializedSyncConfiguration());
-        assertSyncParamsMatch(EXPECT_SYNC_CLIENT_PARAMS, config.asLegacySyncClientParams());
+        AwsSyncClientParams legacySyncParams = config.asLegacySyncClientParams();
+        assertSyncParamsMatch(EXPECT_SYNC_CLIENT_PARAMS, legacySyncParams);
+        assertLegacyConfigurationMatches(EXPECTED_LEGACY_CONFIGURATION, legacySyncParams.getClientConfiguration());
     }
 
     @Test
     public void asyncParamsTranslationShouldBeCorrect() {
         ImmutableAsyncClientConfiguration config = new ImmutableAsyncClientConfiguration(new InitializedAsyncConfiguration());
-        assertAsyncParamsMatch(EXPECT_ASYNC_CLIENT_PARAMS, config.toLegacyAsyncClientParams());
+        AwsAsyncClientParams legacyAsyncParams = config.asLegacyAsyncClientParams();
+        assertAsyncParamsMatch(EXPECT_ASYNC_CLIENT_PARAMS, legacyAsyncParams);
+        assertLegacyConfigurationMatches(EXPECTED_LEGACY_CONFIGURATION, legacyAsyncParams.getClientConfiguration());
     }
 
     public void assertAsyncParamsMatch(AwsAsyncClientParams expected, AwsAsyncClientParams given) {
@@ -195,8 +190,8 @@ public class ImmutableClientConfigurationTest {
 
     private static class InitializedAsyncConfiguration extends InitializedConfiguration implements AsyncClientConfiguration {
         @Override
-        public Optional<ExecutorService> asyncExecutorService() {
-            return Optional.of(EXECUTOR_SERVICE);
+        public ExecutorService asyncExecutorService() {
+            return EXECUTOR_SERVICE;
         }
     }
 
@@ -281,9 +276,6 @@ public class ImmutableClientConfigurationTest {
         public ClientRetryConfiguration retryConfiguration() {
             return ClientRetryConfiguration.builder()
                                            .retryPolicy(RETRY_POLICY)
-                                           .retryThrottlingEnabled(true)
-                                           .maxRetries(10)
-                                           .maxRetriesBeforeThrottling(11)
                                            .build();
         }
 
@@ -295,13 +287,13 @@ public class ImmutableClientConfigurationTest {
         }
 
         @Override
-        public Optional<AwsCredentialsProvider> credentialsProvider() {
-            return Optional.of(CREDENTIALS_PROVIDER);
+        public AwsCredentialsProvider credentialsProvider() {
+            return CREDENTIALS_PROVIDER;
         }
 
         @Override
-        public Optional<URI> endpoint() {
-            return Optional.of(ENDPOINT);
+        public URI endpoint() {
+            return ENDPOINT;
         }
     }
 }

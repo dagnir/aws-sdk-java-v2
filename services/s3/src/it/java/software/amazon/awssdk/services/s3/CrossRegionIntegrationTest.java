@@ -200,9 +200,9 @@ public class CrossRegionIntegrationTest extends AWSIntegrationTestBase {
      * Create a client using the client builder, the provided region and cross-region functionality flag.
      */
     private static AmazonS3 createClientWithBuilder(Regions region, boolean enableGlobalBucketAccess) {
-        return AmazonS3ClientBuilder.standard()
+        return AmazonS3Client.builder()
                                     .withRegion(region)
-                                    .withCredentials(new AWSStaticCredentialsProvider(getCredentials()))
+                                    .credentialsProvider(new AWSStaticCredentialsProvider(getCredentials()))
                                     .withForceGlobalBucketAccessEnabled(enableGlobalBucketAccess)
                                     .build();
     }

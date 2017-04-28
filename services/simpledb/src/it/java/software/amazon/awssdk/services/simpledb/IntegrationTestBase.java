@@ -73,8 +73,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException, Exception {
         setUpCredentials();
-        sdb = SimpleDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
-        sdbAsync = SimpleDBAsyncClientBuilder.standard().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        sdb = SimpleDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        sdbAsync = SimpleDBAsyncClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /**

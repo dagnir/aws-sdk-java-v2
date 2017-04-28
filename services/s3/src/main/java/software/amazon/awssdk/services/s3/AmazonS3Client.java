@@ -53,7 +53,6 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
@@ -968,13 +967,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                 request.addParameter(ResponseHeaderOverrides.RESPONSE_HEADER_EXPIRES, responseHeaders.getExpires());
             }
         }
-    }
-
-    private static String getProtocol(Request<?> request) {
-        if (request == null || request.getEndpoint() == null) {
-            return null;
-        }
-        return request.getEndpoint().getScheme();
     }
 
     private void init() {

@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.utils.Validate;
 
 /**
@@ -30,7 +32,8 @@ import software.amazon.awssdk.utils.Validate;
  *
  * <p>All implementations of this interface must be immutable and thread safe.</p>
  */
-public final class ClientHttpProxyConfiguration {
+public final class ClientHttpProxyConfiguration
+        implements ToCopyableBuilder<ClientHttpProxyConfiguration.Builder, ClientHttpProxyConfiguration> {
     private final URI endpoint;
     private final String username;
     private final String password;
@@ -57,6 +60,17 @@ public final class ClientHttpProxyConfiguration {
      */
     public static Builder builder() {
         return new DefaultClientProxyConfigurationBuilder();
+    }
+
+    @Override
+    public ClientHttpProxyConfiguration.Builder toBuilder() {
+        return builder().endpoint(endpoint)
+                        .username(username)
+                        .password(password)
+                        .ntlmDomain(ntlmDomain)
+                        .ntlmWorkstation(ntlmWorkstation)
+                        .nonProxyHosts(nonProxyHosts)
+                        .preemptiveBasicAuthenticationEnabled(preemptiveBasicAuthenticationEnabled);
     }
 
     /**
@@ -127,7 +141,7 @@ public final class ClientHttpProxyConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientHttpProxyConfiguration> {
 
         /**
          * @see ClientHttpProxyConfiguration#endpoint().
@@ -221,11 +235,6 @@ public final class ClientHttpProxyConfiguration {
          * @see ClientHttpProxyConfiguration#preemptiveBasicAuthenticationEnabled()
          */
         Builder preemptiveBasicAuthenticationEnabled(Boolean preemptiveBasicAuthenticationEnabled);
-
-        /**
-         * Build a {@link ClientHttpProxyConfiguration} from the values currently configured in this builder.
-         */
-        ClientHttpProxyConfiguration build();
     }
 
     /**

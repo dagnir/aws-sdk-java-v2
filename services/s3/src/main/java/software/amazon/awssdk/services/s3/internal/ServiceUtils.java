@@ -44,7 +44,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectMetadataRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
 import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.Md5Utils;

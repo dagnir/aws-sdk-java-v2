@@ -18,6 +18,7 @@ package software.amazon.awssdk.codegen.model.intermediate;
 import static software.amazon.awssdk.codegen.internal.Constants.SMOKE_TESTS_DIR_NAME;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.protocol.ProtocolMetadataProvider;
 
 
@@ -44,9 +45,21 @@ public class Metadata {
 
     private String syncClient;
 
+    private String syncBuilderInterface;
+
+    private String syncBuilder;
+
     private String asyncInterface;
 
     private String asyncClient;
+
+    private String asyncBuilderInterface;
+
+    private String asyncBuilder;
+
+    private String baseBuilderInterface;
+
+    private String baseBuilder;
 
     private String packageName;
 
@@ -73,6 +86,8 @@ public class Metadata {
     private boolean requiresApiKey;
 
     private String uid;
+
+    private AuthType authType;
 
     public String getApiVersion() {
         return apiVersion;
@@ -207,6 +222,32 @@ public class Metadata {
         return this;
     }
 
+    public String getSyncBuilderInterface() {
+        return syncBuilderInterface;
+    }
+
+    public void setSyncBuilderInterface(String syncBuilderInterface) {
+        this.syncBuilderInterface = syncBuilderInterface;
+    }
+
+    public Metadata withSyncBuilderInterface(String syncBuilderInterface) {
+        this.syncBuilderInterface = syncBuilderInterface;
+        return this;
+    }
+
+    public String getSyncBuilder() {
+        return syncBuilder;
+    }
+
+    public void setSyncBuilder(String syncBuilder) {
+        this.syncBuilder = syncBuilder;
+    }
+
+    public Metadata withSyncBuilder(String syncBuilder) {
+        this.syncBuilder = syncBuilder;
+        return this;
+    }
+
     public String getAsyncInterface() {
         return asyncInterface;
     }
@@ -238,18 +279,56 @@ public class Metadata {
         return this;
     }
 
-    /**
-     * @return The class name for the fluent sync client builder.
-     */
-    public String getSyncClientBuilderClassName() {
-        return syncInterface + "Builder";
+    public String getAsyncBuilderInterface() {
+        return asyncBuilderInterface;
     }
 
-    /**
-     * @return The class name for the fluent async client builder.
-     */
-    public String getAsyncClientBuilderClassName() {
-        return asyncInterface + "Builder";
+    public void setAsyncBuilderInterface(String asyncBuilderInterface) {
+        this.asyncBuilderInterface = asyncBuilderInterface;
+    }
+
+    public Metadata withAsyncBuilderInterface(String asyncBuilderInterface) {
+        this.asyncBuilderInterface = asyncBuilderInterface;
+        return this;
+    }
+
+    public String getBaseBuilderInterface() {
+        return baseBuilderInterface;
+    }
+
+    public void setBaseBuilderInterface(String baseBuilderInterface) {
+        this.baseBuilderInterface = baseBuilderInterface;
+    }
+
+    public Metadata withBaseBuilderInterface(String baseBuilderInterface) {
+        this.baseBuilderInterface = baseBuilderInterface;
+        return this;
+    }
+
+    public String getBaseBuilder() {
+        return baseBuilder;
+    }
+
+    public void setBaseBuilder(String baseBuilder) {
+        this.baseBuilder = baseBuilder;
+    }
+
+    public Metadata withBaseBuilder(String baseBuilder) {
+        this.baseBuilder = baseBuilder;
+        return this;
+    }
+
+    public String getAsyncBuilder() {
+        return asyncBuilder;
+    }
+
+    public void setAsyncBuilder(String asyncBuilder) {
+        this.asyncBuilder = asyncBuilder;
+    }
+
+    public Metadata withAsyncBuilder(String asyncBuilder) {
+        this.asyncBuilder = asyncBuilder;
+        return this;
     }
 
     public String getBaseExceptionName() {
@@ -488,6 +567,19 @@ public class Metadata {
 
     public Metadata withUid(String uid) {
         setUid(uid);
+        return this;
+    }
+
+    public AuthType getAuthType() {
+        return authType;
+    }
+
+    public void setAuthType(AuthType authType) {
+        this.authType = authType;
+    }
+
+    public Metadata withAuthType(AuthType authType) {
+        this.authType = authType;
         return this;
     }
 }

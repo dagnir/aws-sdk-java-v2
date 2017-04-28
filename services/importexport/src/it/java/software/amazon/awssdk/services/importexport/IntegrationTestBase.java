@@ -40,7 +40,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        ie = ImportExportClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        ie = ImportExportClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         s3 = new AmazonS3Client(credentials);
     }
 

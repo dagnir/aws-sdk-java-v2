@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.codedeploy;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.test.AwsTestBase;
 
@@ -34,6 +33,6 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        codeDeploy = CodeDeployClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        codeDeploy = CodeDeployClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

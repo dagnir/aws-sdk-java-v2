@@ -21,7 +21,11 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
@@ -74,6 +78,25 @@ public final class PoetUtils {
 
     public static TypeSpec.Builder createClassBuilder(ClassName name) {
         return TypeSpec.classBuilder(name).addAnnotation(GENERATED).addModifiers(Modifier.PUBLIC);
+    }
+
+    public static ParameterizedTypeName createParameterizedTypeName(ClassName className, String... typeVariables) {
+        TypeName[] typeParameters = Arrays.stream(typeVariables).map(TypeVariableName::get).toArray(TypeName[]::new);
+        return ParameterizedTypeName.get(className, typeParameters);
+    }
+
+    public static ParameterizedTypeName createParameterizedTypeName(Class<?> clazz, String... typeVariables) {
+        return createParameterizedTypeName(ClassName.get(clazz), typeVariables);
+    }
+
+    public static TypeVariableName createBoundedTypeVariableName(String parameterName, ClassName upperBound,
+                                                                 String... typeVariables) {
+        return TypeVariableName.get(parameterName, createParameterizedTypeName(upperBound, typeVariables));
+    }
+
+    public static TypeVariableName createBoundedTypeVariableName(String parameterName, Class<?> upperBound,
+                                                                 String... typeVariables) {
+        return createBoundedTypeVariableName(parameterName, ClassName.get(upperBound), typeVariables);
     }
 
     public static ClassName getModelClass(String basePackageDir, String className) {

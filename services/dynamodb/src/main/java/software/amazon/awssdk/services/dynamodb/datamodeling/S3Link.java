@@ -38,7 +38,6 @@ import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectInputStream;
 import software.amazon.awssdk.services.s3.model.SetObjectAclRequest;
-import software.amazon.awssdk.services.s3.transfer.TransferManager;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**
@@ -190,10 +189,6 @@ public class S3Link {
 
     public AmazonS3 getAmazonS3Client() {
         return s3cc.getClient(getRegion());
-    }
-
-    public TransferManager getTransferManager() {
-        return s3cc.getTransferManager(getRegion());
     }
 
     /**

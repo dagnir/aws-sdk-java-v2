@@ -17,10 +17,17 @@ package software.amazon.awssdk.codegen.model.service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Arrays;
+import software.amazon.awssdk.utils.StringUtils;
 
 public enum AuthType {
 
-    NONE("none"), CUSTOM("custom"), IAM("iam");
+    NONE("none"),
+    CUSTOM("custom"),
+    IAM("iam"),
+    V2("v2"),
+    V3("v3"),
+    V3_HTTPS("v3https"),
+    V4("v4");
 
     private final String value;
 
@@ -30,9 +37,10 @@ public enum AuthType {
 
     @JsonCreator
     public static AuthType fromValue(String value) {
+        String normalizedValue = StringUtils.lowerCase(value);
         return Arrays.stream(values())
-                     .filter(authType -> authType.value.equals(value))
+                     .filter(authType -> authType.value.equals(normalizedValue))
                      .findFirst()
-                     .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown AuthType '%s'", value)));
+                     .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown AuthType '%s'", normalizedValue)));
     }
 }

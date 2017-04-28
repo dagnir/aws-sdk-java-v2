@@ -31,10 +31,10 @@ public class GetUrlTest {
 
     @Before
     public void setup() {
-        s3 = AmazonS3ClientBuilder.standard()
-                                  .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                  .withRegion(Regions.US_WEST_2)
-                                  .build();
+        s3 = AmazonS3Client.builder()
+                           .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                           .withRegion(Regions.US_WEST_2)
+                           .build();
     }
 
     @Test

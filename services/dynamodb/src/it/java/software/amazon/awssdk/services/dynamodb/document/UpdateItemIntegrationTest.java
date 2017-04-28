@@ -59,7 +59,7 @@ public class UpdateItemIntegrationTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        DynamoDBClient client = DynamoDBClient.builder().withCredentials(
+        DynamoDBClient client = DynamoDBClient.builder().credentialsProvider(
                 new PropertiesFileCredentialsProvider(
                         System.getProperty("user.home") + CREDENTIALS_FILE_SUFFIX)).build();
         dynamoDb = new DynamoDB(client);

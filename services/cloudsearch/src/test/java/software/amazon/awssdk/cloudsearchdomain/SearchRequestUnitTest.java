@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,10 +49,10 @@ public class SearchRequestUnitTest {
     @Before
     public void testSetup() {
         searchClient = CloudSearchDomainClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(CREDENTIALS))
-                .withEndpointConfiguration(
-                        new AwsClientBuilder.EndpointConfiguration("http://localhost:" + wireMockRule.port(), "us-east-1"))
-                .build();
+                                              .credentialsProvider(new AwsStaticCredentialsProvider(CREDENTIALS))
+                                              .region("us-east-1")
+                                              .endpointOverride(URI.create("http://localhost:" + wireMockRule.port()))
+                                              .build();
     }
 
     /**

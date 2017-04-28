@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.devicefarm;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
@@ -40,7 +39,7 @@ public class DeviceFarmIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = DeviceFarmClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        client = DeviceFarmClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
     @Test

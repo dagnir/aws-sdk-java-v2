@@ -16,7 +16,6 @@
 package software.amazon.awssdk.config;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
 import software.amazon.awssdk.LegacyClientConfiguration;
@@ -24,6 +23,7 @@ import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.utils.Validate;
 
 /**
  * An implementation of {@link ClientConfiguration} that is guaranteed to be immutable and thread-safe.
@@ -58,9 +58,59 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         this.securityConfiguration = configuration.securityConfiguration();
         this.retryConfiguration = configuration.retryConfiguration();
         this.listenerConfiguration = configuration.listenerConfiguration();
-        this.credentialsProvider = require(configuration.credentialsProvider());
-        this.endpoint = require(configuration.endpoint());
+        this.credentialsProvider = configuration.credentialsProvider();
+        this.endpoint = configuration.endpoint();
+
+        validate();
+
         this.legacyConfiguration = initializeLegacyConfiguration();
+    }
+
+    /**
+     * Validate that the provided optional is present, raising an exception if it is not.
+     */
+    protected final <T> T requireField(String field, Optional<T> requiredConfiguration) {
+        return requiredConfiguration.orElseThrow(() ->
+                new IllegalStateException(String.format("The '%s' must be configured in the client builder.", field)));
+    }
+
+    /**
+     * Validate that the provided optional is present, raising an exception if it is not.
+     */
+    protected final <T> T requireField(String field, T requiredConfiguration) {
+        return Validate.notNull(requiredConfiguration, "The '%s' must be configured in the client builder.", field);
+    }
+
+    /**
+     * Validate the contents of this configuration to ensure it includes all of the required fields.
+     */
+    private void validate() {
+        // Ensure they have configured something that allows us to derive the endpoint
+        Validate.validState(endpoint() != null, "The endpoint could not be determined.");
+
+        // Ensure they have configured some combination of timeouts that guarantees a single HTTP request cannot run indefinitely.
+        // We can't guarantee their retry policy won't retry forever.
+        boolean threadEnforcedTimeoutsDefined = timeoutConfiguration().httpRequestTimeout().isPresent()
+                                                || timeoutConfiguration().totalExecutionTimeout().isPresent();
+        boolean transmissionEnforcedTimeoutsDefined = timeoutConfiguration().connectionTimeout().isPresent()
+                                                      && timeoutConfiguration().socketTimeout().isPresent();
+        Validate.validState(threadEnforcedTimeoutsDefined || transmissionEnforcedTimeoutsDefined,
+                            "Valid request timeouts could not be determined. Please specify the connection timeout and socket "
+                            + "timeout or one of the thread-enforced timeouts, either HTTP request or total execution.");
+
+        requireField("securityConfiguration.signerProvider", securityConfiguration().signerProvider());
+        requireField("credentialsProvider", credentialsProvider());
+        requireField("httpConfiguration.expectContinueEnabled", httpConfiguration().expectContinueEnabled());
+        requireField("marshallerConfiguration.gzipEnabled", marshallerConfiguration().gzipEnabled());
+        requireField("metricsConfiguration.requestMetricCollector", metricsConfiguration().requestMetricCollector());
+        requireField("metricsConfiguration.userAgentPrefix", metricsConfiguration().userAgentPrefix());
+        requireField("metricsConfiguration.userAgentSuffix", metricsConfiguration().userAgentSuffix());
+        requireField("retryConfiguration.retryPolicy", retryConfiguration().retryPolicy());
+        requireField("securityConfiguration.secureRandom", securityConfiguration().secureRandom());
+        requireField("tcpConfiguration.connectionMaxIdleTime", tcpConfiguration().connectionMaxIdleTime());
+        requireField("tcpConfiguration.connectionValidationFrequency", tcpConfiguration().connectionValidationFrequency());
+        requireField("tcpConfiguration.maxConnections", tcpConfiguration().maxConnections());
+        requireField("tcpConfiguration.tcpKeepaliveEnabled", tcpConfiguration().tcpKeepaliveEnabled());
     }
 
     @Override
@@ -114,13 +164,13 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
     }
 
     @Override
-    public Optional<AwsCredentialsProvider> credentialsProvider() {
-        return Optional.ofNullable(credentialsProvider);
+    public AwsCredentialsProvider credentialsProvider() {
+        return credentialsProvider;
     }
 
     @Override
-    public Optional<URI> endpoint() {
-        return Optional.ofNullable(endpoint);
+    public URI endpoint() {
+        return endpoint;
     }
 
     /**
@@ -132,6 +182,9 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         return this.legacyConfiguration;
     }
 
+    /**
+     * Convert this client configuration to a {@link LegacyClientConfiguration}.
+     */
     private LegacyClientConfiguration initializeLegacyConfiguration() {
         LegacyClientConfiguration configuration = new LegacyClientConfiguration();
 
@@ -145,13 +198,13 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         copySecurityConfiguration(configuration, securityConfiguration());
         copyRetryConfiguration(configuration, retryConfiguration());
 
-        configuration.setProtocol(require(endpoint().map(URI::getScheme).flatMap(this::schemeToProtocol)));
+        configuration.setProtocol(schemeToProtocol(endpoint().getScheme()).orElse(Protocol.HTTPS));
 
         return configuration;
     }
 
     private void copyHttpConfiguration(LegacyClientConfiguration configuration, ClientHttpConfiguration httpConfiguration) {
-        configuration.setUseExpectContinue(require(httpConfiguration.expectContinueEnabled()));
+        httpConfiguration.expectContinueEnabled().ifPresent(configuration::setUseExpectContinue);
 
         httpConfiguration.additionalHeaders().forEach((header, values) -> {
             if (values.size() > 1) {
@@ -164,71 +217,66 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
     private void copyHttpProxyConfiguration(LegacyClientConfiguration configuration,
                                             ClientHttpProxyConfiguration proxyConfiguration) {
         configuration.setNonProxyHosts(String.join("|", proxyConfiguration.nonProxyHosts()));
-        configuration.setPreemptiveBasicProxyAuth(require(proxyConfiguration.preemptiveBasicAuthenticationEnabled()));
-        configuration.setProxyDomain(require(proxyConfiguration.ntlmDomain()));
-        configuration.setProxyHost(require(proxyConfiguration.endpoint().map(URI::getHost)));
-        configuration.setProxyPort(require(proxyConfiguration.endpoint().map(URI::getPort)));
-        configuration.setProxyPassword(require(proxyConfiguration.password()));
-        configuration.setProxyUsername(require(proxyConfiguration.username()));
-        configuration.setProxyWorkstation(require(proxyConfiguration.ntlmWorkstation()));
+        proxyConfiguration.preemptiveBasicAuthenticationEnabled().ifPresent(configuration::setPreemptiveBasicProxyAuth);
+        proxyConfiguration.ntlmDomain().ifPresent(configuration::setProxyDomain);
+        proxyConfiguration.endpoint().map(URI::getHost).ifPresent(configuration::setProxyHost);
+        proxyConfiguration.endpoint().map(URI::getPort).ifPresent(configuration::setProxyPort);
+        proxyConfiguration.password().ifPresent(configuration::setProxyPassword);
+        proxyConfiguration.username().ifPresent(configuration::setProxyUsername);
+        proxyConfiguration.ntlmWorkstation().ifPresent(configuration::setProxyWorkstation);
     }
 
     private void copyTcpConfiguration(LegacyClientConfiguration configuration, ClientTcpConfiguration tcpConfiguration) {
-        configuration.setConnectionMaxIdleMillis(toRequiredMillis(tcpConfiguration.connectionMaxIdleTime()));
-        configuration.setConnectionTtl(toRequiredMillis(tcpConfiguration.connectionTimeToLive()));
-        configuration.setValidateAfterInactivityMillis(
-                Math.toIntExact(toRequiredMillis(tcpConfiguration.connectionValidationFrequency())));
+        tcpConfiguration.connectionMaxIdleTime().ifPresent(d -> configuration.setConnectionMaxIdleMillis(d.toMillis()));
+        tcpConfiguration.connectionTimeToLive().ifPresent(d -> configuration.setConnectionTtl(d.toMillis()));
+        tcpConfiguration.connectionValidationFrequency().ifPresent(d ->
+                configuration.setValidateAfterInactivityMillis(Math.toIntExact(d.toMillis())));
+        tcpConfiguration.maxConnections().ifPresent(configuration::setMaxConnections);
 
-        configuration.setUseTcpKeepAlive(require(tcpConfiguration.tcpKeepaliveEnabled()));
-        configuration.setMaxConnections(require(tcpConfiguration.maxConnections()));
-        configuration.setSocketBufferSizeHints(require(tcpConfiguration.socketSendBufferSizeHint()),
-                                               require(tcpConfiguration.socketReceiveBufferSizeHint()));
+        tcpConfiguration.tcpKeepaliveEnabled().ifPresent(configuration::setUseTcpKeepAlive);
+        tcpConfiguration.maxConnections().ifPresent(configuration::setMaxConnections);
+        tcpConfiguration.socketSendBufferSizeHint().ifPresent(sendBufferSizeHint ->
+                tcpConfiguration.socketReceiveBufferSizeHint().ifPresent(receiveBufferSizeHint ->
+                        configuration.setSocketBufferSizeHints(sendBufferSizeHint, receiveBufferSizeHint)));
+
     }
 
     private void copyIpConfiguration(LegacyClientConfiguration configuration, ClientIpConfiguration ipConfiguration) {
-        configuration.setLocalAddress(require(ipConfiguration.localAddress()));
+        ipConfiguration.localAddress().ifPresent(configuration::setLocalAddress);
     }
 
     private void copyTimeoutConfiguration(LegacyClientConfiguration configuration,
                                           ClientTimeoutConfiguration timeoutConfiguration) {
-        configuration.setConnectionTimeout(Math.toIntExact(toRequiredMillis(timeoutConfiguration.connectionTimeout())));
-        configuration.setSocketTimeout(Math.toIntExact(toRequiredMillis(timeoutConfiguration.socketTimeout())));
-        configuration.setClientExecutionTimeout(Math.toIntExact(toRequiredMillis(timeoutConfiguration.totalExecutionTimeout())));
+        timeoutConfiguration.connectionTimeout().ifPresent(d ->
+                configuration.setConnectionTimeout(Math.toIntExact(d.toMillis())));
+        timeoutConfiguration.socketTimeout().ifPresent(d ->
+                configuration.setSocketTimeout(Math.toIntExact(d.toMillis())));
+        timeoutConfiguration.totalExecutionTimeout().ifPresent(d ->
+                configuration.setClientExecutionTimeout(Math.toIntExact(d.toMillis())));
     }
 
     private void copyMarshallerConfiguration(LegacyClientConfiguration configuration,
                                              ClientMarshallerConfiguration compressionConfiguration) {
-        configuration.setUseGzip(require(compressionConfiguration.gzipEnabled()));
+        compressionConfiguration.gzipEnabled().ifPresent(configuration::setUseGzip);
     }
 
     private void copyMetricsConfiguration(LegacyClientConfiguration configuration,
                                           ClientMetricsConfiguration metricsConfiguration) {
-        configuration.setUserAgentPrefix(require(metricsConfiguration.userAgentPrefix()));
-        configuration.setUserAgentSuffix(require(metricsConfiguration.userAgentSuffix()));
+        metricsConfiguration.userAgentPrefix().ifPresent(configuration::setUserAgentPrefix);
+        metricsConfiguration.userAgentSuffix().ifPresent(configuration::setUserAgentSuffix);
     }
 
     private void copySecurityConfiguration(LegacyClientConfiguration configuration,
                                            ClientSecurityConfiguration signingConfiguration) {
-        configuration.setSecureRandom(require(signingConfiguration.secureRandom()));
+        signingConfiguration.secureRandom().ifPresent(configuration::setSecureRandom);
     }
 
     private void copyRetryConfiguration(LegacyClientConfiguration configuration,
                                         ClientRetryConfiguration retryConfiguration) {
-        configuration.setUseThrottleRetries(require(retryConfiguration.retryThrottlingEnabled()));
-        configuration.setMaxErrorRetry(require(retryConfiguration.maxRetries()));
-        configuration.setMaxConsecutiveRetriesBeforeThrottling(require(retryConfiguration.maxRetriesBeforeThrottling()));
-        configuration.setRetryPolicy(require(retryConfiguration.retryPolicy()));
+        retryConfiguration.retryPolicy().ifPresent(configuration::setRetryPolicy);
     }
 
-    private Optional<Protocol> schemeToProtocol(String s) {
-        return Arrays.stream(Protocol.values()).filter(p -> s.equals(p.toString())).findFirst();
-    }
-
-    private Long toRequiredMillis(Optional<Duration> duration) {
-        return require(duration.map(Duration::toMillis));
-    }
-
-    protected final <T> T require(Optional<T> requiredOptional) {
-        return requiredOptional.orElseThrow(() -> new IllegalArgumentException("All configuration fields must be specified."));
+    private Optional<Protocol> schemeToProtocol(String scheme) {
+        return Arrays.stream(Protocol.values()).filter(p -> scheme.equals(p.toString())).findFirst();
     }
 }
