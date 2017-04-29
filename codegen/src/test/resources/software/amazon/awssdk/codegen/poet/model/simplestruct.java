@@ -14,7 +14,8 @@ public class SimpleStruct implements Serializable, Cloneable, StructuredPojo {
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public String stringMember() {
         return stringMember;

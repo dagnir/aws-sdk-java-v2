@@ -78,98 +78,112 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public String stringMember() {
         return stringMember;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Integer integerMember() {
         return integerMember;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Boolean booleanMember() {
         return booleanMember;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Float floatMember() {
         return floatMember;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Double doubleMember() {
         return doubleMember;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Long longMember() {
         return longMember;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public List<String> simpleList() {
         return simpleList;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public List<Map<String, String>> listOfMaps() {
         return listOfMaps;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public List<SimpleStruct> listOfStructs() {
         return listOfStructs;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Map<String, List<Integer>> mapOfStringToIntegerList() {
         return mapOfStringToIntegerList;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Map<String, String> mapOfStringToString() {
         return mapOfStringToString;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Map<String, SimpleStruct> mapOfStringToStruct() {
         return mapOfStringToStruct;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Date timestampMember() {
         return timestampMember;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public StructWithTimestamp structWithNestedTimestampMember() {
         return structWithNestedTimestampMember;
@@ -177,11 +191,13 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
 
     /**
      *
+     * <p>
      * {@code ByteBuffer}s are stateful. Calling their {@code get} methods changes their {@code position}. We recommend
      * using {@link java.nio.ByteBuffer#asReadOnlyBuffer()} to create a read-only view of the buffer with an independent
      * {@code position}, and calling {@code get} methods on this rather than directly on the returned {@code ByteBuffer}
      * . Doing so will ensure that anyone else using the {@code ByteBuffer} will not be affected by changes to the
-     * {@code position}. </p>
+     * {@code position}.
+     * </p>
      *
      * @return
      */
@@ -190,42 +206,48 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public StructWithNestedBlobType structWithNestedBlob() {
         return structWithNestedBlob;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Map<String, ByteBuffer> blobMap() {
         return blobMap;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public List<ByteBuffer> listOfBlobs() {
         return listOfBlobs;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public RecursiveStructType recursiveStruct() {
         return recursiveStruct;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public BaseType polymorphicTypeWithSubTypes() {
         return polymorphicTypeWithSubTypes;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public SubTypeOne polymorphicTypeWithoutSubTypes() {
         return polymorphicTypeWithoutSubTypes;

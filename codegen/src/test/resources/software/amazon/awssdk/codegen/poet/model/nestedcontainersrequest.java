@@ -21,21 +21,24 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public List<List<String>> listOfListsOfStrings() {
         return listOfListsOfStrings;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public List<List<List<String>>> listOfListOfListsOfStrings() {
         return listOfListOfListsOfStrings;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings() {
         return mapOfStringToListOfListsOfStrings;

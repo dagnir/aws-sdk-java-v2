@@ -132,7 +132,7 @@ public class AwsServiceModel implements ClassSpec {
                     String javadoc = makeJavadocPoetFriendly(m.getGetterDocumentation());
                     return MethodSpec
                             .methodBuilder(m.getFluentGetterMethodName())
-                            .addJavadoc(makeJavadocPoetFriendly(javadoc))
+                            .addJavadoc(javadoc)
                             .returns(typeProvider.type(m))
                             .addModifiers(Modifier.PUBLIC)
                             .addStatement("return $N", m.getVariable().getVariableName())

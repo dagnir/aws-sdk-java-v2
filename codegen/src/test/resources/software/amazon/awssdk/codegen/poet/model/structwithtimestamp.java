@@ -15,7 +15,8 @@ public class StructWithTimestamp implements Serializable, Cloneable, StructuredP
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Date nestedTimestamp() {
         return nestedTimestamp;

@@ -14,7 +14,8 @@ public class SubTypeOne implements Serializable, Cloneable, StructuredPojo {
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public String subTypeOneMember() {
         return subTypeOneMember;

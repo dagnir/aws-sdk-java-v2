@@ -27,28 +27,32 @@ public class RecursiveStructType implements Serializable, Cloneable, StructuredP
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public String noRecurse() {
         return noRecurse;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public RecursiveStructType recursiveStruct() {
         return recursiveStruct;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public List<RecursiveStructType> recursiveList() {
         return recursiveList;
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public Map<String, RecursiveStructType> recursiveMap() {
         return recursiveMap;

@@ -14,7 +14,8 @@ public class BaseType implements Serializable, Cloneable, StructuredPojo {
     }
 
     /**
-     * turn
+     *
+     * @return
      */
     public String baseMember() {
         return baseMember;
