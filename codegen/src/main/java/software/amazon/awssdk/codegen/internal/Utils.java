@@ -43,8 +43,6 @@ import software.amazon.awssdk.codegen.model.service.XmlNamespace;
 import software.amazon.awssdk.util.StringUtils;
 
 public class Utils {
-    private static final Pattern CAPITALIZE_PATTERN = Pattern.compile("^([a-z]+)([A-Z][a-z].*)");
-
 
     public static boolean isScalar(Shape shape) {
         // enums are treated as scalars in C2j.
@@ -141,7 +139,6 @@ public class Utils {
         }
         return name.length() < 2 ? StringUtils.upperCase(name) : StringUtils.upperCase(name.substring(0, 1))
                 + name.substring(1);
-
     }
 
     /**
