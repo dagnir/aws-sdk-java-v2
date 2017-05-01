@@ -53,7 +53,7 @@ public class DefaultSdkHttpRequest implements SdkHttpRequest {
     @Override
     public Optional<String> getFirstHeader(String headerName) {
         return Optional.ofNullable(headers.get(headerName))
-                .filter(h -> h.size() > 0)
+                .filter(h -> !h.isEmpty())
                 .map(h -> h.get(0));
     }
 
@@ -94,12 +94,12 @@ public class DefaultSdkHttpRequest implements SdkHttpRequest {
      */
     public static final class Builder {
 
-        Map<String, List<String>> headers = new HashMap<>();
-        String resourcePath;
-        Map<String, List<String>> queryParameters = new HashMap<>();
-        URI endpoint;
-        SdkHttpMethod httpMethod;
-        InputStream content;
+        private Map<String, List<String>> headers = new HashMap<>();
+        private String resourcePath;
+        private Map<String, List<String>> queryParameters = new HashMap<>();
+        private URI endpoint;
+        private SdkHttpMethod httpMethod;
+        private InputStream content;
 
         private Builder() {
         }
