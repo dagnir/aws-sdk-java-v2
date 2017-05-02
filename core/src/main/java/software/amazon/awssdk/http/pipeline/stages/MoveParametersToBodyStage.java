@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
+import static software.amazon.awssdk.utils.StringUtils.lowerCase;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -24,6 +26,7 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
 import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 @ReviewBeforeRelease("Might only need to do this for certain protocols - ie query?")
 public final class MoveParametersToBodyStage implements RequestToRequestPipeline {
@@ -49,7 +52,8 @@ public final class MoveParametersToBodyStage implements RequestToRequestPipeline
         input.setContent(new ByteArrayInputStream(params));
         input.addHeader("Content-Length", String.valueOf(params.length));
         input.addHeader("Content-Type",
-                        "application/x-www-form-urlencoded; charset=" + StandardCharsets.UTF_8.toString().toLowerCase());
+                        "application/x-www-form-urlencoded; charset=" +
+                        lowerCase(StandardCharsets.UTF_8.toString()));
         return input;
     }
 }

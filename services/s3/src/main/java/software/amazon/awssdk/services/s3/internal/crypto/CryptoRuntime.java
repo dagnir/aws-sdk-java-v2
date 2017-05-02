@@ -74,7 +74,8 @@ public class CryptoRuntime {
         static volatile boolean isAvailable = check();
 
         static boolean recheck() {
-            return isAvailable = check();
+            isAvailable = check();
+            return isAvailable;
         }
 
         private static boolean check() {
@@ -93,7 +94,8 @@ public class CryptoRuntime {
         static volatile boolean isAvailable = check();
 
         static boolean recheck() {
-            return isAvailable = check();
+            isAvailable = check();
+            return isAvailable;
         }
 
         private static boolean check() {

@@ -35,7 +35,7 @@ import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.document.utils.FluentArrayList;
 import software.amazon.awssdk.services.dynamodb.document.utils.FluentHashSet;
 import software.amazon.awssdk.services.dynamodb.document.utils.ValueMap;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 
 public class ItemTest {
 
@@ -521,11 +521,11 @@ public class ItemTest {
                                ByteBuffer.wrap(new byte[] {66, 77}));
         String json = item.toJsonPretty();
         System.out.println(json);
-        System.out.println("byte[]{1,2,3} => " + Base64.encodeAsString(new byte[] {1, 2, 3}));
-        System.out.println("byte[]{00,11} => " + Base64.encodeAsString(new byte[] {00, 11}));
-        System.out.println("byte[]{22,33} => " + Base64.encodeAsString(new byte[] {22, 33}));
-        System.out.println("byte[]{44,44} => " + Base64.encodeAsString(new byte[] {44, 55}));
-        System.out.println("byte[]{66,77} => " + Base64.encodeAsString(new byte[] {66, 77}));
+        System.out.println("byte[]{1,2,3} => " + Base64Utils.encodeAsString(new byte[] {1, 2, 3}));
+        System.out.println("byte[]{00,11} => " + Base64Utils.encodeAsString(new byte[] {00, 11}));
+        System.out.println("byte[]{22,33} => " + Base64Utils.encodeAsString(new byte[] {22, 33}));
+        System.out.println("byte[]{44,44} => " + Base64Utils.encodeAsString(new byte[] {44, 55}));
+        System.out.println("byte[]{66,77} => " + Base64Utils.encodeAsString(new byte[] {66, 77}));
         Item itemTo = Item.fromJson(json);
         System.out.println(itemTo);
         assertTrue(List.class.isAssignableFrom(itemTo.getTypeOf("binarySetA")));

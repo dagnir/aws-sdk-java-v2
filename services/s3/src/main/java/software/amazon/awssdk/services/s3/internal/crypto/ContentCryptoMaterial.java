@@ -17,8 +17,8 @@ package software.amazon.awssdk.services.s3.internal.crypto;
 
 import static software.amazon.awssdk.services.s3.internal.crypto.KmsSecuredCek.isKmsKeyWrapped;
 import static software.amazon.awssdk.services.s3.model.ExtraMaterialsDescription.NONE;
-import static software.amazon.awssdk.util.BinaryUtils.copyAllBytesFrom;
 import static software.amazon.awssdk.util.Throwables.failure;
+import static software.amazon.awssdk.utils.BinaryUtils.copyAllBytesFrom;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +39,6 @@ import javax.crypto.spec.SecretKeySpec;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.services.kms.KMSClient;
-import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.DecryptRequest;
 import software.amazon.awssdk.services.kms.model.DecryptResult;
 import software.amazon.awssdk.services.kms.model.EncryptRequest;
@@ -54,9 +53,9 @@ import software.amazon.awssdk.services.s3.model.KmsEncryptionMaterials;
 import software.amazon.awssdk.services.s3.model.MaterialsDescriptionProvider;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.json.Jackson;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * Cryptographic material used for client-side content encrypt/decryption in S3.
@@ -227,8 +226,8 @@ final class ContentCryptoMaterial {
                         "Content encrypting key not found.");
             }
         }
-        byte[] cekWrapped = Base64.decode(b64key);
-        byte[] iv = Base64.decode(userMeta.get(Headers.CRYPTO_IV));
+        byte[] cekWrapped = Base64Utils.decode(b64key);
+        byte[] iv = Base64Utils.decode(userMeta.get(Headers.CRYPTO_IV));
         if (cekWrapped == null || iv == null) {
             throw new SdkClientException(
                     "Content encrypting key or IV not found.");
@@ -345,8 +344,8 @@ final class ContentCryptoMaterial {
                         "Content encrypting key not found.");
             }
         }
-        byte[] cekWrapped = Base64.decode(b64key);
-        byte[] iv = Base64.decode(instFile.get(Headers.CRYPTO_IV));
+        byte[] cekWrapped = Base64Utils.decode(b64key);
+        byte[] iv = Base64Utils.decode(instFile.get(Headers.CRYPTO_IV));
         if (cekWrapped == null || iv == null) {
             throw new SdkClientException(
                     "Necessary encryption info not found in the instruction file "
@@ -686,10 +685,10 @@ final class ContentCryptoMaterial {
         // object metadata.
         byte[] encryptedCek = getEncryptedCek();
         metadata.addUserMetadata(Headers.CRYPTO_KEY_V2,
-                                 Base64.encodeAsString(encryptedCek));
+                                 Base64Utils.encodeAsString(encryptedCek));
         // Put the cipher initialization vector (IV) into the object metadata
         byte[] iv = cipherLite.getIv();
-        metadata.addUserMetadata(Headers.CRYPTO_IV, Base64.encodeAsString(iv));
+        metadata.addUserMetadata(Headers.CRYPTO_IV, Base64Utils.encodeAsString(iv));
         // Put the materials description into the object metadata as JSON
         metadata.addUserMetadata(Headers.MATERIALS_DESCRIPTION,
                                  kekMaterialDescAsJson());
@@ -721,10 +720,10 @@ final class ContentCryptoMaterial {
         // object metadata.
         byte[] encryptedCek = getEncryptedCek();
         metadata.addUserMetadata(Headers.CRYPTO_KEY,
-                                 Base64.encodeAsString(encryptedCek));
+                                 Base64Utils.encodeAsString(encryptedCek));
         // Put the cipher initialization vector (IV) into the object metadata
         byte[] iv = cipherLite.getIv();
-        metadata.addUserMetadata(Headers.CRYPTO_IV, Base64.encodeAsString(iv));
+        metadata.addUserMetadata(Headers.CRYPTO_IV, Base64Utils.encodeAsString(iv));
         // Put the materials description into the object metadata as JSON
         metadata.addUserMetadata(Headers.MATERIALS_DESCRIPTION,
                                  kekMaterialDescAsJson());
@@ -746,9 +745,9 @@ final class ContentCryptoMaterial {
     private String toJsonString() {
         Map<String, String> map = new HashMap<String, String>();
         byte[] encryptedCek = getEncryptedCek();
-        map.put(Headers.CRYPTO_KEY_V2, Base64.encodeAsString(encryptedCek));
+        map.put(Headers.CRYPTO_KEY_V2, Base64Utils.encodeAsString(encryptedCek));
         byte[] iv = cipherLite.getIv();
-        map.put(Headers.CRYPTO_IV, Base64.encodeAsString(iv));
+        map.put(Headers.CRYPTO_IV, Base64Utils.encodeAsString(iv));
         map.put(Headers.MATERIALS_DESCRIPTION, kekMaterialDescAsJson());
         // The CRYPTO_CEK_ALGORITHM, CRYPTO_TAG_LENGTH and
         // CRYPTO_KEYWRAP_ALGORITHM were not available in the Encryption Only
@@ -769,9 +768,9 @@ final class ContentCryptoMaterial {
     private String toJsonStringEo() {
         Map<String, String> map = new HashMap<String, String>();
         byte[] encryptedCek = getEncryptedCek();
-        map.put(Headers.CRYPTO_KEY, Base64.encodeAsString(encryptedCek));
+        map.put(Headers.CRYPTO_KEY, Base64Utils.encodeAsString(encryptedCek));
         byte[] iv = cipherLite.getIv();
-        map.put(Headers.CRYPTO_IV, Base64.encodeAsString(iv));
+        map.put(Headers.CRYPTO_IV, Base64Utils.encodeAsString(iv));
         map.put(Headers.MATERIALS_DESCRIPTION, kekMaterialDescAsJson());
         return Jackson.toJsonString(map);
     }

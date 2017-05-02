@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * Utility methods for extracting data from XML documents using Xpath
@@ -502,7 +503,7 @@ public class XpathUtils {
         }
 
         if (!isEmpty(node)) {
-            byte[] decodedBytes = Base64.decode(base64EncodedString);
+            byte[] decodedBytes = Base64Utils.decode(base64EncodedString);
             return ByteBuffer.wrap(decodedBytes);
         }
         return null;

@@ -16,7 +16,7 @@ import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.http.HttpMethodName;
 import ${metadata.packageName}.model.*;
 import software.amazon.awssdk.runtime.transform.Marshaller;
-import software.amazon.awssdk.util.BinaryUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.util.StringInputStream;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.IdempotentUtils;

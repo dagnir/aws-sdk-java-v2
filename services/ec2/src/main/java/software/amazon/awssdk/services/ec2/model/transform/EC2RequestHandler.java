@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.ec2.model.Reservation;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.RunInstancesResult;
 import software.amazon.awssdk.services.ec2.model.SpotInstanceRequest;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 
 public class EC2RequestHandler extends AbstractRequestHandler {
     @Override
@@ -43,7 +43,7 @@ public class EC2RequestHandler extends AbstractRequestHandler {
         if (originalRequest instanceof ImportKeyPairRequest) {
             ImportKeyPairRequest importKeyPairRequest = (ImportKeyPairRequest) originalRequest;
             String publicKeyMaterial = importKeyPairRequest.getPublicKeyMaterial();
-            String encodedKeyMaterial = Base64.encodeAsString(publicKeyMaterial.getBytes());
+            String encodedKeyMaterial = Base64Utils.encodeAsString(publicKeyMaterial.getBytes());
             request.addParameter("PublicKeyMaterial", encodedKeyMaterial);
         } else if (originalRequest instanceof RequestSpotInstancesRequest) {
             // Request -> Query string marshalling for RequestSpotInstancesRequest is a little tricky since

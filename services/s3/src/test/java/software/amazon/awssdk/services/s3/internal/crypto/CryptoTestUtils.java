@@ -58,8 +58,8 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.services.s3.model.S3VersionSummary;
 import software.amazon.awssdk.services.s3.model.VersionListing;
-import software.amazon.awssdk.util.Base16;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base16;
+import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.util.StringUtils;
 
 //import org.bouncycastle.util.encoders.Base64;
@@ -446,16 +446,16 @@ public class CryptoTestUtils {
     }
 
     public static String encodeBase64String(byte[] b) {
-        return Base64.encodeAsString(b);
+        return Base64Utils.encodeAsString(b);
     }
 
     public static byte[] decodeBase64(String b64s) {
-        return Base64.decode(b64s);
+        return Base64Utils.decode(b64s);
     }
 
     public static void main(String[] args) throws Exception {
         KeyPair kp = generateKeyPair("RSA", 1024);
-        System.out.println("private key: " + Base64.encodeAsString(kp.getPrivate().getEncoded()));
-        System.out.println("public key: " + Base64.encodeAsString(kp.getPublic().getEncoded()));
+        System.out.println("private key: " + Base64Utils.encodeAsString(kp.getPrivate().getEncoded()));
+        System.out.println("public key: " + Base64Utils.encodeAsString(kp.getPublic().getEncoded()));
     }
 }

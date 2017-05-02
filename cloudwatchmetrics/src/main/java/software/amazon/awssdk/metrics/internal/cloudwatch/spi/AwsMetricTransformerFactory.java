@@ -91,8 +91,8 @@ public enum AwsMetricTransformerFactory {
             && packageName.equals(transformer.getClass().getPackage().getName())) {
             return transformer;
         }
-        String fqcn = AwsMetricTransformerFactory
-                .buildRequestMetricTransformerFqcn(name(), packageName);
-        return this.requestMetricTransformer = loadRequestMetricTransformer(fqcn);
+        String fqcn = AwsMetricTransformerFactory.buildRequestMetricTransformerFqcn(name(), packageName);
+        this.requestMetricTransformer = loadRequestMetricTransformer(fqcn);
+        return this.requestMetricTransformer;
     }
 }

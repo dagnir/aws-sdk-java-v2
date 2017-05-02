@@ -39,10 +39,10 @@ import software.amazon.awssdk.auth.internal.SignerKey;
 import software.amazon.awssdk.internal.collections.FifoCache;
 import software.amazon.awssdk.log.InternalLogApi;
 import software.amazon.awssdk.log.InternalLogFactory;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * Signer implementation that signs requests with the AWS4 signing protocol.

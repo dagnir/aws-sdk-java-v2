@@ -214,11 +214,10 @@ public class StringUtils {
      * @since 3.0 Changed signature from isBlank(String) to isBlank(CharSequence)
      */
     public static boolean isBlank(final CharSequence cs) {
-        int strLen;
-        if (cs == null || (strLen = cs.length()) == 0) {
+        if (cs == null || cs.length() == 0) {
             return true;
         }
-        for (int i = 0; i < strLen; i++) {
+        for (int i = 0; i < cs.length(); i++) {
             if (!Character.isWhitespace(cs.charAt(i))) {
                 return false;
             }
@@ -543,8 +542,7 @@ public class StringUtils {
      * @since 2.0
      */
     public static String capitalize(final String str) {
-        int strLen;
-        if (str == null || (strLen = str.length()) == 0) {
+        if (str == null || str.length() == 0) {
             return str;
         }
 
@@ -555,10 +553,10 @@ public class StringUtils {
             return str;
         }
 
-        final int[] newCodePoints = new int[strLen]; // cannot be longer than the char array
+        final int[] newCodePoints = new int[str.length()]; // cannot be longer than the char array
         int outOffset = 0;
         newCodePoints[outOffset++] = newCodePoint; // copy the first codepoint
-        for (int inOffset = Character.charCount(firstCodepoint); inOffset < strLen; ) {
+        for (int inOffset = Character.charCount(firstCodepoint); inOffset < str.length(); ) {
             final int codepoint = str.codePointAt(inOffset);
             newCodePoints[outOffset++] = codepoint; // copy the remaining ones
             inOffset += Character.charCount(codepoint);
@@ -584,8 +582,7 @@ public class StringUtils {
      * @since 2.0
      */
     public static String uncapitalize(final String str) {
-        int strLen;
-        if (str == null || (strLen = str.length()) == 0) {
+        if (str == null || str.length() == 0) {
             return str;
         }
 
@@ -596,10 +593,10 @@ public class StringUtils {
             return str;
         }
 
-        final int[] newCodePoints = new int[strLen]; // cannot be longer than the char array
+        final int[] newCodePoints = new int[str.length()]; // cannot be longer than the char array
         int outOffset = 0;
         newCodePoints[outOffset++] = newCodePoint; // copy the first codepoint
-        for (int inOffset = Character.charCount(firstCodepoint); inOffset < strLen; ) {
+        for (int inOffset = Character.charCount(firstCodepoint); inOffset < str.length(); ) {
             final int codepoint = str.codePointAt(inOffset);
             newCodePoints[outOffset++] = codepoint; // copy the remaining ones
             inOffset += Character.charCount(codepoint);

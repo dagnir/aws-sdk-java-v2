@@ -33,9 +33,9 @@ import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResult;
 import software.amazon.awssdk.services.lambda.model.LogType;
-import software.amazon.awssdk.util.Base64;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.Base64Utils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * A factory for objects that implement a user-supplied interface by invoking a remote Lambda
@@ -290,7 +290,7 @@ public final class LambdaInvokerFactory {
             if (invokeResult.getLogResult() != null && log.isInfoEnabled()) {
                 try {
 
-                    String decoded = new String(Base64.decode(invokeResult.getLogResult()), StringUtils.UTF8);
+                    String decoded = new String(Base64Utils.decode(invokeResult.getLogResult()), StringUtils.UTF8);
 
                     log.info(method.getName() + " log:\n\t" + decoded.replaceAll("\n", "\n\t"));
 

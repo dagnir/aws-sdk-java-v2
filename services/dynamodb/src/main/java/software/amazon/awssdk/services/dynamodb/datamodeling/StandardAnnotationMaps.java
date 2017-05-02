@@ -425,8 +425,11 @@ final class StandardAnnotationMaps {
         public boolean putIfAnnotated(Class<? extends Annotation> annotationType, Annotation annotation) {
             if (!annotationType.isAnnotationPresent(DynamoDB.class)) {
                 return false;
-            } else if ((annotation = put(annotationType, annotation)) == null) {
-                return true;
+            } else {
+                annotation = put(annotationType, annotation);
+                if (annotation == null) {
+                    return true;
+                }
             }
             throw new DynamoDBMappingException(
                     "conflicting annotations " + annotation + " and " + get(annotationType) +

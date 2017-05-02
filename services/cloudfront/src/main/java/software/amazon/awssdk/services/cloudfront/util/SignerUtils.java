@@ -33,8 +33,8 @@ import java.util.Date;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.services.cloudfront.auth.Pem;
 import software.amazon.awssdk.services.cloudfront.auth.Rsa;
-import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.IoUtils;
 
 public class SignerUtils {
@@ -87,7 +87,7 @@ public class SignerUtils {
      * distribution by using specialized Base64 encoding.
      */
     public static String makeBytesUrlSafe(byte[] bytes) {
-        byte[] encoded = Base64.encode(bytes);
+        byte[] encoded = Base64Utils.encode(bytes);
 
         for (int i = 0; i < encoded.length; i++) {
             switch (encoded[i]) {

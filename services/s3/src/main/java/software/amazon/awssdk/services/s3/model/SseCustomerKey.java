@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.s3.model;
 
 import java.io.Serializable;
 import javax.crypto.SecretKey;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * Represents a customer provided key for use with Amazon S3 server-side
@@ -90,7 +90,7 @@ public class SseCustomerKey implements Serializable {
 
         // Default to AES-256 encryption
         this.algorithm = SseAlgorithm.AES256.getAlgorithm();
-        this.base64EncodedKey = Base64.encodeAsString(rawKeyMaterial);
+        this.base64EncodedKey = Base64Utils.encodeAsString(rawKeyMaterial);
     }
 
     /**
@@ -112,7 +112,7 @@ public class SseCustomerKey implements Serializable {
 
         // Default to AES-256 encryption
         this.algorithm = SseAlgorithm.AES256.getAlgorithm();
-        this.base64EncodedKey = Base64.encodeAsString(key.getEncoded());
+        this.base64EncodedKey = Base64Utils.encodeAsString(key.getEncoded());
     }
 
     /**

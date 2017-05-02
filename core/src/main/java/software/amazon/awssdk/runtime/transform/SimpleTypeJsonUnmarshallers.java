@@ -21,8 +21,8 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.DateUtils;
+import software.amazon.awssdk.utils.Base64Utils;
 
 @SdkInternalApi
 public class SimpleTypeJsonUnmarshallers {
@@ -195,7 +195,7 @@ public class SimpleTypeJsonUnmarshallers {
             if (base64EncodedString == null) {
                 return null;
             }
-            byte[] decodedBytes = Base64.decode(base64EncodedString);
+            byte[] decodedBytes = Base64Utils.decode(base64EncodedString);
             return ByteBuffer.wrap(decodedBytes);
 
         }

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodb.document.internal;
 
-import static software.amazon.awssdk.util.BinaryUtils.copyAllBytesFrom;
+import static software.amazon.awssdk.utils.BinaryUtils.copyAllBytesFrom;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;

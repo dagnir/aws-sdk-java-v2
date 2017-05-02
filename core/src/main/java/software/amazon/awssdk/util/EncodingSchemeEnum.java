@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.util;
 
+import software.amazon.awssdk.utils.Base16;
+import software.amazon.awssdk.utils.Base64Utils;
+
 /**
  * Currently provided encoding schemes "out of the box".
  *
@@ -34,26 +37,15 @@ public enum EncodingSchemeEnum implements EncodingScheme {
             return Base16.decode(encoded);
         }
     },
-    BASE32 {
-        @Override
-        public String encodeAsString(byte[] bytes) {
-            return Base32.encodeAsString(bytes);
-        }
-
-        @Override
-        public byte[] decode(String encoded) {
-            return Base32.decode(encoded);
-        }
-    },
     BASE64 {
         @Override
         public String encodeAsString(byte[] bytes) {
-            return Base64.encodeAsString(bytes);
+            return Base64Utils.encodeAsString(bytes);
         }
 
         @Override
         public byte[] decode(String encoded) {
-            return Base64.decode(encoded);
+            return Base64Utils.decode(encoded);
         }
     },;
 

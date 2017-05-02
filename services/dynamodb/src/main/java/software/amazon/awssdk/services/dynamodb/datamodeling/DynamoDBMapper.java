@@ -1832,7 +1832,8 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
         public List<T> getPutIfNotExists(final String key) {
             List<T> list = get(key);
             if (list == null) {
-                put(key, (list = new LinkedList<T>()));
+                list = new LinkedList<>();
+                put(key, list);
             }
             return list;
         }

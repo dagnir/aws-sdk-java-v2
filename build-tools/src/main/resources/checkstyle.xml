@@ -371,8 +371,11 @@
             <property name="illegalPkgs" value="org.apache.http.annotation"/>
         </module>
 
-        <!-- Checks that the override annotation is specified when using @inheritDoc javadoc-->
+        <!-- Checks that the override annotation is specified when using @inheritDoc javadoc. -->
         <module name="MissingOverride"/>
+
+        <!-- Do not allow assignment in subexpressions (except in some cases in loop conditions). -->
+        <module name="InnerAssignment"/>
 
         <!-- Checks that we don't use System.out.print -->
         <module name="Regexp">

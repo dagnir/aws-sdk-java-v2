@@ -28,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 
 // https://github.com/aws/aws-sdk-android/issues/15
 public class AndriodSdkIssue15dTestLocal {
@@ -107,7 +107,7 @@ public class AndriodSdkIssue15dTestLocal {
         byte[] origtext = secretKey.getEncoded();
         Assert.assertTrue(origtext.length == 32);
         byte[] ciphertext = cipher.doFinal(origtext);
-        System.out.println("ciphertext: " + Base64.encodeAsString(ciphertext));
+        System.out.println("ciphertext: " + Base64Utils.encodeAsString(ciphertext));
         Assert.assertTrue(ciphertext.length > 32);
         Assert.assertFalse(Arrays.equals(origtext, ciphertext));
         algo = privatekey.getAlgorithm();

@@ -38,9 +38,10 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.runtime.io.SdkDigestInputStream;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.Base64Utils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * Abstract base class for AWS signing protocol implementations. Provides
@@ -108,7 +109,7 @@ public abstract class AbstractAwsSigner implements Signer {
                                          SigningAlgorithm algorithm) throws SdkClientException {
         try {
             byte[] signature = sign(data, key.getBytes(StringUtils.UTF8), algorithm);
-            return software.amazon.awssdk.util.Base64.encodeAsString(signature);
+            return Base64Utils.encodeAsString(signature);
         } catch (Exception e) {
             throw new SdkClientException(
                     "Unable to calculate a request signature: "

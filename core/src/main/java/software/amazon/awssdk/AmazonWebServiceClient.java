@@ -644,14 +644,15 @@ public abstract class AmazonWebServiceClient {
         String serviceNameInRegionMetadata = ServiceNameFactory.getServiceNameInRegionMetadata(httpClientName);
 
         synchronized (this) {
-            if (endpointPrefix != null) {
-                return endpointPrefix;
+            if (endpointPrefix == null) {
+                if (serviceNameInRegionMetadata != null) {
+                    endpointPrefix = serviceNameInRegionMetadata;
+                } else {
+                    endpointPrefix = getServiceNameIntern();
+                }
             }
-            if (serviceNameInRegionMetadata != null) {
-                return endpointPrefix = serviceNameInRegionMetadata;
-            } else {
-                return endpointPrefix = getServiceNameIntern();
-            }
+
+            return endpointPrefix;
         }
     }
 
@@ -676,7 +677,7 @@ public abstract class AmazonWebServiceClient {
         if (serviceName == null) {
             synchronized (this) {
                 if (serviceName == null) {
-                    return serviceName = computeServiceName();
+                    serviceName = computeServiceName();
                 }
             }
         }

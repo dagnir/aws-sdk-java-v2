@@ -28,8 +28,8 @@ import software.amazon.awssdk.protocol.OperationInfo;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.ProtocolRequestMarshaller;
 import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.UriResourcePathUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * Implementation of {@link ProtocolMarshaller} for JSON based services. This includes JSON-RPC and REST-JSON.

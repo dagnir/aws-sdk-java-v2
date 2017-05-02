@@ -22,8 +22,8 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.DateUtils;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * Collection of StAX unmarshallers for simple data types.
@@ -208,7 +208,7 @@ public class SimpleTypeStaxUnmarshallers {
 
         public ByteBuffer unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
             String base64EncodedString = unmarshallerContext.readText();
-            byte[] decodedBytes = Base64.decode(base64EncodedString);
+            byte[] decodedBytes = Base64Utils.decode(base64EncodedString);
             return ByteBuffer.wrap(decodedBytes);
 
         }

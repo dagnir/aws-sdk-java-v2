@@ -28,8 +28,8 @@ import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.transform.PutItemRequestMarshaller;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.ImmutableMapParameter;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 public class PutItemRequestMarshallerTest {
 

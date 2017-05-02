@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.request.S3HandlerContextKeys;
-import software.amazon.awssdk.util.BinaryUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * AWS4 signer implementation for AWS S3.
