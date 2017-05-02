@@ -17,7 +17,6 @@ package software.amazon.awssdk.http.pipeline.stages;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.io.ByteArrayInputStream;
@@ -27,7 +26,9 @@ import java.util.stream.Stream;
 import org.junit.Test;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpMethodName;
 
 public class MoveParametersToBodyStageTest {
@@ -41,7 +42,7 @@ public class MoveParametersToBodyStageTest {
         request.setHttpMethod(HttpMethodName.POST);
         request.addParameters("key", singletonList("value"));
 
-        Request<?> output = sut.execute(request, mock(RequestExecutionContext.class));
+        Request<?> output = sut.execute(request, requestContext(request));
 
         assertThat(output.getParameters()).hasSize(0);
         assertThat(output.getHeaders()).containsKey("Content-Length")
@@ -62,7 +63,7 @@ public class MoveParametersToBodyStageTest {
         request.setHttpMethod(HttpMethodName.POST);
         request.addParameters("key", singletonList("value"));
 
-        Request<?> output = sut.execute(request, mock(RequestExecutionContext.class));
+        Request<?> output = sut.execute(request, requestContext(request));
 
         assertThat(output.getParameters()).hasSize(1);
         assertThat(output.getHeaders()).hasSize(0);
@@ -75,7 +76,7 @@ public class MoveParametersToBodyStageTest {
         request.setContent(null);
         request.setHttpMethod(HttpMethodName.POST);
 
-        Request<?> output = sut.execute(request, mock(RequestExecutionContext.class));
+        Request<?> output = sut.execute(request, requestContext(request));
 
         assertThat(output.getParameters()).hasSize(0);
         assertThat(output.getHeaders()).hasSize(0);
@@ -88,10 +89,18 @@ public class MoveParametersToBodyStageTest {
         request.setHttpMethod(method);
         request.addParameters("key", singletonList("value"));
 
-        Request<?> output = invokeSafely(() -> sut.execute(request, mock(RequestExecutionContext.class)));
+        Request<?> output = invokeSafely(() -> sut.execute(request, requestContext(request)));
 
         assertThat(output.getParameters()).hasSize(1);
         assertThat(output.getHeaders()).hasSize(0);
         assertThat(output.getContent()).isNull();
+    }
+
+    private RequestExecutionContext requestContext(Request<?> request) {
+        return RequestExecutionContext.builder()
+                                      .executionContext(ExecutionContext.builder().build())
+                                      .request(request)
+                                      .requestConfig(RequestConfig.NO_OP)
+                                      .build();
     }
 }
