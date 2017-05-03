@@ -39,7 +39,7 @@ public final class MoveParametersToBodyStage implements RequestToRequestPipeline
     }
 
     private boolean shouldPutParamsInBody(Request<?> input) {
-        return input.getHttpMethod().equals(HttpMethodName.POST) &&
+        return input.getHttpMethod() == HttpMethodName.POST &&
             input.getContent() == null &&
             input.getParameters() != null &&
             input.getParameters().size() > 0;
