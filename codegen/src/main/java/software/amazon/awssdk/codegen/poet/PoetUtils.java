@@ -99,14 +99,6 @@ public final class PoetUtils {
         return createBoundedTypeVariableName(parameterName, ClassName.get(upperBound), typeVariables);
     }
 
-    public static ClassName getModelClass(String basePackageDir, String className) {
-        return ClassName.get(basePackageDir + ".model", className);
-    }
-
-    public static ClassName getTransformClass(String basePackageDir, String className) {
-        return ClassName.get(basePackageDir + ".model.transform", className);
-    }
-
     public static ClassName classNameFromFqcn(String fqcn) {
         String basePath = fqcn.substring(0, fqcn.lastIndexOf("."));
         String className = fqcn.substring(fqcn.lastIndexOf(".") + 1);

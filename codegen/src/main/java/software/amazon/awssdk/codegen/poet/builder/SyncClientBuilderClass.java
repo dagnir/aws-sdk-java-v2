@@ -24,7 +24,6 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
-import software.amazon.awssdk.config.ImmutableClientConfiguration;
 
 public class SyncClientBuilderClass implements ClassSpec {
     private final ClassName clientInterfaceName;
@@ -34,7 +33,7 @@ public class SyncClientBuilderClass implements ClassSpec {
     private final ClassName builderBaseClassName;
 
     public SyncClientBuilderClass(IntermediateModel model) {
-        String basePackage = model.getMetadata().getPackageName();
+        String basePackage = model.getMetadata().getFullClientPackageName();
         this.clientInterfaceName = ClassName.get(basePackage, model.getMetadata().getSyncInterface());
         this.clientClassName = ClassName.get(basePackage, model.getMetadata().getSyncClient());
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getSyncBuilderInterface());

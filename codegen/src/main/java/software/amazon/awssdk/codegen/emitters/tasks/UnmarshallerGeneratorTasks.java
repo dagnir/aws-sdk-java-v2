@@ -56,7 +56,7 @@ public class UnmarshallerGeneratorTasks extends BaseGeneratorTasks {
                 .put("fileHeader", model.getFileHeader())
                 .put("shape", shapeModel)
                 .put("metadata", metadata)
-                .put("transformPackage", model.getTransformPackage())
+                .put("transformPackage", model.getMetadata().getFullTransformPackageName())
                 .put("exceptionUnmarshallerImpl", model.getExceptionUnmarshallerImpl())
                 .build();
 

@@ -35,12 +35,14 @@ import software.amazon.awssdk.util.ImmutableMapParameter;
 public class MarshallerGeneratorTasks extends BaseGeneratorTasks {
 
     private final String transformClassDir;
+    private final String requestTransformClassDir;
     private final Metadata metadata;
     private final Map<String, ShapeModel> shapes;
 
     public MarshallerGeneratorTasks(GeneratorTaskParams dependencies) {
         super(dependencies);
         this.transformClassDir = dependencies.getPathProvider().getTransformDirectory();
+        this.requestTransformClassDir = dependencies.getPathProvider().getRequestTransformDirectory();
         this.metadata = model.getMetadata();
         this.shapes = model.getShapes();
     }
@@ -71,32 +73,37 @@ public class MarshallerGeneratorTasks extends BaseGeneratorTasks {
             return Stream.of(
                     createMarshallerTask(javaShapeName,
                                          freemarker.getRequestMarshallerTemplate(),
-                                         javaShapeName + "Marshaller"),
+                                         javaShapeName + "Marshaller",
+                                         requestTransformClassDir),
                     createMarshallerTask(javaShapeName,
                                          freemarker.getModelMarshallerTemplate(),
-                                         javaShapeName + "ModelMarshaller"));
+                                         javaShapeName + "ModelMarshaller",
+                                         transformClassDir));
         } else {
             return Stream.of(
                     createMarshallerTask(javaShapeName,
                                          freemarker.getModelMarshallerTemplate(),
-                                         javaShapeName + "Marshaller"));
+                                         javaShapeName + "Marshaller",
+                                         transformClassDir));
         }
     }
 
-    private GeneratorTask createMarshallerTask(String javaShapeName, Template template, String marshallerClassName) throws
-                                                                                                                    IOException {
+    private GeneratorTask createMarshallerTask(String javaShapeName, Template template,
+                                               String marshallerClassName, String marshallerDirectory)
+            throws IOException {
         Map<String, Object> marshallerDataModel = ImmutableMapParameter.<String, Object>builder()
                 .put("fileHeader", model.getFileHeader())
                 .put("shapeName", javaShapeName)
                 .put("shapes", shapes)
                 .put("metadata", metadata)
-                .put("transformPackage", model.getTransformPackage())
+                .put("transformPackage", model.getMetadata().getFullTransformPackageName())
+                .put("requestTransformPackage", model.getMetadata().getFullRequestTransformPackageName())
                 .put("customConfig", model.getCustomizationConfig())
                 .put("className", marshallerClassName)
                 .put("protocolEnum", getProtocolEnumName())
                 .build();
 
-        return new FreemarkerGeneratorTask(transformClassDir,
+        return new FreemarkerGeneratorTask(marshallerDirectory,
                                            marshallerClassName,
                                            template,
                                            marshallerDataModel);

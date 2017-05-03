@@ -10,7 +10,7 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.http.HttpMethodName;
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 import software.amazon.awssdk.runtime.transform.Marshaller;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.IdempotentUtils;

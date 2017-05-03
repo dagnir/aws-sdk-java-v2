@@ -1,11 +1,11 @@
 ${fileHeader}
-package ${metadata.packageName}.waiters;
+package ${metadata.fullWaitersPackageName};
 
 import javax.annotation.Generated;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import ${metadata.packageName}.${metadata.syncInterface};
-import ${metadata.packageName}.model.*;
+import ${metadata.fullClientPackageName}.${metadata.syncInterface};
+import ${metadata.fullModelPackageName}.*;
 import software.amazon.awssdk.waiters.*;
 
 import java.util.concurrent.ExecutorService;

@@ -24,7 +24,6 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
-import software.amazon.awssdk.config.ImmutableClientConfiguration;
 
 public class AsyncClientBuilderClass implements ClassSpec {
     private final ClassName clientInterfaceName;
@@ -34,7 +33,7 @@ public class AsyncClientBuilderClass implements ClassSpec {
     private final ClassName builderBaseClassName;
 
     public AsyncClientBuilderClass(IntermediateModel model) {
-        String basePackage = model.getMetadata().getPackageName();
+        String basePackage = model.getMetadata().getFullClientPackageName();
         this.clientInterfaceName = ClassName.get(basePackage, model.getMetadata().getAsyncInterface());
         this.clientClassName = ClassName.get(basePackage, model.getMetadata().getAsyncClient());
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getAsyncBuilderInterface());

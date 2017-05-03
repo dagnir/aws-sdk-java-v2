@@ -15,14 +15,17 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
-import java.util.function.Function;
-import java.util.stream.Stream;
+import java.util.regex.Pattern;
 
-public interface ContentProcessor extends Function<String, String> {
-    static ContentProcessor chain(ContentProcessor... processors) {
-        return input -> Stream.of(processors).map(p -> (Function<String, String>) p)
-                              .reduce(Function.identity(), Function::andThen).apply(input);
+/**
+ * Removes HTML "anchor" tags from a string. This is used to compare files during clobbering while ignoring their documentation
+ * links, which will pretty much always differ.
+ */
+public class LinkRemover implements CodeTransformer {
+    private static final Pattern LINK_PATTERN = Pattern.compile("(<a[ \n]*/>|<a[> \n].*?</a>)", Pattern.DOTALL);
+
+    @Override
+    public String apply(String input) {
+        return LINK_PATTERN.matcher(input).replaceAll("");
     }
-
-    String apply(String input);
 }

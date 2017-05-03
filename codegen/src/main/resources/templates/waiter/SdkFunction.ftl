@@ -4,15 +4,15 @@ ${fileHeader}
 <#assign input = operation.input.variableName>
 <#assign operationName = operation.operationName>
 
-package ${metadata.packageName}.waiters;
+package ${metadata.fullWaitersPackageName};
 
 import javax.annotation.Generated;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.waiters.SdkFunction;
-import ${metadata.packageName}.model.${inputType};
-import ${metadata.packageName}.model.${outputType};
-import ${metadata.packageName}.${metadata.syncInterface};
+import ${metadata.fullModelPackageName}.${inputType};
+import ${metadata.fullModelPackageName}.${outputType};
+import ${metadata.fullClientPackageName}.${metadata.syncInterface};
 
 @SdkInternalApi
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")

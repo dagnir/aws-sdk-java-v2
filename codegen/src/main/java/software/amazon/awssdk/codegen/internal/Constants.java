@@ -41,20 +41,21 @@ public class Constants {
 
     public static final String PROTOCOL_CONFIG_LOCATION = "/protocol-config/%s.json";
 
-    @Deprecated
-    public static final String FILE_NAME_SUFFIX = ".java";
-
     public static final String JAVA_FILE_NAME_SUFFIX = ".java";
 
     public static final String PROPERTIES_FILE_NAME_SUFFIX = ".properties";
 
-    public static final String PACKAGE_NAME_MODEL_SUFFIX = "model";
+    public static final String PACKAGE_NAME_CLIENT_PATTERN = "%s";
 
-    public static final String PACKAGE_NAME_TRANSFORM_SUFFIX = "transform";
+    public static final String PACKAGE_NAME_MODEL_PATTERN = "%s.model";
 
-    public static final String PACKAGE_NAME_WAITERS_SUFFIX = "waiters";
+    public static final String PACKAGE_NAME_TRANSFORM_PATTERN = "%s.transform";
 
-    public static final String PACKAGE_NAME_CUSTOM_AUTH_SUFFIX = "auth";
+    public static final String PACKAGE_NAME_WAITERS_PATTERN = "%s.waiters";
+
+    public static final String PACKAGE_NAME_SMOKE_TEST_PATTERN = "%s.smoketests";
+
+    public static final String PACKAGE_NAME_CUSTOM_AUTH_PATTERN = "%s.auth";
 
     public static final String AUTH_POLICY_ENUM_CLASS_DIR = "software/amazon/awssdk/auth/policy/actions";
 
@@ -73,8 +74,6 @@ public class Constants {
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public static final Log LOGGER = LogFactory.getLog("software.amazon.awssdk.javasdk.codegen");
-
-    public static final String SMOKE_TESTS_DIR_NAME = "smoketests";
 
     public static final String AWS_DOCS_HOST = "docs.aws.amazon.com";
 

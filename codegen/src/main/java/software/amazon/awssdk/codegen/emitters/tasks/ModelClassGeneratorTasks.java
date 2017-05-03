@@ -74,7 +74,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
                 .put("awsDocsUrl", createLinkToServiceDocumentation(metadata, shapeModel))
                 .put("shouldEmitStructuredPojoInterface", model.getMetadata().isJsonProtocol()
                                                           && shapeModel.getShapeType() == ShapeType.Model)
-                .put("transformPackage", model.getTransformPackage())
+                .put("transformPackage", model.getMetadata().getFullTransformPackageName())
                 .build();
 
             // Submit task for generating the
@@ -84,7 +84,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
                                                freemarker.getShapeTemplate(shapeModel),
                                                dataModel);
         } else {
-            ClassSpec enumClass = new EnumClass(metadata.getPackageName(), shapeModel);
+            ClassSpec enumClass = new EnumClass(metadata.getFullModelPackageName(), shapeModel);
             return new PoetGeneratorTask(modelClassDir, model.getFileHeader(), enumClass);
         }
     }

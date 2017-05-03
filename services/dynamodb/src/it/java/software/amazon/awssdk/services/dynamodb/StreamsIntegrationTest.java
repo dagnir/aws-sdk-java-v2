@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.dynamodb;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.model.ListStreamsRequest;
+import software.amazon.awssdk.services.dynamodbstreams.DynamoDBStreamsClient;
 import software.amazon.awssdk.test.AwsTestBase;
 
 public class StreamsIntegrationTest extends AwsTestBase {

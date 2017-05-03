@@ -36,7 +36,7 @@ public class PoetExtensions {
      * @return A Poet {@link ClassName} for the given class in the model package.
      */
     public ClassName getModelClass(String className) {
-        return ClassName.get(appendPackageComponents(Constants.PACKAGE_NAME_MODEL_SUFFIX), className);
+        return ClassName.get(model.getMetadata().getFullModelPackageName(), className);
     }
 
     /**
@@ -44,10 +44,15 @@ public class PoetExtensions {
      * @return A Poet {@link ClassName} for the given class in the transform package.
      */
     public ClassName getTransformClass(String className) {
-        final String transformPackage = appendPackageComponents(
-                Constants.PACKAGE_NAME_MODEL_SUFFIX,
-                Utils.directoryToPackage(model.getCustomizationConfig().getTransformDirectory()));
-        return ClassName.get(transformPackage, className);
+        return ClassName.get(model.getMetadata().getFullTransformPackageName(), className);
+    }
+
+    /**
+     * @param className Simple name of class in transform package.
+     * @return A Poet {@link ClassName} for the given class in the transform package.
+     */
+    public ClassName getRequestTransformClass(String className) {
+        return ClassName.get(model.getMetadata().getFullRequestTransformPackageName(), className);
     }
 
     /**
@@ -55,28 +60,14 @@ public class PoetExtensions {
      * @return A Poet {@link ClassName} for the given class in the waiters package.
      */
     public ClassName getWaiterClass(String className) {
-        return ClassName.get(appendPackageComponents(Constants.PACKAGE_NAME_WAITERS_SUFFIX), className);
+        return ClassName.get(model.getMetadata().getFullWaitersPackageName(), className);
     }
 
     /**
      * @param className Simple name of class in base service package (i.e. software.amazon.awssdk.services.dynamodb).
      * @return A Poet {@link ClassName} for the given class in the base service package.
      */
-    public ClassName getTopLevelClass(String className) {
-        return ClassName.get(model.getMetadata().getPackageName(), className);
-    }
-
-    /**
-     * Append the package components to the base service package.
-     *
-     * @param components Package components to add
-     */
-    private String appendPackageComponents(String... components) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(model.getMetadata().getPackageName());
-        for (String component : components) {
-            stringBuilder.append(".").append(component);
-        }
-        return stringBuilder.toString();
+    public ClassName getClientClass(String className) {
+        return ClassName.get(model.getMetadata().getFullClientPackageName(), className);
     }
 }

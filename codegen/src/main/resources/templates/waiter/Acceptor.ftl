@@ -1,14 +1,14 @@
 ${fileHeader}
 <#assign outputType = operation.returnType.returnType>
 
-package ${metadata.packageName}.waiters;
+package ${metadata.fullWaitersPackageName};
 
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.waiters.WaiterAcceptor;
 import software.amazon.awssdk.waiters.WaiterState;
 import software.amazon.awssdk.waiters.AcceptorPathMatcher;
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -12,7 +12,7 @@ import java.util.List;
 import javax.annotation.Generated;
 
 import software.amazon.awssdk.SdkClientException;
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 import software.amazon.awssdk.runtime.transform.Marshaller;
 import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.util.StringUtils;

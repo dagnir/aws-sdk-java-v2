@@ -15,12 +15,10 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import static software.amazon.awssdk.codegen.internal.Constants.SMOKE_TESTS_DIR_NAME;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.protocol.ProtocolMetadataProvider;
-
+import software.amazon.awssdk.utils.StringUtils;
 
 public class Metadata {
 
@@ -61,9 +59,21 @@ public class Metadata {
 
     private String baseBuilder;
 
-    private String packageName;
+    private String rootPackageName;
 
-    private String packagePath;
+    private String clientPackageName;
+
+    private String modelPackageName;
+
+    private String transformPackageName;
+
+    private String requestTransformPackageName;
+
+    private String waitersPackageName;
+
+    private String authPolicyPackageName;
+
+    private String smokeTestsPackageName;
 
     private String serviceAbbreviation;
 
@@ -344,29 +354,135 @@ public class Metadata {
         return this;
     }
 
-    public String getPackageName() {
-        return packageName;
+    public String getRootPackageName() {
+        return rootPackageName;
     }
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
+    public void setRootPackageName(String rootPackageName) {
+        this.rootPackageName = rootPackageName;
     }
 
-    public Metadata withPackageName(String packageName) {
-        setPackageName(packageName);
+    public Metadata withRootPackageName(String rootPackageName) {
+        setRootPackageName(rootPackageName);
         return this;
     }
 
-    public String getPackagePath() {
-        return packagePath;
+    public String getFullClientPackageName() {
+        return joinPackageNames(rootPackageName, getClientPackageName());
     }
 
-    public void setPackagePath(String packagePath) {
-        this.packagePath = packagePath;
+    public String getClientPackageName() {
+        return clientPackageName;
     }
 
-    public Metadata withPackagePath(String packagePath) {
-        setPackagePath(packagePath);
+    public void setClientPackageName(String clientPackageName) {
+        this.clientPackageName = clientPackageName;
+    }
+
+    public Metadata withClientPackageName(String clientPackageName) {
+        setClientPackageName(clientPackageName);
+        return this;
+    }
+
+    public String getFullModelPackageName() {
+        return joinPackageNames(rootPackageName, getModelPackageName());
+    }
+
+    public String getModelPackageName() {
+        return modelPackageName;
+    }
+
+    public void setModelPackageName(String modelPackageName) {
+        this.modelPackageName = modelPackageName;
+    }
+
+    public Metadata withModelPackageName(String modelPackageName) {
+        setModelPackageName(modelPackageName);
+        return this;
+    }
+
+    public String getFullTransformPackageName() {
+        return joinPackageNames(rootPackageName, getTransformPackageName());
+    }
+
+    public String getTransformPackageName() {
+        return transformPackageName;
+    }
+
+    public void setTransformPackageName(String transformPackageName) {
+        this.transformPackageName = transformPackageName;
+    }
+
+    public Metadata withTransformPackageName(String transformPackageName) {
+        setTransformPackageName(transformPackageName);
+        return this;
+    }
+
+    public String getFullRequestTransformPackageName() {
+        return joinPackageNames(rootPackageName, getRequestTransformPackageName());
+    }
+
+    public String getRequestTransformPackageName() {
+        return requestTransformPackageName;
+    }
+
+    public void setRequestTransformPackageName(String requestTransformPackageName) {
+        this.requestTransformPackageName = requestTransformPackageName;
+    }
+
+    public Metadata withRequestTransformPackageName(String requestTransformPackageName) {
+        setRequestTransformPackageName(requestTransformPackageName);
+        return this;
+    }
+
+    public String getFullWaitersPackageName() {
+        return joinPackageNames(rootPackageName, getWaitersPackageName());
+    }
+
+    public String getWaitersPackageName() {
+        return waitersPackageName;
+    }
+
+    public void setWaitersPackageName(String waitersPackageName) {
+        this.waitersPackageName = waitersPackageName;
+    }
+
+    public Metadata withWaitersPackageName(String waitersPackageName) {
+        setWaitersPackageName(waitersPackageName);
+        return this;
+    }
+
+    public String getFullAuthPolicyPackageName() {
+        return joinPackageNames(rootPackageName, getAuthPolicyPackageName());
+    }
+
+    public String getAuthPolicyPackageName() {
+        return authPolicyPackageName;
+    }
+
+    public void setAuthPolicyPackageName(String authPolicyPackageName) {
+        this.authPolicyPackageName = authPolicyPackageName;
+    }
+
+    public Metadata withAuthPolicyPackageName(String authPolicyPackageName) {
+        setSmokeTestsPackageName(authPolicyPackageName);
+        return this;
+    }
+
+    public String getFullSmokeTestsPackageName() {
+        return joinPackageNames(rootPackageName, getSmokeTestsPackageName());
+    }
+
+    public String getSmokeTestsPackageName() {
+        return smokeTestsPackageName;
+    }
+
+    public void setSmokeTestsPackageName(String smokeTestsPackageName) {
+        this.smokeTestsPackageName = smokeTestsPackageName;
+    }
+
+    public Metadata withSmokeTestsPackageName(String smokeTestsPackageName) {
+        setSmokeTestsPackageName(smokeTestsPackageName);
         return this;
     }
 
@@ -375,13 +491,6 @@ public class Metadata {
      */
     public String getCucumberModuleInjectorClassName() {
         return getSyncInterface() + "ModuleInjector";
-    }
-
-    /**
-     * @return The package name for the smoke tests.
-     */
-    public String getSmokeTestsPackageName() {
-        return packageName + "." + SMOKE_TESTS_DIR_NAME;
     }
 
     /**
@@ -581,5 +690,9 @@ public class Metadata {
     public Metadata withAuthType(AuthType authType) {
         this.authType = authType;
         return this;
+    }
+
+    private String joinPackageNames(String lhs, String rhs) {
+        return StringUtils.isBlank(rhs) ? lhs : lhs + '.' + rhs;
     }
 }

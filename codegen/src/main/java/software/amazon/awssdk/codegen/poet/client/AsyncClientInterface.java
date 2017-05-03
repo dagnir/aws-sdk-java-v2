@@ -33,12 +33,15 @@ public class AsyncClientInterface implements ClassSpec {
 
     private final IntermediateModel model;
     private final ClassName className;
-    private final String basePackage;
+    private final String modelPackage;
+    private final String clientPackageName;
 
     public AsyncClientInterface(IntermediateModel model) {
-        this.basePackage = model.getMetadata().getPackageName();
+        this.modelPackage = model.getMetadata().getFullModelPackageName();
+        this.clientPackageName = model.getMetadata().getFullClientPackageName();
         this.model = model;
-        this.className = ClassName.get(basePackage, model.getMetadata().getAsyncInterface());
+        this.className = ClassName.get(model.getMetadata().getFullClientPackageName(),
+                                       model.getMetadata().getAsyncInterface());
     }
 
     @Override
@@ -64,9 +67,9 @@ public class AsyncClientInterface implements ClassSpec {
     }
 
     private MethodSpec toMethodSpec(OperationModel opModel) {
-        ClassName returnTypeClass = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
+        ClassName returnTypeClass = ClassName.get(modelPackage, opModel.getReturnType().getReturnType());
         TypeName returnType = ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), returnTypeClass);
-        ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
+        ClassName requestType = ClassName.get(modelPackage, opModel.getInput().getVariableType());
 
         return MethodSpec.methodBuilder(opModel.getMethodName())
                 .returns(returnType)
@@ -78,8 +81,8 @@ public class AsyncClientInterface implements ClassSpec {
     }
 
     private MethodSpec builder() {
-        ClassName builderClass = ClassName.get(basePackage, model.getMetadata().getAsyncBuilder());
-        ClassName builderInterface = ClassName.get(basePackage, model.getMetadata().getAsyncBuilderInterface());
+        ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilder());
+        ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilderInterface());
         return MethodSpec.methodBuilder("builder")
                          .returns(builderInterface)
                          .addModifiers(Modifier.STATIC, Modifier.PUBLIC)

@@ -24,7 +24,6 @@ import software.amazon.awssdk.codegen.utils.CompositeIterable;
  * Generator tasks for AWS style clients.
  */
 public class AwsGeneratorTasks implements Iterable<GeneratorTask> {
-
     private final Iterable<GeneratorTask> tasks;
 
     public AwsGeneratorTasks(GeneratorTaskParams params) {

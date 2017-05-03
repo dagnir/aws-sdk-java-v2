@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.simpledb.model.transform;
+package software.amazon.awssdk.services.simpledb.transform;
 
 import static org.junit.Assert.assertTrue;
 

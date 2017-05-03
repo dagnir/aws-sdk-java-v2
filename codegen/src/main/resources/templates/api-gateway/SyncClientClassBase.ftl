@@ -1,6 +1,6 @@
 ${fileHeader}
 <#assign serviceAbbreviation = (metadata.serviceAbbreviation)!metadata.serviceFullName/>
-package ${metadata.packageName};
+package ${metadata.fullClientPackageName};
 
 <#if metadata.hasApiWithStreamInput>
 import java.io.*;
@@ -39,8 +39,8 @@ import software.amazon.awssdk.util.ServiceClientHolderInputStream;
 import ${serviceBaseExceptionFqcn};
 
 
-import ${metadata.packageName}.model.*;
-import ${metadata.packageName}.model.transform.*;
+import ${metadata.fullModelPackageName}.*;
+import ${metadata.fullTransformPackageName}.*;
 
 <#assign documentation = (metadata.documentation)!""/>
 

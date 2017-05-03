@@ -1,5 +1,5 @@
 ${fileHeader}
-package ${metadata.packageName}.model;
+package ${metadata.fullModelPackageName};
 
 import javax.annotation.Generated;
 

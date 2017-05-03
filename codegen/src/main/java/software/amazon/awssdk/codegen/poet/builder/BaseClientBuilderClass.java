@@ -27,6 +27,7 @@ import software.amazon.awssdk.auth.QueryStringSigner;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.client.builder.DefaultClientBuilder;
+import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
@@ -45,7 +46,7 @@ public class BaseClientBuilderClass implements ClassSpec {
     public BaseClientBuilderClass(IntermediateModel model) {
         this.model = model;
 
-        String basePackage = model.getMetadata().getPackageName();
+        String basePackage = model.getMetadata().getFullClientPackageName();
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getBaseBuilderInterface());
         this.builderClassName = ClassName.get(basePackage, model.getMetadata().getBaseBuilder());
     }
@@ -125,8 +126,9 @@ public class BaseClientBuilderClass implements ClassSpec {
     }
 
     private CodeBlock applyListenerDefaultsMethod() {
-        String requestHandlerPath = String.format("/%s/request.handlers", model.getMetadata().getPackagePath());
-        String requestHandler2Path = String.format("/%s/request.handler2s", model.getMetadata().getPackagePath());
+        String requestHandlerDirectory = Utils.packageToDirectory(model.getMetadata().getFullClientPackageName());
+        String requestHandlerPath = String.format("/%s/request.handlers", requestHandlerDirectory);
+        String requestHandler2Path = String.format("/%s/request.handler2s", requestHandlerDirectory);
         return CodeBlock.builder()
                         .add("@Override\n" +
                              "protected void applyListenerDefaults($T builder) {\n", ClientListenerConfiguration.Builder.class)

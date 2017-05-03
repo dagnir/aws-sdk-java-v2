@@ -33,7 +33,7 @@ public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {
 
     public AsyncClientGeneratorTasks(GeneratorTaskParams dependencies) {
         super(dependencies);
-        this.baseDirectory = dependencies.getPathProvider().getBasePackageDirectory();
+        this.baseDirectory = dependencies.getPathProvider().getClientDirectory();
     }
 
     @Override

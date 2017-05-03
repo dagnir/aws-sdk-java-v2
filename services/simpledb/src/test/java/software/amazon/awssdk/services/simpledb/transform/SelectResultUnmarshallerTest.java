@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.simpledb.model.transform;
+package software.amazon.awssdk.services.simpledb.transform;
 
 import static org.junit.Assert.assertTrue;
 
@@ -21,29 +21,26 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.services.simpledb.model.DomainMetadataResult;
+import software.amazon.awssdk.services.simpledb.model.Item;
+import software.amazon.awssdk.services.simpledb.model.SelectResult;
 
-public class DomainMetadataResultUnmarshallerTest {
+public class SelectResultUnmarshallerTest {
 
     /**
-     * Test method for DomainMetadataResultXpathUnmarshaller
+     * Test method for SelectResultUnmarshaller
      */
     @Test
-    public final void testXpathUnmarshaller() throws Exception {
+    public final void testUnmarshall() throws Exception {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
-                                                                                  .getResourceAsStream("DomainMetadataResponse.xml"));
+                                                                                  .getResourceAsStream("SelectResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        DomainMetadataResult result = new DomainMetadataResultUnmarshaller()
-                .unmarshall(unmarshallerContext);
+        SelectResult result = new SelectResultUnmarshaller().unmarshall(unmarshallerContext);
 
-        assertTrue(result.getItemCount() == 25);
-        assertTrue(result.getItemNamesSizeBytes() == 12345);
-        assertTrue(result.getAttributeNameCount() == 20);
-        assertTrue(result.getAttributeNamesSizeBytes() == 2345);
-        assertTrue(result.getAttributeValueCount() == 25);
-        assertTrue(result.getAttributeValuesSizeBytes() == 1234);
-        assertTrue(result.getTimestamp() == 5555);
+        assertTrue(!result.getItems().isEmpty());
+        assertTrue(result.getItems().size() == 2);
+        assertTrue(((Item) result.getItems().get(0)).getName().equals("ItemOne"));
+        assertTrue(((Item) result.getItems().get(1)).getName().equals("ItemTwo"));
     }
 
 }

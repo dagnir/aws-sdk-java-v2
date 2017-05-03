@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.glacier.model.transform;
+package software.amazon.awssdk.services.glacier.transform;
 
 import java.util.function.Supplier;
 

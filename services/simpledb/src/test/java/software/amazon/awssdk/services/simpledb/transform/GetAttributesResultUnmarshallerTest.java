@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.simpledb.model.transform;
+package software.amazon.awssdk.services.simpledb.transform;
 
 import static org.junit.Assert.assertTrue;
 
@@ -21,26 +21,29 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.services.simpledb.model.Item;
-import software.amazon.awssdk.services.simpledb.model.SelectResult;
+import software.amazon.awssdk.services.simpledb.model.Attribute;
+import software.amazon.awssdk.services.simpledb.model.GetAttributesResult;
 
-public class SelectResultUnmarshallerTest {
+public class GetAttributesResultUnmarshallerTest {
 
     /**
-     * Test method for SelectResultUnmarshaller
+     * Test method for GetAttributesResultUnmarshaller
      */
     @Test
     public final void testUnmarshall() throws Exception {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
-                                                                                  .getResourceAsStream("SelectResponse.xml"));
+                                                                                  .getResourceAsStream("GetAttributesResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        SelectResult result = new SelectResultUnmarshaller().unmarshall(unmarshallerContext);
+        GetAttributesResult result = new GetAttributesResultUnmarshaller()
+                .unmarshall(unmarshallerContext);
 
-        assertTrue(!result.getItems().isEmpty());
-        assertTrue(result.getItems().size() == 2);
-        assertTrue(((Item) result.getItems().get(0)).getName().equals("ItemOne"));
-        assertTrue(((Item) result.getItems().get(1)).getName().equals("ItemTwo"));
+        assertTrue(!result.getAttributes().isEmpty());
+        assertTrue(result.getAttributes().size() == 2);
+        assertTrue(((Attribute) result.getAttributes().get(0)).getName().equals("Color"));
+        assertTrue(((Attribute) result.getAttributes().get(0)).getValue().equals("Blue"));
+        assertTrue(((Attribute) result.getAttributes().get(1)).getName().equals("Price"));
+        assertTrue(((Attribute) result.getAttributes().get(1)).getValue().equals("$2.50"));
     }
 
 }

@@ -61,7 +61,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
 
         ClassName baseException = ClassName.get(exceptionPath, model.getSdkModeledExceptionBaseClassName());
 
-        ClassName protocolFactory = poetExtensions.getTopLevelClass(model.getMetadata().getProtocolFactory());
+        ClassName protocolFactory = poetExtensions.getClientClass(model.getMetadata().getProtocolFactory());
 
         MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("init")
                 .returns(protocolFactory)
@@ -119,7 +119,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
     public CodeBlock executionHandler(OperationModel opModel) {
         ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
-        ClassName marshaller = poetExtensions.getTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
+        ClassName marshaller = poetExtensions.getRequestTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
 
         return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>().withMarshaller(new $T($N))" +
                 ".withResponseHandler($N).withErrorResponseHandler($N).withInput($L)).getResult();",

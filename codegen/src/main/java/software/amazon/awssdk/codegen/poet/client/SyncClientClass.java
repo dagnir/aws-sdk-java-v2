@@ -50,13 +50,13 @@ public class SyncClientClass implements ClassSpec {
     public SyncClientClass(GeneratorTaskParams taskParams) {
         this.model = taskParams.getModel();
         this.poetExtensions = taskParams.getPoetExtensions();
-        this.className = poetExtensions.getTopLevelClass(model.getMetadata().getSyncClient());
+        this.className = poetExtensions.getClientClass(model.getMetadata().getSyncClient());
         this.protocolSpec = getProtocolSpecs(model.getMetadata().getProtocol());
     }
 
     @Override
     public TypeSpec poetSpec() {
-        ClassName interfaceClass = poetExtensions.getTopLevelClass(model.getMetadata().getSyncInterface());
+        ClassName interfaceClass = poetExtensions.getClientClass(model.getMetadata().getSyncInterface());
 
         Builder classBuilder = PoetUtils.createClassBuilder(className)
                 .addSuperinterface(interfaceClass)

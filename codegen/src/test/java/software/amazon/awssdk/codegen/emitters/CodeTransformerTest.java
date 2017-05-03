@@ -22,19 +22,19 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 
-public class ContentProcessorTest {
+public class CodeTransformerTest {
 
     @Test
     public void chainCallsProcessorsInOrderAndPassedResultOfPreviousProcessor() {
         String input = "hello", intermediate = "world", output = "earth";
-        ContentProcessor firstProcessor = mockProcessor(input, intermediate), secondProcessor = mockProcessor(intermediate, output);
-        ContentProcessor chain = ContentProcessor.chain(firstProcessor, secondProcessor);
+        CodeTransformer firstProcessor = mockProcessor(input, intermediate), secondProcessor = mockProcessor(intermediate, output);
+        CodeTransformer chain = CodeTransformer.chain(firstProcessor, secondProcessor);
 
         assertThat(chain.apply(input), equalTo(output));
     }
 
-    private ContentProcessor mockProcessor(String accepts, String returns) {
-        ContentProcessor processor = mock(ContentProcessor.class);
+    private CodeTransformer mockProcessor(String accepts, String returns) {
+        CodeTransformer processor = mock(CodeTransformer.class);
         when(processor.apply(accepts)).thenReturn(returns);
         return processor;
     }

@@ -18,7 +18,6 @@ package software.amazon.awssdk.codegen.poet.builder;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
@@ -28,7 +27,7 @@ public class BaseClientBuilderInterface implements ClassSpec {
     private final ClassName builderInterfaceName;
 
     public BaseClientBuilderInterface(IntermediateModel model) {
-        String basePackage = model.getMetadata().getPackageName();
+        String basePackage = model.getMetadata().getFullClientPackageName();
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getBaseBuilderInterface());
     }
 

@@ -51,7 +51,7 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
 
     @Override
     public FieldSpec protocolFactory(IntermediateModel model) {
-        ClassName protocolFactory = poetExtensions.getTopLevelClass(model.getMetadata().getProtocolFactory());
+        ClassName protocolFactory = poetExtensions.getClientClass(model.getMetadata().getProtocolFactory());
         return FieldSpec.builder(protocolFactory, "protocolFactory")
                 .addModifiers(Modifier.PRIVATE, Modifier.FINAL).build();
     }
@@ -63,7 +63,7 @@ public class ApiGatewayProtocolSpec extends JsonProtocolSpec {
 
         ClassName baseException = ClassName.get(exceptionPath, model.getSdkModeledExceptionBaseClassName());
 
-        ClassName protocolFactory = poetExtensions.getTopLevelClass(model.getMetadata().getProtocolFactory());
+        ClassName protocolFactory = poetExtensions.getClientClass(model.getMetadata().getProtocolFactory());
 
         MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("init")
                 .returns(protocolFactory)

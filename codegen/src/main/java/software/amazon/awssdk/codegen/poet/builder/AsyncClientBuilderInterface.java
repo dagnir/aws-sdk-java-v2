@@ -29,7 +29,7 @@ public class AsyncClientBuilderInterface implements ClassSpec {
     private final ClassName baseBuilderInterfaceName;
 
     public AsyncClientBuilderInterface(IntermediateModel model) {
-        String basePackage = model.getMetadata().getPackageName();
+        String basePackage = model.getMetadata().getFullClientPackageName();
         this.clientInterfaceName = ClassName.get(basePackage, model.getMetadata().getAsyncInterface());
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getAsyncBuilderInterface());
         this.baseBuilderInterfaceName = ClassName.get(basePackage, model.getMetadata().getBaseBuilderInterface());

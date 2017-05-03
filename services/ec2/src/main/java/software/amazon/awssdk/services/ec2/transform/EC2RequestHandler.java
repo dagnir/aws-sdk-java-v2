@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.ec2.model.transform;
+package software.amazon.awssdk.services.ec2.transform;
 
 import java.util.ArrayList;
 import java.util.List;

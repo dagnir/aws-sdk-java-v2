@@ -50,7 +50,7 @@ public class ClientReflector {
 
     private Class<?> getInterfaceClass() {
         try {
-            return Class.forName(getFqcn(metadata.getSyncInterface()));
+            return Class.forName(getClientFqcn(metadata.getSyncInterface()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -100,8 +100,8 @@ public class ClientReflector {
      * @param simpleClassName Class name to fully qualify.
      * @return Fully qualified name of class in the client's base package.
      */
-    private String getFqcn(String simpleClassName) {
-        return String.format("%s.%s", metadata.getPackageName(), simpleClassName);
+    private String getClientFqcn(String simpleClassName) {
+        return String.format("%s.%s", metadata.getFullClientPackageName(), simpleClassName);
     }
 
     /**
@@ -109,7 +109,7 @@ public class ClientReflector {
      * @return Fully qualified name of class in the client's model package.
      */
     private String getModelFqcn(String simpleClassName) {
-        return String.format("%s.model.%s", metadata.getPackageName(), simpleClassName);
+        return String.format("%s.%s", metadata.getFullModelPackageName(), simpleClassName);
     }
 
     /**

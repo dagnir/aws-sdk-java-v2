@@ -1,6 +1,6 @@
 ${fileHeader}
 <#assign serviceAbbreviation = (metadata.serviceAbbreviation)!metadata.serviceFullName/>
-package ${metadata.packageName};
+package ${metadata.fullClientPackageName};
 
 import javax.annotation.Generated;
 
@@ -9,7 +9,7 @@ import software.amazon.awssdk.opensdk.*;
 import software.amazon.awssdk.opensdk.model.*;
 import software.amazon.awssdk.regions.*;
 
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 
 /**
  * Interface for accessing ${serviceAbbreviation}.

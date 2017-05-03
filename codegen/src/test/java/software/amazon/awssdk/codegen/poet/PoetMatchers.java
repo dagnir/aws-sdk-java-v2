@@ -24,14 +24,14 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.ComparisonFailure;
-import software.amazon.awssdk.codegen.emitters.ContentProcessor;
+import software.amazon.awssdk.codegen.emitters.CodeTransformer;
 import software.amazon.awssdk.codegen.emitters.JavaCodeFormatter;
 import software.amazon.awssdk.codegen.emitters.UnusedImportRemover;
 import software.amazon.awssdk.utils.IoUtils;
 
 public final class PoetMatchers {
 
-    private static final ContentProcessor processor = ContentProcessor.chain(new UnusedImportRemover(), new JavaCodeFormatter());
+    private static final CodeTransformer processor = CodeTransformer.chain(new UnusedImportRemover(), new JavaCodeFormatter());
 
     public static Matcher<ClassSpec> generatesTo(String expectedTestFile) {
         return new TypeSafeMatcher<ClassSpec>() {

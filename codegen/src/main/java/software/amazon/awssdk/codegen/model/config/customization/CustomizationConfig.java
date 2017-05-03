@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import software.amazon.awssdk.codegen.internal.Constants;
 import software.amazon.awssdk.codegen.model.config.ConstructorFormsWrapper;
 import software.amazon.awssdk.codegen.model.config.templates.CodeGenTemplatesConfig;
 
@@ -187,17 +186,10 @@ public class CustomizationConfig {
     private Set<DeprecatedSuppression> deprecatedSuppressions;
 
     /**
-     * Relative path to customize transform directory. Will be generated relative
-     * to the models directory. Default is {@value Constants#PACKAGE_NAME_TRANSFORM_SUFFIX}.
+     * A service name that this service client should share models with. The models and non-request marshallers will be generated
+     * into the same directory as the provided service's models.
      */
-    private String transformDirectory = Constants.PACKAGE_NAME_TRANSFORM_SUFFIX;
-
-    /**
-     * The package name to use for this client. This allows to services to be within one
-     * logical package. For example, dynamodbstreams and dynamodb can both live within the
-     * package "dynamodb"
-     */
-    private String packageNameOverride;
+    private String shareModelsWith;
 
     private CustomizationConfig() {
     }
@@ -474,23 +466,6 @@ public class CustomizationConfig {
         this.presignersFqcn = presignersFqcn;
     }
 
-    public String getTransformDirectory() {
-        return transformDirectory;
-    }
-
-    public CustomizationConfig setTransformDirectory(String transformDirectory) {
-        this.transformDirectory = transformDirectory;
-        return this;
-    }
-
-    public String getPackageNameOverride() {
-        return packageNameOverride;
-    }
-
-    public void setPackageNameOverride(String packageNameOverride) {
-        this.packageNameOverride = packageNameOverride;
-    }
-
     public Set<DeprecatedSuppression> getDeprecatedSuppressions() {
         return deprecatedSuppressions;
     }
@@ -509,5 +484,13 @@ public class CustomizationConfig {
 
     private boolean shouldSuppress(DeprecatedSuppression suppression) {
         return deprecatedSuppressions != null && deprecatedSuppressions.contains(suppression);
+    }
+
+    public String getShareModelsWith() {
+        return shareModelsWith;
+    }
+
+    public void setShareModelsWith(String shareModelsWith) {
+        this.shareModelsWith = shareModelsWith;
     }
 }

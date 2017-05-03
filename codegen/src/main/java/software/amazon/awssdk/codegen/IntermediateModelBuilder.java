@@ -205,8 +205,8 @@ public class IntermediateModelBuilder {
                             throw new RuntimeException(String.format("Required custom auth not defined: %s",
                                     c2jOperation.getAuthorizer()));
                         }
-                        shape.setRequestSignerClassFqcn(model.getMetadata().getPackageName()
-                                + ".auth." + auth.getInterfaceName());
+                        shape.setRequestSignerClassFqcn(model.getMetadata().getAuthPolicyPackageName() + '.' +
+                                                        auth.getInterfaceName());
                     } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
                         model.getMetadata().setRequiresIamSigners(true);
                         shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");

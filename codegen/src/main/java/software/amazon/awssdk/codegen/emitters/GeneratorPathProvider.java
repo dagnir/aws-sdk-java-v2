@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.emitters;
 
 import software.amazon.awssdk.codegen.internal.Constants;
+import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 
 /**
@@ -33,28 +34,32 @@ public class GeneratorPathProvider {
         this.testDirectory = testDirectory;
     }
 
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    public String getTestDirectory() {
+        return testDirectory;
+    }
+
     public String getModelDirectory() {
-        return getBasePackageDirectory() + "/" + Constants.PACKAGE_NAME_MODEL_SUFFIX;
+        return sourceDirectory + "/" + Utils.packageToDirectory(model.getMetadata().getFullModelPackageName());
     }
 
     public String getTransformDirectory() {
-        return getModelDirectory() + "/" + model.getCustomizationConfig().getTransformDirectory();
+        return sourceDirectory + "/" + Utils.packageToDirectory(model.getMetadata().getFullTransformPackageName());
     }
 
-    public String getBasePackageDirectory() {
-        return sourceDirectory + "/" + getPackagePath();
+    public String getRequestTransformDirectory() {
+        return sourceDirectory + "/" + Utils.packageToDirectory(model.getMetadata().getFullRequestTransformPackageName());
     }
 
-    public String getSmokeTestDirectory() {
-        return String.format("%s/%s/%s",
-                             testDirectory,
-                             getPackagePath(),
-
-                             Constants.SMOKE_TESTS_DIR_NAME);
+    public String getClientDirectory() {
+        return sourceDirectory + "/" + Utils.packageToDirectory(model.getMetadata().getFullClientPackageName());
     }
 
     public String getWaitersDirectory() {
-        return getBasePackageDirectory() + "/" + Constants.PACKAGE_NAME_WAITERS_SUFFIX;
+        return sourceDirectory + "/" + Utils.packageToDirectory(model.getMetadata().getFullWaitersPackageName());
     }
 
     public String getPolicyEnumDirectory() {
@@ -62,10 +67,10 @@ public class GeneratorPathProvider {
     }
 
     public String getAuthorizerDirectory() {
-        return getBasePackageDirectory() + "/" + Constants.PACKAGE_NAME_CUSTOM_AUTH_SUFFIX;
+        return sourceDirectory + "/" + Utils.packageToDirectory(model.getMetadata().getFullAuthPolicyPackageName());
     }
 
-    private String getPackagePath() {
-        return model.getMetadata().getPackagePath();
+    public String getSmokeTestDirectory() {
+        return testDirectory + '/' + Utils.packageToDirectory(model.getMetadata().getFullSmokeTestsPackageName());
     }
 }

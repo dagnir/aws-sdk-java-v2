@@ -7,7 +7,7 @@ import java.math.*;
 import java.nio.ByteBuffer;
 import javax.annotation.Generated;
 
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 import software.amazon.awssdk.runtime.transform.SimpleTypeJsonUnmarshallers.*;
 import software.amazon.awssdk.runtime.transform.*;
 

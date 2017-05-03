@@ -139,7 +139,8 @@ public final class IntermediateModel {
     }
 
     public String getSdkModeledExceptionBaseFqcn() {
-        return String.format("%s.model.%s", metadata.getPackageName(),
+        return String.format("%s.%s",
+                             metadata.getFullModelPackageName(),
                              getSdkModeledExceptionBaseClassName());
     }
 
@@ -194,12 +195,5 @@ public final class IntermediateModel {
 
     public Map<String, AuthorizerModel> getCustomAuthorizers() {
         return customAuthorizers;
-    }
-
-    /**
-     * @return Name of package that the marshallers/unmarshallers are generated into.
-     */
-    public String getTransformPackage() {
-        return metadata.getPackageName() + ".model." + Utils.directoryToPackage(customizationConfig.getTransformDirectory());
     }
 }

@@ -31,12 +31,12 @@ public final class SyncClientInterface implements ClassSpec {
 
     private final IntermediateModel model;
     private final ClassName className;
-    private final String basePackage;
+    private final String clientPackageName;
 
     public SyncClientInterface(IntermediateModel model) {
-        this.basePackage = model.getMetadata().getPackageName();
         this.model = model;
-        this.className = ClassName.get(basePackage, model.getMetadata().getSyncInterface());
+        this.clientPackageName = model.getMetadata().getFullClientPackageName();
+        this.className = ClassName.get(clientPackageName, model.getMetadata().getSyncInterface());
     }
 
     @Override
@@ -75,8 +75,8 @@ public final class SyncClientInterface implements ClassSpec {
     }
 
     private MethodSpec builder() {
-        ClassName builderClass = ClassName.get(basePackage, model.getMetadata().getSyncBuilder());
-        ClassName builderInterface = ClassName.get(basePackage, model.getMetadata().getSyncBuilderInterface());
+        ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getSyncBuilder());
+        ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getSyncBuilderInterface());
         return MethodSpec.methodBuilder("builder")
                 .returns(builderInterface)
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
@@ -93,8 +93,10 @@ public final class SyncClientInterface implements ClassSpec {
     }
 
     private MethodSpec operationMethodSpec(OperationModel opModel) {
-        ClassName returnType = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
-        ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
+        ClassName returnType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                             opModel.getReturnType().getReturnType());
+        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getInput().getVariableType());
 
         return MethodSpec.methodBuilder(opModel.getMethodName())
                 .returns(returnType)
@@ -108,7 +110,8 @@ public final class SyncClientInterface implements ClassSpec {
 
     private MethodSpec waiters() {
         return MethodSpec.methodBuilder("waiters")
-                .returns(ClassName.get(basePackage + ".waiters", model.getMetadata().getSyncInterface() + "Waiters"))
+                .returns(ClassName.get(model.getMetadata().getFullWaitersPackageName(),
+                                       model.getMetadata().getSyncInterface() + "Waiters"))
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .build();
     }

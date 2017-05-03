@@ -1,6 +1,6 @@
 ${fileHeader}
 <#assign hasPlacement=authorizer.hasTokenPlacement()>
-package ${metadata.packageName}.auth;
+package ${metadata.fullAuthPolicyPackageName};
 
 import javax.annotation.Generated;
 <#if hasPlacement>
@@ -8,8 +8,8 @@ import software.amazon.awssdk.ImmutableRequest;
 import software.amazon.awssdk.SignableRequest;
 </#if>
 import software.amazon.awssdk.auth.RequestSigner;
-import ${metadata.packageName}.${metadata.syncInterface};
-import ${metadata.packageName}.${metadata.syncInterface}Builder;
+import ${metadata.fullClientPackageName}.${metadata.syncInterface};
+import ${metadata.fullClientPackageName}.${metadata.syncInterface}Builder;
 
 /**
 <#if hasPlacement>

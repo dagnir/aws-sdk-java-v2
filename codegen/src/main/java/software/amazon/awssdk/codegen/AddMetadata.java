@@ -31,7 +31,7 @@ import software.amazon.awssdk.codegen.model.service.ServiceModel;
  */
 final class AddMetadata {
 
-    private static final String AWS_PACKAGE_PREFIX = "software.amazon.awssdk.services.";
+    private static final String AWS_PACKAGE_PREFIX = "software.amazon.awssdk.services";
 
     public static Metadata constructMetadata(ServiceModel serviceModel,
                                              BasicCodeGenConfig codeGenConfig,
@@ -42,20 +42,23 @@ final class AddMetadata {
         final ServiceMetadata serviceMetadata = serviceModel.getMetadata();
 
         final String serviceName;
-        final String packageName;
+        final String rootPackageName;
 
         // API Gateway uses additional codegen.config settings
         if (serviceMetadata.getProtocol().equals(Protocol.API_GATEWAY.getValue())) {
+            // TODO: The meaning of root package name has changed a bit since this code was written. Specifically, the root for
+            // AWS no longer includes the service name. This changed the behavior of the API gateway generation, but we're not
+            // keeping it up to date at this time. Just be aware this has happened when updating the API gateway code.
             serviceName = codeGenConfig.getInterfaceName();
-            packageName = codeGenConfig.getPackageName();
+            rootPackageName = codeGenConfig.getPackageName();
 
             metadata.withDefaultEndpoint(codeGenConfig.getEndpoint())
                     .withDefaultEndpointWithoutHttpProtocol(
                             Utils.getDefaultEndpointWithoutHttpProtocol(codeGenConfig.getEndpoint()))
                     .withDefaultRegion(codeGenConfig.getDefaultRegion());
         } else {
-            serviceName = Utils.getServiceName(serviceMetadata);
-            packageName = AWS_PACKAGE_PREFIX + Utils.getPackageName(serviceName, customizationConfig);
+            serviceName = Utils.getServiceName(serviceMetadata, customizationConfig);
+            rootPackageName = AWS_PACKAGE_PREFIX;
         }
 
         metadata.withApiVersion(serviceMetadata.getApiVersion())
@@ -66,8 +69,13 @@ final class AddMetadata {
                 .withBaseBuilderInterface(String.format(Constants.BASE_BUILDER_INTERFACE_NAME_PATTERN, serviceName))
                 .withBaseBuilder(String.format(Constants.BASE_BUILDER_CLASS_NAME_PATTERN, serviceName))
                 .withDocumentation(serviceModel.getDocumentation())
-                .withPackageName(packageName)
-                .withPackagePath(packageName.replace(".", "/"))
+                .withRootPackageName(rootPackageName)
+                .withClientPackageName(Utils.getClientPackageName(serviceName, customizationConfig))
+                .withModelPackageName(Utils.getModelPackageName(serviceName, customizationConfig))
+                .withTransformPackageName(Utils.getTransformPackageName(serviceName, customizationConfig))
+                .withRequestTransformPackageName(Utils.getRequestTransformPackageName(serviceName, customizationConfig))
+                .withWaitersPackageName(Utils.getWaitersPackageName(serviceName, customizationConfig))
+                .withSmokeTestsPackageName(Utils.getSmokeTestPackageName(serviceName, customizationConfig))
                 .withServiceAbbreviation(serviceMetadata.getServiceAbbreviation())
                 .withServiceFullName(serviceMetadata.getServiceFullName())
                 .withSyncClient(String.format(Constants.SYNC_CLIENT_CLASS_NAME_PATTERN, serviceName))
