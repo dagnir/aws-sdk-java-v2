@@ -31,7 +31,7 @@ import software.amazon.awssdk.utils.StringUtils;
 @ReviewBeforeRelease("Might only need to do this for certain protocols - ie query?")
 public final class MoveParametersToBodyStage implements RequestToRequestPipeline {
     @Override
-    public Request<?> execute(Request<?> input, RequestExecutionContext context) throws Exception {
+    public Request<?> execute(Request<?> input, RequestExecutionContext context) {
         if (shouldPutParamsInBody(input)) {
             return putParams(input);
         }
