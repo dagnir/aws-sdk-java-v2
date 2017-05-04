@@ -74,6 +74,9 @@
         <!-- Stars must not be used in import statements. -->
         <module name="AvoidStarImport"/>
 
+        <!-- Checks for unused imports. -->
+        <module name="UnusedImports"/>
+
         <!-- Package name and imports must not be wrapped. -->
         <module name="NoLineWrap"/>
 
