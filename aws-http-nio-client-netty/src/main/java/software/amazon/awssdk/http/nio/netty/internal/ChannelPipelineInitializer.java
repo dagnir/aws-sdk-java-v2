@@ -17,14 +17,14 @@ package software.amazon.awssdk.http.nio.netty.internal;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.pool.ChannelPoolHandler;
 import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpContentDecompressor;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
+import software.amazon.awssdk.http.nio.netty.internal.RequestContext.RequestContextSaver;
 import software.amazon.awssdk.http.nio.netty.internal.utils.LoggingHandler;
 import software.amazon.awssdk.utils.Logger;
 
@@ -32,16 +32,20 @@ public class ChannelPipelineInitializer implements ChannelPoolHandler {
     private static final Logger log = Logger.loggerFor(NettyNioAsyncHttpClient.class);
 
     private final SslContext sslContext;
+    private final RequestContextSaver<ChannelId> requestContexts;
     private final ChannelHandler[] handlers;
 
-    public ChannelPipelineInitializer(SslContext sslContext, ChannelHandler...handlers) {
+    public ChannelPipelineInitializer(SslContext sslContext,
+                                      RequestContextSaver<ChannelId> requestContexts,
+                                      ChannelHandler...handlers) {
         this.sslContext = sslContext;
+        this.requestContexts = requestContexts;
         this.handlers = handlers;
     }
 
     @Override
     public void channelReleased(Channel ch) throws Exception {
-
+        requestContexts.delete(ch.id());
     }
 
     @Override
@@ -58,15 +62,15 @@ public class ChannelPipelineInitializer implements ChannelPoolHandler {
             p.addLast(handler);
             handler.handshakeFuture().addListener(future -> {
                 if (!future.isSuccess()) {
-                    Logger.loggerFor(ChannelPipelineInitializer.class).error(() -> "SSL handshake failed.", future.cause());
+                    log.error(() -> "SSL handshake failed.", future.cause());
                 }
             });
         }
 
         p.addLast(new HttpClientCodec());
-        // Remove the following line if you don't want automatic content decompression.
-        p.addLast(new HttpContentDecompressor());
-        p.addLast(new LoggingHandler(log::debug));
+        if (log.underlyingLogger().isDebugEnabled()) {
+            p.addLast(new LoggingHandler(log::debug));
+        }
         p.addLast(handlers);
     }
 }

@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
+import io.netty.channel.ChannelId;
 import io.netty.channel.pool.ChannelPool;
 import io.netty.handler.codec.http.HttpRequest;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
@@ -60,5 +61,7 @@ public final class RequestContext {
     @FunctionalInterface
     public interface RequestContextSaver<T> {
         void save(T key, RequestContext requestContext);
+
+        void delete(ChannelId channelId);
     }
 }

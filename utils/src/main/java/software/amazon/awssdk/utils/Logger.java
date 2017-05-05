@@ -132,6 +132,14 @@ public final class Logger {
     }
 
     /**
+     * Gets the underlying logger for access to lower-level functions
+     * @return log - the underlying log instance
+     */
+    public Log underlyingLogger() {
+        return log;
+    }
+
+    /**
      * Static factory to get a logger instance for a given class
      * @param clz - class to get the logger for
      * @return a Logger instance

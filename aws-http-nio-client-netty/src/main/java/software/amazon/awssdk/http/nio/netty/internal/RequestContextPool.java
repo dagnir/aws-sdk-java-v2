@@ -34,4 +34,9 @@ public final class RequestContextPool implements RequestContextSaver<ChannelId>,
     public void save(ChannelId channelId, RequestContext context) {
         backingMap.put(channelId, context);
     }
+
+    @Override
+    public void delete(ChannelId channelId) {
+
+    }
 }

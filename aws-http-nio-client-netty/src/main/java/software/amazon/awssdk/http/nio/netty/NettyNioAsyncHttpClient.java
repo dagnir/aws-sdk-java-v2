@@ -66,7 +66,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                 ChannelHandler handler = new ResponseHandler(requestContexts);
                 SslContext sslContext = sslContext(key.getScheme(), settings.trustAllCertificates());
                 return new FixedChannelPool(bootstrap,
-                                            new ChannelPipelineInitializer(sslContext, handler),
+                                            new ChannelPipelineInitializer(sslContext, requestContexts, handler),
                                             settings.getMaxConnections());
             }
         };
