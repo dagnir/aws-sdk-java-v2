@@ -38,7 +38,6 @@ import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.apache.internal.RepeatableInputStreamRequestEntity;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
-import software.amazon.awssdk.utils.StringUtils;
 
 /**
  * Responsible for creating Apache HttpClient 4 request objects.
