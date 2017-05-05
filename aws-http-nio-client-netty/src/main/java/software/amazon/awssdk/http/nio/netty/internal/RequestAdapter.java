@@ -15,10 +15,8 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
-import static software.amazon.awssdk.http.nio.netty.internal.utils.NettyUtils.toNettyHttpMethod;
 import static software.amazon.awssdk.utils.StringUtils.isNotBlank;
 
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -26,6 +24,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringEncoder;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpRequest;
 
 public final class RequestAdapter {
@@ -48,5 +47,26 @@ public final class RequestAdapter {
         QueryStringEncoder encoder = new QueryStringEncoder(uriBuilder.toString());
         sdkRequest.getParameters().forEach((k, values) -> values.forEach(v -> encoder.addParam(k, v)));
         return encoder.toString();
+    }
+
+    private static HttpMethod toNettyHttpMethod(SdkHttpMethod method) {
+        switch (method) {
+            case GET:
+                return HttpMethod.GET;
+            case POST:
+                return HttpMethod.POST;
+            case PUT:
+                return HttpMethod.PUT;
+            case DELETE:
+                return HttpMethod.DELETE;
+            case PATCH:
+                return HttpMethod.PATCH;
+            case HEAD:
+                return HttpMethod.HEAD;
+            case OPTIONS:
+                return HttpMethod.OPTIONS;
+            default:
+                throw new IllegalArgumentException("Unknown http method: " + method);
+        }
     }
 }

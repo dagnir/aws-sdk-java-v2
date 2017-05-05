@@ -16,41 +16,22 @@
 package software.amazon.awssdk.http.nio.netty.internal;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.pool.ChannelPoolHandler;
+import io.netty.channel.pool.AbstractChannelPoolHandler;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
-import software.amazon.awssdk.http.nio.netty.internal.RequestContext.RequestContextSaver;
 import software.amazon.awssdk.http.nio.netty.internal.utils.LoggingHandler;
 import software.amazon.awssdk.utils.Logger;
 
-public class ChannelPipelineInitializer implements ChannelPoolHandler {
+public class ChannelPipelineInitializer extends AbstractChannelPoolHandler {
     private static final Logger log = Logger.loggerFor(NettyNioAsyncHttpClient.class);
 
     private final SslContext sslContext;
-    private final RequestContextSaver<ChannelId> requestContexts;
-    private final ChannelHandler[] handlers;
 
-    public ChannelPipelineInitializer(SslContext sslContext,
-                                      RequestContextSaver<ChannelId> requestContexts,
-                                      ChannelHandler...handlers) {
+    public ChannelPipelineInitializer(SslContext sslContext) {
         this.sslContext = sslContext;
-        this.requestContexts = requestContexts;
-        this.handlers = handlers;
-    }
-
-    @Override
-    public void channelReleased(Channel ch) throws Exception {
-        requestContexts.delete(ch.id());
-    }
-
-    @Override
-    public void channelAcquired(Channel ch) throws Exception {
-
     }
 
     @Override
@@ -71,6 +52,6 @@ public class ChannelPipelineInitializer implements ChannelPoolHandler {
         if (log.underlyingLogger().isDebugEnabled()) {
             p.addLast(new LoggingHandler(log::debug));
         }
-        p.addLast(handlers);
+        p.addLast(new ResponseHandler());
     }
 }

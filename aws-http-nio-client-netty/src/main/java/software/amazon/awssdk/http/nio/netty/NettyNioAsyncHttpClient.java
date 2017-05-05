@@ -19,7 +19,6 @@ import static io.netty.handler.ssl.SslContext.defaultClientProvider;
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.pool.AbstractChannelPoolMap;
@@ -41,8 +40,6 @@ import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.http.nio.netty.internal.ChannelPipelineInitializer;
 import software.amazon.awssdk.http.nio.netty.internal.RequestAdapter;
 import software.amazon.awssdk.http.nio.netty.internal.RequestContext;
-import software.amazon.awssdk.http.nio.netty.internal.RequestContextPool;
-import software.amazon.awssdk.http.nio.netty.internal.ResponseHandler;
 import software.amazon.awssdk.http.nio.netty.internal.RunnableRequest;
 
 
@@ -50,7 +47,6 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
     private final EventLoopGroup group = new NioEventLoopGroup();
     private final RequestAdapter requestAdapter = new RequestAdapter();
-    private final RequestContextPool requestContexts = new RequestContextPool();
     private final ChannelPoolMap<URI, ChannelPool> pools;
 
     public NettyNioAsyncHttpClient(SdkHttpClientSettings settings) {
@@ -63,10 +59,9 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
             protected ChannelPool newPool(URI key) {
                 final Bootstrap bootstrap =
                     new Bootstrap().group(group).channel(NioSocketChannel.class).remoteAddress(addressFor(key));
-                ChannelHandler handler = new ResponseHandler(requestContexts);
                 SslContext sslContext = sslContext(key.getScheme(), settings.trustAllCertificates());
                 return new FixedChannelPool(bootstrap,
-                                            new ChannelPipelineInitializer(sslContext, requestContexts, handler),
+                                            new ChannelPipelineInitializer(sslContext),
                                             settings.getMaxConnections());
             }
         };
@@ -80,11 +75,11 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                                           requestProvider,
                                                           requestAdapter.adapt(sdkRequest),
                                                           handler);
-        return new RunnableRequest(context, requestContexts);
+        return new RunnableRequest(context);
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws InterruptedException {
         group.shutdownGracefully().await();
     }
 

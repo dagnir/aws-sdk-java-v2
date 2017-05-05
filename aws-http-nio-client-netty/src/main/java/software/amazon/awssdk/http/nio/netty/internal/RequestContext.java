@@ -15,13 +15,15 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
-import io.netty.channel.ChannelId;
 import io.netty.channel.pool.ChannelPool;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.AttributeKey;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 
 public final class RequestContext {
+    static final AttributeKey<RequestContext> REQUEST_CONTEXT_KEY = AttributeKey.newInstance("requestContext");
+
     private final ChannelPool channelPool;
     private final SdkHttpRequestProvider requestProvider;
     private final HttpRequest nettyRequest;
@@ -51,17 +53,5 @@ public final class RequestContext {
 
     HttpRequest nettyRequest() {
         return nettyRequest;
-    }
-    
-    @FunctionalInterface
-    public interface RequestContextProvider<T> {
-        RequestContext get(T key);
-    }
-
-    @FunctionalInterface
-    public interface RequestContextSaver<T> {
-        void save(T key, RequestContext requestContext);
-
-        void delete(ChannelId channelId);
     }
 }

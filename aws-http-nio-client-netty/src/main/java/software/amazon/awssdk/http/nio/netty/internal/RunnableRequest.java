@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
+import static software.amazon.awssdk.http.nio.netty.internal.RequestContext.REQUEST_CONTEXT_KEY;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.HttpRequest;
@@ -28,14 +30,10 @@ public final class RunnableRequest implements AbortableRunnable {
 
     private static final Logger log = Logger.loggerFor(RunnableRequest.class);
     private final RequestContext context;
-    private final RequestContext.RequestContextSaver<ChannelId> contextSaver;
-    private final URI endpoint;
     private volatile Channel channel;
 
-    public RunnableRequest(RequestContext context, RequestContext.RequestContextSaver<ChannelId> contextSaver) {
+    public RunnableRequest(RequestContext context) {
         this.context = context;
-        this.contextSaver = contextSaver;
-        this.endpoint = context.sdkRequestProvider().request().getEndpoint();
     }
 
     @Override
@@ -43,19 +41,26 @@ public final class RunnableRequest implements AbortableRunnable {
         context.channelPool().acquire().addListener((Future<Channel> channelFuture) -> {
             if (channelFuture.isSuccess()) {
                 channel = channelFuture.getNow();
-                contextSaver.save(channel.id(), context);
+                channel.attr(REQUEST_CONTEXT_KEY).set(context);
                 makeRequest(context.nettyRequest());
             } else {
-                handleFailure(() -> "Failed to create connection to " + endpoint, channelFuture.cause());
+                handleFailure(() -> "Failed to create connection to " + endpoint(), channelFuture.cause());
             }
         });
+    }
+
+    @Override
+    public void abort() {
+        if (channel != null) {
+            channel.disconnect().addListener(ignored -> context.channelPool().release(channel));
+        }
     }
 
     private void makeRequest(HttpRequest request) {
         log.debug(() -> "Writing request: " + request);
         channel.write(request).addListener(wireCall -> {
             if (!wireCall.isSuccess()) {
-                handleFailure(() -> "Failed to make request to " + endpoint, wireCall.cause());
+                handleFailure(() -> "Failed to make request to " + endpoint(), wireCall.cause());
             }
         });
         context.sdkRequestProvider().readyForData(new SdkNettyRequestChannel(channel,
@@ -63,18 +68,15 @@ public final class RunnableRequest implements AbortableRunnable {
                                                                              this::abort));
     }
 
+    private URI endpoint() {
+        return context.sdkRequestProvider().request().getEndpoint();
+    }
+
     private void handleFailure(Supplier<String> msg, Throwable cause) {
         log.error(msg, cause);
         context.sdkRequestProvider().exceptionOccurred(cause);
         if (channel != null) {
             context.channelPool().release(channel);
-        }
-    }
-
-    @Override
-    public void abort() {
-        if (channel != null) {
-            channel.disconnect().addListener(ignored -> context.channelPool().release(channel));
         }
     }
 }

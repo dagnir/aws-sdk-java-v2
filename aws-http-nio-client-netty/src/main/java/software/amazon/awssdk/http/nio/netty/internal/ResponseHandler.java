@@ -15,34 +15,33 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
-import static software.amazon.awssdk.http.nio.netty.internal.utils.NettyUtils.fromNettyHeaders;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static software.amazon.awssdk.http.nio.netty.internal.RequestContext.REQUEST_CONTEXT_KEY;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelId;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponse;
-import software.amazon.awssdk.http.nio.netty.internal.RequestContext.RequestContextProvider;
 import software.amazon.awssdk.utils.Logger;
 
 @ChannelHandler.Sharable
 public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger log = Logger.loggerFor(ResponseHandler.class);
-    private final RequestContextProvider<ChannelId> contextProvider;
-
-    public ResponseHandler(RequestContextProvider<ChannelId> contextProvider) {
-        this.contextProvider = contextProvider;
-    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelContext, HttpObject msg) throws Exception {
-        RequestContext requestContext = contextProvider.get(channelContext.channel().id());
+        RequestContext requestContext = channelContext.channel().attr(REQUEST_CONTEXT_KEY).get();
 
         if (msg instanceof HttpResponse) {
             HttpResponse response = (HttpResponse) msg;
@@ -69,10 +68,18 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        RequestContext requestContext = contextProvider.get(ctx.channel().id());
+        RequestContext requestContext = ctx.channel().attr(REQUEST_CONTEXT_KEY).get();
         log.error(() -> "Exception processing request: " + requestContext.sdkRequestProvider().request(), cause);
         requestContext.handler().exceptionOccurred(cause);
         requestContext.channelPool().release(ctx.channel());
         ctx.fireExceptionCaught(cause);
+    }
+
+    private static Map<String, List<String>> fromNettyHeaders(HttpHeaders headers) {
+        return headers.entries()
+                      .stream()
+                      .collect(groupingBy(Map.Entry::getKey,
+                                          mapping(Map.Entry::getValue,
+                                                  Collectors.toList())));
     }
 }
