@@ -16,11 +16,14 @@
 package software.amazon.awssdk.http.nio.netty.internal;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.pool.AbstractChannelPoolHandler;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
+import java.util.ArrayList;
+import java.util.List;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.internal.utils.LoggingHandler;
 import software.amazon.awssdk.utils.Logger;
@@ -29,9 +32,18 @@ public class ChannelPipelineInitializer extends AbstractChannelPoolHandler {
     private static final Logger log = Logger.loggerFor(NettyNioAsyncHttpClient.class);
 
     private final SslContext sslContext;
+    private final ChannelHandler[] handlers;
 
     public ChannelPipelineInitializer(SslContext sslContext) {
         this.sslContext = sslContext;
+
+        List<ChannelHandler> tmpHandlers = new ArrayList<>();
+        if (log.underlyingLogger().isDebugEnabled()) {
+            tmpHandlers.add(new LoggingHandler(log::debug));
+        }
+        tmpHandlers.add(new ResponseHandler());
+
+        handlers = tmpHandlers.toArray(new ChannelHandler[0]);
     }
 
     @Override
@@ -49,9 +61,6 @@ public class ChannelPipelineInitializer extends AbstractChannelPoolHandler {
         }
 
         p.addLast(new HttpClientCodec());
-        if (log.underlyingLogger().isDebugEnabled()) {
-            p.addLast(new LoggingHandler(log::debug));
-        }
-        p.addLast(new ResponseHandler());
+        p.addLast(handlers);
     }
 }

@@ -26,13 +26,16 @@ import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 import software.amazon.awssdk.http.async.SdkRequestChannel;
 
-public final class SdkNettyRequestChannel implements SdkRequestChannel {
+/**
+ * An implementation of {@link SdkRequestChannel} that allows writing to a Netty {@link Channel}
+ */
+public final class SdkNettyHttpRequestChannel implements SdkRequestChannel {
 
     private final Channel channel;
     private final Consumer<Throwable> errorHandler;
     private final Runnable abort;
 
-    SdkNettyRequestChannel(Channel channel, Consumer<Throwable> errorHandler, Runnable abort) {
+    SdkNettyHttpRequestChannel(Channel channel, Consumer<Throwable> errorHandler, Runnable abort) {
         this.channel = channel;
         this.errorHandler = errorHandler;
         this.abort = abort;

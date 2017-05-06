@@ -31,6 +31,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.SdkHttpClientSettings;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.async.AbortableRunnable;
@@ -45,6 +46,8 @@ import software.amazon.awssdk.http.nio.netty.internal.RunnableRequest;
 
 public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
+    @ReviewBeforeRelease("Needs to be moved into configuration once we decide on an approach there.")
+    private static final int MAX_CONNECTIONS_PER_ENDPOINT = 10;
     private final EventLoopGroup group = new NioEventLoopGroup();
     private final RequestAdapter requestAdapter = new RequestAdapter();
     private final ChannelPoolMap<URI, ChannelPool> pools;
@@ -62,7 +65,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                 SslContext sslContext = sslContext(key.getScheme(), settings.trustAllCertificates());
                 return new FixedChannelPool(bootstrap,
                                             new ChannelPipelineInitializer(sslContext),
-                                            settings.getMaxConnections());
+                                            MAX_CONNECTIONS_PER_ENDPOINT);
             }
         };
     }
@@ -71,7 +74,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
     public AbortableRunnable prepareRequest(SdkHttpRequestProvider requestProvider,
                                             SdkHttpResponseHandler handler) {
         final SdkHttpRequest sdkRequest = requestProvider.request();
-        final RequestContext context = new RequestContext(pools.get(sdkRequest.getEndpoint()),
+        final RequestContext context = new RequestContext(pools.get(stripPath(sdkRequest.getEndpoint())),
                                                           requestProvider,
                                                           requestAdapter.adapt(sdkRequest),
                                                           handler);
@@ -79,13 +82,20 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
     }
 
     @Override
-    public void close() throws InterruptedException {
-        group.shutdownGracefully().await();
+    public void close() {
+        group.shutdownGracefully();
+    }
+
+    private static URI stripPath(URI uri) {
+        return invokeSafely(() -> new URI(uri.getScheme(), null, uri.getHost(), port(uri), null, null, null));
     }
 
     private static InetSocketAddress addressFor(URI uri) {
-        int port = uri.getPort() != -1 ? uri.getPort() : uri.getScheme().equalsIgnoreCase("https") ? 443 : 80;
-        return new InetSocketAddress(uri.getHost(), port);
+        return new InetSocketAddress(uri.getHost(), port(uri));
+    }
+
+    private static int port(URI uri) {
+        return uri.getPort() != -1 ? uri.getPort() : uri.getScheme().equalsIgnoreCase("https") ? 443 : 80;
     }
 
     private static SslContext sslContext(String scheme, boolean trustAllCertificates) {

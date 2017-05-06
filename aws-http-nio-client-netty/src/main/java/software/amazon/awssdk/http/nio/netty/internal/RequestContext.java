@@ -39,7 +39,7 @@ public final class RequestContext {
         this.handler = handler;
     }
 
-    public SdkHttpResponseHandler handler() {
+    SdkHttpResponseHandler handler() {
         return handler;
     }
 

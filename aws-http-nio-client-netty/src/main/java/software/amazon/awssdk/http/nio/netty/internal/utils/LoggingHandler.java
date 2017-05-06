@@ -19,14 +19,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufHolder;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import java.net.SocketAddress;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@ChannelHandler.Sharable
+@Sharable
 public final class LoggingHandler extends ChannelDuplexHandler {
 
     private final Consumer<Supplier<String>> logger;

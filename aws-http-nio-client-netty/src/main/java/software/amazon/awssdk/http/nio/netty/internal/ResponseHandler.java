@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static software.amazon.awssdk.http.nio.netty.internal.RequestContext.REQUEST_CONTEXT_KEY;
 
-import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
@@ -34,7 +34,7 @@ import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.utils.Logger;
 
-@ChannelHandler.Sharable
+@Sharable
 public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     private static final Logger log = Logger.loggerFor(ResponseHandler.class);

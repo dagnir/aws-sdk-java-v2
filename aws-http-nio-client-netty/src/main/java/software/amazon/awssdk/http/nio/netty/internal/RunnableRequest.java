@@ -18,7 +18,6 @@ package software.amazon.awssdk.http.nio.netty.internal;
 import static software.amazon.awssdk.http.nio.netty.internal.RequestContext.REQUEST_CONTEXT_KEY;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelId;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.concurrent.Future;
 import java.net.URI;
@@ -63,9 +62,9 @@ public final class RunnableRequest implements AbortableRunnable {
                 handleFailure(() -> "Failed to make request to " + endpoint(), wireCall.cause());
             }
         });
-        context.sdkRequestProvider().readyForData(new SdkNettyRequestChannel(channel,
-                                                                             context.sdkRequestProvider()::exceptionOccurred,
-                                                                             this::abort));
+        context.sdkRequestProvider().readyForData(new SdkNettyHttpRequestChannel(channel,
+                                                                                 context.sdkRequestProvider()::exceptionOccurred,
+                                                                                 this::abort));
     }
 
     private URI endpoint() {
