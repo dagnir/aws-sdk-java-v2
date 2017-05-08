@@ -120,15 +120,11 @@ public class Utils {
         int i = 0;
         do {
             sb.append(Character.toLowerCase(name.charAt(i++)));
-            // upper followed by lower; assume this is the beginning of a separate word and break
-            if (i < name.length() - 1 && Character.isUpperCase(name.charAt(i)) && Character.isLowerCase(name.charAt(i + 1))) {
-                break;
-            }
-        } while (i < name.length() && Character.isUpperCase(name.charAt(i)));
+        } while ((i < name.length() && Character.isUpperCase(name.charAt(i)))
+                // not followed by a lowercase character
+                && !(i < name.length() - 1 && Character.isLowerCase(name.charAt(i + 1))));
 
-        while (i < name.length()) {
-            sb.append(name.charAt(i++));
-        }
+        sb.append(name.substring(i));
 
         return sb.toString();
     }
