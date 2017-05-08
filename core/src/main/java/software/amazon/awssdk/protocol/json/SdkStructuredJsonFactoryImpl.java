@@ -20,8 +20,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import java.util.List;
 import java.util.Map;
 
-import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.http.ErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorCodeParser;
 import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;

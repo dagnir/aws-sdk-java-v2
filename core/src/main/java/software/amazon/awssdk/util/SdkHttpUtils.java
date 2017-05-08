@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import software.amazon.awssdk.SignableRequest;
-import software.amazon.awssdk.http.HttpMethodName;
 
 public class SdkHttpUtils {
 

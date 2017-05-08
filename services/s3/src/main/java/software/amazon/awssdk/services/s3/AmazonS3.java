@@ -24,7 +24,6 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.internal.S3DirectSpi;

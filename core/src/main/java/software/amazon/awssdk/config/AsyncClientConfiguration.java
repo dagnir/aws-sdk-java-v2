@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.config;
 
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;

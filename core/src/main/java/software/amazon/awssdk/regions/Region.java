@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.regions;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;

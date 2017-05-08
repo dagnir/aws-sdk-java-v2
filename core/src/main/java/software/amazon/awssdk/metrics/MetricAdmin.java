@@ -17,7 +17,6 @@ package software.amazon.awssdk.metrics;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import software.amazon.awssdk.regions.Regions;
 
 /**
  *  Administration of AwsSdkMetrics as an MBean.

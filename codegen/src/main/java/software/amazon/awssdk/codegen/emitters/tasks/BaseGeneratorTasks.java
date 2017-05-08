@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.codegen.emitters.tasks;
 
-import static org.apache.commons.lang3.SystemUtils.PATH_SEPARATOR;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;

@@ -29,7 +29,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.protocol.MarshallingInfo;
 import software.amazon.awssdk.runtime.transform.PathMarshallers;
-import software.amazon.awssdk.utils.StringUtils;
 
 public class MemberModel extends DocumentationModel {
 

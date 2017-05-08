@@ -16,7 +16,7 @@
 package software.amazon.awssdk.config;
 
 import java.net.URI;
-import java.util.Optional;
+
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
