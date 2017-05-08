@@ -19,6 +19,9 @@ import com.squareup.javapoet.TypeName;
 
 import java.util.Set;
 
+/**
+ * Provides the interface(s) and base class that a model should extend.
+ */
 public interface ShapeInterfaceProvider {
     boolean shouldImplementInterface(Class<?> iface);
 
