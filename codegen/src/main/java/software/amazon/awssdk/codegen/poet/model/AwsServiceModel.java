@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
-import static software.amazon.awssdk.codegen.poet.PoetUtils.escapeJavadoc;
+import static software.amazon.awssdk.codegen.poet.PoetUtils.escapeLiteralString;
 import static software.amazon.awssdk.codegen.poet.PoetUtils.makeJavadocPoetFriendly;
 
 import com.squareup.javapoet.ClassName;
@@ -79,7 +79,7 @@ public class AwsServiceModel implements ClassSpec {
                 .addTypes(nestedModelClassTypes());
 
         if (shapeModel.getDocumentation() != null) {
-            specBuilder.addJavadoc(escapeJavadoc(shapeModel.getDocumentation()));
+            specBuilder.addJavadoc(escapeLiteralString(shapeModel.getDocumentation()));
         }
 
         return specBuilder.build();

@@ -65,7 +65,7 @@ public final class PoetUtils {
         addJavadoc(builder, docModel.getDocumentation());
     }
 
-    public static String escapeJavadoc(String javadoc) {
+    public static String escapeLiteralString(String javadoc) {
         if (isNotBlank(javadoc)) {
             return javadoc.replace("$", "$$");
         }
@@ -74,7 +74,7 @@ public final class PoetUtils {
 
     public static String makeJavadocPoetFriendly(String javadoc) {
         if (StringUtils.isNotBlank(javadoc)) {
-            return escapeJavadoc(javadoc)
+            return escapeLiteralString(javadoc)
                     .trim()
                     // remove javadoc start/stop
                     .substring(3, javadoc.length() - 2);
