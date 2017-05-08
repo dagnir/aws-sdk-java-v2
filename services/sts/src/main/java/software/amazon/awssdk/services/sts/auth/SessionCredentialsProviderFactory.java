@@ -17,8 +17,9 @@ package software.amazon.awssdk.services.sts.auth;
 
 import java.util.HashMap;
 import java.util.Map;
-import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.services.sts.STSClient;
 
 /**
  * Session credentials provider factory to share providers across potentially
@@ -39,17 +40,16 @@ public class SessionCredentialsProviderFactory {
      * @param serviceEndpoint
      *            The service endpoint for the service the session credentials
      *            will be used to access.
-     * @param stsClientConfiguration
-     *            Client configuration for the {@link software.amazon.awssdk.services.sts.STSClient}
-     *            used to fetch session credentials.
+     * @param stsClient
+     *            The STS client to use for communication with STS
      */
-    public static synchronized
-            StsSessionCredentialsProvider getSessionCredentialsProvider(AwsCredentials longTermCredentials,
+    @ReviewBeforeRelease("Both credentials and a client? Ew.")
+    public static synchronized StsSessionCredentialsProvider getSessionCredentialsProvider(AwsCredentials longTermCredentials,
                                                                         String serviceEndpoint,
-                                                                        LegacyClientConfiguration stsClientConfiguration) {
+                                                                        STSClient stsClient) {
         Key key = new Key(longTermCredentials.getAwsAccessKeyId(), serviceEndpoint);
         if (!CACHE.containsKey(key)) {
-            CACHE.put(key, new StsSessionCredentialsProvider(longTermCredentials, stsClientConfiguration));
+            CACHE.put(key, new StsSessionCredentialsProvider(stsClient));
         }
         return CACHE.get(key);
     }

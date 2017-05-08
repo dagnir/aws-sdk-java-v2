@@ -31,7 +31,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     @BeforeClass
     public static void setUp() {
         discoveryService = ApplicationDiscoveryClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
                 .build();
     }
 

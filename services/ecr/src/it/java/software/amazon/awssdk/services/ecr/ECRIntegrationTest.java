@@ -34,7 +34,7 @@ public class ECRIntegrationTest extends AwsIntegrationTestBase {
     @BeforeClass
     public static void setUpClient() throws Exception {
         setUpCredentials();
-        ecr = ECRClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        ecr = ECRClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass

@@ -289,7 +289,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     @Test
     public void testClockSkew() throws AmazonServiceException {
         SdkGlobalTime.setGlobalTimeOffset(3600);
-        Route53Client clockSkewClient = Route53Client.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        Route53Client clockSkewClient = Route53Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         clockSkewClient.listHostedZones(new ListHostedZonesRequest());
         assertTrue("Clockskew is fixed!", SdkGlobalTime.getGlobalTimeOffset() < 60);
     }

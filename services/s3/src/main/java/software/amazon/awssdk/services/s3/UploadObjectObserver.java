@@ -113,7 +113,9 @@ public class UploadObjectObserver {
     public String onUploadInitiation(UploadObjectRequest req) {
         InitiateMultipartUploadResult res =
                 s3.initiateMultipartUpload(newInitiateMultipartUploadRequest(req));
-        return this.uploadId = res.getUploadId();
+        String uploadId = res.getUploadId();
+        this.uploadId = uploadId;
+        return uploadId;
     }
 
     /**

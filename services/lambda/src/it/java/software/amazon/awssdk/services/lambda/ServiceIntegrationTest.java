@@ -52,7 +52,7 @@ import software.amazon.awssdk.services.lambda.model.ListFunctionsResult;
 import software.amazon.awssdk.services.lambda.model.LogType;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.test.retry.RetryRule;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.util.StringUtils;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
@@ -203,7 +203,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         Assert.assertEquals(200, invokeResult.getStatusCode().intValue());
 
-        System.out.println(new String(Base64.decode(invokeResult.getLogResult()), StringUtils.UTF8));
+        System.out.println(new String(Base64Utils.decode(invokeResult.getLogResult()), StringUtils.UTF8));
 
         Assert.assertEquals("\"Hello World\"", StringUtils.UTF8.decode(invokeResult.getPayload()).toString());
     }

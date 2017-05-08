@@ -22,8 +22,8 @@ import static software.amazon.awssdk.services.dynamodb.document.internal.Interna
 import static software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils.rejectNullOrEmptyInput;
 import static software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils.rejectNullValue;
 import static software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils.valToString;
-import static software.amazon.awssdk.util.BinaryUtils.copyAllBytesFrom;
-import static software.amazon.awssdk.util.BinaryUtils.copyBytesFrom;
+import static software.amazon.awssdk.utils.BinaryUtils.copyAllBytesFrom;
+import static software.amazon.awssdk.utils.BinaryUtils.copyBytesFrom;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -38,8 +38,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
 import software.amazon.awssdk.services.dynamodb.document.internal.ItemValueConformer;
-import software.amazon.awssdk.util.Base64;
 import software.amazon.awssdk.util.json.Jackson;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * An <a href=
@@ -1314,11 +1314,11 @@ public class Item {
             checkInvalidAttrName(attrName);
             if (String.class == getTypeOf(attrName)) {
                 String b64 = getString(attrName);
-                Base64.decode(b64);
+                Base64Utils.decode(b64);
             } else {
                 Set<String> b64s = getStringSet(attrName);
                 for (String b64 : b64s) {
-                    Base64.decode(b64);
+                    Base64Utils.decode(b64);
                 }
             }
         }
@@ -1326,13 +1326,13 @@ public class Item {
         for (String attrName : binaryAttrNames) {
             if (String.class == getTypeOf(attrName)) {
                 String b64 = getString(attrName);
-                byte[] bytes = Base64.decode(b64);
+                byte[] bytes = Base64Utils.decode(b64);
                 withBinary(attrName, bytes);
             } else {
                 Set<String> b64s = getStringSet(attrName);
                 Set<byte[]> binarySet = new LinkedHashSet<byte[]>(b64s.size());
                 for (String b64 : b64s) {
-                    binarySet.add(Base64.decode(b64));
+                    binarySet.add(Base64Utils.decode(b64));
                 }
                 withBinarySet(attrName, binarySet);
             }

@@ -1,5 +1,5 @@
 ${fileHeader}
-package ${metadata.packageName}.model;
+package ${metadata.fullModelPackageName};
 
 import javax.annotation.Generated;
 
@@ -27,7 +27,7 @@ public class ${shape.shapeName} extends ${baseClassFqcn}
      * @return The decoded console output.
      */
     public String getDecodedOutput() {
-        byte[] bytes = software.amazon.awssdk.util.BinaryUtils.fromBase64(output);
+        byte[] bytes = software.amazon.awssdk.utils.BinaryUtils.fromBase64(output);
         return new String(bytes, software.amazon.awssdk.util.StringUtils.UTF8);
     }
     </#if>

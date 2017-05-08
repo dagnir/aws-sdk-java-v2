@@ -48,7 +48,7 @@ public abstract class ElasticBeanstalkIntegrationTestBase extends AwsTestBase {
         setUpCredentials();
 
         elasticbeanstalk = ElasticBeanstalkClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .withRegion(Regions.US_EAST_1)
                 .build();
         s3 = new AmazonS3Client(credentials);

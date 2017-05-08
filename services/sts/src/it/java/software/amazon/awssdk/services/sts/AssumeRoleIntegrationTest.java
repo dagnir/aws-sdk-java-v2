@@ -129,6 +129,6 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
         CreateAccessKeyResult createAccessKeyResult = iam.createAccessKey(new CreateAccessKeyRequest().withUserName(USER_NAME));
         AwsCredentials credentials = new BasicAwsCredentials(createAccessKeyResult.getAccessKey().getAccessKeyId(),
                                                              createAccessKeyResult.getAccessKey().getSecretAccessKey());
-        return STSClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        return STSClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 }

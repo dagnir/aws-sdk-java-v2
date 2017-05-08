@@ -372,9 +372,10 @@ public class MemberModel extends DocumentationModel {
 
         String variableDesc = documentation != null ? documentation : DEFAULT_GETTER_PARAM.replace("%s", name);
 
-        docBuilder.append("@return " + stripHtmlTags(variableDesc))
-                .append(getEnumDoc())
-                .append("*/");
+        docBuilder.append("@return ")
+                  .append(stripHtmlTags(variableDesc))
+                  .append(getEnumDoc())
+                  .append("*/");
 
         return docBuilder.toString();
     }
@@ -426,8 +427,10 @@ public class MemberModel extends DocumentationModel {
                 : DEFAULT_SETTER_PARAM.replace("%s", name);
 
         docBuilder.append(LINE_SEPARATOR)
-                .append("@param " + variable.getVariableName() + " "
-                        + stripHtmlTags(variableDesc));
+                  .append("@param ")
+                  .append(variable.getVariableName())
+                  .append(" ")
+                  .append(stripHtmlTags(variableDesc));
         return docBuilder.toString();
     }
 

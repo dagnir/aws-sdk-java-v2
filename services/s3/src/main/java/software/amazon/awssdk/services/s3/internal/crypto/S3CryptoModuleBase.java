@@ -21,10 +21,10 @@ import static software.amazon.awssdk.services.s3.model.CryptoStorageMode.ObjectM
 import static software.amazon.awssdk.services.s3.model.InstructionFileId.DEFAULT_INSTRUCTION_FILE_SUFFIX;
 import static software.amazon.awssdk.services.s3.model.InstructionFileId.DOT;
 import static software.amazon.awssdk.services.s3.model.S3DataSource.Utils.cleanupDataSource;
-import static software.amazon.awssdk.util.BinaryUtils.copyAllBytesFrom;
 import static software.amazon.awssdk.util.LengthCheckInputStream.EXCLUDE_SKIPPED_BYTES;
 import static software.amazon.awssdk.util.StringUtils.UTF8;
 import static software.amazon.awssdk.util.Throwables.failure;
+import static software.amazon.awssdk.utils.BinaryUtils.copyAllBytesFrom;
 import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 
 import java.io.ByteArrayInputStream;

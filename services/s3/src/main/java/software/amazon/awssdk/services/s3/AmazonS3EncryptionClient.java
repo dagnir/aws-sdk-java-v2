@@ -24,16 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.AnonymousAwsCredentials;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.internal.MultiFileOutputStream;
 import software.amazon.awssdk.services.s3.internal.PartCreationEvent;
@@ -45,26 +37,21 @@ import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadResult;
 import software.amazon.awssdk.services.s3.model.CopyPartRequest;
 import software.amazon.awssdk.services.s3.model.CopyPartResult;
-import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.EncryptedInitiateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.EncryptedPutObjectRequest;
-import software.amazon.awssdk.services.s3.model.EncryptionMaterials;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterialsProvider;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GroupGrantee;
 import software.amazon.awssdk.services.s3.model.InitiateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.InitiateMultipartUploadResult;
 import software.amazon.awssdk.services.s3.model.InstructionFileId;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PartETag;
-import software.amazon.awssdk.services.s3.model.Permission;
 import software.amazon.awssdk.services.s3.model.PutInstructionFileRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResult;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectId;
-import software.amazon.awssdk.services.s3.model.StaticEncryptionMaterialsProvider;
 import software.amazon.awssdk.services.s3.model.UploadObjectRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResult;
@@ -84,475 +71,23 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
                                             + "/" + VersionInfoUtils.getVersion();
     private final S3CryptoModule<?> crypto;
     private final KMSClient kms;
-    /**
-     * True if the a default KMS client is constructed, which will be shut down
-     * when this instance of S3 encryption client is shutdown.  False otherwise,
-     * which means the users who provided the KMS client would be responsible
-     * to shut down the KMS client. 
-     */
-    private final boolean isKmsClientInternal;
 
     // ///////////////////// Constructors ////////////////
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client that will make <b>anonymous</b>
-     * requests to Amazon S3.  If {@link #getObject(String, String)} is called,
-     * the object contents will be decrypted with the encryption materials provided.
-     * </p>
-     * <p>
-     * Only a subset of the Amazon S3 API will work with anonymous
-     * <i>(i.e. unsigned)</i> requests, but this can prove useful in some situations.
-     * For example:
-     * <ul>
-     *  <li>If an Amazon S3 bucket has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #listObjects(String)} to see what objects are stored in a bucket.</li>
-     *  <li>If an object has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #getObject(String, String)} and
-     *  {@link #getObjectMetadata(String, String)} to pull object content and
-     *  metadata.</li>
-     *  <li>If a bucket has {@link Permission#Write} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can upload objects
-     *  to the bucket.</li>
-     * </ul>
-     * </p>
-     *
-     * @param encryptionMaterials
-     *            The encryption materials to be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(EncryptionMaterials encryptionMaterials) {
-        this(new StaticEncryptionMaterialsProvider(encryptionMaterials));
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client that will make <b>anonymous</b>
-     * requests to Amazon S3.  If {@link #getObject(String, String)} is called,
-     * the object contents will be decrypted with the encryption materials provided.
-     * </p>
-     * <p>
-     * Only a subset of the Amazon S3 API will work with anonymous
-     * <i>(i.e. unsigned)</i> requests, but this can prove useful in some situations.
-     * For example:
-     * <ul>
-     *  <li>If an Amazon S3 bucket has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #listObjects(String)} to see what objects are stored in a bucket.</li>
-     *  <li>If an object has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #getObject(String, String)} and
-     *  {@link #getObjectMetadata(String, String)} to pull object content and
-     *  metadata.</li>
-     *  <li>If a bucket has {@link Permission#Write} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can upload objects
-     *  to the bucket.</li>
-     * </ul>
-     * </p>
-     *
-     * @param encryptionMaterialsProvider
-     *            A provider for the encryption materials to be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(
-            EncryptionMaterialsProvider encryptionMaterialsProvider) {
-
-        this(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()),
-             encryptionMaterialsProvider,
-             CONFIG_FACTORY.getConfig(), new CryptoConfiguration());
-    }
-
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client that will make <b>anonymous</b>
-     * requests to Amazon S3.  If {@link #getObject(String, String)} is called,
-     * the object contents will be decrypted with the encryption materials provided.
-     * The encryption implementation of the provided crypto provider will be
-     * used to encrypt and decrypt data.
-     * </p>
-     * <p>
-     * Only a subset of the Amazon S3 API will work with anonymous
-     * <i>(i.e. unsigned)</i> requests, but this can prove useful in some situations.
-     * For example:
-     * <ul>
-     *  <li>If an Amazon S3 bucket has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #listObjects(String)} to see what objects are stored in a bucket.</li>
-     *  <li>If an object has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #getObject(String, String)} and
-     *  {@link #getObjectMetadata(String, String)} to pull object content and
-     *  metadata.</li>
-     *  <li>If a bucket has {@link Permission#Write} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can upload objects
-     *  to the bucket.</li>
-     * </ul>
-     * </p>
-     *
-     * @param encryptionMaterials
-     *              The encryption materials to be used to encrypt and decrypt data.
-     * @param cryptoConfig
-     *                The crypto configuration whose parameters will be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(EncryptionMaterials encryptionMaterials,
-                                    CryptoConfiguration cryptoConfig) {
-        this(new StaticEncryptionMaterialsProvider(encryptionMaterials),
-             cryptoConfig);
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client that will make <b>anonymous</b>
-     * requests to Amazon S3.  If {@link #getObject(String, String)} is called,
-     * the object contents will be decrypted with the encryption materials provided.
-     * The encryption implementation of the provided crypto provider will be
-     * used to encrypt and decrypt data.
-     * </p>
-     * <p>
-     * Only a subset of the Amazon S3 API will work with anonymous
-     * <i>(i.e. unsigned)</i> requests, but this can prove useful in some situations.
-     * For example:
-     * <ul>
-     *  <li>If an Amazon S3 bucket has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #listObjects(String)} to see what objects are stored in a bucket.</li>
-     *  <li>If an object has {@link Permission#Read} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can call
-     *  {@link #getObject(String, String)} and
-     *  {@link #getObjectMetadata(String, String)} to pull object content and
-     *  metadata.</li>
-     *  <li>If a bucket has {@link Permission#Write} permission for the
-     *  {@link GroupGrantee#AllUsers} group, anonymous clients can upload objects
-     *  to the bucket.</li>
-     * </ul>
-     * </p>
-     *
-     * @param encryptionMaterialsProvider
-     *            A provider for the encryption materials to be used to encrypt and decrypt data.
-     * @param cryptoConfig
-     *            The crypto configuration whose parameters will be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            CryptoConfiguration cryptoConfig) {
-
-        this(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()),
-             encryptionMaterialsProvider,
-             CONFIG_FACTORY.getConfig(), cryptoConfig);
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client using the specified AWS credentials to
-     * access Amazon S3.  Object contents will be encrypted and decrypted with the encryption
-     * materials provided.
-     * </p>
-     *
-     * @param credentials
-     *            The AWS credentials to use when making requests to Amazon S3
-     *            with this client.
-     * @param encryptionMaterials
-     *            The encryption materials to be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(AwsCredentials credentials,
-                                    EncryptionMaterials encryptionMaterials) {
-        this(credentials, new StaticEncryptionMaterialsProvider(
-                encryptionMaterials));
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client using the specified AWS credentials to
-     * access Amazon S3.  Object contents will be encrypted and decrypted with the encryption
-     * materials provided.
-     * </p>
-     *
-     * @param credentials
-     *            The AWS credentials to use when making requests to Amazon S3
-     *            with this client.
-     * @param encryptionMaterialsProvider
-     *            A provider for the encryption materials to be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(AwsCredentials credentials,
-                                    EncryptionMaterialsProvider encryptionMaterialsProvider) {
-        this(credentials, encryptionMaterialsProvider,
-             CONFIG_FACTORY.getConfig(), new CryptoConfiguration());
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client using the specified AWS credentials to
-     * access Amazon S3.  Object contents will be encrypted and decrypted with the encryption
-     * materials provided.
-     * </p>
-     *
-     * @param credentialsProvider
-     *            The AWS credentials provider which will provide credentials
-     *            to authenticate requests with AWS services.
-     * @param encryptionMaterialsProvider
-     *            A provider for the encryption materials to be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(
-            AwsCredentialsProvider credentialsProvider,
-            EncryptionMaterialsProvider encryptionMaterialsProvider) {
-        this(credentialsProvider, encryptionMaterialsProvider,
-             CONFIG_FACTORY.getConfig(), new CryptoConfiguration());
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client using the specified AWS credentials to
-     * access Amazon S3.  Object contents will be encrypted and decrypted with the encryption
-     * materials provided.  The encryption implementation of the provided crypto provider will
-     * be used to encrypt and decrypt data.
-     * </p>
-     *
-     * @param credentials
-     *            The AWS credentials to use when making requests to Amazon S3
-     *            with this client.
-     * @param encryptionMaterials
-     *            The encryption materials to be used to encrypt and decrypt data.
-     * @param cryptoConfig
-     *            The crypto configuration whose parameters will be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(AwsCredentials credentials,
-                                    EncryptionMaterials encryptionMaterials,
-                                    CryptoConfiguration cryptoConfig) {
-        this(credentials, new StaticEncryptionMaterialsProvider(
-                encryptionMaterials), cryptoConfig);
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client using the specified AWS credentials to
-     * access Amazon S3.  Object contents will be encrypted and decrypted with the encryption
-     * materials provided.  The encryption implementation of the provided crypto provider will
-     * be used to encrypt and decrypt data.
-     * </p>
-     *
-     * @param credentials
-     *            The AWS credentials to use when making requests to Amazon S3
-     *            with this client.
-     * @param encryptionMaterialsProvider
-     *            A provider for the encryption materials to be used to encrypt and decrypt data.
-     * @param cryptoConfig
-     *            The crypto configuration whose parameters will be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(AwsCredentials credentials,
-                                    EncryptionMaterialsProvider encryptionMaterialsProvider,
-                                    CryptoConfiguration cryptoConfig) {
-        this(credentials, encryptionMaterialsProvider,
-             CONFIG_FACTORY.getConfig(), cryptoConfig);
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client using the specified AWS credentials to
-     * access Amazon S3.  Object contents will be encrypted and decrypted with the encryption
-     * materials provided.  The encryption implementation of the provided crypto provider will
-     * be used to encrypt and decrypt data.
-     * </p>
-     *
-     * @param credentialsProvider
-     *            The AWS credentials provider which will provide credentials
-     *            to authenticate requests with AWS services.
-     * @param encryptionMaterialsProvider
-     *            A provider for the encryption materials to be used to encrypt and decrypt data.
-     * @param cryptoConfig
-     *            The crypto configuration whose parameters will be used to encrypt and decrypt data.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(
-            AwsCredentialsProvider credentialsProvider,
-            EncryptionMaterialsProvider encryptionMaterialsProvider,
-            CryptoConfiguration cryptoConfig) {
-        this(credentialsProvider, encryptionMaterialsProvider,
-             CONFIG_FACTORY.getConfig(), cryptoConfig);
-    }
-
-    /**
-     * <p>
-     * Constructs a new Amazon S3 Encryption client using the specified AWS credentials and
-     * client configuration to access Amazon S3.  Object contents will be encrypted and decrypted
-     * with the encryption materials provided. The crypto provider and storage mode denoted in
-     * the specified crypto configuration will be used to encrypt and decrypt data.
-     * </p>
-     *
-     * @param credentials
-     *            The AWS credentials to use when making requests to Amazon S3
-     *            with this client.
-     * @param encryptionMaterials
-     *            The encryption materials to be used to encrypt and decrypt data.
-     * @param clientConfig
-     *            The client configuration options controlling how this client
-     *            connects to Amazon S3 (ex: proxy settings, retry counts, etc).
-     * @param cryptoConfig
-     *            The crypto configuration whose parameters will be used to encrypt and decrypt data.
-     * @throws IllegalArgumentException
-     *            If either of the encryption materials or crypto configuration parameters are null.
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withClientConfiguration(LegacyClientConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(AwsCredentials credentials,
-                                    EncryptionMaterials encryptionMaterials,
-                                    LegacyClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
-        this(credentials, new StaticEncryptionMaterialsProvider(
-                encryptionMaterials), clientConfig, cryptoConfig);
-    }
-
-    /**
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withClientConfiguration(LegacyClientConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(AwsCredentials credentials,
-                                    EncryptionMaterialsProvider encryptionMaterialsProvider,
-                                    LegacyClientConfiguration clientConfig, CryptoConfiguration cryptoConfig) {
-        this(new AwsStaticCredentialsProvider(credentials),
-             encryptionMaterialsProvider, clientConfig, cryptoConfig);
-    }
-
-    /**
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withClientConfiguration(LegacyClientConfiguration)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(
-            AwsCredentialsProvider credentialsProvider,
-            EncryptionMaterialsProvider kekMaterialsProvider,
-            LegacyClientConfiguration clientConfig,
-            CryptoConfiguration cryptoConfig) {
-        this(credentialsProvider, kekMaterialsProvider, clientConfig,
-             cryptoConfig,
-             null    // request metric collector
-            );
-    }
-
-    /**
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withClientConfiguration(LegacyClientConfiguration)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withMetricsCollector(RequestMetricCollector)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(
-            AwsCredentialsProvider credentialsProvider,
-            EncryptionMaterialsProvider kekMaterialsProvider,
-            LegacyClientConfiguration clientConfig,
-            CryptoConfiguration cryptoConfig,
-            RequestMetricCollector requestMetricCollector) {
-        this(null, // KMS client
-             credentialsProvider, kekMaterialsProvider, clientConfig,
-             cryptoConfig, requestMetricCollector);
-    }
-
-    /**
-     * @deprecated use {@link AmazonS3EncryptionClientBuilder#withEncryptionMaterials(EncryptionMaterialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCredentials(AwsCredentialsProvider)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withCryptoConfiguration(CryptoConfiguration)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withClientConfiguration(LegacyClientConfiguration)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withMetricsCollector(RequestMetricCollector)} and
-     *                 {@link AmazonS3EncryptionClientBuilder#withKmsClient(KMSClient)}
-     */
-    @Deprecated
-    public AmazonS3EncryptionClient(KMSClient kms,
-                                    AwsCredentialsProvider credentialsProvider,
-                                    EncryptionMaterialsProvider kekMaterialsProvider,
-                                    LegacyClientConfiguration clientConfig,
-                                    CryptoConfiguration cryptoConfig,
-                                    RequestMetricCollector requestMetricCollector) {
-        super(credentialsProvider, clientConfig, requestMetricCollector);
-        assertParameterNotNull(kekMaterialsProvider,
-                               "EncryptionMaterialsProvider parameter must not be null.");
-        assertParameterNotNull(cryptoConfig,
-                               "CryptoConfiguration parameter must not be null.");
-        this.isKmsClientInternal = kms == null;
-        this.kms = isKmsClientInternal
-                   ? newAwsKmsClient(credentialsProvider, clientConfig, cryptoConfig,
-                                     requestMetricCollector)
-                   : kms;
-        this.crypto = new CryptoModuleDispatcher(this.kms, new S3DirectImpl(),
-                                                 credentialsProvider, kekMaterialsProvider, cryptoConfig);
-    }
 
     @SdkInternalApi
     AmazonS3EncryptionClient(AmazonS3EncryptionClientParams params) {
         super(params);
         assertParameterNotNull(params.getEncryptionMaterials(), "EncryptionMaterialsProvider parameter must not be null.");
         assertParameterNotNull(params.getCryptoConfiguration(), "CryptoConfiguration parameter must not be null.");
-        this.isKmsClientInternal = params.getKmsClient() == null;
-        this.kms = isKmsClientInternal ?
-                   newAwsKmsClient(params.getClientParams().getCredentialsProvider(),
-                                   params.getClientParams().getClientConfiguration(),
-                                   params.getCryptoConfiguration(),
-                                   params.getClientParams().getRequestMetricCollector()) : params.getKmsClient();
+        assertParameterNotNull(params.getKmsClient(), "KMS client must not be null.");
+        this.kms = params.getKmsClient();
         this.crypto = new CryptoModuleDispatcher(this.kms, new S3DirectImpl(),
                                                  params.getClientParams().getCredentialsProvider(),
                                                  params.getEncryptionMaterials(), params.getCryptoConfiguration());
     }
 
     public static AmazonS3EncryptionClientBuilder encryptionBuilder() {
-        return AmazonS3EncryptionClientBuilder.standard();
-    }
-
-    /**
-     * Creates and returns a new instance of AWS KMS client in the case when
-     * an explicit AWS KMS client is not specified.
-     */
-    private KMSClient newAwsKmsClient(AwsCredentialsProvider credentialsProvider, LegacyClientConfiguration clientConfig,
-                                         CryptoConfiguration cryptoConfig, RequestMetricCollector requestMetricCollector) {
-        Region kmsRegion = cryptoConfig.getAwsKmsRegion();
-        if (kmsRegion == null) {
-            // This is weird: we should probably be matching the S3 client's region, but this has always been the default behavior
-            // and there's no reason to change it now when we're going to rewrite the entire S3 client anyway in 2.0.
-            kmsRegion = RegionUtils.getRegion("us-east-1");
-        }
-
-        return KMSClient.builder()
-                        .withCredentials(credentialsProvider)
-                        .withClientConfiguration(clientConfig)
-                        .withMetricsCollector(requestMetricCollector)
-                        .withRegion(kmsRegion.getName())
-                        .build();
+        return new AmazonS3EncryptionClientBuilder();
     }
 
     private void assertParameterNotNull(Object parameterValue,
@@ -668,26 +203,6 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
      */
     public PutObjectResult putInstructionFile(PutInstructionFileRequest req) {
         return crypto.putInstructionFileSecurely(req);
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * If the a default internal KMS client has been constructed, it will also be
-     * shut down by calling this method.
-     * Otherwise, users who provided the KMS client would be responsible to
-     * shut down the KMS client extrinsic to this method.
-     */
-    @Override
-    public void shutdown() {
-        super.shutdown();
-        if (isKmsClientInternal) {
-            try {
-                kms.close();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     // /////////////////// Access to the methods in the super class //////////

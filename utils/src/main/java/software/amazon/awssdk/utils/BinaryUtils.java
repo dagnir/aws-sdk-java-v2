@@ -56,7 +56,7 @@ public class BinaryUtils {
      * @return encoded Base64 string.
      */
     public static String toBase64(byte[] data) {
-        return Base64.encodeAsString(data);
+        return Base64Utils.encodeAsString(data);
     }
 
     /**
@@ -68,7 +68,7 @@ public class BinaryUtils {
      * @return bytes decoded from a Base64 string.
      */
     public static byte[] fromBase64(String b64Data) {
-        return b64Data == null ? null : Base64.decode(b64Data);
+        return b64Data == null ? null : Base64Utils.decode(b64Data);
     }
 
     /**

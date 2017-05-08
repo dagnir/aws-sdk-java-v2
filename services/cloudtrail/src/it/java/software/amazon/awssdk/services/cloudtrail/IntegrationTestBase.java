@@ -31,7 +31,7 @@ public class IntegrationTestBase extends AwsTestBase {
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
-        cloudTrail = CloudTrailClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        cloudTrail = CloudTrailClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
         s3 = new AmazonS3Client(credentials);
     }
 }

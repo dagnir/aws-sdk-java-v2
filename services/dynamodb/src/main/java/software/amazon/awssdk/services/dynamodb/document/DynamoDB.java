@@ -76,7 +76,7 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
      * @see DynamoDBClient#DynamoDBClient()
      */
     public DynamoDB(Regions regionEnum) {
-        this(DynamoDBClient.builder().withRegion(regionEnum).build());
+        this(DynamoDBClient.builder().region(regionEnum.getName()).build());
     }
 
     /**

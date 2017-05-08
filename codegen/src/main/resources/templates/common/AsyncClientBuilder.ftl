@@ -1,5 +1,5 @@
 ${fileHeader}
-package ${metadata.packageName};
+package ${metadata.fullClientPackageName};
 
 import javax.annotation.Generated;
 
@@ -10,7 +10,7 @@ import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
 
 /**
- * Fluent builder for {@link ${metadata.packageName + "." + metadata.asyncInterface}}. Use of the
+ * Fluent builder for {@link ${metadata.fullClientPackageName + "." + metadata.asyncInterface}}. Use of the
  * builder is preferred over using constructors of the client class.
 **/
 @NotThreadSafe
@@ -60,9 +60,9 @@ public final class ${metadata.asyncClientBuilderClassName}
     protected ${metadata.asyncInterface} build(AwsAsyncClientParams params) {
         HandlerChainFactory chainFactory = new HandlerChainFactory();
         params.getRequestHandlers().addAll(chainFactory.newRequestHandlerChain(
-                "/${metadata.packagePath}/request.handlers"));
+                "/${metadata.clientPackagePath}/request.handlers"));
         params.getRequestHandlers().addAll(chainFactory.newRequestHandler2Chain(
-                "/${metadata.packagePath}/request.handler2s"));
+                "/${metadata.clientPackagePath}/request.handler2s"));
         params.getRequestHandlers().addAll(chainFactory.getGlobalHandlers());
         return new ${metadata.asyncClient}(params);
     }

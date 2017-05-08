@@ -25,7 +25,7 @@ import java.util.Calendar;
 import java.util.SimpleTimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * This class represents S3 upload policy. Policy string representation and
@@ -119,7 +119,7 @@ public class S3UploadPolicy {
     }
 
     private String base64Encode(byte[] data) {
-        return Base64.encodeAsString(data).replaceAll("\\s", "");
+        return Base64Utils.encodeAsString(data).replaceAll("\\s", "");
     }
 
 }

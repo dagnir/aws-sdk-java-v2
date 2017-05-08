@@ -269,9 +269,15 @@ public class LegacyClientConfiguration {
      */
     private int maxConsecutiveRetriesBeforeThrottling = DEFAULT_MAX_CONSECUTIVE_RETRIES_BEFORE_THROTTLING;
 
+    /**
+     * Create a legacy client configuration object with default options.
+     */
     public LegacyClientConfiguration() {
     }
 
+    /**
+     * Create a copy of another legacy client configuration object.
+     */
     public LegacyClientConfiguration(LegacyClientConfiguration other) {
         this.connectionTimeout = other.connectionTimeout;
         this.maxConnections = other.maxConnections;

@@ -35,7 +35,6 @@ public class ServiceMetadata {
 
     private boolean resultWrapped;
 
-    // TODO : remove this once you have disabled jackson's fail on unknown properties.
     private String signatureVersion;
 
     private String targetPrefix;

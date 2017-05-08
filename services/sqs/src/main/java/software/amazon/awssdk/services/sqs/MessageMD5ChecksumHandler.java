@@ -41,8 +41,8 @@ import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResult;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.Md5Utils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * SQS operations on sending and receiving messages will return the MD5 digest of the message body.

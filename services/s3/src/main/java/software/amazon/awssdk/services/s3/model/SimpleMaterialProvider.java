@@ -41,7 +41,8 @@ public class SimpleMaterialProvider implements EncryptionMaterialsProvider, Seri
     }
 
     public SimpleMaterialProvider withLatest(EncryptionMaterials m) {
-        return addMaterial(this.latest = m);
+        this.latest = m;
+        return addMaterial(m);
     }
 
     public SimpleMaterialProvider removeMaterial(Map<String, String> md) {

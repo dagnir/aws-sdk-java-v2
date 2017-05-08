@@ -17,6 +17,8 @@ package software.amazon.awssdk.config;
 
 import java.security.SecureRandom;
 import java.util.Optional;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 
 /**
@@ -24,7 +26,8 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
  *
  * <p>All implementations of this interface must be immutable and thread safe.</p>
  */
-public final class ClientSecurityConfiguration {
+public final class ClientSecurityConfiguration
+        implements ToCopyableBuilder<ClientSecurityConfiguration.Builder, ClientSecurityConfiguration> {
     private final SignerProvider signerProvider;
     private final SecureRandom secureRandom;
 
@@ -41,6 +44,12 @@ public final class ClientSecurityConfiguration {
      */
     public static Builder builder() {
         return new DefaultClientSecurityConfigurationBuilder();
+    }
+
+    @Override
+    public ClientSecurityConfiguration.Builder toBuilder() {
+        return builder().signerProvider(signerProvider)
+                        .secureRandom(secureRandom);
     }
 
     /**
@@ -67,7 +76,7 @@ public final class ClientSecurityConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientSecurityConfiguration> {
         /**
          * @see ClientSecurityConfiguration#signerProvider().
          */
@@ -91,11 +100,6 @@ public final class ClientSecurityConfiguration {
          * @see Builder#secureRandom(SecureRandom)
          */
         Builder secureRandom(SecureRandom secureRandom);
-
-        /**
-         * Build a {@link ClientSecurityConfiguration} from the values currently configured in this builder.
-         */
-        ClientSecurityConfiguration build();
     }
 
     /**

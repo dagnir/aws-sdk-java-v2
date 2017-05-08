@@ -17,13 +17,16 @@ package software.amazon.awssdk.config;
 
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Configuration that allows manipulating the way in which the SDK converts request objects to messages to be sent to AWS.
  *
  * <p>All implementations of this interface must be immutable and thread safe.</p>
  */
-public final class ClientMarshallerConfiguration {
+public final class ClientMarshallerConfiguration
+        implements ToCopyableBuilder<ClientMarshallerConfiguration.Builder, ClientMarshallerConfiguration> {
     @ReviewBeforeRelease("Should this be included in the HTTP configuration object?")
     private final Boolean gzipEnabled;
 
@@ -41,6 +44,11 @@ public final class ClientMarshallerConfiguration {
         return new DefaultClientMarshallerConfigurationBuilder();
     }
 
+    @Override
+    public ClientMarshallerConfiguration.Builder toBuilder() {
+        return builder().gzipEnabled(gzipEnabled);
+    }
+
     /**
      * Whether GZIP should be used when communication with AWS.
      *
@@ -55,7 +63,7 @@ public final class ClientMarshallerConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientMarshallerConfiguration> {
         /**
          * @see ClientMarshallerConfiguration#gzipEnabled().
          */
@@ -68,11 +76,6 @@ public final class ClientMarshallerConfiguration {
          * @see ClientMarshallerConfiguration#gzipEnabled()
          */
         Builder gzipEnabled(Boolean gzipEnabled);
-
-        /**
-         * Build a {@link ClientMarshallerConfiguration} from the values currently configured in this builder.
-         */
-        ClientMarshallerConfiguration build();
     }
 
     /**

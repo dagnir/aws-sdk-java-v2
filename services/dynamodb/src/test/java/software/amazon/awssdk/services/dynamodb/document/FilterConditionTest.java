@@ -268,7 +268,7 @@ public class FilterConditionTest {
 
     @Test
     public void testScanFilter_DuplicateAttribute() {
-        Table fakeTable = new Table(DynamoDBClient.builder().withRegion(Regions.US_WEST_2).build(), "fake-table");
+        Table fakeTable = new Table(DynamoDBClient.builder().region(Regions.US_WEST_2.getName()).build(), "fake-table");
         try {
             fakeTable.scan(
                     new ScanFilter("foo").eq("bar"),

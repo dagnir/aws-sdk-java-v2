@@ -24,7 +24,7 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * A PEM utility that can be used to read keys from PEM. With this PEM utility,
@@ -125,7 +125,7 @@ public enum Pem {
                 if (readingContent) {
                     if (line.contains(endMarker)) {
                         // completed reading one PEM object
-                        pemContents.add(new PemObject(beginMarker, Base64.decode(sb.toString())));
+                        pemContents.add(new PemObject(beginMarker, Base64Utils.decode(sb.toString())));
                         readingContent = false;
                     } else {
                         sb.append(line.trim());

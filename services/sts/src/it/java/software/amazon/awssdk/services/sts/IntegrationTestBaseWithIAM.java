@@ -31,6 +31,6 @@ public abstract class IntegrationTestBaseWithIAM extends IntegrationTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         IntegrationTestBase.setUp();
-        iam = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

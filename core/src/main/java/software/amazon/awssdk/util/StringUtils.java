@@ -15,13 +15,14 @@
 
 package software.amazon.awssdk.util;
 
-import static software.amazon.awssdk.util.BinaryUtils.copyBytesFrom;
+import static software.amazon.awssdk.utils.BinaryUtils.copyBytesFrom;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.Collator;
 import java.util.Date;
 import java.util.Locale;
+import software.amazon.awssdk.utils.Base64Utils;
 
 /**
  * Utilities for converting objects to strings.
@@ -116,7 +117,7 @@ public class StringUtils {
      * @return The base64 encoded contents of the specified byte buffer.
      */
     public static String fromByteBuffer(ByteBuffer byteBuffer) {
-        return Base64.encodeAsString(copyBytesFrom(byteBuffer));
+        return Base64Utils.encodeAsString(copyBytesFrom(byteBuffer));
     }
 
     public static String replace(String originalString, String partToMatch, String replacement) {

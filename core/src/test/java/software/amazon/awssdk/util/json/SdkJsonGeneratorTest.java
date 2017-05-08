@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.protocol.json.SdkJsonGenerator;
 import software.amazon.awssdk.protocol.json.StructuredJsonGenerator;
-import software.amazon.awssdk.util.Base64;
+import software.amazon.awssdk.utils.Base64Utils;
 
 public class SdkJsonGeneratorTest {
 
@@ -78,7 +78,7 @@ public class SdkJsonGeneratorTest {
         jsonGenerator.writeFieldName("binaryProp").writeValue(ByteBuffer.wrap(data));
         jsonGenerator.writeEndObject();
         JsonNode node = toJsonNode();
-        assertEquals(Base64.encodeAsString(data), node.get("binaryProp").textValue());
+        assertEquals(Base64Utils.encodeAsString(data), node.get("binaryProp").textValue());
     }
 
     @Test

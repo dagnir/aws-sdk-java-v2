@@ -40,7 +40,7 @@ public class IntegrationTestBase extends AwsTestBase {
     @Before
     public void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        iam = IAMClientBuilder.standard().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        iam = IAMClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
 }

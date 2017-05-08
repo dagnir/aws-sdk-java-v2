@@ -17,68 +17,25 @@ package software.amazon.awssdk.codegen.poet.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static software.amazon.awssdk.codegen.poet.PoetMatchers.generatesTo;
 
-import java.io.File;
 import org.junit.Test;
-import software.amazon.awssdk.codegen.C2jModels;
-import software.amazon.awssdk.codegen.IntermediateModelBuilder;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
-import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
-import software.amazon.awssdk.codegen.model.service.ServiceModel;
-import software.amazon.awssdk.codegen.model.service.Waiters;
-import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
-
+import software.amazon.awssdk.codegen.poet.ClientTestModels;
 
 public class SyncClientClassTest {
-
     @Test
     public void syncClientClassJson() throws Exception {
-        File serviceModel = new File(getClass().getResource("c2j/json/service-2.json").getFile());
-        File customizationModel = new File(getClass().getResource("c2j/json/customization.config").getFile());
-        C2jModels models = C2jModels.builder()
-                .serviceModel(getServiceModel(serviceModel))
-                .customizationConfig(getCustomizationConfig(customizationModel))
-                .build();
-
-        IntermediateModel model = new IntermediateModelBuilder(models).build();
-
-        SyncClientClass syncClientClass = createClientClass(model);
+        SyncClientClass syncClientClass = createClientClass(ClientTestModels.jsonServiceModels());
         assertThat(syncClientClass, generatesTo("test-json-client-class.java"));
     }
 
     @Test
     public void syncClientClassQuery() throws Exception {
-
-        File serviceModel = new File(getClass().getResource("c2j/query/service-2.json").getFile());
-        File customizationModel = new File(getClass().getResource("c2j/query/customization.config").getFile());
-        File waitersModel = new File(getClass().getResource("c2j/query/waiters-2.json").getFile());
-
-        C2jModels models = C2jModels
-                .builder()
-                .serviceModel(getServiceModel(serviceModel))
-                .customizationConfig(getCustomizationConfig(customizationModel))
-                .waitersModel(getWaiters(waitersModel))
-                .build();
-
-        IntermediateModel model = new IntermediateModelBuilder(models).build();
-
-        SyncClientClass syncClientClass = createClientClass(model);
+        SyncClientClass syncClientClass = createClientClass(ClientTestModels.queryServiceModels());
         assertThat(syncClientClass, generatesTo("test-query-client-class.java"));
     }
 
     private SyncClientClass createClientClass(IntermediateModel model) {
         return new SyncClientClass(GeneratorTaskParams.create(model, "sources/", "tests/"));
-    }
-
-    private ServiceModel getServiceModel(File file) {
-        return ModelLoaderUtils.loadModel(ServiceModel.class, file);
-    }
-
-    private CustomizationConfig getCustomizationConfig(File file) {
-        return ModelLoaderUtils.loadModel(CustomizationConfig.class, file);
-    }
-
-    private Waiters getWaiters(File file) {
-        return ModelLoaderUtils.loadModel(Waiters.class, file);
     }
 }

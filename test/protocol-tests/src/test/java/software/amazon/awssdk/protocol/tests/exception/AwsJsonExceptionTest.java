@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,7 +31,7 @@ import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfigurat
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocoljsonrpc.model.EmptyModeledException;
-import software.amazon.awssdk.services.protocoljsonrpc.model.ProtocolJsonRpcClientException;
+import software.amazon.awssdk.services.protocoljsonrpc.model.ProtocolJsonRpcException;
 
 /**
  * Exception related tests for AWS/JSON RPC.
@@ -46,9 +47,9 @@ public class AwsJsonExceptionTest {
     @Before
     public void setupClient() {
         client = ProtocolJsonRpcClient.builder()
-                                      .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                      .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
-                                                                                           "us-east-1"))
+                                      .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                      .region("us-east-1")
+                                      .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                       .build();
     }
 
@@ -64,7 +65,7 @@ public class AwsJsonExceptionTest {
         try {
             callAllTypes();
         } catch (EmptyModeledException e) {
-            assertThat(e, instanceOf(ProtocolJsonRpcClientException.class));
+            assertThat(e, instanceOf(ProtocolJsonRpcException.class));
         }
     }
 
@@ -87,8 +88,8 @@ public class AwsJsonExceptionTest {
     private void assertThrowsServiceBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (ProtocolJsonRpcClientException e) {
-            assertEquals(ProtocolJsonRpcClientException.class, e.getClass());
+        } catch (ProtocolJsonRpcException e) {
+            assertEquals(ProtocolJsonRpcException.class, e.getClass());
         }
     }
 }

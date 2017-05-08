@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import org.junit.After;
@@ -92,7 +91,7 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     /**
      * Region to run tests against. Must be us-east-1 since AZ's are hardcoded
      */
-    private static final Regions REGION = Regions.US_EAST_1;
+    private static final String REGION = Regions.US_EAST_1.getName();
 
     /** The ELB client used in these tests. */
     private static ElasticLoadBalancingClient elb;
@@ -124,16 +123,16 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     @BeforeClass
     public static void setUp() throws IOException {
         elb = ElasticLoadBalancingClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(REGION)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(REGION)
                 .build();
         ec2 = EC2Client.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(REGION)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(REGION)
                 .build();
         iam = IAMClient.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(REGION)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(REGION)
                 .build();
 
         List<ServerCertificateMetadata> serverCertificates = iam.listServerCertificates(

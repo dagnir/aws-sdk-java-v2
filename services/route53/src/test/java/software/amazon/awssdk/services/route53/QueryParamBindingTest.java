@@ -22,8 +22,8 @@ import org.junit.Test;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.services.route53.model.GetHealthCheckLastFailureReasonRequest;
 import software.amazon.awssdk.services.route53.model.ListHealthChecksRequest;
-import software.amazon.awssdk.services.route53.model.transform.GetHealthCheckLastFailureReasonRequestMarshaller;
-import software.amazon.awssdk.services.route53.model.transform.ListHealthChecksRequestMarshaller;
+import software.amazon.awssdk.services.route53.transform.GetHealthCheckLastFailureReasonRequestMarshaller;
+import software.amazon.awssdk.services.route53.transform.ListHealthChecksRequestMarshaller;
 
 public class QueryParamBindingTest {
 

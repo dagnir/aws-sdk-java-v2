@@ -36,8 +36,8 @@ public class KmsClientTestExtensions {
 
     public KmsClientTestExtensions(AwsCredentials awsCredentials, Regions region) {
         this.client = KMSClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(awsCredentials))
-                .withRegion(region)
+                .credentialsProvider(new AwsStaticCredentialsProvider(awsCredentials))
+                .region(region.getName())
                 .build();
     }
 

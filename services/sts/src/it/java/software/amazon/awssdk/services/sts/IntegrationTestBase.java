@@ -33,6 +33,6 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        sts = STSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        sts = STSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

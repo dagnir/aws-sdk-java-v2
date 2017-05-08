@@ -51,7 +51,7 @@ public class EventSubscriptionIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         IntegrationTestBase.setUp();
-        sns = SNSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         String topicName = "java-sns-policy-integ-test-" + System.currentTimeMillis();
         topicArn = sns.createTopic(new CreateTopicRequest().withName(topicName)).getTopicArn();
     }

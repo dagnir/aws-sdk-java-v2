@@ -37,6 +37,6 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        emr = EMRClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        emr = EMRClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

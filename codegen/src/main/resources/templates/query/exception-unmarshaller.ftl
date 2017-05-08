@@ -7,7 +7,7 @@ import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.util.XpathUtils;
 
-import ${metadata.packageName}.model.${shape.shapeName};
+import ${metadata.fullModelPackageName}.${shape.shapeName};
 
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
 public class ${shape.shapeName}Unmarshaller extends ${exceptionUnmarshallerImpl} {

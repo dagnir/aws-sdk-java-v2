@@ -34,8 +34,8 @@ public class SqsConcurrentLoadAcceptanceTest extends IntegrationTestBase {
     @Test
     @Ignore
     public void testIdleConnectionReaping() throws Exception {
-        sqs = SQSAsyncClientBuilder.standard().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
-        sqs = SQSAsyncClientBuilder.standard().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        sqs = SQSAsyncClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        sqs = SQSAsyncClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
 
         List<WorkerThread> workers = new ArrayList<WorkerThread>();
         for (int i = 0; i < TOTAL_WORKER_THREADS; i++) {

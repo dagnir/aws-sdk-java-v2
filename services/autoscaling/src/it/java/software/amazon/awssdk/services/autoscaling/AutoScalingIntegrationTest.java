@@ -606,7 +606,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
     @Test
     public void testClockSkewAs() {
         SdkGlobalTime.setGlobalTimeOffset(3600);
-        AutoScalingClient clockSkewClient = AutoScalingClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        AutoScalingClient clockSkewClient = AutoScalingClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
         clockSkewClient.describePolicies(new DescribePoliciesRequest());
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }

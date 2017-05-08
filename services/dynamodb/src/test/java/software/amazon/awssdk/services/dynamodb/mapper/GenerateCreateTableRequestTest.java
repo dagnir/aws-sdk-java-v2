@@ -49,8 +49,8 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
     @BeforeClass
     public static void setUp() {
         dynamo = DynamoDBClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()))
+                .region(Regions.US_WEST_2.getName())
                 .build();
         mapper = new DynamoDBMapper(dynamo);
     }

@@ -30,7 +30,7 @@ import software.amazon.awssdk.codegen.internal.Constants;
  * Formats the generated java source code. Uses Eclipse JDT core plugin from the Eclipse SDK.
  */
 @SuppressWarnings("unchecked")
-public class JavaCodeFormatter implements ContentProcessor {
+public class JavaCodeFormatter implements CodeTransformer {
 
     private static final Map<String, Object> DEFAULT_FORMATTER_OPTIONS;
 

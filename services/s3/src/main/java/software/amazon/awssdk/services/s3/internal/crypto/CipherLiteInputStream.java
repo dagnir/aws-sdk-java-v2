@@ -181,7 +181,8 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
                 }
             }
         }
-        currPos = maxPos = 0;
+        maxPos = 0;
+        currPos = 0;
         abortIfNeeded();
     }
 
@@ -213,7 +214,8 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
     }
 
     final void resetInternal() {
-        currPos = maxPos = 0;
+        maxPos = 0;
+        currPos = 0;
         eof = false;
     }
 
@@ -247,7 +249,8 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
                         return -1;
                     }
                     currPos = 0;
-                    return maxPos = bufout.length;
+                    maxPos = bufout.length;
+                    return maxPos;
                 } catch (IllegalBlockSizeException ignore) {
                     // like the RI
                 } catch (BadPaddingException e) {
@@ -260,7 +263,8 @@ public class CipherLiteInputStream extends SdkFilterInputStream {
         }
         bufout = cipherLite.update(bufin, 0, len);
         currPos = 0;
-        return maxPos = (bufout == null ? 0 : bufout.length);
+        maxPos = bufout == null ? 0 : bufout.length;
+        return maxPos;
     }
 
     void renewCipherLite() {

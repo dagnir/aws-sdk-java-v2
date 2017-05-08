@@ -31,12 +31,7 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
  */
 public interface RequestMetricTransformer {
     /** A convenient instance of a no-op request metric transformer. */
-    public static final RequestMetricTransformer NONE = new RequestMetricTransformer() {
-        public List<MetricDatum> toMetricData(MetricType requestMetric,
-                                              Request<?> request, Response<?> response) {
-            return null;
-        }
-    };
+    public static final RequestMetricTransformer NONE = (requestMetric, request, response) -> null;
 
     /**
      * Returns a list of metric datum for the metrics collected for the given

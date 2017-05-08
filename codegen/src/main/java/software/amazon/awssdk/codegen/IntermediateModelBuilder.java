@@ -46,6 +46,7 @@ import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.codegen.naming.DefaultNamingStrategy;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.Logger;
 
 /**
  * Builds an intermediate model to be used by the templates from the service model and
@@ -53,6 +54,7 @@ import software.amazon.awssdk.util.StringUtils;
  */
 public class IntermediateModelBuilder {
 
+    private static final Logger log = Logger.loggerFor(IntermediateModelBuilder.class);
     private final CustomizationConfig customConfig;
     private final BasicCodeGenConfig codeGenConfig;
     private final ServiceModel service;
@@ -92,9 +94,9 @@ public class IntermediateModelBuilder {
         // Note: This needs to come before any pre/post processing of the
         // models, as the transformer must have access to the original shapes,
         // before any customizations have been applied (which modifies them).
-        System.out.println("Applying customizations to examples...");
+        log.info(() -> "Applying customizations to examples...");
         new ExamplesCustomizer(service, customConfig).applyCustomizationsToExamples(examples);
-        System.out.println("Examples customized.");
+        log.info(() -> "Examples customized.");
 
         CodegenCustomizationProcessor customization = DefaultCustomizationProcessor
                 .getProcessorFor(customConfig);
@@ -115,7 +117,7 @@ public class IntermediateModelBuilder {
                                             Collections.unmodifiableMap(shapes)));
         }
 
-        System.out.println(shapes.size() + " shapes found in total.");
+        log.info(() -> shapes.size() + " shapes found in total.");
 
         IntermediateModel fullModel = new IntermediateModel(
                 constructMetadata(service, codeGenConfig, customConfig), operations, shapes,
@@ -123,12 +125,11 @@ public class IntermediateModelBuilder {
 
         customization.postprocess(fullModel);
 
-        System.out.println(fullModel.getShapes().size() + " shapes remained after " +
-                           "applying customizations.");
+        log.info(() -> fullModel.getShapes().size() + " shapes remained after applying customizations.");
 
         Map<String, ShapeModel> trimmedShapes = removeUnusedShapes(fullModel);
 
-        System.out.println(trimmedShapes.size() + " shapes remained after removing unused shapes.");
+        log.info(() -> trimmedShapes.size() + " shapes remained after removing unused shapes.");
 
         IntermediateModel trimmedModel = new IntermediateModel(fullModel.getMetadata(),
                                                                fullModel.getOperations(),
@@ -204,8 +205,8 @@ public class IntermediateModelBuilder {
                             throw new RuntimeException(String.format("Required custom auth not defined: %s",
                                     c2jOperation.getAuthorizer()));
                         }
-                        shape.setRequestSignerClassFqcn(model.getMetadata().getPackageName()
-                                + ".auth." + auth.getInterfaceName());
+                        shape.setRequestSignerClassFqcn(model.getMetadata().getAuthPolicyPackageName() + '.' +
+                                                        auth.getInterfaceName());
                     } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
                         model.getMetadata().setRequiresIamSigners(true);
                         shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");

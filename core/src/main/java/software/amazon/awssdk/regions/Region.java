@@ -140,7 +140,7 @@ public class Region {
      *                     configuration
      * @deprecated use appropriate {@link AwsClientBuilder} implementation
      *             for the service being constructed. For example:
-     *             {@code AmazonSNSClientBuilder.standard().withRegion(region).build();}
+     *             {@code AmazonSNSClient.builder().withRegion(region).build();}
      */
     @Deprecated
     public <T extends AmazonWebServiceClient> T createClient(Class<T> serviceClass,

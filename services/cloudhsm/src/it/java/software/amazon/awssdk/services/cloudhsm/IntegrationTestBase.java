@@ -26,6 +26,6 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = CloudHSMClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        client = CloudHSMClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 }

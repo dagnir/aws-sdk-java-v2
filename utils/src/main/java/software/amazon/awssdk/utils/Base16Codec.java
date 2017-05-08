@@ -45,8 +45,9 @@ class Base16Codec implements Codec {
         byte p;
 
         for (int i = 0, j = 0; i < src.length; i++) {
-            dest[j++] = (byte) alphabets[(p = src[i]) >>> 4 & MASK_4BITS];
-            dest[j++] = (byte) alphabets[p & MASK_4BITS];
+            p = src[i];
+            dest[j++] = alphabets[p >>> 4 & MASK_4BITS];
+            dest[j++] = alphabets[p & MASK_4BITS];
         }
         return dest;
     }

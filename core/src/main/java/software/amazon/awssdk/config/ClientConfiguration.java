@@ -30,7 +30,7 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
  */
 @SdkInternalApi
 @ReviewBeforeRelease("Do we want to have all optional Client*Configuration objects merged under one 'ClientOverrideConfig', to "
-                     + "make it easier to find the required configuration, like credentials? This would also make it clear why "
+                     + "make it easier to find the required configuration, like endpoint? This would also make it clear why "
                      + "the credential configuration is separated from the other security configuration.")
 public interface ClientConfiguration {
     /**
@@ -91,10 +91,11 @@ public interface ClientConfiguration {
     /**
      * The credentials that should be used to authenticate the service with AWS.
      */
-    Optional<AwsCredentialsProvider> credentialsProvider();
+    @ReviewBeforeRelease("This is AWS-specific, so it should probably be broken out.")
+    AwsCredentialsProvider credentialsProvider();
 
     /**
      * The endpoint with which the SDK should communicate.
      */
-    Optional<URI> endpoint();
+    URI endpoint();
 }

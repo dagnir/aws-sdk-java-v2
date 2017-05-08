@@ -21,6 +21,7 @@ import static org.junit.Assert.assertThat;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +32,7 @@ import software.amazon.awssdk.services.protocolrestxml.ProtocolRestXmlClient;
 import software.amazon.awssdk.services.protocolrestxml.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestxml.model.EmptyModeledException;
 import software.amazon.awssdk.services.protocolrestxml.model.MultiLocationOperationRequest;
-import software.amazon.awssdk.services.protocolrestxml.model.ProtocolRestXmlClientException;
+import software.amazon.awssdk.services.protocolrestxml.model.ProtocolRestXmlException;
 
 public class RestXmlExceptionTests {
 
@@ -45,10 +46,10 @@ public class RestXmlExceptionTests {
     @Before
     public void setupClient() {
         client = ProtocolRestXmlClient.builder()
-                                      .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                      .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
-                                                                                           "us-east-1"))
-                                      .build();
+                                  .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                  .region("us-east-1")
+                                  .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
+                                  .build();
     }
 
     @Test
@@ -65,7 +66,7 @@ public class RestXmlExceptionTests {
         try {
             callAllTypes();
         } catch (EmptyModeledException e) {
-            assertThat(e, instanceOf(ProtocolRestXmlClientException.class));
+            assertThat(e, instanceOf(ProtocolRestXmlException.class));
         }
     }
 
@@ -97,7 +98,7 @@ public class RestXmlExceptionTests {
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {
-        assertThrowsException(runnable, ProtocolRestXmlClientException.class);
+        assertThrowsException(runnable, ProtocolRestXmlException.class);
     }
 
     private void assertThrowsIllegalArgumentException(Runnable runnable) {

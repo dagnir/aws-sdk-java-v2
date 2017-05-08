@@ -66,6 +66,7 @@ public class GenerationMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         this.sourcesDirectory = Paths.get(outputDirectory).resolve("generated-sources").resolve("sdk");
         this.testsDirectory = Paths.get(outputDirectory).resolve("generated-test-sources").resolve("sdk-tests");
+
         findModelRoots().forEach(p -> {
             try {
                 getLog().info("Loading from: " + p.toString());
@@ -86,10 +87,16 @@ public class GenerationMojo extends AbstractMojo {
 
     private Stream<Path> findModelRoots() throws MojoExecutionException {
         try {
-            return Files.find(codeGenResources.toPath(), 10, this::isModelFile).map(Path::getParent);
+            return Files.find(codeGenResources.toPath(), 10, this::isModelFile)
+                        .map(Path::getParent)
+                        .sorted(this::modelSharersLast);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to find '" + MODEL_FILE + "' files in " + codeGenResources, e);
         }
+    }
+
+    private int modelSharersLast(Path lhs, Path rhs) {
+        return loadCustomizationConfig(lhs).getShareModelsWith() == null ? -1 : 1;
     }
 
     private boolean isModelFile(Path p, BasicFileAttributes a) {

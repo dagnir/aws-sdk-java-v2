@@ -192,7 +192,8 @@ final class StandardBeanProperties {
         public void set(T object, V value) {
             T declaringObject = declaring.get(object);
             if (declaringObject == null) {
-                declaring.set(object, (declaringObject = newInstance(targetType)));
+                declaringObject = newInstance(targetType);
+                declaring.set(object, declaringObject);
             }
             reflect.set(declaringObject, value);
         }
@@ -238,10 +239,11 @@ final class StandardBeanProperties {
             for (final Method method : targetType.getMethods()) {
                 if (canMap(method, true)) {
                     String name = fieldNameOf(method);
-                    if ((name = attributes.remove(name)) == null) {
+                    name = attributes.remove(name);
+                    if (name == null) {
                         continue;
                     }
-                    final FieldMap<V> annotations = StandardAnnotationMaps.<V>of(method, name);
+                    final FieldMap<V> annotations = StandardAnnotationMaps.of(method, name);
                     if (!annotations.ignored()) {
                         final Reflect<T, V> reflect = new DeclaringReflect<T, V>(method, declaring, targetType);
                         putOrFlatten(annotations, reflect, method);

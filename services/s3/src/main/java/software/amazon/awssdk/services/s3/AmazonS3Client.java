@@ -53,7 +53,6 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
@@ -294,9 +293,6 @@ import software.amazon.awssdk.services.s3.model.transform.XmlResponsesSaxParser.
 import software.amazon.awssdk.services.s3.request.S3HandlerContextKeys;
 import software.amazon.awssdk.services.s3.waiters.AmazonS3Waiters;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.util.Base16;
-import software.amazon.awssdk.util.Base64;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.CredentialUtils;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.LengthCheckInputStream;
@@ -305,6 +301,9 @@ import software.amazon.awssdk.util.RuntimeHttpUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.ServiceClientHolderInputStream;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.Base16;
+import software.amazon.awssdk.utils.Base64Utils;
+import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.utils.IoUtils;
 
 /**
@@ -801,7 +800,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         if (sseKey.getKey() != null
             && sseKey.getMd5() == null) {
             String encryptionKeyb64 = sseKey.getKey();
-            byte[] encryptionKey = Base64.decode(encryptionKeyb64);
+            byte[] encryptionKey = Base64Utils.decode(encryptionKeyb64);
             request.addHeader(Headers.SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5,
                               Md5Utils.md5AsBase64(encryptionKey));
         }
@@ -824,7 +823,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         if (sseKey.getKey() != null
             && sseKey.getMd5() == null) {
             String encryptionKeyBase64 = sseKey.getKey();
-            byte[] encryptionKey = Base64.decode(encryptionKeyBase64);
+            byte[] encryptionKey = Base64Utils.decode(encryptionKeyBase64);
             request.addHeader(Headers.COPY_SOURCE_SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5,
                               Md5Utils.md5AsBase64(encryptionKey));
         }
@@ -968,13 +967,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                 request.addParameter(ResponseHeaderOverrides.RESPONSE_HEADER_EXPIRES, responseHeaders.getExpires());
             }
         }
-    }
-
-    private static String getProtocol(Request<?> request) {
-        if (request == null || request.getEndpoint() == null) {
-            return null;
-        }
-        return request.getEndpoint().getScheme();
     }
 
     private void init() {
@@ -2018,7 +2010,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                  * stream in memory just to calculate it. Instead, we can calculate it on the fly
                  * and validate it with the returned ETag from the object upload.
                  */
-                input = md5DigestStream = new MD5DigestCalculatingInputStream(input);
+                md5DigestStream = new MD5DigestCalculatingInputStream(input);
+                input = md5DigestStream;
             }
 
             if (metadata.getContentType() == null) {
@@ -2044,7 +2037,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         }
         String contentMd5 = metadata.getContentMD5();
         if (md5DigestStream != null) {
-            contentMd5 = Base64.encodeAsString(md5DigestStream.getMd5Digest());
+            contentMd5 = Base64Utils.encodeAsString(md5DigestStream.getMd5Digest());
         }
 
         final String etag = returnedMetadata.getETag();
@@ -3500,7 +3493,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                  * stream in memory just to calculate it. Instead, we can calculate it on the fly
                  * and validate it with the returned ETag from the object upload.
                  */
-                isCurr = md5DigestStream = new MD5DigestCalculatingInputStream(isCurr);
+                md5DigestStream = new MD5DigestCalculatingInputStream(isCurr);
+                isCurr = md5DigestStream;
             }
             final ProgressListener listener = uploadPartRequest.getGeneralProgressListener();
             publishProgress(listener, ProgressEventType.TRANSFER_PART_STARTED_EVENT);

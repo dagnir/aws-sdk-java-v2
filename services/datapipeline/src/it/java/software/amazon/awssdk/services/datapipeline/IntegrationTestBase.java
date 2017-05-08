@@ -35,6 +35,6 @@ public class IntegrationTestBase extends AwsTestBase {
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
 
-        dataPipeline = DataPipelineClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        dataPipeline = DataPipelineClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 }

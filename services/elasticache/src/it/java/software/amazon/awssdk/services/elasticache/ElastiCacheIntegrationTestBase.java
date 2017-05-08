@@ -28,6 +28,6 @@ public class ElastiCacheIntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        elasticache = ElastiCacheClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        elasticache = ElastiCacheClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

@@ -129,7 +129,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     public TableDescription describe() {
         DescribeTableResult result = client.describeTable(
                 InternalUtils.applyUserAgent(new DescribeTableRequest(tableName)));
-        return tableDescription = result.getTable();
+        TableDescription description = result.getTable();
+        tableDescription = description;
+        return description;
     }
 
     /**
@@ -344,7 +346,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         UpdateTableRequest req = spec.getRequest();
         req.setTableName(getTableName());
         UpdateTableResult result = client.updateTable(req);
-        return this.tableDescription = result.getTableDescription();
+        TableDescription description = result.getTableDescription();
+        this.tableDescription = description;
+        return description;
     }
 
     /**

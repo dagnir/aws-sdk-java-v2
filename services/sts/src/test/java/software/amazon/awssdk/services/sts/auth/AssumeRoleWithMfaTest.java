@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.sts.model.transform.AssumeRoleRequestMarshaller;
+import software.amazon.awssdk.services.sts.transform.AssumeRoleRequestMarshaller;
 
 public class AssumeRoleWithMfaTest {
     @Test

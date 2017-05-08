@@ -1,11 +1,11 @@
 ${fileHeader}
-package ${metadata.packageName}.model;
+package ${metadata.fullModelPackageName};
 
 import javax.annotation.Generated;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
-import ${metadata.packageName}.model.transform.${shape.shapeName}Marshaller;
+import ${metadata.fullTransformPackageName}.${shape.shapeName}Marshaller;
 
 /**
  * <#if shape.documentation?has_content>${shape.documentation}</#if>

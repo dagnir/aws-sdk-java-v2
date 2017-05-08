@@ -211,7 +211,8 @@ final class GcmCipherLite extends CipherLite {
 
     @Override
     long mark() {
-        return this.markedCount = aux == null ? outputByteCount : currentCount;
+        this.markedCount = aux == null ? outputByteCount : currentCount;
+        return this.markedCount;
     }
 
     @Override

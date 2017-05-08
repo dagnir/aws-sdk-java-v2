@@ -38,7 +38,7 @@ public class ServiceIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws FileNotFoundException, IOException {
         setUpCredentials();
-        es = ElasticsearchClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        es = ElasticsearchClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass

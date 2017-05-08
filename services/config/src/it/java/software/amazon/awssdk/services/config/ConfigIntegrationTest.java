@@ -59,9 +59,9 @@ public class ConfigIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        configServiceClient = ConfigClient.builder().withRegion(Regions.US_EAST_1).withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        configServiceClient = ConfigClient.builder().withRegion(Regions.US_EAST_1).credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
-        iam = IAMClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        iam = IAMClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
 
     }
 

@@ -36,7 +36,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     /**
      * Region has to be us-east-1 to find AMI '{@value #AMI_ID}'.
      */
-    private static final Regions REGION = Regions.US_EAST_1;
+    private static final String REGION = Regions.US_EAST_1.getName();
 
     /*
      * Test data values
@@ -59,16 +59,16 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     public static void setUp() throws IOException {
         setUpCredentials();
         autoscaling = AutoScalingClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials))
-                .withRegion(REGION)
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
+                .region(REGION)
                 .build();
-        autoscalingAsync = AutoScalingAsyncClientBuilder.standard()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials))
-                .withRegion(REGION)
+        autoscalingAsync = AutoScalingAsyncClient.builder()
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
+                .region(REGION)
                 .build();
         sns = SNSClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials))
-                .withRegion(REGION)
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
+                .region(REGION)
                 .build();
     }
 

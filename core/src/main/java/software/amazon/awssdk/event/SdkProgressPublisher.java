@@ -65,12 +65,13 @@ public class SdkProgressPublisher {
         // This is unfortunate as the listener should never block in the first
         // place, but such task submission is necessary to remain backward
         // compatible.
-        return latestFutureTask = LazyHolder.EXECUTOR.submit(new Runnable() {
+        latestFutureTask = LazyHolder.EXECUTOR.submit(new Runnable() {
             @Override
             public void run() {
                 listener.progressChanged(event);
             }
         });
+        return latestFutureTask;
     }
 
     private static Future<?> quietlyCallListener(final ProgressListener listener,
@@ -217,7 +218,8 @@ public class SdkProgressPublisher {
     }
 
     protected static Future<?> setLatestFutureTask(Future<?> f) {
-        return latestFutureTask = f;
+        latestFutureTask = f;
+        return latestFutureTask;
     }
 
     /**

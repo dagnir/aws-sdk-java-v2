@@ -23,7 +23,7 @@ import java.util.function.UnaryOperator;
  * @param <T> the type that the builder will build
  * @param <B> the builder type (this)
  */
-public interface SdkBuilder<T extends ToSdkBuilder<T, B>, B extends SdkBuilder<T, B>> {
+public interface SdkBuilder<B extends SdkBuilder<B, T>, T> {
 
     /**
      * An immutable object that is created from the
@@ -32,16 +32,6 @@ public interface SdkBuilder<T extends ToSdkBuilder<T, B>, B extends SdkBuilder<T
      * @return an instance of T
      */
     T build();
-
-    /**
-     * A shallow copy of this object created by building an
-     * immutable T and then transforming it back to a builder.
-     *
-     * @return a copy of this object
-     */
-    default B copy() {
-        return build().toBuilder();
-    }
 
     /**
      * A convenience operator that takes something that will

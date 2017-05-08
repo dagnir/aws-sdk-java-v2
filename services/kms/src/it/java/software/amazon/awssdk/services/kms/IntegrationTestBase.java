@@ -25,6 +25,6 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        kms = KMSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        kms = KMSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }

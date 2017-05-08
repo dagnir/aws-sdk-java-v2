@@ -37,8 +37,8 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @Before
     public void setup() {
         dynamoDB = DynamoDBClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
+                .region(Regions.US_WEST_2.getName())
                 .build();
     }
 

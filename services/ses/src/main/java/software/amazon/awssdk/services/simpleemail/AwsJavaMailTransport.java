@@ -17,6 +17,7 @@ package software.amazon.awssdk.services.simpleemail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -334,15 +335,15 @@ public class AwsJavaMailTransport extends Transport {
 
         if (this.emailService == null) {
             // Use the supplied credentials.
-            builder.withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials(awsAccessKey, awsSecretKey)));
+            builder.credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials(awsAccessKey, awsSecretKey)));
         }
 
         if (!isNullOrEmpty(host)) {
             String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
-            builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(host, region));
+            builder.region(region).endpointOverride(URI.create(host));
         } else if (this.httpsEndpoint != null) {
             String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
-            builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(httpsEndpoint, region));
+            builder.region(region).endpointOverride(URI.create(httpsEndpoint));
         }
 
         emailService = builder.build();

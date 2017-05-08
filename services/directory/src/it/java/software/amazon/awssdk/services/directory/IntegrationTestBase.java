@@ -29,12 +29,12 @@ public class IntegrationTestBase extends AwsIntegrationTestBase {
     @BeforeClass
     public static void baseSetupFixture() {
         dsClient = DirectoryClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
-                .withRegion(Regions.US_EAST_1)
+                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
+                .region(Regions.US_EAST_1.getName())
                 .build();
         ec2Client = EC2Client.builder()
-                .withRegion(Regions.US_EAST_1)
-                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
+                .region(Regions.US_EAST_1.getName())
+                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
                 .build();
     }
 }

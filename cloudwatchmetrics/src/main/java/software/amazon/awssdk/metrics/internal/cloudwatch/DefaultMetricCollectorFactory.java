@@ -42,21 +42,17 @@ public class DefaultMetricCollectorFactory
         Integer qSize = AwsSdkMetrics.getMetricQueueSize();
         Long timeoutMilli = AwsSdkMetrics.getQueuePollTimeoutMilli();
         CloudWatchMetricConfig config = new CloudWatchMetricConfig();
-        LegacyClientConfiguration clientConfig = new LegacyClientConfiguration();
-        if (provider != null) {
-            config.setCredentialsProvider(provider);
-        }
-        if (region != null) {
-            String endPoint = region.getServiceEndpoint(CloudWatchClient.ENDPOINT_PREFIX);
-            config.setCloudWatchEndPoint(endPoint);
-        }
+
         if (qSize != null) {
-            config.setMetricQueueSize(qSize.intValue());
+            config.setMetricQueueSize(qSize);
         }
         if (timeoutMilli != null) {
-            config.setQueuePollTimeoutMilli(timeoutMilli.longValue());
+            config.setQueuePollTimeoutMilli(timeoutMilli);
         }
-        config.setClientConfiguration(clientConfig);
+        config.setCloudWatchClient(CloudWatchClient.builder()
+                                                   .credentialsProvider(provider)
+                                                   .region(region.getName())
+                                                   .build());
         MetricCollectorSupport.startSingleton(config);
         return MetricCollectorSupport.getInstance();
     }

@@ -27,7 +27,7 @@ import java.util.List;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.services.glacier.internal.TreeHashInputStream;
-import software.amazon.awssdk.util.BinaryUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * Utility class for calculating tree hashes.

@@ -15,23 +15,23 @@
 
 package software.amazon.awssdk.codegen;
 
+import software.amazon.awssdk.codegen.internal.Constants;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
+import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.ServiceMetadata;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
-import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.util.json.Jackson;
 
 /**
  * Constructs the metadata that is required for generating the java client from the service meta data.
  */
 final class AddMetadata {
 
-    private static final String AWS_PACKAGE_PREFIX = "software.amazon.awssdk.services.";
+    private static final String AWS_PACKAGE_PREFIX = "software.amazon.awssdk.services";
 
     public static Metadata constructMetadata(ServiceModel serviceModel,
                                              BasicCodeGenConfig codeGenConfig,
@@ -42,39 +42,52 @@ final class AddMetadata {
         final ServiceMetadata serviceMetadata = serviceModel.getMetadata();
 
         final String serviceName;
-        final String packageName;
+        final String rootPackageName;
 
         // API Gateway uses additional codegen.config settings
         if (serviceMetadata.getProtocol().equals(Protocol.API_GATEWAY.getValue())) {
+            // TODO: The meaning of root package name has changed a bit since this code was written. Specifically, the root for
+            // AWS no longer includes the service name. This changed the behavior of the API gateway generation, but we're not
+            // keeping it up to date at this time. Just be aware this has happened when updating the API gateway code.
             serviceName = codeGenConfig.getInterfaceName();
-            packageName = codeGenConfig.getPackageName();
+            rootPackageName = codeGenConfig.getPackageName();
 
             metadata.withDefaultEndpoint(codeGenConfig.getEndpoint())
                     .withDefaultEndpointWithoutHttpProtocol(
                             Utils.getDefaultEndpointWithoutHttpProtocol(codeGenConfig.getEndpoint()))
                     .withDefaultRegion(codeGenConfig.getDefaultRegion());
         } else {
-            serviceName = Utils.getServiceName(serviceMetadata);
-            packageName = AWS_PACKAGE_PREFIX + Utils.getPackageName(serviceName, customizationConfig);
+            serviceName = Utils.getServiceName(serviceMetadata, customizationConfig);
+            rootPackageName = AWS_PACKAGE_PREFIX;
         }
 
-        final String syncInterfaceName = Utils.getInterfaceName(serviceName);
-        final String asyncInterfaceName = Utils.getAsyncInterfaceName(serviceName);
-
         metadata.withApiVersion(serviceMetadata.getApiVersion())
-                .withAsyncClient(Utils.getClientName(asyncInterfaceName))
-                .withAsyncInterface(asyncInterfaceName)
+                .withAsyncClient(String.format(Constants.ASYNC_CLIENT_CLASS_NAME_PATTERN, serviceName))
+                .withAsyncInterface(String.format(Constants.ASYNC_CLIENT_INTERFACE_NAME_PATTERN, serviceName))
+                .withAsyncBuilder(String.format(Constants.ASYNC_BUILDER_CLASS_NAME_PATTERN, serviceName))
+                .withAsyncBuilderInterface(String.format(Constants.ASYNC_BUILDER_INTERFACE_NAME_PATTERN, serviceName))
+                .withBaseBuilderInterface(String.format(Constants.BASE_BUILDER_INTERFACE_NAME_PATTERN, serviceName))
+                .withBaseBuilder(String.format(Constants.BASE_BUILDER_CLASS_NAME_PATTERN, serviceName))
                 .withDocumentation(serviceModel.getDocumentation())
-                .withPackageName(packageName)
-                .withPackagePath(packageName.replace(".", "/"))
+                .withRootPackageName(rootPackageName)
+                .withClientPackageName(Utils.getClientPackageName(serviceName, customizationConfig))
+                .withModelPackageName(Utils.getModelPackageName(serviceName, customizationConfig))
+                .withTransformPackageName(Utils.getTransformPackageName(serviceName, customizationConfig))
+                .withRequestTransformPackageName(Utils.getRequestTransformPackageName(serviceName, customizationConfig))
+                .withWaitersPackageName(Utils.getWaitersPackageName(serviceName, customizationConfig))
+                .withSmokeTestsPackageName(Utils.getSmokeTestPackageName(serviceName, customizationConfig))
                 .withServiceAbbreviation(serviceMetadata.getServiceAbbreviation())
                 .withServiceFullName(serviceMetadata.getServiceFullName())
-                .withSyncClient(Utils.getClientName(syncInterfaceName))
-                .withSyncInterface(syncInterfaceName)
+                .withSyncClient(String.format(Constants.SYNC_CLIENT_CLASS_NAME_PATTERN, serviceName))
+                .withSyncInterface(String.format(Constants.SYNC_CLIENT_INTERFACE_NAME_PATTERN, serviceName))
+                .withSyncBuilder(String.format(Constants.SYNC_BUILDER_CLASS_NAME_PATTERN, serviceName))
+                .withSyncBuilderInterface(String.format(Constants.SYNC_BUILDER_INTERFACE_NAME_PATTERN, serviceName))
+                .withBaseExceptionName(String.format(Constants.BASE_EXCEPTION_NAME_PATTERN, serviceName))
                 .withProtocol(Protocol.fromValue(serviceMetadata.getProtocol()))
                 .withJsonVersion(serviceMetadata.getJsonVersion())
                 .withEndpointPrefix(serviceMetadata.getEndpointPrefix())
                 .withSigningName(serviceMetadata.getSigningName())
+                .withAuthType(AuthType.fromValue(serviceMetadata.getSignatureVersion()))
                 .withRequiresApiKey(requiresApiKey(serviceModel))
                 .withUid(serviceMetadata.getUid());
 

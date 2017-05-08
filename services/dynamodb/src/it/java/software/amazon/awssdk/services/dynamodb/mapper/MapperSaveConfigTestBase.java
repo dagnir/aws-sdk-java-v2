@@ -74,7 +74,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        dynamo = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        dynamo = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         dynamoMapper = new DynamoDBMapper(dynamo);
 
         createTestTable(DEFAULT_PROVISIONED_THROUGHPUT);

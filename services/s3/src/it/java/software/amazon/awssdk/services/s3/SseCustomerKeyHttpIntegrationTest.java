@@ -46,7 +46,7 @@ import software.amazon.awssdk.services.s3.model.InitiateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.model.SSEAlgorithm;
+import software.amazon.awssdk.services.s3.model.SseAlgorithm;
 import software.amazon.awssdk.services.s3.model.SseCustomerKey;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.test.AwsTestBase;
@@ -154,7 +154,7 @@ public class SseCustomerKeyHttpIntegrationTest extends AwsTestBase {
 
         InitiateMultipartUploadRequest initRequest =
                 new InitiateMultipartUploadRequest(bucketName, KEY)
-                        .withSSECustomerKey(serverSideEncryptionKey);
+                        .withSseCustomerKey(serverSideEncryptionKey);
         try {
             s3.initiateMultipartUpload(initRequest);
             fail("secret key and http don't mix");
@@ -174,7 +174,7 @@ public class SseCustomerKeyHttpIntegrationTest extends AwsTestBase {
                 .withFileOffset(offset)
                 .withPartNumber(part)
                 .withLastPart(part == PART_NUMBER)
-                .withSSECustomerKey(serverSideEncryptionKey);
+                .withSseCustomerKey(serverSideEncryptionKey);
         try {
             s3.uploadPart(uploadPartRequest);
             fail("secret key and http don't mix");

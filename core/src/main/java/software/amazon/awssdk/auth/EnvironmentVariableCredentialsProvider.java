@@ -27,15 +27,8 @@ import software.amazon.awssdk.util.StringUtils;
 public class EnvironmentVariableCredentialsProvider implements AwsCredentialsProvider {
     @Override
     public AwsCredentials getCredentials() {
-        String accessKey = System.getenv(SdkGlobalConfiguration.ACCESS_KEY_ENV_VAR);
-        if (accessKey == null) {
-            accessKey = System.getenv(SdkGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR);
-        }
-
+        String accessKey = System.getenv(SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR);
         String secretKey = System.getenv(SdkGlobalConfiguration.SECRET_KEY_ENV_VAR);
-        if (secretKey == null) {
-            secretKey = System.getenv(SdkGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR);
-        }
 
         accessKey = StringUtils.trim(accessKey);
         secretKey = StringUtils.trim(secretKey);
@@ -46,10 +39,8 @@ public class EnvironmentVariableCredentialsProvider implements AwsCredentialsPro
             || StringUtils.isNullOrEmpty(secretKey)) {
 
             throw new SdkClientException("Unable to load AWS credentials from environment variables (" +
-                                         SdkGlobalConfiguration.ACCESS_KEY_ENV_VAR + " (or " +
-                                         SdkGlobalConfiguration.ALTERNATE_ACCESS_KEY_ENV_VAR + ") and " +
-                                         SdkGlobalConfiguration.SECRET_KEY_ENV_VAR + " (or " +
-                                         SdkGlobalConfiguration.ALTERNATE_SECRET_KEY_ENV_VAR + "))");
+                                         SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR + "  and " +
+                                         SdkGlobalConfiguration.SECRET_KEY_ENV_VAR + ")");
         }
 
         return sessionToken == null ?

@@ -41,9 +41,9 @@ public final class EnumClass implements ClassSpec {
     private final ShapeModel shape;
     private final ClassName className;
 
-    public EnumClass(String basePackage, ShapeModel shape) {
+    public EnumClass(String enumPackage, ShapeModel shape) {
         this.shape = shape;
-        this.className = ClassName.get(basePackage + ".model", shape.getShapeName());
+        this.className = ClassName.get(enumPackage, shape.getShapeName());
     }
 
     @Override

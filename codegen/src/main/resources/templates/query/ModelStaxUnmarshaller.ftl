@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import javax.xml.stream.events.XMLEvent;
 import javax.annotation.Generated;
 
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 import software.amazon.awssdk.runtime.transform.MapEntry;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;

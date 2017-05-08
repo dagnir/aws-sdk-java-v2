@@ -27,7 +27,7 @@ public class PackageInfoGeneratorTasks extends BaseGeneratorTasks {
 
     public PackageInfoGeneratorTasks(GeneratorTaskParams dependencies) {
         super(dependencies);
-        this.baseDirectory = dependencies.getPathProvider().getBasePackageDirectory();
+        this.baseDirectory = dependencies.getPathProvider().getClientDirectory();
     }
 
     @Override

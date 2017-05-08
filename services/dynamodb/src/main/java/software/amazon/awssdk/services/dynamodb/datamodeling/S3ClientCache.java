@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.dynamodb.datamodeling;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import software.amazon.awssdk.auth.AwsCredentials;
@@ -26,7 +25,6 @@ import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.Region;
-import software.amazon.awssdk.services.s3.transfer.TransferManager;
 
 /**
  * A smart Map for {@link AmazonS3} objects. {@link S3ClientCache} keeps the
@@ -36,7 +34,6 @@ import software.amazon.awssdk.services.s3.transfer.TransferManager;
  */
 public class S3ClientCache {
     private final ConcurrentMap<String, AmazonS3> clientsByRegion = new ConcurrentHashMap<String, AmazonS3>();
-    private final Map<String, TransferManager> transferManagersByRegion = new ConcurrentHashMap<String, TransferManager>();
 
     private final AwsCredentialsProvider awscredentialsProvider;
 
@@ -76,14 +73,7 @@ public class S3ClientCache {
      */
     public void useClient(AmazonS3 client) {
         String region = client.getRegionName();
-
-        synchronized (transferManagersByRegion) {
-            TransferManager tm = transferManagersByRegion.remove(region);
-            if (tm != null) {
-                tm.shutdownNow();
-            }
-            clientsByRegion.put(region, client);
-        }
+        clientsByRegion.put(region, client);
     }
 
     /**
@@ -152,56 +142,5 @@ public class S3ClientCache {
         client.setRegion(RegionUtils.getRegion(region));
         clientsByRegion.put(region, client);
         return client;
-    }
-
-    /**
-     * Returns a {@link TransferManager} for the given region, or throws an
-     * exception when unable. The returned {@link TransferManager} will always
-     * be instantiated from whatever {@link AmazonS3} is in the cache,
-     * whether provided with {@link #useClient(AmazonS3)} or instantiated
-     * automatically from {@link AwsCredentials}.
-     *
-     * Any {@link TransferManager} returned could be shut down if a new
-     * underlying {@link AmazonS3} is provided with
-     * {@link #useClient(AmazonS3)}.
-     *
-     * @param region
-     *            The region the returned {@link TransferManager} will be
-     *            configured to use.
-     * @return A transfer manager for the given region from the cache, or one
-     *         instantiated automatically from any existing
-     *         {@link AmazonS3},
-     */
-    public TransferManager getTransferManager(Region region) {
-        return getTransferManager(region.toAwsRegion().getName());
-    }
-
-    /**
-     * Returns a {@link TransferManager} for the given region, or throws an
-     * exception when unable. The returned {@link TransferManager} will always
-     * be instantiated from whatever {@link AmazonS3} is in the cache,
-     * whether provided with {@link #useClient(AmazonS3)} or instantiated
-     * automatically from {@link AwsCredentials}.
-     *
-     * Any {@link TransferManager} returned could be shut down if a new
-     * underlying {@link AmazonS3} is provided with
-     * {@link #useClient(AmazonS3)}.
-     *
-     * @param region
-     *            The region string the returned {@link TransferManager} will be
-     *            configured to use.
-     * @return A transfer manager for the given region from the cache, or one
-     *         instantiated automatically from any existing
-     *         {@link AmazonS3},
-     */
-    public TransferManager getTransferManager(String region) {
-        synchronized (transferManagersByRegion) {
-            TransferManager tm = transferManagersByRegion.get(region);
-            if (tm == null) {
-                tm = new TransferManager(getClient(region));
-                transferManagersByRegion.put(region, tm);
-            }
-            return tm;
-        }
     }
 }

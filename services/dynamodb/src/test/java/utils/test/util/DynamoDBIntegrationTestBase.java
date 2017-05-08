@@ -43,7 +43,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        dynamo = DynamoDBClient.builder().withRegion(Regions.US_EAST_1).withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        dynamo = DynamoDBClient.builder().region(Regions.US_EAST_1.getName()).credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         // Create a table
         String keyName = KEY_NAME;

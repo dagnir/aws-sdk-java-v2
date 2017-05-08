@@ -1,12 +1,12 @@
 ${fileHeader}
-package ${metadata.packageName};
+package ${metadata.fullClientPackageName};
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.annotation.ThreadSafe;
@@ -41,7 +41,7 @@ public class ${metadata.asyncClient} implements ${metadata.asyncInterface} {
      * @param asyncClientParams Object providing client parameters.
      */
     ${metadata.asyncClient}(AwsAsyncClientParams asyncClientParams) {
-        this.syncClient = ${metadata.syncInterface}Builder.standard().build((AwsSyncClientParams)asyncClientParams);
+        this.syncClient = new ${metadata.syncClient}(asyncClientParams);
         this.executor = asyncClientParams.getExecutor();
     }
 

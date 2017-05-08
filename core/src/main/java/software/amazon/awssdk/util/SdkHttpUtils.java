@@ -145,13 +145,6 @@ public class SdkHttpUtils {
         return true;
     }
 
-    public static boolean usePayloadForQueryParameters(SignableRequest<?> request) {
-        boolean requestIsPost = HttpMethodName.POST.equals(request.getHttpMethod());
-        boolean requestHasNoPayload = (request.getContent() == null);
-
-        return requestIsPost && requestHasNoPayload;
-    }
-
     /**
      * Creates an encoded query string from all the parameters in the specified
      * request.
@@ -159,7 +152,7 @@ public class SdkHttpUtils {
      * @param request
      *            The request containing the parameters to encode.
      *
-     * @return Null if no parameters were present, otherwise the encoded query
+     * @return empty string if no parameters were present, otherwise the encoded query
      *         string for the parameters present in the specified request.
      */
     public static String encodeParameters(SignableRequest<?> request) {
@@ -167,7 +160,7 @@ public class SdkHttpUtils {
         final Map<String, List<String>> requestParams = request.getParameters();
 
         if (requestParams.isEmpty()) {
-            return null;
+            return "";
         }
 
         final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();

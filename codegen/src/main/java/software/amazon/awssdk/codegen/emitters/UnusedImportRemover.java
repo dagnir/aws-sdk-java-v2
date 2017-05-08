@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class UnusedImportRemover implements ContentProcessor {
+public class UnusedImportRemover implements CodeTransformer {
     private static Pattern IMPORT_PATTERN = Pattern.compile("import(?:\\s+)(?:static\\s+)?(.*)(?:\\s*);");
 
     @Override

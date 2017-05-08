@@ -26,7 +26,7 @@ public class IntegrationTestBase extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        support = SupportClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        support = SupportClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 }
 

@@ -19,7 +19,6 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
-import software.amazon.awssdk.services.cloudwatch.CloudWatchClientBuilder;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.util.VersionInfoUtils;
@@ -37,37 +36,14 @@ class MetricUploaderThread extends Thread {
 
     MetricUploaderThread(CloudWatchMetricConfig config,
                          BlockingQueue<MetricDatum> queue) {
-        this(config,
-             queue,
-             createCloudWatchClient(config));
-    }
-
-    MetricUploaderThread(CloudWatchMetricConfig config,
-                         BlockingQueue<MetricDatum> queue,
-                         CloudWatchClient client) {
         super(THREAD_NAME);
         if (config == null || queue == null) {
             throw new IllegalArgumentException();
         }
-        this.cloudwatchClient = client;
+        this.cloudwatchClient = config.getCloudWatchClient();
         this.qIterator = new BlockingRequestBuilder(config, queue);
         this.setPriority(MIN_PRIORITY);
         setDaemon(true);
-    }
-
-    private static CloudWatchClient createCloudWatchClient(
-            CloudWatchMetricConfig config) {
-        CloudWatchClientBuilder clientBuilder = CloudWatchClient.builder();
-
-        if (config.getCredentialsProvider() != null && config.getClientConfiguration() == null) {
-            clientBuilder.withCredentials(config.getCredentialsProvider());
-        } else if (config.getClientConfiguration() != null && config.getCredentialsProvider() == null) {
-            clientBuilder.withClientConfiguration(config.getClientConfiguration());
-        } else if (config.getClientConfiguration() != null && config.getCredentialsProvider() != null) {
-            clientBuilder.withCredentials(config.getCredentialsProvider())
-                    .withClientConfiguration(config.getClientConfiguration());
-        }
-        return clientBuilder.build();
     }
 
     @Override
@@ -94,10 +70,6 @@ class MetricUploaderThread extends Thread {
 
     void cancel() {
         cancelled = true;
-    }
-
-    public CloudWatchClient getCloudwatchClient() {
-        return cloudwatchClient;
     }
 
     private void appendUserAgent(PutMetricDataRequest request) {

@@ -67,8 +67,8 @@ public class IntegrationTestBase {
     //    private static final boolean IS_SERVICE_BUILDER_USED = false;
     @BeforeClass
     public static void setup() throws InterruptedException {
-        dynamoOld = new DynamoDB(DynamoDBClient.builder().withCredentials(new AwsStaticCredentialsProvider(awsTestCredentials())).build());
-        DynamoDBClient client = DynamoDBClient.builder().withCredentials(new AwsStaticCredentialsProvider(awsTestCredentials())).build();
+        dynamoOld = new DynamoDB(DynamoDBClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(awsTestCredentials())).build());
+        DynamoDBClient client = DynamoDBClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(awsTestCredentials())).build();
         dynamo = new DynamoDB(client);
         createTable_hashKeyOnly();
         createTable_rangeKey();

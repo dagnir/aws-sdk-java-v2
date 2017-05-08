@@ -78,7 +78,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Before
     public void setup() throws Exception {
-        iot = IoTDataPlaneClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
+        iot = IoTDataPlaneClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
     }
 
     @Test

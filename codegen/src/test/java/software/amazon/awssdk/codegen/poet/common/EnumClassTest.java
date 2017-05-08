@@ -38,7 +38,7 @@ public class EnumClassTest {
         m.setEnums(asList(new EnumModel("Available", "available"), new EnumModel("PermanentFailure", "permanent-failure")));
         m.setDocumentation("Some comment on the class itself");
 
-        EnumClass sut = new EnumClass("software.amazon.awssdk.codegen.poet.common", m);
+        EnumClass sut = new EnumClass("software.amazon.awssdk.codegen.poet.common.model", m);
 
         assertThat(sut, generatesTo("test-enum-class.java"));
     }

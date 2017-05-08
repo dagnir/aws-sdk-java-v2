@@ -24,7 +24,6 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
 import software.amazon.awssdk.utils.IoUtils;
 
 /**

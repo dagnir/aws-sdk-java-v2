@@ -15,11 +15,10 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import static software.amazon.awssdk.codegen.internal.Constants.SMOKE_TESTS_DIR_NAME;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.protocol.ProtocolMetadataProvider;
-
+import software.amazon.awssdk.utils.StringUtils;
 
 public class Metadata {
 
@@ -44,17 +43,43 @@ public class Metadata {
 
     private String syncClient;
 
+    private String syncBuilderInterface;
+
+    private String syncBuilder;
+
     private String asyncInterface;
 
     private String asyncClient;
 
-    private String packageName;
+    private String asyncBuilderInterface;
 
-    private String packagePath;
+    private String asyncBuilder;
+
+    private String baseBuilderInterface;
+
+    private String baseBuilder;
+
+    private String rootPackageName;
+
+    private String clientPackageName;
+
+    private String modelPackageName;
+
+    private String transformPackageName;
+
+    private String requestTransformPackageName;
+
+    private String waitersPackageName;
+
+    private String authPolicyPackageName;
+
+    private String smokeTestsPackageName;
 
     private String serviceAbbreviation;
 
     private String serviceFullName;
+
+    private String baseExceptionName;
 
     private boolean hasApiWithStreamInput;
 
@@ -71,6 +96,8 @@ public class Metadata {
     private boolean requiresApiKey;
 
     private String uid;
+
+    private AuthType authType;
 
     public String getApiVersion() {
         return apiVersion;
@@ -205,6 +232,32 @@ public class Metadata {
         return this;
     }
 
+    public String getSyncBuilderInterface() {
+        return syncBuilderInterface;
+    }
+
+    public void setSyncBuilderInterface(String syncBuilderInterface) {
+        this.syncBuilderInterface = syncBuilderInterface;
+    }
+
+    public Metadata withSyncBuilderInterface(String syncBuilderInterface) {
+        this.syncBuilderInterface = syncBuilderInterface;
+        return this;
+    }
+
+    public String getSyncBuilder() {
+        return syncBuilder;
+    }
+
+    public void setSyncBuilder(String syncBuilder) {
+        this.syncBuilder = syncBuilder;
+    }
+
+    public Metadata withSyncBuilder(String syncBuilder) {
+        this.syncBuilder = syncBuilder;
+        return this;
+    }
+
     public String getAsyncInterface() {
         return asyncInterface;
     }
@@ -236,43 +289,200 @@ public class Metadata {
         return this;
     }
 
-    /**
-     * @return The class name for the fluent sync client builder.
-     */
-    public String getSyncClientBuilderClassName() {
-        return syncInterface + "Builder";
+    public String getAsyncBuilderInterface() {
+        return asyncBuilderInterface;
     }
 
-    /**
-     * @return The class name for the fluent async client builder.
-     */
-    public String getAsyncClientBuilderClassName() {
-        return asyncInterface + "Builder";
+    public void setAsyncBuilderInterface(String asyncBuilderInterface) {
+        this.asyncBuilderInterface = asyncBuilderInterface;
     }
 
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public Metadata withPackageName(String packageName) {
-        setPackageName(packageName);
+    public Metadata withAsyncBuilderInterface(String asyncBuilderInterface) {
+        this.asyncBuilderInterface = asyncBuilderInterface;
         return this;
     }
 
-    public String getPackagePath() {
-        return packagePath;
+    public String getBaseBuilderInterface() {
+        return baseBuilderInterface;
     }
 
-    public void setPackagePath(String packagePath) {
-        this.packagePath = packagePath;
+    public void setBaseBuilderInterface(String baseBuilderInterface) {
+        this.baseBuilderInterface = baseBuilderInterface;
     }
 
-    public Metadata withPackagePath(String packagePath) {
-        setPackagePath(packagePath);
+    public Metadata withBaseBuilderInterface(String baseBuilderInterface) {
+        this.baseBuilderInterface = baseBuilderInterface;
+        return this;
+    }
+
+    public String getBaseBuilder() {
+        return baseBuilder;
+    }
+
+    public void setBaseBuilder(String baseBuilder) {
+        this.baseBuilder = baseBuilder;
+    }
+
+    public Metadata withBaseBuilder(String baseBuilder) {
+        this.baseBuilder = baseBuilder;
+        return this;
+    }
+
+    public String getAsyncBuilder() {
+        return asyncBuilder;
+    }
+
+    public void setAsyncBuilder(String asyncBuilder) {
+        this.asyncBuilder = asyncBuilder;
+    }
+
+    public Metadata withAsyncBuilder(String asyncBuilder) {
+        this.asyncBuilder = asyncBuilder;
+        return this;
+    }
+
+    public String getBaseExceptionName() {
+        return baseExceptionName;
+    }
+
+    public void setBaseExceptionName(String baseExceptionName) {
+        this.baseExceptionName = baseExceptionName;
+    }
+
+    public Metadata withBaseExceptionName(String baseExceptionName) {
+        setBaseExceptionName(baseExceptionName);
+        return this;
+    }
+
+    public String getRootPackageName() {
+        return rootPackageName;
+    }
+
+    public void setRootPackageName(String rootPackageName) {
+        this.rootPackageName = rootPackageName;
+    }
+
+    public Metadata withRootPackageName(String rootPackageName) {
+        setRootPackageName(rootPackageName);
+        return this;
+    }
+
+    public String getFullClientPackageName() {
+        return joinPackageNames(rootPackageName, getClientPackageName());
+    }
+
+    public String getClientPackageName() {
+        return clientPackageName;
+    }
+
+    public void setClientPackageName(String clientPackageName) {
+        this.clientPackageName = clientPackageName;
+    }
+
+    public Metadata withClientPackageName(String clientPackageName) {
+        setClientPackageName(clientPackageName);
+        return this;
+    }
+
+    public String getFullModelPackageName() {
+        return joinPackageNames(rootPackageName, getModelPackageName());
+    }
+
+    public String getModelPackageName() {
+        return modelPackageName;
+    }
+
+    public void setModelPackageName(String modelPackageName) {
+        this.modelPackageName = modelPackageName;
+    }
+
+    public Metadata withModelPackageName(String modelPackageName) {
+        setModelPackageName(modelPackageName);
+        return this;
+    }
+
+    public String getFullTransformPackageName() {
+        return joinPackageNames(rootPackageName, getTransformPackageName());
+    }
+
+    public String getTransformPackageName() {
+        return transformPackageName;
+    }
+
+    public void setTransformPackageName(String transformPackageName) {
+        this.transformPackageName = transformPackageName;
+    }
+
+    public Metadata withTransformPackageName(String transformPackageName) {
+        setTransformPackageName(transformPackageName);
+        return this;
+    }
+
+    public String getFullRequestTransformPackageName() {
+        return joinPackageNames(rootPackageName, getRequestTransformPackageName());
+    }
+
+    public String getRequestTransformPackageName() {
+        return requestTransformPackageName;
+    }
+
+    public void setRequestTransformPackageName(String requestTransformPackageName) {
+        this.requestTransformPackageName = requestTransformPackageName;
+    }
+
+    public Metadata withRequestTransformPackageName(String requestTransformPackageName) {
+        setRequestTransformPackageName(requestTransformPackageName);
+        return this;
+    }
+
+    public String getFullWaitersPackageName() {
+        return joinPackageNames(rootPackageName, getWaitersPackageName());
+    }
+
+    public String getWaitersPackageName() {
+        return waitersPackageName;
+    }
+
+    public void setWaitersPackageName(String waitersPackageName) {
+        this.waitersPackageName = waitersPackageName;
+    }
+
+    public Metadata withWaitersPackageName(String waitersPackageName) {
+        setWaitersPackageName(waitersPackageName);
+        return this;
+    }
+
+    public String getFullAuthPolicyPackageName() {
+        return joinPackageNames(rootPackageName, getAuthPolicyPackageName());
+    }
+
+    public String getAuthPolicyPackageName() {
+        return authPolicyPackageName;
+    }
+
+    public void setAuthPolicyPackageName(String authPolicyPackageName) {
+        this.authPolicyPackageName = authPolicyPackageName;
+    }
+
+    public Metadata withAuthPolicyPackageName(String authPolicyPackageName) {
+        setSmokeTestsPackageName(authPolicyPackageName);
+        return this;
+    }
+
+    public String getFullSmokeTestsPackageName() {
+        return joinPackageNames(rootPackageName, getSmokeTestsPackageName());
+    }
+
+    public String getSmokeTestsPackageName() {
+        return smokeTestsPackageName;
+    }
+
+    public void setSmokeTestsPackageName(String smokeTestsPackageName) {
+        this.smokeTestsPackageName = smokeTestsPackageName;
+    }
+
+    public Metadata withSmokeTestsPackageName(String smokeTestsPackageName) {
+        setSmokeTestsPackageName(smokeTestsPackageName);
         return this;
     }
 
@@ -281,13 +491,6 @@ public class Metadata {
      */
     public String getCucumberModuleInjectorClassName() {
         return getSyncInterface() + "ModuleInjector";
-    }
-
-    /**
-     * @return The package name for the smoke tests.
-     */
-    public String getSmokeTestsPackageName() {
-        return packageName + "." + SMOKE_TESTS_DIR_NAME;
     }
 
     /**
@@ -474,5 +677,22 @@ public class Metadata {
     public Metadata withUid(String uid) {
         setUid(uid);
         return this;
+    }
+
+    public AuthType getAuthType() {
+        return authType;
+    }
+
+    public void setAuthType(AuthType authType) {
+        this.authType = authType;
+    }
+
+    public Metadata withAuthType(AuthType authType) {
+        this.authType = authType;
+        return this;
+    }
+
+    private String joinPackageNames(String lhs, String rhs) {
+        return StringUtils.isBlank(rhs) ? lhs : lhs + '.' + rhs;
     }
 }

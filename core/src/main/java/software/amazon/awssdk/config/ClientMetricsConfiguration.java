@@ -17,6 +17,8 @@ package software.amazon.awssdk.config;
 
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 
 /**
@@ -26,7 +28,8 @@ import software.amazon.awssdk.metrics.RequestMetricCollector;
  */
 @ReviewBeforeRelease("This will likely be updated when we change the way metrics work. If not, we should clean up the "
                      + "documentation.")
-public final class ClientMetricsConfiguration {
+public final class ClientMetricsConfiguration
+        implements ToCopyableBuilder<ClientMetricsConfiguration.Builder, ClientMetricsConfiguration> {
     private final String userAgentPrefix;
     private final String userAgentSuffix;
     private final RequestMetricCollector requestMetricCollector;
@@ -42,6 +45,13 @@ public final class ClientMetricsConfiguration {
      */
     public static Builder builder() {
         return new DefaultClientMetricsConfigurationBuilder();
+    }
+
+    @Override
+    public ClientMetricsConfiguration.Builder toBuilder() {
+        return builder().userAgentPrefix(userAgentPrefix)
+                        .userAgentSuffix(userAgentSuffix)
+                        .requestMetricCollector(requestMetricCollector);
     }
 
     /**
@@ -76,7 +86,7 @@ public final class ClientMetricsConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientMetricsConfiguration> {
 
         /**
          * @see ClientMetricsConfiguration#userAgentPrefix().
@@ -113,11 +123,6 @@ public final class ClientMetricsConfiguration {
          * @see ClientMetricsConfiguration#requestMetricCollector()
          */
         Builder requestMetricCollector(RequestMetricCollector metricCollector);
-
-        /**
-         * Build a {@link ClientMetricsConfiguration} from the values currently configured in this builder.
-         */
-        ClientMetricsConfiguration build();
     }
 
     /**

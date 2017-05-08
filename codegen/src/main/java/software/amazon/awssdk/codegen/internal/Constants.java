@@ -24,28 +24,38 @@ public class Constants {
 
     public static final String CUSTOMIZATION_CONFIG_FILE = "customization.config";
 
-    public static final String ASYNC_SUFFIX = "AsyncClient";
+    public static final String ASYNC_CLIENT_INTERFACE_NAME_PATTERN = "%sAsyncClient";
+    public static final String ASYNC_CLIENT_CLASS_NAME_PATTERN = "Default%sAsyncClient";
+    public static final String ASYNC_BUILDER_INTERFACE_NAME_PATTERN = "%sAsyncClientBuilder";
+    public static final String ASYNC_BUILDER_CLASS_NAME_PATTERN = "Default%sAsyncClientBuilder";
 
-    public static final String INTERFACE_NAME_SUFFIX = "Client";
+    public static final String SYNC_CLIENT_INTERFACE_NAME_PATTERN = "%sClient";
+    public static final String SYNC_CLIENT_CLASS_NAME_PATTERN = "Default%sClient";
+    public static final String SYNC_BUILDER_INTERFACE_NAME_PATTERN = "%sClientBuilder";
+    public static final String SYNC_BUILDER_CLASS_NAME_PATTERN = "Default%sClientBuilder";
 
-    public static final String CLIENT_NAME_PREFIX = "Default";
+    public static final String BASE_BUILDER_INTERFACE_NAME_PATTERN = "%sBaseClientBuilder";
+    public static final String BASE_BUILDER_CLASS_NAME_PATTERN = "Default%sBaseClientBuilder";
+
+    public static final String BASE_EXCEPTION_NAME_PATTERN = "%sException";
 
     public static final String PROTOCOL_CONFIG_LOCATION = "/protocol-config/%s.json";
-
-    @Deprecated
-    public static final String FILE_NAME_SUFFIX = ".java";
 
     public static final String JAVA_FILE_NAME_SUFFIX = ".java";
 
     public static final String PROPERTIES_FILE_NAME_SUFFIX = ".properties";
 
-    public static final String PACKAGE_NAME_MODEL_SUFFIX = "model";
+    public static final String PACKAGE_NAME_CLIENT_PATTERN = "%s";
 
-    public static final String PACKAGE_NAME_TRANSFORM_SUFFIX = "transform";
+    public static final String PACKAGE_NAME_MODEL_PATTERN = "%s.model";
 
-    public static final String PACKAGE_NAME_WAITERS_SUFFIX = "waiters";
+    public static final String PACKAGE_NAME_TRANSFORM_PATTERN = "%s.transform";
 
-    public static final String PACKAGE_NAME_CUSTOM_AUTH_SUFFIX = "auth";
+    public static final String PACKAGE_NAME_WAITERS_PATTERN = "%s.waiters";
+
+    public static final String PACKAGE_NAME_SMOKE_TEST_PATTERN = "%s.smoketests";
+
+    public static final String PACKAGE_NAME_CUSTOM_AUTH_PATTERN = "%s.auth";
 
     public static final String AUTH_POLICY_ENUM_CLASS_DIR = "software/amazon/awssdk/auth/policy/actions";
 
@@ -64,8 +74,6 @@ public class Constants {
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public static final Log LOGGER = LogFactory.getLog("software.amazon.awssdk.javasdk.codegen");
-
-    public static final String SMOKE_TESTS_DIR_NAME = "smoketests";
 
     public static final String AWS_DOCS_HOST = "docs.aws.amazon.com";
 

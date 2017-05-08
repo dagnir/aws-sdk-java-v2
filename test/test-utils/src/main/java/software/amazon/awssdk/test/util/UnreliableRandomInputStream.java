@@ -16,6 +16,7 @@
 package software.amazon.awssdk.test.util;
 
 import java.io.IOException;
+import software.amazon.awssdk.utils.Logger;
 
 /**
  * Subclass of RandomInputStream that, in addition to spitting out a set length
@@ -25,6 +26,7 @@ import java.io.IOException;
  * @author Jason Fulghum fulghum@amazon.com
  */
 public class UnreliableRandomInputStream extends RandomInputStream {
+    private static final Logger log = Logger.loggerFor(UnreliableRandomInputStream.class);
     private static final boolean DEBUG = false;
     /** True if this stream has already triggered an exception. */
     private boolean hasTriggeredAnException = false;
@@ -41,13 +43,12 @@ public class UnreliableRandomInputStream extends RandomInputStream {
     }
 
     /**
-     * @see software.amazon.awssdk.util.RandomInputStream#read()
+     * @see software.amazon.awssdk.test.util.RandomInputStream#read()
      */
     @Override
     public int read() throws IOException {
         triggerException();
-        int read = super.read();
-        return read;
+        return super.read();
     }
 
     /*
@@ -59,7 +60,7 @@ public class UnreliableRandomInputStream extends RandomInputStream {
             hasTriggeredAnException = true;
             final String msg = "UnreliableBogusInputStream fired an IOException after reading " + getBytesRead() + " bytes.";
             if (DEBUG) {
-                System.err.println(msg);
+                log.error(() -> msg);
             }
             throw new IOException(msg);
         }
@@ -70,7 +71,7 @@ public class UnreliableRandomInputStream extends RandomInputStream {
         triggerException();
         int read = super.read(b, off, len);
         if (DEBUG) {
-            System.err.println("read=" + read + ", off=" + off + ", len=" + len + ", b.length=" + b.length);
+            log.debug(() -> "read=" + read + ", off=" + off + ", len=" + len + ", b.length=" + b.length);
         }
         return read;
     }

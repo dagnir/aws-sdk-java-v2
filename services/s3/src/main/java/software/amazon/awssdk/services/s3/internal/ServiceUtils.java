@@ -44,13 +44,12 @@ import software.amazon.awssdk.services.s3.model.GetObjectMetadataRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.services.s3.transfer.exception.FileLockException;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.Md5Utils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.util.ValidationUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * General utility methods used throughout the AWS S3 Java client.

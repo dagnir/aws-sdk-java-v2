@@ -22,6 +22,7 @@ import static software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointCon
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +32,7 @@ import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.services.protocolquery.ProtocolQueryClient;
 import software.amazon.awssdk.services.protocolquery.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolquery.model.EmptyModeledException;
-import software.amazon.awssdk.services.protocolquery.model.ProtocolQueryClientException;
+import software.amazon.awssdk.services.protocolquery.model.ProtocolQueryException;
 
 public class QueryExceptionTests {
 
@@ -45,9 +46,9 @@ public class QueryExceptionTests {
     @Before
     public void setupClient() {
         client = ProtocolQueryClient.builder()
-                                    .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                    .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
-                                                                                         "us-east-1"))
+                                    .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                    .region("us-east-1")
+                                    .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                     .build();
     }
 
@@ -89,7 +90,7 @@ public class QueryExceptionTests {
         try {
             callAllTypes();
         } catch (EmptyModeledException e) {
-            assertThat(e, instanceOf(ProtocolQueryClientException.class));
+            assertThat(e, instanceOf(ProtocolQueryException.class));
             assertEquals("EmptyModeledException", e.getErrorCode());
         }
     }
@@ -179,8 +180,8 @@ public class QueryExceptionTests {
     private void assertThrowsServiceBaseException(Runnable runnable) {
         try {
             runnable.run();
-        } catch (ProtocolQueryClientException e) {
-            assertEquals(ProtocolQueryClientException.class, e.getClass());
+        } catch (ProtocolQueryException e) {
+            assertEquals(ProtocolQueryException.class, e.getClass());
         }
     }
 

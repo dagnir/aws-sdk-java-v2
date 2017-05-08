@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.runtime.io.SdkInputStream;
-import software.amazon.awssdk.util.BinaryUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * A wrapper class of InputStream that implements chunked-encoding.
@@ -207,8 +207,8 @@ public final class AwsChunkedEncodingInputStream extends SdkInputStream {
         int toskip = (int) Math.min(DEFAULT_BUFFER_SIZE, n);
         byte[] temp = new byte[toskip];
         while (remaining > 0) {
-            int count;
-            if ((count = read(temp, 0, toskip)) < 0) {
+            int count = read(temp, 0, toskip);
+            if (count < 0) {
                 break;
             }
             remaining -= count;

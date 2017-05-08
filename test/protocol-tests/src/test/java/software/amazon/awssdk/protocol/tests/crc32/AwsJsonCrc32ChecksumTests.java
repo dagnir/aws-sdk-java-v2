@@ -23,16 +23,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
-import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.config.ClientMarshallerConfiguration;
 import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
@@ -72,9 +71,10 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withBodyFile(JSON_BODY_GZIP)));
 
         ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         SimpleResult result = jsonRpc.simple(new SimpleRequest());
@@ -96,9 +96,10 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withBodyFile(JSON_BODY_EXTRA_DATA_GZIP)));
 
         ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         SimpleResult result = jsonRpc.simple(new SimpleRequest());
@@ -114,9 +115,10 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withBodyFile(JSON_BODY_GZIP)));
 
         ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         jsonRpc.simple(new SimpleRequest());
@@ -131,9 +133,10 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withBodyFile(JSON_BODY_GZIP)));
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         AllTypesResult result =
@@ -150,9 +153,10 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withBodyFile(JSON_BODY_GZIP)));
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         jsonRpc.allTypes(new AllTypesRequest());
@@ -166,9 +170,10 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withBody(JSON_BODY)));
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         AllTypesResult result =
@@ -184,9 +189,10 @@ public class AwsJsonCrc32ChecksumTests {
                                                          .withBody(JSON_BODY)));
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
-                .withCredentials(FAKE_CREDENTIALS_PROVIDER)
-                .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + mockServer.port(), "us-east-1"))
-                .withClientConfiguration(new LegacyClientConfiguration().withGzip(true))
+                .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
+                .region("us-east-1")
+                .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
+                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         jsonRpc.allTypes(new AllTypesRequest());

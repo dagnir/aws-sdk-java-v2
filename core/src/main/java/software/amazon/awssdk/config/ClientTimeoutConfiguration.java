@@ -17,13 +17,16 @@ package software.amazon.awssdk.config;
 
 import java.time.Duration;
 import java.util.Optional;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Configuration specifying request and response timeouts within the SDK.
  *
  * <p>All implementations of this interface must be immutable and thread safe.</p>
  */
-public final class ClientTimeoutConfiguration {
+public final class ClientTimeoutConfiguration
+        implements ToCopyableBuilder<ClientTimeoutConfiguration.Builder, ClientTimeoutConfiguration> {
     private final Duration socketTimeout;
     private final Duration connectionTimeout;
     private final Duration httpRequestTimeout;
@@ -39,6 +42,14 @@ public final class ClientTimeoutConfiguration {
         this.totalExecutionTimeout = builder.totalExecutionTimeout;
     }
 
+    @Override
+    public ClientTimeoutConfiguration.Builder toBuilder() {
+        return builder().socketTimeout(socketTimeout)
+                        .connectionTimeout(connectionTimeout)
+                        .httpRequestTimeout(httpRequestTimeout)
+                        .totalExecutionTimeout(totalExecutionTimeout);
+    }
+
     /**
      * Create a {@link Builder}, used to create a {@link ClientTimeoutConfiguration}.
      */
@@ -47,8 +58,8 @@ public final class ClientTimeoutConfiguration {
     }
 
     /**
-     * The amount of time to wait when initially establishing a connection before giving up and timing out. A duration of 0 means
-     * infinity, and is not recommended.
+     * The amount of time to wait for data to be transferred over an established, open connection before the connection is timed
+     * out. A duration of 0 means infinity, and is not recommended.
      *
      * @see Builder#socketTimeout(Duration)
      */
@@ -67,7 +78,7 @@ public final class ClientTimeoutConfiguration {
     }
 
     /**
-     * The amount of time to wait for the request to complete before giving up and timing out. A non-positive value disables this
+     * The amount of time to wait for the request to complete before giving up and timing out. An empty value disables this
      * feature.
      *
      * <p>This feature requires buffering the entire response (for non-streaming APIs) into memory to enforce a hard timeout when
@@ -86,8 +97,8 @@ public final class ClientTimeoutConfiguration {
 
     /**
      * The amount of time to allow the client to complete the execution of an API call. This timeout covers the entire client
-     * execution except for marshalling. This includes request handler execution, all HTTP request including retries,
-     * unmarshalling, etc.
+     * execution except for marshalling. This includes request handler execution, all HTTP requests including retries,
+     * unmarshalling, etc. An empty value disables this feature.
      *
      * <p>This feature requires buffering the entire response (for non-streaming APIs) into memory to enforce a hard timeout when
      * reading the response. For APIs that return large responses this could be expensive.</p>
@@ -112,7 +123,7 @@ public final class ClientTimeoutConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientTimeoutConfiguration> {
 
         /**
          * @see ClientTimeoutConfiguration#socketTimeout().
@@ -186,11 +197,6 @@ public final class ClientTimeoutConfiguration {
          * @see ClientTimeoutConfiguration#totalExecutionTimeout()
          */
         Builder totalExecutionTimeout(Duration totalExecutionTimeout);
-
-        /**
-         * Build a {@link ClientTimeoutConfiguration} from the values currently configured in this builder.
-         */
-        ClientTimeoutConfiguration build();
     }
 
     /**

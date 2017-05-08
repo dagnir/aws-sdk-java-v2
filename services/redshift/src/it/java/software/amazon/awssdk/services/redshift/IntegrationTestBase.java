@@ -25,7 +25,7 @@ public class IntegrationTestBase extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
-        redshift = RedshiftClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        redshift = RedshiftClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
 }

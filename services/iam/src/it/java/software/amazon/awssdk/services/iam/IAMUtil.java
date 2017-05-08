@@ -56,8 +56,8 @@ public class IAMUtil {
     static {
         try {
             IntegrationTestBase.setUpCredentials();
-            client = IAMClientBuilder.standard()
-                    .withCredentials(new AwsStaticCredentialsProvider(IntegrationTestBase.credentials))
+            client = IAMClient.builder()
+                    .credentialsProvider(new AwsStaticCredentialsProvider(IntegrationTestBase.credentials))
                     .build();
         } catch (Exception e) {
             throw new RuntimeException(e);

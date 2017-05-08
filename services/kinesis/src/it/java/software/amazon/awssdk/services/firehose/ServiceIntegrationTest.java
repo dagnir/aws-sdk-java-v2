@@ -58,7 +58,7 @@ public class ServiceIntegrationTest extends AwsTestBase {
         // for now we are using the test account provided by the firehose team
         ProfileCredentialsProvider firehostTestCreds = new ProfileCredentialsProvider(
                 "firehose-test");
-        firehose = FirehoseClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        firehose = FirehoseClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass

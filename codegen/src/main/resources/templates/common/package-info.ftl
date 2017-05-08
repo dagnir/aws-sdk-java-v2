@@ -5,4 +5,4 @@ ${fileHeader}
 /**
  * ${documentation}
  */
-package ${metadata.packageName};
+package ${metadata.fullClientPackageName};

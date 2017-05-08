@@ -21,6 +21,8 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Stack;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.utils.Base64Utils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * Utility for creating easily creating XML documents, one element at a time.
@@ -128,7 +130,7 @@ public class XmlWriter {
      *         together.
      */
     public XmlWriter value(ByteBuffer b) {
-        append(escapeXmlEntities(Base64.encodeAsString(BinaryUtils.copyBytesFrom(b))));
+        append(escapeXmlEntities(Base64Utils.encodeAsString(BinaryUtils.copyBytesFrom(b))));
         return this;
     }
 

@@ -98,7 +98,7 @@ public class UnmarshallingTestRunner {
      * @return Fully qualified name of class in the client's model package.
      */
     public String getModelFqcn(String simpleClassName) {
-        return String.format("%s.model.%s", metadata.getPackageName(), simpleClassName);
+        return String.format("%s.%s", metadata.getFullModelPackageName(), simpleClassName);
     }
 
     /**

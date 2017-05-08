@@ -55,7 +55,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
 
     private boolean shouldGenerateShape(ShapeModel shapeModel) {
         if (shapeModel.getCustomization().isSkipGeneratingModelClass()) {
-            System.out.println("Skip generating class " + shapeModel.getShapeName());
+            info("Skip generating class " + shapeModel.getShapeName());
             return false;
         }
         return true;
@@ -81,7 +81,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
                 .put("awsDocsUrl", createLinkToServiceDocumentation(metadata, shapeModel))
                 .put("shouldEmitStructuredPojoInterface", model.getMetadata().isJsonProtocol()
                                                           && shapeModel.getShapeType() == ShapeType.Model)
-                .put("transformPackage", model.getTransformPackage())
+                .put("transformPackage", model.getMetadata().getFullTransformPackageName())
                 .build();
 
             // Submit task for generating the
@@ -91,7 +91,7 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
                                                freemarker.getShapeTemplate(shapeModel),
                                                dataModel);
         } else {
-            ClassSpec enumClass = new EnumClass(metadata.getPackageName(), shapeModel);
+            ClassSpec enumClass = new EnumClass(metadata.getFullModelPackageName(), shapeModel);
             return new PoetGeneratorTask(modelClassDir, model.getFileHeader(), enumClass);
         }
     }

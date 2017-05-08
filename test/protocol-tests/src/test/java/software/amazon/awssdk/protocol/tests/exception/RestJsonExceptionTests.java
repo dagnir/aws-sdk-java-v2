@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static util.exception.ExceptionTestUtils.stub404Response;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import java.net.URI;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,7 +37,7 @@ import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.EmptyModeledException;
 import software.amazon.awssdk.services.protocolrestjson.model.HeadOperationRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.MultiLocationOperationRequest;
-import software.amazon.awssdk.services.protocolrestjson.model.ProtocolRestJsonClientException;
+import software.amazon.awssdk.services.protocolrestjson.model.ProtocolRestJsonException;
 
 /**
  * Exception related tests for AWS REST JSON.
@@ -53,9 +54,9 @@ public class RestJsonExceptionTests {
     @Before
     public void setupClient() {
         client = ProtocolRestJsonClient.builder()
-                                       .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                                       .withEndpointConfiguration(new EndpointConfiguration("http://localhost:" + wireMock.port(),
-                                                                                            "us-east-1"))
+                                       .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                                       .region("us-east-1")
+                                       .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                        .build();
     }
 
@@ -123,7 +124,7 @@ public class RestJsonExceptionTests {
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {
-        assertThrowsException(runnable, ProtocolRestJsonClientException.class);
+        assertThrowsException(runnable, ProtocolRestJsonException.class);
     }
 
     private void assertThrowsSdkClientException(Runnable runnable) {

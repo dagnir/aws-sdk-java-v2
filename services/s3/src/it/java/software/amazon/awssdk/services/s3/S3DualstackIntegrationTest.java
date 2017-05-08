@@ -90,8 +90,8 @@ public class S3DualstackIntegrationTest extends S3IntegrationTestBase {
      */
     @BeforeClass
     public static void createBucket() {
-        s3dualstack = AmazonS3ClientBuilder.standard()
-                                           .withCredentials(chain)
+        s3dualstack = AmazonS3Client.builder()
+                                           .credentialsProvider(chain)
                                            .withRegion(Regions.US_WEST_2)
                                            .withDualstackEnabled(true)
                                            .build();

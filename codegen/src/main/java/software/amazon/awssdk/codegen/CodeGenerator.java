@@ -123,6 +123,7 @@ public class CodeGenerator {
     private Iterable<GeneratorTask> createGeneratorTasks(IntermediateModel intermediateModel) {
         // For clients built internally, the output directory and source directory are the same.
         GeneratorTaskParams params = GeneratorTaskParams.create(intermediateModel, sourcesDirectory, testsDirectory);
+
         if (params.getModel().getMetadata().getProtocol() == Protocol.API_GATEWAY) {
             return new ApiGatewayGeneratorTasks(params);
         } else {

@@ -41,7 +41,7 @@ public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        ddb = DynamoDBClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @Test
@@ -59,7 +59,7 @@ public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
 
     @Test
     public void testPermissionError() {
-        STSClient sts = STSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        STSClient sts = STSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         Credentials creds = sts.getFederationToken(new GetFederationTokenRequest()
                 .withName("NoAccess")
@@ -68,7 +68,7 @@ public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
                 .withDurationSeconds(900)).getCredentials();
 
 
-        DynamoDBClient client = DynamoDBClient.builder().withCredentials(
+        DynamoDBClient client = DynamoDBClient.builder().credentialsProvider(
                 new AwsStaticCredentialsProvider(new BasicSessionCredentials(
                 creds.getAccessKeyId(),
                 creds.getSecretAccessKey(),

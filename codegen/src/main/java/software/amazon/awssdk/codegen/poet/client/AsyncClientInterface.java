@@ -21,12 +21,9 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
 import javax.lang.model.element.Modifier;
-
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
@@ -36,12 +33,15 @@ public class AsyncClientInterface implements ClassSpec {
 
     private final IntermediateModel model;
     private final ClassName className;
-    private final String basePackage;
+    private final String modelPackage;
+    private final String clientPackageName;
 
     public AsyncClientInterface(IntermediateModel model) {
-        this.basePackage = model.getMetadata().getPackageName();
+        this.modelPackage = model.getMetadata().getFullModelPackageName();
+        this.clientPackageName = model.getMetadata().getFullClientPackageName();
         this.model = model;
-        this.className = ClassName.get(basePackage, model.getMetadata().getAsyncInterface());
+        this.className = ClassName.get(model.getMetadata().getFullClientPackageName(),
+                                       model.getMetadata().getAsyncInterface());
     }
 
     @Override
@@ -53,6 +53,7 @@ public class AsyncClientInterface implements ClassSpec {
                         .initializer("$S", model.getMetadata().getEndpointPrefix())
                         .build())
                 .addMethods(operations())
+                .addMethod(builder())
                 .build();
     }
 
@@ -66,9 +67,9 @@ public class AsyncClientInterface implements ClassSpec {
     }
 
     private MethodSpec toMethodSpec(OperationModel opModel) {
-        ClassName returnTypeClass = PoetUtils.getModelClass(basePackage, opModel.getReturnType().getReturnType());
+        ClassName returnTypeClass = ClassName.get(modelPackage, opModel.getReturnType().getReturnType());
         TypeName returnType = ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), returnTypeClass);
-        ClassName requestType = PoetUtils.getModelClass(basePackage, opModel.getInput().getVariableType());
+        ClassName requestType = ClassName.get(modelPackage, opModel.getInput().getVariableType());
 
         return MethodSpec.methodBuilder(opModel.getMethodName())
                 .returns(returnType)
@@ -77,5 +78,15 @@ public class AsyncClientInterface implements ClassSpec {
                 .addStatement("throw new $T()", UnsupportedOperationException.class)
                 .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata()))
                 .build();
+    }
+
+    private MethodSpec builder() {
+        ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilder());
+        ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilderInterface());
+        return MethodSpec.methodBuilder("builder")
+                         .returns(builderInterface)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addStatement("return new $T()", builderClass)
+                         .build();
     }
 }

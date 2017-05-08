@@ -32,7 +32,8 @@ class CommonGeneratorTasks implements Iterable<GeneratorTask> {
     }
 
     private Iterable<GeneratorTask> createTasks(GeneratorTaskParams params) {
-        return new CompositeIterable<>(new SyncClientGeneratorTasks(params),
+        return new CompositeIterable<>(new CommonClientGeneratorTasks(params),
+                                       new SyncClientGeneratorTasks(params),
                                        new MarshallerGeneratorTasks(params),
                                        new UnmarshallerGeneratorTasks(params),
                                        new ModelClassGeneratorTasks(params),

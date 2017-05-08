@@ -53,7 +53,7 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
     public static void setUp() throws Exception {
         setUpCredentials();
         cf = CloudFormationClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials))
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
                 .withRegion(Regions.AP_NORTHEAST_1)
                 .build();
         s3 = new AmazonS3Client(credentials);

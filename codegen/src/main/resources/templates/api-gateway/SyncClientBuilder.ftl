@@ -1,5 +1,5 @@
 ${fileHeader}
-package ${metadata.packageName};
+package ${metadata.fullClientPackageName};
 
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.client.AwsSyncClientParams;
@@ -10,7 +10,7 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
 </#if>
 <#list customAuthorizers?values as customSigner>
-import ${metadata.packageName}.auth.${customSigner.interfaceName};
+import ${metadata.fullAuthPolicyPackageName}.${customSigner.interfaceName};
 </#list>
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 import software.amazon.awssdk.Protocol;
@@ -19,7 +19,7 @@ import java.net.URI;
 import javax.annotation.Generated;
 
 /**
- * Fluent builder for {@link ${metadata.packageName + "." + metadata.syncInterface}}. Use of the
+ * Fluent builder for {@link ${metadata.fullClientPackageName + "." + metadata.syncInterface}}. Use of the
  * builder is preferred over using constructors of the client class.
 **/
 @NotThreadSafe

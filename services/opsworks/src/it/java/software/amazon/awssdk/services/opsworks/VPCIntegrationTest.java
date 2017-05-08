@@ -171,8 +171,8 @@ public class VPCIntegrationTest extends IntegrationTestBase {
     }
 
     private void initialize() throws InterruptedException {
-        iam = IAMClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
-        ec2 = EC2Client.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        ec2 = EC2Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         roleName = "java-test-role" + System.currentTimeMillis();
         profileName = "java-profile" + System.currentTimeMillis();
         role = iam.createRole(new CreateRoleRequest().withRoleName(roleName).withAssumeRolePolicyDocument(TRUST_POLICY)).getRole();

@@ -1,5 +1,5 @@
 ${fileHeader}
-package ${metadata.packageName}.model;
+package ${metadata.fullModelPackageName};
 
 import software.amazon.awssdk.opensdk.SdkErrorHttpMetadata;
 import software.amazon.awssdk.opensdk.internal.BaseException;

@@ -49,8 +49,8 @@ import software.amazon.awssdk.services.ec2.model.ModifySnapshotAttributeRequest;
 import software.amazon.awssdk.services.ec2.model.ResetSnapshotAttributeRequest;
 import software.amazon.awssdk.services.ec2.model.Snapshot;
 import software.amazon.awssdk.services.ec2.model.Volume;
-import software.amazon.awssdk.services.ec2.model.transform.CopySnapshotRequestMarshaller;
-import software.amazon.awssdk.services.ec2.model.transform.GeneratePreSignUrlRequestHandler;
+import software.amazon.awssdk.services.ec2.transform.CopySnapshotRequestMarshaller;
+import software.amazon.awssdk.services.ec2.transform.GeneratePreSignUrlRequestHandler;
 import software.amazon.awssdk.services.sts.auth.StsSessionCredentialsProvider;
 
 /**

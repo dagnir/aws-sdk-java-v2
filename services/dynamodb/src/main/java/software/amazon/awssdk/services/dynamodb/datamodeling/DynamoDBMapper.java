@@ -212,7 +212,6 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
     private final DynamoDBMapperModelFactory models;
     private final S3Link.Factory s3Links;
     private final AttributeTransformer transformer;
-    private Map<String, Set<String>> annotatedGsisOnHashKeys;
 
     /**
      * Constructs a new mapper with the service object given, using the default
@@ -1833,7 +1832,8 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
         public List<T> getPutIfNotExists(final String key) {
             List<T> list = get(key);
             if (list == null) {
-                put(key, (list = new LinkedList<T>()));
+                list = new LinkedList<>();
+                put(key, list);
             }
             return list;
         }
@@ -1860,8 +1860,8 @@ public class DynamoDBMapper extends AbstractDynamoDBMapper {
     }
 
     public static final class BatchGetItemException extends SdkClientException {
-        private final transient Map<String, KeysAndAttributes> unprocessedKeys;
-        private final transient Map<String, List<Object>> responses;
+        private transient Map<String, KeysAndAttributes> unprocessedKeys;
+        private transient Map<String, List<Object>> responses;
 
         public BatchGetItemException(String message, Map<String, KeysAndAttributes> unprocessedKeys,
                                      Map<String, List<Object>> responses) {

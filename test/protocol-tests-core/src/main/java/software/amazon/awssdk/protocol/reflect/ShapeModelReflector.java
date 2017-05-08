@@ -72,7 +72,7 @@ public class ShapeModelReflector {
     }
 
     private String getFullyQualifiedModelClassName(String modelClassName) {
-        return String.format("%s.model.%s", model.getMetadata().getPackageName(), modelClassName);
+        return String.format("%s.%s", model.getMetadata().getFullModelPackageName(), modelClassName);
     }
 
     /**

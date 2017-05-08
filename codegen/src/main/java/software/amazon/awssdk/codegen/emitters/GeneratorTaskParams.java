@@ -15,8 +15,10 @@
 
 package software.amazon.awssdk.codegen.emitters;
 
+import java.util.function.Consumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import software.amazon.awssdk.codegen.emitters.tasks.SharedModelsTaskParamsValidator;
 import software.amazon.awssdk.codegen.internal.Freemarker;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
@@ -25,6 +27,7 @@ import software.amazon.awssdk.codegen.poet.PoetExtensions;
  * Parameters for generator tasks.
  */
 public class GeneratorTaskParams {
+    private static final Consumer<GeneratorTaskParams> TASK_PARAMS_VALIDATORS = new SharedModelsTaskParamsValidator();
 
     private final Freemarker freemarker;
     private final IntermediateModel model;
@@ -43,7 +46,9 @@ public class GeneratorTaskParams {
 
     public static GeneratorTaskParams create(IntermediateModel model, String sourceDirectory, String testDirectory) {
         final GeneratorPathProvider pathProvider = new GeneratorPathProvider(model, sourceDirectory, testDirectory);
-        return new GeneratorTaskParams(Freemarker.create(model), model, pathProvider);
+        GeneratorTaskParams params = new GeneratorTaskParams(Freemarker.create(model), model, pathProvider);
+        TASK_PARAMS_VALIDATORS.accept(params);
+        return params;
     }
 
     /**

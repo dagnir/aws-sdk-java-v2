@@ -29,6 +29,7 @@ import software.amazon.awssdk.codegen.model.service.Member;
 import software.amazon.awssdk.codegen.model.service.Operation;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
+import software.amazon.awssdk.utils.Logger;
 
 /**
  * This processor internally keeps track of all the structure members whose
@@ -36,6 +37,8 @@ import software.amazon.awssdk.codegen.model.service.Shape;
  * make sure this processor is only invoked once.
  */
 final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor {
+
+    private static Logger log = Logger.loggerFor(ShapeSubstitutionsProcessor.class);
 
     private final Map<String, ShapeSubstitution> shapeSubstitutions;
 
@@ -312,7 +315,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
     }
 
     private void trackShapeMemberSubstitution(String shapeName, String memberName, String originalShape) {
-        System.out.println(String.format("%s -> {%s -> %s}", shapeName, memberName, originalShape));
+        log.info(() -> String.format("%s -> {%s -> %s}", shapeName, memberName, originalShape));
         if (!substitutedShapeMemberReferences.containsKey(shapeName)) {
             substitutedShapeMemberReferences.put(shapeName, new HashMap<String, String>());
         }
@@ -320,7 +323,7 @@ final class ShapeSubstitutionsProcessor implements CodegenCustomizationProcessor
     }
 
     private void trackListMemberSubstitution(String shapeName, String listTypeMemberName, String nestedListMemberOriginalShape) {
-        System.out.println(String.format("%s -> {%s -> %s}", shapeName, listTypeMemberName, nestedListMemberOriginalShape));
+        log.info(() -> String.format("%s -> {%s -> %s}", shapeName, listTypeMemberName, nestedListMemberOriginalShape));
         if (!substitutedListMemberReferences.containsKey(shapeName)) {
             substitutedListMemberReferences.put(shapeName, new HashMap<String, String>());
         }

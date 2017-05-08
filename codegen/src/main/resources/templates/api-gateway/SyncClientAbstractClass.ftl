@@ -1,8 +1,8 @@
 ${fileHeader}
-package ${metadata.packageName};
+package ${metadata.fullClientPackageName};
 
 import javax.annotation.Generated;
-import ${metadata.packageName}.model.*;
+import ${metadata.fullModelPackageName}.*;
 import software.amazon.awssdk.*;
 import software.amazon.awssdk.opensdk.*;
 import software.amazon.awssdk.opensdk.model.*;

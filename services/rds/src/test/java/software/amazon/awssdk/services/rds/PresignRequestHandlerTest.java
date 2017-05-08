@@ -36,7 +36,7 @@ import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.runtime.SdkInternalList;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
 import software.amazon.awssdk.services.rds.model.Tag;
-import software.amazon.awssdk.services.rds.model.transform.CopyDBSnapshotRequestMarshaller;
+import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
 
 /**
  * Unit Tests for {@link PresignRequestHandler}

@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
@@ -40,7 +39,7 @@ import software.amazon.awssdk.codegen.model.service.ServiceMetadata;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.model.service.Shape;
 import software.amazon.awssdk.codegen.model.service.XmlNamespace;
-import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class Utils {
 
@@ -69,7 +68,7 @@ public class Utils {
         return shape.isException() || shape.isFault();
     }
 
-    public static String getServiceName(ServiceMetadata metadata) {
+    public static String getServiceName(ServiceMetadata metadata, CustomizationConfig customizationConfig) {
         String baseName = metadata.getServiceAbbreviation() == null ?
                 metadata.getServiceFullName() :
                 metadata.getServiceAbbreviation();
@@ -86,30 +85,54 @@ public class Utils {
         return baseName;
     }
 
-    public static String getAsyncInterfaceName(String serviceName) {
-        return serviceName + Constants.ASYNC_SUFFIX;
-    }
-
-    public static String getInterfaceName(String serviceName) {
-        return serviceName + Constants.INTERFACE_NAME_SUFFIX;
-    }
-
     public static String pascalCase(String baseName) {
         return Stream.of(baseName.split("\\s+")).map(StringUtils::lowerCase).map(Utils::capitialize).collect(joining());
     }
 
-    public static String getClientName(String interfaceName) {
-        return Constants.CLIENT_NAME_PREFIX + interfaceName;
+    public static String getClientPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        return getCustomizedPackageName(serviceName,
+                                        Constants.PACKAGE_NAME_CLIENT_PATTERN);
     }
 
-    public static String getPackageName(String serviceName, CustomizationConfig customizationConfig) {
-        String lowerCased = StringUtils.lowerCase(serviceName);
-
-        if (customizationConfig.getPackageNameOverride() != null) {
-            return StringUtils.lowerCase(customizationConfig.getPackageNameOverride());
+    public static String getModelPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        // Share transform package classes if we are sharing models.
+        if (customizationConfig.getShareModelsWith() != null) {
+            serviceName = customizationConfig.getShareModelsWith();
         }
+        return getCustomizedPackageName(serviceName,
+                                        Constants.PACKAGE_NAME_MODEL_PATTERN);
+    }
 
-        return lowerCased;
+    public static String getTransformPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        // Share transform package classes if we are sharing models.
+        if (customizationConfig.getShareModelsWith() != null) {
+            serviceName = customizationConfig.getShareModelsWith();
+        }
+        return getRequestTransformPackageName(serviceName, customizationConfig);
+    }
+
+    public static String getRequestTransformPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        return getCustomizedPackageName(serviceName,
+                                        Constants.PACKAGE_NAME_TRANSFORM_PATTERN);
+    }
+
+    public static String getWaitersPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        return getCustomizedPackageName(serviceName,
+                                        Constants.PACKAGE_NAME_WAITERS_PATTERN);
+    }
+
+    public static String getSmokeTestPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        return getCustomizedPackageName(serviceName,
+                                        Constants.PACKAGE_NAME_SMOKE_TEST_PATTERN);
+    }
+
+    public static String getAuthPolicyPackageName(String serviceName, CustomizationConfig customizationConfig) {
+        return getCustomizedPackageName(serviceName,
+                                        Constants.PACKAGE_NAME_CUSTOM_AUTH_PATTERN);
+    }
+
+    private static String getCustomizedPackageName(String serviceName, String defaultPattern) {
+        return String.format(defaultPattern, StringUtils.lowerCase(serviceName));
     }
 
     public static String unCapitialize(String name) {
@@ -153,6 +176,16 @@ public class Utils {
      */
     public static String directoryToPackage(String directoryPath) {
         return directoryPath.replace('/', '.');
+    }
+
+    /**
+     * Converts a Java package name to a directory.
+     *
+     * @param packageName Java package to convert.
+     * @return directory
+     */
+    public static String packageToDirectory(String packageName) {
+        return packageName.replace('.', '/');
     }
 
     public static String getDefaultEndpointWithoutHttpProtocol(String endpoint) {
@@ -335,7 +368,7 @@ public class Utils {
                 marshaller.setXmlNameSpaceUri(xmlNamespace.getUri());
             }
         }
-        if (!StringUtils.isNullOrEmpty(service.getTargetPrefix()) && Metadata.isNotRestProtocol(service.getProtocol())) {
+        if (!StringUtils.isEmpty(service.getTargetPrefix()) && Metadata.isNotRestProtocol(service.getProtocol())) {
             marshaller.setTarget(service.getTargetPrefix() + "." + operation.getName());
         }
         return marshaller;

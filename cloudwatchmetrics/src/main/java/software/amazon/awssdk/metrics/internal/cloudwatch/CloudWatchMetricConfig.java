@@ -34,6 +34,7 @@ import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 /**
  * Configuration for the default AWS SDK collection implementation. This class
@@ -90,11 +91,6 @@ public class CloudWatchMetricConfig {
      * accept in a single request
      */
     static final int MAX_METRICS_DATUM_SIZE = 20;
-    /** Credentials for the uploader to communicate with Amazon CloudWatch. */
-    private AwsCredentialsProvider credentialsProvider;
-
-    /** ClientConfiguration for connecting to Amazon CloudWatch. */
-    private LegacyClientConfiguration clientConfiguration;
 
     /**
      * Number of milliseconds to wait before the polling of the metrics queue
@@ -102,55 +98,8 @@ public class CloudWatchMetricConfig {
      */
     private long queuePollTimeoutMilli = DEFAULT_QUEUE_POLL_TIMEOUT_MILLI;
 
-    /**
-     * Endpoint for Amazon CloudWatch where the metric data can be uploaded;
-     * or null if the default endpoint is to be used.
-     */
-    private String cloudWatchEndPoint;
-
     private int metricQueueSize = DEFAULT_METRICS_QSIZE;
-
-    /**
-     * Returns the credential provider that holds the credentials to connect to
-     * Amazon CloudWatch.
-     */
-    public AwsCredentialsProvider getCredentialsProvider() {
-        return credentialsProvider;
-    }
-
-    /**
-     * Sets the credential provider to the given provider. This credential
-     * provider is used by the uploader thread to connect to Amazon CloudWatch.
-     */
-    public void setCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
-        this.credentialsProvider = credentialsProvider;
-    }
-
-    public CloudWatchMetricConfig withCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
-        setCredentialsProvider(credentialsProvider);
-        return this;
-    }
-
-    /**
-     * Returns the Client Configuration used to connect to
-     * Amazon CloudWatch.
-     */
-    public LegacyClientConfiguration getClientConfiguration() {
-        return clientConfiguration;
-    }
-
-    /**
-     * Sets the Client Configuration. This client
-     * configuration is used by the uploader thread to connect to Amazon CloudWatch.
-     */
-    public void setClientConfiguration(LegacyClientConfiguration clientConfiguration) {
-        this.clientConfiguration = clientConfiguration;
-    }
-
-    public CloudWatchMetricConfig withClientConfiguration(LegacyClientConfiguration clientConfiguration) {
-        setClientConfiguration(clientConfiguration);
-        return this;
-    }
+    private CloudWatchClient cloudWatchClient;
 
     /**
      * Returns the metrics queue polling timeout in millisecond.
@@ -169,25 +118,6 @@ public class CloudWatchMetricConfig {
 
     public CloudWatchMetricConfig withQueuePollTimeoutMilli(long queuePollTimeoutMilli) {
         setQueuePollTimeoutMilli(queuePollTimeoutMilli);
-        return this;
-    }
-
-    /**
-     * Returns the end point of AmazonCloudWatch to upload the metrics.
-     */
-    public String getCloudWatchEndPoint() {
-        return cloudWatchEndPoint;
-    }
-
-    /**
-     * Sets the end point of AmazonCloudWatch to upload the metrics.
-     */
-    public void setCloudWatchEndPoint(String cloudWatchEndPoint) {
-        this.cloudWatchEndPoint = cloudWatchEndPoint;
-    }
-
-    public CloudWatchMetricConfig withCloudWatchEndPoint(String cloudWatchEndPoint) {
-        setCloudWatchEndPoint(cloudWatchEndPoint);
         return this;
     }
 
@@ -210,6 +140,19 @@ public class CloudWatchMetricConfig {
 
     public CloudWatchMetricConfig withMetricQueueSize(int metricQueueSize) {
         setMetricQueueSize(metricQueueSize);
+        return this;
+    }
+
+    public CloudWatchClient getCloudWatchClient() {
+        return cloudWatchClient;
+    }
+
+    public void setCloudWatchClient(CloudWatchClient cloudWatchClient) {
+        this.cloudWatchClient = cloudWatchClient;
+    }
+
+    public CloudWatchMetricConfig withCloudWatchClient(CloudWatchClient cloudWatchClient) {
+        setCloudWatchClient(cloudWatchClient);
         return this;
     }
 }

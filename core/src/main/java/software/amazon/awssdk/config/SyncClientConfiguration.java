@@ -18,7 +18,7 @@ package software.amazon.awssdk.config;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
- * An interface that represents all configuration required by a sync AWS client in order to operate. Sync AWS clients accept
+ * An interface that represents configuration only required by a sync AWS client in order to operate. Sync AWS clients accept
  * implementations of this interface when constructed.
  *
  * <p>Implementations of this interface are not necessarily immutable or thread safe. If thread safety is required, consider

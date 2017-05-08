@@ -91,7 +91,7 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        identity = CognitoIdentityClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        identity = CognitoIdentityClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
     /**

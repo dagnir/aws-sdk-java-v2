@@ -27,7 +27,7 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws IOException {
         setUpCredentials();
-        apiGateway = APIGatewayClientBuilder.standard().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        apiGateway = APIGatewayClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
     }
 
 }

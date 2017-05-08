@@ -98,8 +98,8 @@ public class CognitoSyncIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        identity = CognitoIdentityClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
-        sync = CognitoSyncClient.builder().withCredentials(new AwsStaticCredentialsProvider(credentials)).build();
+        identity = CognitoIdentityClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        sync = CognitoSyncClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
 
         CreateIdentityPoolRequest createRequest = new CreateIdentityPoolRequest()
                 .withIdentityPoolName(IDENTITY_POOL_NAME)

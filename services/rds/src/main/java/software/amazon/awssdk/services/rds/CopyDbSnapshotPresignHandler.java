@@ -19,7 +19,7 @@ import java.util.Date;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
-import software.amazon.awssdk.services.rds.model.transform.CopyDBSnapshotRequestMarshaller;
+import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
 
 /**
  * Handler for pre-signing {@link CopyDBSnapshotRequest}.

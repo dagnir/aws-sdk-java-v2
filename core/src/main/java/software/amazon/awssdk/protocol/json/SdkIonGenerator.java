@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 import java.util.Date;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.util.BinaryUtils;
+import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.ion.IonType;
 import software.amazon.ion.IonWriter;
 import software.amazon.ion.Timestamp;

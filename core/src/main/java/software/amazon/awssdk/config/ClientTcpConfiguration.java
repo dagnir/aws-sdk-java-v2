@@ -18,6 +18,8 @@ package software.amazon.awssdk.config;
 import java.time.Duration;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Configures the TCP connection behavior of the AWS SDK client.
@@ -27,7 +29,8 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 @ReviewBeforeRelease("Configuration descriptions here are relatively short because it is expected that this will be "
                      + "heavily refactored for the pluggable HTTP layer. If that ends up not happening, these descriptions "
                      + "should be enhanced.")
-public final class ClientTcpConfiguration {
+public final class ClientTcpConfiguration
+        implements ToCopyableBuilder<ClientTcpConfiguration.Builder, ClientTcpConfiguration> {
     private final Boolean tcpKeepaliveEnabled;
     private final Integer maxConnections;
     private final Duration connectionTimeToLive;
@@ -54,6 +57,17 @@ public final class ClientTcpConfiguration {
      */
     public static Builder builder() {
         return new DefaultClientTcpConfigurationBuilder();
+    }
+
+    @Override
+    public ClientTcpConfiguration.Builder toBuilder() {
+        return builder().tcpKeepaliveEnabled(tcpKeepaliveEnabled)
+                        .maxConnections(maxConnections)
+                        .connectionTimeToLive(connectionTimeToLive)
+                        .connectionMaxIdleTime(connectionMaxIdleTime)
+                        .connectionValidationFrequency(connectionValidationFrequency)
+                        .socketReceiveBufferSizeHint(socketReceiveBufferSizeHint)
+                        .socketSendBufferSizeHint(socketSendBufferSizeHint);
     }
 
     /**
@@ -125,7 +139,7 @@ public final class ClientTcpConfiguration {
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */
-    interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, ClientTcpConfiguration> {
         /**
          * @see ClientTcpConfiguration#tcpKeepaliveEnabled().
          */
@@ -211,11 +225,6 @@ public final class ClientTcpConfiguration {
          * @see ClientTcpConfiguration#socketSendBufferSizeHint()
          */
         Builder socketSendBufferSizeHint(Integer socketSendBufferSizeHint);
-
-        /**
-         * Build a {@link ClientTcpConfiguration} from the values currently configured in this builder.
-         */
-        ClientTcpConfiguration build();
     }
 
     /**

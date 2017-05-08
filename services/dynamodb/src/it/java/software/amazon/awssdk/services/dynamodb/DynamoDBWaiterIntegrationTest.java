@@ -50,8 +50,8 @@ public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
         tableName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
         client = DynamoDBClient
                 .builder()
-                .withCredentials(new AwsStaticCredentialsProvider(getCredentials()))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
+                .region(Regions.US_WEST_2.getName())
                 .build();
         client.createTable(new CreateTableRequest().withTableName(tableName)
                                                    .withKeySchema(new KeySchemaElement().withKeyType(KeyType.HASH)

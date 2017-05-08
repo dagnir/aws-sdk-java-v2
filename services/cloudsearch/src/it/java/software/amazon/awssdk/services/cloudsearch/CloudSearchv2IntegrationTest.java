@@ -93,7 +93,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setUp() throws Exception {
-        cloudSearch = CloudSearchClient.builder().withCredentials(new AwsStaticCredentialsProvider(getCredentials())).build();
+        cloudSearch = CloudSearchClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(getCredentials())).build();
     }
 
     /**

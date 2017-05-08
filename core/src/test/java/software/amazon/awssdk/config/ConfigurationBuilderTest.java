@@ -24,9 +24,13 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Test;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Validate the functionality of the Client*Configuration classes
@@ -46,6 +50,10 @@ public class ConfigurationBuilderTest {
             ClientTimeoutConfiguration.class,
     };
 
+    private static final Set<String> IGNORED_METHODS = new HashSet<>(Arrays.stream(ToCopyableBuilder.class.getMethods())
+                                                                           .map(Method::getName)
+                                                                           .collect(Collectors.toList()));
+
     @Test
     public void configurationClassesAndBuildersHaveExpectedMethods() throws Exception {
         for(Class<?> configurationClass : CONFIGURATION_CLASSES) {
@@ -63,7 +71,7 @@ public class ConfigurationBuilderTest {
         assertThat(builder).isInstanceOf(builderInterface);
 
         Class<?> builderClass = builder.getClass();
-        Method[] builderMethods = builderClass.getMethods();
+        Method[] builderMethods = builderClass.getDeclaredMethods();
 
         // Builder's build methods should return the configuration object
         Optional<Method> buildMethod = Arrays.stream(builderMethods).filter(m -> m.getName().equals("build")).findFirst();
@@ -80,7 +88,7 @@ public class ConfigurationBuilderTest {
         // Validate method behavior
         for(Method configMethod : configurationClass.getDeclaredMethods()) {
             // Don't validate static methods
-            if(Modifier.isStatic(configMethod.getModifiers())) {
+            if(Modifier.isStatic(configMethod.getModifiers()) || IGNORED_METHODS.contains(configMethod.getName())) {
                 continue;
             }
 

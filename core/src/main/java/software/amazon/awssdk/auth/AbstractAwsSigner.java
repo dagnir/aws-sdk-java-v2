@@ -38,9 +38,10 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.runtime.io.SdkDigestInputStream;
-import software.amazon.awssdk.util.BinaryUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.Base64Utils;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
  * Abstract base class for AWS signing protocol implementations. Provides
@@ -108,7 +109,7 @@ public abstract class AbstractAwsSigner implements Signer {
                                          SigningAlgorithm algorithm) throws SdkClientException {
         try {
             byte[] signature = sign(data, key.getBytes(StringUtils.UTF8), algorithm);
-            return software.amazon.awssdk.util.Base64.encodeAsString(signature);
+            return Base64Utils.encodeAsString(signature);
         } catch (Exception e) {
             throw new SdkClientException(
                     "Unable to calculate a request signature: "
@@ -257,38 +258,6 @@ public abstract class AbstractAwsSigner implements Signer {
         return result.toString();
     }
 
-    protected String getCanonicalizedQueryString(SignableRequest<?> request) {
-        /*
-         * If we're using POST and we don't have any request payload content,
-         * then any request query parameters will be sent as the payload, and
-         * not in the actual query string.
-         */
-        if (SdkHttpUtils.usePayloadForQueryParameters(request)) {
-            return "";
-        }
-        return this.getCanonicalizedQueryString(request.getParameters());
-    }
-
-    /**
-     * Returns the request's payload as binary data.
-     *
-     * @param request
-     *            The request
-     * @return The data from the request's payload, as binary data.
-     */
-    protected byte[] getBinaryRequestPayload(SignableRequest<?> request) {
-        if (SdkHttpUtils.usePayloadForQueryParameters(request)) {
-            String encodedParameters = SdkHttpUtils.encodeParameters(request);
-            if (encodedParameters == null) {
-                return new byte[0];
-            }
-
-            return encodedParameters.getBytes(StringUtils.UTF8);
-        }
-
-        return getBinaryRequestPayloadWithoutQueryParams(request);
-    }
-
     /**
      * Returns the request's payload as a String.
      *
@@ -310,7 +279,7 @@ public abstract class AbstractAwsSigner implements Signer {
      *         form encoding of query string params.
      */
     protected String getRequestPayloadWithoutQueryParams(SignableRequest<?> request) {
-        return newString(getBinaryRequestPayloadWithoutQueryParams(request));
+        return newString(getBinaryRequestPayload(request));
     }
 
     /**
@@ -322,8 +291,8 @@ public abstract class AbstractAwsSigner implements Signer {
      * @return The request's payload contents as binary data, not including any
      *         form encoding of query string params.
      */
-    protected byte[] getBinaryRequestPayloadWithoutQueryParams(SignableRequest<?> request) {
-        InputStream content = getBinaryRequestPayloadStreamWithoutQueryParams(request);
+    protected byte[] getBinaryRequestPayload(SignableRequest<?> request) {
+        InputStream content = getBinaryRequestPayloadStream(request);
 
         try {
             ReadLimitInfo info = request.getReadLimitInfo();
@@ -349,20 +318,6 @@ public abstract class AbstractAwsSigner implements Signer {
     }
 
     protected InputStream getBinaryRequestPayloadStream(SignableRequest<?> request) {
-        if (SdkHttpUtils.usePayloadForQueryParameters(request)) {
-            String encodedParameters = SdkHttpUtils.encodeParameters(request);
-            if (encodedParameters == null) {
-                return new ByteArrayInputStream(new byte[0]);
-            }
-
-            return new ByteArrayInputStream(
-                    encodedParameters.getBytes(StringUtils.UTF8));
-        }
-
-        return getBinaryRequestPayloadStreamWithoutQueryParams(request);
-    }
-
-    protected InputStream getBinaryRequestPayloadStreamWithoutQueryParams(SignableRequest<?> request) {
         try {
             InputStream is = request.getContentUnwrapped();
             if (is == null) {

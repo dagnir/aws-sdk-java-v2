@@ -31,7 +31,7 @@ public class AbstractTestCase extends AwsTestBase {
     @BeforeClass
     public static void init() throws FileNotFoundException, IOException {
         setUpCredentials();
-        KinesisClientBuilder builder = KinesisClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN);
+        KinesisClientBuilder builder = KinesisClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN);
         setEndpoint(builder);
         client = builder.build();
     }
@@ -50,7 +50,7 @@ public class AbstractTestCase extends AwsTestBase {
 
             if (endpoint != null) {
                 String region = AwsHostNameUtils.parseRegion(endpoint, KinesisClient.ENDPOINT_PREFIX);
-                builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region));
+                builder.region(region).endpointOverride(URI.create(endpoint));
             }
         }
     }

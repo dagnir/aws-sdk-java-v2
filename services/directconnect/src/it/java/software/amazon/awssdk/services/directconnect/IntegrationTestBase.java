@@ -19,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.test.AwsTestBase;
 
@@ -31,8 +30,8 @@ public class IntegrationTestBase extends AwsTestBase {
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
         dc = DirectConnectClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_WEST_1)
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
+                .region(Regions.US_WEST_1.getName())
                 .build();
     }
 }

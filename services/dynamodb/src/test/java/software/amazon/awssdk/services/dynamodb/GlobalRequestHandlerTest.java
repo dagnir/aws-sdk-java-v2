@@ -38,8 +38,8 @@ public class GlobalRequestHandlerTest {
     public void clientCreatedWithConstructor_RegistersGlobalHandlers() {
         assertFalse(TestGlobalRequestHandler.wasCalled());
         DynamoDBClient client = DynamoDBClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                .region(Regions.US_WEST_2.getName())
                 .build();
         callApi(client);
         assertTrue(TestGlobalRequestHandler.wasCalled());
@@ -49,8 +49,8 @@ public class GlobalRequestHandlerTest {
     public void clientCreatedWithBuilder_RegistersGlobalHandlers() {
         assertFalse(TestGlobalRequestHandler.wasCalled());
         DynamoDBClient client = DynamoDBClient.builder()
-                .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                .region(Regions.US_WEST_2.getName())
                 .build();
         callApi(client);
         assertTrue(TestGlobalRequestHandler.wasCalled());

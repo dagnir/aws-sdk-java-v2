@@ -91,7 +91,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
-        rds = RDSClient.builder().withCredentials(CREDENTIALS_PROVIDER_CHAIN).build();
+        rds = RDSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     /** Releases all resources allocated by these tests. */
