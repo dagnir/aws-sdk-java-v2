@@ -1,12 +1,11 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.io.Serializable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
-import software.amazon.awssdk.services.jsonprotocoltests.model.transform.SubTypeOneMarshaller;
+import software.amazon.awssdk.services.jsonprotocoltests.transform.SubTypeOneMarshaller;
 
-public class SubTypeOne implements Serializable, Cloneable, StructuredPojo {
+public class SubTypeOne implements Cloneable, StructuredPojo {
     private final String subTypeOneMember;
 
     private SubTypeOne(BeanStyleBuilder builder) {
@@ -27,6 +26,10 @@ public class SubTypeOne implements Serializable, Cloneable, StructuredPojo {
 
     public static Builder builder_() {
         return new BeanStyleBuilder();
+    }
+
+    public static Class<? extends Builder> beanStyleBuilderClass() {
+        return BeanStyleBuilder.class;
     }
 
     @Override
@@ -95,7 +98,7 @@ public class SubTypeOne implements Serializable, Cloneable, StructuredPojo {
         SubTypeOne build_();
     }
 
-    public static class BeanStyleBuilder implements Builder {
+    private static final class BeanStyleBuilder implements Builder {
         private String subTypeOneMember;
 
         private BeanStyleBuilder() {

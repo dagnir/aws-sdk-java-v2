@@ -20,6 +20,7 @@ import static software.amazon.awssdk.codegen.poet.PoetUtils.makeJavadocPoetFrien
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 
+import com.squareup.javapoet.WildcardTypeName;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -41,11 +43,6 @@ import software.amazon.awssdk.protocol.StructuredPojo;
  * Provides the Poet specs for AWS Service models.
  */
 public class AwsServiceModel implements ClassSpec {
-    private static final MethodSpec EXCEPTION_CTOR = MethodSpec.constructorBuilder()
-            .addModifiers(Modifier.PUBLIC)
-            .addParameter(String.class, "message")
-            .addStatement("super($N)", "message")
-            .build();
 
     private final IntermediateModel intermediateModel;
     private final ShapeModel shapeModel;
@@ -61,7 +58,7 @@ public class AwsServiceModel implements ClassSpec {
         this.shapeModel = shapeModel;
         this.poetExtensions = new PoetExtensions(this.intermediateModel);
         this.typeProvider = new TypeProvider(this.poetExtensions);
-        this.shapeModelSpec = new ShapeModelSpec(this.shapeModel, typeProvider);
+        this.shapeModelSpec = new ShapeModelSpec(this.shapeModel, typeProvider, poetExtensions);
         this.interfaceProvider = new AwsShapePublicInterfaceProvider(this.intermediateModel, this.shapeModel);
         this.modelMethodOverrides = new ModelMethodOverrides(this.poetExtensions);
         this.modelBuilderSpecs = new ModelBuilderSpecs(this.shapeModel, this.shapeModelSpec, this.typeProvider,
@@ -87,7 +84,7 @@ public class AwsServiceModel implements ClassSpec {
 
     @Override
     public ClassName className() {
-        return poetExtensions.getModelClass(shapeModel.getShapeName());
+        return shapeModelSpec.className();
     }
 
     private List<TypeName> modelSuperInterfaces() {
@@ -105,13 +102,17 @@ public class AwsServiceModel implements ClassSpec {
 
         switch (shapeModel.getShapeType()) {
             case Exception:
-                methodSpecs.add(EXCEPTION_CTOR);
+                methodSpecs.add(exceptionConstructor());
+                methodSpecs.add(toBuilderMethod());
+                methodSpecs.add(builderMethod());
+                methodSpecs.add(beanStyleBuilderClassMethod());
                 break;
             default:
                 methodSpecs.addAll(memberGetters());
                 methodSpecs.add(constructor());
                 methodSpecs.add(toBuilderMethod());
                 methodSpecs.add(builderMethod());
+                methodSpecs.add(beanStyleBuilderClassMethod());
                 methodSpecs.add(modelMethodOverrides.hashCodeMethod(shapeModel));
                 methodSpecs.add(modelMethodOverrides.equalsMethod(shapeModel));
                 methodSpecs.add(modelMethodOverrides.cloneMethod(className()));
@@ -147,6 +148,7 @@ public class AwsServiceModel implements ClassSpec {
             case Model:
             case Request:
             case Response:
+            case Exception:
                 nestedClasses.add(modelBuilderSpecs.builderInterface());
                 nestedClasses.add(modelBuilderSpecs.beanStyleBuilder());
                 break;
@@ -182,7 +184,20 @@ public class AwsServiceModel implements ClassSpec {
         return ctorBuilder.build();
     }
 
+    private MethodSpec exceptionConstructor() {
+        MethodSpec.Builder ctorBuilder = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PRIVATE)
+                .addParameter(modelBuilderSpecs.builderImplName(), "builder");
+
+        ctorBuilder.addStatement("super(builder.message)");
+
+        shapeModelSpec.fields().forEach(f -> ctorBuilder.addStatement("this.$N = builder.$N", f, f));
+
+        return ctorBuilder.build();
+    }
+
     private MethodSpec builderMethod() {
+        // TODO: Fix when shadowing is fixed and we can remove underscore
         return MethodSpec.methodBuilder("builder_")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(modelBuilderSpecs.builderInterfaceName())
@@ -195,6 +210,15 @@ public class AwsServiceModel implements ClassSpec {
                 .addModifiers(Modifier.PUBLIC)
                 .returns(modelBuilderSpecs.builderInterfaceName())
                 .addStatement("return new $T(this)", modelBuilderSpecs.builderImplName())
+                .build();
+    }
+
+    private MethodSpec beanStyleBuilderClassMethod() {
+        return MethodSpec.methodBuilder("beanStyleBuilderClass")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(ParameterizedTypeName.get(ClassName.get(Class.class),
+                        WildcardTypeName.subtypeOf(modelBuilderSpecs.builderInterfaceName())))
+                .addStatement("return $T.class", modelBuilderSpecs.builderImplName())
                 .build();
     }
 }

@@ -20,6 +20,10 @@ import com.squareup.javapoet.TypeName;
 
 import java.util.List;
 
+/**
+ * Creates the methods for fluent and bean style member setters for a
+ * {@link software.amazon.awssdk.codegen.model.intermediate.MemberModel}.
+ */
 interface MemberSetters {
     List<MethodSpec> fluentDeclarations(TypeName returnType);
 

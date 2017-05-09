@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 /**
- * Helper class for resolving Poet TypeNames for use in model classes.
+ * Helper class for resolving Poet {@link TypeName}s for use in model classes.
  */
 class TypeProvider {
 

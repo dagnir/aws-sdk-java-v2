@@ -16,13 +16,22 @@
 package software.amazon.awssdk.codegen.poet.model;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.Modifier;
 
+import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Provides the Poet specs for model class builders.
@@ -60,6 +69,14 @@ class ModelBuilderSpecs {
         shapeModel.getMembers().forEach(m -> builder.addMethods(
                 settersFactory.fluentSetterDeclarations(m, builderInterfaceName())));
 
+        if (exception()) {
+            builder.addMethod(MethodSpec.methodBuilder("message")
+                    .returns(builderInterfaceName())
+                    .addParameter(String.class, "message")
+                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT).build());
+        }
+
+        // TODO: remove once we can implement the buildable interface
         builder.addMethod(MethodSpec.methodBuilder("build_")
                 .returns(classToBuild())
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -72,16 +89,37 @@ class ModelBuilderSpecs {
     public TypeSpec beanStyleBuilder() {
         TypeSpec.Builder builderClassBuilder = TypeSpec.classBuilder(builderImplName())
                 .addSuperinterface(builderInterfaceName())
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC);
+                // TODO: Uncomment this once property shadowing is fixed
+                //.addSuperinterface(copyableBuilderSuperInterface())
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL);
 
-        builderClassBuilder.addFields(shapeModelSpec.fields(Modifier.PRIVATE));
+        builderClassBuilder.addFields(fields());
+        builderClassBuilder.addMethod(noargConstructor());
+        builderClassBuilder.addMethod(modelCopyConstructor());
+        builderClassBuilder.addMethods(setters());
+        builderClassBuilder.addMethod(buildMethod());
 
-        // No-arg constructor
-        builderClassBuilder.addMethod(MethodSpec.constructorBuilder()
+        return builderClassBuilder.build();
+    }
+
+    private List<FieldSpec> fields() {
+        List<FieldSpec> fields = shapeModelSpec.fields(Modifier.PRIVATE);
+
+        // Inject a message member for the exception message
+        if (exception()) {
+            fields.add(FieldSpec.builder(String.class, "message", Modifier.PRIVATE).build());
+        }
+
+        return fields;
+    }
+
+    private MethodSpec noargConstructor() {
+        return MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE)
-                .build());
+                .build();
+    }
 
-        // Accepts Model for copying
+    private MethodSpec modelCopyConstructor() {
         MethodSpec.Builder copyBuilderCtor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE)
                 .addParameter(classToBuild(), "model");
@@ -91,26 +129,70 @@ class ModelBuilderSpecs {
             copyBuilderCtor.addStatement("this.$N = model.$N", name, name);
         });
 
-        shapeModel.getMembers().forEach(m -> {
-            builderClassBuilder.addMethods(settersFactory.fluentSetters(m, builderInterfaceName()));
-            builderClassBuilder.addMethods(settersFactory.beanStyleSetters(m));
+        if (exception()) {
+            copyBuilderCtor.addStatement("this.message = model.getMessage()");
+        }
 
-        });
+        return copyBuilderCtor.build();
+    }
 
-        builderClassBuilder.addMethod(copyBuilderCtor.build());
+    private List<MethodSpec> setters() {
+        List<MethodSpec> setters = new ArrayList<>();
+        shapeModel.getMembers().stream().flatMap(m ->
+            Stream.concat(settersFactory.fluentSetters(m, builderInterfaceName()).stream(),
+                settersFactory.beanStyleSetters(m).stream()))
+                .forEach(setters::add);
 
+        if (exception()) {
+            setters.addAll(exceptionMessageSetters());
+        }
+
+        return setters;
+    }
+
+    private MethodSpec buildMethod() {
         // FIXME: using 'build_' to avoid clashing with models that have a 'build' property
-        builderClassBuilder.addMethod(MethodSpec.methodBuilder("build_")
+        return MethodSpec.methodBuilder("build_")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(classToBuild())
                 .addStatement("return new $T(this)", classToBuild())
-                .build());
-
-        return builderClassBuilder.build();
+                .build();
     }
 
     private ClassName classToBuild() {
         return poetExtensions.getModelClass(shapeModel.getShapeName());
+    }
+
+    private boolean exception() {
+        return shapeModel.getShapeType() == ShapeType.Exception;
+    }
+
+    private TypeName copyableBuilderSuperInterface() {
+        return ParameterizedTypeName.get(ClassName.get(CopyableBuilder.class),
+                classToBuild().nestedClass("Builder"),
+                classToBuild());
+    }
+
+    List<MethodSpec> exceptionMessageSetters() {
+        List<MethodSpec> setters = new ArrayList<>();
+
+        // bean style
+        setters.add(MethodSpec.methodBuilder("setMessage")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(String.class, "message")
+                .addStatement("this.message = message")
+                .build());
+
+        setters.add(MethodSpec.methodBuilder("message")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(builderInterfaceName())
+                .addAnnotation(Override.class)
+                .addParameter(String.class, "message")
+                .addStatement("this.message = message")
+                .addStatement("return this")
+                .build());
+
+        return setters;
     }
 }

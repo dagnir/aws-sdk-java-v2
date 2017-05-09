@@ -23,6 +23,9 @@ import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
+/**
+ * Creates the method specs for common method overrides for service models.
+ */
 public class ModelMethodOverrides {
     private final PoetExtensions poetExtensions;
 

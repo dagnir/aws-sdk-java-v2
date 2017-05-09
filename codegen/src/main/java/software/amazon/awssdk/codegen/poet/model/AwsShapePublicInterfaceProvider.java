@@ -19,14 +19,13 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.ResponseMetadata;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
@@ -57,9 +56,9 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
             case Request:
             case Model:
             case Response:
-                Stream.of(Serializable.class, Cloneable.class)
-                        .map(ClassName::get)
-                        .forEach(superInterfaces::add);
+                superInterfaces.add(TypeName.get(Cloneable.class));
+                // TODO: Uncomment this once property shadowing is fixed and model build can implement CopyableBuilder
+                //superInterfaces.add(toCopyableBuilderInterface());
                 break;
             default:
                 break;
@@ -94,11 +93,21 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
                 .getSdkModeledExceptionBaseClassName()) != null) {
             return poetExtensions.getModelClass(customExceptionBase);
         }
-        return poetExtensions.getModelClass(intermediateModel.getMetadata().getSyncInterface() + "Exception");
+        return poetExtensions.getModelClass(intermediateModel.getSdkModeledExceptionBaseClassName());
 
     }
 
     private boolean implementStructuredPojoInterface() {
         return intermediateModel.getMetadata().isJsonProtocol() && shapeModel.getShapeType() == ShapeType.Model;
+    }
+
+    private TypeName toCopyableBuilderInterface() {
+        return ParameterizedTypeName.get(ClassName.get(ToCopyableBuilder.class),
+                modelClassName().nestedClass("Builder"),
+                modelClassName());
+    }
+
+    private ClassName modelClassName() {
+        return poetExtensions.getModelClass(shapeModel.getShapeName());
     }
 }

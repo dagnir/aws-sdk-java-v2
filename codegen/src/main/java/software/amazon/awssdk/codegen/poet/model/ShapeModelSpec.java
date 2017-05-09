@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 
 import java.util.Collections;
@@ -24,6 +25,7 @@ import javax.lang.model.element.Modifier;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 /**
  * Provides Poet specs related to shape models.
@@ -31,10 +33,16 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 class ShapeModelSpec {
     private final ShapeModel shapeModel;
     private final TypeProvider typeProvider;
+    private final PoetExtensions poetExtensions;
 
-    public ShapeModelSpec(ShapeModel shapeModel, TypeProvider typeProvider) {
+    public ShapeModelSpec(ShapeModel shapeModel, TypeProvider typeProvider, PoetExtensions poetExtensions) {
         this.shapeModel = shapeModel;
         this.typeProvider = typeProvider;
+        this.poetExtensions = poetExtensions;
+    }
+
+    ClassName className() {
+        return poetExtensions.getModelClass(shapeModel.getShapeName());
     }
 
     public List<FieldSpec> fields() {

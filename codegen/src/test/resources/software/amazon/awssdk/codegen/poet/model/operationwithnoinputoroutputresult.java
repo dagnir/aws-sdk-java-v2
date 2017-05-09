@@ -1,11 +1,9 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.io.Serializable;
 import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.ResponseMetadata;
 
-public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<ResponseMetadata> implements Serializable,
-        Cloneable {
+public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<ResponseMetadata> implements Cloneable {
     private OperationWithNoInputOrOutputResult(BeanStyleBuilder builder) {
     }
 
@@ -15,6 +13,10 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<R
 
     public static Builder builder_() {
         return new BeanStyleBuilder();
+    }
+
+    public static Class<? extends Builder> beanStyleBuilderClass() {
+        return BeanStyleBuilder.class;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<R
         OperationWithNoInputOrOutputResult build_();
     }
 
-    public static class BeanStyleBuilder implements Builder {
+    private static final class BeanStyleBuilder implements Builder {
         private BeanStyleBuilder() {
         }
 

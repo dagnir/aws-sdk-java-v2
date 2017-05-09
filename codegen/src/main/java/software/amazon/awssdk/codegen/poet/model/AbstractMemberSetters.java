@@ -25,6 +25,9 @@ import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 
+/**
+ * Abstract implementation of {@link MemberSetters} to share common functionality.
+ */
 abstract class AbstractMemberSetters implements MemberSetters {
     private MemberModel memberModel;
     private TypeProvider typeProvider;

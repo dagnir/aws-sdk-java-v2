@@ -18,7 +18,6 @@ package software.amazon.awssdk.codegen.poet.model;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 
-import java.util.Collections;
 import java.util.List;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
@@ -33,8 +32,10 @@ class SettersFactory {
     public List<MethodSpec> fluentSetterDeclarations(MemberModel memberModel, TypeName returnType) {
         if (memberModel.isList()) {
             return new ListSetters(memberModel, typeProvider).fluentDeclarations(returnType);
-        } else if (memberModel.isMap()) {
-            return Collections.emptyList();
+        }
+
+        if (memberModel.isMap()) {
+            return new MapSetters(memberModel, typeProvider).fluentDeclarations(returnType);
         }
 
         return new NonCollectionSetters(memberModel, typeProvider).fluentDeclarations(returnType);

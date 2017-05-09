@@ -33,7 +33,7 @@ class MapSetters extends AbstractMemberSetters {
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
-        return Collections.emptyList();
+        return Collections.singletonList(fluentSetterDeclaration(memberAsParameter(), returnType).build());
     }
 
     @Override
