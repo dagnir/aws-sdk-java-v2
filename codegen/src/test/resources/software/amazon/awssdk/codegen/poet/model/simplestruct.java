@@ -1,12 +1,11 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.io.Serializable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
-import software.amazon.awssdk.services.jsonprotocoltests.model.transform.SimpleStructMarshaller;
+import software.amazon.awssdk.services.jsonprotocoltests.transform.SimpleStructMarshaller;
 
-public class SimpleStruct implements Serializable, Cloneable, StructuredPojo {
+public class SimpleStruct implements Cloneable, StructuredPojo {
     private final String stringMember;
 
     private SimpleStruct(BeanStyleBuilder builder) {
@@ -27,6 +26,10 @@ public class SimpleStruct implements Serializable, Cloneable, StructuredPojo {
 
     public static Builder builder_() {
         return new BeanStyleBuilder();
+    }
+
+    public static Class<? extends Builder> beanStyleBuilderClass() {
+        return BeanStyleBuilder.class;
     }
 
     @Override
@@ -95,7 +98,7 @@ public class SimpleStruct implements Serializable, Cloneable, StructuredPojo {
         SimpleStruct build_();
     }
 
-    public static class BeanStyleBuilder implements Builder {
+    private static final class BeanStyleBuilder implements Builder {
         private String stringMember;
 
         private BeanStyleBuilder() {

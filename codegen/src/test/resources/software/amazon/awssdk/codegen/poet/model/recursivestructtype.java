@@ -1,6 +1,5 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +7,9 @@ import java.util.Map;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
-import software.amazon.awssdk.services.jsonprotocoltests.model.transform.RecursiveStructTypeMarshaller;
+import software.amazon.awssdk.services.jsonprotocoltests.transform.RecursiveStructTypeMarshaller;
 
-public class RecursiveStructType implements Serializable, Cloneable, StructuredPojo {
+public class RecursiveStructType implements Cloneable, StructuredPojo {
     private final String noRecurse;
 
     private final RecursiveStructType recursiveStruct;
@@ -64,6 +63,10 @@ public class RecursiveStructType implements Serializable, Cloneable, StructuredP
 
     public static Builder builder_() {
         return new BeanStyleBuilder();
+    }
+
+    public static Class<? extends Builder> beanStyleBuilderClass() {
+        return BeanStyleBuilder.class;
     }
 
     @Override
@@ -180,10 +183,17 @@ public class RecursiveStructType implements Serializable, Cloneable, StructuredP
          */
         Builder recursiveList(RecursiveStructType... recursiveList);
 
+        /**
+         *
+         * @param recursiveMap
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder recursiveMap(Map<String, RecursiveStructType> recursiveMap);
+
         RecursiveStructType build_();
     }
 
-    public static class BeanStyleBuilder implements Builder {
+    private static final class BeanStyleBuilder implements Builder {
         private String noRecurse;
 
         private RecursiveStructType recursiveStruct;

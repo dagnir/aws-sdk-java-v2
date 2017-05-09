@@ -18,20 +18,16 @@ package software.amazon.awssdk.codegen.poet.model;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
-import javax.lang.model.element.Modifier;
-
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
-import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import javax.lang.model.element.Modifier;
+
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 /**
  * Provides the Poet specs for model class builders.
@@ -168,11 +164,11 @@ class ModelBuilderSpecs {
         return shapeModel.getShapeType() == ShapeType.Exception;
     }
 
-    private TypeName copyableBuilderSuperInterface() {
-        return ParameterizedTypeName.get(ClassName.get(CopyableBuilder.class),
-                classToBuild().nestedClass("Builder"),
-                classToBuild());
-    }
+    // private TypeName copyableBuilderSuperInterface() {
+    //     return ParameterizedTypeName.get(ClassName.get(CopyableBuilder.class),
+    //             classToBuild().nestedClass("Builder"),
+    //             classToBuild());
+    // }
 
     List<MethodSpec> exceptionMessageSetters() {
         List<MethodSpec> setters = new ArrayList<>();

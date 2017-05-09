@@ -16,8 +16,6 @@
 package software.amazon.awssdk.codegen.poet;
 
 import com.squareup.javapoet.ClassName;
-import software.amazon.awssdk.codegen.internal.Constants;
-import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 
 /**

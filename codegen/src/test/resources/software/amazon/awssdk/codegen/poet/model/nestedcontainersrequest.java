@@ -1,13 +1,12 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public class NestedContainersRequest extends AmazonWebServiceRequest implements Serializable, Cloneable {
+public class NestedContainersRequest extends AmazonWebServiceRequest implements Cloneable {
     private final List<List<String>> listOfListsOfStrings;
 
     private final List<List<List<String>>> listOfListOfListsOfStrings;
@@ -50,6 +49,10 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
 
     public static Builder builder_() {
         return new BeanStyleBuilder();
+    }
+
+    public static Class<? extends Builder> beanStyleBuilderClass() {
+        return BeanStyleBuilder.class;
     }
 
     @Override
@@ -153,10 +156,17 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements 
          */
         Builder listOfListOfListsOfStrings(List<List<String>>... listOfListOfListsOfStrings);
 
+        /**
+         *
+         * @param mapOfStringToListOfListsOfStrings
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder mapOfStringToListOfListsOfStrings(Map<String, List<List<String>>> mapOfStringToListOfListsOfStrings);
+
         NestedContainersRequest build_();
     }
 
-    public static class BeanStyleBuilder implements Builder {
+    private static final class BeanStyleBuilder implements Builder {
         private List<List<String>> listOfListsOfStrings;
 
         private List<List<List<String>>> listOfListOfListsOfStrings;

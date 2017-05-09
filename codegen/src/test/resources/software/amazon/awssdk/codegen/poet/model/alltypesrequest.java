@@ -1,6 +1,5 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 
-public class AllTypesRequest extends AmazonWebServiceRequest implements Serializable, Cloneable {
+public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneable {
     private final String stringMember;
 
     private final Integer integerMember;
@@ -258,6 +257,10 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Serializ
 
     public static Builder builder_() {
         return new BeanStyleBuilder();
+    }
+
+    public static Class<? extends Builder> beanStyleBuilderClass() {
+        return BeanStyleBuilder.class;
     }
 
     @Override
@@ -600,6 +603,27 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Serializ
 
         /**
          *
+         * @param mapOfStringToIntegerList
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder mapOfStringToIntegerList(Map<String, List<Integer>> mapOfStringToIntegerList);
+
+        /**
+         *
+         * @param mapOfStringToString
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder mapOfStringToString(Map<String, String> mapOfStringToString);
+
+        /**
+         *
+         * @param mapOfStringToStruct
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder mapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct);
+
+        /**
+         *
          * @param timestampMember
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -625,6 +649,13 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Serializ
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder structWithNestedBlob(StructWithNestedBlobType structWithNestedBlob);
+
+        /**
+         *
+         * @param blobMap
+         * @return Returns a reference to this object so that method calls can be chained together.
+         */
+        Builder blobMap(Map<String, ByteBuffer> blobMap);
 
         /**
          *
@@ -664,7 +695,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Serializ
         AllTypesRequest build_();
     }
 
-    public static class BeanStyleBuilder implements Builder {
+    private static final class BeanStyleBuilder implements Builder {
         private String stringMember;
 
         private Integer integerMember;

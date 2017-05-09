@@ -1,13 +1,12 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
-import software.amazon.awssdk.services.jsonprotocoltests.model.transform.StructWithNestedBlobTypeMarshaller;
+import software.amazon.awssdk.services.jsonprotocoltests.transform.StructWithNestedBlobTypeMarshaller;
 
-public class StructWithNestedBlobType implements Serializable, Cloneable, StructuredPojo {
+public class StructWithNestedBlobType implements Cloneable, StructuredPojo {
     private final ByteBuffer nestedBlob;
 
     private StructWithNestedBlobType(BeanStyleBuilder builder) {
@@ -36,6 +35,10 @@ public class StructWithNestedBlobType implements Serializable, Cloneable, Struct
 
     public static Builder builder_() {
         return new BeanStyleBuilder();
+    }
+
+    public static Class<? extends Builder> beanStyleBuilderClass() {
+        return BeanStyleBuilder.class;
     }
 
     @Override
@@ -104,7 +107,7 @@ public class StructWithNestedBlobType implements Serializable, Cloneable, Struct
         StructWithNestedBlobType build_();
     }
 
-    public static class BeanStyleBuilder implements Builder {
+    private static final class BeanStyleBuilder implements Builder {
         private ByteBuffer nestedBlob;
 
         private BeanStyleBuilder() {

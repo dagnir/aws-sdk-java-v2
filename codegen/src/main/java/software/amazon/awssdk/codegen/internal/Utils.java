@@ -22,11 +22,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
@@ -140,6 +135,7 @@ public class Utils {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
         StringBuilder sb = new StringBuilder(name.length());
+
         int i = 0;
         do {
             sb.append(Character.toLowerCase(name.charAt(i++)));
