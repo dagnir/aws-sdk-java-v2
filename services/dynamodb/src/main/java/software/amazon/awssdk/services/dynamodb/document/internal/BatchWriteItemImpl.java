@@ -90,24 +90,28 @@ public class BatchWriteItemImpl implements BatchWriteItemApi {
                 // Put requests for a single table
                 if (itemsToPut != null) {
                     for (Item item : itemsToPut) {
-                        writeRequests.add(new WriteRequest()
-                                                  .withPutRequest(new PutRequest()
-                                                                          .withItem(toAttributeValues(item))));
+                        writeRequests.add(WriteRequest.builder_()
+                                                  .putRequest(PutRequest.builder_()
+                                                          .item(toAttributeValues(item))
+                                                          .build_())
+                                .build_());
                     }
                 }
                 // Delete requests for a single table
                 if (pksToDelete != null) {
                     for (PrimaryKey pkToDelete : pksToDelete) {
-                        writeRequests.add(new WriteRequest()
-                                                  .withDeleteRequest(new DeleteRequest()
-                                                                             .withKey(toAttributeValueMap(pkToDelete))));
+                        writeRequests.add(WriteRequest.builder_()
+                                                  .deleteRequest(DeleteRequest.builder_()
+                                                          .key(toAttributeValueMap(pkToDelete))
+                                                          .build_())
+                                .build_());
                     }
                 }
                 requestItems.put(tableWriteItems.getTableName(), writeRequests);
             }
         }
-        BatchWriteItemRequest req = spec.getRequest()
-                                        .withRequestItems(requestItems);
+        BatchWriteItemRequest req = spec.getRequest().toBuilder()
+                                        .requestItems(requestItems).build_();
         BatchWriteItemResult result = client.batchWriteItem(req);
         return new BatchWriteItemOutcome(result);
     }

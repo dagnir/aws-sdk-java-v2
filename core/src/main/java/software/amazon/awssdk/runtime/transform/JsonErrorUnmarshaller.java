@@ -23,6 +23,8 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 
+import java.lang.reflect.Method;
+
 /**
  * Unmarshaller for JSON error responses from AWS services.
  */
@@ -50,7 +52,14 @@ public class JsonErrorUnmarshaller extends AbstractErrorUnmarshaller<JsonNode> {
 
     @Override
     public AmazonServiceException unmarshall(JsonNode jsonContent) throws Exception {
-        return MAPPER.treeToValue(jsonContent, exceptionClass);
+        // FIXME: dirty hack below
+        Method beanStyleBuilderMethod = exceptionClass.getDeclaredMethod("beanStyleBuilderClass");
+        beanStyleBuilderMethod.setAccessible(true);
+        Class<?> beanStyleBuilderClass = (Class<?>) beanStyleBuilderMethod.invoke(null);
+        Method buildMethod = beanStyleBuilderClass.getMethod("build_");
+        buildMethod.setAccessible(true);
+        Object o = MAPPER.treeToValue(jsonContent, beanStyleBuilderClass);
+        return (AmazonServiceException) buildMethod.invoke(o);
     }
 
     /**

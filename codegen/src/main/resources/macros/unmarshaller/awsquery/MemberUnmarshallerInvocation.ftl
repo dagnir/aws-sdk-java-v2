@@ -18,13 +18,13 @@
 
             <#if !memberModel.http.flattened>
                 if (context.testExpression("${unmarshallerLocationName}", targetDepth)) {
-                    ${shapeVarName}.with${memberModel.name}(new ArrayList<${memberModel.listModel.memberType}>());
+                    ${shapeVarName}.${memberModel.fluentSetterMethodName}(new ArrayList<${memberModel.listModel.memberType}>());
                     continue;
                 }
             </#if>
 
                 if (context.testExpression("${listMemberPath}", targetDepth)) {
-                    ${shapeVarName}.with${memberModel.name}(${memberModel.listModel.simpleType}Unmarshaller.getInstance().unmarshall(context));
+                    ${shapeVarName}.${memberModel.fluentSetterMethodName}(${memberModel.listModel.simpleType}Unmarshaller.getInstance().unmarshall(context));
                     continue;
                 }
 

@@ -204,11 +204,11 @@ public class WebIdentityFederationSessionCredentialsProvider implements AwsSessi
      */
     private void startSession() {
         AssumeRoleWithWebIdentityResult sessionTokenResult = securityTokenService
-                .assumeRoleWithWebIdentity(new AssumeRoleWithWebIdentityRequest().withWebIdentityToken(wifToken)
-                                                                                 .withProviderId(wifProvider)
-                                                                                 .withRoleArn(roleArn)
-                                                                                 .withRoleSessionName("ProviderSession")
-                                                                                 .withDurationSeconds(this.sessionDuration));
+                .assumeRoleWithWebIdentity(new AssumeRoleWithWebIdentityRequest().webIdentityToken(wifToken)
+                                                                                 .providerId(wifProvider)
+                                                                                 .roleArn(roleArn)
+                                                                                 .roleSessionName("ProviderSession")
+                                                                                 .durationSeconds(this.sessionDuration));
         Credentials stsCredentials = sessionTokenResult.getCredentials();
 
         subjectFromWif = sessionTokenResult.getSubjectFromWebIdentityToken();

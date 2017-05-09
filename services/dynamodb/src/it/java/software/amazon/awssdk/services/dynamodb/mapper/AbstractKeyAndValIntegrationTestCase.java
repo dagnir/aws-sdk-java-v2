@@ -50,7 +50,7 @@ public abstract class AbstractKeyAndValIntegrationTestCase extends DynamoDBMappe
      */
     @Before
     public void setUpTest() {
-        setUpTest(DynamoDBMapperConfig.DEFAULT.getSaveBehavior());
+        setUpTest(DynamoDBMapperConfig.DEFAULT.saveBehavior());
     }
 
     /**

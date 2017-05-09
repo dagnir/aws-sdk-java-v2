@@ -106,9 +106,9 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
             String destinationRegion) {
 
         CopySnapshotRequest copySnapshotRequest = new CopySnapshotRequest()
-                .withSourceSnapshotId(sourceSnapshotId)
-                .withSourceRegion(sourceRegion)
-                .withDestinationRegion(destinationRegion);
+                .sourceSnapshotId(sourceSnapshotId)
+                .sourceRegion(sourceRegion)
+                .destinationRegion(destinationRegion);
 
         return new CopySnapshotRequestMarshaller()
                 .marshall(copySnapshotRequest);

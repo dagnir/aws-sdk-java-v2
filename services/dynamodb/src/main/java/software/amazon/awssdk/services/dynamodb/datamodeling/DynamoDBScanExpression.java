@@ -211,7 +211,7 @@ public class DynamoDBScanExpression {
      *
      * @return The scan filter as a map of attribute names to conditions.
      */
-    public Map<String, Condition> getScanFilter() {
+    public Map<String, Condition> scanFilter() {
         return scanFilter;
     }
 
@@ -318,7 +318,7 @@ public class DynamoDBScanExpression {
      * traffic to DynamoDB but with a greater number of round trips and
      * therefore more overall latency.
      */
-    public Integer getLimit() {
+    public Integer limit() {
         return limit;
     }
 
@@ -328,7 +328,7 @@ public class DynamoDBScanExpression {
      * operation -- the operation will cease and return as soon as this many
      * items are scanned, even if no matching results are found.
      *
-     * @see DynamoDBScanExpression#getLimit()
+     * @see DynamoDBScanExpression#limit()
      */
     public void setLimit(Integer limit) {
         this.limit = limit;
@@ -341,7 +341,7 @@ public class DynamoDBScanExpression {
      * cease and return as soon as this many items are scanned, even if no
      * matching results are found.
      *
-     * @see DynamoDBScanExpression#getLimit()
+     * @see DynamoDBScanExpression#limit()
      */
     public DynamoDBScanExpression withLimit(Integer limit) {
         this.limit = limit;
@@ -374,7 +374,7 @@ public class DynamoDBScanExpression {
     /**
      * Returns the ID of the segment to be scanned.
      */
-    public Integer getSegment() {
+    public Integer segment() {
         return segment;
     }
 
@@ -667,7 +667,7 @@ public class DynamoDBScanExpression {
      *
      * @see software.amazon.awssdk.services.dynamodb.model.Select
      */
-    public String getSelect() {
+    public String select() {
         return select;
     }
 

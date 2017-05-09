@@ -40,7 +40,7 @@ public class ByteArraySetUnmarshaller extends BsUnmarshaller {
     public Object unmarshall(AttributeValue value) {
         Set<byte[]> result = new HashSet<byte[]>();
 
-        for (ByteBuffer buffer : value.getBS()) {
+        for (ByteBuffer buffer : value.bs()) {
             if (buffer.hasArray()) {
                 result.add(buffer.array());
             } else {

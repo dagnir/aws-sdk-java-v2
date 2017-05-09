@@ -35,7 +35,7 @@ public class BasicTempTableWithLowThroughput extends DynamoDBTableResource {
     public static final Long READ_CAPACITY = 1L;
     public static final Long WRITE_CAPACITY = 1L;
     public static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT =
-            new ProvisionedThroughput().withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(WRITE_CAPACITY);
+            ProvisionedThroughput.builder_().readCapacityUnits(READ_CAPACITY).writeCapacityUnits(WRITE_CAPACITY).build_();
 
     @Override
     protected DynamoDBClient getClient() {
@@ -44,16 +44,17 @@ public class BasicTempTableWithLowThroughput extends DynamoDBTableResource {
 
     @Override
     protected CreateTableRequest getCreateTableRequest() {
-        CreateTableRequest request = new CreateTableRequest()
-                .withTableName(TEMP_TABLE_NAME)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(HASH_KEY_NAME)
-                                              .withKeyType(KeyType.HASH))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                HASH_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.S));
-        request.setProvisionedThroughput(DEFAULT_PROVISIONED_THROUGHPUT);
+        CreateTableRequest request = CreateTableRequest.builder_()
+                .tableName(TEMP_TABLE_NAME)
+                .keySchema(
+                        KeySchemaElement.builder_().attributeName(HASH_KEY_NAME)
+                                              .keyType(KeyType.HASH).build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(
+                                HASH_KEY_NAME).attributeType(
+                                ScalarAttributeType.S).build_())
+                .provisionedThroughput(DEFAULT_PROVISIONED_THROUGHPUT)
+                .build_();
         return request;
     }
 }

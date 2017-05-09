@@ -35,7 +35,7 @@ public class TestTableForParallelScan extends DynamoDBTableResource {
     public static final Long READ_CAPACITY = 10L;
     public static final Long WRITE_CAPACITY = 5L;
     public static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT =
-            new ProvisionedThroughput().withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(WRITE_CAPACITY);
+            ProvisionedThroughput.builder_().readCapacityUnits(READ_CAPACITY).writeCapacityUnits(WRITE_CAPACITY).build_();
 
     @Override
     protected DynamoDBClient getClient() {
@@ -44,16 +44,17 @@ public class TestTableForParallelScan extends DynamoDBTableResource {
 
     @Override
     protected CreateTableRequest getCreateTableRequest() {
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(TABLE_NAME)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(HASH_KEY_NAME)
-                                              .withKeyType(KeyType.HASH))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                HASH_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.N))
-                .withProvisionedThroughput(DEFAULT_PROVISIONED_THROUGHPUT);
+        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+                .tableName(TABLE_NAME)
+                .keySchema(
+                        KeySchemaElement.builder_().attributeName(HASH_KEY_NAME)
+                                              .keyType(KeyType.HASH).build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(
+                                HASH_KEY_NAME).attributeType(
+                                ScalarAttributeType.N).build_())
+                .provisionedThroughput(DEFAULT_PROVISIONED_THROUGHPUT)
+                .build_();
         return createTableRequest;
     }
 

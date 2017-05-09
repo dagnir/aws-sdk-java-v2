@@ -34,7 +34,7 @@ class ScanPage extends Page<Item, ScanOutcome> {
 
     private final DynamoDBClient client;
     private final ScanSpec spec;
-    private final ScanRequest request;
+    private ScanRequest request;
     private final int index;
     private final Map<String, AttributeValue> lastEvaluatedKey;
 
@@ -45,21 +45,21 @@ class ScanPage extends Page<Item, ScanOutcome> {
             int index,
             ScanOutcome outcome) {
         super(Collections.unmodifiableList(
-                toItemList(outcome.getScanResult().getItems())),
+                toItemList(outcome.scanResult().items())),
               outcome);
         this.client = client;
         this.spec = spec;
         this.request = request;
         this.index = index;
 
-        final Integer max = spec.getMaxResultSize();
-        final ScanResult result = outcome.getScanResult();
-        final List<?> ilist = result.getItems();
+        final Integer max = spec.maxResultSize();
+        final ScanResult result = outcome.scanResult();
+        final List<?> ilist = result.items();
         final int size = ilist == null ? 0 : ilist.size();
         if (max != null && (index + size) > max) {
             this.lastEvaluatedKey = null;
         } else {
-            this.lastEvaluatedKey = result.getLastEvaluatedKey();
+            this.lastEvaluatedKey = result.lastEvaluatedKey();
         }
     }
 
@@ -68,7 +68,7 @@ class ScanPage extends Page<Item, ScanOutcome> {
         if (lastEvaluatedKey == null) {
             return false;
         }
-        Integer max = spec.getMaxResultSize();
+        Integer max = spec.maxResultSize();
         if (max == null) {
             return true;
         }
@@ -79,7 +79,7 @@ class ScanPage extends Page<Item, ScanOutcome> {
         int nextIndex = index + this.size();
         return InternalUtils.minimum(
                 max - nextIndex,
-                spec.getMaxPageSize());
+                spec.maxPageSize());
     }
 
     @Override
@@ -87,15 +87,15 @@ class ScanPage extends Page<Item, ScanOutcome> {
         if (lastEvaluatedKey == null) {
             throw new NoSuchElementException("No more pages");
         }
-        final Integer max = spec.getMaxResultSize();
+        final Integer max = spec.maxResultSize();
         if (max != null) {
             int nextLimit = nextRequestLimit(max.intValue());
             if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
             }
-            request.setLimit(nextLimit);
+            request = request.toBuilder().limit(nextLimit).build_();
         }
-        request.setExclusiveStartKey(lastEvaluatedKey);
+        request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build_();
         // fire off request to the server side
         ScanResult result = client.scan(request);
         final int nextIndex = index + this.size();

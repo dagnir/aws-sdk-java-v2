@@ -43,18 +43,24 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        dynamo = DynamoDBClient.builder().region(Regions.US_EAST_1.getName()).credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        dynamo = DynamoDBClient.builder().region(Regions.US_EAST_1.name()).credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         // Create a table
         String keyName = KEY_NAME;
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(TABLE_NAME)
-                .withKeySchema(new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(keyName).withAttributeType(
-                                ScalarAttributeType.S));
-        createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                                               .withWriteCapacityUnits(5L));
+        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+                .tableName(TABLE_NAME)
+                .keySchema(KeySchemaElement.builder_()
+                        .attributeName(keyName)
+                        .keyType(KeyType.HASH)
+                        .build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(keyName)
+                                .attributeType(ScalarAttributeType.S)
+                                .build_())
+                .provisionedThroughput(ProvisionedThroughput.builder_()
+                        .readCapacityUnits(10L)
+                        .writeCapacityUnits(5L).build_())
+                .build_();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_NAME);
@@ -66,9 +72,9 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
      * reserved for the region.
      */
     public static void deleteAllTables() {
-        ListTablesResult listTables = dynamo.listTables(new ListTablesRequest());
-        for (String name : listTables.getTableNames()) {
-            dynamo.deleteTable(new DeleteTableRequest().withTableName(name));
+        ListTablesResult listTables = dynamo.listTables(ListTablesRequest.builder_().build_());
+        for (String name : listTables.tableNames()) {
+            dynamo.deleteTable(DeleteTableRequest.builder_().tableName(name).build_());
         }
     }
 
@@ -77,17 +83,30 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
 
         String keyName = DynamoDBIntegrationTestBase.KEY_NAME;
         String rangeKeyAttributeName = "rangeKey";
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(TABLE_WITH_RANGE_ATTRIBUTE)
-                .withKeySchema(new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
-                               new KeySchemaElement().withAttributeName(rangeKeyAttributeName).withKeyType(KeyType.RANGE))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(keyName).withAttributeType(
-                                ScalarAttributeType.N),
-                        new AttributeDefinition().withAttributeName(rangeKeyAttributeName).withAttributeType(
-                                ScalarAttributeType.N));
-        createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                                               .withWriteCapacityUnits(5L));
+        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+                .tableName(TABLE_WITH_RANGE_ATTRIBUTE)
+                .keySchema(
+                        KeySchemaElement.builder_()
+                                .attributeName(keyName)
+                                .keyType(KeyType.HASH)
+                                .build_(),
+                        KeySchemaElement.builder_()
+                                .attributeName(rangeKeyAttributeName)
+                                .keyType(KeyType.RANGE)
+                                .build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_()
+                                .attributeName(keyName)
+                                .attributeType(ScalarAttributeType.N)
+                                .build_(),
+                        AttributeDefinition.builder_()
+                                .attributeName(rangeKeyAttributeName)
+                                .attributeType(ScalarAttributeType.N)
+                                .build_())
+                .provisionedThroughput(ProvisionedThroughput.builder_()
+                        .readCapacityUnits(10L)
+                        .writeCapacityUnits(5L).build_())
+                .build_();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_WITH_RANGE_ATTRIBUTE);
@@ -97,7 +116,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
     protected static void setUpTableWithIndexRangeAttribute(boolean recreateTable) throws Exception {
         setUp();
         if (recreateTable) {
-            dynamo.deleteTable(new DeleteTableRequest().withTableName(TABLE_WITH_INDEX_RANGE_ATTRIBUTE));
+            dynamo.deleteTable(DeleteTableRequest.builder_().tableName(TABLE_WITH_INDEX_RANGE_ATTRIBUTE).build_());
             waitForTableToBecomeDeleted(TABLE_WITH_INDEX_RANGE_ATTRIBUTE);
         }
 
@@ -113,60 +132,96 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
         String indexFooCopyName = "index_foo_copy";
         String indexBarCopyName = "index_bar_copy";
 
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(TABLE_WITH_INDEX_RANGE_ATTRIBUTE)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
-                        new KeySchemaElement().withAttributeName(rangeKeyAttributeName).withKeyType(KeyType.RANGE))
-                .withLocalSecondaryIndexes(
-                        new LocalSecondaryIndex()
-                                .withIndexName(indexFooName)
-                                .withKeySchema(
-                                        new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
-                                        new KeySchemaElement().withAttributeName(indexFooRangeKeyAttributeName)
-                                                              .withKeyType(KeyType.RANGE))
-                                .withProjection(new Projection()
-                                                        .withProjectionType(ProjectionType.INCLUDE)
-                                                        .withNonKeyAttributes(fooAttributeName)),
-                        new LocalSecondaryIndex()
-                                .withIndexName(indexBarName)
-                                .withKeySchema(
-                                        new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
-                                        new KeySchemaElement().withAttributeName(indexBarRangeKeyAttributeName)
-                                                              .withKeyType(KeyType.RANGE))
-                                .withProjection(new Projection()
-                                                        .withProjectionType(ProjectionType.INCLUDE)
-                                                        .withNonKeyAttributes(barAttributeName)),
-                        new LocalSecondaryIndex()
-                                .withIndexName(indexFooCopyName)
-                                .withKeySchema(
-                                        new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
-                                        new KeySchemaElement().withAttributeName(multipleIndexRangeKeyAttributeName)
-                                                              .withKeyType(KeyType.RANGE))
-                                .withProjection(new Projection()
-                                                        .withProjectionType(ProjectionType.INCLUDE)
-                                                        .withNonKeyAttributes(fooAttributeName)),
-                        new LocalSecondaryIndex()
-                                .withIndexName(indexBarCopyName)
-                                .withKeySchema(
-                                        new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
-                                        new KeySchemaElement().withAttributeName(multipleIndexRangeKeyAttributeName)
-                                                              .withKeyType(KeyType.RANGE))
-                                .withProjection(new Projection()
-                                                        .withProjectionType(ProjectionType.INCLUDE)
-                                                        .withNonKeyAttributes(barAttributeName)))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(keyName).withAttributeType(ScalarAttributeType.N),
-                        new AttributeDefinition().withAttributeName(rangeKeyAttributeName)
-                                                 .withAttributeType(ScalarAttributeType.N),
-                        new AttributeDefinition().withAttributeName(indexFooRangeKeyAttributeName)
-                                                 .withAttributeType(ScalarAttributeType.N),
-                        new AttributeDefinition().withAttributeName(indexBarRangeKeyAttributeName)
-                                                 .withAttributeType(ScalarAttributeType.N),
-                        new AttributeDefinition().withAttributeName(multipleIndexRangeKeyAttributeName)
-                                                 .withAttributeType(ScalarAttributeType.N));
-        createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                                               .withWriteCapacityUnits(5L));
+        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+                .tableName(TABLE_WITH_INDEX_RANGE_ATTRIBUTE)
+                .keySchema(
+                        KeySchemaElement.builder_()
+                                .attributeName(keyName)
+                                .keyType(KeyType.HASH)
+                                .build_(),
+                        KeySchemaElement.builder_()
+                                .attributeName(rangeKeyAttributeName)
+                                .keyType(KeyType.RANGE)
+                                .build_())
+                .localSecondaryIndexes(
+                        LocalSecondaryIndex.builder_()
+                                .indexName(indexFooName)
+                                .keySchema(
+                                        KeySchemaElement.builder_()
+                                                .attributeName(keyName)
+                                                .keyType(KeyType.HASH)
+                                                .build_(),
+                                        KeySchemaElement.builder_()
+                                                .attributeName(indexFooRangeKeyAttributeName)
+                                                .keyType(KeyType.RANGE)
+                                                .build_())
+                                .projection(Projection.builder_()
+                                        .projectionType(ProjectionType.INCLUDE)
+                                        .nonKeyAttributes(fooAttributeName)
+                                        .build_())
+                                .build_(),
+                        LocalSecondaryIndex.builder_()
+                                .indexName(indexBarName)
+                                .keySchema(
+                                        KeySchemaElement.builder_()
+                                                .attributeName(keyName)
+                                                .keyType(KeyType.HASH)
+                                                .build_(),
+                                        KeySchemaElement.builder_()
+                                                .attributeName(indexBarRangeKeyAttributeName)
+                                                .keyType(KeyType.RANGE)
+                                                .build_())
+                                .projection(Projection.builder_()
+                                        .projectionType(ProjectionType.INCLUDE)
+                                        .nonKeyAttributes(barAttributeName)
+                                        .build_())
+                                .build_(),
+                        LocalSecondaryIndex.builder_()
+                                .indexName(indexFooCopyName)
+                                .keySchema(
+                                        KeySchemaElement.builder_()
+                                                .attributeName(keyName)
+                                                .keyType(KeyType.HASH)
+                                                .build_(),
+                                        KeySchemaElement.builder_()
+                                                .attributeName(multipleIndexRangeKeyAttributeName)
+                                                .keyType(KeyType.RANGE)
+                                                .build_())
+                                .projection(Projection.builder_()
+                                        .projectionType(ProjectionType.INCLUDE)
+                                        .nonKeyAttributes(fooAttributeName)
+                                        .build_())
+                                .build_(),
+                        LocalSecondaryIndex.builder_()
+                                .indexName(indexBarCopyName)
+                                .keySchema(
+                                        KeySchemaElement.builder_()
+                                                .attributeName(keyName)
+                                                .keyType(KeyType.HASH)
+                                                .build_(),
+                                        KeySchemaElement.builder_()
+                                                .attributeName(multipleIndexRangeKeyAttributeName)
+                                                .keyType(KeyType.RANGE)
+                                                .build_())
+                                .projection(Projection.builder_()
+                                        .projectionType(ProjectionType.INCLUDE)
+                                        .nonKeyAttributes(barAttributeName)
+                                        .build_())
+                                .build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(keyName).attributeType(ScalarAttributeType.N).build_(),
+                        AttributeDefinition.builder_().attributeName(rangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build_(),
+                        AttributeDefinition.builder_().attributeName(indexFooRangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build_(),
+                        AttributeDefinition.builder_().attributeName(indexBarRangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build_(),
+                        AttributeDefinition.builder_().attributeName(multipleIndexRangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build_())
+                .provisionedThroughput(ProvisionedThroughput.builder_()
+                        .readCapacityUnits(10L)
+                        .writeCapacityUnits(5L).build_())
+                .build_();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_WITH_INDEX_RANGE_ATTRIBUTE);

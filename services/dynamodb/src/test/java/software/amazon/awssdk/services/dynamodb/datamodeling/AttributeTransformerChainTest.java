@@ -70,8 +70,8 @@ public class AttributeTransformerChainTest {
         Map<String, AttributeValue> values =
                 new HashMap<String, AttributeValue>();
 
-        values.put("test1", new AttributeValue("foo"));
-        values.put("test2", new AttributeValue("bar"));
+        values.put("test1", AttributeValue.builder_().s("foo").build_());
+        values.put("test2", AttributeValue.builder_().s("bar").build_());
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -80,8 +80,8 @@ public class AttributeTransformerChainTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.size());
 
-        Assert.assertEquals("foo.one.two", result.get("test1").getS());
-        Assert.assertEquals("bar.one.two", result.get("test2").getS());
+        Assert.assertEquals("foo.one.two", result.get("test1").s());
+        Assert.assertEquals("bar.one.two", result.get("test2").s());
     }
 
     @Test
@@ -96,8 +96,8 @@ public class AttributeTransformerChainTest {
         Map<String, AttributeValue> values =
                 new HashMap<String, AttributeValue>();
 
-        values.put("test1", new AttributeValue("foo.one.two"));
-        values.put("test2", new AttributeValue("bar.one.two"));
+        values.put("test1", AttributeValue.builder_().s("foo.one.two").build_());
+        values.put("test2", AttributeValue.builder_().s("bar.one.two").build_());
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -106,8 +106,8 @@ public class AttributeTransformerChainTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.size());
 
-        Assert.assertEquals("foo", result.get("test1").getS());
-        Assert.assertEquals("bar", result.get("test2").getS());
+        Assert.assertEquals("foo", result.get("test1").s());
+        Assert.assertEquals("bar", result.get("test2").s());
     }
 
     @Test
@@ -122,8 +122,8 @@ public class AttributeTransformerChainTest {
         Map<String, AttributeValue> values =
                 new HashMap<String, AttributeValue>();
 
-        values.put("test1", new AttributeValue("foo"));
-        values.put("test2", new AttributeValue("bar"));
+        values.put("test1", AttributeValue.builder_().s("foo").build_());
+        values.put("test2", AttributeValue.builder_().s("bar").build_());
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -177,14 +177,14 @@ public class AttributeTransformerChainTest {
         }
 
         private AttributeValue transform(AttributeValue value) {
-            return new AttributeValue(value.getS() + appendMe);
+            return AttributeValue.builder_().s(value.s() + appendMe).build_();
         }
 
         private AttributeValue untransform(AttributeValue value) {
-            String s = value.getS();
+            String s = value.s();
             if (s.endsWith(appendMe)) {
-                return new AttributeValue(
-                        s.substring(0, s.length() - appendMe.length()));
+                return AttributeValue.builder_().s(
+                        s.substring(0, s.length() - appendMe.length())).build_();
             } else {
                 return value;
             }

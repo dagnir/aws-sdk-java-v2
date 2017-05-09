@@ -45,13 +45,13 @@ public class BatchWriteItemOutcome {
      * @see BatchWriteItemSpec#withUnprocessedItems(Map)
      */
     public Map<String, List<WriteRequest>> getUnprocessedItems() {
-        return result.getUnprocessedItems();
+        return result.unprocessedItems();
     }
 
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public BatchWriteItemResult getBatchWriteItemResult() {
+    public BatchWriteItemResult batchWriteItemResult() {
         return result;
     }
 

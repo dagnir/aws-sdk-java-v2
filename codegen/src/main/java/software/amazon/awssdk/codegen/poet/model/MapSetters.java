@@ -23,12 +23,13 @@ import java.util.Collections;
 import java.util.List;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 
 class MapSetters extends AbstractMemberSetters {
     private final TypeProvider typeProvider;
 
-    MapSetters(MemberModel memberModel, TypeProvider typeProvider) {
-        super(memberModel, typeProvider);
+    MapSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
+        super(shapeModel, memberModel, typeProvider);
         this.typeProvider = typeProvider;
     }
 

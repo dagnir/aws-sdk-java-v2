@@ -46,7 +46,7 @@ public class BatchGetItemOutcome {
      */
     public Map<String, List<Item>> getTableItems() {
         Map<String, List<Map<String, AttributeValue>>> res =
-                result.getResponses();
+                result.responses();
         Map<String, List<Item>> map = new LinkedHashMap<String, List<Item>>(res.size());
         for (Map.Entry<String, List<Map<String, AttributeValue>>> e
                 : res.entrySet()) {
@@ -66,13 +66,13 @@ public class BatchGetItemOutcome {
      * @see BatchGetItemSpec#withUnprocessedKeys(Map)
      */
     public Map<String, KeysAndAttributes> getUnprocessedKeys() {
-        return result.getUnprocessedKeys();
+        return result.unprocessedKeys();
     }
 
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public BatchGetItemResult getBatchGetItemResult() {
+    public BatchGetItemResult batchGetItemResult() {
         return result;
     }
 

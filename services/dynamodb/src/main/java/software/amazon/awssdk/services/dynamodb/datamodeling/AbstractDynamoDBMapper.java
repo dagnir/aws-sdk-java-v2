@@ -296,7 +296,7 @@ public class AbstractDynamoDBMapper implements IDynamoDBMapper {
     }
 
     @Override
-    public S3ClientCache getS3ClientCache() {
+    public S3ClientCache s3ClientCache() {
         throw new UnsupportedOperationException("operation not supported in " + getClass());
     }
 

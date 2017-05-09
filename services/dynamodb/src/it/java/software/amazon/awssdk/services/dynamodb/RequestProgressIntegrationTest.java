@@ -59,13 +59,13 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
     private static BatchWriteItemRequest generateLargeBatchWriteItemRequest() {
         List<WriteRequest> writes = new LinkedList<WriteRequest>();
         for (int i = 0; i < 25; i++) {
-            writes.add(new WriteRequest(new PutRequest(
+            writes.add(WriteRequest.builder_().putRequest(PutRequest.builder_().item(
                     ImmutableMapParameter.of(
-                            BasicTempTable.HASH_KEY_NAME, new AttributeValue(Integer.toString(i)),
-                            "large-random-string", new AttributeValue(RandomStringGenerator.nextRandomString(40 * KB))))));
+                            BasicTempTable.HASH_KEY_NAME, AttributeValue.builder_().s(Integer.toString(i)).build_(),
+                            "large-random-string", AttributeValue.builder_().s(RandomStringGenerator.nextRandomString(40 * KB)).build_())).build_()).build_());
         }
-        return new BatchWriteItemRequest(
-                Collections.singletonMap(BasicTempTable.TEMP_TABLE_NAME, writes));
+        return BatchWriteItemRequest.builder_().requestItems(
+                Collections.singletonMap(BasicTempTable.TEMP_TABLE_NAME, writes)).build_();
     }
 
     private static void waitTillListenerCallbacksComplete() {
@@ -105,9 +105,10 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
     @Test
     public void testProgressEventNotification_FailedRequest_NoRetry() {
         // An invalid PutItemRequest that does not have the key attribute value
-        PutItemRequest request = new PutItemRequest(
-                BasicTempTable.TEMP_TABLE_NAME,
-                ImmutableMapParameter.of("foo", new AttributeValue("bar")));
+        PutItemRequest request = PutItemRequest.builder_()
+                .tableName(BasicTempTable.TEMP_TABLE_NAME)
+                .item(ImmutableMapParameter.of("foo", AttributeValue.builder_().s("bar").build_()))
+                .build_();
 
         ExceptionReporter listener = ExceptionReporter.wrap(new ProgressListenerWithEventCodeVerification(
                 ProgressEventType.CLIENT_REQUEST_STARTED_EVENT,
@@ -138,9 +139,10 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
     @Test
     public void testProgressEventNotification_FailedRequest_WithRetry() {
         // An invalid PutItemRequest that does not have the key attribute value
-        PutItemRequest request = new PutItemRequest(
-                BasicTempTable.TEMP_TABLE_NAME,
-                ImmutableMapParameter.of("foo", new AttributeValue("bar")));
+        PutItemRequest request = PutItemRequest.builder_()
+                .tableName(BasicTempTable.TEMP_TABLE_NAME)
+                .item(ImmutableMapParameter.of("foo", AttributeValue.builder_().s("bar").build_()))
+                .build_();
 
         RetryPolicy retryPolicy = new RetryPolicy((originalRequest, exception, retriesAttempted) -> true,
                                                   PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, 2, false);

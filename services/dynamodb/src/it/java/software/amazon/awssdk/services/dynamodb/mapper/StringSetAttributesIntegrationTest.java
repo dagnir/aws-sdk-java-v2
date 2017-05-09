@@ -45,10 +45,10 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, new AttributeValue().withS("" + startKey++));
-            attr.put(STRING_SET_ATTRIBUTE, new AttributeValue().withSS("" + ++startKey, "" + ++startKey, "" + ++startKey));
-            attr.put(ORIGINAL_NAME_ATTRIBUTE, new AttributeValue().withSS("" + ++startKey, "" + ++startKey, "" + ++startKey));
-            attr.put(EXTRA_ATTRIBUTE, new AttributeValue().withSS("" + ++startKey, "" + ++startKey, "" + ++startKey));
+            attr.put(KEY_NAME, AttributeValue.builder_().s("" + startKey++).build_());
+            attr.put(STRING_SET_ATTRIBUTE, AttributeValue.builder_().ss("" + ++startKey, "" + ++startKey, "" + ++startKey).build_());
+            attr.put(ORIGINAL_NAME_ATTRIBUTE, AttributeValue.builder_().ss("" + ++startKey, "" + ++startKey, "" + ++startKey).build_());
+            attr.put(EXTRA_ATTRIBUTE, AttributeValue.builder_().ss("" + ++startKey, "" + ++startKey, "" + ++startKey).build_());
             attrs.add(attr);
         }
     }
@@ -61,7 +61,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(new PutItemRequest(TABLE_NAME, attr));
+            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_NAME).item(attr).build_());
         }
     }
 
@@ -70,10 +70,10 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
         DynamoDBMapper util = new DynamoDBMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
-            StringSetAttributeClass x = util.load(StringSetAttributeClass.class, attr.get(KEY_NAME).getS());
-            assertEquals(x.getKey(), attr.get(KEY_NAME).getS());
-            assertSetsEqual(x.getStringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).getSS()));
-            assertSetsEqual(x.getStringSetAttributeRenamed(), toSet(attr.get(ORIGINAL_NAME_ATTRIBUTE).getSS()));
+            StringSetAttributeClass x = util.load(StringSetAttributeClass.class, attr.get(KEY_NAME).s());
+            assertEquals(x.getKey(), attr.get(KEY_NAME).s());
+            assertSetsEqual(x.stringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).ss()));
+            assertSetsEqual(x.stringSetAttributeRenamed(), toSet(attr.get(ORIGINAL_NAME_ATTRIBUTE).ss()));
         }
     }
 

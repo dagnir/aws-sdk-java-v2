@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  *
  * <pre class="brush: java">
  * &#064;DynamoDBNamed(&quot;InternalStatus&quot;)
- * public String getStatus()
+ * public String status()
  * </pre>
  *
  * <p>This annotation has the lowest precedence among other property/field

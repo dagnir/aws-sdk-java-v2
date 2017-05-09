@@ -55,7 +55,7 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
                                  .withItem(item)
                                  .withConditionExpression(conditionExpression)
                                  .withNameMap(nameMap)
-                                 .withValueMap(valueMap));
+                                 .valueMap(valueMap));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
     private PutItemOutcome doPutItem(PutItemSpec spec) {
         // set the table name
         String tableName = getTable().getTableName();
-        PutItemRequest request = spec.getRequest().withTableName(tableName);
+        PutItemRequest.Builder requestBuilder = spec.getRequest().toBuilder().tableName(tableName);
         // set up the item
         Item item = spec.getItem();
         final Map<String, AttributeValue> attributes = InternalUtils.toAttributeValues(item);
@@ -75,14 +75,14 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
                 InternalUtils.toExpectedAttributeValueMap(spec.getExpected());
         // set up the value map, if any (when expression API is used)
         final Map<String, AttributeValue> attrValMap =
-                InternalUtils.fromSimpleMap(spec.getValueMap());
+                InternalUtils.fromSimpleMap(spec.valueMap());
         // set up the request
-        request.withItem(attributes)
-               .withExpected(expectedMap)
-               .withExpressionAttributeNames(spec.getNameMap())
-               .withExpressionAttributeValues(attrValMap)
+        requestBuilder.item(attributes)
+               .expected(expectedMap)
+               .expressionAttributeNames(spec.nameMap())
+               .expressionAttributeValues(attrValMap)
         ;
-        PutItemResult result = getClient().putItem(request);
+        PutItemResult result = getClient().putItem(requestBuilder.build_());
         return new PutItemOutcome(result);
     }
 }

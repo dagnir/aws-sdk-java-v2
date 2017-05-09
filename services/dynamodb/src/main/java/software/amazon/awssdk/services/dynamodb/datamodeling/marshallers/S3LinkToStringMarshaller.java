@@ -40,11 +40,11 @@ public class S3LinkToStringMarshaller implements StringAttributeMarshaller {
     public AttributeValue marshall(Object obj) {
         S3Link s3link = (S3Link) obj;
 
-        if (s3link.getBucketName() == null || s3link.getKey() == null) {
+        if (s3link.bucketName() == null || s3link.getKey() == null) {
             // insufficient S3 resource specification
             return null;
         }
 
-        return new AttributeValue().withS(s3link.toJson());
+        return AttributeValue.builder_().s(s3link.toJson()).build_();
     }
 }

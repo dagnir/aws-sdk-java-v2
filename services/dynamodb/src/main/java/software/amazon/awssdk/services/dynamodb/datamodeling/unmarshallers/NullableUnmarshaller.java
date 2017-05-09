@@ -33,14 +33,14 @@ public class NullableUnmarshaller implements ArgumentUnmarshaller {
 
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
-        if (value.isNULL() == null) {
+        if (value.nul() == null) {
             wrapped.typeCheck(value, setter);
         }
     }
 
     @Override
     public Object unmarshall(AttributeValue value) throws ParseException {
-        if (value.isNULL() != null) {
+        if (value.nul() != null) {
             return null;
         }
         return wrapped.unmarshall(value);

@@ -46,7 +46,7 @@ public class ObjectSetUnmarshaller extends LUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) throws ParseException {
-        List<AttributeValue> values = value.getL();
+        List<AttributeValue> values = value.l();
 
         // As in the LinkedHashSet(Collection) constructor.
         int size = Math.max(values.size() * 2, 11);

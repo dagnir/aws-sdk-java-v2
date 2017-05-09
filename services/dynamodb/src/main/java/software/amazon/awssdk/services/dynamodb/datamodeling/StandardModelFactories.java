@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.services.dynamodb.ReflectHelper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperFieldModel.Reflect;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperModelFactory.TableFactory;
@@ -234,7 +235,7 @@ final class StandardModelFactories {
         private DynamoDBTypeConverter<AttributeValue, T> getConverter(ConvertibleType<T> type) {
             return new DelegateConverter<AttributeValue, T>(getRule(type).newConverter(type)) {
                 public final AttributeValue convert(T o) {
-                    return o == null ? new AttributeValue().withNULL(true) : super.convert(o);
+                    return o == null ? AttributeValue.builder_().nul(true).build_() : super.convert(o);
                 }
             };
         }
@@ -264,10 +265,16 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, AttributeValue o) {
-                value.withS(o.getS()).withN(o.getN()).withB(o.getB())
-                     .withSS(o.getSS()).withNS(o.getNS()).withBS(o.getBS())
-                     .withBOOL(o.getBOOL()).withL(o.getL()).withM(o.getM())
-                     .withNULL(o.getNULL());
+                ReflectHelper.setObjectMember(value, "s", o.s());
+                ReflectHelper.setObjectMember(value, "n", o.n());
+                ReflectHelper.setObjectMember(value, "b", o.b());
+                ReflectHelper.setObjectMember(value, "ss", o.ss());
+                ReflectHelper.setObjectMember(value, "ns", o.ns());
+                ReflectHelper.setObjectMember(value, "bs", o.bs());
+                ReflectHelper.setObjectMember(value, "bool", o.bool());
+                ReflectHelper.setObjectMember(value, "l", o.l());
+                ReflectHelper.setObjectMember(value, "m", o.m());
+                ReflectHelper.setObjectMember(value, "nul", o.nul());
             }
         }
 
@@ -291,12 +298,12 @@ final class StandardModelFactories {
 
             @Override
             public String get(AttributeValue value) {
-                return value.getS();
+                return value.s();
             }
 
             @Override
             public void set(AttributeValue value, String o) {
-                value.setS(o);
+                ReflectHelper.setObjectMember(value, "s", o);
             }
 
             @Override
@@ -325,12 +332,13 @@ final class StandardModelFactories {
 
             @Override
             public String get(AttributeValue value) {
-                return value.getN();
+                return value.n();
             }
 
             @Override
             public void set(AttributeValue value, String o) {
-                value.setN(o);
+                ReflectHelper.setObjectMember(value, "n", o);
+                //value.setN(o);
             }
         }
 
@@ -354,12 +362,13 @@ final class StandardModelFactories {
 
             @Override
             public ByteBuffer get(AttributeValue value) {
-                return value.getB();
+                return value.b();
             }
 
             @Override
             public void set(AttributeValue value, ByteBuffer o) {
-                value.setB(o);
+                ReflectHelper.setObjectMember(value, "b", o);
+                //value.setB(o);
             }
         }
 
@@ -383,12 +392,13 @@ final class StandardModelFactories {
 
             @Override
             public List<String> get(AttributeValue value) {
-                return value.getSS();
+                return value.ss();
             }
 
             @Override
             public void set(AttributeValue value, List<String> o) {
-                value.setSS(o);
+                ReflectHelper.setObjectMember(value, "ss", o);
+                //value.setSS(o);
             }
         }
 
@@ -412,12 +422,13 @@ final class StandardModelFactories {
 
             @Override
             public List<String> get(AttributeValue value) {
-                return value.getNS();
+                return value.ns();
             }
 
             @Override
             public void set(AttributeValue value, List<String> o) {
-                value.setNS(o);
+                ReflectHelper.setObjectMember(value, "ns", o);
+                //value.setNS(o);
             }
         }
 
@@ -441,12 +452,13 @@ final class StandardModelFactories {
 
             @Override
             public List<ByteBuffer> get(AttributeValue value) {
-                return value.getBS();
+                return value.bs();
             }
 
             @Override
             public void set(AttributeValue value, List<ByteBuffer> o) {
-                value.setBS(o);
+                ReflectHelper.setObjectMember(value, "bs", o);
+                //value.setBS(o);
             }
         }
 
@@ -495,18 +507,19 @@ final class StandardModelFactories {
 
             @Override
             public Boolean get(AttributeValue o) {
-                return o.getBOOL();
+                return o.bool();
             }
 
             @Override
             public void set(AttributeValue o, Boolean value) {
-                o.setBOOL(value);
+                ReflectHelper.setObjectMember(o, "bool", value);
+                //o.setBOOL(value);
             }
 
             @Override
             public Boolean unconvert(AttributeValue o) {
-                if (o.getBOOL() == null && o.getN() != null) {
-                    return BOOLEAN.<Boolean>convert(o.getN());
+                if (o.bool() == null && o.n() != null) {
+                    return BOOLEAN.<Boolean>convert(o.n());
                 }
                 return super.unconvert(o);
             }
@@ -536,11 +549,11 @@ final class StandardModelFactories {
              */
             @Override
             public String get(AttributeValue o) {
-                if (o.getBOOL() != null) {
+                if (o.bool() != null) {
                     // Handle native bools, transform to expected numeric representation.
-                    return o.getBOOL() ? "1" : "0";
+                    return o.bool() ? "1" : "0";
                 }
-                return o.getN();
+                return o.n();
             }
 
             /**
@@ -549,7 +562,8 @@ final class StandardModelFactories {
              */
             @Override
             public void set(AttributeValue o, String value) {
-                o.setN(value);
+                ReflectHelper.setObjectMember(o, "n", value);
+                //o.setN(value);
             }
         }
 
@@ -573,12 +587,13 @@ final class StandardModelFactories {
 
             @Override
             public List<AttributeValue> get(AttributeValue value) {
-                return value.getL();
+                return value.l();
             }
 
             @Override
             public void set(AttributeValue value, List<AttributeValue> o) {
-                value.setL(o);
+                ReflectHelper.setObjectMember(value, "l", o);
+                //value.setL(o);
             }
         }
 
@@ -597,8 +612,8 @@ final class StandardModelFactories {
 
             @Override
             public List<AttributeValue> unconvert(AttributeValue o) {
-                if (o.getL() == null && o.getNS() != null) {
-                    return LIST.convert(o.getNS(), new NativeBool(true).join(scalars.getConverter(Boolean.class, String.class)));
+                if (o.l() == null && o.ns() != null) {
+                    return LIST.convert(o.ns(), new NativeBool(true).join(scalars.getConverter(Boolean.class, String.class)));
                 }
                 return super.unconvert(o);
             }
@@ -624,12 +639,13 @@ final class StandardModelFactories {
 
             @Override
             public List<AttributeValue> get(AttributeValue value) {
-                return value.getL();
+                return value.l();
             }
 
             @Override
             public void set(AttributeValue value, List<AttributeValue> o) {
-                value.setL(o);
+                ReflectHelper.setObjectMember(value, "l", o);
+                //value.setL(o);
             }
         }
 
@@ -656,12 +672,13 @@ final class StandardModelFactories {
 
             @Override
             public Map<String, AttributeValue> get(AttributeValue value) {
-                return value.getM();
+                return value.m();
             }
 
             @Override
             public void set(AttributeValue value, Map<String, AttributeValue> o) {
-                value.setM(o);
+                ReflectHelper.setObjectMember(value, "m", o);
+                //value.setM(o);
             }
         }
 
@@ -698,12 +715,13 @@ final class StandardModelFactories {
 
             @Override
             public Map<String, AttributeValue> get(AttributeValue value) {
-                return value.getM();
+                return value.m();
             }
 
             @Override
             public void set(AttributeValue value, Map<String, AttributeValue> o) {
-                value.setM(o);
+                ReflectHelper.setObjectMember(value, "m", o);
+                //value.setM(o);
             }
         }
 
@@ -757,7 +775,7 @@ final class StandardModelFactories {
 
         @Override
         public AttributeValue convert(final S o) {
-            final AttributeValue value = new AttributeValue();
+            final AttributeValue value = AttributeValue.builder_().build_();
             set(value, o);
             return value;
         }
@@ -765,7 +783,7 @@ final class StandardModelFactories {
         @Override
         public S unconvert(final AttributeValue o) {
             final S value = get(o);
-            if (value == null && o.isNULL() == null) {
+            if (value == null && o.nul() == null) {
                 throw new DynamoDBMappingException("expected " + attributeType + " in value " + o);
             }
             return value;

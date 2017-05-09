@@ -46,7 +46,7 @@ public class ListUnmarshaller extends LUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) throws ParseException {
-        List<AttributeValue> values = value.getL();
+        List<AttributeValue> values = value.l();
         List<Object> objects = new ArrayList<Object>(values.size());
 
         for (AttributeValue v : values) {

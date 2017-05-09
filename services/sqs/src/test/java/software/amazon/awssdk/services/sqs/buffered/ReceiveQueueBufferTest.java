@@ -105,7 +105,7 @@ public class ReceiveQueueBufferTest {
 
     private void expectGetQueueAttributes(Map<String, String> queueAttributes) {
         expect(mockSqs.getQueueAttributes(isA(GetQueueAttributesRequest.class))).andStubReturn(
-                CompletableFuture.completedFuture(new GetQueueAttributesResult().withAttributes(queueAttributes)));
+                CompletableFuture.completedFuture(new GetQueueAttributesResult().attributes(queueAttributes)));
     }
 
     private void expectReceiveMessages(Message... messages) {
@@ -127,7 +127,7 @@ public class ReceiveQueueBufferTest {
             if (sleepSeconds > 0) {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(sleepSeconds));
             }
-            return CompletableFuture.completedFuture(new ReceiveMessageResult().withMessages(asArray(messages)));
+            return CompletableFuture.completedFuture(new ReceiveMessageResult().messages(asArray(messages)));
         });
     }
 

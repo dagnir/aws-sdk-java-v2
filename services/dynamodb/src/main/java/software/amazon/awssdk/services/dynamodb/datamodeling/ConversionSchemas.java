@@ -296,7 +296,7 @@ public final class ConversionSchemas {
                          ByteArraySetToBinarySetMarshaller.instance()));
     }
 
-    private static void addV1BooleanSetMarshallers(
+    private static void addV1BooleansetMarshallers(
             List<Pair<ArgumentMarshaller>> list) {
 
         list.add(Pair.of(Boolean.class,
@@ -352,15 +352,15 @@ public final class ConversionSchemas {
     }
 
     static interface MarshallerSet {
-        ArgumentMarshaller getMarshaller(Method getter);
+        ArgumentMarshaller marshaller(Method getter);
 
-        ArgumentMarshaller getMemberMarshaller(Type memberType);
+        ArgumentMarshaller memberMarshaller(Type memberType);
     }
 
     static interface UnmarshallerSet {
         ArgumentUnmarshaller getUnmarshaller(Method getter, Method setter);
 
-        ArgumentUnmarshaller getMemberUnmarshaller(Type memberType);
+        ArgumentUnmarshaller memberUnmarshaller(Type memberType);
     }
 
     public static class Builder {
@@ -505,7 +505,7 @@ public final class ConversionSchemas {
 
         @Override
         public DynamoDBMapperFieldModel getFieldModel(Method getter) {
-            final ArgumentMarshaller marshaller = getMarshaller(getter);
+            final ArgumentMarshaller marshaller = marshaller(getter);
 
             final DynamoDBAttributeType attributeType;
             if (marshaller instanceof StringAttributeMarshaller) {
@@ -548,7 +548,7 @@ public final class ConversionSchemas {
                 return null;
             }
 
-            ArgumentMarshaller marshaller = getMarshaller(getter);
+            ArgumentMarshaller marshaller = marshaller(getter);
             return marshaller.marshall(object);
         }
 
@@ -575,18 +575,18 @@ public final class ConversionSchemas {
             return result;
         }
 
-        private ArgumentMarshaller getMarshaller(Method getter) {
+        private ArgumentMarshaller marshaller(Method getter) {
             ArgumentMarshaller marshaller =
-                    marshallerSet.getMarshaller(getter);
+                    marshallerSet.marshaller(getter);
 
             marshaller = augment(getter.getGenericReturnType(), marshaller);
 
             return marshaller;
         }
 
-        private ArgumentMarshaller getMemberMarshaller(Type type) {
+        private ArgumentMarshaller memberMarshaller(Type type) {
             ArgumentMarshaller marshaller =
-                    marshallerSet.getMemberMarshaller(type);
+                    marshallerSet.memberMarshaller(type);
 
             marshaller = augment(type, marshaller);
 
@@ -602,7 +602,7 @@ public final class ConversionSchemas {
             }
 
             if (marshaller instanceof MapToMapMarshaller) {
-                return getMapToMapMarshaller(type);
+                return mapToMapMarshaller(type);
             }
             if (marshaller instanceof ObjectToMapMarshaller) {
                 return getObjectToMapMarshaller(type);
@@ -630,12 +630,12 @@ public final class ConversionSchemas {
             }
 
             ArgumentMarshaller memberMarshaller =
-                    getMemberMarshaller(args[0]);
+                    memberMarshaller(args[0]);
 
             return new CollectionToListMarshaller(memberMarshaller);
         }
 
-        private ArgumentMarshaller getMapToMapMarshaller(Type type) {
+        private ArgumentMarshaller mapToMapMarshaller(Type type) {
             if (!(type instanceof ParameterizedType)) {
                 throw new DynamoDBMappingException(
                         "Cannot tell what type of objects belong in the Map "
@@ -658,7 +658,7 @@ public final class ConversionSchemas {
             }
 
             ArgumentMarshaller memberMarshaller =
-                    getMemberMarshaller(args[1]);
+                    memberMarshaller(args[1]);
 
             return new MapToMapMarshaller(memberMarshaller);
         }
@@ -730,9 +730,9 @@ public final class ConversionSchemas {
             return new NullableUnmarshaller(unmarshaller);
         }
 
-        private ArgumentUnmarshaller getMemberUnmarshaller(Type type) {
+        private ArgumentUnmarshaller memberUnmarshaller(Type type) {
             ArgumentUnmarshaller unmarshaller =
-                    unmarshallerSet.getMemberUnmarshaller(type);
+                    unmarshallerSet.memberUnmarshaller(type);
 
             unmarshaller = augment(type, unmarshaller);
 
@@ -755,11 +755,11 @@ public final class ConversionSchemas {
             }
 
             if (unmarshaller instanceof ListUnmarshaller) {
-                return getListUnmarshaller(type);
+                return listUnmarshaller(type);
             }
 
             if (unmarshaller instanceof MapUnmarshaller) {
-                return getMapUnmarshaller(type);
+                return mapUnmarshaller(type);
             }
 
             // Inject ourselves to recursively unmarshall things if it's an
@@ -789,12 +789,12 @@ public final class ConversionSchemas {
             }
 
             ArgumentUnmarshaller memberUnmarshaller =
-                    getMemberUnmarshaller(args[0]);
+                    memberUnmarshaller(args[0]);
 
             return new ObjectSetUnmarshaller(memberUnmarshaller);
         }
 
-        private ArgumentUnmarshaller getListUnmarshaller(Type type) {
+        private ArgumentUnmarshaller listUnmarshaller(Type type) {
             if (!(type instanceof ParameterizedType)) {
                 throw new DynamoDBMappingException(
                         "Cannot tell what type of objects belong in the List "
@@ -812,12 +812,12 @@ public final class ConversionSchemas {
             }
 
             ArgumentUnmarshaller memberUnmarshaller =
-                    getMemberUnmarshaller(args[0]);
+                    memberUnmarshaller(args[0]);
 
             return new ListUnmarshaller(memberUnmarshaller);
         }
 
-        private ArgumentUnmarshaller getMapUnmarshaller(Type type) {
+        private ArgumentUnmarshaller mapUnmarshaller(Type type) {
             if (!(type instanceof ParameterizedType)) {
                 throw new DynamoDBMappingException(
                         "Cannot tell what type of objects belong in the Map "
@@ -840,7 +840,7 @@ public final class ConversionSchemas {
             }
 
             ArgumentUnmarshaller memberUnmarshaller =
-                    getMemberUnmarshaller(args[1]);
+                    memberUnmarshaller(args[1]);
 
             return new MapUnmarshaller(memberUnmarshaller);
         }
@@ -941,7 +941,7 @@ public final class ConversionSchemas {
                     new ArrayList<Pair<ArgumentMarshaller>>();
 
             addStandardDateSetMarshallers(list);
-            addV1BooleanSetMarshallers(list);
+            addV1BooleansetMarshallers(list);
             addStandardNumberSetMarshallers(list);
             addStandardStringSetMarshallers(list);
             addStandardBinarySetMarshallers(list);
@@ -975,7 +975,7 @@ public final class ConversionSchemas {
                     new ArrayList<Pair<ArgumentMarshaller>>();
 
             addStandardDateSetMarshallers(list);
-            addV1BooleanSetMarshallers(list);
+            addV1BooleansetMarshallers(list);
             addStandardNumberSetMarshallers(list);
             addStandardStringSetMarshallers(list);
             addStandardBinarySetMarshallers(list);
@@ -1003,31 +1003,31 @@ public final class ConversionSchemas {
         }
 
         @Override
-        public ArgumentMarshaller getMarshaller(Method getter) {
+        public ArgumentMarshaller marshaller(Method getter) {
             Class<?> returnType = getter.getReturnType();
 
             if (Set.class.isAssignableFrom(returnType)) {
                 Class<?> memberType =
                         unwrapGenericSetParam(getter.getGenericReturnType());
 
-                return getSet(getter, memberType);
+                return set(getter, memberType);
             } else {
-                return getScalar(getter, returnType);
+                return scalar(getter, returnType);
             }
         }
 
         @Override
-        public ArgumentMarshaller getMemberMarshaller(Type memberType) {
+        public ArgumentMarshaller memberMarshaller(Type memberType) {
             Class<?> clazz = resolveClass(memberType);
             if (Set.class.isAssignableFrom(clazz)) {
                 Class<?> setMemberType = unwrapGenericSetParam(memberType);
-                return getSet(null, setMemberType);
+                return set(null, setMemberType);
             } else {
-                return getScalar(null, clazz);
+                return scalar(null, clazz);
             }
         }
 
-        private ArgumentMarshaller getScalar(Method getter, Class<?> type) {
+        private ArgumentMarshaller scalar(Method getter, Class<?> type) {
             ArgumentMarshaller marshaller = find(type, marshallers);
             if (marshaller == null) {
 
@@ -1047,7 +1047,7 @@ public final class ConversionSchemas {
             return marshaller;
         }
 
-        private ArgumentMarshaller getSet(Method getter, Class<?> memberType) {
+        private ArgumentMarshaller set(Method getter, Class<?> memberType) {
             ArgumentMarshaller marshaller = find(memberType, setMarshallers);
             if (marshaller == null) {
 
@@ -1200,25 +1200,25 @@ public final class ConversionSchemas {
                 paramType = unwrapGenericSetParam(
                         setter.getGenericParameterTypes()[0]);
 
-                return getSet(setter, paramType);
+                return set(setter, paramType);
 
             } else {
-                return getScalar(setter, paramType);
+                return scalar(setter, paramType);
             }
         }
 
         @Override
-        public ArgumentUnmarshaller getMemberUnmarshaller(Type memberType) {
+        public ArgumentUnmarshaller memberUnmarshaller(Type memberType) {
             Class<?> clazz = resolveClass(memberType);
             if (Set.class.isAssignableFrom(clazz)) {
                 Class<?> setMemberType = unwrapGenericSetParam(memberType);
-                return getSet(null, setMemberType);
+                return set(null, setMemberType);
             } else {
-                return getScalar(null, clazz);
+                return scalar(null, clazz);
             }
         }
 
-        private ArgumentUnmarshaller getSet(Method setter, Class<?> paramType) {
+        private ArgumentUnmarshaller set(Method setter, Class<?> paramType) {
             ArgumentUnmarshaller unmarshaller =
                     find(paramType, setUnmarshallers);
 
@@ -1240,7 +1240,7 @@ public final class ConversionSchemas {
             return unmarshaller;
         }
 
-        private ArgumentUnmarshaller getScalar(Method setter, Class<?> type) {
+        private ArgumentUnmarshaller scalar(Method setter, Class<?> type) {
             ArgumentUnmarshaller unmarshaller = find(type, unmarshallers);
 
             String className = "?";
@@ -1296,7 +1296,7 @@ public final class ConversionSchemas {
         }
 
         @Override
-        public ArgumentMarshaller getMarshaller(Method getter) {
+        public ArgumentMarshaller marshaller(Method getter) {
             final StandardAnnotationMaps.FieldMap<?> annotations = StandardAnnotationMaps.of(getter, null);
             final DynamoDBMarshalling marshalling = annotations.actualOf(DynamoDBMarshalling.class);
             if (marshalling != null) {
@@ -1304,12 +1304,12 @@ public final class ConversionSchemas {
             } else if (annotations.actualOf(DynamoDBNativeBoolean.class) != null) {
                 return BooleanToBooleanMarshaller.instance();
             }
-            return wrapped.getMarshaller(getter);
+            return wrapped.marshaller(getter);
         }
 
         @Override
-        public ArgumentMarshaller getMemberMarshaller(Type memberType) {
-            return wrapped.getMemberMarshaller(memberType);
+        public ArgumentMarshaller memberMarshaller(Type memberType) {
+            return wrapped.memberMarshaller(memberType);
         }
     }
 
@@ -1335,8 +1335,8 @@ public final class ConversionSchemas {
         }
 
         @Override
-        public ArgumentUnmarshaller getMemberUnmarshaller(Type c) {
-            return wrapped.getMemberUnmarshaller(c);
+        public ArgumentUnmarshaller memberUnmarshaller(Type c) {
+            return wrapped.memberUnmarshaller(c);
         }
     }
 
@@ -1355,28 +1355,28 @@ public final class ConversionSchemas {
         }
 
         @Override
-        public ArgumentMarshaller getMarshaller(Method getter) {
+        public ArgumentMarshaller marshaller(Method getter) {
             synchronized (cache) {
                 ArgumentMarshaller marshaler = cache.get(getter);
                 if (marshaler != null) {
                     return marshaler;
                 }
 
-                marshaler = wrapped.getMarshaller(getter);
+                marshaler = wrapped.marshaller(getter);
                 cache.put(getter, marshaler);
                 return marshaler;
             }
         }
 
         @Override
-        public ArgumentMarshaller getMemberMarshaller(Type memberType) {
+        public ArgumentMarshaller memberMarshaller(Type memberType) {
             synchronized (memberCache) {
                 ArgumentMarshaller marshaller = memberCache.get(memberType);
                 if (marshaller != null) {
                     return marshaller;
                 }
 
-                marshaller = wrapped.getMemberMarshaller(memberType);
+                marshaller = wrapped.memberMarshaller(memberType);
                 memberCache.put(memberType, marshaller);
                 return marshaller;
             }
@@ -1415,14 +1415,14 @@ public final class ConversionSchemas {
         }
 
         @Override
-        public ArgumentUnmarshaller getMemberUnmarshaller(Type memberType) {
+        public ArgumentUnmarshaller memberUnmarshaller(Type memberType) {
             synchronized (memberCache) {
                 ArgumentUnmarshaller unmarshaller = memberCache.get(memberType);
                 if (unmarshaller != null) {
                     return unmarshaller;
                 }
 
-                unmarshaller = wrapped.getMemberUnmarshaller(memberType);
+                unmarshaller = wrapped.memberUnmarshaller(memberType);
                 memberCache.put(memberType, unmarshaller);
                 return unmarshaller;
             }
@@ -1439,7 +1439,7 @@ public final class ConversionSchemas {
 
         ItemConverterRuleFactory(DynamoDBMapperConfig config, S3Link.Factory s3Links, RuleFactory<V> typeConverters) {
             final ConversionSchema.Dependencies depends =
-                    new ConversionSchema.Dependencies().with(S3ClientCache.class, s3Links.getS3ClientCache());
+                    new ConversionSchema.Dependencies().with(S3ClientCache.class, s3Links.s3ClientCache());
             final ConversionSchema schema = config.getConversionSchema();
 
             this.customSchema = (schema != V1 && schema != V2_COMPATIBLE && schema != V2);

@@ -15,340 +15,171 @@
 
 package software.amazon.awssdk.services.dynamodb.document;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.document.spec.GetItemSpec;
-import software.amazon.awssdk.services.dynamodb.document.spec.PutItemSpec;
-import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
-import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
-import software.amazon.awssdk.services.dynamodb.document.utils.ValueMap;
-import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
+import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBQueryExpression;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.pojos.RangeKeyClass;
 
-public class QueryIntegrationTest extends IntegrationTestBase {
-    @Test
-    public void testHashOnlyAllDataTypes_New() {
-        Table table = dynamo.getTable(RANGE_TABLE_NAME);
-        Item item = new Item()
-                .withString(HASH_KEY_NAME, "allDataTypes")
-                .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withBoolean("booleanTrue", true)
-                .withBoolean("booleanFalse", false)
-                .withInt("intAttr", 1234)
-                .withList("listAtr", "abc", "123")
-                .withMap("mapAttr",
-                         new ValueMap()
-                                 .withString("key1", "value1")
-                                 .withInt("key2", 999))
-                .withNull("nullAttr")
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-        PutItemOutcome out = table.putItem(item);
-        System.out.println(out);
-        out = table.putItem(
-                item.withNumber(RANGE_KEY_NAME, 2)
-                    .withNumber("numberAttr", -100));
-        System.out.println(out);
-        ItemCollection<?> col = table.query(
-                HASH_KEY_NAME, "allDataTypes",
-                new RangeKeyCondition(RANGE_KEY_NAME).between(0, 10),
-                new QueryFilter("numberAttr").lt(0)
-                                           );
-        for (Item it : col) {
-            System.out.println(it);
+/**
+ * Integration tests for the query operation on DynamoDBMapper.
+ */
+public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
+
+    private static final long HASH_KEY = System.currentTimeMillis();
+    private static final int TEST_ITEM_NUMBER = 500;
+    private static RangeKeyClass hashKeyObject;
+    private static DynamoDBMapper mapper;
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        setUpTableWithRangeAttribute();
+
+        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(DynamoDBMapperConfig.ConsistentReads.CONSISTENT);
+        mapper = new DynamoDBMapper(dynamo, mapperConfig);
+
+        putTestData(mapper, TEST_ITEM_NUMBER);
+
+        hashKeyObject = new RangeKeyClass();
+        hashKeyObject.setKey(HASH_KEY);
+    }
+
+    /**
+     * Use BatchSave to put some test data into the tested table. Each item is
+     * hash-keyed by the same value, and range-keyed by numbers starting from 0.
+     */
+    private static void putTestData(DynamoDBMapper mapper, int itemNumber) {
+        List<RangeKeyClass> objs = new ArrayList<RangeKeyClass>();
+        for (int i = 0; i < itemNumber; i++) {
+            RangeKeyClass obj = new RangeKeyClass();
+            obj.setKey(HASH_KEY);
+            obj.setRangeKey(i);
+            obj.setBigDecimalAttribute(new BigDecimal(i));
+            objs.add(obj);
         }
+        mapper.batchSave(objs);
     }
 
     @Test
-    public void testItemIteration_Old() {
-        Table table = dynamoOld.getTable(RANGE_TABLE_NAME);
-        Item item = new Item()
-                .withString(HASH_KEY_NAME, "allDataTypes")
-                .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withInt("intAttr", 1234)
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-        PutItemOutcome out = table.putItem(item);
-        System.out.println(out);
-        for (int i = 2; i < 15; i++) {
-            out = table.putItem(item.withNumber(RANGE_KEY_NAME, i));
-        }
-        ItemCollection<?> col = table.query(HASH_KEY_NAME, "allDataTypes",
-                                            new RangeKeyCondition(RANGE_KEY_NAME).between(0, 10));
-        for (Item it : col) {
-            System.out.println(it);
-        }
-    }
+    public void testQueryWithPrimaryRangeKey() throws Exception {
+        DynamoDBQueryExpression<RangeKeyClass> queryExpression =
+                new DynamoDBQueryExpression<RangeKeyClass>()
+                        .withHashKeyValues(hashKeyObject)
+                        .withRangeKeyCondition(
+                                "rangeKey",
+                                Condition.builder_()
+                                        .comparisonOperator(ComparisonOperator.GT)
+                                        .attributeValueList(AttributeValue.builder_().n("1.0").build_())
+                                        .build_())
+                        .withLimit(11);
+        List<RangeKeyClass> list = mapper.query(RangeKeyClass.class, queryExpression);
 
-    @Test
-    public void testZeroIteration_Old() {
-        Table table = dynamoOld.getTable(RANGE_TABLE_NAME);
-        Item item = new Item()
-                .withString(HASH_KEY_NAME, "allDataTypes")
-                .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withInt("intAttr", 1234)
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-        PutItemOutcome out = table.putItem(item);
-        System.out.println(out);
-        for (int i = 1; i < 11; i++) {
-            out = table.putItem(item.withNumber(RANGE_KEY_NAME, i));
-        }
-        QuerySpec spec = new QuerySpec()
-                .withHashKey(HASH_KEY_NAME, "allDataTypes")
-                .withRangeKeyCondition(new RangeKeyCondition(RANGE_KEY_NAME).between(1, 10))
-                .withMaxPageSize(3);
         int count = 0;
-        ItemCollection<?> col = table.query(spec.withMaxResultSize(0));
-        for (Item it : col) {
+        Iterator<RangeKeyClass> iterator = list.iterator();
+        while (iterator.hasNext()) {
             count++;
-            System.out.println(it);
+            RangeKeyClass next = iterator.next();
+            assertTrue(next.getRangeKey() > 1.00);
         }
-        assertTrue(0, count);
-        count = 0;
-        int countPage = 0;
-        for (Page<Item, ?> page : col.pages()) {
-            countPage++;
-            for (Item it : page) {
-                count++;
-                System.out.println(it);
-            }
-        }
-        assertTrue(0, countPage);
-        assertTrue(0, count);
+
+        int numMatchingObjects = TEST_ITEM_NUMBER - 2;
+        assertEquals(count, numMatchingObjects);
+        assertEquals(numMatchingObjects, list.size());
+
+        assertNotNull(list.get(list.size() / 2));
+        assertTrue(list.contains(list.get(list.size() / 2)));
+        assertEquals(numMatchingObjects, list.toArray().length);
+
+        Thread.sleep(250);
+        int totalCount = mapper.count(RangeKeyClass.class, queryExpression);
+        assertEquals(numMatchingObjects, totalCount);
+
+        /**
+         * Tests query with only hash key
+         */
+        queryExpression = new DynamoDBQueryExpression<RangeKeyClass>().withHashKeyValues(hashKeyObject);
+        list = mapper.query(RangeKeyClass.class, queryExpression);
+        assertEquals(TEST_ITEM_NUMBER, list.size());
     }
 
+    /**
+     * Tests making queries using query filter on non-key attributes.
+     */
     @Test
-    public void testExactPageBoundary_Old() {
-        Table table = dynamoOld.getTable(RANGE_TABLE_NAME);
-        Item item = new Item()
-                .withString(HASH_KEY_NAME, "allDataTypes")
-                .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withInt("intAttr", 1234)
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-        PutItemOutcome out = table.putItem(item);
-        System.out.println(out);
-        for (int i = 1; i < 11; i++) {
-            out = table.putItem(item.withNumber(RANGE_KEY_NAME, i));
-        }
-        QuerySpec spec = new QuerySpec()
-                .withHashKey(HASH_KEY_NAME, "allDataTypes")
-                .withRangeKeyCondition(new RangeKeyCondition(RANGE_KEY_NAME).between(1, 10))
-                .withMaxPageSize(3);
-        int count = 0;
-        ItemCollection<?> col = table.query(spec.withMaxResultSize(9));
-        for (Item it : col) {
-            count++;
-            System.out.println(it);
-        }
-        assertTrue(9, count);
-        count = 0;
-        int countPage = 0;
-        for (Page<Item, ?> page : col.pages()) {
-            countPage++;
-            for (Item it : page) {
-                count++;
-                System.out.println(it);
-            }
-        }
-        assertTrue(3, countPage);
-        assertTrue(9, count);
-    }
+    public void testQueryFilter() {
+        // A random filter condition to be applied to the query.
+        Random random = new Random();
+        int randomFilterValue = random.nextInt(TEST_ITEM_NUMBER);
+        Condition filterCondition = Condition.builder_()
+                .comparisonOperator(ComparisonOperator.LT)
+                .attributeValueList(
+                        AttributeValue.builder_().n(Integer.toString(randomFilterValue)).build_()).build_();
 
-    @Test
-    public void testNonExactPageBoundary_Old() {
-        Table table = dynamoOld.getTable(RANGE_TABLE_NAME);
-        Item item = new Item()
-                .withString(HASH_KEY_NAME, "allDataTypes")
-                .withNumber(RANGE_KEY_NAME, 1)
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withInt("intAttr", 1234)
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-        PutItemOutcome out = table.putItem(item);
-        System.out.println(out);
-        for (int i = 1; i < 11; i++) {
-            out = table.putItem(item.withNumber(RANGE_KEY_NAME, i));
-        }
-        QuerySpec spec = new QuerySpec()
-                .withHashKey(HASH_KEY_NAME, "allDataTypes")
-                .withRangeKeyCondition(new RangeKeyCondition(RANGE_KEY_NAME).between(1, 10))
-                .withMaxPageSize(3);
-        int count = 0;
-        ItemCollection<?> col = table.query(spec);
-        for (Item it : col) {
-            count++;
-            System.out.println(it);
-        }
-        assertTrue(10, count);
-        count = 0;
-        int countPage = 0;
-        for (Page<Item, ?> page : col.pages()) {
-            countPage++;
-            for (Item it : page) {
-                count++;
-                System.out.println(it);
-            }
-        }
-        assertTrue(4, countPage);
-        assertTrue(10, count);
-    }
+        /*
+         * (1) Apply the filter on the range key, in form of key condition
+         */
+        DynamoDBQueryExpression<RangeKeyClass> queryWithRangeKeyCondition =
+                new DynamoDBQueryExpression<RangeKeyClass>()
+                        .withHashKeyValues(hashKeyObject)
+                        .withRangeKeyCondition("rangeKey", filterCondition);
+        List<RangeKeyClass> rangeKeyConditionResult = mapper.query(RangeKeyClass.class, queryWithRangeKeyCondition);
 
-    @Test
-    public void testHashOnlyPriorDataTypes() {
-        Table table = dynamoOld.getTable(HASH_ONLY_TABLE_NAME);
-        PutItemOutcome out = table.putItem(
-                new Item().with(HASH_KEY_NAME, "priorDataTypes")
-                          .withBinary("binary", new byte[] {1, 2, 3, 4})
-                          .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                          .withInt("intAttr", 1234)
-                          .withNumber("numberAttr", 999.1234)
-                          .withString("stringAttr", "bla")
-                          .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz")
-                                          );
-        System.out.println(out);
-    }
+        /*
+         * (2) Apply the filter on the bigDecimalAttribute, in form of query filter
+         */
+        DynamoDBQueryExpression<RangeKeyClass> queryWithQueryFilterCondition =
+                new DynamoDBQueryExpression<RangeKeyClass>()
+                        .withHashKeyValues(hashKeyObject)
+                        .withQueryFilter(Collections.singletonMap("bigDecimalAttribute", filterCondition));
+        List<RangeKeyClass> queryFilterResult = mapper.query(RangeKeyClass.class, queryWithQueryFilterCondition);
 
-    @Test
-    public void testHashOnlyAllDataTypesViaSpec() {
-        Table table = dynamo.getTable(HASH_ONLY_TABLE_NAME);
-
-        Item oldItem = new Item()
-                .with(HASH_KEY_NAME, "allDataTypesViaSpec")
-                .withInt("intAttr", 1234);
-        table.putItem(oldItem);
-
-        Item newItem = new Item()
-                .with(HASH_KEY_NAME, "allDataTypesViaSpec")
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withBoolean("booleanTrue", true)
-                .withBoolean("booleanFalse", false)
-                .withInt("intAttr", 1234)
-                .withList("listAtr", "abc", "123")
-                .withMap("mapAttr",
-                         new ValueMap()
-                                 .withString("key1", "value1")
-                                 .withInt("key2", 999))
-                .withNull("nullAttr")
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-
-        PutItemOutcome out = table.putItem(
-                new PutItemSpec()
-                        .withItem(newItem)
-                        .withExpected(
-                                new Expected(HASH_KEY_NAME).notContains("xyz"),
-                                new Expected("intAttr").between(1, 9999))
-                        .withReturnValues(ReturnValue.ALL_OLD)
-                                          );
-
-        Assert.assertTrue(ItemTestUtils.equalsItem(oldItem, out.getItem()));
-
-        Item getNewItem = table.getItem(new GetItemSpec().withPrimaryKey(new
-                                                                                 KeyAttribute(HASH_KEY_NAME,
-                                                                                              "allDataTypesViaSpec"))
-                                                         .withConsistentRead(true));
-        Assert.assertTrue(ItemTestUtils.equalsItem(newItem, getNewItem));
-
-    }
-
-    @Test
-    public void testConditionalExpression() {
-        Table table = dynamo.getTable(HASH_ONLY_TABLE_NAME);
-
-        final String hashKeyVal = "testConditionalExpression";
-        Item oldItem = new Item()
-                .with(HASH_KEY_NAME, hashKeyVal)
-                .withInt("intAttr", 1234);
-        table.putItem(oldItem);
-
-        Item newItem = new Item()
-                .with(HASH_KEY_NAME, hashKeyVal)
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withBoolean("booleanTrue", true)
-                .withBoolean("booleanFalse", false)
-                .withInt("intAttr", 1234)
-                .withList("listAtr", "abc", "123")
-                .withMap("mapAttr", new ValueMap()
-                        .withString("key1", "value1")
-                        .withInt("key2", 999))
-                .withNull("nullAttr")
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-        PutItemOutcome out = table.putItem(newItem,
-                                           "NOT (contains (#pk, :hashkeyAttr)) AND (intAttr BETWEEN :lo AND :hi)",
-                                           new NameMap().with("#pk", "hashkeyAttr"),
-                                           new ValueMap()
-                                                   .withString(":hashkeyAttr", "xyz")
-                                                   .withInt(":lo", 1)
-                                                   .withInt(":hi", 9999));
-
-        // By default PutItem returns no attributes
-        Assert.assertNull(out.getItem());
-
-        Item getNewItem = table.getItem(HASH_KEY_NAME, hashKeyVal);
-        Assert.assertTrue(ItemTestUtils.equalsItem(newItem, getNewItem));
-    }
-
-    @Test
-    public void testCollectionIteration() {
-        Table table = dynamoOld.getTable(RANGE_TABLE_NAME);
-        for (int i = 1; i <= 10; i++) {
-            table.deleteItem(HASH_KEY_NAME, "deleteTest", RANGE_KEY_NAME, i);
-        }
-        Item item = new Item()
-                .withPrimaryKey(HASH_KEY_NAME, "deleteTest", RANGE_KEY_NAME, 0)
-                .withBinary("binary", new byte[] {1, 2, 3, 4})
-                .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                .withInt("intAttr", 1234)
-                .withNumber("numberAttr", 999.1234)
-                .withString("stringAttr", "bla")
-                .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
-        for (int i = 1; i <= 10; i++) {
-            item.withKeyComponent(RANGE_KEY_NAME, i);
-            table.putItem(item);
-            ItemCollection<?> col = table.query(
-                    new QuerySpec()
-                            .withHashKey(HASH_KEY_NAME, "deleteTest")
-                            .withRangeKeyCondition(new RangeKeyCondition(RANGE_KEY_NAME).between(1, 10))
-                            .withMaxPageSize(3)
-                            .withMaxResultSize(i)
-                                               );
-            int rangeKeyValExpected = 0;
-            for (Item it : col) {
-                String hashKeyVal = it.getString(HASH_KEY_NAME);
-                Assert.assertEquals("deleteTest", hashKeyVal);
-                final int rangeKeyVal = it.getInt(RANGE_KEY_NAME);
-                assertTrue(++rangeKeyValExpected, rangeKeyVal);
-            }
-            assertTrue(i, rangeKeyValExpected);
+        assertEquals(rangeKeyConditionResult.size(), queryFilterResult.size());
+        for (int i = 0; i < rangeKeyConditionResult.size(); i++) {
+            assertEquals(rangeKeyConditionResult.get(i), queryFilterResult.get(i));
         }
     }
 
+    /**
+     * Tests that exception should be raised when user provides an index name
+     * when making query with the primary range key.
+     */
     @Test
-    public void testQueryByHashKeyOnly() {
-        Table table = dynamo.getTable(HASH_ONLY_TABLE_NAME);
-        ItemCollection<?> col = table.query(HASH_KEY_NAME, "allDataTypes");
-        for (Item item : col) {
-            System.out.println(item);
+    public void testUnnecessaryIndexNameException() {
+        try {
+            DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+            long hashKey = System.currentTimeMillis();
+            RangeKeyClass keyObject = new RangeKeyClass();
+            keyObject.setKey(hashKey);
+            DynamoDBQueryExpression<RangeKeyClass> queryExpression = new DynamoDBQueryExpression<RangeKeyClass>()
+                    .withHashKeyValues(keyObject);
+            queryExpression.withRangeKeyCondition("rangeKey",
+                    Condition.builder_().comparisonOperator(ComparisonOperator.GT.toString())
+                            .attributeValueList(
+                                    AttributeValue.builder_().n("1.0").build_()).build_()).withLimit(11)
+                    .withIndexName("some_index");
+            mapper.query(RangeKeyClass.class, queryExpression);
+            fail("User should not provide index name when making query with the primary range key");
+        } catch (IllegalArgumentException expected) {
+            System.out.println(expected.getMessage());
+        } catch (Exception e) {
+            fail("Should trigger AmazonClientException.");
         }
+
     }
 }

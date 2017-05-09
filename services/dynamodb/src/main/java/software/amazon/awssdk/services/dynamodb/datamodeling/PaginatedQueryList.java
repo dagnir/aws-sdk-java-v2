@@ -39,7 +39,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResult;
 public class PaginatedQueryList<T> extends PaginatedList<T> {
 
     /** The current query request. */
-    private final QueryRequest queryRequest;
+    private QueryRequest queryRequest;
 
     private final DynamoDBMapperConfig config;
 
@@ -63,9 +63,9 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
 
         allResults.addAll(mapper.marshallIntoObjects(
                 mapper.toParameters(
-                        queryResult.getItems(),
+                        queryResult.items(),
                         clazz,
-                        queryRequest.getTableName(),
+                        queryRequest.tableName(),
                         config)));
 
         // If the results should be eagerly loaded at once
@@ -76,17 +76,17 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
 
     @Override
     protected synchronized boolean atEndOfResults() {
-        return queryResult.getLastEvaluatedKey() == null;
+        return queryResult.lastEvaluatedKey() == null;
     }
 
     @Override
     protected synchronized List<T> fetchNextPage() {
-        queryRequest.setExclusiveStartKey(queryResult.getLastEvaluatedKey());
+        queryRequest = queryRequest.toBuilder().exclusiveStartKey(queryResult.lastEvaluatedKey()).build_();
         queryResult = dynamo.query(DynamoDBMapper.applyUserAgent(queryRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
-                queryResult.getItems(),
+                queryResult.items(),
                 clazz,
-                queryRequest.getTableName(),
+                queryRequest.tableName(),
                 config));
     }
 }

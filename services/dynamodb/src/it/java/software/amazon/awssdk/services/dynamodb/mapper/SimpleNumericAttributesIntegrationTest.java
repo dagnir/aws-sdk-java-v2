@@ -70,23 +70,23 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, new AttributeValue().withS("" + start++));
-            attr.put(INT_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(INTEGER_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(FLOAT_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(FLOAT_OBJECT_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(DOUBLE_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(DOUBLE_OBJECT_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(BIG_INTEGER_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(BIG_DECIMAL_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(LONG_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(LONG_OBJECT_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(BYTE_ATTRIBUTE, new AttributeValue().withN("" + byteStart++));
-            attr.put(BYTE_OBJECT_ATTRIBUTE, new AttributeValue().withN("" + byteStart++));
-            attr.put(BOOLEAN_ATTRIBUTE, new AttributeValue().withN(start++ % 2 == 0 ? "1" : "0"));
-            attr.put(BOOLEAN_OBJECT_ATTRIBUTE, new AttributeValue().withN(start++ % 2 == 0 ? "1" : "0"));
-            attr.put(SHORT_ATTRIBUTE, new AttributeValue().withN("" + byteStart++));
-            attr.put(SHORT_OBJECT_ATTRIBUTE, new AttributeValue().withN("" + byteStart++));
+            attr.put(KEY_NAME, AttributeValue.builder_().s("" + start++).build_());
+            attr.put(INT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(FLOAT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(FLOAT_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(DOUBLE_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(DOUBLE_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(BIG_INTEGER_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(LONG_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(LONG_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(BYTE_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
+            attr.put(BYTE_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
+            attr.put(BOOLEAN_ATTRIBUTE, AttributeValue.builder_().n(start++ % 2 == 0 ? "1" : "0").build_());
+            attr.put(BOOLEAN_OBJECT_ATTRIBUTE, AttributeValue.builder_().n(start++ % 2 == 0 ? "1" : "0").build_());
+            attr.put(SHORT_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
+            attr.put(SHORT_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
             attrs.add(attr);
         }
     }
@@ -99,7 +99,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(new PutItemRequest(TABLE_NAME, attr));
+            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_NAME).item(attr).build_());
         }
     }
 
@@ -114,26 +114,26 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
         DynamoDBMapper util = new DynamoDBMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
-            NumberAttributeClass x = util.load(getKeyObject(attr.get(KEY_NAME).getS()));
-            assertEquals(x.getKey(), attr.get(KEY_NAME).getS());
+            NumberAttributeClass x = util.load(getKeyObject(attr.get(KEY_NAME).s()));
+            assertEquals(x.getKey(), attr.get(KEY_NAME).s());
 
             // Convert all numbers to the most inclusive type for easy comparison
-            assertEquals(x.getBigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getBigIntegerAttribute()), new BigDecimal(attr.get(BIG_INTEGER_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getFloatAttribute()), new BigDecimal(attr.get(FLOAT_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getFloatObjectAttribute()), new BigDecimal(attr.get(FLOAT_OBJECT_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getDoubleAttribute()), new BigDecimal(attr.get(DOUBLE_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getDoubleObjectAttribute()), new BigDecimal(attr.get(DOUBLE_OBJECT_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getIntAttribute()), new BigDecimal(attr.get(INT_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getIntegerAttribute()), new BigDecimal(attr.get(INTEGER_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getLongAttribute()), new BigDecimal(attr.get(LONG_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getLongObjectAttribute()), new BigDecimal(attr.get(LONG_OBJECT_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getByteAttribute()), new BigDecimal(attr.get(BYTE_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getByteObjectAttribute()), new BigDecimal(attr.get(BYTE_OBJECT_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getShortAttribute()), new BigDecimal(attr.get(SHORT_ATTRIBUTE).getN()));
-            assertEquals(new BigDecimal(x.getShortObjectAttribute()), new BigDecimal(attr.get(SHORT_OBJECT_ATTRIBUTE).getN()));
-            assertEquals(x.isBooleanAttribute(), attr.get(BOOLEAN_ATTRIBUTE).getN().equals("1"));
-            assertEquals(x.getBooleanObjectAttribute(), attr.get(BOOLEAN_OBJECT_ATTRIBUTE).getN().equals("1"));
+            assertEquals(x.bigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.bigIntegerAttribute()), new BigDecimal(attr.get(BIG_INTEGER_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.getFloatAttribute()), new BigDecimal(attr.get(FLOAT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.getFloatObjectAttribute()), new BigDecimal(attr.get(FLOAT_OBJECT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.getDoubleAttribute()), new BigDecimal(attr.get(DOUBLE_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.getDoubleObjectAttribute()), new BigDecimal(attr.get(DOUBLE_OBJECT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.getIntAttribute()), new BigDecimal(attr.get(INT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.getIntegerAttribute()), new BigDecimal(attr.get(INTEGER_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.longAttribute()), new BigDecimal(attr.get(LONG_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.longObjectAttribute()), new BigDecimal(attr.get(LONG_OBJECT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.byteAttribute()), new BigDecimal(attr.get(BYTE_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.byteObjectAttribute()), new BigDecimal(attr.get(BYTE_OBJECT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.shortAttribute()), new BigDecimal(attr.get(SHORT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.shortObjectAttribute()), new BigDecimal(attr.get(SHORT_OBJECT_ATTRIBUTE).n()));
+            assertEquals(x.isBooleanAttribute(), attr.get(BOOLEAN_ATTRIBUTE).n().equals("1"));
+            assertEquals(x.booleanObjectAttribute(), attr.get(BOOLEAN_OBJECT_ATTRIBUTE).n().equals("1"));
         }
 
         // Test loading an object that doesn't exist
@@ -235,12 +235,12 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
         DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
         mapper.save(obj);
 
-        GetItemResult item = dynamo.getItem(new GetItemRequest().withTableName("aws-java-sdk-util").withKey(
-                getMapKey(KEY_NAME, new AttributeValue().withS(obj.getKey()))));
+        GetItemResult item = dynamo.getItem(GetItemRequest.builder_().tableName("aws-java-sdk-util").key(
+                mapKey(KEY_NAME, AttributeValue.builder_().s(obj.getKey()).build_())).build_());
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
-            mapper.marshallIntoObject(NumberAttributeClass.class, item.getItem());
+            mapper.marshallIntoObject(NumberAttributeClass.class, item.item());
         }
 
         long end = System.currentTimeMillis();

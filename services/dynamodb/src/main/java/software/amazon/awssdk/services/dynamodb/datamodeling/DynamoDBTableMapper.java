@@ -15,11 +15,13 @@
 
 package software.amazon.awssdk.services.dynamodb.datamodeling;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.RequestBuilder;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -112,15 +114,15 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
  * QueryResultPage&lt;TestClass&gt; results = new QueryResultPage&lt;TestClass&gt;();
  *
  * do {
- *     if (results.getLastEvaluatedKey() != null) {
- *         query.setExclusiveStartKey(results.getLastEvaluatedKey());
+ *     if (results.lastEvaluatedKey() != null) {
+ *         query.setExclusiveStartKey(results.lastEvaluatedKey());
  *     }
  *     query.setLimit(limit - objects.size());
  *     results = mapper.query(query);
  *     for (TestClass object : results.getResults()) {
  *         objects.add(object);
  *     }
- * } while (results.getLastEvaluatedKey() != null &amp;&amp; objects.size() &lt; limit)
+ * } while (results.lastEvaluatedKey() != null &amp;&amp; objects.size() &lt; limit)
  * </pre>
  *
  * @param <T> The object type which this mapper operates.
@@ -285,8 +287,8 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
     public void saveIfNotExists(T object) throws ConditionalCheckFailedException {
         final DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
         for (final DynamoDBMapperFieldModel<T, Object> key : model.keys()) {
-            saveExpression.withExpectedEntry(key.name(), new ExpectedAttributeValue()
-                    .withExists(false));
+            saveExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder_()
+                    .exists(false).build_());
         }
         mapper.<T>save(object, saveExpression);
     }
@@ -303,8 +305,8 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
     public void saveIfExists(T object) throws ConditionalCheckFailedException {
         final DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
         for (final DynamoDBMapperFieldModel<T, Object> key : model.keys()) {
-            saveExpression.withExpectedEntry(key.name(), new ExpectedAttributeValue()
-                    .withExists(true).withValue(key.convert(key.get(object))));
+            saveExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder_()
+                    .exists(true).value(key.convert(key.get(object))).build_());
         }
         mapper.<T>save(object, saveExpression);
     }
@@ -341,8 +343,8 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
     public void deleteIfExists(T object) throws ConditionalCheckFailedException {
         final DynamoDBDeleteExpression deleteExpression = new DynamoDBDeleteExpression();
         for (final DynamoDBMapperFieldModel<T, Object> key : model.keys()) {
-            deleteExpression.withExpectedEntry(key.name(), new ExpectedAttributeValue()
-                    .withExists(true).withValue(key.convert(key.get(object))));
+            deleteExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder_()
+                    .exists(true).value(key.convert(key.get(object))).build_());
         }
         mapper.delete(object, deleteExpression);
     }
@@ -434,7 +436,10 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * @see DynamoDBClient#describeTable
      */
     public TableDescription describeTable() {
-        return db.describeTable(new DescribeTableRequest(mapper.getTableName(model.targetType(), config))).getTable();
+        return db.describeTable(DescribeTableRequest.builder_()
+                .tableName(mapper.getTableName(model.targetType(), config))
+                .build_())
+                .table();
     }
 
     /**
@@ -446,14 +451,18 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
      * @see software.amazon.awssdk.services.dynamodb.model.CreateTableRequest
      */
     public TableDescription createTable(ProvisionedThroughput throughput) {
-        final CreateTableRequest request = mapper.generateCreateTableRequest(model.targetType());
-        request.setProvisionedThroughput(throughput);
-        if (request.getGlobalSecondaryIndexes() != null) {
-            for (final GlobalSecondaryIndex gsi : request.getGlobalSecondaryIndexes()) {
-                gsi.setProvisionedThroughput(throughput);
+        CreateTableRequest request = mapper.generateCreateTableRequest(model.targetType());
+        CreateTableRequest.Builder modified = request.toBuilder()
+                .provisionedThroughput(throughput);
+        if (request.globalSecondaryIndexes() != null) {
+            modified.globalSecondaryIndexes((Collection<GlobalSecondaryIndex>)null);
+            for (GlobalSecondaryIndex gsi : request.globalSecondaryIndexes()) {
+                gsi = gsi.toBuilder().provisionedThroughput(throughput).build_();
+                modified.globalSecondaryIndexes(gsi);
             }
+            request = modified.build_();
         }
-        return db.createTable(request).getTableDescription();
+        return db.createTable(request).tableDescription();
     }
 
     /**
@@ -485,7 +494,7 @@ public final class DynamoDBTableMapper<T extends Object, H extends Object, R ext
     public TableDescription deleteTable() {
         return db.deleteTable(
                 mapper.generateDeleteTableRequest(model.targetType())
-                             ).getTableDescription();
+                             ).tableDescription();
     }
 
     /**

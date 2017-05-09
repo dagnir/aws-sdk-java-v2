@@ -84,7 +84,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      */
     protected void createLaunchConfiguration(String name) {
         CreateLaunchConfigurationRequest createRequest = new CreateLaunchConfigurationRequest()
-                .withLaunchConfigurationName(name).withImageId(AMI_ID).withInstanceType(INSTANCE_TYPE);
+                .launchConfigurationName(name).imageId(AMI_ID).instanceType(INSTANCE_TYPE);
         autoscaling.createLaunchConfiguration(createRequest);
     }
 
@@ -98,8 +98,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      */
     protected void createAutoscalingGroup(String name, String launchConfigurationName) {
         CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(name).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+                .autoScalingGroupName(name).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1);
         autoscaling.createAutoScalingGroup(createRequest);
     }
 

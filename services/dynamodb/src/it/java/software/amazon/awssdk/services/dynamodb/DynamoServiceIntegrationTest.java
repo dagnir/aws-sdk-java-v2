@@ -103,18 +103,19 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
     public void testNullQueryKeyErrorHandling() {
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
         // Put a valid item first
-        item.put(HASH_KEY_NAME, new AttributeValue("bar"));
-        item.put("age", new AttributeValue("30"));
-        PutItemRequest putItemRequest = new PutItemRequest(tableName, item).withReturnValues(ReturnValue.ALL_OLD
-                                                                                                     .toString());
+        item.put(HASH_KEY_NAME, AttributeValue.builder_().s("bar").build_());
+        item.put("age", AttributeValue.builder_().s("30").build_());
+        PutItemRequest putItemRequest = PutItemRequest.builder_().tableName(tableName).item(item).returnValues(ReturnValue.ALL_OLD
+                                                                                                     .toString()).build_();
         dynamo.putItem(putItemRequest);
         Map<String, KeysAndAttributes> items = new HashMap<String, KeysAndAttributes>();
         // Put a valid key and a null one
         items.put(tableName,
-                  new KeysAndAttributes().withKeys(getMapKey(HASH_KEY_NAME, new AttributeValue().withS("bar")), null));
+                  KeysAndAttributes.builder_().keys(mapKey(HASH_KEY_NAME, AttributeValue.builder_().s("bar").build_()), null).build_());
 
-        BatchGetItemRequest request = new BatchGetItemRequest();
-        request.setRequestItems(items);
+        BatchGetItemRequest request =BatchGetItemRequest.builder_()
+                .requestItems(items)
+                .build_();
 
         try {
             dynamo.batchGetItem(request);
@@ -125,13 +126,13 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         Map<String, List<WriteRequest>> requestItems = new HashMap<String, List<WriteRequest>>();
         List<WriteRequest> writeRequests = new ArrayList<WriteRequest>();
         Map<String, AttributeValue> writeAttributes = new HashMap<String, AttributeValue>();
-        writeAttributes.put(HASH_KEY_NAME, new AttributeValue().withS("" + System.currentTimeMillis()));
-        writeAttributes.put("bar", new AttributeValue().withS("" + System.currentTimeMillis()));
-        writeRequests.add(new WriteRequest().withPutRequest(new PutRequest().withItem(writeAttributes)));
-        writeRequests.add(new WriteRequest().withPutRequest(new PutRequest().withItem(null)));
+        writeAttributes.put(HASH_KEY_NAME, AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+        writeAttributes.put("bar", AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+        writeRequests.add(WriteRequest.builder_().putRequest(PutRequest.builder_().item(writeAttributes).build_()).build_());
+        writeRequests.add(WriteRequest.builder_().putRequest(PutRequest.builder_().item(null).build_()).build_());
         requestItems.put(tableName, writeRequests);
         try {
-            dynamo.batchWriteItem(new BatchWriteItemRequest().withRequestItems(requestItems));
+            dynamo.batchWriteItem(BatchWriteItemRequest.builder_().requestItems(requestItems).build_());
         } catch (AmazonServiceException ase) {
             assertEquals("ValidationException", ase.getErrorCode());
         }
@@ -144,7 +145,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
     @Test
     public void testErrorHandling() throws Exception {
 
-        DeleteTableRequest request = new DeleteTableRequest("non-existant-table");
+        DeleteTableRequest request = DeleteTableRequest.builder_().tableName("non-existant-table").build_();
         try {
             dynamo.deleteTable(request);
             fail("Expected an exception to be thrown");
@@ -168,11 +169,10 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
     // AmazonServiceException.
     // @Test
     public void testRequestEntityTooLargeErrorHandling() throws Exception {
-        BatchGetItemRequest request = new BatchGetItemRequest();
 
         Map<String, KeysAndAttributes> items = new HashMap<String, KeysAndAttributes>();
         for (int i = 0; i < 1024; i++) {
-            KeysAndAttributes kaa = new KeysAndAttributes();
+            KeysAndAttributes kaa = KeysAndAttributes.builder_().build_();
             StringBuilder bigString = new StringBuilder();
             for (int j = 0; j < 1024; j++) {
                 bigString.append("a");
@@ -180,7 +180,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
             bigString.append(i);
             items.put(bigString.toString(), kaa);
         }
-        request.setRequestItems(items);
+        BatchGetItemRequest request = BatchGetItemRequest.builder_().requestItems(items).build_();
 
         try {
             dynamo.batchGetItem(request);
@@ -199,13 +199,13 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         List<WriteRequest> writeRequests = new ArrayList<WriteRequest>();
         for (int i = 0; i < itemNumber; i++) {
             HashMap<String, AttributeValue> writeAttributes = new HashMap<String, AttributeValue>();
-            writeAttributes.put(HASH_KEY_NAME, new AttributeValue().withS("" + System.currentTimeMillis()));
-            writeAttributes.put("bar", new AttributeValue().withS("" + System.currentTimeMillis()));
-            writeRequests.add(new WriteRequest().withPutRequest(new PutRequest().withItem(writeAttributes)));
+            writeAttributes.put(HASH_KEY_NAME, AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+            writeAttributes.put("bar", AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+            writeRequests.add(WriteRequest.builder_().putRequest(PutRequest.builder_().item(writeAttributes).build_()).build_());
         }
         requestItems.put(tableName, writeRequests);
         try {
-            dynamo.batchWriteItem(new BatchWriteItemRequest().withRequestItems(requestItems));
+            dynamo.batchWriteItem(BatchWriteItemRequest.builder_().requestItems(requestItems).build_());
         } catch (AmazonServiceException ase) {
             assertEquals("ValidationException", ase.getErrorCode());
             assertEquals(AmazonServiceException.ErrorType.Client, ase.getErrorType());
@@ -223,18 +223,18 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
     @Test
     public void testServiceOperations() throws Exception {
         // Describe all tables
-        ListTablesResult describeTablesResult = dynamo.listTables(new ListTablesRequest());
+        ListTablesResult describeTablesResult = dynamo.listTables(ListTablesRequest.builder_().build_());
 
         // Describe our new table
-        DescribeTableRequest describeTablesRequest = new DescribeTableRequest().withTableName(tableName);
-        TableDescription tableDescription = dynamo.describeTable(describeTablesRequest).getTable();
-        assertEquals(tableName, tableDescription.getTableName());
-        assertNotNull(tableDescription.getTableStatus());
-        assertEquals(HASH_KEY_NAME, tableDescription.getKeySchema().get(0).getAttributeName());
-        assertEquals(KeyType.HASH.toString(), tableDescription.getKeySchema().get(0).getKeyType());
-        assertNotNull(tableDescription.getProvisionedThroughput().getNumberOfDecreasesToday());
-        assertEquals(READ_CAPACITY, tableDescription.getProvisionedThroughput().getReadCapacityUnits());
-        assertEquals(WRITE_CAPACITY, tableDescription.getProvisionedThroughput().getWriteCapacityUnits());
+        DescribeTableRequest describeTablesRequest = DescribeTableRequest.builder_().tableName(tableName).build_();
+        TableDescription tableDescription = dynamo.describeTable(describeTablesRequest).table();
+        assertEquals(tableName, tableDescription.tableName());
+        assertNotNull(tableDescription.tableStatus());
+        assertEquals(HASH_KEY_NAME, tableDescription.keySchema().get(0).attributeName());
+        assertEquals(KeyType.HASH.toString(), tableDescription.keySchema().get(0).keyType());
+        assertNotNull(tableDescription.provisionedThroughput().numberOfDecreasesToday());
+        assertEquals(READ_CAPACITY, tableDescription.provisionedThroughput().readCapacityUnits());
+        assertEquals(WRITE_CAPACITY, tableDescription.provisionedThroughput().writeCapacityUnits());
 
         // Add some data
         int contentLength = 1 * 1024;
@@ -243,40 +243,40 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         byteBufferSet.add(ByteBuffer.wrap(generateByteArray(contentLength + 1)));
 
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(HASH_KEY_NAME, new AttributeValue("bar"));
-        item.put("age", new AttributeValue().withN("30"));
-        item.put("bar", new AttributeValue("" + System.currentTimeMillis()));
-        item.put("foos", new AttributeValue().withSS("bleh", "blah"));
-        item.put("S", new AttributeValue().withSS("ONE", "TWO"));
-        item.put("blob", new AttributeValue().withB(ByteBuffer.wrap(generateByteArray(contentLength))));
-        item.put("blobs", new AttributeValue().withBS(ByteBuffer.wrap(generateByteArray(contentLength)),
-                                                      ByteBuffer.wrap(generateByteArray(contentLength + 1))));
-        item.put("BS", new AttributeValue().withBS(byteBufferSet));
+        item.put(HASH_KEY_NAME, AttributeValue.builder_().s("bar").build_());
+        item.put("age", AttributeValue.builder_().n("30").build_());
+        item.put("bar", AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+        item.put("foos", AttributeValue.builder_().ss("bleh", "blah").build_());
+        item.put("S", AttributeValue.builder_().ss("ONE", "TWO").build_());
+        item.put("blob", AttributeValue.builder_().b(ByteBuffer.wrap(generateByteArray(contentLength))).build_());
+        item.put("blobs", AttributeValue.builder_().bs(ByteBuffer.wrap(generateByteArray(contentLength)),
+                                                      ByteBuffer.wrap(generateByteArray(contentLength + 1))).build_());
+        item.put("BS", AttributeValue.builder_().bs(byteBufferSet).build_());
 
-        PutItemRequest putItemRequest = new PutItemRequest(tableName, item).withReturnValues(ReturnValue.ALL_OLD.toString());
+        PutItemRequest putItemRequest = PutItemRequest.builder_().tableName(tableName).item(item).returnValues(ReturnValue.ALL_OLD.toString()).build_();
 
         PutItemResult putItemResult = dynamo.putItem(putItemRequest);
 
         // Get our new item
-        GetItemResult getItemResult = dynamo.getItem(new GetItemRequest(tableName, getMapKey(HASH_KEY_NAME,
-                                                                                             new AttributeValue("bar")))
-                                                             .withConsistentRead(true));
-        assertNotNull(getItemResult.getItem().get("S").getSS());
-        assertEquals(2, getItemResult.getItem().get("S").getSS().size());
-        assertTrue(getItemResult.getItem().get("S").getSS().contains("ONE"));
-        assertTrue(getItemResult.getItem().get("S").getSS().contains("TWO"));
-        assertEquals("30", getItemResult.getItem().get("age").getN());
-        assertNotNull(getItemResult.getItem().get("bar").getS());
-        assertNotNull(getItemResult.getItem().get("blob").getB());
-        assertEquals(0, getItemResult.getItem().get("blob").getB().compareTo(ByteBuffer.wrap(generateByteArray(contentLength))));
-        assertNotNull(getItemResult.getItem().get("blobs").getBS());
-        assertEquals(2, getItemResult.getItem().get("blobs").getBS().size());
-        assertTrue(getItemResult.getItem().get("blobs").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
-        assertTrue(getItemResult.getItem().get("blobs").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
-        assertNotNull(getItemResult.getItem().get("BS").getBS());
-        assertEquals(2, getItemResult.getItem().get("BS").getBS().size());
-        assertTrue(getItemResult.getItem().get("BS").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
-        assertTrue(getItemResult.getItem().get("BS").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
+        GetItemResult itemResult = dynamo.getItem(GetItemRequest.builder_().tableName(tableName).key(mapKey(HASH_KEY_NAME,
+                                                                                             AttributeValue.builder_().s("bar").build_()))
+                                                             .consistentRead(true).build_());
+        assertNotNull(itemResult.item().get("S").ss());
+        assertEquals(2, itemResult.item().get("S").ss().size());
+        assertTrue(itemResult.item().get("S").ss().contains("ONE"));
+        assertTrue(itemResult.item().get("S").ss().contains("TWO"));
+        assertEquals("30", itemResult.item().get("age").n());
+        assertNotNull(itemResult.item().get("bar").s());
+        assertNotNull(itemResult.item().get("blob").b());
+        assertEquals(0, itemResult.item().get("blob").b().compareTo(ByteBuffer.wrap(generateByteArray(contentLength))));
+        assertNotNull(itemResult.item().get("blobs").bs());
+        assertEquals(2, itemResult.item().get("blobs").bs().size());
+        assertTrue(itemResult.item().get("blobs").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
+        assertTrue(itemResult.item().get("blobs").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
+        assertNotNull(itemResult.item().get("BS").bs());
+        assertEquals(2, itemResult.item().get("BS").bs().size());
+        assertTrue(itemResult.item().get("BS").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
+        assertTrue(itemResult.item().get("BS").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
 
         // Pause to try and deal with ProvisionedThroughputExceededExceptions
         Thread.sleep(1000 * 20);
@@ -286,31 +286,31 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         byteBuffer.put(generateByteArray(contentLength));
         byteBuffer.flip();
         item = new HashMap<String, AttributeValue>();
-        item.put(HASH_KEY_NAME, new AttributeValue().withB(byteBuffer));
+        item.put(HASH_KEY_NAME, AttributeValue.builder_().b(byteBuffer).build_());
         // Reuse the byteBuffer
-        item.put("blob", new AttributeValue().withB(byteBuffer));
-        item.put("blobs", new AttributeValue().withBS(ByteBuffer.wrap(generateByteArray(contentLength)),
-                                                      ByteBuffer.wrap(generateByteArray(contentLength + 1))));
+        item.put("blob", AttributeValue.builder_().b(byteBuffer).build_());
+        item.put("blobs", AttributeValue.builder_().bs(ByteBuffer.wrap(generateByteArray(contentLength)),
+                                                      ByteBuffer.wrap(generateByteArray(contentLength + 1))).build_());
         // Reuse the byteBufferSet
-        item.put("BS", new AttributeValue().withBS(byteBufferSet));
+        item.put("BS", AttributeValue.builder_().bs(byteBufferSet).build_());
 
-        putItemRequest = new PutItemRequest(binaryKeyTableName, item).withReturnValues(ReturnValue.ALL_OLD.toString());
+        putItemRequest = PutItemRequest.builder_().tableName(binaryKeyTableName).item(item).returnValues(ReturnValue.ALL_OLD.toString()).build_();
         dynamo.putItem(putItemRequest);
 
         // Get our new item
-        getItemResult = dynamo.getItem(new GetItemRequest(binaryKeyTableName, getMapKey(HASH_KEY_NAME,
-                                                                                        new AttributeValue().withB(byteBuffer)))
-                                               .withConsistentRead(true));
-        assertNotNull(getItemResult.getItem().get("blob").getB());
-        assertEquals(0, getItemResult.getItem().get("blob").getB().compareTo(ByteBuffer.wrap(generateByteArray(contentLength))));
-        assertNotNull(getItemResult.getItem().get("blobs").getBS());
-        assertEquals(2, getItemResult.getItem().get("blobs").getBS().size());
-        assertTrue(getItemResult.getItem().get("blobs").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
-        assertTrue(getItemResult.getItem().get("blobs").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
-        assertNotNull(getItemResult.getItem().get("BS").getBS());
-        assertEquals(2, getItemResult.getItem().get("BS").getBS().size());
-        assertTrue(getItemResult.getItem().get("BS").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
-        assertTrue(getItemResult.getItem().get("BS").getBS().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
+        itemResult = dynamo.getItem(GetItemRequest.builder_().tableName(binaryKeyTableName).key(mapKey(HASH_KEY_NAME,
+                                                                                        AttributeValue.builder_().b(byteBuffer).build_()))
+                                               .consistentRead(true).build_());
+        assertNotNull(itemResult.item().get("blob").b());
+        assertEquals(0, itemResult.item().get("blob").b().compareTo(ByteBuffer.wrap(generateByteArray(contentLength))));
+        assertNotNull(itemResult.item().get("blobs").bs());
+        assertEquals(2, itemResult.item().get("blobs").bs().size());
+        assertTrue(itemResult.item().get("blobs").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
+        assertTrue(itemResult.item().get("blobs").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
+        assertNotNull(itemResult.item().get("BS").bs());
+        assertEquals(2, itemResult.item().get("BS").bs().size());
+        assertTrue(itemResult.item().get("BS").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength))));
+        assertTrue(itemResult.item().get("BS").bs().contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
 
         // Pause to try and deal with ProvisionedThroughputExceededExceptions
         Thread.sleep(1000 * 20);
@@ -320,89 +320,96 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         Random random = new Random();
         for (int i = 0; i < 50; i++) {
             item = new HashMap<String, AttributeValue>();
-            item.put(HASH_KEY_NAME, new AttributeValue("bar-" + System.currentTimeMillis()));
-            item.put("age", new AttributeValue().withN(Integer.toString(random.nextInt(100) + 30)));
-            item.put("bar", new AttributeValue("" + System.currentTimeMillis()));
-            item.put("foos", new AttributeValue().withSS("bleh", "blah"));
-            dynamo.putItem(new PutItemRequest(tableName, item).withReturnValues(ReturnValue.ALL_OLD.toString()));
+            item.put(HASH_KEY_NAME, AttributeValue.builder_().s("bar-" + System.currentTimeMillis()).build_());
+            item.put("age", AttributeValue.builder_().n(Integer.toString(random.nextInt(100) + 30)).build_());
+            item.put("bar", AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+            item.put("foos", AttributeValue.builder_().ss("bleh", "blah").build_());
+            dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).returnValues(ReturnValue.ALL_OLD.toString()).build_());
         }
 
         // Update an item
         Map<String, AttributeValueUpdate> itemUpdates = new HashMap<String, AttributeValueUpdate>();
-        itemUpdates.put("1", new AttributeValueUpdate(new AttributeValue("¢"), AttributeAction.PUT.toString()));
-        itemUpdates.put("foos", new AttributeValueUpdate(new AttributeValue().withSS("foo"), AttributeAction.PUT.toString()));
-        itemUpdates.put("S", new AttributeValueUpdate(new AttributeValue().withSS("THREE"), AttributeAction.ADD.toString()));
-        itemUpdates.put("age", new AttributeValueUpdate(new AttributeValue().withN("10"), AttributeAction.ADD.toString()));
-        itemUpdates.put("blob", new AttributeValueUpdate(
-                new AttributeValue().withB(ByteBuffer.wrap(generateByteArray(contentLength + 1))),
-                AttributeAction.PUT.toString()));
+        itemUpdates.put("1", AttributeValueUpdate.builder_().value(AttributeValue.builder_().s("¢").build_()).action(AttributeAction.PUT.toString()).build_());
+        itemUpdates.put("foos", AttributeValueUpdate.builder_().value(AttributeValue.builder_().ss("foo").build_()).action(AttributeAction.PUT.toString()).build_());
+        itemUpdates.put("S", AttributeValueUpdate.builder_().value(AttributeValue.builder_().ss("THREE").build_()).action(AttributeAction.ADD.toString()).build_());
+        itemUpdates.put("age", AttributeValueUpdate.builder_().value(AttributeValue.builder_().n("10").build_()).action(AttributeAction.ADD.toString()).build_());
+        itemUpdates.put("blob", AttributeValueUpdate.builder_().value(
+                AttributeValue.builder_().b(ByteBuffer.wrap(generateByteArray(contentLength + 1))).build_()).action(
+                AttributeAction.PUT.toString()).build_());
         itemUpdates.put("blobs",
-                        new AttributeValueUpdate(new AttributeValue().withBS(ByteBuffer.wrap(generateByteArray(contentLength))),
-                                                 AttributeAction.PUT.toString()));
-        UpdateItemRequest updateItemRequest = new UpdateItemRequest(tableName,
-                                                                    getMapKey(HASH_KEY_NAME, new AttributeValue("bar")),
-                                                                    itemUpdates).withReturnValues("ALL_NEW");
+                        AttributeValueUpdate.builder_().value(AttributeValue.builder_().bs(ByteBuffer.wrap(generateByteArray(contentLength))).build_()).action(
+                                                 AttributeAction.PUT.toString()).build_());
+        UpdateItemRequest updateItemRequest = UpdateItemRequest.builder_().tableName(tableName).key(
+                mapKey(HASH_KEY_NAME, AttributeValue.builder_().s("bar").build_())).attributeUpdates(
+                itemUpdates).returnValues("ALL_NEW").build_();
 
         UpdateItemResult updateItemResult = dynamo.updateItem(updateItemRequest);
 
-        assertEquals("¢", updateItemResult.getAttributes().get("1").getS());
-        assertEquals(1, updateItemResult.getAttributes().get("foos").getSS().size());
-        assertTrue(updateItemResult.getAttributes().get("foos").getSS().contains("foo"));
-        assertEquals(3, updateItemResult.getAttributes().get("S").getSS().size());
-        assertTrue(updateItemResult.getAttributes().get("S").getSS().contains("ONE"));
-        assertTrue(updateItemResult.getAttributes().get("S").getSS().contains("TWO"));
-        assertTrue(updateItemResult.getAttributes().get("S").getSS().contains("THREE"));
-        assertEquals(Integer.toString(30 + 10), updateItemResult.getAttributes().get("age").getN());
-        assertEquals(0, updateItemResult.getAttributes().get("blob").getB()
+        assertEquals("¢", updateItemResult.attributes().get("1").s());
+        assertEquals(1, updateItemResult.attributes().get("foos").ss().size());
+        assertTrue(updateItemResult.attributes().get("foos").ss().contains("foo"));
+        assertEquals(3, updateItemResult.attributes().get("S").ss().size());
+        assertTrue(updateItemResult.attributes().get("S").ss().contains("ONE"));
+        assertTrue(updateItemResult.attributes().get("S").ss().contains("TWO"));
+        assertTrue(updateItemResult.attributes().get("S").ss().contains("THREE"));
+        assertEquals(Integer.toString(30 + 10), updateItemResult.attributes().get("age").n());
+        assertEquals(0, updateItemResult.attributes().get("blob").b()
                                         .compareTo(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
-        assertEquals(1, updateItemResult.getAttributes().get("blobs").getBS().size());
-        assertTrue(updateItemResult.getAttributes().get("blobs").getBS()
+        assertEquals(1, updateItemResult.attributes().get("blobs").bs().size());
+        assertTrue(updateItemResult.attributes().get("blobs").bs()
                                    .contains(ByteBuffer.wrap(generateByteArray(contentLength))));
 
         itemUpdates.clear();
-        itemUpdates.put("age", new AttributeValueUpdate(new AttributeValue().withN("30"), AttributeAction.PUT.toString()));
-        itemUpdates.put("blobs", new AttributeValueUpdate(
-                new AttributeValue().withBS(ByteBuffer.wrap(generateByteArray(contentLength + 1))),
-                AttributeAction.ADD.toString()));
-        updateItemRequest = new UpdateItemRequest(tableName, getMapKey(HASH_KEY_NAME, new AttributeValue("bar")),
-                                                  itemUpdates).withReturnValues("ALL_NEW");
+        itemUpdates.put("age", AttributeValueUpdate.builder_().value(AttributeValue.builder_().n("30").build_()).action(AttributeAction.PUT.toString()).build_());
+        itemUpdates.put("blobs", AttributeValueUpdate.builder_()
+                .value(AttributeValue.builder_().bs(ByteBuffer.wrap(generateByteArray(contentLength + 1))).build_())
+                .action(AttributeAction.ADD.toString())
+                .build_());
+        updateItemRequest = UpdateItemRequest.builder_()
+                .tableName(tableName)
+                .key(mapKey(HASH_KEY_NAME, AttributeValue.builder_().s("bar").build_()))
+                .attributeUpdates(itemUpdates)
+                .returnValues("ALL_NEW")
+                .build_();
 
         updateItemResult = dynamo.updateItem(updateItemRequest);
 
-        assertEquals("30", updateItemResult.getAttributes().get("age").getN());
-        assertEquals(2, updateItemResult.getAttributes().get("blobs").getBS().size());
-        assertTrue(updateItemResult.getAttributes().get("blobs").getBS()
+        assertEquals("30", updateItemResult.attributes().get("age").n());
+        assertEquals(2, updateItemResult.attributes().get("blobs").bs().size());
+        assertTrue(updateItemResult.attributes().get("blobs").bs()
                                    .contains(ByteBuffer.wrap(generateByteArray(contentLength))));
-        assertTrue(updateItemResult.getAttributes().get("blobs").getBS()
+        assertTrue(updateItemResult.attributes().get("blobs").bs()
                                    .contains(ByteBuffer.wrap(generateByteArray(contentLength + 1))));
 
         // Get an item that doesn't exist.
-        GetItemRequest getItemsRequest = new GetItemRequest(tableName, getMapKey(HASH_KEY_NAME, new AttributeValue("3")))
-                .withConsistentRead(true);
-        GetItemResult getItemsResult = dynamo.getItem(getItemsRequest);
-        assertNull(getItemsResult.getItem());
+        GetItemRequest itemsRequest = GetItemRequest.builder_().tableName(tableName).key(mapKey(HASH_KEY_NAME, AttributeValue.builder_().s("3").build_()))
+                .consistentRead(true).build_();
+        GetItemResult itemsResult = dynamo.getItem(itemsRequest);
+        assertNull(itemsResult.item());
 
         // Get an item that doesn't have any attributes,
-        getItemsRequest = new GetItemRequest(tableName, getMapKey(HASH_KEY_NAME, new AttributeValue("bar")))
-                .withConsistentRead(true).withAttributesToGet("non-existent-attribute");
-        getItemsResult = dynamo.getItem(getItemsRequest);
-        assertEquals(0, getItemsResult.getItem().size());
+        itemsRequest = GetItemRequest.builder_().tableName(tableName).key(mapKey(HASH_KEY_NAME, AttributeValue.builder_().s("bar").build_()))
+                .consistentRead(true).attributesToGet("non-existent-attribute").build_();
+        itemsResult = dynamo.getItem(itemsRequest);
+        assertEquals(0, itemsResult.item().size());
 
 
         // Scan data
-        ScanRequest scanRequest = new ScanRequest(tableName).withAttributesToGet(HASH_KEY_NAME);
+        ScanRequest scanRequest = ScanRequest.builder_().tableName(tableName).attributesToGet(HASH_KEY_NAME).build_();
         ScanResult scanResult = dynamo.scan(scanRequest);
-        assertTrue(scanResult.getCount() > 0);
-        assertTrue(scanResult.getScannedCount() > 0);
+        assertTrue(scanResult.count() > 0);
+        assertTrue(scanResult.scannedCount() > 0);
 
 
         // Try a more advanced Scan query and run it a few times for performance metrics
         System.out.println("Testing Scan...");
         for (int i = 0; i < 10; i++) {
             HashMap<String, Condition> scanFilter = new HashMap<String, Condition>();
-            scanFilter.put("age", new Condition().withAttributeValueList(new AttributeValue().withN("40")).withComparisonOperator(
-                    ComparisonOperator.GT.toString()));
-            scanRequest = new ScanRequest(tableName).withScanFilter(scanFilter);
+            scanFilter.put("age", Condition.builder_()
+                    .attributeValueList(AttributeValue.builder_().n("40").build_())
+                    .comparisonOperator(ComparisonOperator.GT.toString())
+                    .build_());
+            scanRequest = ScanRequest.builder_().tableName(tableName).scanFilter(scanFilter).build_();
             scanResult = dynamo.scan(scanRequest);
         }
 
@@ -410,28 +417,33 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         HashMap<String, List<WriteRequest>> requestItems = new HashMap<String, List<WriteRequest>>();
         List<WriteRequest> writeRequests = new ArrayList<WriteRequest>();
         HashMap<String, AttributeValue> writeAttributes = new HashMap<String, AttributeValue>();
-        writeAttributes.put(HASH_KEY_NAME, new AttributeValue().withS("" + System.currentTimeMillis()));
-        writeAttributes.put("bar", new AttributeValue().withS("" + System.currentTimeMillis()));
-        writeRequests.add(new WriteRequest().withPutRequest(new PutRequest().withItem(writeAttributes)));
-        writeRequests.add(new WriteRequest().withDeleteRequest(
-                new DeleteRequest().withKey(getMapKey(HASH_KEY_NAME, new AttributeValue().withS("toDelete")))));
+        writeAttributes.put(HASH_KEY_NAME, AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+        writeAttributes.put("bar", AttributeValue.builder_().s("" + System.currentTimeMillis()).build_());
+        writeRequests.add(WriteRequest.builder_().putRequest(PutRequest.builder_().item(writeAttributes).build_()).build_());
+        writeRequests.add(WriteRequest.builder_()
+                .deleteRequest(DeleteRequest.builder_()
+                        .key(mapKey(HASH_KEY_NAME, AttributeValue.builder_().s("toDelete").build_()))
+                        .build_())
+                .build_());
         requestItems.put(tableName, writeRequests);
-        BatchWriteItemResult batchWriteItem = dynamo.batchWriteItem(new BatchWriteItemRequest().withRequestItems(requestItems));
-        //        assertNotNull(batchWriteItem.getItemCollectionMetrics());
-        //        assertEquals(1, batchWriteItem.getItemCollectionMetrics().size());
-        //        assertEquals(tableName, batchWriteItem.getItemCollectionMetrics().entrySet().iterator().next().get);
+        BatchWriteItemResult batchWriteItem = dynamo.batchWriteItem(BatchWriteItemRequest.builder_().requestItems(requestItems).build_());
+        //        assertNotNull(batchWriteItem.itemCollectionMetrics());
+        //        assertEquals(1, batchWriteItem.itemCollectionMetrics().size());
+        //        assertEquals(tableName, batchWriteItem.itemCollectionMetrics().entrySet().iterator().next().get);
         //        assertNotNull(tableName, batchWriteItem.getResponses().iterator().next().getCapacityUnits());
-        assertNotNull(batchWriteItem.getUnprocessedItems());
-        assertTrue(batchWriteItem.getUnprocessedItems().isEmpty());
+        assertNotNull(batchWriteItem.unprocessedItems());
+        assertTrue(batchWriteItem.unprocessedItems().isEmpty());
 
         // Delete some data
-        DeleteItemRequest deleteItemRequest = new DeleteItemRequest(tableName, getMapKey(HASH_KEY_NAME,
-                                                                                         new AttributeValue("jeep")))
-                .withReturnValues(ReturnValue.ALL_OLD.toString());
+        DeleteItemRequest deleteItemRequest = DeleteItemRequest.builder_()
+                .tableName(tableName)
+                .key(mapKey(HASH_KEY_NAME, AttributeValue.builder_().s("jeep").build_()))
+                .returnValues(ReturnValue.ALL_OLD.toString())
+                .build_();
         DeleteItemResult deleteItemResult = dynamo.deleteItem(deleteItemRequest);
 
         // Delete our table
-        DeleteTableResult deleteTable = dynamo.deleteTable(new DeleteTableRequest().withTableName(tableName));
+        DeleteTableResult deleteTable = dynamo.deleteTable(DeleteTableRequest.builder_().tableName(tableName).build_());
 
     }
 

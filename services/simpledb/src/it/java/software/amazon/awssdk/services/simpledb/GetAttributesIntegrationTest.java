@@ -56,7 +56,7 @@ public class GetAttributesIntegrationTest extends IntegrationTestBase {
     public void testGetAttributesMissingParameterException() {
         GetAttributesRequest request = new GetAttributesRequest();
         try {
-            sdb.getAttributes(request.withItemName("foobar"));
+            sdb.getAttributes(request.itemName("foobar"));
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);
@@ -64,7 +64,7 @@ public class GetAttributesIntegrationTest extends IntegrationTestBase {
 
         request = new GetAttributesRequest();
         try {
-            sdb.getAttributes(request.withDomainName("foobar"));
+            sdb.getAttributes(request.domainName("foobar"));
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);

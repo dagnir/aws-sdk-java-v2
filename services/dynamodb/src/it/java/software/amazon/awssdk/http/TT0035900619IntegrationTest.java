@@ -34,29 +34,29 @@ public class TT0035900619IntegrationTest {
     public static void setup() throws InterruptedException {
         client = DynamoDBClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(awsTestCredentials())).build();
         List<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
-        attributeDefinitions.add(new AttributeDefinition("hashKey", ScalarAttributeType.S));
+        attributeDefinitions.add(AttributeDefinition.builder_().attributeName("hashKey").attributeType(ScalarAttributeType.S).build_());
         List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
-        keySchema.add(new KeySchemaElement("hashKey", KeyType.HASH));
+        keySchema.add(KeySchemaElement.builder_().attributeName("hashKey").keyType(KeyType.HASH).build_());
 
-        client.createTable(new CreateTableRequest(attributeDefinitions,
-            TABLE_NAME,
-            keySchema, new ProvisionedThroughput(1L,
-            1L)));
+        client.createTable(CreateTableRequest.builder_().attributeDefinitions(attributeDefinitions)
+                .tableName(TABLE_NAME)
+                .keySchema(keySchema)
+                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(1L).writeCapacityUnits(1L).build_()).build_());
         waitForActiveTable(TABLE_NAME);
     }
 
     public static TableDescription waitForActiveTable(String tableName)
             throws InterruptedException {
-        DescribeTableResult result = client.describeTable(new DescribeTableRequest(tableName));
-        TableDescription desc = result.getTable();
-        String status = desc.getTableStatus();
-        for (;; status = desc.getTableStatus()) {
+        DescribeTableResult result = client.describeTable(DescribeTableRequest.builder_().tableName(tableName).build_());
+        TableDescription desc = result.table();
+        String status = desc.tableStatus();
+        for (;; status = desc.tableStatus()) {
             if ("ACTIVE".equals(status)) {
                 return desc;
             } else if ("CREATING".equals(status) || "UPDATING".equals(status)) {
                 Thread.sleep(SLEEP_TIME_MILLIS);
-                result = client.describeTable(new DescribeTableRequest(tableName));
-                desc = result.getTable();
+                result = client.describeTable(DescribeTableRequest.builder_().tableName(tableName).build_());
+                desc = result.table();
             } else {
                 throw new IllegalArgumentException("Table " + tableName
                         + " is not being created (with status=" + status + ")");
@@ -68,7 +68,7 @@ public class TT0035900619IntegrationTest {
     public static void bye() throws Exception {
         // Disable error injection or else the deletion would fail!
         AmazonHttpClient.configUnreliableTestConditions(null);
-        client.deleteTable(new DeleteTableRequest(TABLE_NAME));
+        client.deleteTable(DeleteTableRequest.builder_().tableName(TABLE_NAME).build_());
         client.close();
     }
 
@@ -82,7 +82,7 @@ public class TT0035900619IntegrationTest {
                     .withFakeIoException(false)
                     .withResetIntervalBeforeException(2)
             );
-            System.out.println(client .describeTable(new DescribeTableRequest(TABLE_NAME)));
+            System.out.println(client .describeTable(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
             Assert.fail();
         } catch (RuntimeException expected) {
             expected.printStackTrace();
@@ -98,7 +98,7 @@ public class TT0035900619IntegrationTest {
                 .withFakeIoException(true)
                 .withResetIntervalBeforeException(2)
         );
-        System.out.println(client.describeTable(new DescribeTableRequest(TABLE_NAME)));
+        System.out.println(client.describeTable(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class TT0035900619IntegrationTest {
                 .withFakeIoException(true)
                 .withResetIntervalBeforeException(2)
         );
-        System.out.println(client.describeTable(new DescribeTableRequest(TABLE_NAME)));
+        System.out.println(client.describeTable(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class TT0035900619IntegrationTest {
                 .withResetIntervalBeforeException(2)
         );
         try {
-            System.out.println(client.describeTable(new DescribeTableRequest(TABLE_NAME)));
+            System.out.println(client.describeTable(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
             Assert.fail();
         } catch(AmazonClientException expected) {
             expected.printStackTrace();

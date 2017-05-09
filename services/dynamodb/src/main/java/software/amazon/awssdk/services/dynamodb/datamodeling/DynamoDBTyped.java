@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperField
  *
  * <pre class="brush: java">
  * &#064;DynamoDBTyped(DynamoDBAttributeType.S)
- * public MyObject getMyObject()
+ * public MyObject myObject()
  * </pre>
 
  * <p><b>Standard Types</b></p>
@@ -114,7 +114,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperField
  * public enum Status { OPEN, PENDING, CLOSED };
  *
  * &#064;DynamoDBTyped(DynamoDBAttributeType.S)
- * public Status getStatus()
+ * public Status status()
  * </pre>
  *
  * <p><b>{@link UUID} to {@code B}</b></p>
@@ -133,14 +133,14 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperField
  * to any {@code Set} type.</p>
  * <pre class="brush: java">
  * &#064;DynamoDBTyped(DynamoDBAttributeType.L)
- * public Set&lt;MyObject&gt; getMyObjects()
+ * public Set&lt;MyObject&gt; myObjects()
  * </pre>
  *
  * <p><b>{@link Object} to {@code M}</b></p>
  * <p>Also supported as {@link DynamoDBDocument}.</p>
  * <pre class="brush: java">
  * &#064;DynamoDBTyped(DynamoDBAttributeType.M)
- * public MyObject getMyObject()
+ * public MyObject myObject()
  * </pre>
  *
  * <p>May be combined with {@link DynamoDBTypeConverted}.</p>

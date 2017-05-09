@@ -65,6 +65,6 @@ public class CustomUnmarshaller extends SUnmarshaller {
         DynamoDBMarshaller unmarshaller =
                 createUnmarshaller(unmarshallerClass);
 
-        return unmarshaller.unmarshall(targetClass, value.getS());
+        return unmarshaller.unmarshall(targetClass, value.s());
     }
 }

@@ -78,7 +78,7 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
             messages.add(new SendMessageBatchRequestEntry(String.valueOf(messageNum), "test-" + messageNum));
         }
         // Use the normal client so we don't have to wait for the buffered messages to be sent
-        sqsClient.sendMessageBatch(new SendMessageBatchRequest(queueUrl).withEntries(messages));
+        sqsClient.sendMessageBatch(new SendMessageBatchRequest(queueUrl).entries(messages));
         assertThat(buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join().getMessages().size(), greaterThan(0));
         // Make sure they are expired by waiting twice the timeout
         Thread.sleep((visiblityTimeoutSeconds * 2) * 1000);
@@ -98,8 +98,8 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
         final String randomString = new String(bytes, StringUtils.UTF8);
 
         SendMessageRequest request = new SendMessageRequest()
-                .withMessageBody(randomString)
-                .withQueueUrl(queueUrl);
+                .messageBody(randomString)
+                .queueUrl(queueUrl);
         buffSqs.sendMessage(request);
     }
 
@@ -113,11 +113,11 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
     public void receiveMessage_WhenMessagesAreOnTheQueueAndLongPollIsEnabled_ReturnsMessage() throws Exception {
         String body = "test message_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString();
         // Use the normal client so we don't have to wait for the buffered messages to be sent
-        sqsClient.sendMessage(new SendMessageRequest().withMessageBody(body).withQueueUrl(queueUrl));
+        sqsClient.sendMessage(new SendMessageRequest().messageBody(body).queueUrl(queueUrl));
         long start = System.nanoTime();
 
-        ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().withMaxNumberOfMessages(1)
-                                                                     .withWaitTimeSeconds(60).withQueueUrl(queueUrl);
+        ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().maxNumberOfMessages(1)
+                                                                     .waitTimeSeconds(60).queueUrl(queueUrl);
         List<Message> messages = buffSqs.receiveMessage(receiveRq).join().getMessages();
         assertThat(messages, hasSize(1));
         assertEquals(body, messages.get(0).getBody());

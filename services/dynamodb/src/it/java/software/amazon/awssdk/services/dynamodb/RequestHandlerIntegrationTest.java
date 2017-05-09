@@ -66,7 +66,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void successfulRequest_InvokesAllSuccessCallbacks() {
-        ddb.listTables(new ListTablesRequest());
+        ddb.listTables(ListTablesRequest.builder_().build_());
 
         verify(mockRequestHandler).beforeMarshalling(any(AmazonWebServiceRequest.class));
         verify(mockRequestHandler).beforeRequest(any(Request.class));
@@ -76,7 +76,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void successfulRequest_BeforeMarshalling_ReplacesOriginalRequest() {
-        ListTablesRequest originalRequest = new ListTablesRequest();
+        ListTablesRequest originalRequest = ListTablesRequest.builder_().build_();
         ListTablesRequest spiedRequest = spy(originalRequest);
         when(mockRequestHandler.beforeMarshalling(eq(originalRequest))).thenReturn(spiedRequest);
 
@@ -84,13 +84,13 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
         verify(mockRequestHandler).beforeMarshalling(any(AmazonWebServiceRequest.class));
         // Asserts that the request is actually replaced with what's returned by beforeMarshalling
-        verify(spiedRequest).getExclusiveStartTableName();
+        verify(spiedRequest).exclusiveStartTableName();
     }
 
     @Test
     public void failedRequest_InvokesAllErrorCallbacks() {
         try {
-            ddb.describeTable(new DescribeTableRequest("some-nonexistent-table-name"));
+            ddb.describeTable(DescribeTableRequest.builder_().tableName("some-nonexistent-table-name").build_());
         } catch (AmazonServiceException expected) {
             // Ignored or expected.
         }
@@ -138,10 +138,10 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
         };
         ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .listenerConfiguration(ClientListenerConfiguration.builder().addRequestListener(requestHandler).build()).build();
-        ListTablesResult result = ddb.listTables(new ListTablesRequest());
+        ListTablesResult result = ddb.listTables(ListTablesRequest.builder_().build_());
         // Assert that the unmarshalled response contains our injected table name and not the actual
         // list of tables
-        assertThat(result.getTableNames().toArray(new String[0]), arrayContaining(injectedTableName));
+        assertThat(result.tableNames().toArray(new String[0]), arrayContaining(injectedTableName));
     }
 
 }

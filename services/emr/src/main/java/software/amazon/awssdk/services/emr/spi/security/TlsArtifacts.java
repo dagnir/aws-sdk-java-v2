@@ -46,7 +46,7 @@ public class TlsArtifacts {
      * Gets the private key in the TlsArtifacts object.
      * @return the private key.
      */
-    public PrivateKey getPrivateKey() {
+    public PrivateKey privateKey() {
         return privateKey;
     }
 

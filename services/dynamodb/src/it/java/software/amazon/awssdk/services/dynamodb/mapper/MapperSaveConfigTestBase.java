@@ -66,9 +66,9 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
     /**
      * Provisioned Throughput for the test table created in Amazon DynamoDB
      */
-    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = new ProvisionedThroughput()
-            .withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(
-                    WRITE_CAPACITY);
+    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = ProvisionedThroughput.builder_()
+            .readCapacityUnits(READ_CAPACITY).writeCapacityUnits(
+                    WRITE_CAPACITY).build_();
     protected static DynamoDBMapper dynamoMapper;
 
     @BeforeClass
@@ -83,7 +83,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
 
     @AfterClass
     public static void tearDown() {
-        dynamo.deleteTable(new DeleteTableRequest(tableName));
+        dynamo.deleteTable(DeleteTableRequest.builder_().tableName(tableName).build_());
     }
 
     /**
@@ -91,39 +91,40 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
      */
     protected static void createTestTable(
             ProvisionedThroughput provisionedThroughput) {
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(tableName)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(
-                                hashKeyName).withKeyType(
-                                KeyType.HASH))
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(
-                                rangeKeyName).withKeyType(
-                                KeyType.RANGE))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                hashKeyName).withAttributeType(
-                                ScalarAttributeType.S))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                rangeKeyName).withAttributeType(
-                                ScalarAttributeType.N));
-        createTableRequest.setProvisionedThroughput(provisionedThroughput);
+        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+                .tableName(tableName)
+                .keySchema(
+                        KeySchemaElement.builder_().attributeName(
+                                hashKeyName).keyType(
+                                KeyType.HASH).build_())
+                .keySchema(
+                        KeySchemaElement.builder_().attributeName(
+                                rangeKeyName).keyType(
+                                KeyType.RANGE).build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(
+                                hashKeyName).attributeType(
+                                ScalarAttributeType.S).build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(
+                                rangeKeyName).attributeType(
+                                ScalarAttributeType.N).build_())
+                .provisionedThroughput(provisionedThroughput)
+                .build_();
 
         TableDescription createdTableDescription = dynamo.createTable(
-                createTableRequest).getTableDescription();
+                createTableRequest).tableDescription();
         System.out.println("Created Table: " + createdTableDescription);
-        assertEquals(tableName, createdTableDescription.getTableName());
-        assertNotNull(createdTableDescription.getTableStatus());
+        assertEquals(tableName, createdTableDescription.tableName());
+        assertNotNull(createdTableDescription.tableStatus());
         assertEquals(hashKeyName, createdTableDescription
-                .getKeySchema().get(0).getAttributeName());
+                .keySchema().get(0).attributeName());
         assertEquals(KeyType.HASH.toString(), createdTableDescription
-                .getKeySchema().get(0).getKeyType());
+                .keySchema().get(0).keyType());
         assertEquals(rangeKeyName, createdTableDescription
-                .getKeySchema().get(1).getAttributeName());
+                .keySchema().get(1).attributeName());
         assertEquals(KeyType.RANGE.toString(), createdTableDescription
-                .getKeySchema().get(1).getKeyType());
+                .keySchema().get(1).keyType());
     }
 
     @DynamoDBTable(tableName = tableName)
@@ -153,7 +154,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
         }
 
         @DynamoDBAttribute(attributeName = nonKeyAttributeName)
-        public String getNonKeyAttribute() {
+        public String nonKeyAttribute() {
             return nonKeyAttribute;
         }
 
@@ -162,7 +163,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
         }
 
         @DynamoDBAttribute(attributeName = stringSetAttributeName)
-        public Set<String> getStringSetAttribute() {
+        public Set<String> stringSetAttribute() {
             return stringSetAttribute;
         }
 

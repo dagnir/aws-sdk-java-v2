@@ -42,8 +42,7 @@ public class TempTableWithSecondaryIndexes extends DynamoDBTableResource {
     public static final String GSI_NAME = "global_secondary_index";
     public static final String GSI_HASH_KEY_NAME = "global_secondary_index_hash_attribute";
     public static final String GSI_RANGE_KEY_NAME = "global_secondary_index_range_attribute";
-    public static final ProvisionedThroughput GSI_PROVISIONED_THROUGHPUT = new ProvisionedThroughput(
-            5L, 5L);
+    public static final ProvisionedThroughput GSI_PROVISIONED_THROUGHPUT = ProvisionedThroughput.builder_().readCapacityUnits(5L).writeCapacityUnits(5L).build_();
 
     @Override
     protected DynamoDBClient getClient() {
@@ -63,62 +62,66 @@ public class TempTableWithSecondaryIndexes extends DynamoDBTableResource {
      */
     @Override
     protected CreateTableRequest getCreateTableRequest() {
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(TEMP_TABLE_NAME)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(HASH_KEY_NAME)
-                                              .withKeyType(KeyType.HASH),
-                        new KeySchemaElement()
-                                .withAttributeName(RANGE_KEY_NAME).withKeyType(
-                                KeyType.RANGE))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                HASH_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.S),
-                        new AttributeDefinition().withAttributeName(
-                                RANGE_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.N),
-                        new AttributeDefinition().withAttributeName(
-                                LSI_RANGE_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.N),
-                        new AttributeDefinition().withAttributeName(
-                                GSI_HASH_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.S),
-                        new AttributeDefinition().withAttributeName(
-                                GSI_RANGE_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.N))
-                .withProvisionedThroughput(BasicTempTable.DEFAULT_PROVISIONED_THROUGHPUT)
-                .withLocalSecondaryIndexes(
-                        new LocalSecondaryIndex()
-                                .withIndexName(LSI_NAME)
-                                .withKeySchema(
-                                        new KeySchemaElement()
-                                                .withAttributeName(
+        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+                .tableName(TEMP_TABLE_NAME)
+                .keySchema(
+                        KeySchemaElement.builder_()
+                            .attributeName(HASH_KEY_NAME)
+                            .keyType(KeyType.HASH)
+                            .build_(),
+                        KeySchemaElement.builder_()
+                                .attributeName(RANGE_KEY_NAME)
+                                .keyType(KeyType.RANGE)
+                                .build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(
+                                HASH_KEY_NAME).attributeType(
+                                ScalarAttributeType.S).build_(),
+                        AttributeDefinition.builder_().attributeName(
+                                RANGE_KEY_NAME).attributeType(
+                                ScalarAttributeType.N).build_(),
+                        AttributeDefinition.builder_().attributeName(
+                                LSI_RANGE_KEY_NAME).attributeType(
+                                ScalarAttributeType.N).build_(),
+                        AttributeDefinition.builder_().attributeName(
+                                GSI_HASH_KEY_NAME).attributeType(
+                                ScalarAttributeType.S).build_(),
+                        AttributeDefinition.builder_().attributeName(
+                                GSI_RANGE_KEY_NAME).attributeType(
+                                ScalarAttributeType.N).build_())
+                .provisionedThroughput(BasicTempTable.DEFAULT_PROVISIONED_THROUGHPUT)
+                .localSecondaryIndexes(
+                        LocalSecondaryIndex.builder_()
+                                .indexName(LSI_NAME)
+                                .keySchema(
+                                        KeySchemaElement.builder_()
+                                                .attributeName(
                                                         HASH_KEY_NAME)
-                                                .withKeyType(KeyType.HASH),
-                                        new KeySchemaElement()
-                                                .withAttributeName(
+                                                .keyType(KeyType.HASH).build_(),
+                                        KeySchemaElement.builder_()
+                                                .attributeName(
                                                         LSI_RANGE_KEY_NAME)
-                                                .withKeyType(KeyType.RANGE))
-                                .withProjection(
-                                        new Projection()
-                                                .withProjectionType(ProjectionType.KEYS_ONLY)))
-                .withGlobalSecondaryIndexes(
-                        new GlobalSecondaryIndex().withIndexName(GSI_NAME)
-                                                  .withKeySchema(
-                                                          new KeySchemaElement()
-                                                                  .withAttributeName(
+                                                .keyType(KeyType.RANGE).build_())
+                                .projection(
+                                        Projection.builder_()
+                                                .projectionType(ProjectionType.KEYS_ONLY).build_()).build_())
+                .globalSecondaryIndexes(
+                        GlobalSecondaryIndex.builder_().indexName(GSI_NAME)
+                                                  .keySchema(
+                                                          KeySchemaElement.builder_()
+                                                                  .attributeName(
                                                                           GSI_HASH_KEY_NAME)
-                                                                  .withKeyType(KeyType.HASH),
-                                                          new KeySchemaElement()
-                                                                  .withAttributeName(
+                                                                  .keyType(KeyType.HASH).build_(),
+                                                          KeySchemaElement.builder_()
+                                                                  .attributeName(
                                                                           GSI_RANGE_KEY_NAME)
-                                                                  .withKeyType(KeyType.RANGE))
-                                                  .withProjection(
-                                                          new Projection()
-                                                                  .withProjectionType(ProjectionType.KEYS_ONLY))
-                                                  .withProvisionedThroughput(
-                                                          GSI_PROVISIONED_THROUGHPUT));
+                                                                  .keyType(KeyType.RANGE).build_())
+                                                  .projection(
+                                                          Projection.builder_()
+                                                                  .projectionType(ProjectionType.KEYS_ONLY).build_())
+                                                  .provisionedThroughput(
+                                                          GSI_PROVISIONED_THROUGHPUT).build_())
+                .build_();
         return createTableRequest;
     }
 

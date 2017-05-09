@@ -101,16 +101,18 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
         client = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         mapper = new DynamoDBMapper(client);
         try {
-            client.createTable(new CreateTableRequest()
-                                       .withTableName(TABLENAME)
-                                       .withKeySchema(new KeySchemaElement(HASH_KEY, KeyType.HASH),
-                                                      new KeySchemaElement(RANGE_KEY, KeyType.RANGE))
-                                       .withAttributeDefinitions(
-                                               new AttributeDefinition(HASH_KEY, ScalarAttributeType.N),
-                                               new AttributeDefinition(RANGE_KEY,
-                                                                       ScalarAttributeType.S))
-                                       .withProvisionedThroughput(
-                                               new ProvisionedThroughput(READ_CAPACITY, WRITE_CAPACITY)));
+            client.createTable(CreateTableRequest.builder_()
+                                       .tableName(TABLENAME)
+                                       .keySchema(KeySchemaElement.builder_().attributeName(HASH_KEY).keyType(KeyType.HASH).build_(),
+                                                      KeySchemaElement.builder_().attributeName(RANGE_KEY).keyType(KeyType.RANGE).build_())
+                                       .attributeDefinitions(
+                                               AttributeDefinition.builder_().attributeName(HASH_KEY).attributeType(ScalarAttributeType.N).build_(),
+                                               AttributeDefinition.builder_().attributeName(RANGE_KEY).attributeType(ScalarAttributeType.S).build_())
+                                       .provisionedThroughput(ProvisionedThroughput.builder_()
+                                               .readCapacityUnits(READ_CAPACITY)
+                                               .writeCapacityUnits(WRITE_CAPACITY)
+                                               .build_())
+                    .build_());
         } catch (ResourceInUseException ex) {
             ex.printStackTrace();
         }
@@ -121,33 +123,33 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
     public static void fillInData() {
         final Builder<String, AttributeValue> record1 = ImmutableMapParameter
                 .builder();
-        record1.put(HASH_KEY, new AttributeValue().withN(FIRST_CUSTOMER_ID))
-               .put(RANGE_KEY, new AttributeValue().withS(ADDRESS_TYPE_WORK))
+        record1.put(HASH_KEY, AttributeValue.builder_().n(FIRST_CUSTOMER_ID).build_())
+               .put(RANGE_KEY, AttributeValue.builder_().s(ADDRESS_TYPE_WORK).build_())
                .put("AddressLine1",
-                    new AttributeValue().withS("1918 8th Aven"))
-               .put("city", new AttributeValue().withS("seattle"))
-               .put("state", new AttributeValue().withS("WA"))
-               .put("zipcode", new AttributeValue().withN("98104"));
+                    AttributeValue.builder_().s("1918 8th Aven").build_())
+               .put("city", AttributeValue.builder_().s("seattle").build_())
+               .put("state", AttributeValue.builder_().s("WA").build_())
+               .put("zipcode", AttributeValue.builder_().n("98104").build_());
         final Builder<String, AttributeValue> record2 = ImmutableMapParameter
                 .builder();
-        record2.put(HASH_KEY, new AttributeValue().withN(FIRST_CUSTOMER_ID))
-               .put(RANGE_KEY, new AttributeValue().withS(ADDRESS_TYPE_HOME))
+        record2.put(HASH_KEY, AttributeValue.builder_().n(FIRST_CUSTOMER_ID).build_())
+               .put(RANGE_KEY, AttributeValue.builder_().s(ADDRESS_TYPE_HOME).build_())
                .put("AddressLine1",
-                    new AttributeValue().withS("15606 NE 40th ST"))
-               .put("city", new AttributeValue().withS("redmond"))
-               .put("state", new AttributeValue().withS("WA"))
-               .put("zipcode", new AttributeValue().withN("98052"));
+                    AttributeValue.builder_().s("15606 NE 40th ST").build_())
+               .put("city", AttributeValue.builder_().s("redmond").build_())
+               .put("state", AttributeValue.builder_().s("WA").build_())
+               .put("zipcode", AttributeValue.builder_().n("98052").build_());
 
-        client.putItem(new PutItemRequest(TABLENAME, record1.build()));
-        client.putItem(new PutItemRequest(TABLENAME, record2.build()));
+        client.putItem(PutItemRequest.builder_().tableName(TABLENAME).item(record1.build()).build_());
+        client.putItem(PutItemRequest.builder_().tableName(TABLENAME).item(record2.build()).build_());
     }
 
     public static void waitForTableCreation() throws InterruptedException {
         while (true) {
             DescribeTableResult describeResult = client
-                    .describeTable(new DescribeTableRequest(TABLENAME));
-            if (TABLE_STATUS_ACTIVE.equals(describeResult.getTable()
-                                                         .getTableStatus())) {
+                    .describeTable(DescribeTableRequest.builder_().tableName(TABLENAME).build_());
+            if (TABLE_STATUS_ACTIVE.equals(describeResult.table()
+                                                         .tableStatus())) {
                 break;
             }
             Thread.sleep(SLEEP_TIME_IN_MILLIS);
@@ -158,7 +160,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
     public static void tearDown() throws Exception {
         try {
             if (client != null) {
-                client.deleteTable(new DeleteTableRequest(TABLENAME));
+                client.deleteTable(DeleteTableRequest.builder_().tableName(TABLENAME).build_());
             }
         } catch (Exception e) {
             // Ignored or expected.
@@ -181,16 +183,16 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
         DynamoDBQueryExpression<Customer> queryExpression =
                 new DynamoDBQueryExpression<Customer>()
                         .withHashKeyValues(customer)
-                        .withRangeKeyCondition(RANGE_KEY, new Condition()
-                                .withComparisonOperator(ComparisonOperator.EQ)
-                                .withAttributeValueList(new AttributeValue(ADDRESS_TYPE_HOME)));
+                        .withRangeKeyCondition(RANGE_KEY, Condition.builder_()
+                                .comparisonOperator(ComparisonOperator.EQ)
+                                .attributeValueList(AttributeValue.builder_().s(ADDRESS_TYPE_HOME).build_()).build_());
         PaginatedQueryList<Customer> results = mapper.query(Customer.class,
                                                             queryExpression);
         assertTrue(results.size() == 1);
 
         final Builder<String, AttributeValue> builder = ImmutableMapParameter
                 .builder();
-        builder.put(":zipcode", new AttributeValue().withN("98109"));
+        builder.put(":zipcode", AttributeValue.builder_().n("98109").build_());
 
         queryExpression = queryExpression
                 .withFilterExpression("zipcode = :zipcode")
@@ -213,15 +215,15 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
                                 "customerId = :customerId AND addressType = :addressType");
         final Builder<String, AttributeValue> builder =
                 ImmutableMapParameter.builder();
-        builder.put(":customerId", new AttributeValue().withN(FIRST_CUSTOMER_ID))
-               .put(":addressType", new AttributeValue(ADDRESS_TYPE_HOME))
+        builder.put(":customerId", AttributeValue.builder_().n(FIRST_CUSTOMER_ID).build_())
+               .put(":addressType", AttributeValue.builder_().s(ADDRESS_TYPE_HOME).build_())
         ;
         query.withExpressionAttributeValues(builder.build());
 
         PaginatedQueryList<Customer> results = mapper.query(Customer.class, query);
         assertTrue(results.size() == 1);
 
-        builder.put(":zipcode", new AttributeValue().withN("98109"));
+        builder.put(":zipcode", AttributeValue.builder_().n("98109").build_());
         query.withFilterExpression("zipcode = :zipcode")
              .withExpressionAttributeValues(builder.build());
 
@@ -247,7 +249,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
         final Builder<String, AttributeValue> attributeValueMapBuilder = ImmutableMapParameter
                 .builder();
         attributeValueMapBuilder
-                .put(":state", new AttributeValue().withS("WA"));
+                .put(":state", AttributeValue.builder_().s("WA").build_());
 
         final Builder<String, String> attributeNameMapBuilder = ImmutableMapParameter
                 .builder();
@@ -274,9 +276,9 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
 
         Builder<String, ExpectedAttributeValue> expectedMapBuilder = ImmutableMapParameter
                 .builder();
-        expectedMapBuilder.put("zipcode", new ExpectedAttributeValue()
-                .withAttributeValueList(new AttributeValue().withN("98052"))
-                .withComparisonOperator(ComparisonOperator.EQ));
+        expectedMapBuilder.put("zipcode", ExpectedAttributeValue.builder_()
+                .attributeValueList(AttributeValue.builder_().n("98052").build_())
+                .comparisonOperator(ComparisonOperator.EQ).build_());
 
         DynamoDBDeleteExpression deleteExpression = new DynamoDBDeleteExpression();
         deleteExpression.setConditionExpression("zipcode = :zipcode");
@@ -284,7 +286,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
         final Builder<String, AttributeValue> attributeValueMapBuilder = ImmutableMapParameter
                 .builder();
         attributeValueMapBuilder.put(":zipcode",
-                                     new AttributeValue().withN("98052"));
+                                     AttributeValue.builder_().n("98052").build_());
         deleteExpression.setExpressionAttributeValues(attributeValueMapBuilder
                                                               .build());
         try {
@@ -351,7 +353,7 @@ public class DynamoDBMapperExpressionsIntegrationTest extends AwsTestBase {
         }
 
         @DynamoDBAttribute(attributeName = "state")
-        public String getState() {
+        public String state() {
             return state;
         }
 

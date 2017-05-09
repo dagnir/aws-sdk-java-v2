@@ -36,7 +36,7 @@ public class ScanCollectionTest {
     @Test
     public void testEmptyResult() {
         ScanCollection col = new ScanCollection(null, new ScanSpec());
-        col.setLastLowLevelResult(new ScanOutcome(new ScanResult()));
+        col.setLastLowLevelResult(new ScanOutcome(ScanResult.builder_().build_()));
         assertTrue(0 == col.getTotalCount());
         assertTrue(0 == col.getTotalScannedCount());
         assertNull(col.getTotalConsumedCapacity());
@@ -45,125 +45,127 @@ public class ScanCollectionTest {
     @Test
     public void setLastLowLevelResult() {
         ScanCollection col = new ScanCollection(null, new ScanSpec());
-        ScanResult result = new ScanResult()
-                .withCount(rand.nextInt())
-                .withScannedCount(rand.nextInt());
+        ScanResult result = ScanResult.builder_()
+                .count(rand.nextInt())
+                .scannedCount(rand.nextInt()).build_();
 
         Map<String, Capacity> gsi = new HashMap<String, Capacity>();
-        gsi.put("gsi1", new Capacity().withCapacityUnits(rand.nextDouble()));
-        gsi.put("gsi2", new Capacity().withCapacityUnits(rand.nextDouble()));
+        gsi.put("gsi1", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
+        gsi.put("gsi2", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
 
         Map<String, Capacity> lsi = new HashMap<String, Capacity>();
-        lsi.put("lsi1", new Capacity().withCapacityUnits(rand.nextDouble()));
-        lsi.put("lsi2", new Capacity().withCapacityUnits(rand.nextDouble()));
+        lsi.put("lsi1", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
+        lsi.put("lsi2", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
 
-        ConsumedCapacity consumedCapacity = new ConsumedCapacity()
-                .withCapacityUnits(rand.nextDouble())
-                .withTable(new Capacity().withCapacityUnits(rand.nextDouble()))
-                .withTableName("tableName")
-                .withGlobalSecondaryIndexes(gsi)
-                .withLocalSecondaryIndexes(lsi);
+        ConsumedCapacity consumedCapacity = ConsumedCapacity.builder_()
+                .capacityUnits(rand.nextDouble())
+                .table(Capacity.builder_().capacityUnits(rand.nextDouble()).build_())
+                .tableName("tableName")
+                .globalSecondaryIndexes(gsi)
+                .localSecondaryIndexes(lsi).build_();
         // Once
-        result.setConsumedCapacity(consumedCapacity);
+        result = result.toBuilder().consumedCapacity(consumedCapacity).build_();
         col.setLastLowLevelResult(new ScanOutcome(result));
 
-        assertTrue(result.getCount() == col.getTotalCount());
-        assertTrue(result.getScannedCount() == col.getTotalScannedCount());
+        assertTrue(result.count() == col.getTotalCount());
+        assertTrue(result.scannedCount() == col.getTotalScannedCount());
 
         ConsumedCapacity total = col.getTotalConsumedCapacity();
         assertNotSame(total, consumedCapacity);
         assertEquals(total, consumedCapacity);
 
-        assertNotSame(gsi, total.getGlobalSecondaryIndexes());
-        assertNotSame(lsi, total.getLocalSecondaryIndexes());
+        assertNotSame(gsi, total.globalSecondaryIndexes());
+        assertNotSame(lsi, total.localSecondaryIndexes());
 
         // Twice
         col.setLastLowLevelResult(new ScanOutcome(result));
 
-        assertTrue(result.getCount() * 2 == col.getTotalCount());
-        assertTrue(result.getScannedCount() * 2 == col.getTotalScannedCount());
+        assertTrue(result.count() * 2 == col.getTotalCount());
+        assertTrue(result.scannedCount() * 2 == col.getTotalScannedCount());
 
         total = col.getTotalConsumedCapacity();
-        assertTrue(total.getCapacityUnits() == 2 * consumedCapacity.getCapacityUnits());
+        assertTrue(total.capacityUnits() == 2 * consumedCapacity.capacityUnits());
 
-        Map<String, Capacity> gsiTotal = total.getGlobalSecondaryIndexes();
-        Map<String, Capacity> lsiTotal = total.getLocalSecondaryIndexes();
+        Map<String, Capacity> gsiTotal = total.globalSecondaryIndexes();
+        Map<String, Capacity> lsiTotal = total.localSecondaryIndexes();
         assertTrue(2 == gsiTotal.size());
         assertTrue(2 == lsiTotal.size());
 
-        assertTrue(gsi.get("gsi1").getCapacityUnits() * 2 == gsiTotal.get("gsi1").getCapacityUnits());
-        assertTrue(gsi.get("gsi2").getCapacityUnits() * 2 == gsiTotal.get("gsi2").getCapacityUnits());
+        assertTrue(gsi.get("gsi1").capacityUnits() * 2 == gsiTotal.get("gsi1").capacityUnits());
+        assertTrue(gsi.get("gsi2").capacityUnits() * 2 == gsiTotal.get("gsi2").capacityUnits());
 
-        assertTrue(lsi.get("lsi1").getCapacityUnits() * 2 == lsiTotal.get("lsi1").getCapacityUnits());
-        assertTrue(lsi.get("lsi2").getCapacityUnits() * 2 == lsiTotal.get("lsi2").getCapacityUnits());
+        assertTrue(lsi.get("lsi1").capacityUnits() * 2 == lsiTotal.get("lsi1").capacityUnits());
+        assertTrue(lsi.get("lsi2").capacityUnits() * 2 == lsiTotal.get("lsi2").capacityUnits());
 
         // A different one
-        ScanResult result3 = new ScanResult()
-                .withCount(rand.nextInt())
-                .withScannedCount(rand.nextInt());
+        ScanResult result3 = ScanResult.builder_()
+                .count(rand.nextInt())
+                .scannedCount(rand.nextInt())
+                .build_();
 
         Map<String, Capacity> gsi3 = new HashMap<String, Capacity>();
-        gsi3.put("gsi3", new Capacity().withCapacityUnits(rand.nextDouble()));
+        gsi3.put("gsi3", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
 
         Map<String, Capacity> lsi3 = new HashMap<String, Capacity>();
-        lsi3.put("lsi3", new Capacity().withCapacityUnits(rand.nextDouble()));
+        lsi3.put("lsi3", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
 
-        ConsumedCapacity consumedCapacity3 = new ConsumedCapacity()
-                .withCapacityUnits(rand.nextDouble())
-                .withTable(new Capacity().withCapacityUnits(rand.nextDouble()))
-                .withTableName("tableName")
-                .withGlobalSecondaryIndexes(gsi3)
-                .withLocalSecondaryIndexes(lsi3);
-        result3.setConsumedCapacity(consumedCapacity3);
+        ConsumedCapacity consumedCapacity3 = ConsumedCapacity.builder_()
+                .capacityUnits(rand.nextDouble())
+                .table(Capacity.builder_().capacityUnits(rand.nextDouble()).build_())
+                .tableName("tableName")
+                .globalSecondaryIndexes(gsi3)
+                .localSecondaryIndexes(lsi3)
+                .build_();
+        result3 = result3.toBuilder().consumedCapacity(consumedCapacity3).build_();
         col.setLastLowLevelResult(new ScanOutcome(result3));
 
-        assertTrue(result.getCount() * 2 + result3.getCount() == col.getTotalCount());
-        assertTrue(result.getScannedCount() * 2 + result3.getScannedCount() == col.getTotalScannedCount());
+        assertTrue(result.count() * 2 + result3.count() == col.getTotalCount());
+        assertTrue(result.scannedCount() * 2 + result3.scannedCount() == col.getTotalScannedCount());
 
         total = col.getTotalConsumedCapacity();
-        assertTrue(total.getCapacityUnits() ==
-                   2 * consumedCapacity.getCapacityUnits()
-                   + consumedCapacity3.getCapacityUnits());
+        assertTrue(total.capacityUnits() ==
+                   2 * consumedCapacity.capacityUnits()
+                   + consumedCapacity3.capacityUnits());
 
-        gsiTotal = total.getGlobalSecondaryIndexes();
-        lsiTotal = total.getLocalSecondaryIndexes();
+        gsiTotal = total.globalSecondaryIndexes();
+        lsiTotal = total.localSecondaryIndexes();
         assertTrue(3 == gsiTotal.size());
         assertTrue(3 == lsiTotal.size());
 
-        assertTrue(gsi.get("gsi1").getCapacityUnits() * 2 == gsiTotal.get("gsi1").getCapacityUnits());
-        assertTrue(gsi.get("gsi2").getCapacityUnits() * 2 == gsiTotal.get("gsi2").getCapacityUnits());
-        assertTrue(gsi3.get("gsi3").getCapacityUnits() == gsiTotal.get("gsi3").getCapacityUnits());
+        assertTrue(gsi.get("gsi1").capacityUnits() * 2 == gsiTotal.get("gsi1").capacityUnits());
+        assertTrue(gsi.get("gsi2").capacityUnits() * 2 == gsiTotal.get("gsi2").capacityUnits());
+        assertTrue(gsi3.get("gsi3").capacityUnits() == gsiTotal.get("gsi3").capacityUnits());
 
-        assertTrue(lsi.get("lsi1").getCapacityUnits() * 2 == lsiTotal.get("lsi1").getCapacityUnits());
-        assertTrue(lsi.get("lsi2").getCapacityUnits() * 2 == lsiTotal.get("lsi2").getCapacityUnits());
-        assertTrue(lsi3.get("lsi3").getCapacityUnits() == lsiTotal.get("lsi3").getCapacityUnits());
+        assertTrue(lsi.get("lsi1").capacityUnits() * 2 == lsiTotal.get("lsi1").capacityUnits());
+        assertTrue(lsi.get("lsi2").capacityUnits() * 2 == lsiTotal.get("lsi2").capacityUnits());
+        assertTrue(lsi3.get("lsi3").capacityUnits() == lsiTotal.get("lsi3").capacityUnits());
 
         // An empty one
-        ScanResult result4 = new ScanResult();
-        ConsumedCapacity consumedCapacity4 = new ConsumedCapacity();
-        result4.setConsumedCapacity(consumedCapacity4);
+        ScanResult result4 = ScanResult.builder_().build_();
+        ConsumedCapacity consumedCapacity4 = ConsumedCapacity.builder_().build_();
+        result4 = result4.toBuilder().consumedCapacity(consumedCapacity4).build_();
         col.setLastLowLevelResult(new ScanOutcome(result4));
 
         // all assertions are expected to be the same as the last set of assertions
-        assertTrue(result.getCount() * 2 + result3.getCount() == col.getTotalCount());
-        assertTrue(result.getScannedCount() * 2 + result3.getScannedCount() == col.getTotalScannedCount());
+        assertTrue(result.count() * 2 + result3.count() == col.getTotalCount());
+        assertTrue(result.scannedCount() * 2 + result3.scannedCount() == col.getTotalScannedCount());
 
         total = col.getTotalConsumedCapacity();
-        assertTrue(total.getCapacityUnits() ==
-                   2 * consumedCapacity.getCapacityUnits()
-                   + consumedCapacity3.getCapacityUnits());
+        assertTrue(total.capacityUnits() ==
+                   2 * consumedCapacity.capacityUnits()
+                   + consumedCapacity3.capacityUnits());
 
-        gsiTotal = total.getGlobalSecondaryIndexes();
-        lsiTotal = total.getLocalSecondaryIndexes();
+        gsiTotal = total.globalSecondaryIndexes();
+        lsiTotal = total.localSecondaryIndexes();
         assertTrue(3 == gsiTotal.size());
         assertTrue(3 == lsiTotal.size());
 
-        assertTrue(gsi.get("gsi1").getCapacityUnits() * 2 == gsiTotal.get("gsi1").getCapacityUnits());
-        assertTrue(gsi.get("gsi2").getCapacityUnits() * 2 == gsiTotal.get("gsi2").getCapacityUnits());
-        assertTrue(gsi3.get("gsi3").getCapacityUnits() == gsiTotal.get("gsi3").getCapacityUnits());
+        assertTrue(gsi.get("gsi1").capacityUnits() * 2 == gsiTotal.get("gsi1").capacityUnits());
+        assertTrue(gsi.get("gsi2").capacityUnits() * 2 == gsiTotal.get("gsi2").capacityUnits());
+        assertTrue(gsi3.get("gsi3").capacityUnits() == gsiTotal.get("gsi3").capacityUnits());
 
-        assertTrue(lsi.get("lsi1").getCapacityUnits() * 2 == lsiTotal.get("lsi1").getCapacityUnits());
-        assertTrue(lsi.get("lsi2").getCapacityUnits() * 2 == lsiTotal.get("lsi2").getCapacityUnits());
-        assertTrue(lsi3.get("lsi3").getCapacityUnits() == lsiTotal.get("lsi3").getCapacityUnits());
+        assertTrue(lsi.get("lsi1").capacityUnits() * 2 == lsiTotal.get("lsi1").capacityUnits());
+        assertTrue(lsi.get("lsi2").capacityUnits() * 2 == lsiTotal.get("lsi2").capacityUnits());
+        assertTrue(lsi3.get("lsi3").capacityUnits() == lsiTotal.get("lsi3").capacityUnits());
     }
 }

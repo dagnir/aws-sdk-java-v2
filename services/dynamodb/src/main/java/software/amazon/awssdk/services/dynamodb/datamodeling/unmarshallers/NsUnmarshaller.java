@@ -25,7 +25,7 @@ abstract class NsUnmarshaller implements ArgumentUnmarshaller {
 
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
-        if (value.getNS() == null) {
+        if (value.ns() == null) {
             throw new DynamoDBMappingException("Expected NS in value " + value + " when invoking " + setter);
         }
     }

@@ -65,7 +65,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
             }
         }
 
-        email.verifyEmailAddress(new VerifyEmailAddressRequest().withEmailAddress(DESTINATION));
+        email.verifyEmailAddress(new VerifyEmailAddressRequest().emailAddress(DESTINATION));
         fail("Please check your email and verify your email address.");
     }
 

@@ -12,10 +12,10 @@ public class AssumeRoleWithMfaTest {
     @Test
     public void testMarshall() {
         AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest()
-            .withRoleArn("arn:aws:iam::123456789012:role/test")
-            .withExternalId("oogeyboogey")
-            .withSerialNumber("arn:aws:iam::123456789012:mfa/test")
-            .withTokenCode("000000");
+            .roleArn("arn:aws:iam::123456789012:role/test")
+            .externalId("oogeyboogey")
+            .serialNumber("arn:aws:iam::123456789012:mfa/test")
+            .tokenCode("000000");
 
         AssumeRoleRequestMarshaller marshaller =
             new AssumeRoleRequestMarshaller();

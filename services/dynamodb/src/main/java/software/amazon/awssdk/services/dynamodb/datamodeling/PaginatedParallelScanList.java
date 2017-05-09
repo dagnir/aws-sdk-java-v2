@@ -56,7 +56,7 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
         this.config = config;
 
         // Marshal the first batch of results in allResults
-        allResults.addAll(marshalParallelScanResultsIntoObjects(parallelScanTask.getNextBatchOfScanResults()));
+        allResults.addAll(marshalParallelScanResultsIntoObjects(parallelScanTask.nextBatchOfScanResults()));
 
         // If the results should be eagerly loaded at once
         if (paginationLoadingStrategy == PaginationLoadingStrategy.EAGER_LOADING) {
@@ -71,7 +71,7 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
 
     @Override
     protected List<T> fetchNextPage() {
-        return marshalParallelScanResultsIntoObjects(parallelScanTask.getNextBatchOfScanResults());
+        return marshalParallelScanResultsIntoObjects(parallelScanTask.nextBatchOfScanResults());
     }
 
     private List<T> marshalParallelScanResultsIntoObjects(List<ScanResult> scanResults) {
@@ -80,7 +80,7 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
             if (null != scanResult) {
                 allItems.addAll(mapper.marshallIntoObjects(
                         mapper.toParameters(
-                                scanResult.getItems(),
+                                scanResult.items(),
                                 clazz,
                                 parallelScanTask.getTableName(),
                                 config)));

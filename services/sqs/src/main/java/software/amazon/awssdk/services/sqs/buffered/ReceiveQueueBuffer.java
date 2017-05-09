@@ -282,8 +282,8 @@ public class ReceiveQueueBuffer {
 
         synchronized (taskSpawnSyncPoint) {
             if (visibilityTimeoutNanos == -1) {
-                GetQueueAttributesRequest request = new GetQueueAttributesRequest().withQueueUrl(qUrl)
-                                                                                   .withAttributeNames("VisibilityTimeout");
+                GetQueueAttributesRequest request = new GetQueueAttributesRequest().queueUrl(qUrl)
+                                                                                   .attributeNames("VisibilityTimeout");
                 ResultConverter.appendUserAgent(request, SqsBufferedAsyncClient.USER_AGENT);
                 long visibilityTimeoutSeconds = Long.parseLong(sqsClient.getQueueAttributes(request).join().getAttributes()
                                                                         .get("VisibilityTimeout"));
@@ -454,7 +454,7 @@ public class ReceiveQueueBuffer {
 
             if (!isExpired()) {
                 ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
-                        .withQueueUrl(qUrl);
+                        .queueUrl(qUrl);
                 ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
                 List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
@@ -463,9 +463,9 @@ public class ReceiveQueueBuffer {
                 int i = 0;
                 for (Message m : messages) {
 
-                    entries.add(new ChangeMessageVisibilityBatchRequestEntry().withId(Integer.toString(i))
-                                                                              .withReceiptHandle(m.getReceiptHandle())
-                                                                              .withVisibilityTimeout(0));
+                    entries.add(new ChangeMessageVisibilityBatchRequestEntry().id(Integer.toString(i))
+                                                                              .receiptHandle(m.getReceiptHandle())
+                                                                              .visibilityTimeout(0));
                     ++i;
                 }
 
@@ -488,7 +488,7 @@ public class ReceiveQueueBuffer {
 
             try {
                 visibilityDeadlineNano = System.nanoTime() + visibilityTimeoutNanos;
-                ReceiveMessageRequest request = new ReceiveMessageRequest(qUrl).withMaxNumberOfMessages(config.getMaxBatchSize());
+                ReceiveMessageRequest request = new ReceiveMessageRequest(qUrl).maxNumberOfMessages(config.getMaxBatchSize());
                 ResultConverter.appendUserAgent(request, SqsBufferedAsyncClient.USER_AGENT);
 
                 if (config.getVisibilityTimeoutSeconds() > 0) {
@@ -498,7 +498,7 @@ public class ReceiveQueueBuffer {
                 }
 
                 if (config.isLongPoll()) {
-                    request.withWaitTimeSeconds(config.getLongPollWaitTimeoutSeconds());
+                    request.waitTimeSeconds(config.getLongPollWaitTimeoutSeconds());
                 }
 
                 messages = sqsClient.receiveMessage(request).join().getMessages();

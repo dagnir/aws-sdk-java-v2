@@ -16,6 +16,7 @@
 package software.amazon.awssdk.services.dynamodb.document.internal;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.ItemCollection;
@@ -74,7 +75,7 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
                                       .withRangeKeyCondition(rangeKeyCondition)
                                       .withFilterExpression(filterExpression)
                                       .withNameMap(nameMap)
-                                      .withValueMap(valueMap));
+                                      .valueMap(valueMap));
     }
 
     @Override
@@ -87,7 +88,7 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
                                       .withFilterExpression(filterExpression)
                                       .withProjectionExpression(projectionExpression)
                                       .withNameMap(nameMap)
-                                      .withValueMap(valueMap));
+                                      .valueMap(valueMap));
     }
 
     @Override
@@ -98,14 +99,17 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
     protected ItemCollection<QueryOutcome> doQuery(QuerySpec spec) {
         // set the table name
         String tableName = getTable().getTableName();
-        QueryRequest request = spec.getRequest().withTableName(tableName);
+        QueryRequest.Builder requestBuilder = spec.getRequest().toBuilder().tableName(tableName);
+
+        Map<String, Condition> conditions = new LinkedHashMap<>(spec.getRequest().keyConditions());
+
         // hash key
         final KeyAttribute hashKey = spec.getHashKey();
         if (hashKey != null) {
-            request.addKeyConditionsEntry(hashKey.getName(),
-                                      new Condition()
-                                              .withComparisonOperator(ComparisonOperator.EQ)
-                                              .withAttributeValueList(InternalUtils.toAttributeValue(hashKey.getValue())));
+            conditions.put(hashKey.name(),
+                    Condition.builder_()
+                            .comparisonOperator(ComparisonOperator.EQ)
+                            .attributeValueList(InternalUtils.toAttributeValue(hashKey.value())).build_());
         }
         // range key condition
         RangeKeyCondition rangeKeyCond = spec.getRangeKeyCondition();
@@ -114,32 +118,37 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
             if (keyCond == null) {
                 throw new IllegalArgumentException("key condition not specified in range key condition");
             }
-            Object[] values = rangeKeyCond.getValues();
+            Object[] values = rangeKeyCond.values();
             if (values == null) {
                 throw new IllegalArgumentException("key condition values not specified in range key condition");
             }
-            request.addKeyConditionsEntry(rangeKeyCond.getAttrName(),
-                                      new Condition()
-                                              .withComparisonOperator(keyCond.toComparisonOperator())
-                                              .withAttributeValueList(InternalUtils.toAttributeValues(values)));
+            conditions.put(rangeKeyCond.getAttrName(),
+                    Condition.builder_()
+                            .comparisonOperator(keyCond.toComparisonOperator())
+                            .attributeValueList(InternalUtils.toAttributeValues(values)).build_());
         }
+
+        requestBuilder.keyConditions(conditions);
+
         // query filters;
         Collection<QueryFilter> filters = spec.getQueryFilters();
         if (filters != null) {
-            request.setQueryFilter(InternalUtils.toAttributeConditionMap(filters));
+            requestBuilder.queryFilter(InternalUtils.toAttributeConditionMap(filters));
         }
 
         // set up the start key, if any
         Collection<KeyAttribute> startKey = spec.getExclusiveStartKey();
         if (startKey != null) {
-            request.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
+            requestBuilder.exclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
         }
 
         // set up the value map, if any (when expression API is used)
-        final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
+        final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.valueMap());
         // set up expressions, if any
-        request.withExpressionAttributeNames(spec.getNameMap())
-               .withExpressionAttributeValues(attrValMap);
+        requestBuilder.expressionAttributeNames(spec.nameMap())
+               .expressionAttributeValues(attrValMap);
+
+        spec.setRequest(requestBuilder.build_());
         return new QueryCollection(getClient(), spec);
     }
 

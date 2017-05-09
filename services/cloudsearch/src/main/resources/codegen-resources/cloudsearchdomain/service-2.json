@@ -321,7 +321,7 @@
           "location":"querystring",
           "locationName":"q.parser"
         },
-        "return":{
+        "returnValues":{
           "shape":"Return",
           "documentation":"<p>Specifies the field and expression values to include in the response. Multiple fields or expressions are specified as a comma-separated list. By default, a search response includes all return enabled fields (<code>_all_fields</code>). To return only the document IDs for the matching documents, specify <code>_no_fields</code>. To retrieve the relevance score calculated for each document, specify <code>_score</code>. </p>",
           "location":"querystring",

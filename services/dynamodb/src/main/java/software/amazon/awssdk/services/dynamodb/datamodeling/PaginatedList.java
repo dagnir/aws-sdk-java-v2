@@ -77,7 +77,7 @@ public abstract class PaginatedList<T> implements List<T> {
      * Keeps track on whether an iterator of the list has been retrieved.
      * Only updated and checked when the list is in ITERATION_ONLY mode.
      */
-    private boolean iterationStarted = false;
+    private boolean iterationstarted = false;
 
     /**
      * Constructs a PaginatedList instance using the default PaginationLoadingStrategy
@@ -433,10 +433,10 @@ public abstract class PaginatedList<T> implements List<T> {
 
             if (iterationOnly) {
                 synchronized (PaginatedList.this) {
-                    if (iterationStarted) {
+                    if (iterationstarted) {
                         throw new UnsupportedOperationException("The list could only be iterated once in ITERATION_ONLY mode.");
                     }
-                    iterationStarted = true;
+                    iterationstarted = true;
                 }
 
                 allResultsCopy = null; // not needed for ITERATION_ONLY mode

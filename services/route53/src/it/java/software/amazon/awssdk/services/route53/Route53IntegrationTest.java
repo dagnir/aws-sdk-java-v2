@@ -103,10 +103,10 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     public void testRoute53() throws Exception {
         // Create Hosted Zone
         CreateHostedZoneResult result = route53.createHostedZone(new CreateHostedZoneRequest()
-                                                                         .withName(ZONE_NAME)
-                                                                         .withCallerReference(CALLER_REFERENCE)
-                                                                         .withHostedZoneConfig(new HostedZoneConfig()
-                                                                                                       .withComment(COMMENT))
+                                                                         .name(ZONE_NAME)
+                                                                         .callerReference(CALLER_REFERENCE)
+                                                                         .hostedZoneConfig(new HostedZoneConfig()
+                                                                                                       .comment(COMMENT))
         );
 
         createdZoneId = result.getHostedZone().getId();
@@ -119,30 +119,30 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
 
         // Get Hosted Zone
-        GetHostedZoneRequest getHostedZoneRequest = new GetHostedZoneRequest(createdZoneId);
-        GetHostedZoneResult getHostedZoneResult = route53.getHostedZone(getHostedZoneRequest);
-        assertValidDelegationSet(getHostedZoneResult.getDelegationSet());
-        assertValidCreatedHostedZone(getHostedZoneResult.getHostedZone());
+        GetHostedZoneRequest hostedZoneRequest = new GetHostedZoneRequest(createdZoneId);
+        GetHostedZoneResult hostedZoneResult = route53.getHostedZone(hostedZoneRequest);
+        assertValidDelegationSet(hostedZoneResult.getDelegationSet());
+        assertValidCreatedHostedZone(hostedZoneResult.getHostedZone());
 
         // Create a health check
-        HealthCheckConfig config = new HealthCheckConfig().withType("TCP").withPort(PORT_NUM).withIPAddress(IP_ADDRESS);
+        HealthCheckConfig config = new HealthCheckConfig().type("TCP").port(PORT_NUM).ipAddress(IP_ADDRESS);
         CreateHealthCheckResult createHealthCheckResult = route53.createHealthCheck(
-                new CreateHealthCheckRequest().withHealthCheckConfig(config).withCallerReference(CALLER_REFERENCE));
+                new CreateHealthCheckRequest().healthCheckConfig(config).callerReference(CALLER_REFERENCE));
         healthCheckId = createHealthCheckResult.getHealthCheck().getId();
         assertNotNull(createHealthCheckResult.getLocation());
         assertValidHealthCheck(createHealthCheckResult.getHealthCheck());
 
         // Get the health check back
-        GetHealthCheckResult getHealthCheckResult = route53
-                .getHealthCheck(new GetHealthCheckRequest().withHealthCheckId(healthCheckId));
-        assertValidHealthCheck(getHealthCheckResult.getHealthCheck());
+        GetHealthCheckResult gealthCheckResult = route53
+                .getHealthCheck(new GetHealthCheckRequest().healthCheckId(healthCheckId));
+        assertValidHealthCheck(gealthCheckResult.getHealthCheck());
 
         // Delete the health check
-        route53.deleteHealthCheck(new DeleteHealthCheckRequest().withHealthCheckId(healthCheckId));
+        route53.deleteHealthCheck(new DeleteHealthCheckRequest().healthCheckId(healthCheckId));
 
         // Get the health check back
         try {
-            getHealthCheckResult = route53.getHealthCheck(new GetHealthCheckRequest().withHealthCheckId(healthCheckId));
+            gealthCheckResult = route53.getHealthCheck(new GetHealthCheckRequest().healthCheckId(healthCheckId));
             fail();
         } catch (AmazonServiceException e) {
             assertNotNull(e.getMessage());
@@ -181,21 +181,21 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
         // Change Resource Record Sets
         ResourceRecordSet newResourceRecordSet = new ResourceRecordSet()
-                .withName(ZONE_NAME)
-                .withResourceRecords(existingResourceRecordSet.getResourceRecords())
-                .withTTL(existingResourceRecordSet.getTTL() + 100)
-                .withType(existingResourceRecordSet.getType());
+                .name(ZONE_NAME)
+                .resourceRecords(existingResourceRecordSet.getResourceRecords())
+                .ttl(existingResourceRecordSet.getTTL() + 100)
+                .type(existingResourceRecordSet.getType());
 
         changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
-                                                              .withHostedZoneId(createdZoneId)
-                                                              .withChangeBatch(new ChangeBatch().withComment(COMMENT)
-                                                                                       .withChanges(new Change().withAction(
+                                                              .hostedZoneId(createdZoneId)
+                                                              .changeBatch(new ChangeBatch().comment(COMMENT)
+                                                                                       .changes(new Change().action(
                                                                                                ChangeAction.DELETE)
-                                                                                                            .withResourceRecordSet(
+                                                                                                            .resourceRecordSet(
                                                                                                                     existingResourceRecordSet),
-                                                                                                    new Change().withAction(
+                                                                                                    new Change().action(
                                                                                                             ChangeAction.CREATE)
-                                                                                                            .withResourceRecordSet(
+                                                                                                            .resourceRecordSet(
                                                                                                                     newResourceRecordSet))
                                                               )).getChangeInfo();
         assertValidChangeInfo(changeInfo);
@@ -204,30 +204,30 @@ public class Route53IntegrationTest extends IntegrationTestBase {
         // when they provide SetIdentifier containing special characters.
         String specialChars = "&<>'\"";
         newResourceRecordSet = new ResourceRecordSet()
-                .withName("weighted." + ZONE_NAME)
-                .withType(RRType.CNAME)
-                .withSetIdentifier(specialChars)
-                .withWeight(0L)
-                .withTTL(1000L)
-                .withResourceRecords(
-                        new ResourceRecord().withValue("www.example.com"));
+                .name("weighted." + ZONE_NAME)
+                .type(RRType.CNAME)
+                .setIdentifier(specialChars)
+                .weight(0L)
+                .ttl(1000L)
+                .resourceRecords(
+                        new ResourceRecord().value("www.example.com"));
         changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
-                                                              .withHostedZoneId(createdZoneId)
-                                                              .withChangeBatch(
-                                                                      new ChangeBatch().withComment(COMMENT).withChanges(
-                                                                              new Change().withAction(ChangeAction.CREATE)
-                                                                                      .withResourceRecordSet(
+                                                              .hostedZoneId(createdZoneId)
+                                                              .changeBatch(
+                                                                      new ChangeBatch().comment(COMMENT).changes(
+                                                                              new Change().action(ChangeAction.CREATE)
+                                                                                      .resourceRecordSet(
                                                                                               newResourceRecordSet)))
         ).getChangeInfo();
         assertValidChangeInfo(changeInfo);
 
         // Clear up the RR Set
         changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
-                                                              .withHostedZoneId(createdZoneId)
-                                                              .withChangeBatch(
-                                                                      new ChangeBatch().withComment(COMMENT).withChanges(
-                                                                              new Change().withAction(ChangeAction.DELETE)
-                                                                                      .withResourceRecordSet(
+                                                              .hostedZoneId(createdZoneId)
+                                                              .changeBatch(
+                                                                      new ChangeBatch().comment(COMMENT).changes(
+                                                                              new Change().action(ChangeAction.DELETE)
+                                                                                      .resourceRecordSet(
                                                                                               newResourceRecordSet)))
         ).getChangeInfo();
 

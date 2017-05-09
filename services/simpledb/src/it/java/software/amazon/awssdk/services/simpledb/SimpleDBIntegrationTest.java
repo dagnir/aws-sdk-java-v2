@@ -162,13 +162,13 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
      * Tests that empty string values are correct represented as the empty string, and not null.
      */
     private void gotestEmptyStringValues() throws Exception {
-        ReplaceableAttribute emptyValueAttribute = new ReplaceableAttribute().withName("empty").withValue("");
+        ReplaceableAttribute emptyValueAttribute = new ReplaceableAttribute().name("empty").value("");
         PutAttributesRequest request = new PutAttributesRequest(domainName, "emptyStringTestItem", null)
-                .withAttributes(new ReplaceableAttribute[] {emptyValueAttribute});
+                .attributes(new ReplaceableAttribute[] {emptyValueAttribute});
         sdb.putAttributes(request);
 
         List<Attribute> attributes = sdb.getAttributes(
-                new GetAttributesRequest(domainName, "emptyStringTestItem").withConsistentRead(Boolean.TRUE))
+                new GetAttributesRequest(domainName, "emptyStringTestItem").consistentRead(Boolean.TRUE))
                                         .getAttributes();
 
         assertEquals(1, attributes.size());
@@ -184,13 +184,13 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
      */
     private void gotestNewlineValues() throws Exception {
         String value = "foo\nbar\nbaz";
-        ReplaceableAttribute newlineValueAttribute = new ReplaceableAttribute().withName("newline").withValue(value);
+        ReplaceableAttribute newlineValueAttribute = new ReplaceableAttribute().name("newline").value(value);
         PutAttributesRequest request = new PutAttributesRequest(domainName, "newlineTestItem", null)
-                .withAttributes(new ReplaceableAttribute[] {newlineValueAttribute});
+                .attributes(new ReplaceableAttribute[] {newlineValueAttribute});
         sdb.putAttributes(request);
 
         List<Attribute> attributes = sdb.getAttributes(
-                new GetAttributesRequest(domainName, "newlineTestItem").withConsistentRead(Boolean.TRUE))
+                new GetAttributesRequest(domainName, "newlineTestItem").consistentRead(Boolean.TRUE))
                                         .getAttributes();
 
         assertEquals(1, attributes.size());
@@ -256,8 +256,8 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setDomainName(domainName);
         request.setItemName(FOO_ITEM.getName());
         request.setAttributes(FOO_ITEM.getAttributes());
-        request.setExpected(new UpdateCondition().withExists(Boolean.TRUE).withName("non-existant-attribute-name")
-                                                 .withValue("non-existant-attribute-value"));
+        request.setExpected(new UpdateCondition().exists(Boolean.TRUE).name("non-existant-attribute-name")
+                                                 .value("non-existant-attribute-value"));
 
         try {
             sdb.putAttributes(request);
@@ -293,7 +293,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), selectResult.getItems());
 
         // Try again with the consistent read parameter enabled...
-        sdb.select(request.withConsistentRead(Boolean.TRUE));
+        sdb.select(request.consistentRead(Boolean.TRUE));
         selectResult = sdb.select(request);
         assertNull(selectResult.getNextToken());
         assertItemsPresent(ITEM_LIST, selectResult.getItems());
@@ -335,7 +335,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setDomainName(domainName);
         request.setItemName(FOO_ITEM.getName());
         request.setConsistentRead(Boolean.TRUE);
-        request.withAttributeNames(new String[] {((ReplaceableAttribute) FOO_ITEM.getAttributes().get(0)).getName(),
+        request.attributeNames(new String[] {((ReplaceableAttribute) FOO_ITEM.getAttributes().get(0)).getName(),
                                                  ((ReplaceableAttribute) FOO_ITEM.getAttributes().get(1)).getName()});
 
         GetAttributesResult getAttributesResult = sdb.getAttributes(request);
@@ -369,7 +369,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         List<Attribute> attributeList = new ArrayList<Attribute>();
         for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {
             String attributeName = (String) iterator.next();
-            attributeList.add(new Attribute().withName(attributeName));
+            attributeList.add(new Attribute().name(attributeName));
         }
 
         assertTrue(doAttributesExistForItem(sdb, FOO_ITEM.getName(), domainName, attributeNames));
@@ -378,7 +378,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setDomainName(domainName);
         request.setItemName(FOO_ITEM.getName());
         request.setAttributes(attributeList);
-        request.setExpected(new UpdateCondition().withExists(Boolean.FALSE).withName("non-existant-attribute-name"));
+        request.setExpected(new UpdateCondition().exists(Boolean.FALSE).name("non-existant-attribute-name"));
         sdb.deleteAttributes(request);
 
         // Wait a few seconds for eventual consistency...
@@ -424,7 +424,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         List<Attribute> attributeList = new ArrayList<Attribute>();
         for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {
             String attributeName = (String) iterator.next();
-            attributeList.add(new Attribute().withName(attributeName));
+            attributeList.add(new Attribute().name(attributeName));
         }
 
         assertTrue(doAttributesExistForItem(sdb, FOO_ITEM.getName(), domainName, attributeNames));
@@ -433,8 +433,8 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         request.setDomainName(domainName);
         request.setItemName(FOO_ITEM.getName());
         request.setAttributes(attributeList);
-        request.setExpected(new UpdateCondition().withExists(Boolean.TRUE).withName("non-existant-attribute-name")
-                                                 .withValue("non-existant-attribute-value"));
+        request.setExpected(new UpdateCondition().exists(Boolean.TRUE).name("non-existant-attribute-name")
+                                                 .value("non-existant-attribute-value"));
 
         try {
             sdb.deleteAttributes(request);

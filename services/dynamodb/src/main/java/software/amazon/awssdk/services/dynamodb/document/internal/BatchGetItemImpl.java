@@ -83,17 +83,21 @@ public class BatchGetItemImpl implements BatchGetItemApi {
                 for (PrimaryKey pk : pks) {
                     keys.add(InternalUtils.toAttributeValueMap(pk));
                 }
-                final KeysAndAttributes keysAndAttrs = new KeysAndAttributes()
-                        .withAttributesToGet(attrNames)
-                        .withConsistentRead(tableKeysAndAttributes.isConsistentRead())
-                        .withKeys(keys)
-                        .withProjectionExpression(tableKeysAndAttributes.getProjectionExpression())
-                        .withExpressionAttributeNames(tableKeysAndAttributes.getNameMap());
+                final KeysAndAttributes keysAndAttrs = KeysAndAttributes.builder_()
+                        .attributesToGet(attrNames)
+                        .consistentRead(tableKeysAndAttributes.isConsistentRead())
+                        .keys(keys)
+                        .projectionExpression(tableKeysAndAttributes.getProjectionExpression())
+                        .expressionAttributeNames(tableKeysAndAttributes.nameMap())
+                        .build_();
                 requestItems.put(tableKeysAndAttributes.getTableName(), keysAndAttrs);
             }
         }
         BatchGetItemRequest req = spec.getRequest()
-                                      .withRequestItems(requestItems);
+                .toBuilder()
+                .requestItems(requestItems)
+                .build_();
+        spec.setRequest(req);
         BatchGetItemResult result = client.batchGetItem(req);
         return new BatchGetItemOutcome(result);
     }

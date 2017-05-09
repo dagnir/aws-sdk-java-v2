@@ -168,7 +168,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      */
     protected static void deleteDomain(String domainName) {
         DeleteDomainRequest request = new DeleteDomainRequest();
-        sdb.deleteDomain(request.withDomainName(domainName));
+        sdb.deleteDomain(request.domainName(domainName));
     }
 
     /**
@@ -177,7 +177,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     protected boolean doesDomainExist(String domainName) {
         try {
             DomainMetadataRequest request = new DomainMetadataRequest();
-            sdb.domainMetadata(request.withDomainName(domainName));
+            sdb.domainMetadata(request.domainName(domainName));
             return true;
         } catch (NoSuchDomainException e) {
             return false;
@@ -189,7 +189,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      */
     protected void createDomain(String domainName) {
         CreateDomainRequest request = new CreateDomainRequest();
-        sdb.createDomain(request.withDomainName(domainName));
+        sdb.createDomain(request.domainName(domainName));
     }
 
     /**

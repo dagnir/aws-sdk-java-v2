@@ -60,7 +60,7 @@ public class CrossSdkVerificationClass {
     private Set<Calendar> calendarSetAttribute;
 
     // these are kind of pointless, but here for completeness
-    private Set<Boolean> booleanSetAttribute;
+    private Set<Boolean> booleansetAttribute;
 
     @DynamoDBHashKey
     public String getKey() {
@@ -89,7 +89,7 @@ public class CrossSdkVerificationClass {
         this.version = version;
     }
 
-    public String getLastUpdater() {
+    public String lastUpdater() {
         return lastUpdater;
     }
 
@@ -105,7 +105,7 @@ public class CrossSdkVerificationClass {
         this.integerAttribute = integerAttribute;
     }
 
-    public Long getLongAttribute() {
+    public Long longAttribute() {
         return longAttribute;
     }
 
@@ -129,7 +129,7 @@ public class CrossSdkVerificationClass {
         this.floatAttribute = floatAttribute;
     }
 
-    public BigDecimal getBigDecimalAttribute() {
+    public BigDecimal bigDecimalAttribute() {
         return bigDecimalAttribute;
     }
 
@@ -137,7 +137,7 @@ public class CrossSdkVerificationClass {
         this.bigDecimalAttribute = bigDecimalAttribute;
     }
 
-    public BigInteger getBigIntegerAttribute() {
+    public BigInteger bigIntegerAttribute() {
         return bigIntegerAttribute;
     }
 
@@ -145,7 +145,7 @@ public class CrossSdkVerificationClass {
         this.bigIntegerAttribute = bigIntegerAttribute;
     }
 
-    public Byte getByteAttribute() {
+    public Byte byteAttribute() {
         return byteAttribute;
     }
 
@@ -169,7 +169,7 @@ public class CrossSdkVerificationClass {
         this.calendarAttribute = calendarAttribute;
     }
 
-    public Boolean getBooleanAttribute() {
+    public Boolean booleanAttribute() {
         return booleanAttribute;
     }
 
@@ -201,7 +201,7 @@ public class CrossSdkVerificationClass {
         this.floatSetAttribute = floatSetAttribute;
     }
 
-    public Set<BigDecimal> getBigDecimalSetAttribute() {
+    public Set<BigDecimal> bigDecimalSetAttribute() {
         return bigDecimalSetAttribute;
     }
 
@@ -209,7 +209,7 @@ public class CrossSdkVerificationClass {
         this.bigDecimalSetAttribute = bigDecimalSetAttribute;
     }
 
-    public Set<BigInteger> getBigIntegerSetAttribute() {
+    public Set<BigInteger> bigIntegerSetAttribute() {
         return bigIntegerSetAttribute;
     }
 
@@ -217,7 +217,7 @@ public class CrossSdkVerificationClass {
         this.bigIntegerSetAttribute = bigIntegerSetAttribute;
     }
 
-    public Set<Long> getLongSetAttribute() {
+    public Set<Long> longSetAttribute() {
         return longSetAttribute;
     }
 
@@ -225,7 +225,7 @@ public class CrossSdkVerificationClass {
         this.longSetAttribute = longSetAttribute;
     }
 
-    public Set<Byte> getByteSetAttribute() {
+    public Set<Byte> byteSetAttribute() {
         return byteSetAttribute;
     }
 
@@ -249,15 +249,15 @@ public class CrossSdkVerificationClass {
         this.calendarSetAttribute = calendarSetAttribute;
     }
 
-    public Set<Boolean> getBooleanSetAttribute() {
-        return booleanSetAttribute;
+    public Set<Boolean> booleansetAttribute() {
+        return booleansetAttribute;
     }
 
-    public void setBooleanSetAttribute(Set<Boolean> booleanSetAttribute) {
-        this.booleanSetAttribute = booleanSetAttribute;
+    public void setBooleansetAttribute(Set<Boolean> booleansetAttribute) {
+        this.booleansetAttribute = booleansetAttribute;
     }
 
-    public Set<String> getStringSetAttribute() {
+    public Set<String> stringSetAttribute() {
         return stringSetAttribute;
     }
 
@@ -274,7 +274,7 @@ public class CrossSdkVerificationClass {
         result = prime * result + ((bigIntegerAttribute == null) ? 0 : bigIntegerAttribute.hashCode());
         result = prime * result + ((bigIntegerSetAttribute == null) ? 0 : bigIntegerSetAttribute.hashCode());
         result = prime * result + ((booleanAttribute == null) ? 0 : booleanAttribute.hashCode());
-        result = prime * result + ((booleanSetAttribute == null) ? 0 : booleanSetAttribute.hashCode());
+        result = prime * result + ((booleansetAttribute == null) ? 0 : booleansetAttribute.hashCode());
         result = prime * result + ((byteAttribute == null) ? 0 : byteAttribute.hashCode());
         result = prime * result + ((byteSetAttribute == null) ? 0 : byteSetAttribute.hashCode());
         result = prime * result + ((calendarAttribute == null) ? 0 : calendarAttribute.hashCode());
@@ -344,11 +344,11 @@ public class CrossSdkVerificationClass {
         } else if (!booleanAttribute.equals(other.booleanAttribute)) {
             return false;
         }
-        if (booleanSetAttribute == null) {
-            if (other.booleanSetAttribute != null) {
+        if (booleansetAttribute == null) {
+            if (other.booleansetAttribute != null) {
                 return false;
             }
-        } else if (!booleanSetAttribute.equals(other.booleanSetAttribute)) {
+        } else if (!booleansetAttribute.equals(other.booleansetAttribute)) {
             return false;
         }
         if (byteAttribute == null) {

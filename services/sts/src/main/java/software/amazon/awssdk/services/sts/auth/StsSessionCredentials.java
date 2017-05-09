@@ -148,11 +148,11 @@ public class StsSessionCredentials implements AwsRefreshableSessionCredentials {
     @Override
     public synchronized void refreshCredentials() {
         GetSessionTokenResult sessionTokenResult = stsService
-                .getSessionToken(new GetSessionTokenRequest().withDurationSeconds(sessionDurationSeconds));
+                .getSessionToken(new GetSessionTokenRequest().durationSeconds(sessionDurationSeconds));
         sessionCredentials = sessionTokenResult.getCredentials();
     }
 
-    /**
+    /*
      * Gets a current session credentials object, reinitializing if necessary.
      */
     private synchronized Credentials getSessionCredentials() {

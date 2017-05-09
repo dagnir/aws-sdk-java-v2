@@ -44,8 +44,8 @@ public class QueryParamBindingTest {
         // https://tt.amazon.com/0048388339
 
         ListHealthChecksRequest listReq = new ListHealthChecksRequest()
-                .withMarker(VALUE_WITH_SEMICOLON)
-                .withMaxItems(VALUE_WITH_AMPERSAND);
+                .marker(VALUE_WITH_SEMICOLON)
+                .maxItems(VALUE_WITH_AMPERSAND);
 
         Request<ListHealthChecksRequest> httpReq_List = new ListHealthChecksRequestMarshaller().marshall(listReq);
         Assert.assertEquals("/2013-04-01/healthcheck", httpReq_List.getResourcePath());

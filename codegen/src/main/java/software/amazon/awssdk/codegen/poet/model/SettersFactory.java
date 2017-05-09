@@ -21,47 +21,50 @@ import com.squareup.javapoet.TypeName;
 import java.util.List;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 
 class SettersFactory {
+    private final ShapeModel shapeModel;
     private final TypeProvider typeProvider;
 
-    public SettersFactory(TypeProvider typeProvider) {
+    public SettersFactory(ShapeModel shapeModel, TypeProvider typeProvider) {
+        this.shapeModel = shapeModel;
         this.typeProvider = typeProvider;
     }
 
     public List<MethodSpec> fluentSetterDeclarations(MemberModel memberModel, TypeName returnType) {
         if (memberModel.isList()) {
-            return new ListSetters(memberModel, typeProvider).fluentDeclarations(returnType);
+            return new ListSetters(shapeModel, memberModel, typeProvider).fluentDeclarations(returnType);
         }
 
         if (memberModel.isMap()) {
-            return new MapSetters(memberModel, typeProvider).fluentDeclarations(returnType);
+            return new MapSetters(shapeModel, memberModel, typeProvider).fluentDeclarations(returnType);
         }
 
-        return new NonCollectionSetters(memberModel, typeProvider).fluentDeclarations(returnType);
+        return new NonCollectionSetters(shapeModel, memberModel, typeProvider).fluentDeclarations(returnType);
     }
 
     public List<MethodSpec> fluentSetters(MemberModel memberModel, TypeName returnType) {
         if (memberModel.isList()) {
-            return new ListSetters(memberModel, typeProvider).fluent(returnType);
+            return new ListSetters(shapeModel, memberModel, typeProvider).fluent(returnType);
         }
 
         if (memberModel.isMap()) {
-            return new MapSetters(memberModel, typeProvider).fluent(returnType);
+            return new MapSetters(shapeModel, memberModel, typeProvider).fluent(returnType);
         }
 
-        return new NonCollectionSetters(memberModel, typeProvider).fluent(returnType);
+        return new NonCollectionSetters(shapeModel, memberModel, typeProvider).fluent(returnType);
     }
 
     public List<MethodSpec> beanStyleSetters(MemberModel memberModel) {
         if (memberModel.isList()) {
-            return new ListSetters(memberModel, typeProvider).beanStyle();
+            return new ListSetters(shapeModel, memberModel, typeProvider).beanStyle();
         }
 
         if (memberModel.isMap()) {
-            return new MapSetters(memberModel, typeProvider).beanStyle();
+            return new MapSetters(shapeModel, memberModel, typeProvider).beanStyle();
         }
 
-        return new NonCollectionSetters(memberModel, typeProvider).beanStyle();
+        return new NonCollectionSetters(shapeModel, memberModel, typeProvider).beanStyle();
     }
 }

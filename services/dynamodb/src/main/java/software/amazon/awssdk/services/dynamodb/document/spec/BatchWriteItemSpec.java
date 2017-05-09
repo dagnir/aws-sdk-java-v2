@@ -38,7 +38,7 @@ public class BatchWriteItemSpec extends AbstractSpec<BatchWriteItemRequest> {
     private Map<String, List<WriteRequest>> unprocessedItems;
 
     public BatchWriteItemSpec() {
-        super(new BatchWriteItemRequest());
+        super(BatchWriteItemRequest.builder_().build_());
     }
 
     public Collection<TableWriteItems> getTableWriteItems() {
@@ -65,12 +65,12 @@ public class BatchWriteItemSpec extends AbstractSpec<BatchWriteItemRequest> {
 
 
     public String getReturnConsumedCapacity() {
-        return getRequest().getReturnConsumedCapacity();
+        return getRequest().returnConsumedCapacity();
     }
 
 
     public BatchWriteItemSpec withReturnConsumedCapacity(ReturnConsumedCapacity capacity) {
-        getRequest().withReturnConsumedCapacity(capacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build_());
         return this;
     }
 

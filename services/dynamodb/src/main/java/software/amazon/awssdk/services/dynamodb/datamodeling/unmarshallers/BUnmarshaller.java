@@ -25,7 +25,7 @@ abstract class BUnmarshaller implements ArgumentUnmarshaller {
 
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
-        if (value.getB() == null) {
+        if (value.b() == null) {
             throw new DynamoDBMappingException("Expected B in value " + value + " when invoking " + setter);
         }
     }

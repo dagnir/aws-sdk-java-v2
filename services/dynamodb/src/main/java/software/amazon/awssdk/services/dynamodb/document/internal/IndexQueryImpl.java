@@ -35,7 +35,7 @@ public class IndexQueryImpl extends QueryImpl {
 
     @Override
     protected ItemCollection<QueryOutcome> doQuery(QuerySpec spec) {
-        spec.getRequest().setIndexName(index.getIndexName());
+        spec.setRequest(spec.getRequest().toBuilder().indexName(index.getIndexName()).build_());
         return super.doQuery(spec);
     }
 }

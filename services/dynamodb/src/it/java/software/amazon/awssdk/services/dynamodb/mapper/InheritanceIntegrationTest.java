@@ -49,19 +49,19 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
     }
 
     @Test
-    public void testSubSubClass() throws Exception {
-        List<SubSubClass> objs = new ArrayList<SubSubClass>();
+    public void testSubsubClass() throws Exception {
+        List<SubsubClass> objs = new ArrayList<SubsubClass>();
         for (int i = 0; i < 5; i++) {
-            SubSubClass obj = getUniqueObject(new SubSubClass());
+            SubsubClass obj = getUniqueObject(new SubsubClass());
             obj.setSubField("" + startKey++);
-            obj.setSubSubField("" + startKey++);
+            obj.setSubsubField("" + startKey++);
             objs.add(obj);
         }
 
         DynamoDBMapper util = new DynamoDBMapper(dynamo);
-        for (SubSubClass obj : objs) {
+        for (SubsubClass obj : objs) {
             util.save(obj);
-            assertEquals(util.load(SubSubClass.class, obj.getKey()), obj);
+            assertEquals(util.load(SubsubClass.class, obj.getKey()), obj);
         }
     }
 
@@ -119,7 +119,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
         }
 
         @DynamoDBAttribute
-        public String getNormalStringAttribute() {
+        public String normalStringAttribute() {
             return normalStringAttribute;
         }
 
@@ -170,7 +170,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         private String subField;
 
-        public String getSubField() {
+        public String subField() {
             return subField;
         }
 
@@ -220,23 +220,23 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
     }
 
-    public static class SubSubClass extends SubClass {
+    public static class SubsubClass extends SubClass {
 
-        private String subSubField;
+        private String subsubField;
 
-        public String getSubSubField() {
-            return subSubField;
+        public String subsubField() {
+            return subsubField;
         }
 
-        public void setSubSubField(String subSubField) {
-            this.subSubField = subSubField;
+        public void setSubsubField(String subsubField) {
+            this.subsubField = subsubField;
         }
 
         @Override
         public int hashCode() {
             final int prime = 31;
             int result = super.hashCode();
-            result = prime * result + ((subSubField == null) ? 0 : subSubField.hashCode());
+            result = prime * result + ((subsubField == null) ? 0 : subsubField.hashCode());
             return result;
         }
 
@@ -251,12 +251,12 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            SubSubClass other = (SubSubClass) obj;
-            if (subSubField == null) {
-                if (other.subSubField != null) {
+            SubsubClass other = (SubsubClass) obj;
+            if (subsubField == null) {
+                if (other.subsubField != null) {
                     return false;
                 }
-            } else if (!subSubField.equals(other.subSubField)) {
+            } else if (!subsubField.equals(other.subsubField)) {
                 return false;
             }
             return true;

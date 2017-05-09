@@ -38,7 +38,7 @@ final class StandardBeanProperties {
      */
     @SuppressWarnings("unchecked")
     static final <T> Beans<T> of(Class<T> clazz) {
-        return ((CachedBeans<T>) CachedBeans.CACHE).getBeans(clazz);
+        return ((CachedBeans<T>) CachedBeans.CACHE).beans(clazz);
     }
 
     /**
@@ -56,7 +56,7 @@ final class StandardBeanProperties {
         private static final CachedBeans<Object> CACHE = new CachedBeans<Object>();
         private final ConcurrentMap<Class<T>, Beans<T>> cache = new ConcurrentHashMap<Class<T>, Beans<T>>();
 
-        private final Beans<T> getBeans(Class<T> clazz) {
+        private final Beans<T> beans(Class<T> clazz) {
             if (!cache.containsKey(clazz)) {
                 final TableMap<T> annotations = StandardAnnotationMaps.<T>of(clazz);
                 final BeanMap<T, Object> map = new BeanMap<T, Object>(clazz, false);

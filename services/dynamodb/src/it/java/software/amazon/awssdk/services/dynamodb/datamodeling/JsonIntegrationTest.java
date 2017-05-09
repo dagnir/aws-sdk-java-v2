@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
+import software.amazon.awssdk.services.dynamodb.ReflectHelper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.TableNameOverride;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -59,17 +60,18 @@ public class JsonIntegrationTest extends AwsTestBase {
                         .build());
 
         CreateTableRequest request = mapper
-                .generateCreateTableRequest(TestClass.class)
-                .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
+                .generateCreateTableRequest(TestClass.class).toBuilder()
+                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(1L).writeCapacityUnits(1L).build_())
+                .build_();
 
         client.createTable(request);
 
         Thread.sleep(10000);
 
         while (true) {
-            String status = client.describeTable(new DescribeTableRequest(TABLE_NAME))
-                                  .getTable()
-                                  .getTableStatus();
+            String status = client.describeTable(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_())
+                                  .table()
+                                  .tableStatus();
 
             if (status.equals(TableStatus.ACTIVE.toString())) {
                 break;
@@ -88,7 +90,7 @@ public class JsonIntegrationTest extends AwsTestBase {
         }
 
         try {
-            client.deleteTable(new DeleteTableRequest(TABLE_NAME));
+            client.deleteTable(DeleteTableRequest.builder_().tableName(TABLE_NAME).build_());
         } catch (ResourceNotFoundException e) {
             // Ignored or expected.
         }
@@ -158,7 +160,7 @@ public class JsonIntegrationTest extends AwsTestBase {
             this.id = id;
         }
 
-        public List<Map<String, ChildClass>> getListOfMaps() {
+        public List<Map<String, ChildClass>> listOfMaps() {
             return listOfMaps;
         }
 
@@ -166,7 +168,7 @@ public class JsonIntegrationTest extends AwsTestBase {
             this.listOfMaps = listOfMaps;
         }
 
-        public Map<String, List<ChildClass>> getMapOfLists() {
+        public Map<String, List<ChildClass>> mapOfLists() {
             return mapOfLists;
         }
 
@@ -223,7 +225,7 @@ public class JsonIntegrationTest extends AwsTestBase {
             this.otherChildren = otherChildren;
         }
 
-        public Map<String, ChildClass> getNamedChildren() {
+        public Map<String, ChildClass> namedChildren() {
             return namedChildren;
         }
 

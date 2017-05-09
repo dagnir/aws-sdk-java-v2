@@ -15,9 +15,12 @@
 
 package software.amazon.awssdk.services.lambda.invoke;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.services.lambda.model.InvokeAsyncRequest;
@@ -31,22 +34,22 @@ public class InvokeArgsAsStringTest {
 
     @Test
     public void testInvokeAsyncArgsAsString() throws IOException {
-        InvokeAsyncRequest request = new InvokeAsyncRequest();
-        request.setInvokeArgs(ARGS);
+        InvokeAsyncRequest.Builder requestBuilder = InvokeAsyncRequest.builder_();
+        requestBuilder.invokeArgs(new ByteArrayInputStream(ARGS.getBytes(StandardCharsets.UTF_8)));
 
-        InputStream stream = request.getInvokeArgs();
+        InputStream stream = requestBuilder.build_().invokeArgs();
 
-        String decoded = new String(IoUtils.toByteArray(stream), StringUtils.UTF8);
+        String decoded = new String(IoUtils.toByteArray(stream), StandardCharsets.UTF_8);
 
         Assert.assertEquals(ARGS, decoded);
     }
 
     @Test
     public void testInvokeArgsAsString() {
-        InvokeRequest request = new InvokeRequest();
-        request.setPayload(ARGS);
+        InvokeRequest.Builder requestBuilder = InvokeRequest.builder_();
+        requestBuilder.payload(ByteBuffer.wrap(ARGS.getBytes(StandardCharsets.UTF_8)));
 
-        ByteBuffer bb = request.getPayload();
+        ByteBuffer bb = requestBuilder.build_().payload();
         String decoded = StringUtils.UTF8.decode(bb).toString();
 
         Assert.assertEquals(ARGS, decoded);

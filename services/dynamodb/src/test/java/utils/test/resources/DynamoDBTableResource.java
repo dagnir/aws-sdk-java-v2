@@ -48,9 +48,9 @@ public abstract class DynamoDBTableResource implements TestResource {
                 new UnorderedCollectionComparator.CrossTypeComparator<GlobalSecondaryIndex, GlobalSecondaryIndexDescription>() {
                     @Override
                     public boolean equals(GlobalSecondaryIndex a, GlobalSecondaryIndexDescription b) {
-                        return a.getIndexName().equals(b.getIndexName())
-                               && equalProjections(a.getProjection(), b.getProjection())
-                               && UnorderedCollectionComparator.equalUnorderedCollections(a.getKeySchema(), b.getKeySchema());
+                        return a.indexName().equals(b.indexName())
+                               && equalProjections(a.projection(), b.projection())
+                               && UnorderedCollectionComparator.equalUnorderedCollections(a.keySchema(), b.keySchema());
                     }
                 });
     }
@@ -71,9 +71,9 @@ public abstract class DynamoDBTableResource implements TestResource {
                         // Project parameter might not be specified in the
                         // CreateTableRequest. But it should be treated as equal
                         // to the default projection type - KEYS_ONLY.
-                        return a.getIndexName().equals(b.getIndexName())
-                               && equalProjections(a.getProjection(), b.getProjection())
-                               && UnorderedCollectionComparator.equalUnorderedCollections(a.getKeySchema(), b.getKeySchema());
+                        return a.indexName().equals(b.indexName())
+                               && equalProjections(a.projection(), b.projection())
+                               && UnorderedCollectionComparator.equalUnorderedCollections(a.keySchema(), b.keySchema());
                     }
                 });
     }
@@ -87,11 +87,11 @@ public abstract class DynamoDBTableResource implements TestResource {
             throw new IllegalStateException("The projection parameter should never be null.");
         }
 
-        return fromCreateTableRequest.getProjectionType().equals(
-                fromDescribeTableResult.getProjectionType())
+        return fromCreateTableRequest.projectionType().equals(
+                fromDescribeTableResult.projectionType())
                && UnorderedCollectionComparator.equalUnorderedCollections(
-                fromCreateTableRequest.getNonKeyAttributes(),
-                fromDescribeTableResult.getNonKeyAttributes());
+                fromCreateTableRequest.nonKeyAttributes(),
+                fromDescribeTableResult.nonKeyAttributes());
     }
 
     protected abstract DynamoDBClient getClient();
@@ -110,7 +110,7 @@ public abstract class DynamoDBTableResource implements TestResource {
         if (waitTillFinished) {
             System.out.println("Waiting for " + this + " to become active...");
             try {
-                TableUtils.waitUntilActive(getClient(), getCreateTableRequest().getTableName());
+                TableUtils.waitUntilActive(getClient(), getCreateTableRequest().tableName());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -120,11 +120,11 @@ public abstract class DynamoDBTableResource implements TestResource {
     @Override
     public void delete(boolean waitTillFinished) {
         System.out.println("Deleting " + this + "...");
-        getClient().deleteTable(new DeleteTableRequest(getCreateTableRequest().getTableName()));
+        getClient().deleteTable(DeleteTableRequest.builder_().tableName(getCreateTableRequest().tableName()).build_());
 
         if (waitTillFinished) {
             System.out.println("Waiting for " + this + " to become deleted...");
-            DynamoDBTestBase.waitForTableToBecomeDeleted(getClient(), getCreateTableRequest().getTableName());
+            DynamoDBTestBase.waitForTableToBecomeDeleted(getClient(), getCreateTableRequest().tableName());
         }
     }
 
@@ -133,21 +133,21 @@ public abstract class DynamoDBTableResource implements TestResource {
         CreateTableRequest createRequest = getCreateTableRequest();
         TableDescription table = null;
         try {
-            table = getClient().describeTable(new DescribeTableRequest(
-                    createRequest.getTableName())).getTable();
+            table = getClient().describeTable(DescribeTableRequest.builder_().tableName(
+                    createRequest.tableName()).build_()).table();
         } catch (AmazonServiceException ase) {
             if (ase.getErrorCode().equalsIgnoreCase("ResourceNotFoundException")) {
                 return ResourceStatus.NOT_EXIST;
             }
         }
 
-        String tableStatus = table.getTableStatus();
+        String tableStatus = table.tableStatus();
 
         if (tableStatus.equals(TableStatus.ACTIVE.toString())) {
             // returns AVAILABLE only if table KeySchema + LSIs + GSIs all match.
-            if (UnorderedCollectionComparator.equalUnorderedCollections(createRequest.getKeySchema(), table.getKeySchema())
-                && equalUnorderedGsiLists(createRequest.getGlobalSecondaryIndexes(), table.getGlobalSecondaryIndexes())
-                && equalUnorderedLsiLists(createRequest.getLocalSecondaryIndexes(), table.getLocalSecondaryIndexes())) {
+            if (UnorderedCollectionComparator.equalUnorderedCollections(createRequest.keySchema(), table.keySchema())
+                && equalUnorderedGsiLists(createRequest.globalSecondaryIndexes(), table.globalSecondaryIndexes())
+                && equalUnorderedLsiLists(createRequest.localSecondaryIndexes(), table.localSecondaryIndexes())) {
                 return ResourceStatus.AVAILABLE;
             } else {
                 return ResourceStatus.EXIST_INCOMPATIBLE_RESOURCE;
@@ -166,7 +166,7 @@ public abstract class DynamoDBTableResource implements TestResource {
      */
     @Override
     public String toString() {
-        return "DynamoDB Table [" + getCreateTableRequest().getTableName() + "]";
+        return "DynamoDB Table [" + getCreateTableRequest().tableName() + "]";
     }
 
     @Override

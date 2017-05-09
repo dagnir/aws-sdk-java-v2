@@ -83,7 +83,7 @@ public class IndexRangeKeyClass {
     @DynamoDBIndexRangeKey(
             localSecondaryIndexNames = {"index_foo_copy", "index_bar_copy"}
     )
-    public Double getMultipleIndexRangeKey() {
+    public Double multipleIndexRangeKey() {
         return multipleIndexRangeKey;
     }
 
@@ -101,7 +101,7 @@ public class IndexRangeKeyClass {
     }
 
     @DynamoDBAttribute
-    public String getBarAttribute() {
+    public String barAttribute() {
         return barAttribute;
     }
 

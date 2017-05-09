@@ -304,7 +304,7 @@ public class TableKeysAndAttributes {
         return this;
     }
 
-    public Map<String, String> getNameMap() {
+    public Map<String, String> nameMap() {
         return nameMap;
     }
 

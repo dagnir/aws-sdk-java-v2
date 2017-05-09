@@ -58,23 +58,25 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
     public static void setUp() throws Exception {
         DynamoDBTestBase.setUpTestBase();
         List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
-        keySchema.add(new KeySchemaElement("id", KeyType.HASH));
+        keySchema.add(KeySchemaElement.builder_().attributeName("id").keyType(KeyType.HASH).build_());
 
-        CreateTableRequest req = new CreateTableRequest(HASH_KEY_ONLY_TABLE_NAME, keySchema)
-                .withProvisionedThroughput(new ProvisionedThroughput(10L, 10L))
-                .withAttributeDefinitions(
-                        new AttributeDefinition("id", ScalarAttributeType.S),
-                        new AttributeDefinition("status", ScalarAttributeType.S),
-                        new AttributeDefinition("ts", ScalarAttributeType.S))
-                .withGlobalSecondaryIndexes(
-                        new GlobalSecondaryIndex()
-                                .withProvisionedThroughput(new ProvisionedThroughput(10L, 10L))
-                                .withIndexName("statusAndCreation")
-                                .withKeySchema(
-                                        new KeySchemaElement("status", KeyType.HASH),
-                                        new KeySchemaElement("ts", KeyType.RANGE))
-                                .withProjection(
-                                        new Projection().withProjectionType(ProjectionType.ALL)));
+        CreateTableRequest req = CreateTableRequest.builder_()
+                .tableName(HASH_KEY_ONLY_TABLE_NAME)
+                .keySchema(keySchema)
+                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(10L).writeCapacityUnits(10L).build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName("id").attributeType(ScalarAttributeType.S).build_(),
+                        AttributeDefinition.builder_().attributeName("status").attributeType(ScalarAttributeType.S).build_(),
+                        AttributeDefinition.builder_().attributeName("ts").attributeType(ScalarAttributeType.S).build_())
+                .globalSecondaryIndexes(
+                        GlobalSecondaryIndex.builder_()
+                                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(10L).writeCapacityUnits(10L).build_())
+                                .indexName("statusAndCreation")
+                                .keySchema(
+                                        KeySchemaElement.builder_().attributeName("status").keyType(KeyType.HASH).build_(),
+                                        KeySchemaElement.builder_().attributeName("ts").keyType(KeyType.RANGE).build_())
+                                .projection(
+                                        Projection.builder_().projectionType(ProjectionType.ALL).build_()).build_()).build_();
 
         TableUtils.createTableIfNotExists(dynamo, req);
         TableUtils.waitUntilActive(dynamo, HASH_KEY_ONLY_TABLE_NAME);
@@ -82,7 +84,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
 
     @AfterClass
     public static void tearDown() throws Exception {
-        dynamo.deleteTable(new DeleteTableRequest(HASH_KEY_ONLY_TABLE_NAME));
+        dynamo.deleteTable(DeleteTableRequest.builder_().tableName(HASH_KEY_ONLY_TABLE_NAME).build_());
     }
 
     /**
@@ -105,13 +107,13 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
                 .withConsistentRead(false)
                 .withHashKeyValues(user)
                 .withRangeKeyCondition("ts",
-                                       new Condition()
-                                               .withComparisonOperator(ComparisonOperator.GT)
-                                               .withAttributeValueList(new AttributeValue("100")));
+                                       Condition.builder_()
+                                               .comparisonOperator(ComparisonOperator.GT)
+                                               .attributeValueList(AttributeValue.builder_().s("100").build_()).build_());
 
         PaginatedQueryList<User> query = mapper.query(User.class, expr);
         assertEquals(1, query.size());
-        assertEquals(status, query.get(0).getStatus());
+        assertEquals(status, query.get(0).status());
     }
 
     @DynamoDBTable(tableName = HASH_KEY_ONLY_TABLE_NAME)
@@ -130,7 +132,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
         }
 
         @DynamoDBIndexHashKey(globalSecondaryIndexName = "statusAndCreation")
-        public String getStatus() {
+        public String status() {
             return status;
         }
 

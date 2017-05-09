@@ -118,8 +118,8 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         Set<String> messages = Collections.synchronizedSet(new HashSet<String>());
         for (int i = 0; i < NUM_MESSAGES; i++) {
             String body = "test message " + i + "_" + System.currentTimeMillis();
-            SendMessageRequest request = new SendMessageRequest().withMessageBody(body).withQueueUrl(queueUrl)
-                                                                 .withMessageAttributes(ATTRIBUTES);
+            SendMessageRequest request = new SendMessageRequest().messageBody(body).queueUrl(queueUrl)
+                                                                 .messageAttributes(ATTRIBUTES);
 
             sendResults.add(buffSqs.sendMessage(request));
             messages.add(body);
@@ -174,8 +174,8 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         }
 
         private List<Message> recieveMessage() throws InterruptedException, ExecutionException {
-            ReceiveMessageRequest recRequest = new ReceiveMessageRequest().withMaxNumberOfMessages(1).withQueueUrl(url)
-                                                                          .withMessageAttributeNames("All");
+            ReceiveMessageRequest recRequest = new ReceiveMessageRequest().maxNumberOfMessages(1).queueUrl(url)
+                                                                          .messageAttributeNames("All");
             Future<ReceiveMessageResult> future = buffSqs.receiveMessage(recRequest);
             List<Message> messages = future.get().getMessages();
             return messages;
@@ -190,7 +190,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         }
 
         private void deleteMessage(Message theMessage) throws InterruptedException, ExecutionException {
-            DeleteMessageRequest deleteRequest = new DeleteMessageRequest().withQueueUrl(url).withReceiptHandle(
+            DeleteMessageRequest deleteRequest = new DeleteMessageRequest().queueUrl(url).receiptHandle(
                     theMessage.getReceiptHandle());
             buffSqs.deleteMessage(deleteRequest).get();
         }

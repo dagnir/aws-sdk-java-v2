@@ -52,13 +52,13 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, new AttributeValue().withN("" + startKey++));
-            attr.put(RANGE_KEY, new AttributeValue().withN("" + start++));
-            attr.put(INTEGER_ATTRIBUTE, new AttributeValue().withNS("" + start++, "" + start++, "" + start++));
-            attr.put(BIG_DECIMAL_ATTRIBUTE, new AttributeValue().withN("" + start++));
-            attr.put(STRING_ATTRIBUTE, new AttributeValue().withS("" + start++));
-            attr.put(STRING_SET_ATTRIBUTE, new AttributeValue().withSS("" + start++, "" + start++, "" + start++));
-            attr.put(VERSION_ATTRIBUTE, new AttributeValue().withN("1"));
+            attr.put(KEY_NAME, AttributeValue.builder_().n("" + startKey++).build_());
+            attr.put(RANGE_KEY, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
+            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
+            attr.put(STRING_ATTRIBUTE, AttributeValue.builder_().s("" + start++).build_());
+            attr.put(STRING_SET_ATTRIBUTE, AttributeValue.builder_().ss("" + start++, "" + start++, "" + start++).build_());
+            attr.put(VERSION_ATTRIBUTE, AttributeValue.builder_().n("1").build_());
 
             attrs.add(attr);
         }
@@ -72,7 +72,7 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(new PutItemRequest(TABLE_WITH_RANGE_ATTRIBUTE, attr));
+            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_WITH_RANGE_ATTRIBUTE).item(attr).build_());
         }
     }
 
@@ -81,18 +81,18 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
         DynamoDBMapper util = new DynamoDBMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
-            RangeKeyClass x = util.load(newRangeKey(Long.parseLong(attr.get(KEY_NAME).getN()),
-                                                    Double.parseDouble(attr.get(RANGE_KEY).getN())));
+            RangeKeyClass x = util.load(newRangeKey(Long.parseLong(attr.get(KEY_NAME).n()),
+                                                    Double.parseDouble(attr.get(RANGE_KEY).n())));
 
             // Convert all numbers to the most inclusive type for easy
             // comparison
-            assertEquals(new BigDecimal(x.getKey()), new BigDecimal(attr.get(KEY_NAME).getN()));
-            assertEquals(new BigDecimal(x.getRangeKey()), new BigDecimal(attr.get(RANGE_KEY).getN()));
-            assertEquals(new BigDecimal(x.getVersion()), new BigDecimal(attr.get(VERSION_ATTRIBUTE).getN()));
-            assertEquals(x.getBigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).getN()));
-            assertNumericSetsEquals(x.getIntegerAttribute(), attr.get(INTEGER_ATTRIBUTE).getNS());
-            assertEquals(x.getStringAttribute(), attr.get(STRING_ATTRIBUTE).getS());
-            assertSetsEqual(x.getStringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).getSS()));
+            assertEquals(new BigDecimal(x.getKey()), new BigDecimal(attr.get(KEY_NAME).n()));
+            assertEquals(new BigDecimal(x.getRangeKey()), new BigDecimal(attr.get(RANGE_KEY).n()));
+            assertEquals(new BigDecimal(x.getVersion()), new BigDecimal(attr.get(VERSION_ATTRIBUTE).n()));
+            assertEquals(x.bigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).n()));
+            assertNumericSetsEquals(x.getIntegerAttribute(), attr.get(INTEGER_ATTRIBUTE).ns());
+            assertEquals(x.stringAttribute(), attr.get(STRING_ATTRIBUTE).s());
+            assertSetsEqual(x.stringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).ss()));
         }
     }
 

@@ -42,7 +42,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     private Map<String, Object> valueMap;
 
     public PutItemSpec() {
-        super(new PutItemRequest());
+        super(PutItemRequest.builder_().build_());
     }
 
     public Item getItem() {
@@ -84,15 +84,15 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     }
 
     public String getConditionExpression() {
-        return getRequest().getConditionExpression();
+        return getRequest().conditionExpression();
     }
 
     public PutItemSpec withConditionExpression(String conditionExpression) {
-        getRequest().setConditionExpression(conditionExpression);
+        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build_());
         return this;
     }
 
-    public Map<String, String> getNameMap() {
+    public Map<String, String> nameMap() {
         return nameMap;
     }
 
@@ -112,7 +112,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
         return this;
     }
 
-    public Map<String, Object> getValueMap() {
+    public Map<String, Object> valueMap() {
         return valueMap;
     }
 
@@ -120,7 +120,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
      * Applicable only when an expression has been specified. Used to
      * specify the actual values for the attribute-value placeholders.
      */
-    public PutItemSpec withValueMap(Map<String, Object> valueMap) {
+    public PutItemSpec valueMap(Map<String, Object> valueMap) {
         if (valueMap == null) {
             this.valueMap = null;
         } else {
@@ -131,42 +131,43 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     }
 
     public String getConditionalOperator() {
-        return getRequest().getConditionalOperator();
+        return getRequest().conditionalOperator();
     }
 
     public PutItemSpec withConditionalOperator(
             ConditionalOperator conditionalOperator) {
-        getRequest().setConditionalOperator(conditionalOperator);
+        setRequest(getRequest().toBuilder().conditionalOperator(conditionalOperator).build_());
         return this;
     }
 
     public String getReturnConsumedCapacity() {
-        return getRequest().getReturnConsumedCapacity();
+        return getRequest().returnConsumedCapacity();
     }
 
     public PutItemSpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        getRequest().setReturnConsumedCapacity(returnConsumedCapacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build_());
         return this;
     }
 
     public String getReturnItemCollectionMetrics() {
-        return getRequest().getReturnItemCollectionMetrics();
+        return getRequest().returnItemCollectionMetrics();
     }
 
     public PutItemSpec withReturnItemCollectionMetrics(
             ReturnItemCollectionMetrics returnItemCollectionMetrics) {
-        getRequest()
-                .setReturnItemCollectionMetrics(returnItemCollectionMetrics);
+        setRequest(getRequest().toBuilder()
+                .returnItemCollectionMetrics(returnItemCollectionMetrics)
+                .build_());
         return this;
     }
 
     public String getReturnValues() {
-        return getRequest().getReturnValues();
+        return getRequest().returnValues();
     }
 
     public PutItemSpec withReturnValues(ReturnValue returnValues) {
-        getRequest().setReturnValues(returnValues);
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build_());
         return this;
     }
 

@@ -33,13 +33,13 @@ public class EnumMarshallerIntegrationTest extends DynamoDBMapperIntegrationTest
 
         final TestObject object1 = new TestObject();
 
-        assertNull(object1.getStatus());
+        assertNull(object1.status());
 
         mapper.save(object1);
 
         final TestObject object2 = mapper.load(TestObject.class, object1.getKey());
 
-        assertNull(object2.getStatus());
+        assertNull(object2.status());
     }
 
     @Test
@@ -53,12 +53,12 @@ public class EnumMarshallerIntegrationTest extends DynamoDBMapperIntegrationTest
         mapper.save(object1);
 
         assertNotNull(object1.getKey());
-        assertNotNull(object1.getStatus());
+        assertNotNull(object1.status());
 
         final TestObject object2 = mapper.load(TestObject.class, object1.getKey());
 
         assertEquals(object1.getKey(), object2.getKey());
-        assertEquals(object1.getStatus(), object2.getStatus());
+        assertEquals(object1.status(), object2.status());
     }
 
     @DynamoDBTable(tableName = "aws-java-sdk-util")
@@ -81,7 +81,7 @@ public class EnumMarshallerIntegrationTest extends DynamoDBMapperIntegrationTest
         }
 
         @DynamoDBMarshalling(marshallerClass = StatusEnumMarshaller.class)
-        public Status getStatus() {
+        public Status status() {
             return this.status;
         }
 

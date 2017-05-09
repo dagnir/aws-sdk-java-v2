@@ -37,7 +37,7 @@ public class CustomSecureRandomIntegrationTest extends AwsIntegrationTestBase {
                 .securityConfiguration(ClientSecurityConfiguration.builder().secureRandom(customSecureRandom).build())
                 .build();
 
-        ddb.listTables(new ListTablesRequest());
+        ddb.listTables(ListTablesRequest.builder_().build_());
         verify(customSecureRandom, atLeastOnce()).nextBytes((byte[]) Mockito.any());
     }
 

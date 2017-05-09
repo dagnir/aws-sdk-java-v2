@@ -44,7 +44,7 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
     /** Releases all resources used by this test. */
     @After
     public void tearDown() throws Exception {
-        sdb.deleteDomain(new DeleteDomainRequest().withDomainName(domainName));
+        sdb.deleteDomain(new DeleteDomainRequest().domainName(domainName));
     }
 
     /**
@@ -56,7 +56,7 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
     public void testInvalidXmlCharacters() throws Exception {
         createTestData();
 
-        SelectResult selectResult = sdb.select(new SelectRequest().withSelectExpression("SELECT * FROM `" + domainName
+        SelectResult selectResult = sdb.select(new SelectRequest().selectExpression("SELECT * FROM `" + domainName
                                                                                         + "`"));
 
         List<Item> items = selectResult.getItems();
@@ -81,12 +81,12 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
      * containing non-XML compatible characters.
      */
     private void createTestData() throws Exception {
-        sdb.createDomain(new CreateDomainRequest().withDomainName(domainName));
+        sdb.createDomain(new CreateDomainRequest().domainName(domainName));
 
-        ReplaceableAttribute attribute = new ReplaceableAttribute().withName(NON_XML_COMPATIBLE_STRING).withValue(
+        ReplaceableAttribute attribute = new ReplaceableAttribute().name(NON_XML_COMPATIBLE_STRING).value(
                 NON_XML_COMPATIBLE_STRING);
-        sdb.putAttributes(new PutAttributesRequest().withDomainName(domainName).withItemName(NON_XML_COMPATIBLE_STRING)
-                                                    .withAttributes(new ReplaceableAttribute[] {attribute}));
+        sdb.putAttributes(new PutAttributesRequest().domainName(domainName).itemName(NON_XML_COMPATIBLE_STRING)
+                                                    .attributes(new ReplaceableAttribute[] {attribute}));
 
         // Sleep 5s to let data propagate
         Thread.sleep(5 * 1000);

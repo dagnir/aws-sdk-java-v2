@@ -36,7 +36,7 @@ public class SqsIntegrationTest extends IntegrationTestBase {
 
     private String getQueueCreationDate(SQSAsyncClient sqs, String queueURL) {
         GetQueueAttributesRequest request = new GetQueueAttributesRequest(queueURL)
-                .withAttributeNames(QueueAttributeName.CreatedTimestamp.toString());
+                .attributeNames(QueueAttributeName.CreatedTimestamp.toString());
         Map<String, String> attributes = sqs.getQueueAttributes(request).join().getAttributes();
         return attributes.get(QueueAttributeName.CreatedTimestamp.toString());
     }

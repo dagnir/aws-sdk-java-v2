@@ -48,7 +48,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.StandardBeanPropert
  *     public String getExchange() { return exchange; }
  *     public void setExchange(String exchange) { this.exchange = exchange; }
  *
- *     public String getSubscriber() { return subscriber; }
+ *     public String subscriber() { return subscriber; }
  *     public void setSubscriber(String subscriber) { this.subscriber = subscriber; }
  * }
  * </pre>

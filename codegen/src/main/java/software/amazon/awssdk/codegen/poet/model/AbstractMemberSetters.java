@@ -23,16 +23,19 @@ import com.squareup.javapoet.TypeName;
 import javax.lang.model.element.Modifier;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 
 /**
  * Abstract implementation of {@link MemberSetters} to share common functionality.
  */
 abstract class AbstractMemberSetters implements MemberSetters {
+    private ShapeModel shapeModel;
     private MemberModel memberModel;
     private TypeProvider typeProvider;
 
-    AbstractMemberSetters(MemberModel memberModel, TypeProvider typeProvider) {
+    AbstractMemberSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
+        this.shapeModel = shapeModel;
         this.memberModel = memberModel;
         this.typeProvider = typeProvider;
     }
@@ -84,6 +87,9 @@ abstract class AbstractMemberSetters implements MemberSetters {
         return ParameterSpec.builder(typeProvider.type(memberModel), fieldName()).build();
     }
 
+    protected ShapeModel shapeModel() {
+        return shapeModel;
+    }
     protected MemberModel memberModel() {
         return memberModel;
     }

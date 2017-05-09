@@ -54,35 +54,35 @@ public class Route53RequestHandlerTest {
         delegationSet.setId(delegationSetId);
 
         CreateHostedZoneResult createResult = new CreateHostedZoneResult()
-                .withDelegationSet(delegationSet);
+                .delegationSet(delegationSet);
 
         afterResponse(requestHandler, createResult);
 
         assertEquals(createResult.getDelegationSet().getId(), id);
 
         CreateReusableDelegationSetResult createResuableResult = new CreateReusableDelegationSetResult()
-                .withDelegationSet(delegationSet);
+                .delegationSet(delegationSet);
 
         afterResponse(requestHandler, createResuableResult);
 
         assertEquals(createResuableResult.getDelegationSet().getId(), id);
 
         GetHostedZoneResult getZoneResult = new GetHostedZoneResult()
-                .withDelegationSet(delegationSet);
+                .delegationSet(delegationSet);
 
         afterResponse(requestHandler, getZoneResult);
 
         assertEquals(getZoneResult.getDelegationSet().getId(), id);
 
         GetReusableDelegationSetResult getResuableResult = new GetReusableDelegationSetResult()
-                .withDelegationSet(delegationSet);
+                .delegationSet(delegationSet);
 
         afterResponse(requestHandler, getResuableResult);
 
         assertEquals(getResuableResult.getDelegationSet().getId(), id);
 
         ListReusableDelegationSetsResult listResult = new ListReusableDelegationSetsResult()
-                .withDelegationSets(delegationSet);
+                .delegationSets(delegationSet);
 
         afterResponse(requestHandler, listResult);
 
@@ -91,7 +91,7 @@ public class Route53RequestHandlerTest {
         delegationSet.setId(id);
 
         createResult = new CreateHostedZoneResult()
-                .withDelegationSet(delegationSet);
+                .delegationSet(delegationSet);
 
         afterResponse(requestHandler, createResult);
 

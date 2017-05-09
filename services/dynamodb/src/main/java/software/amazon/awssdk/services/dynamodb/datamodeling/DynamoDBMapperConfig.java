@@ -73,7 +73,7 @@ public class DynamoDBMapperConfig {
     private final ObjectTableNameResolver objectTableNameResolver;
     private final PaginationLoadingStrategy paginationLoadingStrategy;
     private final RequestMetricCollector requestMetricCollector;
-    private final ConversionSchema conversionSchema;
+    private final ConversionSchema conversionschema;
     private final BatchWriteRetryStrategy batchWriteRetryStrategy;
     private final BatchLoadRetryStrategy batchLoadRetryStrategy;
     private final DynamoDBTypeConverterFactory typeConverterFactory;
@@ -89,7 +89,7 @@ public class DynamoDBMapperConfig {
         this.objectTableNameResolver = builder.objectTableNameResolver;
         this.paginationLoadingStrategy = builder.paginationLoadingStrategy;
         this.requestMetricCollector = builder.requestMetricCollector;
-        this.conversionSchema = builder.conversionSchema;
+        this.conversionschema = builder.conversionschema;
         this.batchWriteRetryStrategy = builder.batchWriteRetryStrategy;
         this.batchLoadRetryStrategy = builder.batchLoadRetryStrategy;
         this.typeConverterFactory = builder.typeConverterFactory;
@@ -167,8 +167,8 @@ public class DynamoDBMapperConfig {
              paginationLoadingStrategy,
              requestMetricCollector,
              DEFAULT.getConversionSchema(),
-             DEFAULT.getBatchWriteRetryStrategy(),
-             DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.batchWriteRetryStrategy(),
+             DEFAULT.batchLoadRetryStrategy());
     }
 
     private DynamoDBMapperConfig(
@@ -179,7 +179,7 @@ public class DynamoDBMapperConfig {
             ObjectTableNameResolver objectTableNameResolver,
             PaginationLoadingStrategy paginationLoadingStrategy,
             RequestMetricCollector requestMetricCollector,
-            ConversionSchema conversionSchema,
+            ConversionSchema conversionschema,
             BatchWriteRetryStrategy batchWriteRetryStrategy,
             BatchLoadRetryStrategy batchLoadRetryStrategy) {
 
@@ -190,7 +190,7 @@ public class DynamoDBMapperConfig {
         this.objectTableNameResolver = objectTableNameResolver;
         this.paginationLoadingStrategy = paginationLoadingStrategy;
         this.requestMetricCollector = requestMetricCollector;
-        this.conversionSchema = conversionSchema;
+        this.conversionschema = conversionschema;
         this.batchWriteRetryStrategy = batchWriteRetryStrategy;
         this.batchLoadRetryStrategy = batchLoadRetryStrategy;
         this.typeConverterFactory = null;
@@ -203,7 +203,7 @@ public class DynamoDBMapperConfig {
     @Deprecated
     public DynamoDBMapperConfig(SaveBehavior saveBehavior) {
         this(saveBehavior, null, null, null, null, null, null,
-             DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.getConversionSchema(), DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -214,7 +214,7 @@ public class DynamoDBMapperConfig {
     @Deprecated
     public DynamoDBMapperConfig(ConsistentReads consistentReads) {
         this(null, consistentReads, null, null, null, null, null,
-             DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.getConversionSchema(), DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -224,7 +224,7 @@ public class DynamoDBMapperConfig {
     @Deprecated
     public DynamoDBMapperConfig(TableNameOverride tableNameOverride) {
         this(null, null, tableNameOverride, null, null, null, null,
-             DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.getConversionSchema(), DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -234,7 +234,7 @@ public class DynamoDBMapperConfig {
     @Deprecated
     public DynamoDBMapperConfig(TableNameResolver tableNameResolver) {
         this(null, null, null, tableNameResolver, null, null, null,
-             DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.getConversionSchema(), DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -244,7 +244,7 @@ public class DynamoDBMapperConfig {
     @Deprecated
     public DynamoDBMapperConfig(ObjectTableNameResolver objectTableNameResolver) {
         this(null, null, null, null, objectTableNameResolver, null, null,
-             DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.getConversionSchema(), DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -254,7 +254,7 @@ public class DynamoDBMapperConfig {
     @Deprecated
     public DynamoDBMapperConfig(TableNameResolver tableNameResolver, ObjectTableNameResolver objectTableNameResolver) {
         this(null, null, null, tableNameResolver, objectTableNameResolver, null, null,
-             DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.getConversionSchema(), DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -267,7 +267,7 @@ public class DynamoDBMapperConfig {
             PaginationLoadingStrategy paginationLoadingStrategy) {
 
         this(null, null, null, null, null, paginationLoadingStrategy, null,
-             DEFAULT.getConversionSchema(), DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             DEFAULT.getConversionSchema(), DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -275,9 +275,9 @@ public class DynamoDBMapperConfig {
      * @see DynamoDBConfig#builder
      */
     @Deprecated
-    public DynamoDBMapperConfig(ConversionSchema conversionSchema) {
+    public DynamoDBMapperConfig(ConversionSchema conversionschema) {
         this(null, null, null, null, null, null, null,
-             conversionSchema, DEFAULT.getBatchWriteRetryStrategy(), DEFAULT.getBatchLoadRetryStrategy());
+             conversionschema, DEFAULT.batchWriteRetryStrategy(), DEFAULT.batchLoadRetryStrategy());
     }
 
     /**
@@ -319,14 +319,14 @@ public class DynamoDBMapperConfig {
         return overrides == null || this == overrides ? this : builder().merge(this).merge(overrides).build();
     }
 
-    public BatchLoadRetryStrategy getBatchLoadRetryStrategy() {
+    public BatchLoadRetryStrategy batchLoadRetryStrategy() {
         return batchLoadRetryStrategy;
     }
 
     /**
      * Returns the save behavior for this configuration.
      */
-    public SaveBehavior getSaveBehavior() {
+    public SaveBehavior saveBehavior() {
         return saveBehavior;
     }
 
@@ -393,13 +393,13 @@ public class DynamoDBMapperConfig {
      * @return the conversion schema for this config object
      */
     public ConversionSchema getConversionSchema() {
-        return conversionSchema;
+        return conversionschema;
     }
 
     /**
      * @return the BatchWriteRetryStrategy for this config object
      */
-    public BatchWriteRetryStrategy getBatchWriteRetryStrategy() {
+    public BatchWriteRetryStrategy batchWriteRetryStrategy() {
         return batchWriteRetryStrategy;
     }
 
@@ -590,7 +590,7 @@ public class DynamoDBMapperConfig {
          *         want it to keep retrying until all the UnprocessedItems are
          *         fulfilled.
          */
-        public int getMaxRetryOnUnprocessedItems(
+        public int maxRetryOnUnprocessedItems(
                 Map<String, List<WriteRequest>> batchWriteItemInput);
 
         /**
@@ -647,7 +647,7 @@ public class DynamoDBMapperConfig {
         private ObjectTableNameResolver objectTableNameResolver;
         private PaginationLoadingStrategy paginationLoadingStrategy;
         private RequestMetricCollector requestMetricCollector;
-        private ConversionSchema conversionSchema;
+        private ConversionSchema conversionschema;
         private BatchWriteRetryStrategy batchWriteRetryStrategy;
         private BatchLoadRetryStrategy batchLoadRetryStrategy;
         private DynamoDBTypeConverterFactory typeConverterFactory;
@@ -664,12 +664,12 @@ public class DynamoDBMapperConfig {
          */
         private Builder(final boolean defaults) {
             if (defaults == true) {
-                saveBehavior = DEFAULT.getSaveBehavior();
+                saveBehavior = DEFAULT.saveBehavior();
                 consistentReads = DEFAULT.getConsistentReads();
                 paginationLoadingStrategy = DEFAULT.getPaginationLoadingStrategy();
-                conversionSchema = DEFAULT.getConversionSchema();
-                batchWriteRetryStrategy = DEFAULT.getBatchWriteRetryStrategy();
-                batchLoadRetryStrategy = DEFAULT.getBatchLoadRetryStrategy();
+                conversionschema = DEFAULT.getConversionSchema();
+                batchWriteRetryStrategy = DEFAULT.batchWriteRetryStrategy();
+                batchLoadRetryStrategy = DEFAULT.batchLoadRetryStrategy();
             }
         }
 
@@ -701,8 +701,8 @@ public class DynamoDBMapperConfig {
             if (o.requestMetricCollector != null) {
                 requestMetricCollector = o.requestMetricCollector;
             }
-            if (o.conversionSchema != null) {
-                conversionSchema = o.conversionSchema;
+            if (o.conversionschema != null) {
+                conversionschema = o.conversionschema;
             }
             if (o.batchWriteRetryStrategy != null) {
                 batchWriteRetryStrategy = o.batchWriteRetryStrategy;
@@ -719,7 +719,7 @@ public class DynamoDBMapperConfig {
         /**
          * @return the currently-configured save behavior
          */
-        public SaveBehavior getSaveBehavior() {
+        public SaveBehavior saveBehavior() {
             return saveBehavior;
         }
 
@@ -901,14 +901,14 @@ public class DynamoDBMapperConfig {
          * @return the current conversion schema
          */
         public ConversionSchema getConversionSchema() {
-            return conversionSchema;
+            return conversionschema;
         }
 
         /**
          * @param value the new conversion schema
          */
         public void setConversionSchema(ConversionSchema value) {
-            conversionSchema = value;
+            conversionschema = value;
         }
 
         /**
@@ -923,7 +923,7 @@ public class DynamoDBMapperConfig {
         /**
          * @return the current BatchWriteRetryStrategy
          */
-        public BatchWriteRetryStrategy getBatchWriteRetryStrategy() {
+        public BatchWriteRetryStrategy batchWriteRetryStrategy() {
             return batchWriteRetryStrategy;
         }
 
@@ -945,7 +945,7 @@ public class DynamoDBMapperConfig {
             return this;
         }
 
-        public BatchLoadRetryStrategy getBatchLoadRetryStrategy() {
+        public BatchLoadRetryStrategy batchLoadRetryStrategy() {
             return batchLoadRetryStrategy;
         }
 
@@ -998,7 +998,7 @@ public class DynamoDBMapperConfig {
          * <p>Then, on the property, specify the attribute binding,</p>
          * <pre class="brush: java">
          * &#064;DynamoDBTyped(DynamoDBAttributeType.S)
-         * public MyObject getMyObject()
+         * public MyObject myObject()
          * </pre>
          * @param value the new type-converter factory
          * @return this builder
@@ -1131,7 +1131,7 @@ public class DynamoDBMapperConfig {
         private final DynamoDBMapperConfig config = builder().withBatchLoadRetryStrategy(this).build();
 
         /* (non-Javadoc)
-         * @see BatchLoadRetryStrategy#getMaxRetryOnUnprocessedKeys(java.util.Map, java.util.Map)
+         * @see BatchLoadRetryStrategy#maxRetryOnUnprocessedKeys(java.util.Map, java.util.Map)
          */
         @Override
         public boolean shouldRetry(final BatchLoadContext batchLoadContext) {
@@ -1169,9 +1169,9 @@ public class DynamoDBMapperConfig {
 
         @Override
         public long getDelayBeforeNextRetry(final BatchLoadContext batchLoadContext) {
-            Map<String, KeysAndAttributes> requestedKeys = batchLoadContext.getBatchGetItemRequest().getRequestItems();
-            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.getBatchGetItemResult()
-                                                                             .getUnprocessedKeys();
+            Map<String, KeysAndAttributes> requestedKeys = batchLoadContext.batchGetItemRequest().requestItems();
+            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResult()
+                                                                             .unprocessedKeys();
 
             long delay = 0;
             //Exponential backoff only when all keys are unprocessed
@@ -1187,7 +1187,7 @@ public class DynamoDBMapperConfig {
 
         @Override
         public boolean shouldRetry(BatchLoadContext batchLoadContext) {
-            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.getBatchGetItemResult().getUnprocessedKeys();
+            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResult().unprocessedKeys();
             return unprocessedKeys != null && unprocessedKeys.size() > 0 && batchLoadContext.getRetriesAttempted() < MAX_RETRIES;
         }
 
@@ -1222,7 +1222,7 @@ public class DynamoDBMapperConfig {
         }
 
         @Override
-        public int getMaxRetryOnUnprocessedItems(
+        public int maxRetryOnUnprocessedItems(
                 Map<String, List<WriteRequest>> batchWriteItemInput) {
             return maxRetry;
         }

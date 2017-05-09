@@ -38,6 +38,6 @@ public class ObjectToStringMarshaller implements StringAttributeMarshaller {
 
     @Override
     public AttributeValue marshall(Object obj) {
-        return new AttributeValue().withS(obj.toString());
+        return AttributeValue.builder_().s(obj.toString()).build_();
     }
 }

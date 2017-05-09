@@ -76,7 +76,7 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
      * @see DynamoDBClient#DynamoDBClient()
      */
     public DynamoDB(Regions regionEnum) {
-        this(DynamoDBClient.builder().region(regionEnum.getName()).build());
+        this(DynamoDBClient.builder().region(regionEnum.name()).build());
     }
 
     /**
@@ -91,8 +91,8 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
      */
     public Table createTable(CreateTableRequest req) {
         CreateTableResult result = client.createTable(req);
-        return new Table(client, req.getTableName(),
-                         result.getTableDescription());
+        return new Table(client, req.tableName(),
+                         result.tableDescription());
     }
 
     /**
@@ -102,11 +102,12 @@ public class DynamoDB implements ListTablesApi, BatchGetItemApi,
                              List<KeySchemaElement> keySchema,
                              List<AttributeDefinition> attributeDefinitions,
                              ProvisionedThroughput provisionedThroughput) {
-        return createTable(new CreateTableRequest()
-                                   .withTableName(tableName)
-                                   .withKeySchema(keySchema)
-                                   .withAttributeDefinitions(attributeDefinitions)
-                                   .withProvisionedThroughput(provisionedThroughput));
+        return createTable(CreateTableRequest.builder_()
+                        .tableName(tableName)
+                        .keySchema(keySchema)
+                        .attributeDefinitions(attributeDefinitions)
+                        .provisionedThroughput(provisionedThroughput)
+                        .build_());
     }
 
     @Override

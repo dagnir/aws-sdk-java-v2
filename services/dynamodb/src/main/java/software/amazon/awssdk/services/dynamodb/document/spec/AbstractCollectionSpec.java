@@ -24,7 +24,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  *
  * @param <T> request type
  */
-abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
+abstract class AbstractCollectionspec<T extends AmazonWebServiceRequest>
         extends AbstractSpec<T> {
 
     private Integer maxPageSize;
@@ -35,28 +35,28 @@ abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
     private Integer maxResultSize;
 
 
-    AbstractCollectionSpec(T req) {
+    AbstractCollectionspec(T req) {
         super(req);
     }
 
-    public AbstractCollectionSpec<T> withMaxResultSize(
+    public AbstractCollectionspec<T> withMaxResultSize(
             Integer maxResultSize) {
         this.maxResultSize = maxResultSize;
         return this;
     }
 
-    public AbstractCollectionSpec<T> withMaxResultSize(
+    public AbstractCollectionspec<T> withMaxResultSize(
             int maxResultSize) {
         this.maxResultSize = maxResultSize;
         return this;
     }
 
-    public AbstractCollectionSpec<T> withMaxPageSize(Integer maxPageSize) {
+    public AbstractCollectionspec<T> withMaxPageSize(Integer maxPageSize) {
         this.maxPageSize = maxPageSize;
         return this;
     }
 
-    public AbstractCollectionSpec<T> withMaxPageSize(int maxPageSize) {
+    public AbstractCollectionspec<T> withMaxPageSize(int maxPageSize) {
         this.maxPageSize = maxPageSize;
         return this;
     }
@@ -65,7 +65,7 @@ abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
      * The maximum number of resources to be retrieved in this query, including
      * all the resources in all pages to be retrieved. 
      */
-    public Integer getMaxResultSize() {
+    public Integer maxResultSize() {
         return maxResultSize;
     }
 
@@ -81,7 +81,7 @@ abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
      * The maximum number of resources to be retrieved in a single page; used
      * for pagination purposes.
      */
-    public Integer getMaxPageSize() {
+    public Integer maxPageSize() {
         return maxPageSize;
     }
 

@@ -95,8 +95,8 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
     @Test(expected = DynamoDBMappingException.class)
     public void testPrivateKeySetterLoad() throws Exception {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put(KEY_NAME, new AttributeValue().withS("abc"));
-        dynamo.putItem(new PutItemRequest().withTableName("aws-java-sdk-util").withItem(attr));
+        attr.put(KEY_NAME, AttributeValue.builder_().s("abc").build_());
+        dynamo.putItem(PutItemRequest.builder_().tableName("aws-java-sdk-util").item(attr).build_());
         DynamoDBMapper util = new DynamoDBMapper(dynamo);
         util.load(PrivateKeySetter.class, "abc");
     }
@@ -135,21 +135,21 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
     @Test(expected = DynamoDBMappingException.class)
     public void testWrongDataType() {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put("integerProperty", new AttributeValue().withS("abc"));
-        attr.put(KEY_NAME, new AttributeValue().withS("" + startKey++));
-        dynamo.putItem(new PutItemRequest().withTableName("aws-java-sdk-util").withItem(attr));
+        attr.put("integerProperty", AttributeValue.builder_().s("abc").build_());
+        attr.put(KEY_NAME, AttributeValue.builder_().s("" + startKey++).build_());
+        dynamo.putItem(PutItemRequest.builder_().tableName("aws-java-sdk-util").item(attr).build_());
         DynamoDBMapper util = new DynamoDBMapper(dynamo);
-        util.load(NumericFields.class, attr.get(KEY_NAME).getS());
+        util.load(NumericFields.class, attr.get(KEY_NAME).s());
     }
 
     @Test(expected = DynamoDBMappingException.class)
     public void testWrongDataType2() {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put("integerProperty", new AttributeValue().withNS("1", "2", "3"));
-        attr.put(KEY_NAME, new AttributeValue().withS("" + startKey++));
-        dynamo.putItem(new PutItemRequest().withTableName("aws-java-sdk-util").withItem(attr));
+        attr.put("integerProperty", AttributeValue.builder_().ns("1", "2", "3").build_());
+        attr.put(KEY_NAME, AttributeValue.builder_().s("" + startKey++).build_());
+        dynamo.putItem(PutItemRequest.builder_().tableName("aws-java-sdk-util").item(attr).build_());
         DynamoDBMapper util = new DynamoDBMapper(dynamo);
-        util.load(NumericFields.class, attr.get(KEY_NAME).getS());
+        util.load(NumericFields.class, attr.get(KEY_NAME).s());
     }
 
     // Complex types are not supported by the V1 conversion schema
@@ -174,14 +174,14 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
 
     // Lists are not supported by the V1 conversion schema.
     @Test(expected = DynamoDBMappingException.class)
-    public void testNonSetCollection() {
+    public void testNonsetCollection() {
         DynamoDBMapperConfig config = new DynamoDBMapperConfig(ConversionSchemas.V1);
         DynamoDBMapper mapper = new DynamoDBMapper(dynamo, config);
 
-        NonSetCollectionType obj = new NonSetCollectionType();
+        NonsetCollectionType obj = new NonsetCollectionType();
         obj.setKey("" + startKey++);
         obj.setBadlyMapped(new ArrayList<String>());
-        obj.getBadlyMapped().add("abc");
+        obj.badlyMapped().add("abc");
         mapper.save(obj);
     }
 
@@ -312,7 +312,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.key = key;
         }
 
-        public String getStringProperty() {
+        public String stringProperty() {
             return stringProperty;
         }
 
@@ -450,7 +450,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
     }
 
     @DynamoDBTable(tableName = "aws-java-sdk-util")
-    public static class NonSetCollectionType {
+    public static class NonsetCollectionType {
 
         private String key;
         private List<String> badlyMapped;
@@ -464,7 +464,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.key = key;
         }
 
-        public List<String> getBadlyMapped() {
+        public List<String> badlyMapped() {
             return badlyMapped;
         }
 
@@ -515,7 +515,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.key = key;
         }
 
-        public String getValue() {
+        public String value() {
             return value;
         }
 
@@ -551,7 +551,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.rangekey = rangekey;
         }
 
-        public String getValue() {
+        public String value() {
             return value;
         }
 

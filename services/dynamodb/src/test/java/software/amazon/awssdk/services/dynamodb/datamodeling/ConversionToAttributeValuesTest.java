@@ -58,7 +58,7 @@ public class ConversionToAttributeValuesTest {
     public void converterFailsForSubProperty() throws Exception {
         DynamoDBMapperTableModel<ConverterData> tableModel = getTable(ConverterData.class);
         Map<String, AttributeValue> withSubData = tableModel.convert(new ConverterData());
-        assertEquals("bar", tableModel.unconvert(withSubData).getSubDocument().getaData().getValue());
+        assertEquals("bar", tableModel.unconvert(withSubData).subDocument().getaData().value());
     }
 
     private <T> DynamoDBMapperTableModel<T> getTable(Class<T> clazz) {
@@ -88,7 +88,7 @@ public class ConversionToAttributeValuesTest {
             this.key = key;
         }
 
-        public ConverterSubDocument getSubDocument() {
+        public ConverterSubDocument subDocument() {
             return subDocument;
         }
 
@@ -163,7 +163,7 @@ public class ConversionToAttributeValuesTest {
             this.value = value;
         }
 
-        public String getValue() {
+        public String value() {
             return value;
         }
 
@@ -188,7 +188,7 @@ public class ConversionToAttributeValuesTest {
     public static class CustomDataConverter implements DynamoDBTypeConverter<String, CustomData> {
 
         public String convert(CustomData object) {
-            return object.getValue();
+            return object.value();
         }
 
         public CustomData unconvert(String object) {

@@ -43,7 +43,7 @@ public class S3LinksTestClass {
         return this;
     }
 
-    public S3Link getS3LinkWest() {
+    public S3Link s3LinkWest() {
         return s3LinkWest;
     }
 
@@ -51,7 +51,7 @@ public class S3LinksTestClass {
         this.s3LinkWest = s3LinkAttribute;
     }
 
-    public S3Link getS3LinkEast() {
+    public S3Link s3LinkEast() {
         return s3LinkEast;
     }
 

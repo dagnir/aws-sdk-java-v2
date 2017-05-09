@@ -38,7 +38,7 @@ public class ShortSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<Short> result = new HashSet<Short>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(Short.valueOf(s));
         }
         return result;

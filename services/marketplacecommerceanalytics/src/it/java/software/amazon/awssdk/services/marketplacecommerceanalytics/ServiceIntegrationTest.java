@@ -85,31 +85,31 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         topicArn = sns.createTopic(new CreateTopicRequest(TOPIC_NAME)).getTopicArn();
         policyArn = createPolicy();
         roleArn = createRole();
-        iam.attachRolePolicy(new AttachRolePolicyRequest().withRoleName(ROLE_NAME).withPolicyArn(policyArn));
+        iam.attachRolePolicy(new AttachRolePolicyRequest().roleName(ROLE_NAME).policyArn(policyArn));
     }
 
     private String createPolicy() throws IOException {
-        CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest().withPolicyName(POLICY_NAME)
-                                                                           .withPolicyDocument(getPolicyDocument());
+        CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest().policyName(POLICY_NAME)
+                                                                           .policyDocument(getPolicyDocument());
         return iam.createPolicy(createPolicyRequest).getPolicy().getArn();
     }
 
     private String createRole() throws Exception {
-        CreateRoleRequest createRoleRequest = new CreateRoleRequest().withRoleName(ROLE_NAME)
-                                                                     .withAssumeRolePolicyDocument(getAssumeRolePolicy());
+        CreateRoleRequest createRoleRequest = new CreateRoleRequest().roleName(ROLE_NAME)
+                                                                     .assumeRolePolicyDocument(getAssumeRolePolicy());
         return iam.createRole(createRoleRequest).getRole().getArn();
     }
 
     @After
     public void tearDown() {
         try {
-            iam.detachRolePolicy(new DetachRolePolicyRequest().withRoleName(ROLE_NAME).withPolicyArn(policyArn));
-            iam.deleteRole(new DeleteRoleRequest().withRoleName(ROLE_NAME));
+            iam.detachRolePolicy(new DetachRolePolicyRequest().roleName(ROLE_NAME).policyArn(policyArn));
+            iam.deleteRole(new DeleteRoleRequest().roleName(ROLE_NAME));
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            iam.deletePolicy(new DeletePolicyRequest().withPolicyArn(policyArn));
+            iam.deletePolicy(new DeletePolicyRequest().policyArn(policyArn));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,11 +127,13 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test(expected = AmazonServiceException.class)
     public void test() {
-        client.generateDataSet(new GenerateDataSetRequest().withDataSetPublicationDate(new Date())
-                                                           .withRoleNameArn(roleArn).withDestinationS3BucketName(BUCKET_NAME).withSnsTopicArn(topicArn)
-                                                           .withDestinationS3BucketName(BUCKET_NAME).withDestinationS3Prefix("some-prefix")
-                                                           .withDataSetPublicationDate(new Date())
-                                                           .withDataSetType(DataSetType.Customer_subscriber_hourly_monthly_subscriptions));
+        client.generateDataSet(GenerateDataSetRequest.builder_()
+                .dataSetPublicationDate(new Date())
+                .roleNameArn(roleArn).destinationS3BucketName(BUCKET_NAME).snsTopicArn(topicArn)
+                .destinationS3BucketName(BUCKET_NAME).destinationS3Prefix("some-prefix")
+                .dataSetPublicationDate(new Date())
+                .dataSetType(DataSetType.Customer_subscriber_hourly_monthly_subscriptions)
+                .build_());
     }
 
     private String getAssumeRolePolicy() throws Exception {

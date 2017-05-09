@@ -36,6 +36,6 @@ public class BooleanToBooleanMarshaller implements BooleanAttributeMarshaller {
 
     @Override
     public AttributeValue marshall(Object obj) {
-        return new AttributeValue().withBOOL((Boolean) obj);
+        return AttributeValue.builder_().bool((Boolean) obj).build_();
     }
 }

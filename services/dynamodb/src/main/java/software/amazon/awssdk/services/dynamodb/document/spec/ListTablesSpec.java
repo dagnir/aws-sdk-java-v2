@@ -22,18 +22,18 @@ import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 /**
  * Full parameter specification for the ListTables API.
  */
-public class ListTablesSpec extends AbstractCollectionSpec<ListTablesRequest> {
+public class ListTablesSpec extends AbstractCollectionspec<ListTablesRequest> {
 
     public ListTablesSpec() {
-        super(new ListTablesRequest());
+        super(ListTablesRequest.builder_().build_());
     }
 
     public String getExclusiveStartTableName() {
-        return getRequest().getExclusiveStartTableName();
+        return getRequest().exclusiveStartTableName();
     }
 
     public ListTablesSpec withExclusiveStartTableName(String exclusiveStartTableName) {
-        getRequest().setExclusiveStartTableName(exclusiveStartTableName);
+        setRequest(getRequest().toBuilder().exclusiveStartTableName(exclusiveStartTableName).build_());
         return this;
     }
 

@@ -74,8 +74,8 @@ public class SubClass {
         SubClass that = (SubClass) o;
 
         return equals(this.name, that.name)
-               && equals(this.value, that.value)
-               && equals(this.bb, that.bb);
+                && equals(this.value, that.value)
+                && equals(this.bb, that.bb);
     }
 
     @Override

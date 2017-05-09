@@ -163,7 +163,7 @@ public interface IDynamoDBMapper {
 
     /**
      * Saves an item in DynamoDB. The service method used is determined by the
-     * {@link DynamoDBMapperConfig#getSaveBehavior()} value, to use either
+     * {@link DynamoDBMapperConfig#saveBehavior()} value, to use either
      * {@link DynamoDBClient#putItem(PutItemRequest)} or
      * {@link DynamoDBClient#updateItem(UpdateItemRequest)}:
      * <ul>
@@ -322,7 +322,7 @@ public interface IDynamoDBMapper {
      *            API.
      * @param config
      *            Only {@link DynamoDBMapperConfig#getTableNameOverride()} and
-     *            {@link DynamoDBMapperConfig#getBatchWriteRetryStrategy()} are considered. If
+     *            {@link DynamoDBMapperConfig#batchWriteRetryStrategy()} are considered. If
      *            TableNameOverride is specified, all objects in the two parameter lists will be
      *            considered to belong to the given table override. In particular, this method
      *            <b>always acts as if SaveBehavior.CLOBBER was specified</b> regardless of the
@@ -330,7 +330,7 @@ public interface IDynamoDBMapper {
      * @return A list of failed batches which includes the unprocessed items and the exceptions
      *         causing the failure.
      * @see DynamoDBMapperConfig#getTableNameOverride()
-     * @see DynamoDBMapperConfig#getBatchWriteRetryStrategy()
+     * @see DynamoDBMapperConfig#batchWriteRetryStrategy()
      */
     List<FailedBatch> batchWrite(Iterable<? extends Object> objectsToWrite,
                                  Iterable<? extends Object> objectsToDelete,
@@ -642,7 +642,7 @@ public interface IDynamoDBMapper {
     /**
      * Returns the underlying {@link S3ClientCache} for accessing S3.
      */
-    S3ClientCache getS3ClientCache();
+    S3ClientCache s3ClientCache();
 
     /**
      * Creates an S3Link with the specified bucket name and key using the default S3 region. This

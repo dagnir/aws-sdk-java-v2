@@ -63,10 +63,10 @@ public class PresignRequestHandlerTest {
         // request was recreated with all the same parameters but with test
         // credentials.
         final CopyDBSnapshotRequest request = new CopyDBSnapshotRequest()
-                .withSourceDBSnapshotIdentifier("arn:aws:rds:us-east-1:123456789012:snapshot:rds:test-instance-ss-2016-12-20-23-19")
-                .withTargetDBSnapshotIdentifier("test-instance-ss-copy-2")
-                .withSourceRegion("us-east-1")
-                .withKmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555");
+                .sourceDBSnapshotIdentifier("arn:aws:rds:us-east-1:123456789012:snapshot:rds:test-instance-ss-2016-12-20-23-19")
+                .targetDBSnapshotIdentifier("test-instance-ss-copy-2")
+                .sourceRegion("us-east-1")
+                .kmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555");
 
         Calendar c = new GregorianCalendar();
         c.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -119,7 +119,7 @@ public class PresignRequestHandlerTest {
     @Test
     public void testParsesDestinationRegionfromRequestEndpoint() throws URISyntaxException {
         CopyDBSnapshotRequest request = new CopyDBSnapshotRequest()
-                .withSourceRegion("us-east-1");
+                .sourceRegion("us-east-1");
         Region destination = RegionUtils.getRegion("us-west-2");
         Request<?> marshalled = marshallRequest(request);
         marshalled.setEndpoint(new URI("https://" + destination.getServiceEndpoint("rds")));
@@ -148,9 +148,9 @@ public class PresignRequestHandlerTest {
 
     private CopyDBSnapshotRequest makeTestRequest() {
         return new CopyDBSnapshotRequest()
-                .withSourceDBSnapshotIdentifier("arn:aws:rds:us-east-1:123456789012:snapshot:rds:test-instance-ss-2016-12-20-23-19")
-                .withTargetDBSnapshotIdentifier("test-instance-ss-copy-2")
-                .withSourceRegion("us-east-1")
-                .withKmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555");
+                .sourceDBSnapshotIdentifier("arn:aws:rds:us-east-1:123456789012:snapshot:rds:test-instance-ss-2016-12-20-23-19")
+                .targetDBSnapshotIdentifier("test-instance-ss-copy-2")
+                .sourceRegion("us-east-1")
+                .kmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555");
     }
 }

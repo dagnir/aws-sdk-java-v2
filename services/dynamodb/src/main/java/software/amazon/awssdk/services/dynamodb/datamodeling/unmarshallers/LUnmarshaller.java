@@ -24,7 +24,7 @@ abstract class LUnmarshaller implements ArgumentUnmarshaller {
 
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
-        if (value.getL() == null) {
+        if (value.l() == null) {
             throw new DynamoDBMappingException("Expected L in value " + value + " when invoking " + setter);
         }
     }

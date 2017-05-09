@@ -44,21 +44,21 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
     public void setup() {
         ddb = DynamoDBClient.builder()
                 .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
-                .region(Regions.US_WEST_2.getName())
+                .region(Regions.US_WEST_2.name())
                 .build();
         mapper = new DynamoDBMapper(ddb, DynamoDBMapperConfig.builder()
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(TABLE_NAME))
                 .build()).newTableMapper(GsiWithAlwaysUpdateTimestamp.class);
-        mapper.createTable(new ProvisionedThroughput(5L, 5L));
+        mapper.createTable(ProvisionedThroughput.builder_().readCapacityUnits(5L).writeCapacityUnits(5L).build_());
         ddb.waiters().tableExists()
-                .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
+                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
     }
 
     @After
     public void tearDown() {
         mapper.deleteTableIfExists();
         ddb.waiters().tableNotExists()
-                .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
+                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
     }
 
     @Test
@@ -71,11 +71,11 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
                 .setRangeKey(rangeKey));
         final GsiWithAlwaysUpdateTimestamp created = mapper.load(hashKey, rangeKey);
         // Have to store it since the mapper will auto update any generated values in the saved object.
-        Long createdDate = created.getLastModifiedDate();
+        Long createdDate = created.lastModifiedDate();
         // Need to wait a bit for the timestamps to actually be different
         Thread.sleep(1000);
         mapper.save(created);
         final GsiWithAlwaysUpdateTimestamp updated = mapper.load(hashKey, rangeKey);
-        assertNotEquals(createdDate, updated.getLastModifiedDate());
+        assertNotEquals(createdDate, updated.lastModifiedDate());
     }
 }

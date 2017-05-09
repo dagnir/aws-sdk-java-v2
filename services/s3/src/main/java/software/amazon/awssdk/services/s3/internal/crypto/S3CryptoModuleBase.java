@@ -568,19 +568,20 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
         if (materials.isKmsEnabled()) {
             final Map<String, String> encryptionContext =
                     ContentCryptoMaterial.mergeMaterialDescriptions(materials, req);
-            GenerateDataKeyRequest keyGenReq = new GenerateDataKeyRequest()
-                    .withEncryptionContext(encryptionContext)
-                    .withKeyId(materials.getCustomerMasterKeyId())
-                    .withKeySpec(contentCryptoScheme.getKeySpec());
+            GenerateDataKeyRequest keyGenReq = GenerateDataKeyRequest.builder_()
+                    .encryptionContext(encryptionContext)
+                    .keyId(materials.getCustomerMasterKeyId())
+                    .keySpec(contentCryptoScheme.getKeySpec())
+                    .build_();
             keyGenReq
                     .withGeneralProgressListener(req.getGeneralProgressListener())
                     .withRequestMetricCollector(req.getRequestMetricCollector())
             ;
             GenerateDataKeyResult keyGenRes = kms.generateDataKey(keyGenReq);
             final SecretKey cek =
-                    new SecretKeySpec(copyAllBytesFrom(keyGenRes.getPlaintext()),
+                    new SecretKeySpec(copyAllBytesFrom(keyGenRes.plaintext()),
                                       contentCryptoScheme.getKeyGeneratorAlgorithm());
-            byte[] keyBlob = copyAllBytesFrom(keyGenRes.getCiphertextBlob());
+            byte[] keyBlob = copyAllBytesFrom(keyGenRes.ciphertextBlob());
             return ContentCryptoMaterial.wrap(cek, iv,
                                               contentCryptoScheme, provider,
                                               new KmsSecuredCek(keyBlob, encryptionContext));

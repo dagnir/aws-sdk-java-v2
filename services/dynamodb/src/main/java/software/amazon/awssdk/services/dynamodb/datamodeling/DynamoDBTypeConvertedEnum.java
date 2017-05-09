@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * public static enum Status { OPEN, PENDING, CLOSED }
  *
  * &#064;DynamoDBTyped(DynamoDBAttributeType.S)
- * public Status getStatus()
+ * public Status status()
  * </pre>
  *
  * <p>Please note, there are some risks in distributed systems when using

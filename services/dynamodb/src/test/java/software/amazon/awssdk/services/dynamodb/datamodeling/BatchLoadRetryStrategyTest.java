@@ -73,7 +73,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_NoRetry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(1)))
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build_())
                 .times(1);
         DynamoDBMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.NoRetryBatchLoadRetryStrategy());
@@ -88,7 +88,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(1)))
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build_())
                 .times(4);
         mapper = new DynamoDBMapper(ddbMock, getConfigWithCustomBatchLoadRetryStrategy(new BatchLoadRetryStrategyWithNoDelay(3)));
 
@@ -101,7 +101,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallSuccess_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(
-                buildDefaultGetItemResult().withUnprocessedKeys(new HashMap<>(1))).times(1);
+                buildDefaultGetItemResult().toBuilder().unprocessedKeys(new HashMap<>(1)).build_()).times(1);
         DynamoDBMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy());
         mapper = new DynamoDBMapper(ddbMock, config);
@@ -114,7 +114,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(3)))
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build_())
                 .times(6);
         DynamoDBMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy());
@@ -129,7 +129,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_NoRetry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().withUnprocessedKeys(buildUnprocessedKeysMap(3)))
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build_())
                 .times(1);
         DynamoDBMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDBMapperConfig.NoRetryBatchLoadRetryStrategy());
@@ -144,8 +144,8 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testNoDelayOnPartialFailure_DefaultRetry() {
         BatchLoadRetryStrategy defaultRetryStrategy = new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy();
-        expect(mockItemResult.getUnprocessedKeys()).andReturn(buildUnprocessedKeysMap(2));
-        expect(mockItemRequest.getRequestItems()).andReturn(buildUnprocessedKeysMap(3));
+        expect(mockItemResult.unprocessedKeys()).andReturn(buildUnprocessedKeysMap(2));
+        expect(mockItemRequest.requestItems()).andReturn(buildUnprocessedKeysMap(3));
         replay(mockItemRequest);
         replay(mockItemResult);
         BatchLoadContext context = new BatchLoadContext(mockItemRequest);
@@ -157,8 +157,8 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testDelayOnPartialFailure_DefaultRetry() {
         BatchLoadRetryStrategy defaultRetryStrategy = new DynamoDBMapperConfig.DefaultBatchLoadRetryStrategy();
-        expect(mockItemResult.getUnprocessedKeys()).andReturn(buildUnprocessedKeysMap(3));
-        expect(mockItemRequest.getRequestItems()).andReturn(buildUnprocessedKeysMap(3));
+        expect(mockItemResult.unprocessedKeys()).andReturn(buildUnprocessedKeysMap(3));
+        expect(mockItemRequest.requestItems()).andReturn(buildUnprocessedKeysMap(3));
         replay(mockItemRequest);
         replay(mockItemResult);
         BatchLoadContext context = new BatchLoadContext(mockItemRequest);
@@ -174,7 +174,7 @@ public class BatchLoadRetryStrategyTest {
     private Map<String, KeysAndAttributes> buildUnprocessedKeysMap(final int size) {
         final Map<String, KeysAndAttributes> unproccessedKeys = new HashMap<String, KeysAndAttributes>(size);
         for (int i = 0; i < size; i++) {
-            unproccessedKeys.put("test" + i, new KeysAndAttributes());
+            unproccessedKeys.put("test" + i, KeysAndAttributes.builder_().build_());
         }
 
         return unproccessedKeys;
@@ -183,7 +183,7 @@ public class BatchLoadRetryStrategyTest {
     private BatchGetItemResult buildDefaultGetItemResult() {
 
         final Map<String, List<Map<String, AttributeValue>>> map = new HashMap<String, List<Map<String, AttributeValue>>>();
-        return new BatchGetItemResult().withResponses(map);
+        return BatchGetItemResult.builder_().responses(map).build_();
 
     }
 
@@ -196,7 +196,7 @@ public class BatchLoadRetryStrategyTest {
         }
 
         /**
-         * @see BatchLoadRetryStrategy#getMaxRetryOnUnprocessedKeys(java.util.Map, java.util.Map)
+         * @see BatchLoadRetryStrategy#maxRetryOnUnprocessedKeys(java.util.Map, java.util.Map)
          */
         @Override
         public boolean shouldRetry(final BatchLoadContext batchLoadContext) {
@@ -234,8 +234,11 @@ public class BatchLoadRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return new WriteRequest().withPutRequest(new PutRequest(Collections.singletonMap(HASH_ATTR,
-                                                                                             new AttributeValue(hash))));
+            return WriteRequest.builder_()
+                    .putRequest(PutRequest.builder_()
+                        .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_().s(hash).build_()))
+                        .build_())
+                    .build_();
         }
     }
 
@@ -259,8 +262,12 @@ public class BatchLoadRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return new WriteRequest().withPutRequest(new PutRequest(Collections.singletonMap(HASH_ATTR,
-                                                                                             new AttributeValue(hash))));
+            return WriteRequest.builder_()
+                    .putRequest(PutRequest.builder_()
+                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_().s(hash)
+                                    .build_()))
+                            .build_())
+                    .build_();
         }
     }
 
@@ -284,8 +291,13 @@ public class BatchLoadRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return new WriteRequest().withPutRequest(new PutRequest(Collections.singletonMap(HASH_ATTR,
-                                                                                             new AttributeValue(hash))));
+            return WriteRequest.builder_()
+                    .putRequest(PutRequest.builder_()
+                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_()
+                                    .s(hash)
+                                    .build_()))
+                            .build_())
+                    .build_();
         }
     }
 }

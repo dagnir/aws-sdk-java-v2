@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * public void setEffectiveRange(DateRange effectiveRange) { this.effectiveRange = effectiveRange; }
  *
  * &#064;DynamoDBFlattened(attributes={
- *     &#064;DynamoDBAttribute(mappedBy=&quot;start&quot;, attributeName=&quot;extensionStartDate&quot;),
+ *     &#064;DynamoDBAttribute(mappedBy=&quot;start&quot;, attributeName=&quot;extensionstartDate&quot;),
  *     &#064;DynamoDBAttribute(mappedBy=&quot;end&quot;, attributeName=&quot;extensionEndDate&quot;)})
  * public DateRange getExtensionRange() { return extensionRange; }
  * public void setExtensionRange(DateRange extensionRange) { this.extensionRange = extensionRange; }
@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  *     private Date start;
  *     private Date end;
  *
- *     public Date getStart() { return start; }
+ *     public Date start() { return start; }
  *     public void setStart(Date start) { this.start = start; }
  *
  *     public Date getEnd() { return end; }

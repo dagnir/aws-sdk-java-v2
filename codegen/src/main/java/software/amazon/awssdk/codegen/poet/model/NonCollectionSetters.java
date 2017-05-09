@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
@@ -24,21 +26,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 
 class NonCollectionSetters extends AbstractMemberSetters {
     private final TypeProvider typeProvider;
 
-    NonCollectionSetters(MemberModel memberModel, TypeProvider typeProvider) {
-        super(memberModel, typeProvider);
+    NonCollectionSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
+        super(shapeModel, memberModel, typeProvider);
         this.typeProvider = typeProvider;
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
         List<MethodSpec> fluentDeclarations = new ArrayList<>();
         fluentDeclarations.add(fluentSetterDeclaration(memberAsParameter(), returnType).build());
+
         if (memberModel().getEnumType() != null) {
             fluentDeclarations.add(fluentSetterDeclaration(modeledParam(), returnType).build());
         }
+
         return fluentDeclarations;
     }
 
@@ -74,10 +80,18 @@ class NonCollectionSetters extends AbstractMemberSetters {
                 .build();
     }
 
+
     private MethodSpec beanStyleAssignmentSetter() {
-        return beanStyleSetterBuilder()
-                .addCode(assignmentCopyBody())
-                .build();
+        MethodSpec.Builder builder = beanStyleSetterBuilder()
+                .addCode(assignmentCopyBody());
+
+        if (shapeModel().getShapeType() == ShapeType.Exception) {
+            builder.addAnnotation(
+                    AnnotationSpec.builder(JsonProperty.class)
+                    .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
+        }
+
+        return builder.build();
     }
 
     private MethodSpec fluentEnumToStringSetter(TypeName returnType) {

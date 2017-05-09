@@ -215,7 +215,7 @@ public class DynamoDBQueryExpression<T> {
      * {@code DynamoDBMapper.queryPage} to retrieve a single page of items from
      * DynamoDB.
      */
-    public Integer getLimit() {
+    public Integer limit() {
         return limit;
     }
 
@@ -1000,7 +1000,7 @@ public class DynamoDBQueryExpression<T> {
      *
      * @see software.amazon.awssdk.services.dynamodb.model.Select
      */
-    public String getSelect() {
+    public String select() {
         return select;
     }
 

@@ -48,6 +48,6 @@ public class NumberSetToNumberSetMarshaller
             numberAttributes.add(n.toString());
         }
 
-        return new AttributeValue().withNS(numberAttributes);
+        return AttributeValue.builder_().ns(numberAttributes).build_();
     }
 }

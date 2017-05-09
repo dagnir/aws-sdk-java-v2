@@ -47,13 +47,13 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         String subnetId_1 = getSubnetIdInVpc(vpcId, US_EAST_1B);
 
         String dsId = dsClient
-                .createDirectory(new CreateDirectoryRequest().withDescription("This is my directory!")
-                                                             .withName("AWS.Java.SDK.Directory").withShortName("md").withPassword("My.Awesome.Password.2015")
-                                                             .withSize(DirectorySize.Small).withVpcSettings(
-                                new DirectoryVpcSettings().withVpcId(vpcId).withSubnetIds(subnetId_0, subnetId_1)))
-                .getDirectoryId();
+                .createDirectory(CreateDirectoryRequest.builder_().description("This is my directory!")
+                                                             .name("AWS.Java.SDK.Directory").shortName("md").password("My.Awesome.Password.2015")
+                                                             .size(DirectorySize.Small).vpcSettings(
+                                DirectoryVpcSettings.builder_().vpcId(vpcId).subnetIds(subnetId_0, subnetId_1).build_()).build_())
+                .directoryId();
 
-        dsClient.deleteDirectory(new DeleteDirectoryRequest().withDirectoryId(dsId));
+        dsClient.deleteDirectory(DeleteDirectoryRequest.builder_().directoryId(dsId).build_());
     }
 
     private String getVpcId() {
@@ -66,7 +66,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     private String getSubnetIdInVpc(String vpcId, String az) {
         List<Subnet> subnets = ec2Client.describeSubnets(new DescribeSubnetsRequest()
-                                                                 .withFilters(new Filter("vpc-id").withValues(vpcId), new Filter("availabilityZone").withValues(az)))
+                                                                 .filters(new Filter("vpc-id").values(vpcId), new Filter("availabilityZone").values(az)))
                                         .getSubnets();
         if (subnets.isEmpty()) {
             Assert.fail("No Subnet found in VPC " + vpcId + " AvailabilityZone: " + az);
@@ -80,7 +80,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void describeDirectories_InvalidNextToken_ThrowsExceptionWithRequestIdPresent() {
         try {
-            dsClient.describeDirectories(new DescribeDirectoriesRequest().withNextToken("invalid"));
+            dsClient.describeDirectories(DescribeDirectoriesRequest.builder_().nextToken("invalid").build_());
         } catch (InvalidNextTokenException e) {
             assertNotNull(e.getRequestId());
         }

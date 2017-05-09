@@ -262,7 +262,7 @@ class DynamoDBReflector {
      * Returns the setter corresponding to the getter given, or null if no such
      * setter exists.
      */
-    Method getSetter(Method getter) {
+    Method setter(Method getter) {
         synchronized (setterCache) {
             if (!setterCache.containsKey(getter)) {
                 String fieldName = ReflectionUtils.getFieldNameByGetter(getter, false);

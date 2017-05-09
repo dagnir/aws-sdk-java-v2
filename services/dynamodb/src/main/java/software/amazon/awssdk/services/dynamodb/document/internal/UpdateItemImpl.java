@@ -66,7 +66,7 @@ public class UpdateItemImpl implements UpdateItemApi {
                                   .withPrimaryKey(primaryKey)
                                   .withUpdateExpression(updateExpression)
                                   .withNameMap(nameMap)
-                                  .withValueMap(valueMap));
+                                  .valueMap(valueMap));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class UpdateItemImpl implements UpdateItemApi {
                                               .withUpdateExpression(updateExpression)
                                               .withConditionExpression(conditionExpression)
                                               .withNameMap(nameMap)
-                                              .withValueMap(valueMap));
+                                              .valueMap(valueMap));
     }
 
     @Override
@@ -87,19 +87,19 @@ public class UpdateItemImpl implements UpdateItemApi {
     }
 
     private UpdateItemOutcome doUpdateItem(UpdateItemSpec spec) {
-        final UpdateItemRequest request = spec.getRequest();
-        request.setKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()));
-        request.setTableName(table.getTableName());
+        final UpdateItemRequest.Builder requestBuilder = spec.getRequest().toBuilder();
+        requestBuilder.key(InternalUtils.toAttributeValueMap(spec.getKeyComponents()));
+        requestBuilder.tableName(table.getTableName());
         final Collection<Expected> expected = spec.getExpected();
         final Map<String, ExpectedAttributeValue> expectedMap =
                 InternalUtils.toExpectedAttributeValueMap(expected);
-        request.setExpected(expectedMap);
-        request.setAttributeUpdates(
+        requestBuilder.expected(expectedMap);
+        requestBuilder.attributeUpdates(
                 InternalUtils.toAttributeValueUpdate(spec.getAttributeUpdate()));
-        request.setExpressionAttributeNames(spec.getNameMap());
-        request.setExpressionAttributeValues(
-                InternalUtils.fromSimpleMap(spec.getValueMap()));
-        return new UpdateItemOutcome(client.updateItem(request));
+        requestBuilder.expressionAttributeNames(spec.nameMap());
+        requestBuilder.expressionAttributeValues(
+                InternalUtils.fromSimpleMap(spec.valueMap()));
+        return new UpdateItemOutcome(client.updateItem(requestBuilder.build_()));
     }
 
     @Override

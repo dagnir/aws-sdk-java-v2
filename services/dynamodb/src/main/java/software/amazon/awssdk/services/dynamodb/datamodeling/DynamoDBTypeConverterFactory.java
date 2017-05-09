@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.StandardTypeConvert
  * <p>Then, on the property, specify the attribute binding,</p>
  * <pre class="brush: java">
  * &#064;DynamoDBTyped(DynamoDBAttributeType.S)
- * public MyObject getMyObject()
+ * public MyObject myObject()
  * </pre>
  *
  * @see software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig

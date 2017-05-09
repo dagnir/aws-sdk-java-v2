@@ -62,6 +62,6 @@ public class ObjectSetToStringSetMarshaller
             strings.add(String.valueOf(o));
         }
 
-        return new AttributeValue().withSS(strings);
+        return AttributeValue.builder_().ss(strings).build_();
     }
 }

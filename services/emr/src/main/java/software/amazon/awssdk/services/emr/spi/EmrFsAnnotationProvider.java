@@ -18,5 +18,5 @@ package software.amazon.awssdk.services.emr.spi;
 import java.util.Map;
 
 public abstract class EmrFsAnnotationProvider {
-    public abstract Map<String, String> getAnnotations();
+    public abstract Map<String, String> annotations();
 }

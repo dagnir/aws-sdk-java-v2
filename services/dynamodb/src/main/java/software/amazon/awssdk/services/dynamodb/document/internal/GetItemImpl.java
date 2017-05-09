@@ -69,10 +69,11 @@ public class GetItemImpl extends AbstractImpl implements GetItemApi {
     private GetItemOutcome doLoadItem(GetItemSpec spec) {
         String tableName = getTable().getTableName();
         // Set up the key attributes
-        GetItemRequest req = spec.getRequest()
-                                 .withTableName(tableName)
-                                 .withKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()))
-                                 .withExpressionAttributeNames(spec.getNameMap());
+        GetItemRequest req = spec.getRequest().toBuilder()
+                .tableName(tableName)
+                .key(InternalUtils.toAttributeValueMap(spec.getKeyComponents()))
+                .expressionAttributeNames(spec.nameMap())
+                .build_();
 
         GetItemResult result = getClient().getItem(req);
         return new GetItemOutcome(result);

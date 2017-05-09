@@ -95,7 +95,7 @@ public class StsSessionCredentialsProvider implements AwsSessionCredentialsProvi
 
     private SessionCredentialsHolder newSession() {
         GetSessionTokenResult sessionTokenResult = securityTokenService.getSessionToken(
-                new GetSessionTokenRequest().withDurationSeconds(DEFAULT_DURATION_SECONDS));
+                new GetSessionTokenRequest().durationSeconds(DEFAULT_DURATION_SECONDS));
         return new SessionCredentialsHolder(sessionTokenResult.getCredentials());
     }
 

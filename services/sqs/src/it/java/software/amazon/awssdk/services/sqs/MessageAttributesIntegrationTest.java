@@ -77,13 +77,13 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
         byte[] bytes = new byte[]{1, 1, 1, 0, 0, 0};
         String byteBufferAttrName = "byte-buffer-attr";
         Map<String, MessageAttributeValue> attrs = ImmutableMapParameter.of(byteBufferAttrName,
-                new MessageAttributeValue().withDataType("Binary").withBinaryValue(ByteBuffer.wrap(bytes)));
+                new MessageAttributeValue().dataType("Binary").binaryValue(ByteBuffer.wrap(bytes)));
 
-        sqs.sendMessage(new SendMessageRequest().withQueueUrl(queueUrl).withMessageBody("test")
-                .withMessageAttributes(attrs));
+        sqs.sendMessage(new SendMessageRequest().queueUrl(queueUrl).messageBody("test")
+                .messageAttributes(attrs));
         // Long poll to make sure we get the message back
         List<Message> messages = sqs.receiveMessage(
-                new ReceiveMessageRequest(queueUrl).withMessageAttributeNames("All").withWaitTimeSeconds(20)).join()
+                new ReceiveMessageRequest(queueUrl).messageAttributeNames("All").waitTimeSeconds(20)).join()
                 .getMessages();
 
         ByteBuffer actualByteBuffer = messages.get(0).getMessageAttributes().get(byteBufferAttrName).getBinaryValue();
@@ -95,8 +95,8 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
     public void receiveMessage_WithAllAttributesRequested_ReturnsAttributes() throws Exception {
         sendTestMessage();
 
-        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl).withWaitTimeSeconds(5)
-                .withVisibilityTimeout(0).withMessageAttributeNames("All");
+        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl).waitTimeSeconds(5)
+                .visibilityTimeout(0).messageAttributeNames("All");
         ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(receiveMessageRequest).join();
 
         assertFalse(receiveMessageResult.getMessages().isEmpty());
@@ -113,8 +113,8 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
     public void receiveMessage_WithNoAttributesRequested_DoesNotReturnAttributes() throws Exception {
         sendTestMessage();
 
-        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl).withWaitTimeSeconds(5)
-                .withVisibilityTimeout(0);
+        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl).waitTimeSeconds(5)
+                .visibilityTimeout(0);
         ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(receiveMessageRequest).join();
 
         assertFalse(receiveMessageResult.getMessages().isEmpty());
@@ -127,17 +127,17 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
     @Test
     public void sendMessageBatch_WithMessageAttributes_ResultHasMd5OfMessageAttributes() {
         SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest()
-                .withQueueUrl(queueUrl).withEntries(
+                .queueUrl(queueUrl).entries(
                         new SendMessageBatchRequestEntry("1", MESSAGE_BODY)
-                                .withMessageAttributes(createRandomAttributeValues(1)),
+                                .messageAttributes(createRandomAttributeValues(1)),
                         new SendMessageBatchRequestEntry("2", MESSAGE_BODY)
-                                .withMessageAttributes(createRandomAttributeValues(2)),
+                                .messageAttributes(createRandomAttributeValues(2)),
                         new SendMessageBatchRequestEntry("3", MESSAGE_BODY)
-                                .withMessageAttributes(createRandomAttributeValues(3)),
+                                .messageAttributes(createRandomAttributeValues(3)),
                         new SendMessageBatchRequestEntry("4", MESSAGE_BODY)
-                                .withMessageAttributes(createRandomAttributeValues(4)),
+                                .messageAttributes(createRandomAttributeValues(4)),
                         new SendMessageBatchRequestEntry("5", MESSAGE_BODY)
-                                .withMessageAttributes(createRandomAttributeValues(5)))).join();
+                                .messageAttributes(createRandomAttributeValues(5)))).join();
 
         assertThat(sendMessageBatchResult.getSuccessful().size(), greaterThan(0));
         assertNotEmpty(sendMessageBatchResult.getSuccessful().get(0).getId());
@@ -147,7 +147,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
     private SendMessageResult sendTestMessage() {
         SendMessageResult sendMessageResult = sqs.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)
-                .withMessageAttributes(createRandomAttributeValues(10))).join();
+                .messageAttributes(createRandomAttributeValues(10))).join();
         return sendMessageResult;
     }
 }

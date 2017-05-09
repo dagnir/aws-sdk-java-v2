@@ -38,7 +38,7 @@ public class FloatSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<Float> result = new HashSet<Float>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(Float.valueOf(s));
         }
         return result;

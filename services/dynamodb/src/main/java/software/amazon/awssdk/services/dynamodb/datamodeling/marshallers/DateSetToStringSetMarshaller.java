@@ -50,6 +50,6 @@ public class DateSetToStringSetMarshaller
             timestamps.add(DateUtils.formatIso8601Date(date));
         }
 
-        return new AttributeValue().withSS(timestamps);
+        return AttributeValue.builder_().ss(timestamps).build_();
     }
 }

@@ -83,9 +83,9 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
                         .withHashKeyValues(hashKeyObject)
                         .withRangeKeyCondition(
                                 "rangeKey",
-                                new Condition()
-                                        .withComparisonOperator(ComparisonOperator.GT)
-                                        .withAttributeValueList(new AttributeValue().withN("1.0")))
+                                Condition.builder_()
+                                        .comparisonOperator(ComparisonOperator.GT)
+                                        .attributeValueList(AttributeValue.builder_().n("1.0").build_()).build_())
                         .withLimit(11);
         List<RangeKeyClass> list = mapper.query(RangeKeyClass.class, queryExpression);
 
@@ -125,10 +125,10 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         // A random filter condition to be applied to the query.
         Random random = new Random();
         int randomFilterValue = random.nextInt(TEST_ITEM_NUMBER);
-        Condition filterCondition = new Condition()
-                .withComparisonOperator(ComparisonOperator.LT)
-                .withAttributeValueList(
-                        new AttributeValue().withN(Integer.toString(randomFilterValue)));
+        Condition filterCondition = Condition.builder_()
+                .comparisonOperator(ComparisonOperator.LT)
+                .attributeValueList(
+                        AttributeValue.builder_().n(Integer.toString(randomFilterValue)).build_()).build_();
 
         /*
          * (1) Apply the filter on the range key, in form of key condition
@@ -168,9 +168,9 @@ public class QueryIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             DynamoDBQueryExpression<RangeKeyClass> queryExpression = new DynamoDBQueryExpression<RangeKeyClass>()
                     .withHashKeyValues(keyObject);
             queryExpression.withRangeKeyCondition("rangeKey",
-                                                  new Condition().withComparisonOperator(ComparisonOperator.GT.toString())
-                                                                 .withAttributeValueList(
-                                                                         new AttributeValue().withN("1.0"))).withLimit(11)
+                                                  Condition.builder_().comparisonOperator(ComparisonOperator.GT.toString())
+                                                                 .attributeValueList(
+                                                                         AttributeValue.builder_().n("1.0").build_()).build_()).withLimit(11)
                            .withIndexName("some_index");
             mapper.query(RangeKeyClass.class, queryExpression);
             fail("User should not provide index name when making query with the primary range key");

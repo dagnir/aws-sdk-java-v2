@@ -26,6 +26,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
@@ -241,16 +243,16 @@ public final class LambdaInvokerFactory {
          */
         private InvokeRequest buildInvokeRequest(Method method, LambdaFunction annotation, Object input) {
 
-            InvokeRequest invokeRequest = new InvokeRequest();
+            InvokeRequest.Builder invokeRequestBuilder = InvokeRequest.builder_();
 
             String functionName = config.getLambdaFunctionNameResolver().getFunctionName(method, annotation, config);
 
-            invokeRequest.setFunctionName(functionName);
+            invokeRequestBuilder.functionName(functionName);
             if (hasQualifier()) {
-                invokeRequest.setQualifier(getQualifier());
+                invokeRequestBuilder.qualifier(getQualifier());
             }
-            invokeRequest.setInvocationType(annotation.invocationType());
-            invokeRequest.setLogType(annotation.logType());
+            invokeRequestBuilder.invocationType(annotation.invocationType());
+            invokeRequestBuilder.logType(annotation.logType());
 
             if (input != null) {
                 try {
@@ -259,14 +261,14 @@ public final class LambdaInvokerFactory {
                     if (log.isDebugEnabled()) {
                         log.debug("Serialized request object to '" + payload + "'");
                     }
-                    invokeRequest.setPayload(payload);
+                    invokeRequestBuilder.payload(ByteBuffer.wrap(payload.getBytes(StandardCharsets.UTF_8)));
 
                 } catch (JsonProcessingException ex) {
                     throw new LambdaSerializationException("Failed to serialize request object to JSON", ex);
                 }
             }
 
-            return invokeRequest;
+            return invokeRequestBuilder.build_();
         }
 
         private boolean hasQualifier() {
@@ -287,19 +289,19 @@ public final class LambdaInvokerFactory {
          */
         private Object processInvokeResult(Method method, InvokeResult invokeResult) throws Throwable {
 
-            if (invokeResult.getLogResult() != null && log.isInfoEnabled()) {
+            if (invokeResult.logResult() != null && log.isInfoEnabled()) {
                 try {
 
-                    String decoded = new String(Base64Utils.decode(invokeResult.getLogResult()), StringUtils.UTF8);
+                    String decoded = new String(Base64Utils.decode(invokeResult.logResult()), StringUtils.UTF8);
 
                     log.info(method.getName() + " log:\n\t" + decoded.replaceAll("\n", "\n\t"));
 
                 } catch (Exception ex) {
-                    log.warn("Error decoding log result '" + invokeResult.getLogResult() + "'", ex);
+                    log.warn("Error decoding log result '" + invokeResult.logResult() + "'", ex);
                 }
             }
 
-            String functionError = invokeResult.getFunctionError();
+            String functionError = invokeResult.functionError();
 
             if (functionError == null) {
                 // Success.
@@ -321,7 +323,7 @@ public final class LambdaInvokerFactory {
 
             try {
 
-                return getObjectFromPayload(method.getGenericReturnType(), invokeResult.getPayload());
+                return getObjectFromPayload(method.getGenericReturnType(), invokeResult.payload());
 
             } catch (IOException ex) {
                 throw new LambdaSerializationException("Failed to parse Lambda function result", ex);
@@ -339,15 +341,15 @@ public final class LambdaInvokerFactory {
          */
         private Throwable getExceptionFromPayload(Method method, InvokeResult invokeResult) {
             try {
-                LambdaFunctionException error = getObjectFromPayload(LambdaFunctionException.class, invokeResult.getPayload());
-                error.setFunctionError(invokeResult.getFunctionError());
+                LambdaFunctionException error = getObjectFromPayload(LambdaFunctionException.class, invokeResult.payload());
+                error.setFunctionError(invokeResult.functionError());
                 error.fillInStackTrace(method.getDeclaringClass());
 
                 return getExceptionToThrow(method, error);
             } catch (Exception ex) {
                 log.warn("Error parsing exception information from response payload", ex);
                 return new LambdaFunctionException("Unexpected error executing Lambda function",
-                                                   invokeResult.getFunctionError());
+                                                   invokeResult.functionError());
             }
         }
 

@@ -71,17 +71,17 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     protected static MessageAttributeValue createRandomStringAttributeValue() {
-        return new MessageAttributeValue().withDataType("String").withStringValue(UUID.randomUUID().toString());
+        return new MessageAttributeValue().dataType("String").stringValue(UUID.randomUUID().toString());
     }
 
     protected static MessageAttributeValue createRandomNumberAttributeValue() {
-        return new MessageAttributeValue().withDataType("Number").withStringValue(Integer.toString(random.nextInt()));
+        return new MessageAttributeValue().dataType("Number").stringValue(Integer.toString(random.nextInt()));
     }
 
     protected static MessageAttributeValue createRandomBinaryAttributeValue() {
         byte[] randomBytes = new byte[10];
         random.nextBytes(randomBytes);
-        return new MessageAttributeValue().withDataType("Binary").withBinaryValue(ByteBuffer.wrap(randomBytes));
+        return new MessageAttributeValue().dataType("Binary").binaryValue(ByteBuffer.wrap(randomBytes));
     }
 
     protected static Map<String, MessageAttributeValue> createRandomAttributeValues(int attrNumber) {

@@ -44,11 +44,13 @@ public class BatchWriteRetryStrategyTest {
     private static Map<String, List<WriteRequest>> unprocessedItems;
 
     static {
-        WriteRequest writeReq = new WriteRequest()
-                .withPutRequest(new PutRequest()
-                                        .withItem(Collections.singletonMap(
-                                                HASH_ATTR,
-                                                new AttributeValue("foo"))));
+        WriteRequest writeReq = WriteRequest.builder_()
+                .putRequest(PutRequest.builder_()
+                        .item(Collections.singletonMap(
+                                HASH_ATTR,
+                                AttributeValue.builder_().s("foo").build_()))
+                        .build_())
+                .build_();
 
         unprocessedItems = Collections.singletonMap(TABLE_NAME,
                                                     Arrays.asList(writeReq));
@@ -128,15 +130,14 @@ public class BatchWriteRetryStrategyTest {
 
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemSuccess() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(new BatchWriteItemResult()
-                                   .withUnprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()));
+                .andReturn(BatchWriteItemResult.builder_()
+                        .unprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()).build_());
     }
 
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemReturnUnprocessedItems() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(
-                        new BatchWriteItemResult()
-                                .withUnprocessedItems(unprocessedItems));
+                .andReturn(BatchWriteItemResult.builder_()
+                                .unprocessedItems(unprocessedItems).build_());
     }
 
     private void expectedBatchWriteItemThrowException(Exception e) {
@@ -161,7 +162,7 @@ public class BatchWriteRetryStrategyTest {
         }
 
         @Override
-        public int getMaxRetryOnUnprocessedItems(
+        public int maxRetryOnUnprocessedItems(
                 Map<String, List<WriteRequest>> batchWriteItemInput) {
             return maxRetry;
         }
@@ -195,9 +196,11 @@ public class BatchWriteRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return new WriteRequest()
-                    .withPutRequest(new PutRequest(
-                            Collections.singletonMap(HASH_ATTR, new AttributeValue(hash))));
+            return WriteRequest.builder_()
+                    .putRequest(PutRequest.builder_()
+                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_().s(hash).build_()))
+                            .build_())
+                    .build_();
         }
     }
 

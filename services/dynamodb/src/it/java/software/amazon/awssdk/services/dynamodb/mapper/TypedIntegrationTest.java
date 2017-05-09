@@ -78,10 +78,10 @@ public class TypedIntegrationTest extends AbstractKeyAndValIntegrationTestCase {
     @Test
     public void testNativeMap() {
         final Map<String, AttributeValue> map = new HashMap<String, AttributeValue>();
-        map.put("A", new AttributeValue().withN("123"));
+        map.put("A", AttributeValue.builder_().n("123").build_());
 
         final KeyAndNativeValue object = new KeyAndNativeValue();
-        object.setVal(new AttributeValue().withM(map));
+        object.setVal(AttributeValue.builder_().m(map).build_());
         assertBeforeAndAfterChange(false, object);
     }
 

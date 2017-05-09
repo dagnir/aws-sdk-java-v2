@@ -63,17 +63,18 @@ public class WafIntegrationTest extends AwsTestBase {
 
     private static void deleteIpSet() {
         if (ipSetId != null) {
-            final String changeToken = getNewChangeToken();
-            client.deleteIPSet(new DeleteIPSetRequest()
-                                       .withIPSetId(ipSetId)
-                                       .withChangeToken(changeToken));
+            final String changeToken = newChangeToken();
+            client.deleteIPSet(DeleteIPSetRequest.builder_()
+                    .ipSetId(ipSetId)
+                    .changeToken(changeToken)
+                    .build_());
         }
     }
 
-    private static String getNewChangeToken() {
+    private static String newChangeToken() {
 
-        GetChangeTokenResult result = client.getChangeToken(new GetChangeTokenRequest());
-        return result.getChangeToken();
+        GetChangeTokenResult result = client.getChangeToken(GetChangeTokenRequest.builder_().build_());
+        return result.changeToken();
 
     }
 
@@ -86,74 +87,81 @@ public class WafIntegrationTest extends AwsTestBase {
     }
 
     private String testCreateIpSet() {
-        final String changeToken = getNewChangeToken();
-        CreateIPSetResult createResult = client.createIPSet(new CreateIPSetRequest()
-                                                                    .withChangeToken(changeToken)
-                                                                    .withName(IP_SET_NAME));
+        final String changeToken = newChangeToken();
+        CreateIPSetResult createResult = client.createIPSet(CreateIPSetRequest.builder_()
+                .changeToken(changeToken)
+                .name(IP_SET_NAME).build_());
 
-        Assert.assertEquals(changeToken, createResult.getChangeToken());
+        Assert.assertEquals(changeToken, createResult.changeToken());
 
-        final IPSet ipSet = createResult.getIPSet();
+        final IPSet ipSet = createResult.ipSet();
         Assert.assertNotNull(ipSet);
-        Assert.assertEquals(IP_SET_NAME, ipSet.getName());
-        Assert.assertTrue(ipSet.getIPSetDescriptors().isEmpty());
-        Assert.assertNotNull(ipSet.getIPSetId());
+        Assert.assertEquals(IP_SET_NAME, ipSet.name());
+        Assert.assertTrue(ipSet.ipSetDescriptors().isEmpty());
+        Assert.assertNotNull(ipSet.ipSetId());
 
-        return ipSet.getIPSetId();
+        return ipSet.ipSetId();
     }
 
     private void testGetIpSet() {
-        GetIPSetResult getResult = client.getIPSet(new GetIPSetRequest()
-                                                           .withIPSetId(ipSetId));
-        IPSet ipSet = getResult.getIPSet();
+        GetIPSetResult getResult = client.getIPSet(GetIPSetRequest.builder_()
+                .ipSetId(ipSetId)
+                .build_());
+        IPSet ipSet = getResult.ipSet();
         Assert.assertNotNull(ipSet);
-        Assert.assertEquals(IP_SET_NAME, ipSet.getName());
-        Assert.assertTrue(ipSet.getIPSetDescriptors().isEmpty());
-        Assert.assertNotNull(ipSet.getIPSetId());
-        Assert.assertEquals(ipSetId, ipSet.getIPSetId());
+        Assert.assertEquals(IP_SET_NAME, ipSet.name());
+        Assert.assertTrue(ipSet.ipSetDescriptors().isEmpty());
+        Assert.assertNotNull(ipSet.ipSetId());
+        Assert.assertEquals(ipSetId, ipSet.ipSetId());
 
-        ListIPSetsResult listResult = client.listIPSets(new ListIPSetsRequest().withLimit(1));
-        Assert.assertNotNull(listResult.getIPSets());
-        Assert.assertFalse(listResult.getIPSets().isEmpty());
+        ListIPSetsResult listResult = client.listIPSets(ListIPSetsRequest.builder_()
+                .limit(1)
+                .build_());
+        Assert.assertNotNull(listResult.ipSets());
+        Assert.assertFalse(listResult.ipSets().isEmpty());
     }
 
     private void testUpdateIpSet() {
-        final IPSetDescriptor ipSetDescriptor = new IPSetDescriptor()
-                .withType(IPSetDescriptorType.IPV4)
-                .withValue(IP_ADDRESS_RANGE);
-        final IPSetUpdate ipToInsert = new IPSetUpdate()
-                .withIPSetDescriptor(ipSetDescriptor)
-                .withAction(ChangeAction.INSERT);
+        final IPSetDescriptor ipSetDescriptor = IPSetDescriptor.builder_()
+                .type(IPSetDescriptorType.IPV4)
+                .value(IP_ADDRESS_RANGE)
+                .build_();
+        final IPSetUpdate ipToInsert = IPSetUpdate.builder_()
+                .ipSetDescriptor(ipSetDescriptor)
+                .action(ChangeAction.INSERT)
+                .build_();
 
 
-        client.updateIPSet(new UpdateIPSetRequest()
-                                   .withIPSetId(ipSetId)
-                                   .withChangeToken(getNewChangeToken())
-                                   .withUpdates(ipToInsert));
-        GetIPSetResult getResult = client.getIPSet(new GetIPSetRequest()
-                                                           .withIPSetId(ipSetId));
+        client.updateIPSet(UpdateIPSetRequest.builder_()
+                                   .ipSetId(ipSetId)
+                                   .changeToken(newChangeToken())
+                                   .updates(ipToInsert).build_());
+        GetIPSetResult getResult = client.getIPSet(GetIPSetRequest.builder_()
+                                                           .ipSetId(ipSetId).build_());
 
-        IPSet ipSet = getResult.getIPSet();
+        IPSet ipSet = getResult.ipSet();
         Assert.assertNotNull(ipSet);
-        Assert.assertEquals(IP_SET_NAME, ipSet.getName());
-        Assert.assertNotNull(ipSet.getIPSetId());
-        Assert.assertEquals(ipSetId, ipSet.getIPSetId());
+        Assert.assertEquals(IP_SET_NAME, ipSet.name());
+        Assert.assertNotNull(ipSet.ipSetId());
+        Assert.assertEquals(ipSetId, ipSet.ipSetId());
 
-        List<IPSetDescriptor> actualList = ipSet.getIPSetDescriptors();
+        List<IPSetDescriptor> actualList = ipSet.ipSetDescriptors();
 
         Assert.assertFalse(actualList.isEmpty());
         Assert.assertEquals(1, actualList.size());
         IPSetDescriptor actualIpSetDescriptor = actualList.get(0);
-        Assert.assertEquals(ipSetDescriptor.getType(), actualIpSetDescriptor.getType());
-        Assert.assertEquals(ipSetDescriptor.getValue(), actualIpSetDescriptor.getValue());
+        Assert.assertEquals(ipSetDescriptor.type(), actualIpSetDescriptor.type());
+        Assert.assertEquals(ipSetDescriptor.value(), actualIpSetDescriptor.value());
 
-        final IPSetUpdate ipToDelete = new IPSetUpdate()
-                .withIPSetDescriptor(ipSetDescriptor)
-                .withAction(ChangeAction.DELETE);
+        final IPSetUpdate ipToDelete = IPSetUpdate.builder_()
+                .ipSetDescriptor(ipSetDescriptor)
+                .action(ChangeAction.DELETE)
+                .build_();
 
-        client.updateIPSet(new UpdateIPSetRequest()
-                                   .withIPSetId(ipSetId)
-                                   .withChangeToken(getNewChangeToken())
-                                   .withUpdates(ipToDelete));
+        client.updateIPSet(UpdateIPSetRequest.builder_()
+                .ipSetId(ipSetId)
+                .changeToken(newChangeToken())
+                .updates(ipToDelete)
+                .build_());
     }
 }

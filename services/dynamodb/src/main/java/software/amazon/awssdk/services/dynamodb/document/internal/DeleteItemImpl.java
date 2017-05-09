@@ -66,7 +66,7 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
                                     .withPrimaryKey(primaryKeys)
                                     .withConditionExpression(conditionExpression)
                                     .withNameMap(nameMap)
-                                    .withValueMap(valueMap))
+                                    .valueMap(valueMap))
                 ;
     }
 
@@ -79,20 +79,21 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
         // set the table name
         final String tableName = getTable().getTableName();
         // set up the keys
-        DeleteItemRequest request = spec.getRequest().withTableName(tableName)
-                                    .withKey(InternalUtils.toAttributeValueMap(spec.getKeyComponents()));
+        DeleteItemRequest.Builder requestBuilder = spec.getRequest().toBuilder()
+                .tableName(tableName)
+                .key(InternalUtils.toAttributeValueMap(spec.getKeyComponents()));
         // set up the expected attribute map, if any
         final Collection<Expected> expected = spec.getExpected();
         final Map<String, ExpectedAttributeValue> expectedMap =
                 InternalUtils.toExpectedAttributeValueMap(expected);
         // set up the value map, if any (when expression API is used)
         final Map<String, AttributeValue> attrValMap =
-                InternalUtils.fromSimpleMap(spec.getValueMap());
+                InternalUtils.fromSimpleMap(spec.valueMap());
         // set up the request
-        request.withExpected(expectedMap)
-               .withExpressionAttributeNames(spec.getNameMap())
-               .withExpressionAttributeValues(attrValMap);
-        DeleteItemResult result = getClient().deleteItem(request);
+        requestBuilder.expected(expectedMap)
+               .expressionAttributeNames(spec.nameMap())
+               .expressionAttributeValues(attrValMap);
+        DeleteItemResult result = getClient().deleteItem(requestBuilder.build_());
         return new DeleteItemOutcome(result);
     }
 

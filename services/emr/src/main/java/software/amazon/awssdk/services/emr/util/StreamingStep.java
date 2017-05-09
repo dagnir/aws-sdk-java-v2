@@ -39,13 +39,13 @@ import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig;
  *     .toHadoopJarStepConfig();
  *
  * StepConfig wordCount = new StepConfig()
- *     .withName("Word Count")
- *     .withActionOnFailure("TERMINATE_JOB_FLOW")
+ *     .name("Word Count")
+ *     .actionOnFailure("TERMINATE_JOB_FLOW")
  *     .withHadoopJarStep(config);
  *
  * RunJobFlowRequest request = new RunJobFlowRequest()
- *     .withName("Word Count")
- *     .withSteps(wordCount)
+ *     .name("Word Count")
+ *     .steps(wordCount)
  *     .withLogUri("s3://log-bucket/")
  *     .withInstances(new JobFlowInstancesConfig()
  *         .withEc2KeyName("keypairt")
@@ -53,7 +53,7 @@ import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig;
  *         .withInstanceCount(5)
  *         .withKeepJobFlowAliveWhenNoSteps(true)
  *         .withMasterInstanceType("m1.small")
- *         .withSlaveInstanceType("m1.small"));
+ *         .slaveInstanceType("m1.small"));
  *
  * RunJobFlowResult result = emr.runJobFlow(request);
  * </pre>
@@ -257,9 +257,10 @@ public class StreamingStep {
             args.add(reducer);
         }
 
-        return new HadoopJarStepConfig()
-                .withJar("/home/hadoop/contrib/streaming/hadoop-streaming.jar")
-                .withArgs(args);
+        return HadoopJarStepConfig.builder_()
+                .jar("/home/hadoop/contrib/streaming/hadoop-streaming.jar")
+                .args(args)
+                .build_();
     }
 }
 

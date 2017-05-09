@@ -73,14 +73,16 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     @BeforeClass
     public static void setUpTestData() throws Exception {
         String keyName = "id";
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(TABLE_NAME)
-                .withKeySchema(new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(keyName).withAttributeType(
-                                ScalarAttributeType.S));
-        createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                                               .withWriteCapacityUnits(5L));
+        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+                .tableName(TABLE_NAME)
+                .keySchema(KeySchemaElement.builder_().attributeName(keyName).keyType(KeyType.HASH).build_())
+                .attributeDefinitions(
+                        AttributeDefinition.builder_().attributeName(keyName).attributeType(
+                                ScalarAttributeType.S).build_())
+                .provisionedThroughput(ProvisionedThroughput.builder_()
+                        .readCapacityUnits(10L)
+                        .writeCapacityUnits(5L).build_())
+                .build_();
 
         TableUtils.createTableIfNotExists(dynamo, createTableRequest);
         TableUtils.waitUntilActive(dynamo, TABLE_NAME);
@@ -95,9 +97,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
-                .addFilterCondition("value", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                .addFilterCondition("value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
         scanExpression
-                .addFilterCondition("extraData", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                .addFilterCondition("extraData", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
         List<SimpleClass> list = util.scan(SimpleClass.class, scanExpression);
 
         int count = 0;
@@ -106,7 +108,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
         }
 
         int totalCount = util.count(SimpleClass.class, scanExpression);
@@ -129,8 +131,8 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
                 .withLimit(SCAN_LIMIT)
                 .withScanFilter(ImmutableMapParameter.of(
-                        "value", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL),
-                        "non-existent-field", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL)
+                        "value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL).build_(),
+                        "non-existent-field", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL).build_()
                                                         ))
                 .withConditionalOperator(ConditionalOperator.AND);
 
@@ -148,9 +150,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
-                .addFilterCondition("value", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                .addFilterCondition("value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
         scanExpression
-                .addFilterCondition("extraData", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                .addFilterCondition("extraData", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
 
         PaginatedParallelScanList<SimpleClass> parallelScanList = util
                 .parallelScan(SimpleClass.class, scanExpression, PARALLEL_SCAN_SEGMENTS);
@@ -164,7 +166,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
             allDataAppearance.put(next.getId(), true);
         }
         assertFalse(allDataAppearance.values().contains(false));
@@ -186,9 +188,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
-                .addFilterCondition("value", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                .addFilterCondition("value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
         scanExpression
-                .addFilterCondition("extraData", new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                .addFilterCondition("extraData", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
 
         long startTime = System.currentTimeMillis();
         PaginatedScanList<SimpleClass> scanList = util.scan(SimpleClass.class, scanExpression);
@@ -229,9 +231,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         scanExpression.addFilterCondition("value",
-                                          new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                                          Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
         scanExpression.addFilterCondition("extraData",
-                                          new Condition().withComparisonOperator(ComparisonOperator.NOT_NULL.toString()));
+                                          Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
         int limit = 3;
         scanExpression.setLimit(limit);
         ScanResultPage<SimpleClass> result = util.scanPage(SimpleClass.class, scanExpression);
@@ -243,14 +245,14 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
             assertTrue(seen.add(next));
         }
 
         assertEquals(limit, count);
         assertEquals(count, result.getResults().toArray().length);
 
-        scanExpression.setExclusiveStartKey(result.getLastEvaluatedKey());
+        scanExpression.setExclusiveStartKey(result.lastEvaluatedKey());
         result = util.scanPage(SimpleClass.class, scanExpression);
 
         iterator = result.getResults().iterator();
@@ -259,7 +261,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
             assertTrue(seen.add(next));
         }
 
@@ -293,7 +295,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             this.id = id;
         }
 
-        public String getValue() {
+        public String value() {
             return value;
         }
 

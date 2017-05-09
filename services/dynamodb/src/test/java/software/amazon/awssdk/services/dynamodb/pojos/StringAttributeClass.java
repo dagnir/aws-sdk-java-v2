@@ -39,7 +39,7 @@ public class StringAttributeClass {
     }
 
     @DynamoDBAttribute
-    public String getStringAttribute() {
+    public String stringAttribute() {
         return stringAttribute;
     }
 

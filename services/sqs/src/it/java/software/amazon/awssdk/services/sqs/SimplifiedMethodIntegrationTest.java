@@ -157,10 +157,10 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 
     private void runSendMessageBatchTest() {
         SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest(queueUrl, Arrays.asList(
-                new SendMessageBatchRequestEntry().withId("1").withMessageBody("1"), new SendMessageBatchRequestEntry()
-                        .withId("2").withMessageBody("2"), new SendMessageBatchRequestEntry().withId("3")
-                        .withMessageBody("3"), new SendMessageBatchRequestEntry().withId("4").withMessageBody("4"),
-                new SendMessageBatchRequestEntry().withId("5").withMessageBody("5")))).join();
+                new SendMessageBatchRequestEntry().id("1").messageBody("1"), new SendMessageBatchRequestEntry()
+                        .id("2").messageBody("2"), new SendMessageBatchRequestEntry().id("3")
+                        .messageBody("3"), new SendMessageBatchRequestEntry().id("4").messageBody("4"),
+                new SendMessageBatchRequestEntry().id("5").messageBody("5")))).join();
 
         assertNotNull(sendMessageBatchResult.getFailed());
         assertThat(sendMessageBatchResult.getSuccessful().size(), greaterThan(0));

@@ -39,7 +39,7 @@ public class PutAttributesIntegrationTest extends IntegrationTestBase {
     public void testPutAttributesMissingParameterException() {
         PutAttributesRequest request = new PutAttributesRequest();
         try {
-            sdb.putAttributes(request.withDomainName("foo"));
+            sdb.putAttributes(request.domainName("foo"));
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);
@@ -47,7 +47,7 @@ public class PutAttributesIntegrationTest extends IntegrationTestBase {
 
         request = new PutAttributesRequest();
         try {
-            sdb.putAttributes(request.withItemName("foo"));
+            sdb.putAttributes(request.itemName("foo"));
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);

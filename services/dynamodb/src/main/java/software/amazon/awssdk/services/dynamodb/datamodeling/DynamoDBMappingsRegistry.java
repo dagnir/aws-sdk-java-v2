@@ -76,7 +76,7 @@ final class DynamoDBMappingsRegistry {
             }
         }
 
-        final Collection<Mapping> getMappings() {
+        final Collection<Mapping> mappings() {
             return byNames.values();
         }
     }

@@ -66,7 +66,7 @@ public class RangeKeyClass {
     }
 
     @DynamoDBAttribute
-    public Set<String> getStringSetAttribute() {
+    public Set<String> stringSetAttribute() {
         return stringSetAttribute;
     }
 
@@ -75,7 +75,7 @@ public class RangeKeyClass {
     }
 
     @DynamoDBAttribute
-    public BigDecimal getBigDecimalAttribute() {
+    public BigDecimal bigDecimalAttribute() {
         return bigDecimalAttribute;
     }
 
@@ -84,7 +84,7 @@ public class RangeKeyClass {
     }
 
     @DynamoDBAttribute
-    public String getStringAttribute() {
+    public String stringAttribute() {
         return stringAttribute;
     }
 

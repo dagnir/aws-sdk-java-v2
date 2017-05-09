@@ -45,16 +45,16 @@ public class DeviceFarmIntegrationTest extends AwsTestBase {
     @Test
     public void testCreateProject() {
         CreateProjectResult result = client
-                .createProject(new CreateProjectRequest()
-                                       .withName(PROJECT_NAME));
-        final Project project = result.getProject();
+                .createProject(CreateProjectRequest.builder_()
+                        .name(PROJECT_NAME)
+                        .build_());
+        final Project project = result.project();
         assertNotNull(project);
-        assertNotNull(project.getArn());
+        assertNotNull(project.arn());
     }
 
     @Test(expected = AmazonServiceException.class)
     public void testExceptionHandling() {
-        client.listDevicePools(new ListDevicePoolsRequest()
-                                       .withNextToken("fake-token"));
+        client.listDevicePools(ListDevicePoolsRequest.builder_().nextToken("fake-token").build_());
     }
 }

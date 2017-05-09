@@ -45,6 +45,6 @@ public class S3LinkUnmarshaller extends SUnmarshaller {
                     + "load S3Link");
         }
 
-        return S3Link.fromJson(clientCache, value.getS());
+        return S3Link.fromJson(clientCache, value.s());
     }
 }

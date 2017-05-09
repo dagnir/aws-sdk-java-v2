@@ -39,7 +39,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScanResult;
 public class PaginatedScanList<T> extends PaginatedList<T> {
 
     /** The current scan request. */
-    private final ScanRequest scanRequest;
+    private ScanRequest scanRequest;
 
     private final DynamoDBMapperConfig config;
 
@@ -62,9 +62,9 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
 
         allResults.addAll(mapper.marshallIntoObjects(
                 mapper.toParameters(
-                        scanResult.getItems(),
+                        scanResult.items(),
                         clazz,
-                        scanRequest.getTableName(),
+                        scanRequest.tableName(),
                         config)));
 
         // If the results should be eagerly loaded at once
@@ -75,17 +75,17 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
 
     @Override
     protected synchronized boolean atEndOfResults() {
-        return scanResult.getLastEvaluatedKey() == null;
+        return scanResult.lastEvaluatedKey() == null;
     }
 
     @Override
     protected synchronized List<T> fetchNextPage() {
-        scanRequest.setExclusiveStartKey(scanResult.getLastEvaluatedKey());
+        scanRequest = scanRequest.toBuilder().exclusiveStartKey(scanResult.lastEvaluatedKey()).build_();
         scanResult = dynamo.scan(DynamoDBMapper.applyUserAgent(scanRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
-                scanResult.getItems(),
+                scanResult.items(),
                 clazz,
-                scanRequest.getTableName(),
+                scanRequest.tableName(),
                 config));
     }
 

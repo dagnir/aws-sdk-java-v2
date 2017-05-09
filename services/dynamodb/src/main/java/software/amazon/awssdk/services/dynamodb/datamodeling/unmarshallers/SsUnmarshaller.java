@@ -24,7 +24,7 @@ abstract class SsUnmarshaller implements ArgumentUnmarshaller {
 
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
-        if (value.getSS() == null) {
+        if (value.ss() == null) {
             throw new DynamoDBMappingException("Expected SS in value " + value + " when invoking " + setter);
         }
     }

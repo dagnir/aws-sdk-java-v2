@@ -33,9 +33,9 @@ public class WafRegionalIntegrationTest extends AwsIntegrationTestBase {
     public void smokeTest() {
         final WAFRegionalClient client = WAFRegionalClient.builder()
                                                                  .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
-                                                                 .region(Regions.US_WEST_2.getName())
+                                                                 .region(Regions.US_WEST_2.name())
                                                                  .build();
 
-        client.listResourcesForWebACL(new ListResourcesForWebACLRequest().withWebACLId("foo"));
+        client.listResourcesForWebACL(ListResourcesForWebACLRequest.builder_().webACLId("foo").build_());
     }
 }

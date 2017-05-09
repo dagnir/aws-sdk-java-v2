@@ -40,7 +40,7 @@ public class ScopeDownPolicyCredentialsProviderTest {
     @Test
     public void scopeDownPolicyInCredentialsProvider_SetsPolicyOnAssumeRoleRequest() {
         when(sts.assumeRole(any(AssumeRoleRequest.class)))
-                .thenReturn(new AssumeRoleResult().withCredentials(
+                .thenReturn(new AssumeRoleResult().credentials(
                         new Credentials("akid", "skid", "sessionToken", new Date())));
         ArgumentCaptor<AssumeRoleRequest> argumentCaptor = ArgumentCaptor
                 .forClass(AssumeRoleRequest.class);

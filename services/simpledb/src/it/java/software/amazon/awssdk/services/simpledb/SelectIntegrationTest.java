@@ -53,7 +53,7 @@ public class SelectIntegrationTest extends IntegrationTestBase {
     public void testSelectNoSuchDomainException() {
         SelectRequest request = new SelectRequest();
         try {
-            sdb.select(request.withSelectExpression("select * from foobarbazbarbashbar"));
+            sdb.select(request.selectExpression("select * from foobarbazbarbashbar"));
             fail("Expected NoSuchDomainException, but wasn't thrown");
         } catch (NoSuchDomainException e) {
             assertValidException(e);
@@ -68,7 +68,7 @@ public class SelectIntegrationTest extends IntegrationTestBase {
     public void testSelectInvalidQueryExpressionException() {
         SelectRequest request = new SelectRequest();
         try {
-            sdb.select(request.withSelectExpression("foobarbazbar"));
+            sdb.select(request.selectExpression("foobarbazbar"));
             fail("Expected InvalidQueryExpressionException, but wasn't thrown");
         } catch (InvalidQueryExpressionException e) {
             assertValidException(e);

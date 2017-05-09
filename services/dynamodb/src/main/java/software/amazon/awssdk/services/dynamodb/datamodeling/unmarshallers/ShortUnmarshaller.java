@@ -35,6 +35,6 @@ public class ShortUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return Short.valueOf(value.getN());
+        return Short.valueOf(value.n());
     }
 }

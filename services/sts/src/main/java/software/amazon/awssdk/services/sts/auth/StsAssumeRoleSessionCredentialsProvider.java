@@ -128,12 +128,12 @@ public class StsAssumeRoleSessionCredentialsProvider implements AwsSessionCreden
      * credentials for the assumed Role sent back from STS.
      */
     private SessionCredentialsHolder newSession() {
-        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest().withRoleArn(roleArn)
-                                                                     .withDurationSeconds(roleSessionDurationSeconds)
-                                                                     .withRoleSessionName(roleSessionName)
-                                                                     .withPolicy(scopeDownPolicy);
+        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest().roleArn(roleArn)
+                                                                     .durationSeconds(roleSessionDurationSeconds)
+                                                                     .roleSessionName(roleSessionName)
+                                                                     .policy(scopeDownPolicy);
         if (roleExternalId != null) {
-            assumeRoleRequest = assumeRoleRequest.withExternalId(roleExternalId);
+            assumeRoleRequest = assumeRoleRequest.externalId(roleExternalId);
         }
 
         AssumeRoleResult assumeRoleResult = securityTokenService.assumeRole(assumeRoleRequest);

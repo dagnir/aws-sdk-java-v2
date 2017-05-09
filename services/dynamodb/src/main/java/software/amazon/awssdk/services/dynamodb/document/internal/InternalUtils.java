@@ -23,11 +23,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.services.dynamodb.document.AttributeUpdate;
 import software.amazon.awssdk.services.dynamodb.document.Expected;
@@ -109,16 +111,15 @@ public enum InternalUtils {
         Map<String, AttributeValueUpdate> result = new LinkedHashMap<String, AttributeValueUpdate>();
 
         for (AttributeUpdate attribute : attributesToUpdate) {
-            AttributeValueUpdate attributeToUpdate = new AttributeValueUpdate()
-                    .withAction(attribute.getAction());
-            if (attribute.getValue() != null) {
-                attributeToUpdate.withValue(toAttributeValue(attribute
-                                                                     .getValue()));
+            AttributeValueUpdate.Builder attributeToUpdateBuilder = AttributeValueUpdate.builder_()
+                    .action(attribute.getAction());
+            if (attribute.value() != null) {
+                attributeToUpdateBuilder.value(toAttributeValue(attribute.value()));
             } else if (attribute.getAttributeValues() != null) {
-                attributeToUpdate.withValue(toAttributeValue(attribute
+                attributeToUpdateBuilder.value(toAttributeValue(attribute
                                                                      .getAttributeValues()));
             }
-            result.put(attribute.getAttributeName(), attributeToUpdate);
+            result.put(attribute.getAttributeName(), attributeToUpdateBuilder.build_());
         }
 
         return result;
@@ -152,35 +153,35 @@ public enum InternalUtils {
      *             if the input object type is not supported
      */
     public static AttributeValue toAttributeValue(Object value) {
-        AttributeValue result = new AttributeValue();
+        AttributeValue.Builder resultBuilder = AttributeValue.builder_();
         if (value == null) {
-            return result.withNULL(Boolean.TRUE);
+            return resultBuilder.nul(Boolean.TRUE).build_();
         } else if (value instanceof Boolean) {
-            return result.withBOOL((Boolean) value);
+            return resultBuilder.bool((Boolean) value).build_();
         } else if (value instanceof String) {
-            return result.withS((String) value);
+            return resultBuilder.s((String) value).build_();
         } else if (value instanceof BigDecimal) {
             BigDecimal bd = (BigDecimal) value;
-            return result.withN(bd.toPlainString());
+            return resultBuilder.n(bd.toPlainString()).build_();
         } else if (value instanceof Number) {
-            return result.withN(value.toString());
+            return resultBuilder.n(value.toString()).build_();
         } else if (value instanceof byte[]) {
-            return result.withB(ByteBuffer.wrap((byte[]) value));
+            return resultBuilder.b(ByteBuffer.wrap((byte[]) value)).build_();
         } else if (value instanceof ByteBuffer) {
-            return result.withB((ByteBuffer) value);
+            return resultBuilder.b((ByteBuffer) value).build_();
         } else if (value instanceof Set) {
             // default to an empty string set if there is no element
             @SuppressWarnings("unchecked")
             Set<Object> set = (Set<Object>) value;
             if (set.size() == 0) {
-                result.setSS(new LinkedHashSet<String>());
-                return result;
+                resultBuilder.ss(new ArrayList<>());
+                return resultBuilder.build_();
             }
             Object element = set.iterator().next();
             if (element instanceof String) {
                 @SuppressWarnings("unchecked")
                 Set<String> ss = (Set<String>) value;
-                result.setSS(new ArrayList<String>(ss));
+                resultBuilder.ss(new ArrayList<String>(ss));
             } else if (element instanceof Number) {
                 @SuppressWarnings("unchecked")
                 Set<Number> in = (Set<Number>) value;
@@ -189,7 +190,7 @@ public enum InternalUtils {
                     BigDecimal bd = InternalUtils.toBigDecimal(n);
                     out.add(bd.toPlainString());
                 }
-                result.setNS(out);
+                resultBuilder.ns(out);
             } else if (element instanceof byte[]) {
                 @SuppressWarnings("unchecked")
                 Set<byte[]> in = (Set<byte[]>) value;
@@ -197,11 +198,11 @@ public enum InternalUtils {
                 for (byte[] buf : in) {
                     out.add(ByteBuffer.wrap(buf));
                 }
-                result.setBS(out);
+                resultBuilder.bs(out);
             } else if (element instanceof ByteBuffer) {
                 @SuppressWarnings("unchecked")
                 Set<ByteBuffer> bs = (Set<ByteBuffer>) value;
-                result.setBS(bs);
+                resultBuilder.bs(bs);
             } else {
                 throw new UnsupportedOperationException("element type: "
                                                         + element.getClass());
@@ -213,22 +214,21 @@ public enum InternalUtils {
             for (Object v : in) {
                 out.add(toAttributeValue(v));
             }
-            result.setL(out);
+            resultBuilder.l(out);
         } else if (value instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> in = (Map<String, Object>) value;
-            if (in.size() > 0) {
-                for (Map.Entry<String, Object> e : in.entrySet()) {
-                    result.addMEntry(e.getKey(), toAttributeValue(e.getValue()));
-                }
-            } else {    // empty map
-                result.setM(new LinkedHashMap<String, AttributeValue>());
+            Map<String, AttributeValue> attrs = new HashMap<>();
+            for (Map.Entry<String, Object> e : in.entrySet()) {
+                attrs.put(e.getKey(), toAttributeValue(e.getValue()));
+                //resultBuilder.addMEntry(e.getKey(), toAttributeValue(e.getValue()));
             }
+            resultBuilder.m(attrs);
         } else {
             throw new UnsupportedOperationException("value type: "
                                                     + value.getClass());
         }
-        return result;
+        return resultBuilder.build_();
     }
 
     /**
@@ -362,53 +362,53 @@ public enum InternalUtils {
         if (value == null) {
             return null;
         }
-        if (Boolean.TRUE.equals(value.getNULL())) {
+        if (Boolean.TRUE.equals(value.nul())) {
             return null;
-        } else if (Boolean.FALSE.equals(value.getNULL())) {
+        } else if (Boolean.FALSE.equals(value.nul())) {
             throw new UnsupportedOperationException("False-NULL is not supported in DynamoDB");
-        } else if (value.getBOOL() != null) {
+        } else if (value.bool() != null) {
             @SuppressWarnings("unchecked")
-            T t = (T) value.getBOOL();
+            T t = (T) value.bool();
             return t;
-        } else if (value.getS() != null) {
+        } else if (value.s() != null) {
             @SuppressWarnings("unchecked")
-            T t = (T) value.getS();
+            T t = (T) value.s();
             return t;
-        } else if (value.getN() != null) {
+        } else if (value.n() != null) {
             @SuppressWarnings("unchecked")
-            T t = (T) new BigDecimal(value.getN());
+            T t = (T) new BigDecimal(value.n());
             return t;
-        } else if (value.getB() != null) {
+        } else if (value.b() != null) {
             @SuppressWarnings("unchecked")
-            T t = (T) copyAllBytesFrom(value.getB());
+            T t = (T) copyAllBytesFrom(value.b());
             return t;
-        } else if (value.getSS() != null) {
+        } else if (value.ss() != null) {
             @SuppressWarnings("unchecked")
-            T t = (T) new LinkedHashSet<String>(value.getSS());
+            T t = (T) new LinkedHashSet<String>(value.ss());
             return t;
-        } else if (value.getNS() != null) {
-            Set<BigDecimal> set = new LinkedHashSet<BigDecimal>(value.getNS().size());
-            for (String s : value.getNS()) {
+        } else if (value.ns() != null) {
+            Set<BigDecimal> set = new LinkedHashSet<BigDecimal>(value.ns().size());
+            for (String s : value.ns()) {
                 set.add(new BigDecimal(s));
             }
             @SuppressWarnings("unchecked")
             T t = (T) set;
             return t;
-        } else if (value.getBS() != null) {
-            Set<byte[]> set = new LinkedHashSet<byte[]>(value.getBS().size());
-            for (ByteBuffer bb : value.getBS()) {
+        } else if (value.bs() != null) {
+            Set<byte[]> set = new LinkedHashSet<byte[]>(value.bs().size());
+            for (ByteBuffer bb : value.bs()) {
                 set.add(copyAllBytesFrom(bb));
             }
             @SuppressWarnings("unchecked")
             T t = (T) set;
             return t;
-        } else if (value.getL() != null) {
+        } else if (value.l() != null) {
             @SuppressWarnings("unchecked")
-            T t = (T) toSimpleList(value.getL());
+            T t = (T) toSimpleList(value.l());
             return t;
-        } else if (value.getM() != null) {
+        } else if (value.m() != null) {
             @SuppressWarnings("unchecked")
-            T t = (T) toSimpleMapValue(value.getM());
+            T t = (T) toSimpleMapValue(value.m());
             return t;
         } else {
             throw new IllegalArgumentException(
@@ -445,13 +445,13 @@ public enum InternalUtils {
                 new LinkedHashMap<String, ExpectedAttributeValue>();
         for (Expected expected : expectedSet) {
             final String attr = expected.getAttribute();
-            final Object[] values = expected.getValues();
-            ExpectedAttributeValue eav = new ExpectedAttributeValue();
+            final Object[] values = expected.values();
+            ExpectedAttributeValue.Builder eavBuilder = ExpectedAttributeValue.builder_();
             if (values != null) {
                 if (values.length > 0) {
                     // convert from list of object values to list of AttributeValues
                     AttributeValue[] avs = InternalUtils.toAttributeValues(values);
-                    eav.withAttributeValueList(avs);
+                    eavBuilder.attributeValueList(avs);
                 } else {
                     throw new IllegalStateException("Bug!");
                 }
@@ -462,8 +462,8 @@ public enum InternalUtils {
                         "Comparison operator for attribute " + expected.getAttribute()
                         + " must be specified");
             }
-            eav.withComparisonOperator(op);
-            expectedMap.put(attr, eav);
+            eavBuilder.comparisonOperator(op);
+            expectedMap.put(attr, eavBuilder.build_());
         }
         if (expectedSet.size() != expectedMap.size()) {
             throw new IllegalArgumentException("duplicates attribute names not allowed in input");
@@ -481,13 +481,13 @@ public enum InternalUtils {
         Map<String, Condition> conditionMap = new LinkedHashMap<String, Condition>();
         for (Filter<?> filter : filters) {
             final String attr = filter.getAttribute();
-            final Object[] values = filter.getValues();
-            Condition condition = new Condition();
+            final Object[] values = filter.values();
+            Condition.Builder conditionBuilder = Condition.builder_();
             if (values != null) {
                 if (values.length > 0) {
                     // convert from list of object values to list of AttributeValues
                     AttributeValue[] avs = InternalUtils.toAttributeValues(values);
-                    condition.withAttributeValueList(avs);
+                    conditionBuilder.attributeValueList(avs);
                 } else {
                     throw new IllegalStateException("Bug!");
                 }
@@ -498,8 +498,8 @@ public enum InternalUtils {
                         "Comparison operator for attribute " + filter.getAttribute()
                         + " must be specified");
             }
-            condition.withComparisonOperator(op);
-            conditionMap.put(attr, condition);
+            conditionBuilder.comparisonOperator(op);
+            conditionMap.put(attr, conditionBuilder.build_());
         }
         if (filters.size() != conditionMap.size()) {
             throw new IllegalArgumentException("duplicates attribute names not allowed in input");
@@ -548,8 +548,8 @@ public enum InternalUtils {
         }
         Map<String, AttributeValue> keys = new LinkedHashMap<String, AttributeValue>();
         for (KeyAttribute keyAttr : primaryKey) {
-            keys.put(keyAttr.getName(),
-                     InternalUtils.toAttributeValue(keyAttr.getValue()));
+            keys.put(keyAttr.name(),
+                     InternalUtils.toAttributeValue(keyAttr.value()));
         }
         return Collections.unmodifiableMap(keys);
     }

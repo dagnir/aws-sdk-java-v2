@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * attribute this property corresponds to. Furthermore, the
  * {@link DynamoDbMapper} class assumes Java naming conventions, and will
  * lower-case the first character of a getter method's property name to
- * determine the name of the property. E.g., a method getValue() will map to the
+ * determine the name of the property. E.g., a method value() will map to the
  * DynamoDB attribute "value". Similarly, a method isValid() maps to the
  * DynamoDB attribute "valid".
  * <p>

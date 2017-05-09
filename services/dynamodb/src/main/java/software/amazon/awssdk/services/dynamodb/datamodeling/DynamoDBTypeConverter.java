@@ -82,7 +82,10 @@ public interface DynamoDBTypeConverter<S extends Object, T extends Object> {
 
         @Override
         public S convert(final T o) {
-            return source.convert(target.convert(o));
+            U o1 = target.convert(o);
+            S o2 = source.convert(o1);
+            return o2;
+            //return source.convert(target.convert(o));
         }
 
         @Override

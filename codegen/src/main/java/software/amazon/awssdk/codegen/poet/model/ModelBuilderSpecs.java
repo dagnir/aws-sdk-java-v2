@@ -47,7 +47,7 @@ class ModelBuilderSpecs {
         this.shapeModelSpec = shapeModelSpec;
         this.typeProvider = typeProvider;
         this.poetExtensions = poetExtensions;
-        this.settersFactory = new SettersFactory(this.typeProvider);
+        this.settersFactory = new SettersFactory(this.shapeModel, this.typeProvider);
     }
 
     public ClassName builderInterfaceName() {

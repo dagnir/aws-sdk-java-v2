@@ -79,7 +79,7 @@ public class NumberSetAttributeClass {
     }
 
     @DynamoDBAttribute
-    public Set<BigDecimal> getBigDecimalAttribute() {
+    public Set<BigDecimal> bigDecimalAttribute() {
         return bigDecimalAttribute;
     }
 
@@ -88,7 +88,7 @@ public class NumberSetAttributeClass {
     }
 
     @DynamoDBAttribute
-    public Set<BigInteger> getBigIntegerAttribute() {
+    public Set<BigInteger> bigIntegerAttribute() {
         return bigIntegerAttribute;
     }
 
@@ -97,7 +97,7 @@ public class NumberSetAttributeClass {
     }
 
     @DynamoDBAttribute
-    public Set<Long> getLongObjectAttribute() {
+    public Set<Long> longObjectAttribute() {
         return longObjectAttribute;
     }
 
@@ -106,7 +106,7 @@ public class NumberSetAttributeClass {
     }
 
     @DynamoDBAttribute
-    public Set<Byte> getByteObjectAttribute() {
+    public Set<Byte> byteObjectAttribute() {
         return byteObjectAttribute;
     }
 
@@ -133,7 +133,7 @@ public class NumberSetAttributeClass {
     }
 
     @DynamoDBAttribute
-    public Set<Boolean> getBooleanAttribute() {
+    public Set<Boolean> booleanAttribute() {
         return booleanAttribute;
     }
 

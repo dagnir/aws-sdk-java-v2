@@ -29,7 +29,7 @@ public class BatchLoadContext {
     /**
      * The BatchGetItemRequest.
      */
-    private final BatchGetItemRequest batchGetItemRequest;
+    private BatchGetItemRequest batchGetItemRequest;
     /**
      * The BatchGetItemResult returned by the DynamoDB client.
      */
@@ -49,10 +49,18 @@ public class BatchLoadContext {
         this.retriesAttempted = 0;
     }
 
+    public BatchGetItemRequest getBatchGetItemRequest() {
+        return batchGetItemRequest;
+    }
+
+    public void setBatchGetItemRequest(BatchGetItemRequest batchGetItemRequest) {
+        this.batchGetItemRequest = batchGetItemRequest;
+    }
+
     /**
      * @return the BatchGetItemResult
      */
-    public BatchGetItemResult getBatchGetItemResult() {
+    public BatchGetItemResult batchGetItemResult() {
         return batchGetItemResult;
     }
 
@@ -67,7 +75,7 @@ public class BatchLoadContext {
     /**
      * @return the BatchGetItemRequest.
      */
-    public BatchGetItemRequest getBatchGetItemRequest() {
+    public BatchGetItemRequest batchGetItemRequest() {
         return batchGetItemRequest;
     }
 

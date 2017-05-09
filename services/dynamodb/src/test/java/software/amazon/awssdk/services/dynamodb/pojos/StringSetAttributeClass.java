@@ -40,7 +40,7 @@ public class StringSetAttributeClass {
     }
 
     @DynamoDBAttribute
-    public Set<String> getStringSetAttribute() {
+    public Set<String> stringSetAttribute() {
         return stringSetAttribute;
     }
 
@@ -49,7 +49,7 @@ public class StringSetAttributeClass {
     }
 
     @DynamoDBAttribute(attributeName = "originalName")
-    public Set<String> getStringSetAttributeRenamed() {
+    public Set<String> stringSetAttributeRenamed() {
         return StringSetAttributeRenamed;
     }
 

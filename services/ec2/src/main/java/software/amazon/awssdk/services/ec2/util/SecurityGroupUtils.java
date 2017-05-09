@@ -44,7 +44,7 @@ public class SecurityGroupUtils {
 
         DescribeSecurityGroupsRequest securityGroupsRequest =
                 new DescribeSecurityGroupsRequest()
-                        .withGroupNames(securityGroupName);
+                        .groupNames(securityGroupName);
 
         try {
             ec2.describeSecurityGroups(securityGroupsRequest);

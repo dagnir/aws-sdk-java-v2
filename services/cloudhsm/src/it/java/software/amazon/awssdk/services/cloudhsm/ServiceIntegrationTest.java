@@ -28,9 +28,9 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testOperations() {
-        client.listHsms(new ListHsmsRequest()).getHsmList();
-        client.listAvailableZones(new ListAvailableZonesRequest());
-        client.listHapgs(new ListHapgsRequest());
-        client.listLunaClients(new ListLunaClientsRequest());
+        client.listHsms(ListHsmsRequest.builder_().build_()).hsmList();
+        client.listAvailableZones(ListAvailableZonesRequest.builder_().build_());
+        client.listHapgs(ListHapgsRequest.builder_().build_());
+        client.listLunaClients(ListLunaClientsRequest.builder_().build_());
     }
 }

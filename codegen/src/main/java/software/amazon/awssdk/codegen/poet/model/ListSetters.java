@@ -28,12 +28,13 @@ import java.util.Collection;
 import java.util.List;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 
 class ListSetters extends AbstractMemberSetters {
     private TypeProvider typeProvider;
 
-    public ListSetters(MemberModel memberModel, TypeProvider typeProvider) {
-        super(memberModel, typeProvider);
+    public ListSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
+        super(shapeModel, memberModel, typeProvider);
         this.typeProvider = typeProvider;
     }
 
