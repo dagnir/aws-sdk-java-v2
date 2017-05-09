@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.EC2CredentialsUtils;
 
 @SdkInternalApi
 public class ConnectionUtils {

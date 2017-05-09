@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.ResponseHeaderOverrides;

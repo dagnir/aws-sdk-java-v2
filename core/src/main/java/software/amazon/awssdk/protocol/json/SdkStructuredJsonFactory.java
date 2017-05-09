@@ -17,9 +17,7 @@ package software.amazon.awssdk.protocol.json;
 
 import java.util.List;
 
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;
 import software.amazon.awssdk.runtime.http.response.JsonResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
@@ -45,11 +43,11 @@ public interface SdkStructuredJsonFactory {
      * Returns the response handler to be used for handling a successfull response.
      *
      * @param operationMetadata Additional context information about an operation to create the
-     *                          appropriate response handler.
+     * appropriate response handler.
      */
     <T> JsonResponseHandler<T> createResponseHandler(
-            JsonOperationMetadata operationMetadata,
-            Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller);
+        JsonOperationMetadata operationMetadata,
+        Unmarshaller<T, JsonUnmarshallerContext> responseUnmarshaller);
 
     /**
      * Returns the error response handler for handling a error response.
@@ -57,6 +55,6 @@ public interface SdkStructuredJsonFactory {
      * @param errorUnmarshallers Response unmarshallers to unamrshall the error responses.
      */
     JsonErrorResponseHandler createErrorResponseHandler(
-            List<JsonErrorUnmarshaller> errorUnmarshallers, String customErrorCodeFieldName);
+        List<JsonErrorUnmarshaller> errorUnmarshallers, String customErrorCodeFieldName);
 
 }

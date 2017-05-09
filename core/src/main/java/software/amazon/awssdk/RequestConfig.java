@@ -23,7 +23,6 @@ import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.retry.RetryPolicy;
 
 /**
  * Generic representation of request level configuration. The customer interface for specifying

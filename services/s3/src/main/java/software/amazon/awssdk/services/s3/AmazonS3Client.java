@@ -77,7 +77,6 @@ import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.Presigner;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerFactory;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressInputStream;
 import software.amazon.awssdk.event.ProgressListener;
@@ -4465,7 +4464,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
     }
 
     /**
-     * @deprecated use {@link AmazonS3ClientBuilder#setEndpointConfiguration(AwsClientBuilder.EndpointConfiguration)}
+     * @deprecated use {@link AmazonS3ClientBuilder#setEndpointConfiguration(
+     * software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration)}
      */
     @Override
     @Deprecated

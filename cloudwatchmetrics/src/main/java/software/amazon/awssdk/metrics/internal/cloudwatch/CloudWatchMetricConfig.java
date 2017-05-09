@@ -30,9 +30,7 @@
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
 import java.util.concurrent.TimeUnit;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 

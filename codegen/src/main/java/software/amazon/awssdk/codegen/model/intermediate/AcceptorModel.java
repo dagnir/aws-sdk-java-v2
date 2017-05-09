@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import software.amazon.awssdk.codegen.JmesPathCodeGenVisitor;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.jmespath.JmesPathExpression;
-import software.amazon.awssdk.utils.StringUtils;
 
 public class AcceptorModel {
 

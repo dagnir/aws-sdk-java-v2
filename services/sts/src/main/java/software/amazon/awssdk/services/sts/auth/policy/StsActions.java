@@ -18,8 +18,6 @@ package software.amazon.awssdk.services.sts.auth.policy;
 import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.services.sts.STSClient;
-import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityRequest;
 
 /**
  * The available AWS access control policy actions for Amazon Security Token Service.

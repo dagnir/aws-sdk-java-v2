@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.s3.model.lifecycle;
 
 import java.io.Serializable;
-import software.amazon.awssdk.services.s3.model.BucketLifecycleConfiguration;
 
 /**
  * The {@link LifecycleFilter} is used to identify objects that a Lifecycle Rule applies to.

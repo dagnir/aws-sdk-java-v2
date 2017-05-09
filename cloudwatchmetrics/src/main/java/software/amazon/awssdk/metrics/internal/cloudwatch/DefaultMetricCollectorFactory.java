@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.metrics.internal.cloudwatch;
 
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricCollector;

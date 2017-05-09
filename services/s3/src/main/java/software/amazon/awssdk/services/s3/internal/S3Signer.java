@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.auth.AbstractAwsSigner;
 import software.amazon.awssdk.auth.AwsCredentials;

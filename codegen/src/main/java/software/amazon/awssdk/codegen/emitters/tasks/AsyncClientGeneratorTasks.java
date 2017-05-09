@@ -23,8 +23,6 @@ import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
 import software.amazon.awssdk.codegen.poet.builder.AsyncClientBuilderClass;
 import software.amazon.awssdk.codegen.poet.builder.AsyncClientBuilderInterface;
-import software.amazon.awssdk.codegen.poet.builder.BaseClientBuilderClass;
-import software.amazon.awssdk.codegen.poet.builder.BaseClientBuilderInterface;
 import software.amazon.awssdk.codegen.poet.client.AsyncClientInterface;
 
 public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {

@@ -16,7 +16,6 @@
 package software.amazon.awssdk.client.builder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
@@ -38,7 +37,6 @@ import software.amazon.awssdk.config.MutableClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.GlobalClientConfigurationDefaults;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
-import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.regions.AwsRegionProvider;
 import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.regions.RegionUtils;
