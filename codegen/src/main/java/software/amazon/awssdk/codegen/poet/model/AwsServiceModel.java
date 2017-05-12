@@ -106,6 +106,7 @@ public class AwsServiceModel implements ClassSpec {
                 methodSpecs.add(toBuilderMethod());
                 methodSpecs.add(builderMethod());
                 methodSpecs.add(beanStyleBuilderClassMethod());
+                methodSpecs.addAll(memberGetters());
                 break;
             default:
                 methodSpecs.addAll(memberGetters());
