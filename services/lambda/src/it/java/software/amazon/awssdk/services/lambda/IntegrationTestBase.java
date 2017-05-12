@@ -107,7 +107,10 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     private static void createLambdaServiceRole() {
-        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        iam = IAMClient.builder()
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region("us-east-1")
+                .build();
 
         CreateRoleResult result = iam.createRole(new CreateRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME)
                                                                         .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
