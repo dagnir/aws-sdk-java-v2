@@ -30,7 +30,10 @@ public class SessionBasedAuthenticationIntegrationTest extends IntegrationTestBa
     public void clientWithStsSessionCredentials_CanMakeCallsToSqs() throws Exception {
         setUpCredentials();
 
-        STSClient stsClient = STSClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        STSClient stsClient = STSClient.builder()
+                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
+                .region("us-east-1")
+                .build();
         StsSessionCredentialsProvider sessionCredentials = new StsSessionCredentialsProvider(stsClient);
         SQSAsyncClient sqsClient = SQSAsyncClient.builder().credentialsProvider(sessionCredentials).build();
         String queueUrl = createQueue(sqsClient);

@@ -18,6 +18,7 @@ package software.amazon.awssdk.client.builder;
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
@@ -106,6 +107,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * Used by child classes to get the signing region configured on this builder. This is usually used when generating the child
      * class's signer. This will never return null.
      */
+    @ReviewBeforeRelease("Signing region is not always endpoint region. When dust settles with region refactor revisit this")
     protected final String signingRegion() {
         return resolveRegion().orElseThrow(() -> new IllegalStateException("The signing region could not be determined."));
     }

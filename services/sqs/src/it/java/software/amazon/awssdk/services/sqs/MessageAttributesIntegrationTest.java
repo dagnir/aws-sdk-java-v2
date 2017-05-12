@@ -52,12 +52,12 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
     @Before
     public void setup() {
-        queueUrl = createQueue(sqs);
+        queueUrl = createQueue(sqsAsync);
     }
 
     @After
     public void tearDown() throws Exception {
-        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        sqsAsync.deleteQueue(new DeleteQueueRequest(queueUrl));
     }
 
     @Test
@@ -79,10 +79,10 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
         Map<String, MessageAttributeValue> attrs = ImmutableMapParameter.of(byteBufferAttrName,
                 new MessageAttributeValue().withDataType("Binary").withBinaryValue(ByteBuffer.wrap(bytes)));
 
-        sqs.sendMessage(new SendMessageRequest().withQueueUrl(queueUrl).withMessageBody("test")
+        sqsAsync.sendMessage(new SendMessageRequest().withQueueUrl(queueUrl).withMessageBody("test")
                 .withMessageAttributes(attrs));
         // Long poll to make sure we get the message back
-        List<Message> messages = sqs.receiveMessage(
+        List<Message> messages = sqsAsync.receiveMessage(
                 new ReceiveMessageRequest(queueUrl).withMessageAttributeNames("All").withWaitTimeSeconds(20)).join()
                 .getMessages();
 
@@ -97,7 +97,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
         ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl).withWaitTimeSeconds(5)
                 .withVisibilityTimeout(0).withMessageAttributeNames("All");
-        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(receiveMessageRequest).join();
+        ReceiveMessageResult receiveMessageResult = sqsAsync.receiveMessage(receiveMessageRequest).join();
 
         assertFalse(receiveMessageResult.getMessages().isEmpty());
         Message message = receiveMessageResult.getMessages().get(0);
@@ -115,7 +115,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
         ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl).withWaitTimeSeconds(5)
                 .withVisibilityTimeout(0);
-        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(receiveMessageRequest).join();
+        ReceiveMessageResult receiveMessageResult = sqsAsync.receiveMessage(receiveMessageRequest).join();
 
         assertFalse(receiveMessageResult.getMessages().isEmpty());
         Message message = receiveMessageResult.getMessages().get(0);
@@ -126,7 +126,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void sendMessageBatch_WithMessageAttributes_ResultHasMd5OfMessageAttributes() {
-        SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest()
+        SendMessageBatchResult sendMessageBatchResult = sqsAsync.sendMessageBatch(new SendMessageBatchRequest()
                 .withQueueUrl(queueUrl).withEntries(
                         new SendMessageBatchRequestEntry("1", MESSAGE_BODY)
                                 .withMessageAttributes(createRandomAttributeValues(1)),
@@ -146,7 +146,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
     }
 
     private SendMessageResult sendTestMessage() {
-        SendMessageResult sendMessageResult = sqs.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)
+        SendMessageResult sendMessageResult = sqsAsync.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)
                 .withMessageAttributes(createRandomAttributeValues(10))).join();
         return sendMessageResult;
     }

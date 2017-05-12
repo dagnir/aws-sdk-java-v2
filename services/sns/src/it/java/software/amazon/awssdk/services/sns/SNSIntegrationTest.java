@@ -195,7 +195,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         // Subscribe an SQS queue for notifications
         String queueArn = initializeReceivingQueue();
         SubscribeResult subscribeResult = sns
-                .subscribe(new SubscribeRequest().withEndpoint(queueArn).withProtocol("sqs").withTopicArn(topicArn));
+                .subscribe(new SubscribeRequest().withEndpoint(queueArn).withProtocol("sqsAsync").withTopicArn(topicArn));
         subscriptionArn = subscribeResult.getSubscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
@@ -287,7 +287,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         queueUrl = sqs.createQueue(new CreateQueueRequest("subscribeTopicTest-" + System.currentTimeMillis()))
                       .getQueueUrl();
         String queueArn = initializeReceivingQueue();
-        SubscribeResult subscribeResult = sns.subscribe(new SubscribeRequest(topicArn, "sqs", queueArn));
+        SubscribeResult subscribeResult = sns.subscribe(new SubscribeRequest(topicArn, "sqsAsync", queueArn));
         String subscriptionArn = subscribeResult.getSubscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
