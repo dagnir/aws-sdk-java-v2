@@ -3532,7 +3532,7 @@
     "AttachClassicLinkVpcResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -4513,7 +4513,7 @@
           "documentation": "<p>The AWS account ID of the instance owner. This is only present if the product code is attached to the instance.</p>",
           "locationName": "ownerId"
         },
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>The return value of the request. Returns <code>true</code> if the specified product code is owned by the requester and associated with the specified instance.</p>",
           "locationName": "return"
@@ -5324,7 +5324,7 @@
     "CreateRouteResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -6336,7 +6336,7 @@
     "DeleteVpcPeeringConnectionResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -9019,7 +9019,7 @@
     "DetachClassicLinkVpcResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -9232,7 +9232,7 @@
     "DisableVpcClassicLinkDnsSupportResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -9262,7 +9262,7 @@
     "DisableVpcClassicLinkResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -9643,7 +9643,7 @@
     "EnableVpcClassicLinkDnsSupportResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -9673,7 +9673,7 @@
     "EnableVpcClassicLinkResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -10619,7 +10619,7 @@
           "documentation": "<p>The date and time the image was created.</p>",
           "locationName": "creationDate"
         },
-        "Public": {
+        "PublicLaunchPermissions": {
           "shape": "Boolean",
           "documentation": "<p>Indicates whether the image has public launch permissions. The value is <code>true</code> if this image has public launch permissions or <code>false</code> if it has only implicit and explicit launch permissions.</p>",
           "locationName": "isPublic"
@@ -13044,7 +13044,7 @@
     "ModifyInstancePlacementResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Is <code>true</code> if the request succeeds, and an error otherwise.</p>",
           "locationName": "return"
@@ -13194,7 +13194,7 @@
     "ModifySpotFleetRequestResponse": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Is <code>true</code> if the request succeeds, and an error otherwise.</p>",
           "locationName": "return"
@@ -13306,7 +13306,7 @@
     "ModifyVpcEndpointResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
@@ -14896,7 +14896,7 @@
     "RejectVpcPeeringConnectionResult": {
       "type": "structure",
       "members": {
-        "Return": {
+        "ReturnValue": {
           "shape": "Boolean",
           "documentation": "<p>Returns <code>true</code> if the request succeeds; otherwise, it returns an error.</p>",
           "locationName": "return"
