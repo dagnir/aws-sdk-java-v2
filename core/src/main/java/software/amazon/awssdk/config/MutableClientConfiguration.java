@@ -31,10 +31,6 @@ public final class MutableClientConfiguration
         implements ClientConfiguration, SyncClientConfiguration, AsyncClientConfiguration, Cloneable {
 
     // ClientConfiguration
-    private ClientHttpConfiguration httpConfiguration = ClientHttpConfiguration.builder().build();
-    private ClientHttpProxyConfiguration httpProxyConfiguration = ClientHttpProxyConfiguration.builder().build();
-    private ClientTcpConfiguration tcpConfiguration = ClientTcpConfiguration.builder().build();
-    private ClientIpConfiguration ipConfiguration = ClientIpConfiguration.builder().build();
     private ClientTimeoutConfiguration timeoutConfiguration = ClientTimeoutConfiguration.builder().build();
     private ClientMarshallerConfiguration marshallerConfiguration = ClientMarshallerConfiguration.builder().build();
     private ClientMetricsConfiguration metricsConfiguration = ClientMetricsConfiguration.builder().build();
@@ -46,46 +42,6 @@ public final class MutableClientConfiguration
 
     // AsyncClientConfiguration
     private ExecutorService asyncExecutorService;
-
-    @Override
-    public final ClientHttpConfiguration httpConfiguration() {
-        return httpConfiguration;
-    }
-
-    public final MutableClientConfiguration httpConfiguration(ClientHttpConfiguration httpConfiguration) {
-        this.httpConfiguration = httpConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientHttpProxyConfiguration httpProxyConfiguration() {
-        return httpProxyConfiguration;
-    }
-
-    public final MutableClientConfiguration httpProxyConfiguration(ClientHttpProxyConfiguration httpProxyConfiguration) {
-        this.httpProxyConfiguration = httpProxyConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientTcpConfiguration tcpConfiguration() {
-        return tcpConfiguration;
-    }
-
-    public final MutableClientConfiguration tcpConfiguration(ClientTcpConfiguration tcpConfiguration) {
-        this.tcpConfiguration = tcpConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientIpConfiguration ipConfiguration() {
-        return ipConfiguration;
-    }
-
-    public final MutableClientConfiguration ipConfiguration(ClientIpConfiguration ipConfiguration) {
-        this.ipConfiguration = ipConfiguration;
-        return this;
-    }
 
     @Override
     public final ClientTimeoutConfiguration timeoutConfiguration() {

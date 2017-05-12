@@ -118,6 +118,8 @@ public class LegacyClientConfiguration {
 
     public static final int DEFAULT_MAX_CONSECUTIVE_RETRIES_BEFORE_THROTTLING = 100;
 
+    // TODO hacky hack for now
+    private static final SecureRandom DEFAULT_SECURE_RANDOM = new SecureRandom();
 
     /** A prefix to the HTTP user agent header passed with all HTTP requests.  */
     private String userAgentPrefix = DEFAULT_USER_AGENT;
@@ -1775,7 +1777,7 @@ public class LegacyClientConfiguration {
      */
     public SecureRandom getSecureRandom() {
         if (secureRandom == null) {
-            secureRandom = new SecureRandom();
+            return DEFAULT_SECURE_RANDOM;
         }
         return secureRandom;
     }

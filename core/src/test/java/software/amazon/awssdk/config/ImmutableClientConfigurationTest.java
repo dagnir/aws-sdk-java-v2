@@ -17,7 +17,6 @@ package software.amazon.awssdk.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.net.InetAddress;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -45,40 +44,22 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 public class ImmutableClientConfigurationTest {
     private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-    private static final RequestHandler2 REQUEST_HANDLER = new RequestHandler2() {};
+    private static final RequestHandler2 REQUEST_HANDLER = new RequestHandler2() {
+    };
     private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new DefaultAwsCredentialsProviderChain();
     private static final URI ENDPOINT = URI.create("https://www.example.com");
     private static final RetryPolicy RETRY_POLICY = new RetryPolicy(null, null, 10, true);
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     private static final LegacyClientConfiguration EXPECTED_LEGACY_CONFIGURATION =
-            new LegacyClientConfiguration().withHeader("header", "value")
-                                           .withUseExpectContinue(true)
-                                           .withProxyUsername("username")
-                                           .withNonProxyHosts("nonProxyHost1|nonProxyHost2")
-                                           .withProxyDomain("domain")
-                                           .withProxyPassword("password")
-                                           .withProxyWorkstation("workstation")
-                                           .withPreemptiveBasicProxyAuth(true)
-                                           .withProxyHost("host")
-                                           .withProxyPort(123)
-                                           .withConnectionMaxIdleMillis(10_000)
-                                           .withConnectionTtl(11_000)
-                                           .withValidateAfterInactivityMillis(12_000)
-                                           .withReaper(true)
-                                           .withTcpKeepAlive(true)
-                                           .withMaxConnections(1)
-                                           .withSocketBufferSizeHints(2, 3)
-                                           .withLocalAddress(InetAddress.getLoopbackAddress())
-                                           .withConnectionTimeout(1_000)
-                                           .withSocketTimeout(3_000)
-                                           .withClientExecutionTimeout(4_000)
-                                           .withGzip(true)
-                                           .withUserAgentPrefix("userAgentPrefix")
-                                           .withUserAgentSuffix("userAgentSuffix")
-                                           .withSecureRandom(SECURE_RANDOM)
-                                           .withRetryPolicy(RETRY_POLICY)
-                                           .withProtocol(Protocol.HTTPS);
+            new LegacyClientConfiguration()
+                    .withHeader("header", "value")
+                    .withClientExecutionTimeout(4_000)
+                    .withGzip(true)
+                    .withUserAgentPrefix("userAgentPrefix")
+                    .withUserAgentSuffix("userAgentSuffix")
+                    .withRetryPolicy(RETRY_POLICY)
+                    .withProtocol(Protocol.HTTPS);
 
     private static final AwsSyncClientParams EXPECT_SYNC_CLIENT_PARAMS = new AwsSyncClientParams() {
         @Override
@@ -165,12 +146,12 @@ public class ImmutableClientConfigurationTest {
         assertLegacyConfigurationMatches(EXPECTED_LEGACY_CONFIGURATION, legacyAsyncParams.getClientConfiguration());
     }
 
-    public void assertAsyncParamsMatch(AwsAsyncClientParams expected, AwsAsyncClientParams given) {
+    private void assertAsyncParamsMatch(AwsAsyncClientParams expected, AwsAsyncClientParams given) {
         assertSyncParamsMatch(expected, given);
         assertThat(expected.getExecutor()).isEqualTo(given.getExecutor());
     }
 
-    public void assertSyncParamsMatch(AwsSyncClientParams expected, AwsSyncClientParams given) {
+    private void assertSyncParamsMatch(AwsSyncClientParams expected, AwsSyncClientParams given) {
         assertThat(expected.getCredentialsProvider()).isEqualTo(given.getCredentialsProvider());
         assertThat(expected.getEndpoint()).isEqualTo(given.getEndpoint());
         assertThat(expected.getRequestHandlers()).isEqualTo(given.getRequestHandlers());
@@ -196,94 +177,51 @@ public class ImmutableClientConfigurationTest {
     }
 
     private static class InitializedConfiguration implements ClientConfiguration {
-        @Override
-        public ClientHttpConfiguration httpConfiguration() {
-            return ClientHttpConfiguration.builder()
-                                          .addAdditionalHeader("header", "value")
-                                          .expectContinueEnabled(true)
-                                          .build();
-        }
-
-        @Override
-        public ClientHttpProxyConfiguration httpProxyConfiguration() {
-            return ClientHttpProxyConfiguration.builder()
-                                               .username("username")
-                                               .addNonProxyHost("nonProxyHost1")
-                                               .addNonProxyHost("nonProxyHost2")
-                                               .ntlmDomain("domain")
-                                               .password("password")
-                                               .ntlmWorkstation("workstation")
-                                               .preemptiveBasicAuthenticationEnabled(true)
-                                               .endpoint(URI.create("http://host:123"))
-                                               .build();
-        }
-
-        @Override
-        public ClientTcpConfiguration tcpConfiguration() {
-            return ClientTcpConfiguration.builder()
-                                         .connectionMaxIdleTime(Duration.ofSeconds(10))
-                                         .connectionTimeToLive(Duration.ofSeconds(11))
-                                         .connectionValidationFrequency(Duration.ofSeconds(12))
-                                         .tcpKeepaliveEnabled(true)
-                                         .maxConnections(1)
-                                         .socketSendBufferSizeHint(2)
-                                         .socketReceiveBufferSizeHint(3)
-                                         .build();
-        }
-
-        @Override
-        public ClientIpConfiguration ipConfiguration() {
-            return ClientIpConfiguration.builder()
-                                        .localAddress(InetAddress.getLoopbackAddress())
-                                        .build();
-        }
 
         @Override
         public ClientTimeoutConfiguration timeoutConfiguration() {
             return ClientTimeoutConfiguration.builder()
-                                             .connectionTimeout(Duration.ofSeconds(1))
-                                             .httpRequestTimeout(Duration.ofSeconds(2))
-                                             .socketTimeout(Duration.ofSeconds(3))
-                                             .totalExecutionTimeout(Duration.ofSeconds(4))
-                                             .build();
+                    .httpRequestTimeout(Duration.ofSeconds(2))
+                    .totalExecutionTimeout(Duration.ofSeconds(4))
+                    .build();
         }
 
         @Override
         public ClientMarshallerConfiguration marshallerConfiguration() {
             return ClientMarshallerConfiguration.builder()
-                                                .gzipEnabled(true)
-                                                .build();
+                    .gzipEnabled(true)
+                    .addAdditionalHeader("header", "value")
+                    .build();
         }
 
         @Override
         public ClientMetricsConfiguration metricsConfiguration() {
             return ClientMetricsConfiguration.builder()
-                                             .requestMetricCollector(RequestMetricCollector.NONE)
-                                             .userAgentPrefix("userAgentPrefix")
-                                             .userAgentSuffix("userAgentSuffix")
-                                             .build();
+                    .requestMetricCollector(RequestMetricCollector.NONE)
+                    .userAgentPrefix("userAgentPrefix")
+                    .userAgentSuffix("userAgentSuffix")
+                    .build();
         }
 
         @Override
         public ClientSecurityConfiguration securityConfiguration() {
             return ClientSecurityConfiguration.builder()
-                                              .signerProvider(SIGNER_PROVIDER)
-                                              .secureRandom(SECURE_RANDOM)
-                                              .build();
+                    .signerProvider(SIGNER_PROVIDER)
+                    .build();
         }
 
         @Override
         public ClientRetryConfiguration retryConfiguration() {
             return ClientRetryConfiguration.builder()
-                                           .retryPolicy(RETRY_POLICY)
-                                           .build();
+                    .retryPolicy(RETRY_POLICY)
+                    .build();
         }
 
         @Override
         public ClientListenerConfiguration listenerConfiguration() {
             return ClientListenerConfiguration.builder()
-                                              .addRequestListener(REQUEST_HANDLER)
-                                              .build();
+                    .addRequestListener(REQUEST_HANDLER)
+                    .build();
         }
 
         @Override

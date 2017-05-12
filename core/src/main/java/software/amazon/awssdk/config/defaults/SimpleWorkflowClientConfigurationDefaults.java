@@ -15,12 +15,8 @@
 
 package software.amazon.awssdk.config.defaults;
 
-import java.time.Duration;
-import java.util.function.Supplier;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.config.ClientConfiguration;
-import software.amazon.awssdk.config.ClientTcpConfiguration;
-import software.amazon.awssdk.config.ClientTimeoutConfiguration;
 
 /**
  * A Simple Workflow-specific decorator for a {@link ClientConfiguration} that adds default values optimal for communicating with
@@ -29,15 +25,5 @@ import software.amazon.awssdk.config.ClientTimeoutConfiguration;
  */
 @SdkInternalApi
 public class SimpleWorkflowClientConfigurationDefaults extends ClientConfigurationDefaults {
-    @Override
-    protected void applyTcpDefaults(ClientTcpConfiguration.Builder builder) {
-        Supplier<Integer> defaultValue = () -> 1000;
-        builder.maxConnections(builder.maxConnections().orElseGet(defaultValue));
-    }
-
-    @Override
-    protected void applyTimeoutDefaults(ClientTimeoutConfiguration.Builder builder) {
-        Supplier<Duration> defaultValue = () -> Duration.ofSeconds(90);
-        builder.socketTimeout(builder.socketTimeout().orElseGet(defaultValue));
-    }
+    // TODO hook back up service specific defaults
 }

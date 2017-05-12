@@ -21,15 +21,11 @@ import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
-import software.amazon.awssdk.config.ClientHttpConfiguration;
-import software.amazon.awssdk.config.ClientHttpProxyConfiguration;
-import software.amazon.awssdk.config.ClientIpConfiguration;
 import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
 import software.amazon.awssdk.config.ClientMetricsConfiguration;
 import software.amazon.awssdk.config.ClientRetryConfiguration;
 import software.amazon.awssdk.config.ClientSecurityConfiguration;
-import software.amazon.awssdk.config.ClientTcpConfiguration;
 import software.amazon.awssdk.config.ClientTimeoutConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
@@ -301,82 +297,6 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     }
 
     // Getters and setters that just delegate to the mutable client configuration
-
-    @Override
-    public final ClientHttpConfiguration httpConfiguration() {
-        return mutableClientConfiguration.httpConfiguration();
-    }
-
-    @Override
-    public final B httpConfiguration(ClientHttpConfiguration httpConfiguration) {
-        mutableClientConfiguration.httpConfiguration(httpConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientHttpConfiguration getHttpConfiguration() {
-        return httpConfiguration();
-    }
-
-    public final void setHttpConfiguration(ClientHttpConfiguration httpConfiguration) {
-        httpConfiguration(httpConfiguration);
-    }
-
-    @Override
-    public final ClientHttpProxyConfiguration httpProxyConfiguration() {
-        return mutableClientConfiguration.httpProxyConfiguration();
-    }
-
-    @Override
-    public final B httpProxyConfiguration(ClientHttpProxyConfiguration httpProxyConfiguration) {
-        mutableClientConfiguration.httpProxyConfiguration(httpProxyConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientHttpProxyConfiguration getHttpProxyConfiguration() {
-        return httpProxyConfiguration();
-    }
-
-    public final void setHttpProxyConfiguration(ClientHttpProxyConfiguration httpProxyConfiguration) {
-        httpProxyConfiguration(httpProxyConfiguration);
-    }
-
-    @Override
-    public final ClientTcpConfiguration tcpConfiguration() {
-        return mutableClientConfiguration.tcpConfiguration();
-    }
-
-    @Override
-    public final B tcpConfiguration(ClientTcpConfiguration tcpConfiguration) {
-        mutableClientConfiguration.tcpConfiguration(tcpConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientTcpConfiguration getTcpConfiguration() {
-        return tcpConfiguration();
-    }
-
-    public final void setTcpConfiguration(ClientTcpConfiguration tcpConfiguration) {
-        tcpConfiguration(tcpConfiguration);
-    }
-
-    @Override
-    public final ClientIpConfiguration ipConfiguration() {
-        return mutableClientConfiguration.ipConfiguration();
-    }
-
-    @Override
-    public final B ipConfiguration(ClientIpConfiguration ipConfiguration) {
-        mutableClientConfiguration.ipConfiguration(ipConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientIpConfiguration getIpConfiguration() {
-        return ipConfiguration();
-    }
-
-    public final void setIpConfiguration(ClientIpConfiguration ipConfiguration) {
-        ipConfiguration(ipConfiguration);
-    }
 
     @Override
     public final ClientTimeoutConfiguration timeoutConfiguration() {
