@@ -24,6 +24,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
@@ -40,7 +41,7 @@ class ListSetters extends AbstractMemberSetters {
         List<MethodSpec> fluentDeclarations = new ArrayList<>();
 
         fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(
-                typeProvider.type(memberModel()), fieldName()).build(), returnType).build());
+                asCollection(), fieldName()).build(), returnType).build());
         fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(
                 asArray(), fieldName()).build(), returnType).varargs(true).build());
         if (memberModel().getEnumType() != null) {
@@ -159,6 +160,15 @@ class ListSetters extends AbstractMemberSetters {
 
     private TypeName listElementType() {
         return typeProvider.type(elementModel());
+    }
+
+    @Override
+    protected ParameterSpec memberAsParameter() {
+        return ParameterSpec.builder(ParameterizedTypeName.get(Collection.class), fieldName()).build();
+    }
+
+    private TypeName asCollection() {
+        return ParameterizedTypeName.get(ClassName.get(Collection.class), listElementType());
     }
 
     private ArrayTypeName asArray() {
