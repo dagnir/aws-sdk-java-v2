@@ -1,4 +1,19 @@
-package software.amazon.awssdk.services.acm;
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.awssdk.services.json;
 
 import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -12,13 +27,13 @@ import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 
-@Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
+@Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
-public abstract class DefaultACMBaseClientBuilder<B extends ACMBaseClientBuilder<B, C>, C> extends DefaultClientBuilder<B, C>
-        implements ClientBuilder<B, C> {
+public abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuilder<B, C>, C> extends DefaultClientBuilder<B, C>
+    implements ClientBuilder<B, C> {
     @Override
     protected final String serviceEndpointPrefix() {
-        return "acm";
+        return "json-service";
     }
 
     @Override
@@ -31,7 +46,7 @@ public abstract class DefaultACMBaseClientBuilder<B extends ACMBaseClientBuilder
 
             private SignerProvider defaultSignerProvider() {
                 Aws4Signer signer = new Aws4Signer();
-                signer.setServiceName("acm");
+                signer.setServiceName("json-service");
                 signer.setRegionName(signingRegion());
                 return new StaticSignerProvider(signer);
             }
@@ -39,10 +54,10 @@ public abstract class DefaultACMBaseClientBuilder<B extends ACMBaseClientBuilder
             @Override
             protected void applyListenerDefaults(ClientListenerConfiguration.Builder builder) {
                 HandlerChainFactory chainFactory = new HandlerChainFactory();
-                chainFactory.newRequestHandlerChain("/software/amazon/awssdk/services/acm/request.handlers").forEach(
-                        builder::addRequestListener);
-                chainFactory.newRequestHandler2Chain("/software/amazon/awssdk/services/acm/request.handler2s").forEach(
-                        builder::addRequestListener);
+                chainFactory.newRequestHandlerChain("/software/amazon/awssdk/services/json/request.handlers").forEach(
+                    builder::addRequestListener);
+                chainFactory.newRequestHandler2Chain("/software/amazon/awssdk/services/json/request.handler2s").forEach(
+                    builder::addRequestListener);
             }
         };
     }
