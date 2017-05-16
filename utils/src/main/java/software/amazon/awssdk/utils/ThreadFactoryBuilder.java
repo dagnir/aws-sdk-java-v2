@@ -25,20 +25,21 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
  */
 @SdkProtectedApi
 public class ThreadFactoryBuilder {
-    private static final AtomicInteger DEFAULT_POOL_NUMBER = new AtomicInteger(1);
+    private static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
 
-    private String threadNameFormat;
+    private String threadNamePrefix = "aws-java-sdk-thread";
     private Boolean daemonThreads = true;
 
     /**
-     * The name of the threads that should be created in {@link String#format(String, Object...)} format. The first %s will be
-     * provided with a unique (monotonically increasing) integer. It is strongly suggested to provide a useful name that allows
-     * the customer to identify the purpose for the threads.
+     * The name prefix for threads created by this thread factory. The prefix will be appended with a number unique to the thread
+     * factory and a number unique to the thread.
      *
-     * By default, this is "aws-java-sdk-thread-POOL-%s".
+     * For example, "aws-java-sdk-thread" could become "aws-java-sdk-thread-3-4".
+     *
+     * By default, this is "aws-java-sdk-thread".
      */
-    public ThreadFactoryBuilder threadNameFormat(String threadNameFormat) {
-        this.threadNameFormat = threadNameFormat;
+    public ThreadFactoryBuilder threadNamePrefix(String threadNamePrefix) {
+        this.threadNamePrefix = threadNamePrefix;
         return this;
     }
 
@@ -55,19 +56,14 @@ public class ThreadFactoryBuilder {
      * Create the {@link ThreadFactory} with the configuration currently applied to this builder.
      */
     public ThreadFactory build() {
-        String threadNameFormat = this.threadNameFormat != null ? this.threadNameFormat
-                                                                : createDefaultThreadPoolNameFormat();
+        String threadNamePrefixWithPoolNumber = threadNamePrefix + "-" + POOL_NUMBER.getAndIncrement();
 
-        ThreadFactory result = new NamedThreadFactory(Executors.defaultThreadFactory(), threadNameFormat);
+        ThreadFactory result = new NamedThreadFactory(Executors.defaultThreadFactory(), threadNamePrefixWithPoolNumber);
 
         if (daemonThreads) {
             result = new DaemonThreadFactory(result);
         }
 
         return result;
-    }
-
-    private String createDefaultThreadPoolNameFormat() {
-        return "aws-java-sdk-thread-" + DEFAULT_POOL_NUMBER.getAndIncrement() + "-%s";
     }
 }

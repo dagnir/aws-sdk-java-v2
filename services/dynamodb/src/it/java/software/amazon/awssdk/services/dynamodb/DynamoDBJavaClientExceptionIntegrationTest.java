@@ -21,8 +21,8 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicSessionCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
@@ -69,7 +69,7 @@ public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
 
 
         DynamoDBClient client = DynamoDBClient.builder().credentialsProvider(
-                new AwsStaticCredentialsProvider(new BasicSessionCredentials(
+                new StaticCredentialsProvider(new AwsSessionCredentials(
                 creds.getAccessKeyId(),
                 creds.getSecretAccessKey(),
                 creds.getSessionToken()))).build();

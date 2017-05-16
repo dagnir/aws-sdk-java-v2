@@ -15,7 +15,12 @@
 
 package software.amazon.awssdk.util;
 
-public class ComparableUtils {
+import java.util.stream.Stream;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+
+@ReviewBeforeRelease("We should consider migrating this and other related util classes to the utils package.")
+public final class ComparableUtils {
+    private ComparableUtils() {}
 
     /**
      * Does a safe comparison of two {@link Comparable} objects accounting for nulls
@@ -33,11 +38,22 @@ public class ComparableUtils {
             return d1.compareTo(d2);
         } else if (d1 == null && d2 != null) {
             return -1;
-        } else if (d1 != null && d2 == null) {
+        } else if (d1 != null) {
             return 1;
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Get the minimum value from a list of comparable vales.
+     *
+     * @param values The values from which the minimum should be extracted.
+     * @return The minimum value in the list.
+     */
+    @SafeVarargs
+    public static <T extends Comparable<T>> T minimum(T... values) {
+        return values == null ? null : Stream.of(values).min(Comparable::compareTo).orElse(null);
     }
 
 }

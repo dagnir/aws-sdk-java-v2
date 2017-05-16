@@ -15,42 +15,27 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SdkClientException;
+import java.util.Optional;
 import software.amazon.awssdk.SdkGlobalConfiguration;
-import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 /**
- * {@link AwsCredentialsProvider} implementation that provides credentials
- * by looking at the: <code>AWS_ACCESS_KEY_ID</code> (or <code>AWS_ACCESS_KEY</code>) and
- * <code>AWS_SECRET_KEY</code> (or <code>AWS_SECRET_ACCESS_KEY</code>) environment variables.
+ * {@link AwsCredentialsProvider} implementation that provides credentials by looking at the: <code>AWS_ACCESS_KEY_ID</code> and
+ * <code>AWS_SECRET_KEY</code> environment variables.
  */
 public class EnvironmentVariableCredentialsProvider implements AwsCredentialsProvider {
     @Override
-    public AwsCredentials getCredentials() {
-        String accessKey = System.getenv(SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR);
-        String secretKey = System.getenv(SdkGlobalConfiguration.SECRET_KEY_ENV_VAR);
+    public Optional<AwsCredentials> getCredentials() {
+        String accessKey = StringUtils.trim(System.getenv(SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR));
+        String secretKey = StringUtils.trim(System.getenv(SdkGlobalConfiguration.SECRET_KEY_ENV_VAR));
+        String sessionToken = StringUtils.trim(System.getenv(SdkGlobalConfiguration.AWS_SESSION_TOKEN_ENV_VAR));
 
-        accessKey = StringUtils.trim(accessKey);
-        secretKey = StringUtils.trim(secretKey);
-        String sessionToken =
-                StringUtils.trim(System.getenv(SdkGlobalConfiguration.AWS_SESSION_TOKEN_ENV_VAR));
-
-        if (StringUtils.isNullOrEmpty(accessKey)
-            || StringUtils.isNullOrEmpty(secretKey)) {
-
-            throw new SdkClientException("Unable to load AWS credentials from environment variables (" +
-                                         SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR + "  and " +
-                                         SdkGlobalConfiguration.SECRET_KEY_ENV_VAR + ")");
+        if (StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey)) {
+            return Optional.empty();
         }
 
-        return sessionToken == null ?
-               new BasicAwsCredentials(accessKey, secretKey)
-                                    :
-               new BasicSessionCredentials(accessKey, secretKey, sessionToken);
-    }
-
-    @Override
-    public void refresh() {
+        return Optional.of(sessionToken == null ? new AwsCredentials(accessKey, secretKey)
+                                                : new AwsSessionCredentials(accessKey, secretKey, sessionToken));
     }
 
     @Override

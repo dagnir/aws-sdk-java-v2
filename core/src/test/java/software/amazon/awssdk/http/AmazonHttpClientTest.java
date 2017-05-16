@@ -34,9 +34,9 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -142,9 +142,9 @@ public class AmazonHttpClientTest {
 
     @Test
     public void testCredentialsSetInRequestContext() throws Exception {
-        final BasicAwsCredentials credentials = new BasicAwsCredentials("foo", "bar");
+        final AwsCredentials credentials = new AwsCredentials("foo", "bar");
 
-        AwsCredentialsProvider credentialsProvider = new AwsStaticCredentialsProvider(credentials);
+        AwsCredentialsProvider credentialsProvider = new StaticCredentialsProvider(credentials);
 
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setCredentialsProvider(credentialsProvider);

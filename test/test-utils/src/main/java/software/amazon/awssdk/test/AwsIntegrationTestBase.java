@@ -20,21 +20,25 @@ import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
-import software.amazon.awssdk.auth.PropertiesFileCredentialsProvider;
+import software.amazon.awssdk.auth.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
-import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
 import software.amazon.awssdk.utils.IoUtils;
 
 public abstract class AwsIntegrationTestBase {
 
     /** Default Properties Credentials file path. */
-    private static final String PROPERTIES_FILE_PATH = System.getProperty("user.home")
-                                                       + "/.aws/awsTestAccount.properties";
-    private static final String TEST_CREDENTIALS_PROFILE_NAME = "aws-java-sdk-test";
-    public static final AwsCredentialsProviderChain CREDENTIALS_PROVIDER_CHAIN = new AwsCredentialsProviderChain(
-            new PropertiesFileCredentialsProvider(PROPERTIES_FILE_PATH),
-            new ProfileCredentialsProvider(TEST_CREDENTIALS_PROFILE_NAME), new EnvironmentVariableCredentialsProvider(),
-            new SystemPropertiesCredentialsProvider());
+    private static final String TEST_CREDENTIALS_PROFILE_NAME = "aws-test-account";
+
+    public static final AwsCredentialsProviderChain CREDENTIALS_PROVIDER_CHAIN =
+        AwsCredentialsProviderChain.builder()
+                                   .credentialsProviders(ProfileCredentialsProvider.builder()
+                                                                                   .profileName(TEST_CREDENTIALS_PROFILE_NAME)
+                                                                                   .build(),
+                                                         new SystemPropertiesCredentialsProvider(),
+                                                         new EnvironmentVariableCredentialsProvider())
+                                   .build();
+
+
     /**
      * Shared AWS credentials, loaded from a properties file.
      */
@@ -48,7 +52,7 @@ public abstract class AwsIntegrationTestBase {
     public static void setUpCredentials() {
         if (credentials == null) {
             try {
-                credentials = CREDENTIALS_PROVIDER_CHAIN.getCredentials();
+                credentials = CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
             } catch (Exception ignored) {
                 // Ignored.
             }

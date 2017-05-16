@@ -15,13 +15,60 @@
 
 package software.amazon.awssdk.auth;
 
+import java.util.Objects;
+import software.amazon.awssdk.utils.Validate;
+
 /**
- * AWS session credentials object.
+ * A special type of {@link AwsCredentials} that also provides a session token to be used in service authentication. Session
+ * tokens are typically provided by a token broker service, like AWS Security Token Service, and provide temporary access to an
+ * AWS service.
  */
-public interface AwsSessionCredentials extends AwsCredentials {
+public class AwsSessionCredentials extends AwsCredentials {
+    private final String sessionToken;
 
     /**
-     * Returns the session token for this session.
+     * Constructs a new session credentials object, with the specified AWS access key, AWS secret key and AWS session token.
+     *
+     * @param accessKey The AWS access key, used to identify the user interacting with AWS.
+     * @param secretKey The AWS secret access key, used to authenticate the user interacting with AWS.
+     * @param sessionToken The AWS session token, retrieved from an AWS token service, used for authenticating that this user has
+     *                     received temporary permission to access some resource.
      */
-    public String getSessionToken();
+    public AwsSessionCredentials(String accessKey, String secretKey, String sessionToken) {
+        super(accessKey, secretKey);
+        this.sessionToken = Validate.notNull(sessionToken, "Session token cannot be null.");
+    }
+
+    /**
+     * Retrieve the AWS session token. This token is retrieved from an AWS token service, and is used for authenticating that this
+     * user has received temporary permission to access some resource.
+     */
+    public final String sessionToken() {
+        return sessionToken;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + accessKeyId() + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final AwsSessionCredentials that = (AwsSessionCredentials) o;
+        return Objects.equals(sessionToken, that.sessionToken);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), sessionToken);
+    }
 }

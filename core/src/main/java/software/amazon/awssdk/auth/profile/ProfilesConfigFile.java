@@ -22,9 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.AllProfiles;
-import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
 import software.amazon.awssdk.auth.profile.internal.BasicProfile;
 import software.amazon.awssdk.auth.profile.internal.BasicProfileConfigLoader;
 import software.amazon.awssdk.auth.profile.internal.Profile;
@@ -62,27 +62,9 @@ import software.amazon.awssdk.util.ValidationUtils;
  * @see ProfileCredentialsProvider
  */
 public class ProfilesConfigFile {
-
-    /**
-     * Environment variable name for overriding the default AWS profile
-     */
-    @Deprecated
-    public static final String AWS_PROFILE_ENVIRONMENT_VARIABLE = AwsProfileNameLoader.AWS_PROFILE_ENVIRONMENT_VARIABLE;
-
-    /**
-     * System property name for overriding the default AWS profile
-     */
-    @Deprecated
-    public static final String AWS_PROFILE_SYSTEM_PROPERTY = AwsProfileNameLoader.AWS_PROFILE_SYSTEM_PROPERTY;
-
-    /**
-     * Name of the default profile as specified in the configuration file.
-     */
-    @Deprecated
-    public static final String DEFAULT_PROFILE_NAME = AwsProfileNameLoader.DEFAULT_PROFILE_NAME;
-
     private final File profileFile;
     private final ProfileCredentialsService profileCredentialsService;
+
     /**
      * Cache credential providers as credentials from profiles are requested. Doesn't really make a
      * difference for basic credentials but for assume role it's more efficient as each assume role
@@ -159,7 +141,7 @@ public class ProfilesConfigFile {
     public AwsCredentials getCredentials(String profileName) {
         final AwsCredentialsProvider provider = credentialProviderCache.get(profileName);
         if (provider != null) {
-            return provider.getCredentials();
+            return provider.getCredentialsOrThrow();
         } else {
             BasicProfile profile = allProfiles.getProfile(profileName);
             if (profile == null) {
@@ -167,7 +149,7 @@ public class ProfilesConfigFile {
             }
             final AwsCredentialsProvider newProvider = fromProfile(profile);
             credentialProviderCache.put(profileName, newProvider);
-            return newProvider.getCredentials();
+            return newProvider.getCredentialsOrThrow();
         }
     }
 
@@ -193,8 +175,7 @@ public class ProfilesConfigFile {
             final String profileName = entry.getKey();
             legacyProfiles.put(profileName,
                                new Profile(profileName, entry.getValue().getProperties(),
-                                           new AwsStaticCredentialsProvider(
-                                                   getCredentials(profileName))));
+                                           new StaticCredentialsProvider(getCredentials(profileName))));
         }
         return legacyProfiles;
     }
@@ -208,4 +189,8 @@ public class ProfilesConfigFile {
         }
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + profileFile + ")";
+    }
 }

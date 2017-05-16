@@ -22,7 +22,7 @@ import static org.junit.Assert.fail;
 import java.util.Date;
 import org.junit.After;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AnonymousAwsCredentials;
+import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
@@ -64,7 +64,7 @@ public class UnauthenticatedIntegrationTest extends S3IntegrationTestBase {
                 bucketName, "key-2", new RandomInputStream(321L), new ObjectMetadata())
                              .withCannedAcl(CannedAccessControlList.PublicRead));
 
-        AmazonS3 anonymousS3 = new AmazonS3Client(new AnonymousAwsCredentials());
+        AmazonS3 anonymousS3 = new AmazonS3Client(new AnonymousCredentialsProvider().requireCredentials());
 
         // listObjects
         ObjectListing objectListing = anonymousS3.listObjects(bucketName);

@@ -17,9 +17,6 @@ package software.amazon.awssdk.metrics;
 
 import static software.amazon.awssdk.SdkGlobalConfiguration.DEFAULT_METRICS_SYSTEM_PROPERTY;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,10 +25,8 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkGlobalConfiguration;
-import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
-import software.amazon.awssdk.auth.PropertiesCredentials;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.metrics.spi.MetricType;
@@ -49,7 +44,7 @@ import software.amazon.awssdk.util.AwsServiceMetrics;
  * When the system property is specified, a default metric collector will be
  * started at the AWS SDK level. The default implementation uploads the
  * request/response metrics captured to Amazon CloudWatch using AWS credentials
- * obtained via the {@link DefaultAwsCredentialsProviderChain}.
+ * obtained via the {@link DefaultCredentialsProvider}.
  * <p>
  * For additional optional attributes that can be specified for the system
  * property, please read the javadoc of the individual fields of
@@ -108,7 +103,7 @@ public enum AwsSdkMetrics {
     public static final String INCLUDE_PER_HOST_METRICS = "includePerHostMetrics";
     /**
      * Used to specify an AWS credential property file.
-     * By default, the {@link DefaultAwsCredentialsProviderChain} is used.
+     * By default, the {@link DefaultCredentialsProvider} is used.
      *
      * <pre>
      * Example:
@@ -226,7 +221,7 @@ public enum AwsSdkMetrics {
     private static volatile Integer metricQueueSize;
     private static volatile Long queuePollTimeoutMilli;
     private static volatile String metricNameSpace = DEFAULT_METRIC_NAMESPACE;
-    private static volatile String credentialFile;
+
     /**
      * No JVM level metrics is generated if this field is set to null or blank.
      * Otherwise, the value in this field is used to compose the metric name
@@ -283,9 +278,7 @@ public enum AwsSdkMetrics {
                         String key = pair[0].trim();
                         String value = pair[1].trim();
                         try {
-                            if (AWS_CREDENTIAL_PROPERTIES_FILE.equals(key)) {
-                                setCredentialFile0(value);
-                            } else if (CLOUDWATCH_REGION.equals(key)) {
+                            if (CLOUDWATCH_REGION.equals(key)) {
                                 region = RegionUtils.getRegion(value);
                             } else if (METRIC_QUEUE_SIZE.equals(key)) {
                                 Integer i = Integer.valueOf(value);
@@ -308,7 +301,7 @@ public enum AwsSdkMetrics {
                             } else {
                                 LogFactory.getLog(AwsSdkMetrics.class).debug("Ignoring unrecognized parameter: " + part);
                             }
-                        } catch (IOException | RuntimeException e) {
+                        } catch (RuntimeException e) {
                             LogFactory.getLog(AwsSdkMetrics.class).debug("Ignoring failure", e);
                         }
                     }
@@ -733,45 +726,6 @@ public enum AwsSdkMetrics {
      */
     public static String getRegionName() {
         return region == null ? null : region.getName();
-    }
-
-    /**
-     * Returns the last set AWS credential file, or null if there is none.
-     */
-    public static String getCredentailFile() {
-        return credentialFile;
-    }
-
-    /**
-     * Sets the AWS credential file to be used for accessing Amazon CloudWatch.
-     * Successfully calling this method would result in the AWS credential
-     * provider to make use of the given credential file.
-     */
-    public static void setCredentialFile(String filepath)
-            throws FileNotFoundException, IOException {
-        setCredentialFile0(filepath);
-    }
-
-    /**
-     * Internal method to implement the {@link #setCredentialFile(String)}.
-     */
-    private static void setCredentialFile0(String filepath)
-            throws FileNotFoundException, IOException {
-        final PropertiesCredentials cred =
-                new PropertiesCredentials(new File(filepath));
-        synchronized (AwsSdkMetrics.class) {
-            credentialProvider = new AwsCredentialsProvider() {
-                @Override
-                public void refresh() {
-                }
-
-                @Override
-                public AwsCredentials getCredentials() {
-                    return cred;
-                }
-            };
-            AwsSdkMetrics.credentialFile = filepath;
-        }
     }
 
     /**

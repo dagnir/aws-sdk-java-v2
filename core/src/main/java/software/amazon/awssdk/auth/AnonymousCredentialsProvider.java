@@ -15,19 +15,20 @@
 
 package software.amazon.awssdk.auth;
 
-/**
- * No-op credentials provider that always returns null on {@link #getCredentials()}. Useful for non-authenticated calls where
- * credentials are not provided.
- */
-public class NullCredentialsProvider implements AwsCredentialsProvider {
+import java.util.Optional;
 
+/**
+ * Credentials provider that always returns anonymous {@link AwsCredentials}. Anonymous AWS credentials result in un-authenticated
+ * requests and will fail unless the resource or API's policy has been configured to specifically allow anonymous access.
+ */
+public class AnonymousCredentialsProvider implements AwsCredentialsProvider {
     @Override
-    public AwsCredentials getCredentials() {
-        return null;
+    public Optional<AwsCredentials> getCredentials() {
+        return Optional.of(AwsCredentials.ANONYMOUS_CREDENTIALS);
     }
 
     @Override
-    public void refresh() {
-
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

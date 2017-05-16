@@ -15,26 +15,31 @@
 
 package software.amazon.awssdk.auth;
 
+import java.util.Optional;
 import software.amazon.awssdk.annotation.SdkPublicApi;
-import software.amazon.awssdk.util.ValidationUtils;
+import software.amazon.awssdk.utils.Validate;
 
 /**
- * Simple implementation of AWSCredentialsProvider that just wraps static AWSCredentials.
+ * An implementation of {@link AwsCredentialsProvider} that returns a set implementation of {@link AwsCredentials}.
  */
 @SdkPublicApi
-public class AwsStaticCredentialsProvider implements AwsCredentialsProvider {
-
+public class StaticCredentialsProvider implements AwsCredentialsProvider {
     private final AwsCredentials credentials;
 
-    public AwsStaticCredentialsProvider(AwsCredentials credentials) {
-        this.credentials = ValidationUtils.assertNotNull(credentials, "credentials");
+    /**
+     * Create a credentials provider that always returns the provided set of credentials.
+     */
+    public StaticCredentialsProvider(AwsCredentials credentials) {
+        this.credentials = Validate.notNull(credentials, "Credentials must not be null.");
     }
 
-    public AwsCredentials getCredentials() {
-        return credentials;
+    @Override
+    public Optional<AwsCredentials> getCredentials() {
+        return Optional.of(credentials);
     }
 
-    public void refresh() {
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" + credentials + ")";
     }
-
 }

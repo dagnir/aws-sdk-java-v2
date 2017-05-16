@@ -17,6 +17,7 @@ package software.amazon.awssdk.http.pipeline.stages;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
@@ -29,7 +30,8 @@ public class BeforeRequestHandlersStage implements RequestToRequestPipeline {
 
     @Override
     public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
-        request.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, context.credentialsProvider().getCredentials());
+        AwsCredentials credentials = context.credentialsProvider().getCredentialsOrThrow();
+        request.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, credentials);
         // Apply any additional service specific request handlers that need to be run
         for (RequestHandler2 requestHandler2 : context.requestHandler2s()) {
             requestHandler2.beforeRequest(request);

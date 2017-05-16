@@ -56,7 +56,7 @@ public class NonBlocking implements CachedSupplier.PrefetchStrategy {
                         currentlyRefreshing.set(false);
                     }
                 });
-            } catch (RuntimeException e) {
+            } catch (RuntimeException | Error e) {
                 currentlyRefreshing.set(false);
                 throw e;
             }

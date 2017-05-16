@@ -1,6 +1,5 @@
 package software.amazon.awssdk.http;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,8 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.PropertiesCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
@@ -24,6 +22,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class TT0035900619IntegrationTest {
     private static DynamoDBClient client;
@@ -32,7 +31,7 @@ public class TT0035900619IntegrationTest {
 
     @BeforeClass
     public static void setup() throws InterruptedException {
-        client = DynamoDBClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(awsTestCredentials())).build();
+        client = DynamoDBClient.builder().credentialsProvider(new StaticCredentialsProvider(awsTestCredentials())).build();
         List<AttributeDefinition> attributeDefinitions = new ArrayList<AttributeDefinition>();
         attributeDefinitions.add(new AttributeDefinition("hashKey", ScalarAttributeType.S));
         List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
@@ -132,9 +131,7 @@ public class TT0035900619IntegrationTest {
 
     protected static AwsCredentials awsTestCredentials() {
         try {
-            return new PropertiesCredentials(new File(
-                    System.getProperty("user.home")
-                            + "/.aws/awsTestAccount.properties"));
+            return AwsIntegrationTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.utils;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -34,10 +36,9 @@ public class ExecutorUtils {
      * daemon thread.
      */
     public static ExecutorService newSingleDaemonThreadExecutor(int queueCapacity, String threadNameFormat) {
-        return new ThreadPoolExecutor(1, 1,
-                                      0L, TimeUnit.MILLISECONDS,
+        return new ThreadPoolExecutor(0, 1, 5, SECONDS,
                                       new LinkedBlockingQueue<>(queueCapacity),
-                                      new ThreadFactoryBuilder().daemonThreads(true).threadNameFormat(threadNameFormat).build());
+                                      new ThreadFactoryBuilder().daemonThreads(true).threadNamePrefix(threadNameFormat).build());
     }
 
     /**

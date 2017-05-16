@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.AnonymousAwsCredentials;
+import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.auth.internal.SignerConstants;
@@ -103,7 +103,7 @@ public class DefaultSigningMethodTest {
     private static void testSignAnonymously(AmazonS3Client s3) {
         Request<?> fakeGetObjectRequest = createFakeGetObjectRequest(s3);
         Signer signer = s3.createSigner(fakeGetObjectRequest, FAKE_BUCKET, FAKE_KEY);
-        signer.sign(fakeGetObjectRequest, new AnonymousAwsCredentials());
+        signer.sign(fakeGetObjectRequest, new AnonymousCredentialsProvider().getCredentialsOrThrow());
     }
 
     /**

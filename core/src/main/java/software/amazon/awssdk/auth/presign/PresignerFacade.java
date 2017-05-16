@@ -57,7 +57,7 @@ public final class PresignerFacade {
             addCustomHeaders(request);
         }
         final AwsCredentialsProvider credentialsProvider = resolveCredentials(request);
-        presigner.presignRequest(request, credentialsProvider.getCredentials(), expirationDate);
+        presigner.presignRequest(request, credentialsProvider.getCredentialsOrThrow(), expirationDate);
         return RuntimeHttpUtils.convertRequestToUrl(request, true, false);
     }
 

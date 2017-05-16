@@ -17,11 +17,12 @@ package software.amazon.awssdk.auth.profile.internal;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.AwsSessionCredentials;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
 
 /**
@@ -43,17 +44,17 @@ public class Profile {
 
     public Profile(String profileName, AwsCredentials awsCredentials) {
         Map<String, String> properties = new LinkedHashMap<String, String>();
-        properties.put(ProfileKeyConstants.AWS_ACCESS_KEY_ID, awsCredentials.getAwsAccessKeyId());
-        properties.put(ProfileKeyConstants.AWS_SECRET_ACCESS_KEY, awsCredentials.getAwsSecretKey());
+        properties.put(ProfileKeyConstants.AWS_ACCESS_KEY_ID, awsCredentials.accessKeyId());
+        properties.put(ProfileKeyConstants.AWS_SECRET_ACCESS_KEY, awsCredentials.secretAccessKey());
 
         if (awsCredentials instanceof AwsSessionCredentials) {
             AwsSessionCredentials sessionCred = (AwsSessionCredentials) awsCredentials;
-            properties.put(ProfileKeyConstants.AWS_SESSION_TOKEN, sessionCred.getSessionToken());
+            properties.put(ProfileKeyConstants.AWS_SESSION_TOKEN, sessionCred.sessionToken());
         }
 
         this.profileName = profileName;
         this.properties = properties;
-        this.awsCredentials = new AwsStaticCredentialsProvider(awsCredentials);
+        this.awsCredentials = new StaticCredentialsProvider(awsCredentials);
     }
 
     public Profile(String profileName, String sourceProfile, AwsCredentialsProvider awsCredentials, RoleInfo roleInfo) {
@@ -85,7 +86,7 @@ public class Profile {
         return profileName;
     }
 
-    public AwsCredentials getCredentials() {
+    public Optional<AwsCredentials> getCredentials() {
         return awsCredentials.getCredentials();
     }
 

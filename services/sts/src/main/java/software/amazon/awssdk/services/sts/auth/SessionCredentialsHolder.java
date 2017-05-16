@@ -19,7 +19,6 @@ import java.util.Date;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsSessionCredentials;
-import software.amazon.awssdk.auth.BasicSessionCredentials;
 import software.amazon.awssdk.services.sts.model.Credentials;
 
 /**
@@ -33,9 +32,9 @@ final class SessionCredentialsHolder {
     private final Date sessionCredentialsExpiration;
 
     SessionCredentialsHolder(Credentials credentials) {
-        this.sessionCredentials = new BasicSessionCredentials(credentials.getAccessKeyId(),
-                                                              credentials.getSecretAccessKey(),
-                                                              credentials.getSessionToken());
+        this.sessionCredentials = new AwsSessionCredentials(credentials.getAccessKeyId(),
+                                                            credentials.getSecretAccessKey(),
+                                                            credentials.getSessionToken());
         this.sessionCredentialsExpiration = credentials.getExpiration();
     }
 

@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.utils.cache;
 
-import java.io.Closeable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +34,7 @@ import software.amazon.awssdk.utils.Validate;
  *
  * This should be created using {@link #builder(Supplier)}.
  */
-public final class CachedSupplier<T> implements Supplier<T>, Closeable {
+public final class CachedSupplier<T> implements Supplier<T>, AutoCloseable {
     /**
      * Maximum time to wait for a blocking refresh lock before calling refresh again. This is to rate limit how many times we call
      * refresh. In the ideal case, refresh always occurs in a timely fashion and only one thread actually does the refresh.
@@ -192,7 +191,7 @@ public final class CachedSupplier<T> implements Supplier<T>, Closeable {
      * @see NonBlocking
      */
     @FunctionalInterface
-    public interface PrefetchStrategy extends Closeable {
+    public interface PrefetchStrategy extends AutoCloseable {
         /**
          * Execute the provided value updater to update the cache. The specific implementation defines how this is invoked.
          */

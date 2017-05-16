@@ -25,18 +25,18 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 @SdkProtectedApi
 public class NamedThreadFactory implements ThreadFactory {
     private final ThreadFactory delegate;
-    private final String nameFormat;
+    private final String namePrefix;
     private final AtomicInteger threadCount = new AtomicInteger(0);
 
-    public NamedThreadFactory(ThreadFactory delegate, String nameFormat) {
+    public NamedThreadFactory(ThreadFactory delegate, String namePrefix) {
         this.delegate = Validate.notNull(delegate, "delegate must not be null");
-        this.nameFormat = Validate.notBlank(nameFormat, "nameFormat must not be blank");
+        this.namePrefix = Validate.notBlank(namePrefix, "namePrefix must not be blank");
     }
 
     @Override
     public Thread newThread(Runnable runnable) {
         Thread thread = delegate.newThread(runnable);
-        thread.setName(String.format(nameFormat, threadCount.getAndIncrement()));
+        thread.setName(namePrefix + "-" + threadCount.getAndIncrement());
         return thread;
     }
 }
