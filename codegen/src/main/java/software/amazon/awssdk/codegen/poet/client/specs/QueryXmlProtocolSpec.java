@@ -43,6 +43,11 @@ import software.amazon.awssdk.utils.StringUtils;
 public class QueryXmlProtocolSpec implements ProtocolSpec {
 
     private final PoetExtensions poetExtensions;
+    private final TypeName unmarshallerType = ParameterizedTypeName.get(Unmarshaller.class,
+                                                                        AmazonServiceException.class,
+                                                                        Node.class);
+    private final TypeName listOfUnmarshallersType = ParameterizedTypeName.get(ClassName.get("java.util", "List"),
+                                                                               unmarshallerType);
 
     public QueryXmlProtocolSpec(PoetExtensions poetExtensions) {
         this.poetExtensions = poetExtensions;
@@ -50,21 +55,19 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
 
     @Override
     public FieldSpec protocolFactory(IntermediateModel model) {
-        TypeName unmarshaller = ParameterizedTypeName.get(Unmarshaller.class, AmazonServiceException.class, Node.class);
-        TypeName listOfUnmarshallers = ParameterizedTypeName.get(ClassName.get("java.util", "List"), unmarshaller);
-        return FieldSpec.builder(listOfUnmarshallers, "exceptionUnmarshallers")
-                .addModifiers(Modifier.PRIVATE)
-                .initializer("new $T<$T>()", ArrayList.class, unmarshaller)
+
+        return FieldSpec.builder(listOfUnmarshallersType, "exceptionUnmarshallers")
+                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                 .build();
     }
 
     @Override
     public MethodSpec initProtocolFactory(IntermediateModel model) {
         MethodSpec.Builder methodSpec = MethodSpec.methodBuilder("init")
-                .returns(List.class)
+                .returns(listOfUnmarshallersType)
                 .addModifiers(Modifier.PRIVATE);
 
-        methodSpec.addStatement("$T unmarshallers = new $T()", List.class, ArrayList.class);
+        methodSpec.addStatement("$T<$T> unmarshallers = new $T<>()", List.class, unmarshallerType, ArrayList.class);
         errorUnmarshallers(model).forEach(methodSpec::addCode);
         methodSpec.addCode(CodeBlock.builder().add("unmarshallers.add(new $T($T.class));",
                                                    getErrorUnmarshallerClass(model),

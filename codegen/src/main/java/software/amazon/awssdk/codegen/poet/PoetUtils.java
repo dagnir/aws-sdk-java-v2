@@ -35,7 +35,7 @@ import software.amazon.awssdk.codegen.model.intermediate.HasDeprecation;
 public final class PoetUtils {
     public static final AnnotationSpec GENERATED =
             AnnotationSpec.builder(Generated.class)
-                          .addMember("value", "$S", "software.amazon.awssdk:aws-java-sdk-code-generator")
+                          .addMember("value", "$S", "software.amazon.awssdk:codegen")
                           .build();
 
     private PoetUtils() {
