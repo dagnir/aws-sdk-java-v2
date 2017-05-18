@@ -48,11 +48,35 @@ public class ShapeModelReflector {
 
     private Object createStructure(ShapeModel structureShape, JsonNode input) throws Exception {
         String fqcn = getFullyQualifiedModelClassName(structureShape.getShapeName());
-        Object shapeObject = Class.forName(fqcn).newInstance();
-        if (input != null) {
-            initializeFields(structureShape, input, shapeObject);
+
+        Class<?> shapeClass = Class.forName(fqcn);
+
+        Method builderMethod = null;
+
+        try {
+            builderMethod = shapeClass.getDeclaredMethod("builder_");
+        } catch (NoSuchMethodException ignored) {
+            // Ignored
         }
-        return shapeObject;
+
+        if (builderMethod != null) {
+            builderMethod.setAccessible(true);
+            Object builderInstance = builderMethod.invoke(null);
+
+            if (input != null) {
+                initializeFields(structureShape, input, builderInstance);
+            }
+
+            Method buildMethod = builderInstance.getClass().getDeclaredMethod("build_");
+            buildMethod.setAccessible(true);
+            return buildMethod.invoke(builderInstance);
+        } else {
+            Object shapeObject = Class.forName(fqcn).newInstance();
+            if (input != null) {
+                initializeFields(structureShape, input, shapeObject);
+            }
+            return shapeObject;
+        }
     }
 
     private void initializeFields(ShapeModel structureShape, JsonNode input,
@@ -66,6 +90,7 @@ public class ShapeModelReflector {
                                                    structureShape.getC2jName() + " shape.");
             }
             Method setter = getMemberSetter(shapeObject.getClass(), memberModel);
+            setter.setAccessible(true);
             final Object toSet = getMemberValue(input.get(memberName), memberModel);
             setter.invoke(shapeObject, toSet);
         }

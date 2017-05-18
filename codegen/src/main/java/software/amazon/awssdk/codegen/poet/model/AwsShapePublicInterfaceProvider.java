@@ -26,6 +26,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
@@ -77,6 +78,9 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
             case Request:
                 return ClassName.get(AmazonWebServiceRequest.class);
             case Response:
+                if (intermediateModel.getMetadata().getProtocol() == Protocol.API_GATEWAY) {
+                    return ClassName.get("software.amazon.awssdk.opensdk", "BaseResult");
+                }
                 return ParameterizedTypeName.get(AmazonWebServiceResult.class, ResponseMetadata.class);
             case Exception:
                 return exceptionBaseClass();

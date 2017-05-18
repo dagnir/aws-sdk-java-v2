@@ -89,7 +89,7 @@ public class RestXmlExceptionTests {
     @Test
     public void illegalArgumentException_emptyPathParam() {
         assertThrowsIllegalArgumentException(() -> client.multiLocationOperation(
-                new MultiLocationOperationRequest().withPathParam("")));
+                new MultiLocationOperationRequest().pathParam("")));
     }
 
     private void callAllTypes() {

@@ -75,8 +75,8 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        SimpleResult result = client.simple(new SimpleRequest());
-        Assert.assertEquals("foo", result.getStringMember());
+        SimpleResult result = client.simple(SimpleRequest.builder_().build_());
+        Assert.assertEquals("foo", result.stringMember());
     }
 
     @Test(expected = AmazonClientException.class)
@@ -93,7 +93,7 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        client.simple(new SimpleRequest());
+        client.simple(SimpleRequest.builder_().build_());
     }
 
     @Test
@@ -111,8 +111,8 @@ public class RestJsonCrc32ChecksumTests {
                 .build();
 
         AllTypesResult result =
-                client.allTypes(new AllTypesRequest());
-        Assert.assertEquals("foo", result.getStringMember());
+                client.allTypes(AllTypesRequest.builder_().build_());
+        Assert.assertEquals("foo", result.stringMember());
     }
 
     @Test(expected = AmazonClientException.class)
@@ -129,7 +129,7 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        client.allTypes(new AllTypesRequest());
+        client.allTypes(AllTypesRequest.builder_().build_());
     }
 
     @Test
@@ -146,8 +146,8 @@ public class RestJsonCrc32ChecksumTests {
                 .build();
 
         AllTypesResult result =
-                client.allTypes(new AllTypesRequest());
-        Assert.assertEquals("foo", result.getStringMember());
+                client.allTypes(AllTypesRequest.builder_().build_());
+        Assert.assertEquals("foo", result.stringMember());
     }
 
     @Test(expected = AmazonClientException.class)
@@ -164,6 +164,6 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        client.allTypes(new AllTypesRequest());
+        client.allTypes(AllTypesRequest.builder_().build_());
     }
 }

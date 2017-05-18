@@ -54,13 +54,18 @@ public class JsonErrorUnmarshaller extends AbstractErrorUnmarshaller<JsonNode> {
     @Override
     public AmazonServiceException unmarshall(JsonNode jsonContent) throws Exception {
         // FIXME: dirty hack below
-        Method beanStyleBuilderMethod = exceptionClass.getDeclaredMethod("beanStyleBuilderClass");
-        beanStyleBuilderMethod.setAccessible(true);
-        Class<?> beanStyleBuilderClass = (Class<?>) beanStyleBuilderMethod.invoke(null);
-        Method buildMethod = beanStyleBuilderClass.getMethod("build_");
-        buildMethod.setAccessible(true);
-        Object o = MAPPER.treeToValue(jsonContent, beanStyleBuilderClass);
-        return (AmazonServiceException) buildMethod.invoke(o);
+        try {
+            Method beanStyleBuilderMethod = exceptionClass.getDeclaredMethod("beanStyleBuilderClass");
+            beanStyleBuilderMethod.setAccessible(true);
+            Class<?> beanStyleBuilderClass = (Class<?>) beanStyleBuilderMethod.invoke(null);
+            Method buildMethod = beanStyleBuilderClass.getMethod("build_");
+            buildMethod.setAccessible(true);
+            Object o = MAPPER.treeToValue(jsonContent, beanStyleBuilderClass);
+            return (AmazonServiceException) buildMethod.invoke(o);
+        } catch (NoSuchMethodException e) {
+            // This exception is not the new style with a builder, assume it's still the old style that we can directly map from JSON
+            return MAPPER.treeToValue(jsonContent, exceptionClass);
+        }
     }
 
     /**
