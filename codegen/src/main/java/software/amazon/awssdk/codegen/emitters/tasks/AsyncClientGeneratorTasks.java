@@ -18,20 +18,20 @@ package software.amazon.awssdk.codegen.emitters.tasks;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
 import software.amazon.awssdk.codegen.poet.builder.AsyncClientBuilderClass;
 import software.amazon.awssdk.codegen.poet.builder.AsyncClientBuilderInterface;
+import software.amazon.awssdk.codegen.poet.client.AsyncClientClass;
 import software.amazon.awssdk.codegen.poet.client.AsyncClientInterface;
 
 public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {
 
-    private final String baseDirectory;
+    private final GeneratorTaskParams generatorTaskParams;
 
     public AsyncClientGeneratorTasks(GeneratorTaskParams dependencies) {
         super(dependencies);
-        this.baseDirectory = dependencies.getPathProvider().getClientDirectory();
+        this.generatorTaskParams = dependencies;
     }
 
     @Override
@@ -44,11 +44,7 @@ public class AsyncClientGeneratorTasks extends BaseGeneratorTasks {
     }
 
     private GeneratorTask createClientClassTask() throws IOException {
-        return new FreemarkerGeneratorTask(
-                baseDirectory,
-                model.getMetadata().getAsyncClient(),
-                freemarker.getAsyncClientTemplate(),
-                model);
+        return createPoetGeneratorTask(new AsyncClientClass(generatorTaskParams));
     }
 
     private GeneratorTask createClientBuilderTask() throws IOException {
