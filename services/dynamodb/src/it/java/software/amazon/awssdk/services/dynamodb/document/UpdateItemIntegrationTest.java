@@ -31,7 +31,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.PropertiesFileCredentialsProvider;
+import software.amazon.awssdk.auth.ProfileCredentialsProvider;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.spec.GetItemSpec;
 import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
@@ -43,6 +43,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class UpdateItemIntegrationTest {
 
@@ -53,15 +54,14 @@ public class UpdateItemIntegrationTest {
     private static final String ADDRESS_TYPE_WORK = "work";
     private static DynamoDB dynamoDb;
     private static String TABLE_NAME = "UpdateItemIntegrationTest";
-    private static String CREDENTIALS_FILE_SUFFIX = "/.aws/awsTestAccount.properties";
     private static String HASH_KEY = "customer_id";
     private static String RANGE_KEY = "address_type";
 
     @BeforeClass
     public static void setUp() throws Exception {
-        DynamoDBClient client = DynamoDBClient.builder().credentialsProvider(
-                new PropertiesFileCredentialsProvider(
-                        System.getProperty("user.home") + CREDENTIALS_FILE_SUFFIX)).build();
+        DynamoDBClient client = DynamoDBClient.builder()
+                                              .credentialsProvider(AwsIntegrationTestBase.CREDENTIALS_PROVIDER_CHAIN)
+                                              .build();
         dynamoDb = new DynamoDB(client);
 
         createTable();

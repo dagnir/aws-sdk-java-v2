@@ -29,9 +29,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudsearchdomain.CloudSearchDomainClient;
 import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
 
@@ -39,7 +37,7 @@ import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
  * Unit tests for {@link SearchRequest}.
  */
 public class SearchRequestUnitTest {
-    private static final AwsCredentials CREDENTIALS = new BasicAwsCredentials("access", "secret");
+    private static final AwsCredentials CREDENTIALS = new AwsCredentials("access", "secret");
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(0);
@@ -49,7 +47,7 @@ public class SearchRequestUnitTest {
     @Before
     public void testSetup() {
         searchClient = CloudSearchDomainClient.builder()
-                                              .credentialsProvider(new AwsStaticCredentialsProvider(CREDENTIALS))
+                                              .credentialsProvider(new StaticCredentialsProvider(CREDENTIALS))
                                               .region("us-east-1")
                                               .endpointOverride(URI.create("http://localhost:" + wireMockRule.port()))
                                               .build();

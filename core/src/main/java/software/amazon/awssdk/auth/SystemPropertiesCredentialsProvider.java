@@ -18,38 +18,24 @@ package software.amazon.awssdk.auth;
 import static software.amazon.awssdk.SdkGlobalConfiguration.ACCESS_KEY_SYSTEM_PROPERTY;
 import static software.amazon.awssdk.SdkGlobalConfiguration.SECRET_KEY_SYSTEM_PROPERTY;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.util.StringUtils;
+import java.util.Optional;
+import software.amazon.awssdk.utils.StringUtils;
 
 /**
- * {@link AwsCredentialsProvider} implementation that provides credentials by
- * looking at the <code>aws.accessKeyId</code> and <code>aws.secretKey</code>
- * Java system properties.
+ * {@link AwsCredentialsProvider} implementation that provides credentials by looking at the <code>aws.accessKeyId</code> and
+ * <code>aws.secretKey</code> Java system properties.
  */
 public class SystemPropertiesCredentialsProvider implements AwsCredentialsProvider {
-
     @Override
-    public AwsCredentials getCredentials() {
-        String accessKey =
-                StringUtils.trim(System.getProperty(ACCESS_KEY_SYSTEM_PROPERTY));
+    public Optional<AwsCredentials> getCredentials() {
+        String accessKey = StringUtils.trim(System.getProperty(ACCESS_KEY_SYSTEM_PROPERTY));
+        String secretKey = StringUtils.trim(System.getProperty(SECRET_KEY_SYSTEM_PROPERTY));
 
-        String secretKey =
-                StringUtils.trim(System.getProperty(SECRET_KEY_SYSTEM_PROPERTY));
-
-        if (StringUtils.isNullOrEmpty(accessKey)
-            || StringUtils.isNullOrEmpty(secretKey)) {
-
-            throw new SdkClientException(
-                    "Unable to load AWS credentials from Java system "
-                    + "properties (" + ACCESS_KEY_SYSTEM_PROPERTY + " and "
-                    + SECRET_KEY_SYSTEM_PROPERTY + ")");
+        if (StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey)) {
+            return Optional.empty();
         }
 
-        return new BasicAwsCredentials(accessKey, secretKey);
-    }
-
-    @Override
-    public void refresh() {
+        return Optional.of(new AwsCredentials(accessKey, secretKey));
     }
 
     @Override

@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.auth.AbstractAwsSigner;
 import software.amazon.awssdk.auth.AwsCredentials;
@@ -140,7 +139,7 @@ public class S3Signer extends AbstractAwsSigner {
                     + "no resource path");
         }
 
-        if (credentials == null || credentials.getAwsSecretKey() == null) {
+        if (credentials == null || credentials.secretAccessKey() == null) {
             log.debug("Canonical string will not be signed, as no AWS Secret Key was provided");
             return;
         }
@@ -170,16 +169,16 @@ public class S3Signer extends AbstractAwsSigner {
         log.debug("Calculated string to sign:\n\"" + canonicalString + "\"");
 
         String signature = super.signAndBase64Encode(canonicalString,
-                                                     sanitizedCredentials.getAwsSecretKey(),
+                                                     sanitizedCredentials.secretAccessKey(),
                                                      SigningAlgorithm.HmacSHA1);
         request.addHeader("Authorization",
-                          "AWS " + sanitizedCredentials.getAwsAccessKeyId() + ":"
+                          "AWS " + sanitizedCredentials.accessKeyId() + ":"
                           + signature);
     }
 
     @Override
     protected void addSessionCredentials(SignableRequest<?> request,
                                          AwsSessionCredentials credentials) {
-        request.addHeader("x-amz-security-token", credentials.getSessionToken());
+        request.addHeader("x-amz-security-token", credentials.sessionToken());
     }
 }

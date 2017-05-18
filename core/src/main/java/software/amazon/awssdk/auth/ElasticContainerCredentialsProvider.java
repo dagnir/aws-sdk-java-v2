@@ -1,0 +1,157 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.awssdk.auth;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import software.amazon.awssdk.internal.CredentialsEndpointProvider;
+import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
+import software.amazon.awssdk.utils.Logger;
+import software.amazon.awssdk.utils.SystemUtils;
+import software.amazon.awssdk.utils.Validate;
+
+/**
+ * {@link AwsCredentialsProvider} implementation that loads credentials from the Amazon Elastic Container Service.
+ *
+ * <p>The URI path is retrieved from the environment variable "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" in the container's
+ * environment. If the environment variable is not set, this credentials provider will always return null.</p>
+ */
+public class ElasticContainerCredentialsProvider implements AwsCredentialsProvider, AutoCloseable {
+    /**
+     * Environment variable to get the Amazon ECS credentials resource path.
+     */
+    static final String ECS_CONTAINER_CREDENTIALS_PATH = "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI";
+
+    private static final Logger LOG = Logger.loggerFor(ElasticContainerCredentialsProvider.class);
+
+    /**
+     * Default endpoint from which we should retrieve the Amazon ECS credentials.
+     */
+    private static final String ECS_CREDENTIALS_ENDPOINT = "http://169.254.170.2";
+
+    /**
+     * The client to use to fetch the Amazon ECS credentials.
+     */
+    private final EC2CredentialsProvider credentialsFetcher;
+
+    /**
+     * Create an instance of this provider using the default configuration. For custom configuration, see {@link #builder()}.
+     */
+    public ElasticContainerCredentialsProvider() {
+        this(builder());
+    }
+
+    /**
+     * @see #builder()
+     */
+    private ElasticContainerCredentialsProvider(Builder builder) {
+        if (!isEnabled()) {
+            LOG.debug(() -> "ECS credentials environment variable (" + ECS_CONTAINER_CREDENTIALS_PATH + ") was not set or could "
+                            + "not be accessed due to the security manager. ECS container credentials will not be loaded until "
+                            + "this environment variable is available.");
+        }
+
+        this.credentialsFetcher = new EC2CredentialsProvider(builder.credentialsEndpointProvider,
+                                                             builder.asyncCredentialUpdateEnabled,
+                                                             "elastic-container-credentials-provider");
+
+    }
+
+    /**
+     * Create a builder for creating a {@link ElasticContainerCredentialsProvider}.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public Optional<AwsCredentials> getCredentials() {
+        return !isEnabled() ? Optional.empty() : credentialsFetcher.getCredentials();
+    }
+
+    @Override
+    public void close() {
+        credentialsFetcher.close();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+
+    private static boolean isEnabled() {
+        return SystemUtils.getSetting(ECS_CONTAINER_CREDENTIALS_PATH).isPresent();
+    }
+
+    /**
+     * Retrieve the endpoint that should be used to communicate with the elastic container service to retrieve credentials.
+     */
+    private static class EcsCredentialsEndpointProvider extends CredentialsEndpointProvider {
+        @Override
+        public URI getCredentialsEndpoint() throws URISyntaxException {
+            String path = SystemUtils.getSetting(ECS_CONTAINER_CREDENTIALS_PATH)
+                                     .orElseThrow(() -> new IllegalStateException("The " + ECS_CONTAINER_CREDENTIALS_PATH +
+                                                                                  " environment variable was disabled."));
+            Validate.notEmpty(path, "The environment variable %s is empty.", ECS_CONTAINER_CREDENTIALS_PATH);
+            return new URI(ECS_CREDENTIALS_ENDPOINT + path);
+        }
+
+        @Override
+        public CredentialsEndpointRetryPolicy getRetryPolicy() {
+            return new ContainerCredentialsRetryPolicy();
+        }
+    }
+
+    /**
+     * A builder for creating a custom a {@link ElasticContainerCredentialsProvider}.
+     */
+    public static final class Builder {
+        private Boolean asyncCredentialUpdateEnabled = false;
+        private CredentialsEndpointProvider credentialsEndpointProvider = new EcsCredentialsEndpointProvider();
+
+        /**
+         * Created using {@link #builder()}.
+         */
+        private Builder() {}
+
+        /**
+         * Configure whether this provider should fetch credentials asynchronously in the background. If this is true, threads are
+         * less likely to block when {@link #getCredentials()} is called, but additional resources are used to maintain the
+         * provider.
+         *
+         * <p>By default, this is disabled.</p>
+         */
+        public Builder asyncCredentialUpdateEnabled(Boolean asyncCredentialUpdateEnabled) {
+            this.asyncCredentialUpdateEnabled = asyncCredentialUpdateEnabled;
+            return this;
+        }
+
+        @SdkTestInternalApi
+        Builder credentialsEndpointProvider(CredentialsEndpointProvider credentialsEndpointProvider) {
+            this.credentialsEndpointProvider = credentialsEndpointProvider;
+            return this;
+        }
+
+        /**
+         * Build a {@link ElasticContainerCredentialsProvider} from the provided configuration.
+         */
+        public ElasticContainerCredentialsProvider build() {
+            return new ElasticContainerCredentialsProvider(this);
+        }
+    }
+}

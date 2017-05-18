@@ -19,9 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AnonymousAwsCredentials;
+import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
@@ -49,7 +48,7 @@ public class GlobalClientConfigurationDefaultsTest {
 
             @Override
             protected AwsCredentialsProvider getCredentialsDefault() {
-                return new AwsStaticCredentialsProvider(new AnonymousAwsCredentials());
+                return new AnonymousCredentialsProvider();
             }
 
             @Override

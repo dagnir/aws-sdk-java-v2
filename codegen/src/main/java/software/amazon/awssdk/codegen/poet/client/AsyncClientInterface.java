@@ -31,10 +31,10 @@ import software.amazon.awssdk.codegen.poet.PoetUtils;
 
 public class AsyncClientInterface implements ClassSpec {
 
-    private final IntermediateModel model;
-    private final ClassName className;
+    protected final IntermediateModel model;
+    protected final ClassName className;
+    protected final String clientPackageName;
     private final String modelPackage;
-    private final String clientPackageName;
 
     public AsyncClientInterface(IntermediateModel model) {
         this.modelPackage = model.getMetadata().getFullModelPackageName();
@@ -47,14 +47,14 @@ public class AsyncClientInterface implements ClassSpec {
     @Override
     public TypeSpec poetSpec() {
         return PoetUtils.createInterfaceBuilder(className)
-                .addSuperinterface(AutoCloseable.class)
-                .addField(FieldSpec.builder(String.class, "ENDPOINT_PREFIX")
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                        .initializer("$S", model.getMetadata().getEndpointPrefix())
-                        .build())
-                .addMethods(operations())
-                .addMethod(builder())
-                .build();
+                        .addSuperinterface(AutoCloseable.class)
+                        .addField(FieldSpec.builder(String.class, "ENDPOINT_PREFIX")
+                                           .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                                           .initializer("$S", model.getMetadata().getEndpointPrefix())
+                                           .build())
+                        .addMethods(operations())
+                        .addMethod(builderMethod())
+                        .build();
     }
 
     @Override
@@ -62,25 +62,31 @@ public class AsyncClientInterface implements ClassSpec {
         return className;
     }
 
-    private Iterable<MethodSpec> operations() {
-        return model.getOperations().values().stream().map(this::toMethodSpec).collect(Collectors.toList());
+    protected final Iterable<MethodSpec> operations() {
+        return model.getOperations().values().stream()
+                    .map(this::operationSignatureAndJavaDoc)
+                    .map(b -> this.operationBody(b.builder, b.opModel))
+                    .map(MethodSpec.Builder::build)
+                    .collect(Collectors.toList());
     }
 
-    private MethodSpec toMethodSpec(OperationModel opModel) {
+    protected MethodSpec.Builder operationBody(MethodSpec.Builder builder, OperationModel operationModel) {
+        return builder.addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
+                      .addStatement("throw new $T()", UnsupportedOperationException.class);
+    }
+
+    private BuilderModelBag operationSignatureAndJavaDoc(OperationModel opModel) {
         ClassName returnTypeClass = ClassName.get(modelPackage, opModel.getReturnType().getReturnType());
         TypeName returnType = ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), returnTypeClass);
         ClassName requestType = ClassName.get(modelPackage, opModel.getInput().getVariableType());
 
-        return MethodSpec.methodBuilder(opModel.getMethodName())
-                .returns(returnType)
-                .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
-                .addParameter(requestType, opModel.getInput().getVariableName())
-                .addStatement("throw new $T()", UnsupportedOperationException.class)
-                .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata()))
-                .build();
+        return new BuilderModelBag(MethodSpec.methodBuilder(opModel.getMethodName())
+                         .returns(returnType)
+                         .addParameter(requestType, opModel.getInput().getVariableName())
+                         .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata())), opModel);
     }
 
-    private MethodSpec builder() {
+    private MethodSpec builderMethod() {
         ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilder());
         ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilderInterface());
         return MethodSpec.methodBuilder("builder")
@@ -88,5 +94,15 @@ public class AsyncClientInterface implements ClassSpec {
                          .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                          .addStatement("return new $T()", builderClass)
                          .build();
+    }
+
+    private static class BuilderModelBag {
+        private final MethodSpec.Builder builder;
+        private final OperationModel opModel;
+
+        private BuilderModelBag(MethodSpec.Builder builder, OperationModel opModel) {
+            this.builder = builder;
+            this.opModel = opModel;
+        }
     }
 }

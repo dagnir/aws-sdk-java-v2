@@ -15,14 +15,14 @@
 
 package software.amazon.awssdk.auth.profile.internal;
 
+import java.util.Optional;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.auth.BasicSessionCredentials;
+import software.amazon.awssdk.auth.AwsSessionCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.util.StringUtils;
 
 /**
@@ -38,17 +38,17 @@ public class ProfileStaticCredentialsProvider implements AwsCredentialsProvider 
 
     public ProfileStaticCredentialsProvider(BasicProfile profile) {
         this.profile = profile;
-        this.credentialsProvider = new AwsStaticCredentialsProvider(fromStaticCredentials());
+        this.credentialsProvider = new StaticCredentialsProvider(fromStaticCredentials());
     }
 
     @Override
-    public AwsCredentials getCredentials() {
+    public Optional<AwsCredentials> getCredentials() {
         return credentialsProvider.getCredentials();
     }
 
     @Override
-    public void refresh() {
-        // No Op
+    public String toString() {
+        return getClass().getSimpleName() + "(" + credentialsProvider + ")";
     }
 
     private AwsCredentials fromStaticCredentials() {
@@ -64,8 +64,8 @@ public class ProfileStaticCredentialsProvider implements AwsCredentialsProvider 
         }
 
         if (profile.getAwsSessionToken() == null) {
-            return new BasicAwsCredentials(profile.getAwsAccessIdKey(),
-                                           profile.getAwsSecretAccessKey());
+            return new AwsCredentials(profile.getAwsAccessIdKey(),
+                                      profile.getAwsSecretAccessKey());
         } else {
             if (profile.getAwsSessionToken().isEmpty()) {
                 throw new SdkClientException(String.format(
@@ -73,9 +73,9 @@ public class ProfileStaticCredentialsProvider implements AwsCredentialsProvider 
                         profile.getProfileName()));
             }
 
-            return new BasicSessionCredentials(profile.getAwsAccessIdKey(),
-                                               profile.getAwsSecretAccessKey(),
-                                               profile.getAwsSessionToken());
+            return new AwsSessionCredentials(profile.getAwsAccessIdKey(),
+                                             profile.getAwsSecretAccessKey(),
+                                             profile.getAwsSessionToken());
         }
     }
 

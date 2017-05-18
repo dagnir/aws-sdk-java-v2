@@ -25,6 +25,7 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.util.CredentialUtils;
 
 /**
  * Signer implementation responsible for signing an AWS query string request
@@ -68,12 +69,12 @@ public class QueryStringSigner extends AbstractAwsSigner {
                      SigningAlgorithm algorithm, AwsCredentials credentials)
             throws SdkClientException {
         // annonymous credentials, don't sign
-        if (credentials instanceof AnonymousAwsCredentials) {
+        if (CredentialUtils.isAnonymous(credentials)) {
             return;
         }
 
         AwsCredentials sanitizedCredentials = sanitizeCredentials(credentials);
-        request.addParameter("AWSAccessKeyId", sanitizedCredentials.getAwsAccessKeyId());
+        request.addParameter("AWSAccessKeyId", sanitizedCredentials.accessKeyId());
         request.addParameter("SignatureVersion", version.toString());
 
         int timeOffset = request.getTimeOffset();
@@ -94,7 +95,7 @@ public class QueryStringSigner extends AbstractAwsSigner {
         }
 
         String signatureValue = signAndBase64Encode(stringToSign,
-                                                    sanitizedCredentials.getAwsSecretKey(), algorithm);
+                                                    sanitizedCredentials.secretAccessKey(), algorithm);
         request.addParameter("Signature", signatureValue);
     }
 
@@ -199,6 +200,6 @@ public class QueryStringSigner extends AbstractAwsSigner {
 
     @Override
     protected void addSessionCredentials(SignableRequest<?> request, AwsSessionCredentials credentials) {
-        request.addParameter("SecurityToken", credentials.getSessionToken());
+        request.addParameter("SecurityToken", credentials.sessionToken());
     }
 }

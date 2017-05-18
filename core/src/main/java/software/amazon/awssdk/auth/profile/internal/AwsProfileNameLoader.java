@@ -16,6 +16,7 @@
 package software.amazon.awssdk.auth.profile.internal;
 
 import software.amazon.awssdk.annotation.Immutable;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.StringUtils;
 
@@ -25,7 +26,6 @@ import software.amazon.awssdk.util.StringUtils;
 @SdkInternalApi
 @Immutable
 public class AwsProfileNameLoader {
-
     /**
      * Name of the default profile as specified in the configuration file.
      */
@@ -41,16 +41,12 @@ public class AwsProfileNameLoader {
      */
     public static final String AWS_PROFILE_SYSTEM_PROPERTY = "aws.profile";
 
-    public static final AwsProfileNameLoader INSTANCE = new AwsProfileNameLoader();
-
-    private AwsProfileNameLoader() {
-    }
-
     /**
      * TODO The order would make more sense as System Property, Environment Variable, Default
      * Profile name but we have to keep the current order for backwards compatiblity. Consider
      * changing this in a future major version.
      */
+    @ReviewBeforeRelease("Switch system property and environment variable order?")
     public final String loadProfileName() {
         final String profileEnvVarOverride = getEnvProfileName();
         if (!StringUtils.isNullOrEmpty(profileEnvVarOverride)) {

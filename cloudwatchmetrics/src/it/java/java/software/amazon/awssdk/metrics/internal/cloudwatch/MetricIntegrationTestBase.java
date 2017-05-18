@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricCollector;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;

@@ -19,10 +19,9 @@ import static software.amazon.awssdk.utils.Validate.notNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.MetricsReportingCredentialsProvider;
-import software.amazon.awssdk.auth.NullCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
@@ -52,9 +51,11 @@ public final class RequestExecutionContext {
         this.requestHandler2s = builder.resolveRequestHandlers();
         this.awsRequestMetrics = builder.executionContext.getAwsRequestMetrics();
         this.signerProvider = builder.executionContext.getSignerProvider();
-        this.credentialsProvider = Optional.ofNullable(builder.executionContext.getCredentialsProvider())
-                .map(p -> (AwsCredentialsProvider) new MetricsReportingCredentialsProvider(p, awsRequestMetrics))
-                .orElseGet(NullCredentialsProvider::new);
+
+        AwsCredentialsProvider contextCredentialsProvider = builder.executionContext.getCredentialsProvider();
+        this.credentialsProvider = contextCredentialsProvider != null
+                                   ? new MetricsReportingCredentialsProvider(contextCredentialsProvider, awsRequestMetrics)
+                                   : new AnonymousCredentialsProvider();
     }
 
     /**

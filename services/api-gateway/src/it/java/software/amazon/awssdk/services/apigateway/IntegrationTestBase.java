@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.apigateway;
 
 import java.io.IOException;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.test.AwsTestBase;
 
 public class IntegrationTestBase extends AwsTestBase {
@@ -27,7 +27,7 @@ public class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws IOException {
         setUpCredentials();
-        apiGateway = APIGatewayClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        apiGateway = APIGatewayClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
     }
 
 }

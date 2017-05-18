@@ -28,8 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import utils.http.S3WireMockTestBase;
 import utils.metrics.MockRequestMetricsCollector;
@@ -47,7 +47,7 @@ public class BucketThrottlingTest extends S3WireMockTestBase {
     @Before
     public void setup() {
         metricsCollector = new MockRequestMetricsCollector();
-        s3client = new AmazonS3Client(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")),
+        s3client = new AmazonS3Client(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")),
                                       new LegacyClientConfiguration().withMaxErrorRetry(MAX_RETRY),
                                       metricsCollector);
         s3client.setEndpoint(getEndpoint());

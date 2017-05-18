@@ -15,10 +15,6 @@
 
 package software.amazon.awssdk.metrics;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import software.amazon.awssdk.regions.Regions;
-
 /**
  *  Administration of AwsSdkMetrics as an MBean.
  */
@@ -138,17 +134,6 @@ public class MetricAdmin implements MetricAdminMBean {
     @Override
     public void setHostMetricName(String hostMetricName) {
         AwsSdkMetrics.setHostMetricName(hostMetricName);
-    }
-
-    @Override
-    public String getCredentialFile() {
-        return AwsSdkMetrics.getCredentailFile();
-    }
-
-    @Override
-    public void setCredentialFile(String filepath)
-            throws FileNotFoundException, IOException {
-        AwsSdkMetrics.setCredentialFile(filepath);
     }
 
     @Override

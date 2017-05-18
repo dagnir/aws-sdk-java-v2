@@ -21,7 +21,6 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;

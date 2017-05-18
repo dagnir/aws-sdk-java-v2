@@ -29,7 +29,7 @@ import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
@@ -46,7 +46,7 @@ public class ImmutableClientConfigurationTest {
     private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final RequestHandler2 REQUEST_HANDLER = new RequestHandler2() {};
-    private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new DefaultAwsCredentialsProviderChain();
+    private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private static final URI ENDPOINT = URI.create("https://www.example.com");
     private static final RetryPolicy RETRY_POLICY = new RetryPolicy(null, null, 10, true);
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();

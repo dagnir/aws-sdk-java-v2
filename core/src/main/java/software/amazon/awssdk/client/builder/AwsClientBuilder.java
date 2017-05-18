@@ -30,7 +30,7 @@ import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerFactory;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
@@ -103,7 +103,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
     /**
      * Sets the AWSCredentialsProvider used by the client. If not specified the default is {@link
-     * DefaultAwsCredentialsProviderChain}.
+     * DefaultCredentialsProvider}.
      *
      * @param credentialsProvider New AWSCredentialsProvider to use.
      */
@@ -113,7 +113,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
     /**
      * Sets the AWSCredentialsProvider used by the client. If not specified the default is {@link
-     * DefaultAwsCredentialsProviderChain}.
+     * DefaultCredentialsProvider}.
      *
      * @param credentialsProvider New AWSCredentialsProvider to use.
      * @return This object for method chaining.
@@ -125,10 +125,10 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
     /**
      * If the builder isn't explicitly configured with credentials we use the {@link
-     * DefaultAwsCredentialsProviderChain}.
+     * DefaultCredentialsProvider}.
      */
     private AwsCredentialsProvider resolveCredentials() {
-        return (credentials == null) ? DefaultAwsCredentialsProviderChain.getInstance() : credentials;
+        return (credentials == null) ? new DefaultCredentialsProvider() : credentials;
     }
 
     /**

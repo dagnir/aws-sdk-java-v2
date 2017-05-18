@@ -16,25 +16,18 @@
 package software.amazon.awssdk.retry.internal;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.ContainerCredentialsProvider;
+import software.amazon.awssdk.auth.ElasticContainerCredentialsProvider;
 import software.amazon.awssdk.auth.InstanceProfileCredentialsProvider;
 
 /**
  * Custom retry policy for credentials providers ({@link InstanceProfileCredentialsProvider},
- * {@link ContainerCredentialsProvider}) that retrieve credentials from a local endpoint in EC2 host.
+ * {@link ElasticContainerCredentialsProvider}) that retrieve credentials from a local endpoint in EC2 host.
  *
  * Internal use only.
  */
 @SdkInternalApi
 public interface CredentialsEndpointRetryPolicy {
-
-    public static final CredentialsEndpointRetryPolicy NO_RETRY = new CredentialsEndpointRetryPolicy() {
-
-        @Override
-        public boolean shouldRetry(int retriesAttempted, CredentialsEndpointRetryParameters retryParams) {
-            return false;
-        }
-    };
+    CredentialsEndpointRetryPolicy NO_RETRY = (retriesAttempted, retryParams) -> false;
 
     /**
      * Returns whether a failed request should be retried.
@@ -46,5 +39,4 @@ public interface CredentialsEndpointRetryPolicy {
      * @return True if the failed request should be retried.
      */
     boolean shouldRetry(int retriesAttempted, CredentialsEndpointRetryParameters retryParams);
-
 }

@@ -22,8 +22,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.global.handlers.TestGlobalRequestHandler;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
@@ -40,8 +40,8 @@ public class GlobalRequestHandlerTest {
     public void clientCreatedWithConstructor_RegistersGlobalHandlers() {
         assertFalse(TestGlobalRequestHandler.wasCalled());
         DynamoDBClient client = DynamoDBClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                .region(Regions.US_WEST_2.name())
+                .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
+                .region(Regions.US_WEST_2.getName())
                 .build();
         callApi(client);
         assertTrue(TestGlobalRequestHandler.wasCalled());
@@ -52,8 +52,8 @@ public class GlobalRequestHandlerTest {
     public void clientCreatedWithBuilder_RegistersGlobalHandlers() {
         assertFalse(TestGlobalRequestHandler.wasCalled());
         DynamoDBClient client = DynamoDBClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
-                .region(Regions.US_WEST_2.name())
+                .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
+                .region(Regions.US_WEST_2.getName())
                 .build();
         callApi(client);
         assertTrue(TestGlobalRequestHandler.wasCalled());

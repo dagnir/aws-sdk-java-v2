@@ -29,8 +29,6 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.utils.IoUtils;
-import sun.misc.IOUtils;
 
 /**
  * Class to load a CLI style config or credentials file. Performs only basic validation on

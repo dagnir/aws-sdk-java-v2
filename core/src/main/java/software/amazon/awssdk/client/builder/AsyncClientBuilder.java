@@ -17,10 +17,7 @@ package software.amazon.awssdk.client.builder;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Supplier;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
-import software.amazon.awssdk.config.AsyncClientConfiguration;
 
 /**
  * This includes required and optional override configuration required by every async client builder. An instance can be acquired

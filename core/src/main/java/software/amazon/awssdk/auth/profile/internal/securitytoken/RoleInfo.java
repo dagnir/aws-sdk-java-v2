@@ -18,7 +18,7 @@ package software.amazon.awssdk.auth.profile.internal.securitytoken;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 
 @SdkProtectedApi
 public class RoleInfo implements Cloneable {
@@ -354,7 +354,7 @@ public class RoleInfo implements Cloneable {
      *         chained together.
      */
     public RoleInfo withLongLivedCredentials(AwsCredentials longLivedCredentials) {
-        setLongLivedCredentialsProvider(new AwsStaticCredentialsProvider(longLivedCredentials));
+        setLongLivedCredentialsProvider(new StaticCredentialsProvider(longLivedCredentials));
         return this;
     }
 

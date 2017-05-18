@@ -26,7 +26,6 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
 import software.amazon.awssdk.util.SdkHttpUtils;
-import software.amazon.awssdk.utils.StringUtils;
 
 @ReviewBeforeRelease("Might only need to do this for certain protocols - ie query?")
 public final class MoveParametersToBodyStage implements RequestToRequestPipeline {

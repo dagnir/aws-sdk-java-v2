@@ -39,6 +39,7 @@ import software.amazon.awssdk.auth.internal.SignerKey;
 import software.amazon.awssdk.internal.collections.FifoCache;
 import software.amazon.awssdk.log.InternalLogApi;
 import software.amazon.awssdk.log.InternalLogFactory;
+import software.amazon.awssdk.util.CredentialUtils;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
@@ -181,7 +182,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
     @Override
     public void sign(SignableRequest<?> request, AwsCredentials credentials) {
         // anonymous credentials, don't sign
-        if (isAnonymous(credentials)) {
+        if (CredentialUtils.isAnonymous(credentials)) {
             return;
         }
 
@@ -231,7 +232,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
                                Date userSpecifiedExpirationDate) {
 
         // anonymous credentials, don't sign
-        if (isAnonymous(credentials)) {
+        if (CredentialUtils.isAnonymous(credentials)) {
             return;
         }
 
@@ -246,7 +247,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
             // request.
             request.addParameter(SignerConstants.X_AMZ_SECURITY_TOKEN,
                                  ((AwsSessionCredentials) sanitizedCredentials)
-                                         .getSessionToken());
+                                         .sessionToken());
         }
 
         final Aws4SignerRequestParams signerRequestParams = new Aws4SignerRequestParams(
@@ -378,7 +379,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
     private final String computeSigningCacheKeyName(AwsCredentials credentials,
                                                     Aws4SignerRequestParams signerRequestParams) {
         final StringBuilder hashKeyBuilder = new StringBuilder(
-                credentials.getAwsSecretKey());
+                credentials.secretAccessKey());
 
         return hashKeyBuilder.append("-")
                              .append(signerRequestParams.getRegionName())
@@ -404,7 +405,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
     private String buildAuthorizationHeader(SignableRequest<?> request,
                                             byte[] signature, AwsCredentials credentials,
                                             Aws4SignerRequestParams signerParams) {
-        final String signingCredentials = credentials.getAwsAccessKeyId() + "/"
+        final String signingCredentials = credentials.accessKeyId() + "/"
                                           + signerParams.getScope();
 
         final String credential = "Credential="
@@ -434,7 +435,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
                                                 AwsCredentials credentials, Aws4SignerRequestParams signerParams,
                                                 String timeStamp, long expirationInSeconds) {
 
-        String signingCredentials = credentials.getAwsAccessKeyId() + "/"
+        String signingCredentials = credentials.accessKeyId() + "/"
                                     + signerParams.getScope();
 
         request.addParameter(SignerConstants.X_AMZ_ALGORITHM, SignerConstants.AWS4_SIGNING_ALGORITHM);
@@ -449,7 +450,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
     @Override
     protected void addSessionCredentials(SignableRequest<?> request,
                                          AwsSessionCredentials credentials) {
-        request.addHeader(SignerConstants.X_AMZ_SECURITY_TOKEN, credentials.getSessionToken());
+        request.addHeader(SignerConstants.X_AMZ_SECURITY_TOKEN, credentials.sessionToken());
     }
 
     protected String getCanonicalizedHeaderString(SignableRequest<?> request) {
@@ -561,13 +562,6 @@ public class Aws4Signer extends AbstractAwsSigner implements
     }
 
     /**
-     * Checks if the credentials is an instance of {@link AnonymousAwsCredentials}
-     */
-    private boolean isAnonymous(AwsCredentials credentials) {
-        return credentials instanceof AnonymousAwsCredentials;
-    }
-
-    /**
      * Generates an expiration date for the presigned url. If user has specified
      * an expiration date, check if it is in the given limit.
      */
@@ -592,7 +586,7 @@ public class Aws4Signer extends AbstractAwsSigner implements
      */
     protected byte[] newSigningKey(AwsCredentials credentials,
                                    String dateStamp, String regionName, String serviceName) {
-        byte[] kSecret = ("AWS4" + credentials.getAwsSecretKey())
+        byte[] kSecret = ("AWS4" + credentials.secretAccessKey())
                 .getBytes(Charset.forName("UTF-8"));
         byte[] kDate = sign(dateStamp, kSecret, SigningAlgorithm.HmacSHA256);
         byte[] kRegion = sign(regionName, kDate, SigningAlgorithm.HmacSHA256);

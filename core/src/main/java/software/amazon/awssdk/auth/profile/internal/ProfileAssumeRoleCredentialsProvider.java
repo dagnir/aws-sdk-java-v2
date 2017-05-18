@@ -15,8 +15,10 @@
 
 package software.amazon.awssdk.auth.profile.internal;
 
+import java.util.Optional;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.Immutable;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -25,15 +27,13 @@ import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
 import software.amazon.awssdk.util.StringUtils;
 
 /**
- * Serves assume role credentials defined in a {@link BasicProfile}. If a profile defines the
- * role_arn property then the profile is treated as an assume role profile. Does basic validation
- * that the role exists and the source (long lived) credentials are valid.
+ * Serves assume role credentials defined in a {@link BasicProfile}. If a profile defines the role_arn property then the profile
+ * is treated as an assume role profile. Does basic validation that the role exists and the source (long lived) credentials are
+ * valid.
  */
 @SdkInternalApi
 @Immutable
 public class ProfileAssumeRoleCredentialsProvider implements AwsCredentialsProvider {
-
-
     private final AllProfiles allProfiles;
     private final BasicProfile profile;
     private final ProfileCredentialsService profileCredentialsService;
@@ -48,14 +48,16 @@ public class ProfileAssumeRoleCredentialsProvider implements AwsCredentialsProvi
     }
 
     @Override
-    public AwsCredentials getCredentials() {
+    public Optional<AwsCredentials> getCredentials() {
         return assumeRoleCredentialsProvider.getCredentials();
     }
 
     @Override
-    public void refresh() {
+    public String toString() {
+        return getClass().getSimpleName() + "(" + assumeRoleCredentialsProvider + ")";
     }
 
+    @ReviewBeforeRelease("This is gross. It needs to be cleaned up before GA when we refactor profiles.")
     private AwsCredentialsProvider fromAssumeRole() {
         if (StringUtils.isNullOrEmpty(profile.getRoleSourceProfile())) {
             throw new SdkClientException(String.format(
@@ -63,24 +65,20 @@ public class ProfileAssumeRoleCredentialsProvider implements AwsCredentialsProvi
                     profile.getProfileName()));
         }
 
-        final BasicProfile sourceProfile = allProfiles
-                .getProfile(this.profile.getRoleSourceProfile());
+        final BasicProfile sourceProfile = allProfiles.getProfile(this.profile.getRoleSourceProfile());
         if (sourceProfile == null) {
-            throw new SdkClientException(String.format(
-                    "Unable to load source profile [%s]: Source profile was not found [%s]",
-                    profile.getProfileName(), profile.getRoleSourceProfile()));
+            throw new SdkClientException(String.format("Unable to load source profile [%s]: Source profile was not found [%s]",
+                                                       profile.getProfileName(), profile.getRoleSourceProfile()));
         }
-        AwsCredentials sourceCredentials = new ProfileStaticCredentialsProvider(sourceProfile)
-                .getCredentials();
 
-
-        final String roleSessionName = (this.profile.getRoleSessionName() == null) ?
-                                       "aws-sdk-java-" + System.currentTimeMillis() : this.profile.getRoleSessionName();
-
-        RoleInfo roleInfo = new RoleInfo().withRoleArn(this.profile.getRoleArn())
-                                          .withRoleSessionName(roleSessionName)
-                                          .withExternalId(this.profile.getRoleExternalId())
-                                          .withLongLivedCredentials(sourceCredentials);
-        return profileCredentialsService.getAssumeRoleCredentialsProvider(roleInfo);
+        return new ProfileStaticCredentialsProvider(sourceProfile).getCredentials().map(credentials -> {
+            final String roleSessionName = (this.profile.getRoleSessionName() == null) ?
+                                           "aws-sdk-java-" + System.currentTimeMillis() : this.profile.getRoleSessionName();
+            RoleInfo roleInfo = new RoleInfo().withRoleArn(this.profile.getRoleArn())
+                                              .withRoleSessionName(roleSessionName)
+                                              .withExternalId(this.profile.getRoleExternalId())
+                                              .withLongLivedCredentials(credentials);
+            return profileCredentialsService.getAssumeRoleCredentialsProvider(roleInfo);
+        }).orElseThrow(() -> new IllegalStateException("Unexpected missing credentials from static provider."));
     }
 }

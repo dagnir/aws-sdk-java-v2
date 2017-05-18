@@ -21,8 +21,8 @@ import static org.junit.Assert.assertEquals;
 import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 
 public class GetUrlTest {
@@ -32,7 +32,7 @@ public class GetUrlTest {
     @Before
     public void setup() {
         s3 = AmazonS3Client.builder()
-                           .withCredentials(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                           .withCredentials(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
                            .withRegion(Regions.US_WEST_2)
                            .build();
     }

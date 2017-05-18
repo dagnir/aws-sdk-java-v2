@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.devicefarm.model.CreateProjectRequest;
 import software.amazon.awssdk.services.devicefarm.model.CreateProjectResult;
 import software.amazon.awssdk.services.devicefarm.model.ListDevicePoolsRequest;
@@ -39,7 +39,7 @@ public class DeviceFarmIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
-        client = DeviceFarmClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        client = DeviceFarmClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
     }
 
     @Test

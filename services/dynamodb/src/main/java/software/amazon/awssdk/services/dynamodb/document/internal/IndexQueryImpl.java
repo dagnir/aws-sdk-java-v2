@@ -19,7 +19,6 @@ import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.Index;
 import software.amazon.awssdk.services.dynamodb.document.ItemCollection;
 import software.amazon.awssdk.services.dynamodb.document.QueryOutcome;
-import software.amazon.awssdk.services.dynamodb.document.api.QueryApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
 
 /**

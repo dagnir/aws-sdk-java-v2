@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
@@ -37,8 +37,8 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @Before
     public void setup() {
         dynamoDB = DynamoDBClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
-                .region(Regions.US_WEST_2.name())
+                .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
+                .region(Regions.US_WEST_2.getName())
                 .build();
     }
 

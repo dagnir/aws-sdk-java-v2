@@ -29,7 +29,7 @@ public class ContainerCredentialsRetryPolicyTest {
 
     @BeforeClass
     public static void setup() {
-        retryPolicy = ContainerCredentialsRetryPolicy.getInstance();
+        retryPolicy = new ContainerCredentialsRetryPolicy();
     }
 
     @Test

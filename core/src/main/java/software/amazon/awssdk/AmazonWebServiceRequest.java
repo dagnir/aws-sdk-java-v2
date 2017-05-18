@@ -24,7 +24,7 @@ import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 
@@ -76,30 +76,16 @@ public abstract class AmazonWebServiceRequest implements Cloneable, ReadLimitInf
     private Integer sdkClientExecutionTimeout = null;
 
     /**
-     * Returns the optional credentials to use to sign this request, overriding the default
-     * credentials set at the client level.
-     *
-     * @return The optional credentials to use to sign this request, overriding the default
-     *         credentials set at the client level.
-     *
-     * @deprecated by {@link #getRequestCredentialsProvider()}
-     */
-    @Deprecated
-    public AwsCredentials getRequestCredentials() {
-        return credentialsProvider == null ? null : credentialsProvider.getCredentials();
-    }
-
-    /**
      * Sets the optional credentials to use for this request, overriding the default credentials set at the client level.
      *
      * @param credentials The optional AWS security credentials to use for this request, overriding the default credentials set at
      *                    the client level.
      * @deprecated by {@link #setRequestCredentialsProvider(AwsCredentialsProvider)}. If you must use {@link AwsCredentials} you
-     *     can wrap it with a {@link AwsStaticCredentialsProvider}.
+     *     can wrap it with a {@link StaticCredentialsProvider}.
      */
     @Deprecated
     public void setRequestCredentials(AwsCredentials credentials) {
-        this.credentialsProvider = credentials == null ? null : new AwsStaticCredentialsProvider(credentials);
+        this.credentialsProvider = credentials == null ? null : new StaticCredentialsProvider(credentials);
     }
 
     /**

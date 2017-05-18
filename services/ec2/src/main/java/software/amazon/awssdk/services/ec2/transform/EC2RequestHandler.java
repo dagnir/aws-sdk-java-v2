@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.ec2.transform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.apache.commons.codec.Charsets;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.AbstractRequestHandler;
@@ -43,7 +44,7 @@ public class EC2RequestHandler extends AbstractRequestHandler {
         if (originalRequest instanceof ImportKeyPairRequest) {
             ImportKeyPairRequest importKeyPairRequest = (ImportKeyPairRequest) originalRequest;
             String publicKeyMaterial = importKeyPairRequest.getPublicKeyMaterial();
-            String encodedKeyMaterial = Base64Utils.encodeAsString(publicKeyMaterial.getBytes());
+            String encodedKeyMaterial = Base64Utils.encodeAsString(publicKeyMaterial.getBytes(Charsets.UTF_8));
             request.addParameter("PublicKeyMaterial", encodedKeyMaterial);
         } else if (originalRequest instanceof RequestSpotInstancesRequest) {
             // Request -> Query string marshalling for RequestSpotInstancesRequest is a little tricky since

@@ -30,9 +30,10 @@ import org.junit.Before;
  * <p>
  * Can either be used stand-alone for example
  * <pre><code>
- *     private LogCaptor logCaptor = new LogCaptor.DefaultLogCaptor(Level.INFO);
- *     // Do stuff that you expect to log things
- *     assertThat(logCaptor.loggedEvents(), is(not(empty())));
+ *     try (LogCaptor logCaptor = new LogCaptor.DefaultLogCaptor(Level.INFO)) {
+ *         // Do stuff that you expect to log things
+ *         assertThat(logCaptor.loggedEvents(), is(not(empty())));
+ *     }
  * </code></pre>
  * <p>
  * Or can extend it to make use of @Before / @After test annotations
@@ -48,7 +49,7 @@ import org.junit.Before;
  * </code></pre>
  */
 
-public interface LogCaptor {
+public interface LogCaptor extends AutoCloseable {
 
     List<LoggingEvent> loggedEvents();
 
@@ -72,7 +73,7 @@ public interface LogCaptor {
 
     class DefaultLogCaptor extends AppenderSkeleton implements LogCaptor {
 
-        private final List<LoggingEvent> loggedEvents = new ArrayList<LoggingEvent>();
+        private final List<LoggingEvent> loggedEvents = new ArrayList<>();
         private final Level originalLoggingLevel = Logger.getRootLogger().getLevel();
         private final Level levelToCapture;
 
@@ -83,14 +84,8 @@ public interface LogCaptor {
         }
 
         @Override
-        public void finalize() {
-            super.finalize();
-            stopLogging();
-        }
-
-        @Override
         public List<LoggingEvent> loggedEvents() {
-            return new ArrayList<LoggingEvent>(loggedEvents);
+            return new ArrayList<>(loggedEvents);
         }
 
         @Override
@@ -121,6 +116,7 @@ public interface LogCaptor {
 
         @Override
         public void close() {
+            stopLogging();
         }
     }
 }

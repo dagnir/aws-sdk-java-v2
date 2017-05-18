@@ -36,7 +36,7 @@ public class AwsProfileRegionProvider extends AwsRegionProvider {
     private final BasicProfileConfigLoader profileConfigLoader;
 
     public AwsProfileRegionProvider() {
-        this(AwsProfileNameLoader.INSTANCE.loadProfileName());
+        this(new AwsProfileNameLoader().loadProfileName());
     }
 
     public AwsProfileRegionProvider(String profileName) {

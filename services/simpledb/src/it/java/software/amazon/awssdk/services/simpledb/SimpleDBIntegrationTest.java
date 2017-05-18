@@ -28,12 +28,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import org.junit.AfterClass;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.AttributeDoesNotExistException;
 import software.amazon.awssdk.services.simpledb.model.BatchDeleteAttributesRequest;
@@ -149,7 +146,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         sdb.listDomains(new ListDomainsRequest());
 
         ListDomainsRequest listDomainsRequest = new ListDomainsRequest();
-        listDomainsRequest.setRequestCredentials(new BasicAwsCredentials("foo", "bar"));
+        listDomainsRequest.setRequestCredentials(new AwsCredentials("foo", "bar"));
         try {
             sdb.listDomains(listDomainsRequest);
             fail("Expected an authentication exception from bogus request credentials.");

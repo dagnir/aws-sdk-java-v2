@@ -31,7 +31,6 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import utils.model.EmptyAmazonWebServiceRequest;
@@ -144,13 +143,13 @@ public class AmazonWebServiceRequestAdapterTest {
     @Test
     public void customCredentialsSetInBaseRequest_IsSetOnAdapter() {
         EmptyAmazonWebServiceRequest request = new EmptyAmazonWebServiceRequest();
-        AwsCredentials credentials = new BasicAwsCredentials("akid", "skid");
+        AwsCredentials credentials = new AwsCredentials("akid", "skid");
         request.setRequestCredentials(credentials);
         AmazonWebServiceRequestAdapter adapter = new AmazonWebServiceRequestAdapter(request);
 
-        AwsCredentials adaptedCredentials = adapter.getCredentialsProvider().getCredentials();
-        assertEquals("akid", adaptedCredentials.getAwsAccessKeyId());
-        assertEquals("skid", adaptedCredentials.getAwsSecretKey());
+        AwsCredentials adaptedCredentials = adapter.getCredentialsProvider().getCredentialsOrThrow();
+        assertEquals("akid", adaptedCredentials.accessKeyId());
+        assertEquals("skid", adaptedCredentials.secretAccessKey());
     }
 
     @Test

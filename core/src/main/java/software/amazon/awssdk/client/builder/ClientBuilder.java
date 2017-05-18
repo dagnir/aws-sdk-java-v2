@@ -20,7 +20,7 @@ import java.util.Optional;
 import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.ContainerCredentialsProvider;
+import software.amazon.awssdk.auth.ElasticContainerCredentialsProvider;
 import software.amazon.awssdk.builder.SdkBuilder;
 import software.amazon.awssdk.config.ClientHttpConfiguration;
 import software.amazon.awssdk.config.ClientHttpProxyConfiguration;
@@ -167,8 +167,8 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
      *     environment variables.</li>
      * <li>Check the aws.accessKeyId and aws.secretKey java system properties.</li>
      * <li>Check the {user.home}/.aws/credentials file.</li>
-     * <li>If running in EC2, check the {@link ContainerCredentialsProvider#ECS_CONTAINER_CREDENTIALS_PATH} path for a credentials
-     *     file that the security manager allows access to.
+     * <li>If running in EC2, check the {@link ElasticContainerCredentialsProvider#ECS_CONTAINER_CREDENTIALS_PATH} path for a
+     *     credentials file that the security manager allows access to.
      * <li>If running in EC2, check the EC2 metadata service for credentials.</li>
      * </ul>
      *

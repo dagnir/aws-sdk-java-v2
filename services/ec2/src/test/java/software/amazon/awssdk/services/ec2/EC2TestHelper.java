@@ -15,12 +15,10 @@
 
 package software.amazon.awssdk.services.ec2;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.PropertiesCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.ec2.model.AssociateDhcpOptionsRequest;
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayRequest;
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayResult;
@@ -62,6 +60,7 @@ import software.amazon.awssdk.services.ec2.model.PurchaseReservedInstancesOfferi
 import software.amazon.awssdk.services.ec2.model.Vpc;
 import software.amazon.awssdk.services.ec2.model.VpnConnection;
 import software.amazon.awssdk.services.ec2.model.VpnGateway;
+import software.amazon.awssdk.test.AwsTestBase;
 
 @Deprecated
 public class EC2TestHelper {
@@ -69,21 +68,19 @@ public class EC2TestHelper {
     /** Shared EC2 client for all tests to use. */
     public static EC2Client EC2;
 
-    /** Shared AWS credentials, loaded from a properties file. */
     public static AwsCredentials CREDENTIALS;
 
     static {
         try {
             if (CREDENTIALS == null) {
-                File accountInfoPropertiesFile = new File(System.getProperty("user.home"), ".aws/awsTestAccount.properties");
                 try {
-                    CREDENTIALS = new PropertiesCredentials(accountInfoPropertiesFile);
+                    CREDENTIALS = AwsTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
 
-            EC2 = EC2Client.builder().credentialsProvider(new AwsStaticCredentialsProvider(CREDENTIALS)).build();
+            EC2 = EC2Client.builder().credentialsProvider(new StaticCredentialsProvider(CREDENTIALS)).build();
         } catch (Exception exception) {
             // Ignored or expected.
         }

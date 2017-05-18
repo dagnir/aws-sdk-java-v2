@@ -24,8 +24,8 @@ import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.inspector.model.AccessDeniedException;
 import software.amazon.awssdk.services.inspector.model.ListRulesPackagesRequest;
 
@@ -38,7 +38,7 @@ public class InspectorErrorUnmarshallingTest {
 
     @Before
     public void setup() {
-        AwsStaticCredentialsProvider credsProvider = new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid"));
+        StaticCredentialsProvider credsProvider = new StaticCredentialsProvider(new AwsCredentials("akid", "skid"));
         inspector = InspectorClient.builder()
                                    .credentialsProvider(credsProvider)
                                    .region("us-east-1")

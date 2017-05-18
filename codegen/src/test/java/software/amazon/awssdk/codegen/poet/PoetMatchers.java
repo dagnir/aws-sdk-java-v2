@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static software.amazon.awssdk.codegen.poet.PoetUtils.buildJavaFile;
 
 import java.io.IOException;
+import java.util.Random;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -31,7 +32,8 @@ import software.amazon.awssdk.utils.IoUtils;
 
 public final class PoetMatchers {
 
-    private static final CodeTransformer processor = CodeTransformer.chain(new UnusedImportRemover(), new JavaCodeFormatter());
+    private static final CodeTransformer processor = CodeTransformer.chain(new CopyrightRemover(),
+                                                                           new JavaCodeFormatter());
 
     public static Matcher<ClassSpec> generatesTo(String expectedTestFile) {
         return new TypeSafeMatcher<ClassSpec>() {
@@ -58,7 +60,7 @@ public final class PoetMatchers {
 
     private static String getExpectedClass(ClassSpec spec, String testFile) {
         try {
-            return IoUtils.toString(spec.getClass().getResourceAsStream(testFile));
+            return processor.apply(IoUtils.toString(spec.getClass().getResourceAsStream(testFile)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -72,5 +74,12 @@ public final class PoetMatchers {
             throw new RuntimeException("Failed to generate class", e);
         }
         return processor.apply(output.toString());
+    }
+
+    private static class CopyrightRemover implements CodeTransformer {
+        @Override
+        public String apply(String input) {
+            return input.substring(input.indexOf("package"));
+        }
     }
 }
