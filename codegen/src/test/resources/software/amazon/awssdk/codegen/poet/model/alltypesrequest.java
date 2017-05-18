@@ -2,6 +2,7 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -564,7 +565,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param simpleList
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder simpleList(List<String> simpleList);
+        Builder simpleList(Collection<String> simpleList);
 
         /**
          *
@@ -578,7 +579,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param listOfMaps
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder listOfMaps(List<Map<String, String>> listOfMaps);
+        Builder listOfMaps(Collection<Map<String, String>> listOfMaps);
 
         /**
          *
@@ -592,7 +593,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param listOfStructs
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder listOfStructs(List<SimpleStruct> listOfStructs);
+        Builder listOfStructs(Collection<SimpleStruct> listOfStructs);
 
         /**
          *
@@ -662,7 +663,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          * @param listOfBlobs
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder listOfBlobs(List<ByteBuffer> listOfBlobs);
+        Builder listOfBlobs(Collection<ByteBuffer> listOfBlobs);
 
         /**
          *
@@ -850,7 +851,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
         }
 
         @Override
-        public Builder simpleList(List<String> simpleList) {
+        public Builder simpleList(Collection simpleList) {
             if (simpleList == null) {
                 this.simpleList = null;
             } else {
@@ -874,7 +875,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          *
          * @param simpleList
          */
-        public void setSimpleList(List<String> simpleList) {
+        public void setSimpleList(Collection simpleList) {
             if (simpleList == null) {
                 this.simpleList = null;
             } else {
@@ -896,7 +897,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
         }
 
         @Override
-        public Builder listOfMaps(List<Map<String, String>> listOfMaps) {
+        public Builder listOfMaps(Collection listOfMaps) {
             if (listOfMaps == null) {
                 this.listOfMaps = null;
             } else {
@@ -920,7 +921,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          *
          * @param listOfMaps
          */
-        public void setListOfMaps(List<Map<String, String>> listOfMaps) {
+        public void setListOfMaps(Collection listOfMaps) {
             if (listOfMaps == null) {
                 this.listOfMaps = null;
             } else {
@@ -942,7 +943,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
         }
 
         @Override
-        public Builder listOfStructs(List<SimpleStruct> listOfStructs) {
+        public Builder listOfStructs(Collection listOfStructs) {
             if (listOfStructs == null) {
                 this.listOfStructs = null;
             } else {
@@ -966,7 +967,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          *
          * @param listOfStructs
          */
-        public void setListOfStructs(List<SimpleStruct> listOfStructs) {
+        public void setListOfStructs(Collection listOfStructs) {
             if (listOfStructs == null) {
                 this.listOfStructs = null;
             } else {
@@ -1142,7 +1143,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
         }
 
         @Override
-        public Builder listOfBlobs(List<ByteBuffer> listOfBlobs) {
+        public Builder listOfBlobs(Collection listOfBlobs) {
             if (listOfBlobs == null) {
                 this.listOfBlobs = null;
             } else {
@@ -1166,7 +1167,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements Cloneabl
          *
          * @param listOfBlobs
          */
-        public void setListOfBlobs(List<ByteBuffer> listOfBlobs) {
+        public void setListOfBlobs(Collection listOfBlobs) {
             if (listOfBlobs == null) {
                 this.listOfBlobs = null;
             } else {

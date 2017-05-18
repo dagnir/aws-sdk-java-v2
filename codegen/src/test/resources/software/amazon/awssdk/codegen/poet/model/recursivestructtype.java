@@ -1,6 +1,7 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,7 +175,7 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          * @param recursiveList
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder recursiveList(List<RecursiveStructType> recursiveList);
+        Builder recursiveList(Collection<RecursiveStructType> recursiveList);
 
         /**
          *
@@ -241,7 +242,7 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
         }
 
         @Override
-        public Builder recursiveList(List<RecursiveStructType> recursiveList) {
+        public Builder recursiveList(Collection recursiveList) {
             if (recursiveList == null) {
                 this.recursiveList = null;
             } else {
@@ -265,7 +266,7 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          *
          * @param recursiveList
          */
-        public void setRecursiveList(List<RecursiveStructType> recursiveList) {
+        public void setRecursiveList(Collection recursiveList) {
             if (recursiveList == null) {
                 this.recursiveList = null;
             } else {

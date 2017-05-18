@@ -1,6 +1,7 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +135,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
          * @param listOfListsOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder listOfListsOfStrings(List<List<String>> listOfListsOfStrings);
+        Builder listOfListsOfStrings(Collection<List<String>> listOfListsOfStrings);
 
         /**
          *
@@ -148,7 +149,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
          * @param listOfListOfListsOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder listOfListOfListsOfStrings(List<List<List<String>>> listOfListOfListsOfStrings);
+        Builder listOfListOfListsOfStrings(Collection<List<List<String>>> listOfListOfListsOfStrings);
 
         /**
          *
@@ -184,7 +185,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         }
 
         @Override
-        public Builder listOfListsOfStrings(List<List<String>> listOfListsOfStrings) {
+        public Builder listOfListsOfStrings(Collection listOfListsOfStrings) {
             if (listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = null;
             } else {
@@ -208,7 +209,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
          *
          * @param listOfListsOfStrings
          */
-        public void setListOfListsOfStrings(List<List<String>> listOfListsOfStrings) {
+        public void setListOfListsOfStrings(Collection listOfListsOfStrings) {
             if (listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = null;
             } else {
@@ -230,7 +231,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         }
 
         @Override
-        public Builder listOfListOfListsOfStrings(List<List<List<String>>> listOfListOfListsOfStrings) {
+        public Builder listOfListOfListsOfStrings(Collection listOfListOfListsOfStrings) {
             if (listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = null;
             } else {
@@ -254,7 +255,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
          *
          * @param listOfListOfListsOfStrings
          */
-        public void setListOfListOfListsOfStrings(List<List<List<String>>> listOfListOfListsOfStrings) {
+        public void setListOfListOfListsOfStrings(Collection listOfListOfListsOfStrings) {
             if (listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = null;
             } else {
