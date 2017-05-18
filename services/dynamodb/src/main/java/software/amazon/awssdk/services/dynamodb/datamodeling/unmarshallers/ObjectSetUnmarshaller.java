@@ -20,7 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import software.amazon.awssdk.services.dynamodb.datamodeling.ArgumentUnmarshaller;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMappingException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 public class ObjectSetUnmarshaller extends LUnmarshaller {
@@ -56,7 +56,7 @@ public class ObjectSetUnmarshaller extends LUnmarshaller {
             memberUnmarshaller.typeCheck(v, null);
             Object o = memberUnmarshaller.unmarshall(v);
             if (!objects.add(o)) {
-                throw new DynamoDBMappingException(
+                throw new DynamoDbMappingException(
                         "Duplicate value (" + o + ") found in " + values);
             }
         }

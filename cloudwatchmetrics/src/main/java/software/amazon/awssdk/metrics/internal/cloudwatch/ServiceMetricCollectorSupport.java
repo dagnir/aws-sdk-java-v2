@@ -95,25 +95,25 @@ public class ServiceMetricCollectorSupport extends ServiceMetricCollector {
         if (metrics.contains(throughputType)) {
             // Throughput metric
             final Dimension throughputDimension = new Dimension()
-                    .withName(Dimensions.MetricType.name())
-                    .withValue(throughputType.name());
+                    .name(Dimensions.MetricType.name())
+                    .value(throughputType.name());
             final MetricDatum throughputDatum = new MetricDatum()
-                    .withMetricName(throughputType.getServiceName())
-                    .withDimensions(throughputDimension)
-                    .withUnit(StandardUnit.BytesSecond)
-                    .withValue(bytesPerSec);
+                    .metricName(throughputType.getServiceName())
+                    .dimensions(throughputDimension)
+                    .unit(StandardUnit.BytesSecond)
+                    .value(bytesPerSec);
             safeAddMetricsToQueue(throughputDatum);
         }
         if (metrics.contains(byteCountType)) {
             // Byte count metric
             final Dimension byteCountDimension = new Dimension()
-                    .withName(Dimensions.MetricType.name())
-                    .withValue(byteCountType.name());
+                    .name(Dimensions.MetricType.name())
+                    .value(byteCountType.name());
             final MetricDatum byteCountDatum = new MetricDatum()
-                    .withMetricName(byteCountType.getServiceName())
-                    .withDimensions(byteCountDimension)
-                    .withUnit(StandardUnit.Bytes)
-                    .withValue(byteCount);
+                    .metricName(byteCountType.getServiceName())
+                    .dimensions(byteCountDimension)
+                    .unit(StandardUnit.Bytes)
+                    .value(byteCount);
             safeAddMetricsToQueue(byteCountDatum);
         }
     }
@@ -124,13 +124,13 @@ public class ServiceMetricCollectorSupport extends ServiceMetricCollector {
         final Set<MetricType> metrics = AwsSdkMetrics.getPredefinedMetrics();
         if (metrics.contains(type)) {
             final Dimension dim = new Dimension()
-                    .withName(Dimensions.MetricType.name())
-                    .withValue(type.name());
+                    .name(Dimensions.MetricType.name())
+                    .value(type.name());
             final MetricDatum datum = new MetricDatum()
-                    .withMetricName(type.getServiceName())
-                    .withDimensions(dim)
-                    .withUnit(StandardUnit.Milliseconds)
-                    .withValue(provider.getDurationMilli());
+                    .metricName(type.getServiceName())
+                    .dimensions(dim)
+                    .unit(StandardUnit.Milliseconds)
+                    .value(provider.getDurationMilli());
             safeAddMetricsToQueue(datum);
         }
     }

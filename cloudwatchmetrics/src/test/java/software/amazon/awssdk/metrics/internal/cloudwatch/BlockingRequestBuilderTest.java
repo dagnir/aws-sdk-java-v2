@@ -20,19 +20,19 @@ public class BlockingRequestBuilderTest {
     public void cloneMetricDatum() {
         BlockingRequestBuilder b = new BlockingRequestBuilder(new CloudWatchMetricConfig(), null);
         Collection<Dimension> dimensions = Collections.emptyList();
-        MetricDatum md = new MetricDatum().withDimensions(dimensions);
+        MetricDatum md = new MetricDatum().dimensions(dimensions);
         assertNotSame("Expect a new collection to be created", md.getDimensions(), dimensions);
         assertTrue(0 == md.getDimensions().size());
-        md.withDimensions(new Dimension().withName("Name1").withValue("Value1"));
+        md.dimensions(new Dimension().name("Name1").value("Value1"));
         assertTrue(1 == md.getDimensions().size());
-        md.withDimensions(new Dimension().withName("Name2").withValue("Value2"));
+        md.dimensions(new Dimension().name("Name2").value("Value2"));
         assertTrue(2 == md.getDimensions().size());
-        md.withMetricName("MetricName");
-        md.withStatisticValues(new StatisticSet().withMaximum(100.0)
-                .withMinimum(10.0).withSampleCount(12.34).withSum(99.9));
-        md.withTimestamp(new Date());
-        md.withUnit(StandardUnit.Milliseconds);
-        md.withValue(56.78);
+        md.metricName("MetricName");
+        md.statisticValues(new StatisticSet().maximum(100.0)
+                .minimum(10.0).sampleCount(12.34).sum(99.9));
+        md.timestamp(new Date());
+        md.unit(StandardUnit.Milliseconds);
+        md.value(56.78);
 
         MetricDatum md2 = b.cloneMetricDatum(md);
 

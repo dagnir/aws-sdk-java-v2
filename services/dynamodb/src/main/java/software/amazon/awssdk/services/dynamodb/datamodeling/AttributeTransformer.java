@@ -92,7 +92,7 @@ public interface AttributeTransformer {
         /**
          * @return the mapper config for this operation
          */
-        DynamoDBMapperConfig mapperConfig();
+        DynamoDbMapperConfig mapperConfig();
 
         /**
          * @return the name of the DynamoDB table the attributes were read

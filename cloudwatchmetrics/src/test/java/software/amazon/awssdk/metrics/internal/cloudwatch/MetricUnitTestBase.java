@@ -106,9 +106,9 @@ public class MetricUnitTestBase {
             m = new MetricDatum();
             final String metricName = fields[0];
             final String metric = fields[1];
-            m.withMetricName(metricName)
-             .withDimensions(new Dimension().withName("metric").withValue(metric))
-             .withTimestamp(new Date(Long.parseLong(fields[3])));
+            m.metricName(metricName)
+             .dimensions(new Dimension().name("metric").value(metric))
+             .timestamp(new Date(Long.parseLong(fields[3])));
             if (fields[4] != null && !fields[4].isEmpty())
                 m.setValue(Double.parseDouble(fields[4]));
             m.setUnit(fields[6]);

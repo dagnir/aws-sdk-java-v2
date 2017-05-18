@@ -31,9 +31,9 @@ public class StsProfileCredentialsService implements ProfileCredentialsService {
     @ReviewBeforeRelease("How should the STS client be cleaned up?")
     @Override
     public AwsCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
-        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest().withRoleArn(targetRoleInfo.getRoleArn())
-                                                                     .withRoleSessionName(targetRoleInfo.getRoleSessionName())
-                                                                     .withExternalId(targetRoleInfo.getExternalId());
+        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest().roleArn(targetRoleInfo.getRoleArn())
+                                                                     .roleSessionName(targetRoleInfo.getRoleSessionName())
+                                                                     .externalId(targetRoleInfo.getExternalId());
         STSClient stsClient = STSClient.builder().credentialsProvider(targetRoleInfo.getLongLivedCredentialsProvider()).build();
 
         return StsAssumeRoleCredentialsProvider.builder()

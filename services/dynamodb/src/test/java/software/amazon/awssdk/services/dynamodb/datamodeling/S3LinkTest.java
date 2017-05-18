@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.s3.model.Region;
 
 @Ignore // FIXME: Setup fails with "region cannot be null"
 public class S3LinkTest {
-    private DynamoDBMapper mapper;
+    private DynamoDbMapper mapper;
 
     @Before
     public void setUp() {
@@ -37,7 +37,7 @@ public class S3LinkTest {
                                           .credentialsProvider(new StaticCredentialsProvider(credentials))
                                           .region(Regions.US_WEST_2.getName())
                                           .build();
-        mapper = new DynamoDBMapper(db, new StaticCredentialsProvider(credentials));
+        mapper = new DynamoDbMapper(db, new StaticCredentialsProvider(credentials));
     }
 
     @Test(expected = IllegalArgumentException.class)

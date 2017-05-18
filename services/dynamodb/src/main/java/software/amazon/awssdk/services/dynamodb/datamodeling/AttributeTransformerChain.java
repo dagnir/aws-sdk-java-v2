@@ -141,7 +141,7 @@ public class AttributeTransformerChain implements AttributeTransformer {
         }
 
         @Override
-        public DynamoDBMapperConfig mapperConfig() {
+        public DynamoDbMapperConfig mapperConfig() {
             return delegate.mapperConfig();
         }
 

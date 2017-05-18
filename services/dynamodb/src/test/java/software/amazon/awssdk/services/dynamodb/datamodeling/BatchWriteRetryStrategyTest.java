@@ -25,8 +25,8 @@ import org.easymock.IExpectationSetters;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.BatchWriteRetryStrategy;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper.FailedBatch;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.BatchWriteRetryStrategy;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
@@ -57,12 +57,12 @@ public class BatchWriteRetryStrategyTest {
     }
 
     private DynamoDBClient ddbMock;
-    private DynamoDBMapper mapper;
+    private DynamoDbMapper mapper;
 
     @Before
     public void setup() {
         ddbMock = createMock(DynamoDBClient.class);
-        mapper = new DynamoDBMapper(
+        mapper = new DynamoDbMapper(
                 ddbMock,
                 getConfigWithCustomBatchWriteRetryStrategy(
                         new BatchWriteRetryStrategyWithNoDelay(MAX_RETRY)));
@@ -145,9 +145,9 @@ public class BatchWriteRetryStrategyTest {
                 .andThrow(e);
     }
 
-    private DynamoDBMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
+    private DynamoDbMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
             BatchWriteRetryStrategy batchWriteRetryStrategy) {
-        return new DynamoDBMapperConfig.Builder()
+        return new DynamoDbMapperConfig.Builder()
                 .withBatchWriteRetryStrategy(batchWriteRetryStrategy)
                 .build();
     }
@@ -176,7 +176,7 @@ public class BatchWriteRetryStrategyTest {
 
     }
 
-    @DynamoDBTable(tableName = TABLE_NAME)
+    @DynamoDbTable(tableName = TABLE_NAME)
     public static class Item {
 
         private String hash;
@@ -185,8 +185,8 @@ public class BatchWriteRetryStrategyTest {
             this.hash = hash;
         }
 
-        @DynamoDBHashKey
-        @DynamoDBAttribute(attributeName = HASH_ATTR)
+        @DynamoDbHashKey
+        @DynamoDbAttribute(attributeName = HASH_ATTR)
         public String getHash() {
             return hash;
         }

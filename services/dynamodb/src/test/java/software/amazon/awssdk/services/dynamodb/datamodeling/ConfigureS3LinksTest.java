@@ -52,7 +52,7 @@ public class ConfigureS3LinksTest {
         assertNull(obj.s31());
     }
 
-    @DynamoDBTable(tableName = "nonexisting-test-tablename")
+    @DynamoDbTable(tableName = "nonexisting-test-tablename")
     public static class CorrectTestClass {
 
         private String hk;
@@ -61,7 +61,7 @@ public class ConfigureS3LinksTest {
         public CorrectTestClass() {
         }
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getHk() {
             return hk;
         }
@@ -79,7 +79,7 @@ public class ConfigureS3LinksTest {
         }
     }
 
-    @DynamoDBTable(tableName = "nonexisting-test-tablename")
+    @DynamoDbTable(tableName = "nonexisting-test-tablename")
     public static class ManyS3LinksTestClass {
 
         private String hk;
@@ -93,7 +93,7 @@ public class ConfigureS3LinksTest {
         public ManyS3LinksTestClass() {
         }
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getHk() {
             return hk;
         }

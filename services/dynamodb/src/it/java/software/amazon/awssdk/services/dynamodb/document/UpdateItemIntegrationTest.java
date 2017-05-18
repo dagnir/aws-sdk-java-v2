@@ -31,7 +31,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.ProfileCredentialsProvider;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.spec.GetItemSpec;
 import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
@@ -52,7 +51,7 @@ public class UpdateItemIntegrationTest {
     private static final Long FIRST_CUSTOMER_ID = 1000L;
     private static final String ADDRESS_TYPE_HOME = "home";
     private static final String ADDRESS_TYPE_WORK = "work";
-    private static DynamoDB dynamoDb;
+    private static DynamoDb dynamoDb;
     private static String TABLE_NAME = "UpdateItemIntegrationTest";
     private static String HASH_KEY = "customer_id";
     private static String RANGE_KEY = "address_type";
@@ -62,7 +61,7 @@ public class UpdateItemIntegrationTest {
         DynamoDBClient client = DynamoDBClient.builder()
                                               .credentialsProvider(AwsIntegrationTestBase.CREDENTIALS_PROVIDER_CHAIN)
                                               .build();
-        dynamoDb = new DynamoDB(client);
+        dynamoDb = new DynamoDb(client);
 
         createTable();
         fillInData();

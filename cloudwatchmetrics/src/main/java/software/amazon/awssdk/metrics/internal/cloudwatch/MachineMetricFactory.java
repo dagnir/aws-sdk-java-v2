@@ -71,13 +71,13 @@ class MachineMetricFactory {
             // skip zero values in some cases
             if (val != 0 || metric.includeZeroValue()) {
                 MetricDatum datum = new MetricDatum()
-                        .withMetricName(metric.getMetricName())
-                        .withDimensions(
+                        .metricName(metric.getMetricName())
+                        .dimensions(
                                 new Dimension()
-                                        .withName(metric.getDimensionName())
-                                        .withValue(metric.name()))
-                        .withUnit(unit)
-                        .withValue((double) val);
+                                        .name(metric.getDimensionName())
+                                        .value(metric.name()))
+                        .unit(unit)
+                        .value((double) val);
                 list.add(datum);
             }
         }

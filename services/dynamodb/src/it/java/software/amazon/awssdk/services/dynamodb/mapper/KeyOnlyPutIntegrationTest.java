@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBSaveExpression;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbSaveExpression;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
@@ -60,10 +60,10 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (HashAndAttribute obj : objs) {
             try {
-                DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
+                DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression();
                 Map<String, ExpectedAttributeValue> expected = new HashMap<String, ExpectedAttributeValue>();
                 ExpectedAttributeValue expectedVersion = ExpectedAttributeValue.builder_()
                         .value(AttributeValue.builder_()
@@ -94,13 +94,13 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
         return obj;
     }
 
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static class HashAndAttribute {
 
         protected String key;
         protected String normalStringAttribute;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getKey() {
             return key;
         }
@@ -109,7 +109,7 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
             this.key = key;
         }
 
-        @DynamoDBAttribute
+        @DynamoDbAttribute
         public String normalStringAttribute() {
             return normalStringAttribute;
         }

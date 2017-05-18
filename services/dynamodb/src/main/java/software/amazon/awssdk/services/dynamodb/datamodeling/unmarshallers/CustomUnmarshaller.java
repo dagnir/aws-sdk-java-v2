@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.services.dynamodb.datamodeling.unmarshallers;
 
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMarshaller;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMappingException;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMarshaller;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 /**
@@ -26,29 +26,29 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 public class CustomUnmarshaller extends SUnmarshaller {
 
     private final Class<?> targetClass;
-    private final Class<? extends DynamoDBMarshaller<?>> unmarshallerClass;
+    private final Class<? extends DynamoDbMarshaller<?>> unmarshallerClass;
 
     public CustomUnmarshaller(
             Class<?> targetClass,
-            Class<? extends DynamoDBMarshaller<?>> unmarshallerClass) {
+            Class<? extends DynamoDbMarshaller<?>> unmarshallerClass) {
 
         this.targetClass = targetClass;
         this.unmarshallerClass = unmarshallerClass;
     }
 
     @SuppressWarnings({"rawtypes"})
-    private static DynamoDBMarshaller createUnmarshaller(Class<?> clazz) {
+    private static DynamoDbMarshaller createUnmarshaller(Class<?> clazz) {
         try {
 
-            return (DynamoDBMarshaller) clazz.newInstance();
+            return (DynamoDbMarshaller) clazz.newInstance();
 
         } catch (InstantiationException e) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
 
         } catch (IllegalAccessException e) {
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "Failed to instantiate custom marshaler for class " + clazz,
                     e);
         }
@@ -62,7 +62,7 @@ public class CustomUnmarshaller extends SUnmarshaller {
         // do that now without a breaking change; user's unmarshallers
         // might not all be thread-safe.
 
-        DynamoDBMarshaller unmarshaller =
+        DynamoDbMarshaller unmarshaller =
                 createUnmarshaller(unmarshallerClass);
 
         return unmarshaller.unmarshall(targetClass, value.s());

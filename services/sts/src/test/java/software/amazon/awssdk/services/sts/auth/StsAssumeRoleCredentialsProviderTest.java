@@ -32,7 +32,7 @@ public class StsAssumeRoleCredentialsProviderTest extends StsCredentialsProvider
 
     @Override
     protected AssumeRoleResult getResponse(Credentials credentials) {
-        return new AssumeRoleResult().withCredentials(credentials);
+        return new AssumeRoleResult().credentials(credentials);
     }
 
     @Override

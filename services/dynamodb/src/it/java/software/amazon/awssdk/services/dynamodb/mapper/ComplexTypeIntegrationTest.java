@@ -33,12 +33,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTypeConverted;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTypeConvertedJson;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTypeConverter;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTypeConverted;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTypeConvertedJson;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTypeConverter;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 
 /**
  * Tests of the configuration object
@@ -52,7 +52,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
     @Test
     public void testComplexTypes() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         ComplexClass obj = getUniqueObject();
         util.save(obj);
@@ -105,14 +105,14 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
         obj.setKey(key);
         obj.setOtherAttribute("" + start++);
 
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         mapper.save(obj);
         ComplexKey loaded = mapper.load(ComplexKey.class, obj.getKey());
         assertEquals(obj, loaded);
     }
 
-    public static final class ComplexNestedListTypeMarshaller implements DynamoDBTypeConverter<String, List<ComplexNestedType>> {
+    public static final class ComplexNestedListTypeMarshaller implements DynamoDbTypeConverter<String, List<ComplexNestedType>> {
         @Override
         public String convert(final List<ComplexNestedType> object) {
             try {
@@ -139,14 +139,14 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
         }
     }
 
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static final class ComplexClass extends NumberAttributeClass {
 
         private String extraField;
         private ComplexNestedType complexNestedType;
         private List<ComplexNestedType> complexNestedTypeList;
 
-        @DynamoDBTypeConvertedJson
+        @DynamoDbTypeConvertedJson
         public ComplexNestedType getComplexNestedType() {
             return complexNestedType;
         }
@@ -155,7 +155,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
             this.complexNestedType = complexNestedType;
         }
 
-        @DynamoDBTypeConverted(converter = ComplexNestedListTypeMarshaller.class)
+        @DynamoDbTypeConverted(converter = ComplexNestedListTypeMarshaller.class)
         public List<ComplexNestedType> getComplexNestedTypeList() {
             return complexNestedTypeList;
         }
@@ -318,14 +318,14 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
     }
 
-    @DynamoDBTable(tableName = "aws-java-sdk-util")
+    @DynamoDbTable(tableName = "aws-java-sdk-util")
     public static final class ComplexKey {
 
         private ComplexNestedType key;
         private String otherAttribute;
 
-        @DynamoDBHashKey
-        @DynamoDBTypeConvertedJson
+        @DynamoDbHashKey
+        @DynamoDbTypeConvertedJson
         public ComplexNestedType getKey() {
             return key;
         }

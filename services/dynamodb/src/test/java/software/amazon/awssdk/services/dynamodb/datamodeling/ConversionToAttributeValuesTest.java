@@ -24,8 +24,8 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 public class ConversionToAttributeValuesTest {
 
-    private DynamoDBMapperModelFactory models;
-    private DynamoDBMapperConfig finalConfig;
+    private DynamoDbMapperModelFactory models;
+    private DynamoDbMapperConfig finalConfig;
 
     public static boolean equals(Object o1, Object o2) {
         if (o1 == o2) {
@@ -47,8 +47,8 @@ public class ConversionToAttributeValuesTest {
 
     @Before
     public void setUp() throws Exception {
-        finalConfig = new DynamoDBMapperConfig.Builder()
-                .withTypeConverterFactory(DynamoDBMapperConfig.DEFAULT.getTypeConverterFactory())
+        finalConfig = new DynamoDbMapperConfig.Builder()
+                .withTypeConverterFactory(DynamoDbMapperConfig.DEFAULT.getTypeConverterFactory())
                 .withConversionSchema(ConversionSchemas.V2)
                 .build();
         this.models = StandardModelFactories.of(S3Link.Factory.of(null));
@@ -56,21 +56,21 @@ public class ConversionToAttributeValuesTest {
 
     @Test
     public void converterFailsForSubProperty() throws Exception {
-        DynamoDBMapperTableModel<ConverterData> tableModel = getTable(ConverterData.class);
+        DynamoDbMapperTableModel<ConverterData> tableModel = getTable(ConverterData.class);
         Map<String, AttributeValue> withSubData = tableModel.convert(new ConverterData());
         assertEquals("bar", tableModel.unconvert(withSubData).subDocument().getaData().value());
     }
 
-    private <T> DynamoDBMapperTableModel<T> getTable(Class<T> clazz) {
+    private <T> DynamoDbMapperTableModel<T> getTable(Class<T> clazz) {
         return this.models.getTableFactory(finalConfig).getTable(clazz);
     }
 
-    @DynamoDBTable(tableName = "test")
+    @DynamoDbTable(tableName = "test")
     public static class ConverterData {
 
-        @DynamoDBTypeConverted(converter = CustomDataConverter.class)
+        @DynamoDbTypeConverted(converter = CustomDataConverter.class)
         CustomData customConverted;
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String key;
         private ConverterSubDocument subDocument;
 
@@ -123,10 +123,10 @@ public class ConversionToAttributeValuesTest {
 
     }
 
-    @DynamoDBDocument
+    @DynamoDbDocument
     public static class ConverterSubDocument {
 
-        @DynamoDBTypeConverted(converter = CustomDataConverter.class)
+        @DynamoDbTypeConverted(converter = CustomDataConverter.class)
         private CustomData aData;
 
         public CustomData getaData() {
@@ -185,7 +185,7 @@ public class ConversionToAttributeValuesTest {
         }
     }
 
-    public static class CustomDataConverter implements DynamoDBTypeConverter<String, CustomData> {
+    public static class CustomDataConverter implements DynamoDbTypeConverter<String, CustomData> {
 
         public String convert(CustomData object) {
             return object.value();

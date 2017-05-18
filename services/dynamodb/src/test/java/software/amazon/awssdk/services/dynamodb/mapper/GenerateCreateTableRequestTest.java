@@ -28,7 +28,7 @@ import org.junit.Test;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
@@ -45,7 +45,7 @@ import utils.test.util.DynamoDBTestBase;
 @Ignore // FIXME: setup fails with "region cannot be null"
 public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
 
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
 
     @BeforeClass
     public static void setUp() {
@@ -53,7 +53,7 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
                 .credentialsProvider(new AnonymousCredentialsProvider())
                 .region(Regions.US_WEST_2.getName())
                 .build();
-        mapper = new DynamoDBMapper(dynamo);
+        mapper = new DynamoDbMapper(dynamo);
     }
 
     private static boolean equalLsi(Collection<LocalSecondaryIndex> a, Collection<LocalSecondaryIndex> b) {

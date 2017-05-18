@@ -24,7 +24,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
  *
  * @param <T> request type
  */
-abstract class AbstractCollectionspec<T extends AmazonWebServiceRequest>
+abstract class AbstractCollectionSpec<T extends AmazonWebServiceRequest>
         extends AbstractSpec<T> {
 
     private Integer maxPageSize;
@@ -35,28 +35,28 @@ abstract class AbstractCollectionspec<T extends AmazonWebServiceRequest>
     private Integer maxResultSize;
 
 
-    AbstractCollectionspec(T req) {
+    AbstractCollectionSpec(T req) {
         super(req);
     }
 
-    public AbstractCollectionspec<T> withMaxResultSize(
+    public AbstractCollectionSpec<T> withMaxResultSize(
             Integer maxResultSize) {
         this.maxResultSize = maxResultSize;
         return this;
     }
 
-    public AbstractCollectionspec<T> withMaxResultSize(
+    public AbstractCollectionSpec<T> withMaxResultSize(
             int maxResultSize) {
         this.maxResultSize = maxResultSize;
         return this;
     }
 
-    public AbstractCollectionspec<T> withMaxPageSize(Integer maxPageSize) {
+    public AbstractCollectionSpec<T> withMaxPageSize(Integer maxPageSize) {
         this.maxPageSize = maxPageSize;
         return this;
     }
 
-    public AbstractCollectionspec<T> withMaxPageSize(int maxPageSize) {
+    public AbstractCollectionSpec<T> withMaxPageSize(int maxPageSize) {
         this.maxPageSize = maxPageSize;
         return this;
     }

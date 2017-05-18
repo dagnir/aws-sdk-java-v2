@@ -41,7 +41,7 @@ import software.amazon.awssdk.services.s3.model.SetObjectAclRequest;
 import software.amazon.awssdk.util.json.Jackson;
 
 /**
- * An S3 Link that works with {@link DynamoDBMapper}.
+ * An S3 Link that works with {@link DynamoDbMapper}.
  * An S3 link is persisted as a JSON string in DynamoDB.
  * This link object can be used directly to upload/download files to S3.
  * Alternatively, the underlying
@@ -542,7 +542,7 @@ public class S3Link {
     /**
      * {@link S3Link} factory.
      */
-    public static final class Factory implements DynamoDBTypeConverter<String, S3Link> {
+    public static final class Factory implements DynamoDbTypeConverter<String, S3Link> {
         static final Factory DEFAULT = new Factory((S3ClientCache) null);
         private final S3ClientCache s3cc;
 

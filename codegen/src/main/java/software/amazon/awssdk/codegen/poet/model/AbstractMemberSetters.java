@@ -90,6 +90,7 @@ abstract class AbstractMemberSetters implements MemberSetters {
     protected ShapeModel shapeModel() {
         return shapeModel;
     }
+
     protected MemberModel memberModel() {
         return memberModel;
     }

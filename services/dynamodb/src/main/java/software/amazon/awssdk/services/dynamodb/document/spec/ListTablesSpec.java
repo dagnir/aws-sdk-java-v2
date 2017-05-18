@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 /**
  * Full parameter specification for the ListTables API.
  */
-public class ListTablesSpec extends AbstractCollectionspec<ListTablesRequest> {
+public class ListTablesSpec extends AbstractCollectionSpec<ListTablesRequest> {
 
     public ListTablesSpec() {
         super(ListTablesRequest.builder_().build_());

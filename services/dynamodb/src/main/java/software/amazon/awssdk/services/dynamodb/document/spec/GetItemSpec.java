@@ -77,7 +77,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
 
     public GetItemSpec withAttributesToGet(String... attrNames) {
         if (attrNames == null) {
-            setRequest(getRequest().toBuilder().attributesToGet((String[])null).build_());
+            setRequest(getRequest().toBuilder().attributesToGet((String[]) null).build_());
         } else {
             setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attrNames)).build_());
         }

@@ -34,7 +34,7 @@ public class StsGetFederationTokenCredentialsProviderTest
 
     @Override
     protected GetFederationTokenResult getResponse(Credentials credentials) {
-        return new GetFederationTokenResult().withCredentials(credentials);
+        return new GetFederationTokenResult().credentials(credentials);
     }
 
     @Override

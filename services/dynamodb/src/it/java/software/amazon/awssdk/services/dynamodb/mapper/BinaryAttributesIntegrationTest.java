@@ -33,7 +33,7 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.BinaryAttributeByteArrayClass;
@@ -74,7 +74,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : ATTRIBUTES) {
             // test BinaryAttributeClass
@@ -104,7 +104,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
             byteBufferObjs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (BinaryAttributeByteBufferClass obj : byteBufferObjs) {
             util.save(obj);
         }
@@ -144,7 +144,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
         // test BinaryAttributeClass
         BinaryAttributeByteBufferClass byteBufferObj = getUniqueByteBufferObject(CONTENT_LENGTH);
         byteBufferObj.setBinarySetAttribute(null);
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.save(byteBufferObj);
 
         BinaryAttributeByteBufferClass loadedX = util.load(BinaryAttributeByteBufferClass.class, byteBufferObj.getKey());
@@ -194,7 +194,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
             byteBufferObjs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (BinaryAttributeByteBufferClass obj : byteBufferObjs) {
             util.save(obj);
         }
@@ -240,7 +240,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
     public void testDelete() throws Exception {
         // test BinaryAttributeClass
         BinaryAttributeByteBufferClass byteBufferObj = getUniqueByteBufferObject(CONTENT_LENGTH);
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.save(byteBufferObj);
 
         util.delete(byteBufferObj);

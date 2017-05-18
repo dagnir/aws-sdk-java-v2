@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodb.datamodeling;
 
 import java.util.List;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResult;
 
@@ -41,19 +41,19 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
     /** The current scan request. */
     private ScanRequest scanRequest;
 
-    private final DynamoDBMapperConfig config;
+    private final DynamoDbMapperConfig config;
 
     /** The current results for the last executed scan operation. */
     private ScanResult scanResult;
 
     public PaginatedScanList(
-            DynamoDBMapper mapper,
+            DynamoDbMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             ScanRequest scanRequest,
             ScanResult scanResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDBMapperConfig config) {
+            DynamoDbMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.scanRequest = scanRequest;
@@ -81,7 +81,7 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
     @Override
     protected synchronized List<T> fetchNextPage() {
         scanRequest = scanRequest.toBuilder().exclusiveStartKey(scanResult.lastEvaluatedKey()).build_();
-        scanResult = dynamo.scan(DynamoDBMapper.applyUserAgent(scanRequest));
+        scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(scanRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
                 scanResult.items(),
                 clazz,

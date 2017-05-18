@@ -24,10 +24,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTypeConvertedJson;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTypeConvertedJson;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
@@ -43,7 +43,7 @@ public class TypeConvertedJsonTest {
 
     @Test
     public void responseWithUnmappedField_IgnoresUnknownFieldAndUnmarshallsCorrectly() {
-        final DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+        final DynamoDbMapper mapper = new DynamoDbMapper(ddb);
         when(ddb.getItem(any(GetItemRequest.class)))
                 .thenReturn(GetItemResult.builder_().item(
                         ImmutableMapParameter.of("hashKey", AttributeValue.builder_().s(HASH_KEY).build_(),
@@ -55,13 +55,13 @@ public class TypeConvertedJsonTest {
         assertEquals("knownValue", pojo.getJsonMappedPojo().getKnownField());
     }
 
-    @DynamoDBTable(tableName = "TestTable")
+    @DynamoDbTable(tableName = "TestTable")
     public static class TopLevelPojo {
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKey;
 
-        @DynamoDBTypeConvertedJson
+        @DynamoDbTypeConvertedJson
         private JsonMappedPojo jsonMappedPojo;
 
         public String getHashKey() {

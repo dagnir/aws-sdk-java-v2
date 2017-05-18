@@ -231,11 +231,11 @@ public class MetricIntegrationTestBase extends AWSTestBase {
         Collection<Dimension> dims = new ArrayList<Dimension>();
         // Looking specifically for the HttpRequestTime for a PutItemRequest
         dims.add(new Dimension()
-            .withName(Dimensions.MetricType.name())
-            .withValue(Field.HttpRequestTime.name()));
+            .name(Dimensions.MetricType.name())
+            .value(Field.HttpRequestTime.name()));
         dims.add(new Dimension()
-            .withName(Dimensions.RequestType.name())
-            .withValue(PutItemRequest.class.getSimpleName()));
+            .name(Dimensions.RequestType.name())
+            .value(PutItemRequest.class.getSimpleName()));
         getMetricStatisticsRequest.setDimensions(dims);
         getMetricStatisticsRequest.setPeriod(60);
 

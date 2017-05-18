@@ -34,7 +34,7 @@ public class StsGetSessionTokenCredentialsProviderTest
 
     @Override
     protected GetSessionTokenResult getResponse(Credentials credentials) {
-        return new GetSessionTokenResult().withCredentials(credentials);
+        return new GetSessionTokenResult().credentials(credentials);
     }
 
     @Override

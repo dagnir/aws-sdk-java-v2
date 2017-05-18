@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.dynamodb.model.Select;
 /**
  * Full parameter specification for the Query API.
  */
-public class QuerySpec extends AbstractCollectionspec<QueryRequest> {
+public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     private KeyAttribute hashKey;
     private RangeKeyCondition rangeKeyCondition;
     private Collection<QueryFilter> queryFilters;

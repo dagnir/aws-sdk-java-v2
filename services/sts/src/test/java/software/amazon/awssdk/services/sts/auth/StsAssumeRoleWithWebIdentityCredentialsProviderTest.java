@@ -34,7 +34,7 @@ public class StsAssumeRoleWithWebIdentityCredentialsProviderTest
 
     @Override
     protected AssumeRoleWithWebIdentityResult getResponse(Credentials credentials) {
-        return new AssumeRoleWithWebIdentityResult().withCredentials(credentials);
+        return new AssumeRoleWithWebIdentityResult().credentials(credentials);
     }
 
     @Override

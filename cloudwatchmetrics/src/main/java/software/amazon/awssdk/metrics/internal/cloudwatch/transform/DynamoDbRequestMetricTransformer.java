@@ -31,7 +31,7 @@ import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
-import software.amazon.awssdk.services.dynamodb.metrics.DynamoDBRequestMetric;
+import software.amazon.awssdk.services.dynamodb.metrics.DynamoDbRequestMetric;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
 
 /**
@@ -65,11 +65,11 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                                                                                          NoSuchMethodException,
                                                                                          IllegalAccessException,
                                                                                          InvocationTargetException {
-        if (!(metricType instanceof DynamoDBRequestMetric)) {
+        if (!(metricType instanceof DynamoDbRequestMetric)) {
             return null;
         }
         // Predefined metrics across all aws http clients
-        DynamoDBRequestMetric predefined = (DynamoDBRequestMetric) metricType;
+        DynamoDbRequestMetric predefined = (DynamoDbRequestMetric) metricType;
         switch (predefined) {
             case DynamoDBConsumedCapacity:
                 if (response == null) {
@@ -82,28 +82,28 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                     return Collections.emptyList();
                 }
                 ConsumedCapacity consumedCapacity = (ConsumedCapacity) value;
-                Double units = consumedCapacity.getCapacityUnits();
+                Double units = consumedCapacity.capacityUnits();
                 if (units == null) {
                     return Collections.emptyList();
                 }
-                String tableName = consumedCapacity.getTableName();
+                String tableName = consumedCapacity.tableName();
                 List<Dimension> dims = new ArrayList<Dimension>();
                 dims.add(new Dimension()
-                                 .withName(Dimensions.MetricType.name())
-                                 .withValue(metricType.name()));
+                                 .name(Dimensions.MetricType.name())
+                                 .value(metricType.name()));
                 // request type specific
                 dims.add(new Dimension()
-                                 .withName(Dimensions.RequestType.name())
-                                 .withValue(requestType(req)));
+                                 .name(Dimensions.RequestType.name())
+                                 .value(requestType(req)));
                 // table specific
                 dims.add(new Dimension()
-                                 .withName(DynamoDBDimensions.TableName.name())
-                                 .withValue(tableName));
+                                 .name(DynamoDBDimensions.TableName.name())
+                                 .value(tableName));
                 MetricDatum datum = new MetricDatum()
-                        .withMetricName(req.getServiceName())
-                        .withDimensions(dims)
-                        .withUnit(StandardUnit.Count)
-                        .withValue(units);
+                        .metricName(req.getServiceName())
+                        .dimensions(dims)
+                        .unit(StandardUnit.Count)
+                        .value(units);
                 return Collections.singletonList(datum);
             default:
                 return Collections.emptyList();

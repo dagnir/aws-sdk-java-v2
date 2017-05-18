@@ -149,13 +149,13 @@ public class PredefinedMetricTransformer {
             return Collections.emptyList();
         } else {
             return Collections.singletonList(new MetricDatum()
-                                                     .withMetricName(req.getServiceName())
-                                                     .withDimensions(new Dimension()
-                                                                             .withName(Dimensions.MetricType.name())
-                                                                             .withValue(metricType.name()))
-                                                     .withUnit(StandardUnit.Count)
-                                                     .withValue(Double.valueOf(count))
-                                                     .withTimestamp(endTimestamp(ti)))
+                                                     .metricName(req.getServiceName())
+                                                     .dimensions(new Dimension()
+                                                                             .name(Dimensions.MetricType.name())
+                                                                             .value(metricType.name()))
+                                                     .unit(StandardUnit.Count)
+                                                     .value(Double.valueOf(count))
+                                                     .timestamp(endTimestamp(ti)))
                     ;
         }
     }
@@ -173,13 +173,13 @@ public class PredefinedMetricTransformer {
             return Collections.emptyList();
         } else {
             return Collections.singletonList(new MetricDatum()
-                                                     .withMetricName(req.getServiceName())
-                                                     .withDimensions(new Dimension()
-                                                                             .withName(Dimensions.MetricType.name())
-                                                                             .withValue(metricType.name()))
-                                                     .withUnit(StandardUnit.Count)
-                                                     .withValue(Double.valueOf(count))
-                                                     .withTimestamp(endTimestamp(ti)))
+                                                     .metricName(req.getServiceName())
+                                                     .dimensions(new Dimension()
+                                                                             .name(Dimensions.MetricType.name())
+                                                                             .value(metricType.name()))
+                                                     .unit(StandardUnit.Count)
+                                                     .value(Double.valueOf(count))
+                                                     .timestamp(endTimestamp(ti)))
                     ;
         }
     }
@@ -207,21 +207,21 @@ public class PredefinedMetricTransformer {
                 if (sub.isEndTimeKnown()) { // being defensive
                     List<Dimension> dims = new ArrayList<Dimension>();
                     dims.add(new Dimension()
-                                     .withName(Dimensions.MetricType.name())
-                                     .withValue(metricName));
+                                     .name(Dimensions.MetricType.name())
+                                     .value(metricName));
                     // Either a non request type specific datum is created per
                     // sub-measurement, or a request type specific one is
                     // created but not both
                     if (includesRequestType) {
                         dims.add(new Dimension()
-                                         .withName(Dimensions.RequestType.name())
-                                         .withValue(requestType(req)));
+                                         .name(Dimensions.RequestType.name())
+                                         .value(requestType(req)));
                     }
                     MetricDatum datum = new MetricDatum()
-                            .withMetricName(req.getServiceName())
-                            .withDimensions(dims)
-                            .withUnit(StandardUnit.Milliseconds)
-                            .withValue(sub.getTimeTakenMillisIfKnown());
+                            .metricName(req.getServiceName())
+                            .dimensions(dims)
+                            .unit(StandardUnit.Milliseconds)
+                            .value(sub.getTimeTakenMillisIfKnown());
                     result.add(datum);
                 }
             }
@@ -243,17 +243,17 @@ public class PredefinedMetricTransformer {
         if (root.isEndTimeKnown()) { // being defensive
             List<Dimension> dims = new ArrayList<Dimension>();
             dims.add(new Dimension()
-                             .withName(Dimensions.MetricType.name())
-                             .withValue(metricName));
+                             .name(Dimensions.MetricType.name())
+                             .value(metricName));
             // request type specific
             dims.add(new Dimension()
-                             .withName(Dimensions.RequestType.name())
-                             .withValue(requestType(req)));
+                             .name(Dimensions.RequestType.name())
+                             .value(requestType(req)));
             MetricDatum datum = new MetricDatum()
-                    .withMetricName(req.getServiceName())
-                    .withDimensions(dims)
-                    .withUnit(StandardUnit.Milliseconds)
-                    .withValue(root.getTimeTakenMillisIfKnown());
+                    .metricName(req.getServiceName())
+                    .dimensions(dims)
+                    .unit(StandardUnit.Milliseconds)
+                    .value(root.getTimeTakenMillisIfKnown());
             return Collections.singletonList(datum);
         }
         return Collections.emptyList();
@@ -290,21 +290,21 @@ public class PredefinedMetricTransformer {
         }
         final List<MetricDatum> result = new ArrayList<MetricDatum>();
         final Dimension metricDimension = new Dimension()
-                .withName(Dimensions.MetricType.name())
-                .withValue(metricName);
+                .name(Dimensions.MetricType.name())
+                .value(metricName);
         // non-request type specific metric datum
         final MetricDatum first = new MetricDatum()
-                .withMetricName(req.getServiceName())
-                .withDimensions(metricDimension)
-                .withUnit(StandardUnit.Count)
-                .withValue(Double.valueOf(count))
-                .withTimestamp(endTimestamp(ti));
+                .metricName(req.getServiceName())
+                .dimensions(metricDimension)
+                .unit(StandardUnit.Count)
+                .value(Double.valueOf(count))
+                .timestamp(endTimestamp(ti));
         result.add(first);
         if (includesRequestType) {
             // additional request type specific metric datum
             Dimension requestDimension = new Dimension()
-                    .withName(Dimensions.RequestType.name())
-                    .withValue(requestType(req));
+                    .name(Dimensions.RequestType.name())
+                    .value(requestType(req));
             final MetricDatum second =
                     newMetricDatum(first, metricDimension, requestDimension);
             result.add(second);

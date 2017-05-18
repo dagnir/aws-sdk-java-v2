@@ -129,8 +129,8 @@ public class PredefinedMetricTransformerTest {
         // Check the first dimension
         int diff = DimensionComparator.INSTANCE.compare(
             new Dimension()
-                .withName(Dimensions.MetricType.name())
-                .withValue(Field.Exception.name()),
+                .name(Dimensions.MetricType.name())
+                .value(Field.Exception.name()),
         firstDatum.getDimensions().get(0));
         assertTrue(diff == 0);
         // Check the second request specific datum
@@ -138,15 +138,15 @@ public class PredefinedMetricTransformerTest {
         // Check the 1st dimension
         diff = DimensionComparator.INSTANCE.compare(
                 new Dimension()
-                    .withName(Dimensions.MetricType.name())
-                    .withValue(Field.Exception.name()),
+                    .name(Dimensions.MetricType.name())
+                    .value(Field.Exception.name()),
                     secondDatum.getDimensions().get(0));
         assertTrue(diff == 0);
         // Check the 2nd dimension
         diff = DimensionComparator.INSTANCE.compare(
                 new Dimension()
-                    .withName(Dimensions.RequestType.name())
-                    .withValue(mockRequest.getOriginalRequest().getClass().getSimpleName()),
+                    .name(Dimensions.RequestType.name())
+                    .value(mockRequest.getOriginalRequest().getClass().getSimpleName()),
                     secondDatum.getDimensions().get(1));
         assertTrue(diff == 0);
         assertEquals(firstDatum.getMetricName(), secondDatum.getMetricName());

@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.dynamodb.model.Select;
 /**
  * API for fully specifying all the parameters of a Table-centric Scan API.
  */
-public class ScanSpec extends AbstractCollectionspec<ScanRequest> {
+public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
     private Collection<ScanFilter> scanFilters;
     private Map<String, String> nameMap;
     private Map<String, Object> valueMap;
@@ -103,7 +103,7 @@ public class ScanSpec extends AbstractCollectionspec<ScanRequest> {
      */
     public ScanSpec withAttributesToGet(String... attributes) {
         if (attributes == null) {
-            setRequest(getRequest().toBuilder().attributesToGet((String [])null).build_());
+            setRequest(getRequest().toBuilder().attributesToGet((String []) null).build_());
         } else {
             setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attributes)).build_());
         }

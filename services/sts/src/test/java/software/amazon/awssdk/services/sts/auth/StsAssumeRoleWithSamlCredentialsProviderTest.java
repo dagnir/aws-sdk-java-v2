@@ -34,7 +34,7 @@ public class StsAssumeRoleWithSamlCredentialsProviderTest
 
     @Override
     protected AssumeRoleWithSAMLResult getResponse(Credentials credentials) {
-        return new AssumeRoleWithSAMLResult().withCredentials(credentials);
+        return new AssumeRoleWithSAMLResult().credentials(credentials);
     }
 
     @Override

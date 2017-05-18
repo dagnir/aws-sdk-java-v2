@@ -116,14 +116,14 @@ class BlockingRequestBuilder {
         MetricDatum statDatum = uniqueMetrics.get(key);
         if (statDatum == null) {
             statDatum = new MetricDatum()
-                    .withDimensions(datum.getDimensions())
-                    .withMetricName(metricName)
-                    .withUnit(datum.getUnit())
-                    .withStatisticValues(new StatisticSet()
-                                                 .withMaximum(value)
-                                                 .withMinimum(value)
-                                                 .withSampleCount(0.0)
-                                                 .withSum(0.0))
+                    .dimensions(datum.getDimensions())
+                    .metricName(metricName)
+                    .unit(datum.getUnit())
+                    .statisticValues(new StatisticSet()
+                                                 .maximum(value)
+                                                 .minimum(value)
+                                                 .sampleCount(0.0)
+                                                 .sum(0.0))
             ;
             uniqueMetrics.put(key, statDatum);
         }
@@ -243,15 +243,15 @@ class BlockingRequestBuilder {
             for (MetricDatum md : data) {
                 MetricDatum newMd = cloneMetricDatum(md);
                 for (Dimension dim : extraDims) {
-                    newMd.withDimensions(dim);  // add the extra dimensions to the new metric datum
+                    newMd.dimensions(dim);  // add the extra dimensions to the new metric datum
                 }
                 newData.add(newMd);
             }
             data = newData;
         }
         return new PutMetricDataRequest()
-                .withNamespace(namespace)
-                .withMetricData(data)
+                .namespace(namespace)
+                .metricData(data)
                 .withRequestMetricCollector(RequestMetricCollector.NONE)
                 ;
     }
@@ -262,15 +262,15 @@ class BlockingRequestBuilder {
      */
     final MetricDatum cloneMetricDatum(MetricDatum md) {
         return new MetricDatum()
-                .withDimensions(md.getDimensions()) // a new collection is created
-                .withMetricName(md.getMetricName())
-                .withStatisticValues(md.getStatisticValues())
-                .withTimestamp(md.getTimestamp())
-                .withUnit(md.getUnit())
-                .withValue(md.getValue());
+                .dimensions(md.getDimensions()) // a new collection is created
+                .metricName(md.getMetricName())
+                .statisticValues(md.getStatisticValues())
+                .timestamp(md.getTimestamp())
+                .unit(md.getUnit())
+                .value(md.getValue());
     }
 
     private Dimension dimension(Dimensions name, String value) {
-        return new Dimension().withName(name.toString()).withValue(value);
+        return new Dimension().name(name.toString()).value(value);
     }
 }

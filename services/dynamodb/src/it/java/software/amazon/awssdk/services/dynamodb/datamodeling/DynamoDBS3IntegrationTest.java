@@ -35,19 +35,19 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
     @Test
     public void testCredentialContext() throws Exception {
-        tryCreateItem(new DynamoDBMapper(dynamo, new StaticCredentialsProvider(credentials)));
+        tryCreateItem(new DynamoDbMapper(dynamo, new StaticCredentialsProvider(credentials)));
     }
 
     @Test
     public void testManuallyFilledContext() throws Exception {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new StaticCredentialsProvider(credentials));
-        S3ClientCache s3cc = mapper.getS3ClientCache();
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new StaticCredentialsProvider(credentials));
+        S3ClientCache s3cc = mapper.s3ClientCache();
         s3cc.useClient(s3East);
         s3cc.useClient(s3West);
         tryCreateItem(mapper);
     }
 
-    public void tryCreateItem(DynamoDBMapper mapper) throws Exception {
+    public void tryCreateItem(DynamoDbMapper mapper) throws Exception {
         String westKey = UUID.randomUUID().toString();
         String eastKey = UUID.randomUUID().toString();
 

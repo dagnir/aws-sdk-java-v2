@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.dynamodb.datamodeling;
 
 import java.util.List;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResult;
 
@@ -41,19 +41,19 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
     /** The current query request. */
     private QueryRequest queryRequest;
 
-    private final DynamoDBMapperConfig config;
+    private final DynamoDbMapperConfig config;
 
     /** The current results for the last executed query operation. */
     private QueryResult queryResult;
 
     public PaginatedQueryList(
-            DynamoDBMapper mapper,
+            DynamoDbMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             QueryRequest queryRequest,
             QueryResult queryResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDBMapperConfig config) {
+            DynamoDbMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.queryRequest = queryRequest;
@@ -82,7 +82,7 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
     @Override
     protected synchronized List<T> fetchNextPage() {
         queryRequest = queryRequest.toBuilder().exclusiveStartKey(queryResult.lastEvaluatedKey()).build_();
-        queryResult = dynamo.query(DynamoDBMapper.applyUserAgent(queryRequest));
+        queryResult = dynamo.query(DynamoDbMapper.applyUserAgent(queryRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
                 queryResult.items(),
                 clazz,

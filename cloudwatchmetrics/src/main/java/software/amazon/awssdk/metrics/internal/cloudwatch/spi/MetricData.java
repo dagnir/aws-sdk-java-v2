@@ -30,12 +30,12 @@ public enum MetricData {
      */
     public static MetricDatum newMetricDatum(MetricDatum from, Dimension... dimensions) {
         return new MetricDatum()
-                .withMetricName(from.getMetricName())
-                .withDimensions(dimensions)
-                .withUnit(from.getUnit())
-                .withValue(from.getValue())
-                .withStatisticValues(from.getStatisticValues())
-                .withTimestamp(from.getTimestamp())
+                .metricName(from.getMetricName())
+                .dimensions(dimensions)
+                .unit(from.getUnit())
+                .value(from.getValue())
+                .statisticValues(from.getStatisticValues())
+                .timestamp(from.getTimestamp())
                 ;
     }
 }

@@ -26,9 +26,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.ReflectHelper;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.TableNameOverride;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.ConsistentReads;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.TableNameOverride;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
@@ -43,16 +42,16 @@ public class JsonIntegrationTest extends AwsTestBase {
                                              + UUID.randomUUID().toString();
 
     private static DynamoDBClient client;
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
 
     @BeforeClass
     public static void setup() throws Exception {
         setUpCredentials();
         client = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        mapper = new DynamoDBMapper(
+        mapper = new DynamoDbMapper(
                 client,
-                new DynamoDBMapperConfig.Builder()
+                new DynamoDbMapperConfig.Builder()
                         .withConversionSchema(ConversionSchemas.V2)
                         .withTableNameOverride(TableNameOverride
                                                        .withTableNameReplacement(TABLE_NAME))
@@ -144,14 +143,14 @@ public class JsonIntegrationTest extends AwsTestBase {
         Assert.assertEquals(test, result);
     }
 
-    @DynamoDBTable(tableName = "")
+    @DynamoDbTable(tableName = "")
     public static class TestClass {
 
         private String id;
         private List<Map<String, ChildClass>> listOfMaps;
         private Map<String, List<ChildClass>> mapOfLists;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getId() {
             return id;
         }
@@ -192,7 +191,7 @@ public class JsonIntegrationTest extends AwsTestBase {
         }
     }
 
-    @DynamoDBDocument
+    @DynamoDbDocument
     public static class ChildClass {
 
         private boolean bool;

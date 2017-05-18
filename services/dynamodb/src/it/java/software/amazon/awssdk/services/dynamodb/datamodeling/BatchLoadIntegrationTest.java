@@ -43,8 +43,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.SaveBehavior;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.ConsistentReads;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodb.mapper.NumberSetAttributeClass;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
@@ -59,7 +59,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     private static int start = 1;
     private static int byteStart = 1;
     private static int startKeyDebug = 1;
-    DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new DynamoDBMapperConfig(SaveBehavior.UPDATE,
+    DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new DynamoDbMapperConfig(SaveBehavior.UPDATE,
                                                                                 ConsistentReads.CONSISTENT, null));
 
     @BeforeClass
@@ -182,8 +182,8 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
             throws NoSuchFieldException, SecurityException,
                    IllegalArgumentException, IllegalAccessException {
         long startTime = System.currentTimeMillis();
-        long maxBackOffTimePerRetry = DynamoDBMapper.MAX_BACKOFF_IN_MILLISECONDS;
-        int NoOfRetries = DynamoDBMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
+        long maxBackOffTimePerRetry = DynamoDbMapper.MAX_BACKOFF_IN_MILLISECONDS;
+        int NoOfRetries = DynamoDbMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
 
         List<Object> objs = new ArrayList<Object>();
         NumberSetAttributeClass obj = getUniqueNumericObject();
@@ -200,7 +200,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
                 return result;
             }
         });
-        DynamoDBMapper mapper = new DynamoDBMapper(mockClient);
+        DynamoDbMapper mapper = new DynamoDbMapper(mockClient);
         try {
             mapper.batchLoad(objs);
             fail("Expecting an expection due to exceed of number of retries.");

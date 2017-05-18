@@ -15,15 +15,15 @@
 
 package software.amazon.awssdk.services.dynamodb.mapper;
 
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
 
-@DynamoDBTable(tableName = "tableNotExist")
+@DynamoDbTable(tableName = "tableNotExist")
 public class NoSuchTableClass {
 
     private String key;
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public String getKey() {
         return key;
     }

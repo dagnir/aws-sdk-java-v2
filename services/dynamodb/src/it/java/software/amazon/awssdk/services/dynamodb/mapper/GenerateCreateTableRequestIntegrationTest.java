@@ -28,7 +28,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.ReflectHelper;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
@@ -52,13 +52,13 @@ import utils.test.util.DynamoDBTestBase;
 public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase {
 
     private static final ProvisionedThroughput DEFAULT_CAPACITY = ProvisionedThroughput.builder_().readCapacityUnits(5L).writeCapacityUnits(5L).build_();
-    private static DynamoDBMapper mapper;
+    private static DynamoDbMapper mapper;
     private static Set<String> testedTableName = new HashSet<String>();
 
     @BeforeClass
     public static void setUp() throws Exception {
         DynamoDBTestBase.setUpTestBase();
-        mapper = new DynamoDBMapper(dynamo);
+        mapper = new DynamoDbMapper(dynamo);
     }
 
     @AfterClass
