@@ -107,9 +107,9 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
         final KeyAttribute hashKey = spec.getHashKey();
         if (hashKey != null) {
             conditions.put(hashKey.name(),
-                    Condition.builder_()
+                    Condition.builder()
                             .comparisonOperator(ComparisonOperator.EQ)
-                            .attributeValueList(InternalUtils.toAttributeValue(hashKey.value())).build_());
+                            .attributeValueList(InternalUtils.toAttributeValue(hashKey.value())).build());
         }
         // range key condition
         RangeKeyCondition rangeKeyCond = spec.getRangeKeyCondition();
@@ -123,9 +123,9 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
                 throw new IllegalArgumentException("key condition values not specified in range key condition");
             }
             conditions.put(rangeKeyCond.getAttrName(),
-                    Condition.builder_()
+                    Condition.builder()
                             .comparisonOperator(keyCond.toComparisonOperator())
-                            .attributeValueList(InternalUtils.toAttributeValues(values)).build_());
+                            .attributeValueList(InternalUtils.toAttributeValues(values)).build());
         }
 
         requestBuilder.keyConditions(conditions);
@@ -148,7 +148,7 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
         requestBuilder.expressionAttributeNames(spec.nameMap())
                .expressionAttributeValues(attrValMap);
 
-        spec.setRequest(requestBuilder.build_());
+        spec.setRequest(requestBuilder.build());
         return new QueryCollection(getClient(), spec);
     }
 

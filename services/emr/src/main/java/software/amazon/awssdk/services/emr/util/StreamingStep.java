@@ -257,10 +257,10 @@ public class StreamingStep {
             args.add(reducer);
         }
 
-        return HadoopJarStepConfig.builder_()
+        return HadoopJarStepConfig.builder()
                 .jar("/home/hadoop/contrib/streaming/hadoop-streaming.jar")
                 .args(args)
-                .build_();
+                .build();
     }
 }
 

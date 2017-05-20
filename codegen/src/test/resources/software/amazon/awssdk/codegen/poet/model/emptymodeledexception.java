@@ -1,15 +1,22 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-public class EmptyModeledException extends JsonProtocolTestsException {
+import javax.annotation.Generated;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
+
+@Generated("software.amazon.awssdk:codegen")
+public class EmptyModeledException extends JsonProtocolTestsException implements
+        ToCopyableBuilder<EmptyModeledException.Builder, EmptyModeledException> {
     private EmptyModeledException(BeanStyleBuilder builder) {
         super(builder.message);
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -17,10 +24,8 @@ public class EmptyModeledException extends JsonProtocolTestsException {
         return BeanStyleBuilder.class;
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, EmptyModeledException> {
         Builder message(String message);
-
-        EmptyModeledException build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -44,8 +49,9 @@ public class EmptyModeledException extends JsonProtocolTestsException {
         }
 
         @Override
-        public EmptyModeledException build_() {
+        public EmptyModeledException build() {
             return new EmptyModeledException(this);
         }
     }
 }
+

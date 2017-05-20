@@ -2,15 +2,18 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.RecursiveStructTypeMarshaller;
 
-public class RecursiveStructType implements Cloneable, StructuredPojo {
+@Generated("software.amazon.awssdk:codegen")
+public class RecursiveStructType implements ToCopyableBuilder<RecursiveStructType.Builder, RecursiveStructType>, StructuredPojo {
     private final String noRecurse;
 
     private final RecursiveStructType recursiveStruct;
@@ -58,11 +61,12 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
         return recursiveMap;
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -120,16 +124,6 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
     }
 
     @Override
-    public RecursiveStructType clone() {
-        try {
-            return (RecursiveStructType) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -155,7 +149,7 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
         RecursiveStructTypeMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, RecursiveStructType> {
         /**
          *
          * @param noRecurse
@@ -190,8 +184,6 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder recursiveMap(Map<String, RecursiveStructType> recursiveMap);
-
-        RecursiveStructType build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -207,15 +199,15 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
         }
 
         private BeanStyleBuilder(RecursiveStructType model) {
-            this.noRecurse = model.noRecurse;
-            this.recursiveStruct = model.recursiveStruct;
-            this.recursiveList = model.recursiveList;
-            this.recursiveMap = model.recursiveMap;
+            setNoRecurse(model.noRecurse);
+            setRecursiveStruct(model.recursiveStruct);
+            setRecursiveList(model.recursiveList);
+            setRecursiveMap(model.recursiveMap);
         }
 
         @Override
         public Builder noRecurse(String noRecurse) {
-            this.noRecurse = noRecurse;
+            this.noRecurse = StringCopier.copyString(noRecurse);
             return this;
         }
 
@@ -224,12 +216,12 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          * @param noRecurse
          */
         public void setNoRecurse(String noRecurse) {
-            this.noRecurse = noRecurse;
+            this.noRecurse = StringCopier.copyString(noRecurse);
         }
 
         @Override
         public Builder recursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = recursiveStruct;
+            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
             return this;
         }
 
@@ -238,26 +230,22 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          * @param recursiveStruct
          */
         public void setRecursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = recursiveStruct;
+            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
         }
 
         @Override
-        public Builder recursiveList(Collection recursiveList) {
-            if (recursiveList == null) {
-                this.recursiveList = null;
-            } else {
-                this.recursiveList = new ArrayList<RecursiveStructType>(recursiveList);
-            }
+        public Builder recursiveList(Collection<RecursiveStructType> recursiveList) {
+            this.recursiveList = RecursiveListTypeCopier.copyRecursiveListType(recursiveList);
             return this;
         }
 
         @Override
         public Builder recursiveList(RecursiveStructType... recursiveList) {
             if (this.recursiveList == null) {
-                this.recursiveList = new ArrayList<RecursiveStructType>(recursiveList.length);
+                this.recursiveList = new ArrayList<>(recursiveList.length);
             }
-            for (RecursiveStructType ele : recursiveList) {
-                this.recursiveList.add(ele);
+            for (RecursiveStructType e : recursiveList) {
+                this.recursiveList.add(RecursiveStructTypeCopier.copyRecursiveStructType(e));
             }
             return this;
         }
@@ -266,12 +254,8 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          *
          * @param recursiveList
          */
-        public void setRecursiveList(Collection recursiveList) {
-            if (recursiveList == null) {
-                this.recursiveList = null;
-            } else {
-                this.recursiveList = new ArrayList<RecursiveStructType>(recursiveList);
-            }
+        public void setRecursiveList(Collection<RecursiveStructType> recursiveList) {
+            this.recursiveList = RecursiveListTypeCopier.copyRecursiveListType(recursiveList);
         }
 
         /**
@@ -280,20 +264,16 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          */
         public void setRecursiveList(RecursiveStructType... recursiveList) {
             if (this.recursiveList == null) {
-                this.recursiveList = new ArrayList<RecursiveStructType>(recursiveList.length);
+                this.recursiveList = new ArrayList<>(recursiveList.length);
             }
-            for (RecursiveStructType ele : recursiveList) {
-                this.recursiveList.add(ele);
+            for (RecursiveStructType e : recursiveList) {
+                this.recursiveList.add(RecursiveStructTypeCopier.copyRecursiveStructType(e));
             }
         }
 
         @Override
         public Builder recursiveMap(Map<String, RecursiveStructType> recursiveMap) {
-            if (recursiveMap == null) {
-                this.recursiveMap = null;
-            } else {
-                this.recursiveMap = new HashMap<String, RecursiveStructType>(recursiveMap);
-            }
+            this.recursiveMap = RecursiveMapTypeCopier.copyRecursiveMapType(recursiveMap);
             return this;
         }
 
@@ -302,16 +282,13 @@ public class RecursiveStructType implements Cloneable, StructuredPojo {
          * @param recursiveMap
          */
         public void setRecursiveMap(Map<String, RecursiveStructType> recursiveMap) {
-            if (recursiveMap == null) {
-                this.recursiveMap = null;
-            } else {
-                this.recursiveMap = new HashMap<String, RecursiveStructType>(recursiveMap);
-            }
+            this.recursiveMap = RecursiveMapTypeCopier.copyRecursiveMapType(recursiveMap);
         }
 
         @Override
-        public RecursiveStructType build_() {
+        public RecursiveStructType build() {
             return new RecursiveStructType(this);
         }
     }
 }
+

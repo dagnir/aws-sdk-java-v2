@@ -33,6 +33,6 @@ public class StreamsIntegrationTest extends AwsTestBase {
 
     @Test
     public void testDefaultEndpoint() {
-        streams.listStreams(ListStreamsRequest.builder_().tableName("foo").build_());
+        streams.listStreams(ListStreamsRequest.builder().tableName("foo").build());
     }
 }

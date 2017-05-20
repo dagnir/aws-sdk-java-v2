@@ -42,7 +42,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     private Map<String, Object> valueMap;
 
     public PutItemSpec() {
-        super(PutItemRequest.builder_().build_());
+        super(PutItemRequest.builder().build());
     }
 
     public Item getItem() {
@@ -88,7 +88,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     }
 
     public PutItemSpec withConditionExpression(String conditionExpression) {
-        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build_());
+        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build());
         return this;
     }
 
@@ -136,7 +136,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
 
     public PutItemSpec withConditionalOperator(
             ConditionalOperator conditionalOperator) {
-        setRequest(getRequest().toBuilder().conditionalOperator(conditionalOperator).build_());
+        setRequest(getRequest().toBuilder().conditionalOperator(conditionalOperator).build());
         return this;
     }
 
@@ -146,7 +146,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
 
     public PutItemSpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
@@ -158,7 +158,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
             ReturnItemCollectionMetrics returnItemCollectionMetrics) {
         setRequest(getRequest().toBuilder()
                 .returnItemCollectionMetrics(returnItemCollectionMetrics)
-                .build_());
+                .build());
         return this;
     }
 
@@ -167,7 +167,7 @@ public class PutItemSpec extends AbstractSpec<PutItemRequest> {
     }
 
     public PutItemSpec withReturnValues(ReturnValue returnValues) {
-        setRequest(getRequest().toBuilder().returnValues(returnValues).build_());
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build());
         return this;
     }
 

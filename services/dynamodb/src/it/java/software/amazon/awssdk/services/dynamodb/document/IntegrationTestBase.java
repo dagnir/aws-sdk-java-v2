@@ -58,9 +58,9 @@ public class IntegrationTestBase {
     protected static final String GSI_RANGE_KEY_NAME = "gsiRangekeyAttr";
     // attribute names for the LSI keys (Note an LSI must share the same hash key as the table.)
     protected static final String LSI_RANGE_KEY_NAME = "lsiRangekeyAttr";
-    private static final ProvisionedThroughput THRUPUT = ProvisionedThroughput.builder_()
-            .readCapacityUnits(1L).writeCapacityUnits(2L).build_();
-    private static final Projection PROJECTION = Projection.builder_().projectionType(ProjectionType.ALL).build_();
+    private static final ProvisionedThroughput THRUPUT = ProvisionedThroughput.builder()
+            .readCapacityUnits(1L).writeCapacityUnits(2L).build();
+    private static final Projection PROJECTION = Projection.builder().projectionType(ProjectionType.ALL).build();
     protected static DynamoDb dynamo;
     protected static DynamoDb dynamoOld;
 
@@ -89,49 +89,49 @@ public class IntegrationTestBase {
             TableDescription desc = table.waitForActiveOrDelete();
             if (desc == null) {
                 // table doesn't exist; let's create it
-                ddb.createTable(CreateTableRequest.builder_()
+                ddb.createTable(CreateTableRequest.builder()
                         .tableName(HASH_ONLY_TABLE_NAME)
                         .attributeDefinitions(
-                                AttributeDefinition.builder_()
+                                AttributeDefinition.builder()
                                         .attributeName(HASH_KEY_NAME)
                                         .attributeType(ScalarAttributeType.S)
-                                        .build_(),
-                                AttributeDefinition.builder_()
+                                        .build(),
+                                AttributeDefinition.builder()
                                         .attributeName(GSI_HASH_KEY_NAME)
                                         .attributeType(ScalarAttributeType.S)
-                                        .build_(),
-                                AttributeDefinition.builder_()
+                                        .build(),
+                                AttributeDefinition.builder()
                                         .attributeName(GSI_RANGE_KEY_NAME)
                                         .attributeType(ScalarAttributeType.N)
-                                        .build_())
-                        .keySchema(KeySchemaElement.builder_()
+                                        .build())
+                        .keySchema(KeySchemaElement.builder()
                                 .attributeName(HASH_KEY_NAME)
                                 .keyType(KeyType.HASH)
-                                .build_())
+                                .build())
                         .globalSecondaryIndexes(
-                                GlobalSecondaryIndex.builder_()
+                                GlobalSecondaryIndex.builder()
                                         .indexName(HASH_ONLY_GSI_NAME)
-                                        .keySchema(KeySchemaElement.builder_()
+                                        .keySchema(KeySchemaElement.builder()
                                                 .attributeName(GSI_HASH_KEY_NAME)
                                                 .keyType(KeyType.HASH)
-                                                .build_())
+                                                .build())
                                         .projection(PROJECTION)
-                                        .provisionedThroughput(THRUPUT).build_(),
-                                GlobalSecondaryIndex.builder_()
+                                        .provisionedThroughput(THRUPUT).build(),
+                                GlobalSecondaryIndex.builder()
                                         .indexName(RANGE_GSI_NAME)
-                                        .keySchema(KeySchemaElement.builder_()
+                                        .keySchema(KeySchemaElement.builder()
                                                         .attributeName(GSI_HASH_KEY_NAME)
                                                         .keyType(KeyType.HASH)
-                                                        .build_(),
-                                                KeySchemaElement.builder_()
+                                                        .build(),
+                                                KeySchemaElement.builder()
                                                         .attributeName(GSI_RANGE_KEY_NAME)
                                                         .keyType(KeyType.RANGE)
-                                                        .build_())
+                                                        .build())
                                         .projection(PROJECTION)
                                         .provisionedThroughput(THRUPUT)
-                                        .build_())
+                                        .build())
                         .provisionedThroughput(THRUPUT)
-                        .build_());
+                        .build());
                 // waits until table becomes active
                 table.waitForActive();
             }
@@ -148,42 +148,42 @@ public class IntegrationTestBase {
             TableDescription desc = table.waitForActiveOrDelete();
             if (desc == null) {
                 // table doesn't exist; let's create it
-                CreateTableRequest req = CreateTableRequest.builder_()
+                CreateTableRequest req = CreateTableRequest.builder()
                         .tableName(RANGE_TABLE_NAME)
                         .attributeDefinitions(
-                                AttributeDefinition.builder_().attributeName(HASH_KEY_NAME).attributeType(ScalarAttributeType.S).build_(),
-                                AttributeDefinition.builder_().attributeName(RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build_(),
-                                AttributeDefinition.builder_().attributeName(LSI_RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build_(),
-                                AttributeDefinition.builder_().attributeName(GSI_HASH_KEY_NAME).attributeType(ScalarAttributeType.S).build_(),
-                                AttributeDefinition.builder_().attributeName(GSI_RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build_()
+                                AttributeDefinition.builder().attributeName(HASH_KEY_NAME).attributeType(ScalarAttributeType.S).build(),
+                                AttributeDefinition.builder().attributeName(RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build(),
+                                AttributeDefinition.builder().attributeName(LSI_RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build(),
+                                AttributeDefinition.builder().attributeName(GSI_HASH_KEY_NAME).attributeType(ScalarAttributeType.S).build(),
+                                AttributeDefinition.builder().attributeName(GSI_RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build()
                         )
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName(HASH_KEY_NAME).keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName(RANGE_KEY_NAME).keyType(KeyType.RANGE).build_())
+                                KeySchemaElement.builder().attributeName(HASH_KEY_NAME).keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName(RANGE_KEY_NAME).keyType(KeyType.RANGE).build())
                         .provisionedThroughput(THRUPUT)
                         .globalSecondaryIndexes(
-                                GlobalSecondaryIndex.builder_()
+                                GlobalSecondaryIndex.builder()
                                         .indexName(HASH_ONLY_GSI_NAME)
-                                        .keySchema(KeySchemaElement.builder_().attributeName(GSI_HASH_KEY_NAME).keyType(KeyType.HASH).build_())
+                                        .keySchema(KeySchemaElement.builder().attributeName(GSI_HASH_KEY_NAME).keyType(KeyType.HASH).build())
                                         .projection(PROJECTION)
                                         .provisionedThroughput(THRUPUT)
-                                        .build_(),
-                                GlobalSecondaryIndex.builder_()
+                                        .build(),
+                                GlobalSecondaryIndex.builder()
                                         .indexName(RANGE_GSI_NAME)
                                         .keySchema(
-                                                KeySchemaElement.builder_().attributeName(GSI_HASH_KEY_NAME).keyType(KeyType.HASH).build_(),
-                                                KeySchemaElement.builder_().attributeName(GSI_RANGE_KEY_NAME).keyType(KeyType.RANGE).build_())
+                                                KeySchemaElement.builder().attributeName(GSI_HASH_KEY_NAME).keyType(KeyType.HASH).build(),
+                                                KeySchemaElement.builder().attributeName(GSI_RANGE_KEY_NAME).keyType(KeyType.RANGE).build())
                                         .projection(PROJECTION)
                                         .provisionedThroughput(THRUPUT)
-                                        .build_())
+                                        .build())
                         .localSecondaryIndexes(
-                                LocalSecondaryIndex.builder_()
+                                LocalSecondaryIndex.builder()
                                         .indexName(LSI_NAME)
                                         .keySchema(
-                                                KeySchemaElement.builder_().attributeName(HASH_KEY_NAME).keyType(KeyType.HASH).build_(),
-                                                KeySchemaElement.builder_().attributeName(LSI_RANGE_KEY_NAME).keyType(KeyType.RANGE).build_())
-                                        .projection(PROJECTION).build_()
-                                                  ).build_();
+                                                KeySchemaElement.builder().attributeName(HASH_KEY_NAME).keyType(KeyType.HASH).build(),
+                                                KeySchemaElement.builder().attributeName(LSI_RANGE_KEY_NAME).keyType(KeyType.RANGE).build())
+                                        .projection(PROJECTION).build()
+                                                  ).build();
                 ddb.createTable(req);
                 // waits until table becomes active
                 table.waitForActive();

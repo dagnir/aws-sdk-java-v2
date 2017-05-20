@@ -1,11 +1,15 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
+import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.SubTypeOneMarshaller;
 
-public class SubTypeOne implements Cloneable, StructuredPojo {
+@Generated("software.amazon.awssdk:codegen")
+public class SubTypeOne implements ToCopyableBuilder<SubTypeOne.Builder, SubTypeOne>, StructuredPojo {
     private final String subTypeOneMember;
 
     private SubTypeOne(BeanStyleBuilder builder) {
@@ -20,11 +24,12 @@ public class SubTypeOne implements Cloneable, StructuredPojo {
         return subTypeOneMember;
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -61,16 +66,6 @@ public class SubTypeOne implements Cloneable, StructuredPojo {
     }
 
     @Override
-    public SubTypeOne clone() {
-        try {
-            return (SubTypeOne) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -87,15 +82,13 @@ public class SubTypeOne implements Cloneable, StructuredPojo {
         SubTypeOneMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, SubTypeOne> {
         /**
          *
          * @param subTypeOneMember
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder subTypeOneMember(String subTypeOneMember);
-
-        SubTypeOne build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -105,12 +98,12 @@ public class SubTypeOne implements Cloneable, StructuredPojo {
         }
 
         private BeanStyleBuilder(SubTypeOne model) {
-            this.subTypeOneMember = model.subTypeOneMember;
+            setSubTypeOneMember(model.subTypeOneMember);
         }
 
         @Override
         public Builder subTypeOneMember(String subTypeOneMember) {
-            this.subTypeOneMember = subTypeOneMember;
+            this.subTypeOneMember = StringCopier.copyString(subTypeOneMember);
             return this;
         }
 
@@ -119,12 +112,13 @@ public class SubTypeOne implements Cloneable, StructuredPojo {
          * @param subTypeOneMember
          */
         public void setSubTypeOneMember(String subTypeOneMember) {
-            this.subTypeOneMember = subTypeOneMember;
+            this.subTypeOneMember = StringCopier.copyString(subTypeOneMember);
         }
 
         @Override
-        public SubTypeOne build_() {
+        public SubTypeOne build() {
             return new SubTypeOne(this);
         }
     }
 }
+

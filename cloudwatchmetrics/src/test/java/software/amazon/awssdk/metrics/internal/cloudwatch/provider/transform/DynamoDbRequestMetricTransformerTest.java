@@ -25,9 +25,9 @@ public class DynamoDbRequestMetricTransformerTest {
     @Test
     public void noConsumedCapacity() {
         DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
-        PutItemRequest pi_req = PutItemRequest.builder_().build_();
+        PutItemRequest pi_req = PutItemRequest.builder().build();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
-        PutItemResult pi_res = PutItemResult.builder_().build_();
+        PutItemResult pi_res = PutItemResult.builder().build();
         Response<PutItemResult> res = new Response<PutItemResult>(pi_res, null);
         List<MetricDatum> list = t.toMetricData(DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, res);
         assertTrue(list.size() == 0);
@@ -36,14 +36,14 @@ public class DynamoDbRequestMetricTransformerTest {
     @Test
     public void consumedCapacity() {
         DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
-        PutItemRequest pi_req = PutItemRequest.builder_().build_();
+        PutItemRequest pi_req = PutItemRequest.builder().build();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
-        PutItemResult pi_res = PutItemResult.builder_()
-                .consumedCapacity(ConsumedCapacity.builder_()
+        PutItemResult pi_res = PutItemResult.builder()
+                .consumedCapacity(ConsumedCapacity.builder()
                         .capacityUnits(1.0)
                         .tableName("testTable")
-                        .build_())
-                .build_();
+                        .build())
+                .build();
         Response<PutItemResult> res = new Response<PutItemResult>(pi_res, null);
         List<MetricDatum> list = t.toMetricData(
                 DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, res);

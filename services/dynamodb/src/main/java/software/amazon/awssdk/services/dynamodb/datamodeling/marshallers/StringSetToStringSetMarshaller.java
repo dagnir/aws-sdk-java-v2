@@ -48,6 +48,6 @@ public class StringSetToStringSetMarshaller
             strings.add(s);
         }
 
-        return AttributeValue.builder_().ss(strings).build_();
+        return AttributeValue.builder().ss(strings).build();
     }
 }

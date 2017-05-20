@@ -73,7 +73,7 @@ public class DynamoDBTestBase extends AwsTestBase {
                 // Ignored or expected.
             }
             try {
-                DescribeTableRequest request = DescribeTableRequest.builder_().tableName(tableName).build_();
+                DescribeTableRequest request = DescribeTableRequest.builder().tableName(tableName).build();
                 TableDescription table = dynamo.describeTable(request).table();
 
                 String tableStatus = table.tableStatus();

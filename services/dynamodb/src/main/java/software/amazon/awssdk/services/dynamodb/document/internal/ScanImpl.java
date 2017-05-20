@@ -92,7 +92,7 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
         requestBuilder.expressionAttributeNames(spec.nameMap())
                .expressionAttributeValues(attrValMap);
 
-        spec.setRequest(requestBuilder.build_());
+        spec.setRequest(requestBuilder.build());
         return new ScanCollection(getClient(), spec);
     }
 }

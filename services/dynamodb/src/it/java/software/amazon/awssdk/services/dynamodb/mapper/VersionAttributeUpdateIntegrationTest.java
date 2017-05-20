@@ -112,9 +112,9 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
             try {
                 DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression();
                 Map<String, ExpectedAttributeValue> expected = new HashMap<String, ExpectedAttributeValue>();
-                ExpectedAttributeValue expectedVersion = ExpectedAttributeValue.builder_()
-                        .value(AttributeValue.builder_()
-                                           .n(obj.getVersion().add(BigInteger.valueOf(1)).toString()).build_()).build_();
+                ExpectedAttributeValue expectedVersion = ExpectedAttributeValue.builder()
+                        .value(AttributeValue.builder()
+                                           .n(obj.getVersion().add(BigInteger.valueOf(1)).toString()).build()).build();
                 expected.put("version", expectedVersion);
                 saveExpression.setExpected(expected);
                 util.save(obj, saveExpression);
@@ -189,9 +189,9 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
             try {
                 DynamoDbDeleteExpression deleteExpression = new DynamoDbDeleteExpression();
                 Map<String, ExpectedAttributeValue> expected = new HashMap<String, ExpectedAttributeValue>();
-                ExpectedAttributeValue expectedVersion = ExpectedAttributeValue.builder_()
-                        .value(AttributeValue.builder_()
-                                           .n("2").build_()).build_();  //version is still 2 in db
+                ExpectedAttributeValue expectedVersion = ExpectedAttributeValue.builder()
+                        .value(AttributeValue.builder()
+                                           .n("2").build()).build();  //version is still 2 in db
                 expected.put("version", expectedVersion);
                 deleteExpression.setExpected(expected);
                 util.delete(obj, deleteExpression);
@@ -216,7 +216,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         // for auto-generated keys.
         DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression()
                 .withExpected(Collections.singletonMap(
-                        "otherAttribute", ExpectedAttributeValue.builder_().exists(false).build_()))
+                        "otherAttribute", ExpectedAttributeValue.builder().exists(false).build()))
                 .withConditionalOperator(ConditionalOperator.AND);
         // The save should succeed since the user provided conditions are joined by AND.
         mapper.save(versionedObject, saveExpression);
@@ -228,7 +228,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         // delete should also work
         DynamoDbDeleteExpression deleteExpression = new DynamoDbDeleteExpression()
                 .withExpected(Collections.singletonMap(
-                        "otherAttribute", ExpectedAttributeValue.builder_().exists(false).build_()))
+                        "otherAttribute", ExpectedAttributeValue.builder().exists(false).build()))
                 .withConditionalOperator(ConditionalOperator.AND);
         mapper.delete(versionedObject, deleteExpression);
 
@@ -253,13 +253,13 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         // the generated conditions for the version field.
         Map<String, ExpectedAttributeValue> goodConditions =
                 ImmutableMapParameter.of(
-                        "otherAttribute", ExpectedAttributeValue.builder_().exists(false).build_(),
-                        "version", ExpectedAttributeValue.builder_().exists(false).build_()
+                        "otherAttribute", ExpectedAttributeValue.builder().exists(false).build(),
+                        "version", ExpectedAttributeValue.builder().exists(false).build()
                                         );
         Map<String, ExpectedAttributeValue> badConditions =
                 ImmutableMapParameter.of(
-                        "otherAttribute", ExpectedAttributeValue.builder_().value(AttributeValue.builder_().s("non-existent-value").build_()).build_(),
-                        "version", ExpectedAttributeValue.builder_().value(AttributeValue.builder_().n("-1").build_()).build_()
+                        "otherAttribute", ExpectedAttributeValue.builder().value(AttributeValue.builder().s("non-existent-value").build()).build(),
+                        "version", ExpectedAttributeValue.builder().value(AttributeValue.builder().n("-1").build()).build()
                                         );
 
         IntegerVersionField newObj = getUniqueObject(new IntegerVersionField());

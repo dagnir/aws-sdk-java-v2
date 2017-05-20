@@ -34,7 +34,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
     private Map<String, String> nameMap;
 
     public GetItemSpec() {
-        super(GetItemRequest.builder_().build_());
+        super(GetItemRequest.builder().build());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
     }
 
     public GetItemSpec withReturnConsumedCapacity(ReturnConsumedCapacity capacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build());
         return this;
     }
 
@@ -77,9 +77,9 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
 
     public GetItemSpec withAttributesToGet(String... attrNames) {
         if (attrNames == null) {
-            setRequest(getRequest().toBuilder().attributesToGet((String[]) null).build_());
+            setRequest(getRequest().toBuilder().attributesToGet((String[]) null).build());
         } else {
-            setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attrNames)).build_());
+            setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attrNames)).build());
         }
         return this;
     }
@@ -89,7 +89,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
     }
 
     public GetItemSpec withConsistentRead(boolean consistentRead) {
-        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build_());
+        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build());
         return this;
     }
 
@@ -104,7 +104,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
      * been specified.)
      */
     public GetItemSpec withProjectionExpression(String projectionExpression) {
-        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build_());
+        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build());
         return this;
     }
 

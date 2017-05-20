@@ -60,15 +60,15 @@ public class JsonIntegrationTest extends AwsTestBase {
 
         CreateTableRequest request = mapper
                 .generateCreateTableRequest(TestClass.class).toBuilder()
-                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(1L).writeCapacityUnits(1L).build_())
-                .build_();
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(1L).writeCapacityUnits(1L).build())
+                .build();
 
         client.createTable(request);
 
         Thread.sleep(10000);
 
         while (true) {
-            String status = client.describeTable(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_())
+            String status = client.describeTable(DescribeTableRequest.builder().tableName(TABLE_NAME).build())
                                   .table()
                                   .tableStatus();
 
@@ -89,7 +89,7 @@ public class JsonIntegrationTest extends AwsTestBase {
         }
 
         try {
-            client.deleteTable(DeleteTableRequest.builder_().tableName(TABLE_NAME).build_());
+            client.deleteTable(DeleteTableRequest.builder().tableName(TABLE_NAME).build());
         } catch (ResourceNotFoundException e) {
             // Ignored or expected.
         }

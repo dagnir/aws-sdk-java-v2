@@ -26,7 +26,6 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
@@ -44,10 +43,9 @@ class ListSetters extends AbstractMemberSetters {
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
         List<MethodSpec> fluentDeclarations = new ArrayList<>();
 
-        fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(
-                asCollection(), fieldName()).build(), returnType).build());
-        fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(
-                asArray(), fieldName()).build(), returnType).varargs(true).build());
+        fluentDeclarations.add(fluentSetterDeclaration(memberAsParameter(), returnType).build());
+        fluentDeclarations.add(fluentSetterDeclaration(
+                ParameterSpec.builder(asArray(), fieldName()).build(), returnType).varargs(true).build());
         if (memberModel().getEnumType() != null) {
             fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(
                     asArrayOfModeledElement(), fieldName()).build(), returnType).varargs(true).build());
@@ -86,7 +84,7 @@ class ListSetters extends AbstractMemberSetters {
 
     private MethodSpec fluentCopySetter(TypeName returnType) {
         return fluentSetterBuilder(returnType)
-                .addCode(copySetterBody(ParameterizedTypeName.get(typeProvider.listImplClassName(), listElementType()))
+                .addCode(copySetterBody()
                         .toBuilder()
                         .addStatement("return this").build())
                 .build();
@@ -94,7 +92,7 @@ class ListSetters extends AbstractMemberSetters {
 
     private MethodSpec beanStyleCopySetter() {
         MethodSpec.Builder builder = beanStyleSetterBuilder()
-                .addCode(copySetterBody(ParameterizedTypeName.get(typeProvider.listImplClassName(), listElementType())));
+                .addCode(copySetterBody());
 
         if (shapeModel().getShapeType() == ShapeType.Exception) {
             builder.addAnnotation(
@@ -137,12 +135,13 @@ class ListSetters extends AbstractMemberSetters {
     private CodeBlock varargToListBody() {
         return CodeBlock.builder()
                 .beginControlFlow("if (this.$N == null)", fieldName())
-                .addStatement("this.$N = new $T($N.length)", fieldName(),
-                        ParameterizedTypeName.get(typeProvider.listImplClassName(), listElementType()),
+                .addStatement("this.$N = new $T<>($N.length)", fieldName(),
+                        typeProvider.listImplClassName(),
                         fieldName())
                 .endControlFlow()
-                .beginControlFlow("for ($T ele : $N)", listElementType(), fieldName())
-                .addStatement("this.$N.add(ele)", fieldName())
+                .beginControlFlow("for ($T e: $N)", listElementType(), fieldName())
+                .addStatement("this.$N.add($N.$N(e))", fieldName(), MemberCopierSpec.copierClassName(elementModel()),
+                        MemberCopierSpec.copyMethodName(elementModel()))
                 .endControlFlow()
                 .build();
     }
@@ -170,16 +169,12 @@ class ListSetters extends AbstractMemberSetters {
     }
 
     private TypeName listElementType() {
-        return typeProvider.type(elementModel());
+        return typeProvider.parameterType(elementModel());
     }
 
     @Override
     protected ParameterSpec memberAsParameter() {
-        return ParameterSpec.builder(ParameterizedTypeName.get(Collection.class), fieldName()).build();
-    }
-
-    private TypeName asCollection() {
-        return ParameterizedTypeName.get(ClassName.get(Collection.class), listElementType());
+        return ParameterSpec.builder(typeProvider.parameterType(memberModel()), fieldName()).build();
     }
 
     private ArrayTypeName asArray() {

@@ -93,7 +93,7 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
         requestBuilder.expected(expectedMap)
                .expressionAttributeNames(spec.nameMap())
                .expressionAttributeValues(attrValMap);
-        DeleteItemResult result = getClient().deleteItem(requestBuilder.build_());
+        DeleteItemResult result = getClient().deleteItem(requestBuilder.build());
         return new DeleteItemOutcome(result);
     }
 

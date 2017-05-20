@@ -1,11 +1,15 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
+import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.BaseTypeMarshaller;
 
-public class BaseType implements Cloneable, StructuredPojo {
+@Generated("software.amazon.awssdk:codegen")
+public class BaseType implements ToCopyableBuilder<BaseType.Builder, BaseType>, StructuredPojo {
     private final String baseMember;
 
     private BaseType(BeanStyleBuilder builder) {
@@ -20,11 +24,12 @@ public class BaseType implements Cloneable, StructuredPojo {
         return baseMember;
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -61,16 +66,6 @@ public class BaseType implements Cloneable, StructuredPojo {
     }
 
     @Override
-    public BaseType clone() {
-        try {
-            return (BaseType) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -87,15 +82,13 @@ public class BaseType implements Cloneable, StructuredPojo {
         BaseTypeMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, BaseType> {
         /**
          *
          * @param baseMember
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder baseMember(String baseMember);
-
-        BaseType build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -105,12 +98,12 @@ public class BaseType implements Cloneable, StructuredPojo {
         }
 
         private BeanStyleBuilder(BaseType model) {
-            this.baseMember = model.baseMember;
+            setBaseMember(model.baseMember);
         }
 
         @Override
         public Builder baseMember(String baseMember) {
-            this.baseMember = baseMember;
+            this.baseMember = StringCopier.copyString(baseMember);
             return this;
         }
 
@@ -119,12 +112,13 @@ public class BaseType implements Cloneable, StructuredPojo {
          * @param baseMember
          */
         public void setBaseMember(String baseMember) {
-            this.baseMember = baseMember;
+            this.baseMember = StringCopier.copyString(baseMember);
         }
 
         @Override
-        public BaseType build_() {
+        public BaseType build() {
             return new BaseType(this);
         }
     }
 }
+

@@ -49,9 +49,9 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, AttributeValue.builder_().s("" + startKey++).build_());
-            attr.put(STRING_ATTRIBUTE, AttributeValue.builder_().s("" + startKey++).build_());
-            attr.put(ORIGINAL_NAME_ATTRIBUTE, AttributeValue.builder_().s("" + startKey++).build_());
+            attr.put(KEY_NAME, AttributeValue.builder().s("" + startKey++).build());
+            attr.put(STRING_ATTRIBUTE, AttributeValue.builder().s("" + startKey++).build());
+            attr.put(ORIGINAL_NAME_ATTRIBUTE, AttributeValue.builder().s("" + startKey++).build());
             attrs.add(attr);
         }
     }
@@ -64,7 +64,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_NAME).item(attr).build_());
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(attr).build());
         }
     }
 

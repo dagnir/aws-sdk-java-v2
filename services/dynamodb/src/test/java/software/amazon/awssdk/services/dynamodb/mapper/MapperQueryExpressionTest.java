@@ -50,9 +50,9 @@ import software.amazon.awssdk.util.ImmutableMapParameter;
 public class MapperQueryExpressionTest {
 
     private static final String TABLE_NAME = "table_name";
-    private static final Condition RANGE_KEY_CONDITION = Condition.builder_()
-            .attributeValueList(AttributeValue.builder_().s("some value").build_())
-            .comparisonOperator(ComparisonOperator.EQ).build_();
+    private static final Condition RANGE_KEY_CONDITION = Condition.builder()
+            .attributeValueList(AttributeValue.builder().s("some value").build())
+            .comparisonOperator(ComparisonOperator.EQ).build();
 
     private static DynamoDBClient mockClient;
     private static DynamoDbMapper mapper;
@@ -72,7 +72,7 @@ public class MapperQueryExpressionTest {
             Class<T> clazz, DynamoDbQueryExpression<T> queryExpression,
             String expectedErrorMessage) {
         try {
-            Mockito.when(mockClient.query(any())).thenReturn(QueryResult.builder_().items(new ArrayList<>()).build_());
+            Mockito.when(mockClient.query(any())).thenReturn(QueryResult.builder().items(new ArrayList<>()).build());
 
             mapper.queryPage(clazz, queryExpression, DynamoDbMapperConfig.DEFAULT);
             if (expectedErrorMessage != null) {
@@ -111,8 +111,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 1);
         assertEquals("primaryHashKey", queryRequest.keyConditions().keySet().iterator().next());
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("primaryHashKey"));
         assertNull(queryRequest.indexName());
 
@@ -125,8 +125,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 1);
         assertEquals("primaryHashKey", queryRequest.keyConditions().keySet().iterator().next());
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("primaryHashKey"));
         assertEquals("GSI-primary-hash", queryRequest.indexName());
 
@@ -138,8 +138,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 1);
         assertEquals("primaryHashKey", queryRequest.keyConditions().keySet().iterator().next());
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("primaryHashKey"));
         assertNull(queryRequest.indexName());
 
@@ -166,8 +166,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 1);
         assertEquals("indexHashKey", queryRequest.keyConditions().keySet().iterator().next());
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("bar").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("bar").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("indexHashKey"));
         assertEquals("GSI-index-hash-1", queryRequest.indexName());
 
@@ -201,8 +201,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 2);
         assertTrue(queryRequest.keyConditions().containsKey("primaryHashKey"));
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("primaryHashKey"));
         assertTrue(queryRequest.keyConditions().containsKey("primaryRangeKey"));
         assertEquals(RANGE_KEY_CONDITION, queryRequest.keyConditions().get("primaryRangeKey"));
@@ -218,8 +218,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 2);
         assertTrue(queryRequest.keyConditions().containsKey("primaryHashKey"));
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("primaryHashKey"));
         assertTrue(queryRequest.keyConditions().containsKey("primaryRangeKey"));
         assertEquals(RANGE_KEY_CONDITION, queryRequest.keyConditions().get("primaryRangeKey"));
@@ -234,8 +234,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 2);
         assertTrue(queryRequest.keyConditions().containsKey("primaryHashKey"));
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("primaryHashKey"));
         assertTrue(queryRequest.keyConditions().containsKey("indexRangeKey"));
         assertEquals(RANGE_KEY_CONDITION, queryRequest.keyConditions().get("indexRangeKey"));
@@ -252,8 +252,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 2);
         assertTrue(queryRequest.keyConditions().containsKey("primaryHashKey"));
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("primaryHashKey"));
         assertTrue(queryRequest.keyConditions().containsKey("indexRangeKey"));
         assertEquals(RANGE_KEY_CONDITION, queryRequest.keyConditions().get("indexRangeKey"));
@@ -286,8 +286,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 2);
         assertTrue(queryRequest.keyConditions().containsKey("indexHashKey"));
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("indexHashKey"));
         assertTrue(queryRequest.keyConditions().containsKey("primaryRangeKey"));
         assertEquals(RANGE_KEY_CONDITION, queryRequest.keyConditions().get("primaryRangeKey"));
@@ -311,8 +311,8 @@ public class MapperQueryExpressionTest {
         assertTrue(queryRequest.keyConditions().size() == 2);
         assertTrue(queryRequest.keyConditions().containsKey("indexHashKey"));
         assertEquals(
-                Condition.builder_().attributeValueList(AttributeValue.builder_().s("foo").build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_(),
+                Condition.builder().attributeValueList(AttributeValue.builder().s("foo").build())
+                               .comparisonOperator(ComparisonOperator.EQ).build(),
                 queryRequest.keyConditions().get("indexHashKey"));
         assertTrue(queryRequest.keyConditions().containsKey("indexRangeKey"));
         assertEquals(RANGE_KEY_CONDITION, queryRequest.keyConditions().get("indexRangeKey"));

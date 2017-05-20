@@ -40,9 +40,9 @@ public class BooleanToNumberMarshaller implements NumberAttributeMarshaller {
     public AttributeValue marshall(Object obj) {
         Boolean bool = (Boolean) obj;
         if (bool == null || bool == false) {
-            return AttributeValue.builder_().n("0").build_();
+            return AttributeValue.builder().n("0").build();
         } else {
-            return AttributeValue.builder_().n("1").build_();
+            return AttributeValue.builder().n("1").build();
         }
     }
 }

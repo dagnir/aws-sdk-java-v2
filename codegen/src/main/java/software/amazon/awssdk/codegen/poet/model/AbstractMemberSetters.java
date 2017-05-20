@@ -34,7 +34,7 @@ abstract class AbstractMemberSetters implements MemberSetters {
     private MemberModel memberModel;
     private TypeProvider typeProvider;
 
-    AbstractMemberSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
+    public AbstractMemberSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
         this.shapeModel = shapeModel;
         this.memberModel = memberModel;
         this.typeProvider = typeProvider;
@@ -72,19 +72,15 @@ abstract class AbstractMemberSetters implements MemberSetters {
                 .addModifiers(Modifier.PUBLIC);
     }
 
-    protected CodeBlock copySetterBody(TypeName copyTypeImpl) {
+    protected CodeBlock copySetterBody() {
         return CodeBlock.builder()
-                .beginControlFlow("if ($N == null)", fieldName())
-                .addStatement("this.$N = null", fieldName())
-                .endControlFlow()
-                .beginControlFlow("else")
-                .addStatement("this.$N = new $T($N)", fieldName(), copyTypeImpl, fieldName())
-                .endControlFlow()
+                .addStatement("this.$N = $N.$N($N)", fieldName(), MemberCopierSpec.copierClassName(memberModel),
+                        MemberCopierSpec.copyMethodName(memberModel), fieldName())
                 .build();
     }
 
     protected ParameterSpec memberAsParameter() {
-        return ParameterSpec.builder(typeProvider.type(memberModel), fieldName()).build();
+        return ParameterSpec.builder(typeProvider.parameterType(memberModel), fieldName()).build();
     }
 
     protected ShapeModel shapeModel() {

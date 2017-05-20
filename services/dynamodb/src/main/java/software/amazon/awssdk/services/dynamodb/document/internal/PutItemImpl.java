@@ -82,7 +82,7 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
                .expressionAttributeNames(spec.nameMap())
                .expressionAttributeValues(attrValMap)
         ;
-        PutItemResult result = getClient().putItem(requestBuilder.build_());
+        PutItemResult result = getClient().putItem(requestBuilder.build());
         return new PutItemOutcome(result);
     }
 }

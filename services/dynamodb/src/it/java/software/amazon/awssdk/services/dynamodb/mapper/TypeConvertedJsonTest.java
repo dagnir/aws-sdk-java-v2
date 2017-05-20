@@ -45,11 +45,11 @@ public class TypeConvertedJsonTest {
     public void responseWithUnmappedField_IgnoresUnknownFieldAndUnmarshallsCorrectly() {
         final DynamoDbMapper mapper = new DynamoDbMapper(ddb);
         when(ddb.getItem(any(GetItemRequest.class)))
-                .thenReturn(GetItemResult.builder_().item(
-                        ImmutableMapParameter.of("hashKey", AttributeValue.builder_().s(HASH_KEY).build_(),
-                                                 "jsonMappedPojo", AttributeValue.builder_().s(
-                                        "{\"knownField\": \"knownValue\", \"unknownField\": \"unknownValue\"}").build_()
-                                                )).build_());
+                .thenReturn(GetItemResult.builder().item(
+                        ImmutableMapParameter.of("hashKey", AttributeValue.builder().s(HASH_KEY).build(),
+                                                 "jsonMappedPojo", AttributeValue.builder().s(
+                                        "{\"knownField\": \"knownValue\", \"unknownField\": \"unknownValue\"}").build()
+                                                )).build());
 
         final TopLevelPojo pojo = mapper.load(new TopLevelPojo().setHashKey(HASH_KEY));
         assertEquals("knownValue", pojo.getJsonMappedPojo().getKnownField());

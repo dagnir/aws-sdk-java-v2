@@ -81,7 +81,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
      */
     @Test
     public void testDescribeTempTableWithIndexes() {
-        TableDescription tableDescription = dynamo.describeTable(DescribeTableRequest.builder_().tableName(tableName).build_()).table();
+        TableDescription tableDescription = dynamo.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
         assertEquals(tableName, tableDescription.tableName());
         assertNotNull(tableDescription.tableStatus());
         assertEquals(2, tableDescription.keySchema().size());
@@ -149,32 +149,32 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         int duplicateGSIRangeValue = random.nextInt();
         for (int i = 0; i < totalDuplicateGSIKeys; i++) {
             Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-            item.put(HASH_KEY_NAME, AttributeValue.builder_().s(UUID.randomUUID().toString()).build_());
-            item.put(RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(i)).build_());
-            item.put(GSI_HASH_KEY_NAME, AttributeValue.builder_().s(duplicateGSIHashValue).build_());
-            item.put(GSI_RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(duplicateGSIRangeValue)).build_());
-            dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).build_());
+            item.put(HASH_KEY_NAME, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+            item.put(RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(i)).build());
+            item.put(GSI_HASH_KEY_NAME, AttributeValue.builder().s(duplicateGSIHashValue).build());
+            item.put(GSI_RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(duplicateGSIRangeValue)).build());
+            dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
         }
 
         // Query the duplicate GSI key values should return all the items
         Map<String, Condition> keyConditions = new HashMap<String, Condition>();
         keyConditions.put(
                 GSI_HASH_KEY_NAME,
-                Condition.builder_().attributeValueList(
-                        AttributeValue.builder_().s((duplicateGSIHashValue)).build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_());
+                Condition.builder().attributeValueList(
+                        AttributeValue.builder().s((duplicateGSIHashValue)).build())
+                               .comparisonOperator(ComparisonOperator.EQ).build());
         keyConditions.put(
                 GSI_RANGE_KEY_NAME,
-                Condition.builder_().attributeValueList(
-                        AttributeValue.builder_().n(Integer
-                                                           .toString(duplicateGSIRangeValue)).build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_());
+                Condition.builder().attributeValueList(
+                        AttributeValue.builder().n(Integer
+                                                           .toString(duplicateGSIRangeValue)).build())
+                               .comparisonOperator(ComparisonOperator.EQ).build());
 
         // All the items with the GSI keys should be returned
-        assertQueryResultCount(totalDuplicateGSIKeys, QueryRequest.builder_()
+        assertQueryResultCount(totalDuplicateGSIKeys, QueryRequest.builder()
                 .tableName(tableName)
                 .indexName(GSI_NAME)
-                .keyConditions(keyConditions).build_());
+                .keyConditions(keyConditions).build());
 
         // Other than this, the behavior of GSI query should be the similar
         // as LSI query. So following code is similar to that used for
@@ -186,39 +186,39 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         int totalIndexedItemsPerHash = 5;
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 
-        item.put(HASH_KEY_NAME, AttributeValue.builder_().s(randomPrimaryHashKeyValue).build_());
-        item.put(GSI_HASH_KEY_NAME, AttributeValue.builder_().s(randomGSIHashKeyValue).build_());
+        item.put(HASH_KEY_NAME, AttributeValue.builder().s(randomPrimaryHashKeyValue).build());
+        item.put(GSI_HASH_KEY_NAME, AttributeValue.builder().s(randomGSIHashKeyValue).build());
         // Items with GSI keys
         for (int i = 0; i < totalIndexedItemsPerHash; i++) {
-            item.put(RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(i)).build_());
-            item.put(GSI_RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(i)).build_());
-            item.put("attribute_" + i, AttributeValue.builder_().s(UUID.randomUUID().toString()).build_());
-            dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).build_());
+            item.put(RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(i)).build());
+            item.put(GSI_RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(i)).build());
+            item.put("attribute_" + i, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+            dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
             item.remove("attribute_" + i);
         }
         item.remove(GSI_RANGE_KEY_NAME);
         // Items with incomplete GSI keys (no GSI range key)
         for (int i = totalIndexedItemsPerHash; i < totalItemsPerHash; i++) {
-            item.put(RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(i)).build_());
-            item.put("attribute_" + i, AttributeValue.builder_().s(UUID.randomUUID().toString()).build_());
-            dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).build_());
+            item.put(RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(i)).build());
+            item.put("attribute_" + i, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+            dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
             item.remove("attribute_" + i);
         }
 
         /**
          *  1) Query-with-GSI (only by GSI hash key)
          */
-        QueryResult result = dynamo.query(QueryRequest.builder_()
+        QueryResult result = dynamo.query(QueryRequest.builder()
                                                   .tableName(tableName)
                                                   .indexName(GSI_NAME)
                                                   .keyConditions(
                                                           Collections.singletonMap(
                                                                   GSI_HASH_KEY_NAME,
-                                                                  Condition.builder_()
-                                                                          .attributeValueList(AttributeValue.builder_()
-                                                                                  .s(randomGSIHashKeyValue).build_())
+                                                                  Condition.builder()
+                                                                          .attributeValueList(AttributeValue.builder()
+                                                                                  .s(randomGSIHashKeyValue).build())
                                                                           .comparisonOperator(
-                                                                                         ComparisonOperator.EQ).build_())).build_());
+                                                                                         ComparisonOperator.EQ).build())).build());
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.count());
         // By default, the result includes all the key attributes (2 primary + 2 GSI).
@@ -231,25 +231,25 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         keyConditions = new HashMap<String, Condition>();
         keyConditions.put(
                 GSI_HASH_KEY_NAME,
-                Condition.builder_()
-                        .attributeValueList(AttributeValue.builder_()
+                Condition.builder()
+                        .attributeValueList(AttributeValue.builder()
                                 .s(randomGSIHashKeyValue)
-                                .build_())
+                                .build())
                         .comparisonOperator(ComparisonOperator.EQ)
-                        .build_());
+                        .build());
         keyConditions.put(
                 GSI_RANGE_KEY_NAME,
-                Condition.builder_()
-                        .attributeValueList(AttributeValue.builder_()
+                Condition.builder()
+                        .attributeValueList(AttributeValue.builder()
                                 .n(Integer.toString(rangeKeyConditionRange))
-                                .build_())
+                                .build())
                         .comparisonOperator(ComparisonOperator.LT)
-                        .build_());
-        result = dynamo.query(QueryRequest.builder_()
+                        .build());
+        result = dynamo.query(QueryRequest.builder()
                                       .tableName(tableName)
                                       .indexName(GSI_NAME)
                                       .keyConditions(keyConditions)
-                                      .build_());
+                                      .build());
         assertEquals((Object) rangeKeyConditionRange, (Object) result.count());
 
         /**
@@ -257,19 +257,19 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
          * was not created with this projection type.
          */
         try {
-            result = dynamo.query(QueryRequest.builder_()
+            result = dynamo.query(QueryRequest.builder()
                                           .tableName(tableName)
                                           .indexName(GSI_NAME)
                                           .keyConditions(
                                                   Collections.singletonMap(
                                                           GSI_HASH_KEY_NAME,
-                                                          Condition.builder_()
-                                                                  .attributeValueList(AttributeValue.builder_()
+                                                          Condition.builder()
+                                                                  .attributeValueList(AttributeValue.builder()
                                                                           .s(randomGSIHashKeyValue)
-                                                                          .build_())
+                                                                          .build())
                                                                          .comparisonOperator(ComparisonOperator.EQ)
-                                                                  .build_()))
-                                          .select(Select.ALL_ATTRIBUTES).build_());
+                                                                  .build()))
+                                          .select(Select.ALL_ATTRIBUTES).build());
             fail("AmazonServiceException is expected");
         } catch (AmazonServiceException ase) {
             assertTrue(ase.getMessage().contains("Select type ALL_ATTRIBUTES is not supported for global secondary"));
@@ -278,17 +278,17 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         /**
          * 4) Query-with-GSI on selected attributes (by AttributesToGet)
          */
-        result = dynamo.query(QueryRequest.builder_()
+        result = dynamo.query(QueryRequest.builder()
                                       .tableName(tableName)
                                       .indexName(GSI_NAME)
                                       .keyConditions(
                                               Collections.singletonMap(
                                                       GSI_HASH_KEY_NAME,
-                                                      Condition.builder_()
-                                                              .attributeValueList(AttributeValue.builder_()
-                                                                      .s(randomGSIHashKeyValue).build_())
-                                                                     .comparisonOperator(ComparisonOperator.EQ).build_()))
-                                      .attributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME).build_());
+                                                      Condition.builder()
+                                                              .attributeValueList(AttributeValue.builder()
+                                                                      .s(randomGSIHashKeyValue).build())
+                                                                     .comparisonOperator(ComparisonOperator.EQ).build()))
+                                      .attributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME).build());
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.count());
         // Two attributes as specified in AttributesToGet
@@ -298,18 +298,18 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
          * 5) Exception when using both Selection and AttributeToGet
          */
         try {
-            result = dynamo.query(QueryRequest.builder_()
+            result = dynamo.query(QueryRequest.builder()
                                           .tableName(tableName)
                                           .indexName(GSI_NAME)
                                           .keyConditions(
                                                   Collections.singletonMap(
                                                           GSI_HASH_KEY_NAME,
-                                                          Condition.builder_().attributeValueList(
-                                                                  AttributeValue.builder_()
-                                                                          .s(randomGSIHashKeyValue).build_())
-                                                                         .comparisonOperator(ComparisonOperator.EQ).build_()))
+                                                          Condition.builder().attributeValueList(
+                                                                  AttributeValue.builder()
+                                                                          .s(randomGSIHashKeyValue).build())
+                                                                         .comparisonOperator(ComparisonOperator.EQ).build()))
                                           .attributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME, LSI_RANGE_KEY_NAME)
-                                          .select(Select.ALL_PROJECTED_ATTRIBUTES).build_());
+                                          .select(Select.ALL_PROJECTED_ATTRIBUTES).build());
             fail("Should trigger exception when using both Select and AttributeToGet.");
         } catch (AmazonServiceException ase) {
             // Ignored or expected.
@@ -318,19 +318,19 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         /**
          * 6) Query-with-GSI on selected attributes (by Select.SPECIFIC_ATTRIBUTES)
          */
-        result = dynamo.query(QueryRequest.builder_()
+        result = dynamo.query(QueryRequest.builder()
                                       .tableName(tableName)
                                       .indexName(GSI_NAME)
                                       .keyConditions(
                                               Collections.singletonMap(
                                                       GSI_HASH_KEY_NAME,
-                                                      Condition.builder_().attributeValueList(
-                                                              AttributeValue.builder_()
-                                                                      .s(randomGSIHashKeyValue).build_())
+                                                      Condition.builder().attributeValueList(
+                                                              AttributeValue.builder()
+                                                                      .s(randomGSIHashKeyValue).build())
                                                                      .comparisonOperator(
-                                                                             ComparisonOperator.EQ).build_()))
+                                                                             ComparisonOperator.EQ).build()))
                                       .attributesToGet(HASH_KEY_NAME)
-                                      .select(Select.SPECIFIC_ATTRIBUTES).build_());
+                                      .select(Select.SPECIFIC_ATTRIBUTES).build());
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.count());
         // Only one attribute as specified in AttributesToGet
@@ -347,38 +347,38 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         int totalIndexedItemsPerHash = 5;
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 
-        item.put(HASH_KEY_NAME, AttributeValue.builder_().s(randomHashKeyValue).build_());
+        item.put(HASH_KEY_NAME, AttributeValue.builder().s(randomHashKeyValue).build());
         // Items with LSI range key
         for (int i = 0; i < totalIndexedItemsPerHash; i++) {
-            item.put(RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(i)).build_());
-            item.put(LSI_RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(i)).build_());
-            item.put("attribute_" + i, AttributeValue.builder_().s(UUID.randomUUID().toString()).build_());
-            dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).build_());
+            item.put(RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(i)).build());
+            item.put(LSI_RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(i)).build());
+            item.put("attribute_" + i, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+            dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
             item.remove("attribute_" + i);
         }
         item.remove(LSI_RANGE_KEY_NAME);
         // Items without LSI range key
         for (int i = totalIndexedItemsPerHash; i < totalItemsPerHash; i++) {
-            item.put(RANGE_KEY_NAME, AttributeValue.builder_().n(Integer.toString(i)).build_());
-            item.put("attribute_" + i, AttributeValue.builder_().s(UUID.randomUUID().toString()).build_());
-            dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).build_());
+            item.put(RANGE_KEY_NAME, AttributeValue.builder().n(Integer.toString(i)).build());
+            item.put("attribute_" + i, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+            dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
             item.remove("attribute_" + i);
         }
 
         /**
          *  1) Query-with-LSI (only by hash key)
          */
-        QueryResult result = dynamo.query(QueryRequest.builder_()
+        QueryResult result = dynamo.query(QueryRequest.builder()
                                                   .tableName(tableName)
                                                   .indexName(LSI_NAME)
                                                   .keyConditions(
                                                           Collections.singletonMap(
                                                                   HASH_KEY_NAME,
-                                                                  Condition.builder_().attributeValueList(
-                                                                          AttributeValue.builder_()
-                                                                                  .s(randomHashKeyValue).build_())
+                                                                  Condition.builder().attributeValueList(
+                                                                          AttributeValue.builder()
+                                                                                  .s(randomHashKeyValue).build())
                                                                                  .comparisonOperator(
-                                                                                         ComparisonOperator.EQ).build_())).build_());
+                                                                                         ComparisonOperator.EQ).build())).build());
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.count());
         // By default, the result includes all the projected attributes.
@@ -391,34 +391,34 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         Map<String, Condition> keyConditions = new HashMap<String, Condition>();
         keyConditions.put(
                 HASH_KEY_NAME,
-                Condition.builder_().attributeValueList(
-                        AttributeValue.builder_().s(randomHashKeyValue).build_())
-                               .comparisonOperator(ComparisonOperator.EQ).build_());
+                Condition.builder().attributeValueList(
+                        AttributeValue.builder().s(randomHashKeyValue).build())
+                               .comparisonOperator(ComparisonOperator.EQ).build());
         keyConditions.put(
                 LSI_RANGE_KEY_NAME,
-                Condition.builder_().attributeValueList(AttributeValue.builder_()
-                                                               .n(Integer.toString(rangeKeyConditionRange)).build_())
-                               .comparisonOperator(ComparisonOperator.LT).build_());
-        result = dynamo.query(QueryRequest.builder_()
+                Condition.builder().attributeValueList(AttributeValue.builder()
+                                                               .n(Integer.toString(rangeKeyConditionRange)).build())
+                               .comparisonOperator(ComparisonOperator.LT).build());
+        result = dynamo.query(QueryRequest.builder()
                                       .tableName(tableName)
                                       .indexName(LSI_NAME)
-                                      .keyConditions(keyConditions).build_());
+                                      .keyConditions(keyConditions).build());
         assertEquals((Object) rangeKeyConditionRange, (Object) result.count());
 
         /**
          * 3) Query-with-LSI on selected attributes (by Select)
          */
-        result = dynamo.query(QueryRequest.builder_()
+        result = dynamo.query(QueryRequest.builder()
                                       .tableName(tableName)
                                       .indexName(LSI_NAME)
                                       .keyConditions(
                                               Collections.singletonMap(
                                                       HASH_KEY_NAME,
-                                                      Condition.builder_().attributeValueList(
-                                                              AttributeValue.builder_()
-                                                                      .s(randomHashKeyValue).build_())
-                                                                     .comparisonOperator(ComparisonOperator.EQ).build_()))
-                                      .select(Select.ALL_ATTRIBUTES).build_());
+                                                      Condition.builder().attributeValueList(
+                                                              AttributeValue.builder()
+                                                                      .s(randomHashKeyValue).build())
+                                                                     .comparisonOperator(ComparisonOperator.EQ).build()))
+                                      .select(Select.ALL_ATTRIBUTES).build());
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.count());
         // By setting Select.ALL_ATTRIBUTES, all attributes in the item will be returned
@@ -427,17 +427,17 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         /**
          * 4) Query-with-LSI on selected attributes (by AttributesToGet)
          */
-        result = dynamo.query(QueryRequest.builder_()
+        result = dynamo.query(QueryRequest.builder()
                                       .tableName(tableName)
                                       .indexName(LSI_NAME)
                                       .keyConditions(
                                               Collections.singletonMap(
                                                       HASH_KEY_NAME,
-                                                      Condition.builder_().attributeValueList(
-                                                              AttributeValue.builder_()
-                                                                      .s(randomHashKeyValue).build_())
-                                                                     .comparisonOperator(ComparisonOperator.EQ).build_()))
-                                      .attributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME).build_());
+                                                      Condition.builder().attributeValueList(
+                                                              AttributeValue.builder()
+                                                                      .s(randomHashKeyValue).build())
+                                                                     .comparisonOperator(ComparisonOperator.EQ).build()))
+                                      .attributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME).build());
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.count());
         // Two attributes as specified in AttributesToGet
@@ -447,18 +447,18 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
          * 5) Exception when using both Selection and AttributeToGet
          */
         try {
-            result = dynamo.query(QueryRequest.builder_()
+            result = dynamo.query(QueryRequest.builder()
                                           .tableName(tableName)
                                           .indexName(LSI_NAME)
                                           .keyConditions(
                                                   Collections.singletonMap(
                                                           HASH_KEY_NAME,
-                                                          Condition.builder_().attributeValueList(
-                                                                  AttributeValue.builder_()
-                                                                          .s(randomHashKeyValue).build_())
-                                                                         .comparisonOperator(ComparisonOperator.EQ).build_()))
+                                                          Condition.builder().attributeValueList(
+                                                                  AttributeValue.builder()
+                                                                          .s(randomHashKeyValue).build())
+                                                                         .comparisonOperator(ComparisonOperator.EQ).build()))
                                           .attributesToGet(HASH_KEY_NAME, RANGE_KEY_NAME, LSI_RANGE_KEY_NAME)
-                                          .select(Select.ALL_PROJECTED_ATTRIBUTES).build_());
+                                          .select(Select.ALL_PROJECTED_ATTRIBUTES).build());
             fail("Should trigger exception when using both Select and AttributeToGet.");
         } catch (AmazonServiceException ase) {
             // Ignored or expected.
@@ -467,19 +467,19 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         /**
          * 6) Query-with-LSI on selected attributes (by Select.SPECIFIC_ATTRIBUTES)
          */
-        result = dynamo.query(QueryRequest.builder_()
+        result = dynamo.query(QueryRequest.builder()
                                       .tableName(tableName)
                                       .indexName(LSI_NAME)
                                       .keyConditions(
                                               Collections.singletonMap(
                                                       HASH_KEY_NAME,
-                                                      Condition.builder_().attributeValueList(
-                                                              AttributeValue.builder_()
-                                                                      .s(randomHashKeyValue).build_())
+                                                      Condition.builder().attributeValueList(
+                                                              AttributeValue.builder()
+                                                                      .s(randomHashKeyValue).build())
                                                                      .comparisonOperator(
-                                                                             ComparisonOperator.EQ).build_()))
+                                                                             ComparisonOperator.EQ).build()))
                                       .attributesToGet(HASH_KEY_NAME)
-                                      .select(Select.SPECIFIC_ATTRIBUTES).build_());
+                                      .select(Select.SPECIFIC_ATTRIBUTES).build());
         // Only the indexed items should be returned
         assertEquals((Object) totalIndexedItemsPerHash, (Object) result.count());
         // Only one attribute as specified in AttributesToGet

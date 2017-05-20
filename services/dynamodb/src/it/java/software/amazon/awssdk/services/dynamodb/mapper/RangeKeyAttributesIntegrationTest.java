@@ -52,13 +52,13 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, AttributeValue.builder_().n("" + startKey++).build_());
-            attr.put(RANGE_KEY, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
-            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(STRING_ATTRIBUTE, AttributeValue.builder_().s("" + start++).build_());
-            attr.put(STRING_SET_ATTRIBUTE, AttributeValue.builder_().ss("" + start++, "" + start++, "" + start++).build_());
-            attr.put(VERSION_ATTRIBUTE, AttributeValue.builder_().n("1").build_());
+            attr.put(KEY_NAME, AttributeValue.builder().n("" + startKey++).build());
+            attr.put(RANGE_KEY, AttributeValue.builder().n("" + start++).build());
+            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(STRING_ATTRIBUTE, AttributeValue.builder().s("" + start++).build());
+            attr.put(STRING_SET_ATTRIBUTE, AttributeValue.builder().ss("" + start++, "" + start++, "" + start++).build());
+            attr.put(VERSION_ATTRIBUTE, AttributeValue.builder().n("1").build());
 
             attrs.add(attr);
         }
@@ -72,7 +72,7 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_WITH_RANGE_ATTRIBUTE).item(attr).build_());
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_WITH_RANGE_ATTRIBUTE).item(attr).build());
         }
     }
 

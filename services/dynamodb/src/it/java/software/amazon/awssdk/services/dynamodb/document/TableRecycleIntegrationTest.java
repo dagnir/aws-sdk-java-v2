@@ -56,12 +56,12 @@ public class TableRecycleIntegrationTest extends IntegrationTestBase {
     }
 
     private CreateTableRequest newCreateTableRequest(String tableName, String hashKeyName) {
-        return CreateTableRequest.builder_()
+        return CreateTableRequest.builder()
                 .tableName(tableName)
-                .keySchema(KeySchemaElement.builder_().attributeName(hashKeyName).keyType(KeyType.HASH).build_())
+                .keySchema(KeySchemaElement.builder().attributeName(hashKeyName).keyType(KeyType.HASH).build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName(hashKeyName).attributeType(ScalarAttributeType.S).build_())
-                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(1L).writeCapacityUnits(1L).build_())
-                .build_();
+                        AttributeDefinition.builder().attributeName(hashKeyName).attributeType(ScalarAttributeType.S).build())
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(1L).writeCapacityUnits(1L).build())
+                .build();
     }
 }

@@ -99,7 +99,7 @@ public class UpdateItemImpl implements UpdateItemApi {
         requestBuilder.expressionAttributeNames(spec.nameMap());
         requestBuilder.expressionAttributeValues(
                 InternalUtils.fromSimpleMap(spec.valueMap()));
-        return new UpdateItemOutcome(client.updateItem(requestBuilder.build_()));
+        return new UpdateItemOutcome(client.updateItem(requestBuilder.build()));
     }
 
     @Override

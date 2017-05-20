@@ -18,12 +18,14 @@ package software.amazon.awssdk.codegen.poet.model;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.WildcardTypeName;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,30 +56,77 @@ class TypeProvider {
         return ClassName.get(HashMap.class);
     }
 
-    public TypeName type(MemberModel memberModel) {
+    public TypeName fieldType(MemberModel memberModel) {
         if (memberModel.isSimple()) {
             return getTypeNameForSimpleType(memberModel.getVariable().getSimpleType());
         } else if (memberModel.isList()) {
             ListModel listModel = memberModel.getListModel();
-            return ParameterizedTypeName.get(ClassName.get(List.class), type(listModel.getListMemberModel()));
+            TypeName elementType = fieldType(listModel.getListMemberModel());
+            return ParameterizedTypeName.get(ClassName.get(List.class), elementType);
         } else if (memberModel.isMap()) {
             MapModel mapModel = memberModel.getMapModel();
             TypeName keyType;
             if (mapModel.isKeySimple()) {
                 keyType = getTypeNameForSimpleType(mapModel.getKeyType());
             } else {
-                keyType = type(mapModel.getKeyModel());
+                keyType = fieldType(mapModel.getKeyModel());
             }
 
-            TypeName valueType;
-            if (mapModel.isValueSimple()) {
-                valueType = getTypeNameForSimpleType(mapModel.getValueType());
-            } else {
-                valueType = type(mapModel.getValueModel());
-            }
+            TypeName valueType = fieldType(mapModel.getValueModel());
+
             return ParameterizedTypeName.get(ClassName.get(Map.class), keyType, valueType);
         }
         return poetExtensions.getModelClass(memberModel.getC2jShape());
+    }
+
+    public TypeName parameterType(MemberModel memberModel) {
+        if (memberModel.isList()) {
+            ListModel listModel = memberModel.getListModel();
+            MemberModel elementModel = listModel.getListMemberModel();
+            TypeName listElementType = parameterType(elementModel);
+            if (elementModel.isList()) {
+                listElementType = WildcardTypeName.subtypeOf(listElementType);
+            }
+            return ParameterizedTypeName.get(ClassName.get(Collection.class), listElementType);
+        }
+
+        if (memberModel.isMap()) {
+            MapModel mapModel = memberModel.getMapModel();
+
+            TypeName keyType;
+            if (mapModel.isKeySimple()) {
+                keyType = getTypeNameForSimpleType(mapModel.getKeyType());
+            } else {
+                keyType = parameterType(mapModel.getKeyModel());
+
+            }
+
+            TypeName valueType = parameterType(mapModel.getValueModel());
+            if (mapModel.getValueModel().isList()) {
+                valueType = WildcardTypeName.subtypeOf(valueType);
+            }
+
+            return ParameterizedTypeName.get(ClassName.get(Map.class), keyType, valueType);
+        }
+
+        return fieldType(memberModel);
+    }
+
+    public TypeName mapEntryType(MapModel mapModel) {
+        TypeName keyType;
+        if (mapModel.isKeySimple()) {
+            keyType = getTypeNameForSimpleType(mapModel.getKeyType());
+        } else {
+            keyType = parameterType(mapModel.getKeyModel());
+
+        }
+
+        TypeName valueType = parameterType(mapModel.getValueModel());
+        if (mapModel.getValueModel().isList()) {
+            valueType = WildcardTypeName.subtypeOf(valueType);
+        }
+
+        return ParameterizedTypeName.get(ClassName.get(Map.Entry.class), keyType, valueType);
     }
 
     public TypeName getTypeNameForSimpleType(String simpleType) {
@@ -100,7 +149,7 @@ class TypeProvider {
                 .filter(cls -> cls.getName().equals(simpleType) || cls.getSimpleName().equals(simpleType))
                 .map(ClassName::get)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Unsupported simple type " + simpleType));
+                .orElseThrow(() -> new RuntimeException("Unsupported simple fieldType " + simpleType));
 
     }
 

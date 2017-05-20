@@ -568,11 +568,11 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
         if (materials.isKmsEnabled()) {
             final Map<String, String> encryptionContext =
                     ContentCryptoMaterial.mergeMaterialDescriptions(materials, req);
-            GenerateDataKeyRequest keyGenReq = GenerateDataKeyRequest.builder_()
+            GenerateDataKeyRequest keyGenReq = GenerateDataKeyRequest.builder()
                     .encryptionContext(encryptionContext)
                     .keyId(materials.getCustomerMasterKeyId())
                     .keySpec(contentCryptoScheme.getKeySpec())
-                    .build_();
+                    .build();
             keyGenReq
                     .withGeneralProgressListener(req.getGeneralProgressListener())
                     .withRequestMetricCollector(req.getRequestMetricCollector())

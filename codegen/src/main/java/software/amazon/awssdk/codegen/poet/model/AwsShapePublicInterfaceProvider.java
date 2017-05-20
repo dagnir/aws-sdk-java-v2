@@ -25,6 +25,7 @@ import java.util.Set;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.ResponseMetadata;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -53,12 +54,11 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
         Set<TypeName> superInterfaces = new HashSet<>();
 
         switch (shapeModel.getShapeType()) {
+            case Exception:
             case Request:
             case Model:
             case Response:
-                superInterfaces.add(TypeName.get(Cloneable.class));
-                // TODO: Uncomment this once property shadowing is fixed and model build can implement CopyableBuilder
-                //superInterfaces.add(toCopyableBuilderInterface());
+                superInterfaces.add(toCopyableBuilderInterface());
                 break;
             default:
                 break;
@@ -104,14 +104,13 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
         return intermediateModel.getMetadata().isJsonProtocol() && shapeModel.getShapeType() == ShapeType.Model;
     }
 
-    // TODO: Uncomment and use when we can actually implement this interface
-    // private TypeName toCopyableBuilderInterface() {
-    //     return ParameterizedTypeName.get(ClassName.get(ToCopyableBuilder.class),
-    //             modelClassName().nestedClass("Builder"),
-    //             modelClassName());
-    // }
+    private TypeName toCopyableBuilderInterface() {
+        return ParameterizedTypeName.get(ClassName.get(ToCopyableBuilder.class),
+                modelClassName().nestedClass("Builder"),
+                modelClassName());
+    }
 
-    // private ClassName modelClassName() {
-    //     return poetExtensions.getModelClass(shapeModel.getShapeName());
-    // }
+    private ClassName modelClassName() {
+        return poetExtensions.getModelClass(shapeModel.getShapeName());
+    }
 }

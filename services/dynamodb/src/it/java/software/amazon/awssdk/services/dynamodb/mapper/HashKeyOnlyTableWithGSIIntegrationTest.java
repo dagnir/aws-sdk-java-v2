@@ -58,25 +58,25 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
     public static void setUp() throws Exception {
         DynamoDBTestBase.setUpTestBase();
         List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
-        keySchema.add(KeySchemaElement.builder_().attributeName("id").keyType(KeyType.HASH).build_());
+        keySchema.add(KeySchemaElement.builder().attributeName("id").keyType(KeyType.HASH).build());
 
-        CreateTableRequest req = CreateTableRequest.builder_()
+        CreateTableRequest req = CreateTableRequest.builder()
                 .tableName(HASH_KEY_ONLY_TABLE_NAME)
                 .keySchema(keySchema)
-                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(10L).writeCapacityUnits(10L).build_())
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(10L).writeCapacityUnits(10L).build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName("id").attributeType(ScalarAttributeType.S).build_(),
-                        AttributeDefinition.builder_().attributeName("status").attributeType(ScalarAttributeType.S).build_(),
-                        AttributeDefinition.builder_().attributeName("ts").attributeType(ScalarAttributeType.S).build_())
+                        AttributeDefinition.builder().attributeName("id").attributeType(ScalarAttributeType.S).build(),
+                        AttributeDefinition.builder().attributeName("status").attributeType(ScalarAttributeType.S).build(),
+                        AttributeDefinition.builder().attributeName("ts").attributeType(ScalarAttributeType.S).build())
                 .globalSecondaryIndexes(
-                        GlobalSecondaryIndex.builder_()
-                                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(10L).writeCapacityUnits(10L).build_())
+                        GlobalSecondaryIndex.builder()
+                                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(10L).writeCapacityUnits(10L).build())
                                 .indexName("statusAndCreation")
                                 .keySchema(
-                                        KeySchemaElement.builder_().attributeName("status").keyType(KeyType.HASH).build_(),
-                                        KeySchemaElement.builder_().attributeName("ts").keyType(KeyType.RANGE).build_())
+                                        KeySchemaElement.builder().attributeName("status").keyType(KeyType.HASH).build(),
+                                        KeySchemaElement.builder().attributeName("ts").keyType(KeyType.RANGE).build())
                                 .projection(
-                                        Projection.builder_().projectionType(ProjectionType.ALL).build_()).build_()).build_();
+                                        Projection.builder().projectionType(ProjectionType.ALL).build()).build()).build();
 
         TableUtils.createTableIfNotExists(dynamo, req);
         TableUtils.waitUntilActive(dynamo, HASH_KEY_ONLY_TABLE_NAME);
@@ -84,7 +84,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
 
     @AfterClass
     public static void tearDown() throws Exception {
-        dynamo.deleteTable(DeleteTableRequest.builder_().tableName(HASH_KEY_ONLY_TABLE_NAME).build_());
+        dynamo.deleteTable(DeleteTableRequest.builder().tableName(HASH_KEY_ONLY_TABLE_NAME).build());
     }
 
     /**
@@ -107,9 +107,9 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
                 .withConsistentRead(false)
                 .withHashKeyValues(user)
                 .withRangeKeyCondition("ts",
-                                       Condition.builder_()
+                                       Condition.builder()
                                                .comparisonOperator(ComparisonOperator.GT)
-                                               .attributeValueList(AttributeValue.builder_().s("100").build_()).build_());
+                                               .attributeValueList(AttributeValue.builder().s("100").build()).build());
 
         PaginatedQueryList<User> query = mapper.query(User.class, expr);
         assertEquals(1, query.size());

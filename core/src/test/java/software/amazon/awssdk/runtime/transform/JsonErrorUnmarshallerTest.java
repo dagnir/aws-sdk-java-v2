@@ -114,7 +114,7 @@ public class JsonErrorUnmarshallerTest {
             Builder customField(String customField);
             Builder customInt(Integer customInt);
 
-            CustomException build_();
+            CustomException build();
         }
 
         private static class BeanStyleBuilder implements Builder {
@@ -148,7 +148,7 @@ public class JsonErrorUnmarshallerTest {
             }
 
             @Override
-            public CustomException build_() {
+            public CustomException build() {
                 return new CustomException(this);
             }
         }

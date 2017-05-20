@@ -76,14 +76,14 @@ class NonCollectionSetters extends AbstractMemberSetters {
 
     private MethodSpec fluentAssignmentSetter(TypeName returnType) {
         return fluentSetterBuilder(returnType)
-                .addCode(assignmentCopyBody().toBuilder().addStatement("return this").build())
+                .addCode(copySetterBody().toBuilder().addStatement("return this").build())
                 .build();
     }
 
 
     private MethodSpec beanStyleAssignmentSetter() {
         MethodSpec.Builder builder = beanStyleSetterBuilder()
-                .addCode(assignmentCopyBody());
+                .addCode(copySetterBody());
 
         if (shapeModel().getShapeType() == ShapeType.Exception) {
             builder.addAnnotation(
@@ -106,15 +106,9 @@ class NonCollectionSetters extends AbstractMemberSetters {
                 .build();
     }
 
-    private CodeBlock assignmentCopyBody() {
-        return CodeBlock.builder()
-                .addStatement("this.$N = $N", fieldName(), fieldName())
-                .build();
-    }
-
     private CodeBlock enumToStringAssignmentBody() {
         return CodeBlock.builder()
-                .addStatement("this.$N = $N.toString()", fieldName(), fieldName())
+                .addStatement("this.$N($N.toString())", fieldName(), fieldName())
                 .build();
     }
 

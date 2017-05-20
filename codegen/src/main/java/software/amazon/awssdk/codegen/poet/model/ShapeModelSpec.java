@@ -56,7 +56,7 @@ class ShapeModelSpec {
     }
 
     public FieldSpec asField(MemberModel memberModel, Modifier... modifiers) {
-        FieldSpec.Builder builder = FieldSpec.builder(typeProvider.type(memberModel),
+        FieldSpec.Builder builder = FieldSpec.builder(typeProvider.fieldType(memberModel),
                 memberModel.getVariable().getVariableName());
 
         if (modifiers != null) {

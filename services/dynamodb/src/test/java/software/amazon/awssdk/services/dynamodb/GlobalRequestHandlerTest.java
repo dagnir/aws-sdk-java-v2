@@ -61,7 +61,7 @@ public class GlobalRequestHandlerTest {
 
     private void callApi(DynamoDBClient client) {
         try {
-            client.listTables(ListTablesRequest.builder_().build_());
+            client.listTables(ListTablesRequest.builder().build());
         } catch (SdkBaseException expected) {
             // Ignored or expected.
         }

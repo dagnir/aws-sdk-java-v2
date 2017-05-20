@@ -21,7 +21,7 @@ import static com.fasterxml.jackson.core.JsonToken.*;
 public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shapeName}, JsonUnmarshallerContext> {
 
     public ${shape.shapeName} unmarshall(JsonUnmarshallerContext context) throws Exception {
-        ${shape.shapeName}.Builder ${shape.variable.variableName}Builder = ${shape.shapeName}.builder_();
+        ${shape.shapeName}.Builder ${shape.variable.variableName}Builder = ${shape.shapeName}.builder();
 
 <#if shape.hasHeaderMember >
         if (context.isStartOfDocument()) {
@@ -68,7 +68,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
     <@PayloadUnmarshallerMacro.content shape />
 </#if>
 
-        return ${shape.variable.variableName}Builder.build_();
+        return ${shape.variable.variableName}Builder.build();
     }
 
     private static ${shape.shapeName}Unmarshaller INSTANCE;

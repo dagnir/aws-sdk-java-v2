@@ -44,22 +44,22 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @BeforeClass
     public static void setup() {
-        CreateConnectionResult result = dc.createConnection(CreateConnectionRequest.builder_()
+        CreateConnectionResult result = dc.createConnection(CreateConnectionRequest.builder()
                 .connectionName(CONNECTION_NAME)
                 .bandwidth("1Gbps")
                 .location("EqSV5")
-                .build_());
+                .build());
         connectionId = result.connectionId();
     }
 
     @AfterClass
     public static void tearDown() {
-        dc.deleteConnection(DeleteConnectionRequest.builder_().connectionId(connectionId).build_());
+        dc.deleteConnection(DeleteConnectionRequest.builder().connectionId(connectionId).build());
     }
 
     @Test
     public void describeLocations_ReturnsNonEmptyList() {
-        DescribeLocationsResult describeLocations = dc.describeLocations(DescribeLocationsRequest.builder_().build_());
+        DescribeLocationsResult describeLocations = dc.describeLocations(DescribeLocationsRequest.builder().build());
         assertTrue(describeLocations.locations().size() > 0);
         for (Location location : describeLocations.locations()) {
             assertNotNull(location.locationCode());
@@ -69,7 +69,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeConnections_ReturnsNonEmptyList() {
-        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder_().build_());
+        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder().build());
         assertTrue(describeConnectionsResult.connections().size() > 0);
         assertNotNull(describeConnectionsResult.connections().get(0).connectionId());
         assertNotNull(describeConnectionsResult.connections().get(0).connectionName());
@@ -80,9 +80,9 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeConnections_FilteredByCollectionId_ReturnsOnlyOneConnection() {
-        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder_()
+        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder()
                 .connectionId(connectionId)
-                .build_());
+                .build());
         assertThat(describeConnectionsResult.connections(), hasSize(1));
         assertEquals(connectionId, describeConnectionsResult.connections().get(0).connectionId());
         assertEquals(EXPECTED_CONNECTION_STATUS, describeConnectionsResult.connections().get(0).connectionState());
@@ -100,7 +100,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
                 .credentialsProvider(new StaticCredentialsProvider(credentials))
                 .build();
 
-        clockSkewClient.describeConnections(DescribeConnectionsRequest.builder_().build_());
+        clockSkewClient.describeConnections(DescribeConnectionsRequest.builder().build());
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 

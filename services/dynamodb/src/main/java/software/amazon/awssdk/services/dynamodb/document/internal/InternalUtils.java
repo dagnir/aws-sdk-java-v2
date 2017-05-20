@@ -111,7 +111,7 @@ public enum InternalUtils {
         Map<String, AttributeValueUpdate> result = new LinkedHashMap<String, AttributeValueUpdate>();
 
         for (AttributeUpdate attribute : attributesToUpdate) {
-            AttributeValueUpdate.Builder attributeToUpdateBuilder = AttributeValueUpdate.builder_()
+            AttributeValueUpdate.Builder attributeToUpdateBuilder = AttributeValueUpdate.builder()
                     .action(attribute.getAction());
             if (attribute.value() != null) {
                 attributeToUpdateBuilder.value(toAttributeValue(attribute.value()));
@@ -119,7 +119,7 @@ public enum InternalUtils {
                 attributeToUpdateBuilder.value(toAttributeValue(attribute
                                                                      .getAttributeValues()));
             }
-            result.put(attribute.getAttributeName(), attributeToUpdateBuilder.build_());
+            result.put(attribute.getAttributeName(), attributeToUpdateBuilder.build());
         }
 
         return result;
@@ -153,29 +153,29 @@ public enum InternalUtils {
      *             if the input object type is not supported
      */
     public static AttributeValue toAttributeValue(Object value) {
-        AttributeValue.Builder resultBuilder = AttributeValue.builder_();
+        AttributeValue.Builder resultBuilder = AttributeValue.builder();
         if (value == null) {
-            return resultBuilder.nul(Boolean.TRUE).build_();
+            return resultBuilder.nul(Boolean.TRUE).build();
         } else if (value instanceof Boolean) {
-            return resultBuilder.bool((Boolean) value).build_();
+            return resultBuilder.bool((Boolean) value).build();
         } else if (value instanceof String) {
-            return resultBuilder.s((String) value).build_();
+            return resultBuilder.s((String) value).build();
         } else if (value instanceof BigDecimal) {
             BigDecimal bd = (BigDecimal) value;
-            return resultBuilder.n(bd.toPlainString()).build_();
+            return resultBuilder.n(bd.toPlainString()).build();
         } else if (value instanceof Number) {
-            return resultBuilder.n(value.toString()).build_();
+            return resultBuilder.n(value.toString()).build();
         } else if (value instanceof byte[]) {
-            return resultBuilder.b(ByteBuffer.wrap((byte[]) value)).build_();
+            return resultBuilder.b(ByteBuffer.wrap((byte[]) value)).build();
         } else if (value instanceof ByteBuffer) {
-            return resultBuilder.b((ByteBuffer) value).build_();
+            return resultBuilder.b((ByteBuffer) value).build();
         } else if (value instanceof Set) {
             // default to an empty string set if there is no element
             @SuppressWarnings("unchecked")
             Set<Object> set = (Set<Object>) value;
             if (set.size() == 0) {
                 resultBuilder.ss(new ArrayList<>());
-                return resultBuilder.build_();
+                return resultBuilder.build();
             }
             Object element = set.iterator().next();
             if (element instanceof String) {
@@ -228,7 +228,7 @@ public enum InternalUtils {
             throw new UnsupportedOperationException("value type: "
                                                     + value.getClass());
         }
-        return resultBuilder.build_();
+        return resultBuilder.build();
     }
 
     /**
@@ -446,7 +446,7 @@ public enum InternalUtils {
         for (Expected expected : expectedSet) {
             final String attr = expected.getAttribute();
             final Object[] values = expected.values();
-            ExpectedAttributeValue.Builder eavBuilder = ExpectedAttributeValue.builder_();
+            ExpectedAttributeValue.Builder eavBuilder = ExpectedAttributeValue.builder();
             if (values != null) {
                 if (values.length > 0) {
                     // convert from list of object values to list of AttributeValues
@@ -463,7 +463,7 @@ public enum InternalUtils {
                         + " must be specified");
             }
             eavBuilder.comparisonOperator(op);
-            expectedMap.put(attr, eavBuilder.build_());
+            expectedMap.put(attr, eavBuilder.build());
         }
         if (expectedSet.size() != expectedMap.size()) {
             throw new IllegalArgumentException("duplicates attribute names not allowed in input");
@@ -482,7 +482,7 @@ public enum InternalUtils {
         for (Filter<?> filter : filters) {
             final String attr = filter.getAttribute();
             final Object[] values = filter.values();
-            Condition.Builder conditionBuilder = Condition.builder_();
+            Condition.Builder conditionBuilder = Condition.builder();
             if (values != null) {
                 if (values.length > 0) {
                     // convert from list of object values to list of AttributeValues
@@ -499,7 +499,7 @@ public enum InternalUtils {
                         + " must be specified");
             }
             conditionBuilder.comparisonOperator(op);
-            conditionMap.put(attr, conditionBuilder.build_());
+            conditionMap.put(attr, conditionBuilder.build());
         }
         if (filters.size() != conditionMap.size()) {
             throw new IllegalArgumentException("duplicates attribute names not allowed in input");

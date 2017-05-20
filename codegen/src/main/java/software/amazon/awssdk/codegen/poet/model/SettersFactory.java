@@ -26,10 +26,12 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 class SettersFactory {
     private final ShapeModel shapeModel;
     private final TypeProvider typeProvider;
+    private final ServiceModelCopierSpecs serviceModelCopierSpecs;
 
-    public SettersFactory(ShapeModel shapeModel, TypeProvider typeProvider) {
+    public SettersFactory(ShapeModel shapeModel, TypeProvider typeProvider, ServiceModelCopierSpecs serviceModelCopierSpecs) {
         this.shapeModel = shapeModel;
         this.typeProvider = typeProvider;
+        this.serviceModelCopierSpecs = serviceModelCopierSpecs;
     }
 
     public List<MethodSpec> fluentSetterDeclarations(MemberModel memberModel, TypeName returnType) {

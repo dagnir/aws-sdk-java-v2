@@ -223,7 +223,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition beginsWith(final V value) {
-        return Condition.builder_().comparisonOperator(BEGINS_WITH).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(BEGINS_WITH).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -235,7 +235,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition between(final V lo, final V hi) {
-        return Condition.builder_().comparisonOperator(BETWEEN).attributeValueList(convert(lo), convert(hi)).build_();
+        return Condition.builder().comparisonOperator(BETWEEN).attributeValueList(convert(lo), convert(hi)).build();
     }
 
     /**
@@ -246,7 +246,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition contains(final V value) {
-        return Condition.builder_().comparisonOperator(CONTAINS).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(CONTAINS).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -257,7 +257,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition eq(final V value) {
-        return Condition.builder_().comparisonOperator(EQ).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(EQ).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -268,7 +268,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition ge(final V value) {
-        return Condition.builder_().comparisonOperator(GE).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(GE).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -279,7 +279,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition gt(final V value) {
-        return Condition.builder_().comparisonOperator(GT).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(GT).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -290,7 +290,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition in(final Collection<V> values) {
-        return Condition.builder_().comparisonOperator(IN).attributeValueList(LIST.convert(values, this)).build_();
+        return Condition.builder().comparisonOperator(IN).attributeValueList(LIST.convert(values, this)).build();
     }
 
     /**
@@ -311,7 +311,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition isNull() {
-        return Condition.builder_().comparisonOperator(NULL).build_();
+        return Condition.builder().comparisonOperator(NULL).build();
     }
 
     /**
@@ -322,7 +322,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition le(final V value) {
-        return Condition.builder_().comparisonOperator(LE).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(LE).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -333,7 +333,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition lt(final V value) {
-        return Condition.builder_().comparisonOperator(LT).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(LT).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -344,7 +344,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition ne(final V value) {
-        return Condition.builder_().comparisonOperator(NE).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(NE).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -355,7 +355,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition notContains(final V value) {
-        return Condition.builder_().comparisonOperator(NOT_CONTAINS).attributeValueList(convert(value)).build_();
+        return Condition.builder().comparisonOperator(NOT_CONTAINS).attributeValueList(convert(value)).build();
     }
 
     /**
@@ -365,7 +365,7 @@ public class DynamoDbMapperFieldModel<T, V> implements DynamoDbAutoGenerator<V>,
      * @see software.amazon.awssdk.services.dynamodb.model.Condition
      */
     public final Condition notNull() {
-        return Condition.builder_().comparisonOperator(NOT_NULL).build_();
+        return Condition.builder().comparisonOperator(NOT_NULL).build();
     }
 
     /**

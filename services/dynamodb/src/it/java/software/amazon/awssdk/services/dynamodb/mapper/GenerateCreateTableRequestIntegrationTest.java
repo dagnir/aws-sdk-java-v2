@@ -51,7 +51,7 @@ import utils.test.util.DynamoDBTestBase;
  */
 public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase {
 
-    private static final ProvisionedThroughput DEFAULT_CAPACITY = ProvisionedThroughput.builder_().readCapacityUnits(5L).writeCapacityUnits(5L).build_();
+    private static final ProvisionedThroughput DEFAULT_CAPACITY = ProvisionedThroughput.builder().readCapacityUnits(5L).writeCapacityUnits(5L).build();
     private static DynamoDbMapper mapper;
     private static Set<String> testedTableName = new HashSet<String>();
 
@@ -64,7 +64,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
     @AfterClass
     public static void tearDown() {
         for (String tableName : testedTableName) {
-            dynamo.deleteTable(DeleteTableRequest.builder_().tableName(tableName).build_()  );
+            dynamo.deleteTable(DeleteTableRequest.builder().tableName(tableName).build()  );
         }
     }
 
@@ -105,43 +105,43 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
 
         assertEquals(createdTableName, createdTableDescription.tableName());
         List<KeySchemaElement> expectedKeyElements = Arrays.asList(
-                KeySchemaElement.builder_().attributeName("key").keyType(KeyType.HASH).build_(),
-                KeySchemaElement.builder_().attributeName("rangeKey").keyType(KeyType.RANGE).build_()
+                KeySchemaElement.builder().attributeName("key").keyType(KeyType.HASH).build(),
+                KeySchemaElement.builder().attributeName("rangeKey").keyType(KeyType.RANGE).build()
                                                                   );
         assertEquals(expectedKeyElements, createdTableDescription.keySchema());
 
         List<AttributeDefinition> expectedAttrDefinitions = Arrays.asList(
-                AttributeDefinition.builder_().attributeName("key").attributeType(ScalarAttributeType.N).build_(),
-                AttributeDefinition.builder_().attributeName("rangeKey").attributeType(ScalarAttributeType.N).build_(),
-                AttributeDefinition.builder_().attributeName("indexFooRangeKey").attributeType(ScalarAttributeType.N).build_(),
-                AttributeDefinition.builder_().attributeName("indexBarRangeKey").attributeType(ScalarAttributeType.N).build_(),
-                AttributeDefinition.builder_().attributeName("multipleIndexRangeKey").attributeType(ScalarAttributeType.N).build_()
+                AttributeDefinition.builder().attributeName("key").attributeType(ScalarAttributeType.N).build(),
+                AttributeDefinition.builder().attributeName("rangeKey").attributeType(ScalarAttributeType.N).build(),
+                AttributeDefinition.builder().attributeName("indexFooRangeKey").attributeType(ScalarAttributeType.N).build(),
+                AttributeDefinition.builder().attributeName("indexBarRangeKey").attributeType(ScalarAttributeType.N).build(),
+                AttributeDefinition.builder().attributeName("multipleIndexRangeKey").attributeType(ScalarAttributeType.N).build()
                                                                          );
         assertTrue(UnorderedCollectionComparator.equalUnorderedCollections(
                 expectedAttrDefinitions,
                 createdTableDescription.attributeDefinitions()));
 
         List<LocalSecondaryIndex> expectedLsi = Arrays.asList(
-                LocalSecondaryIndex.builder_()
+                LocalSecondaryIndex.builder()
                         .indexName("index_foo")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("key").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("indexFooRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                LocalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("key").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("indexFooRangeKey").keyType(KeyType.RANGE).build()).build(),
+                LocalSecondaryIndex.builder()
                         .indexName("index_bar")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("key").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("indexBarRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                LocalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("key").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("indexBarRangeKey").keyType(KeyType.RANGE).build()).build(),
+                LocalSecondaryIndex.builder()
                         .indexName("index_foo_copy")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("key").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("multipleIndexRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                LocalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("key").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("multipleIndexRangeKey").keyType(KeyType.RANGE).build()).build(),
+                LocalSecondaryIndex.builder()
                         .indexName("index_bar_copy")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("key").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("multipleIndexRangeKey").keyType(KeyType.RANGE).build_()).build_());
+                                KeySchemaElement.builder().attributeName("key").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("multipleIndexRangeKey").keyType(KeyType.RANGE).build()).build());
         assertTrue(equalLsi(expectedLsi, createdTableDescription.localSecondaryIndexes()));
 
         assertNull(request.globalSecondaryIndexes());
@@ -161,71 +161,71 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
 
         assertEquals(createdTableName, createdTableDescription.tableName());
         List<KeySchemaElement> expectedKeyElements = Arrays.asList(
-                KeySchemaElement.builder_().attributeName("primaryHashKey").keyType(KeyType.HASH).build_(),
-                KeySchemaElement.builder_().attributeName("primaryRangeKey").keyType(KeyType.RANGE).build_()
+                KeySchemaElement.builder().attributeName("primaryHashKey").keyType(KeyType.HASH).build(),
+                KeySchemaElement.builder().attributeName("primaryRangeKey").keyType(KeyType.RANGE).build()
                                                                   );
         assertEquals(expectedKeyElements, createdTableDescription.keySchema());
 
         List<AttributeDefinition> expectedAttrDefinitions = Arrays.asList(
-                AttributeDefinition.builder_().attributeName("primaryHashKey").attributeType(ScalarAttributeType.S).build_(),
-                AttributeDefinition.builder_().attributeName("indexHashKey").attributeType(ScalarAttributeType.S).build_(),
-                AttributeDefinition.builder_().attributeName("primaryRangeKey").attributeType(ScalarAttributeType.S).build_(),
-                AttributeDefinition.builder_().attributeName("indexRangeKey").attributeType(ScalarAttributeType.S).build_(),
-                AttributeDefinition.builder_().attributeName("anotherIndexRangeKey").attributeType(ScalarAttributeType.S).build_()
+                AttributeDefinition.builder().attributeName("primaryHashKey").attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder().attributeName("indexHashKey").attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder().attributeName("primaryRangeKey").attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder().attributeName("indexRangeKey").attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder().attributeName("anotherIndexRangeKey").attributeType(ScalarAttributeType.S).build()
                                                                          );
         assertTrue(UnorderedCollectionComparator.equalUnorderedCollections(
                 expectedAttrDefinitions,
                 createdTableDescription.attributeDefinitions()));
 
         List<LocalSecondaryIndex> expectedLsi = Arrays.asList(
-                LocalSecondaryIndex.builder_()
+                LocalSecondaryIndex.builder()
                         .indexName("LSI-primary-range")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("primaryHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("primaryRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                LocalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("primaryHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("primaryRangeKey").keyType(KeyType.RANGE).build()).build(),
+                LocalSecondaryIndex.builder()
                         .indexName("LSI-index-range-1")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("primaryHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("indexRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                LocalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("primaryHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("indexRangeKey").keyType(KeyType.RANGE).build()).build(),
+                LocalSecondaryIndex.builder()
                         .indexName("LSI-index-range-2")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("primaryHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("indexRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                LocalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("primaryHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("indexRangeKey").keyType(KeyType.RANGE).build()).build(),
+                LocalSecondaryIndex.builder()
                         .indexName("LSI-index-range-3")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("primaryHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("anotherIndexRangeKey").keyType(KeyType.RANGE).build_()).build_());
+                                KeySchemaElement.builder().attributeName("primaryHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("anotherIndexRangeKey").keyType(KeyType.RANGE).build()).build());
         assertTrue(equalLsi(expectedLsi, createdTableDescription.localSecondaryIndexes()));
 
         List<GlobalSecondaryIndex> expectedGsi = Arrays.asList(
-                GlobalSecondaryIndex.builder_()
+                GlobalSecondaryIndex.builder()
                         .indexName("GSI-primary-hash-index-range-1")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("primaryHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("indexRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                GlobalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("primaryHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("indexRangeKey").keyType(KeyType.RANGE).build()).build(),
+                GlobalSecondaryIndex.builder()
                         .indexName("GSI-primary-hash-index-range-2")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("primaryHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("anotherIndexRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                GlobalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("primaryHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("anotherIndexRangeKey").keyType(KeyType.RANGE).build()).build(),
+                GlobalSecondaryIndex.builder()
                         .indexName("GSI-index-hash-primary-range")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("indexHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("primaryRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                GlobalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("indexHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("primaryRangeKey").keyType(KeyType.RANGE).build()).build(),
+                GlobalSecondaryIndex.builder()
                         .indexName("GSI-index-hash-index-range-1")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("indexHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("indexRangeKey").keyType(KeyType.RANGE).build_()).build_(),
-                GlobalSecondaryIndex.builder_()
+                                KeySchemaElement.builder().attributeName("indexHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("indexRangeKey").keyType(KeyType.RANGE).build()).build(),
+                GlobalSecondaryIndex.builder()
                         .indexName("GSI-index-hash-index-range-2")
                         .keySchema(
-                                KeySchemaElement.builder_().attributeName("indexHashKey").keyType(KeyType.HASH).build_(),
-                                KeySchemaElement.builder_().attributeName("indexRangeKey").keyType(KeyType.RANGE).build_()).build_());
+                                KeySchemaElement.builder().attributeName("indexHashKey").keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName("indexRangeKey").keyType(KeyType.RANGE).build()).build());
         assertTrue(equalGsi(expectedGsi, createdTableDescription.globalSecondaryIndexes()));
 
         assertEquals(DEFAULT_CAPACITY, request.provisionedThroughput());

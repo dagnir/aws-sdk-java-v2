@@ -73,7 +73,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_NoRetry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build_())
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build())
                 .times(1);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.NoRetryBatchLoadRetryStrategy());
@@ -88,7 +88,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build_())
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build())
                 .times(4);
         mapper = new DynamoDbMapper(ddbMock, getConfigWithCustomBatchLoadRetryStrategy(new BatchLoadRetryStrategyWithNoDelay(3)));
 
@@ -101,7 +101,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallSuccess_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(
-                buildDefaultGetItemResult().toBuilder().unprocessedKeys(new HashMap<>(1)).build_()).times(1);
+                buildDefaultGetItemResult().toBuilder().unprocessedKeys(new HashMap<>(1)).build()).times(1);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy());
         mapper = new DynamoDbMapper(ddbMock, config);
@@ -114,7 +114,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build_())
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build())
                 .times(6);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy());
@@ -129,7 +129,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_NoRetry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build_())
+                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build())
                 .times(1);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.NoRetryBatchLoadRetryStrategy());
@@ -174,7 +174,7 @@ public class BatchLoadRetryStrategyTest {
     private Map<String, KeysAndAttributes> buildUnprocessedKeysMap(final int size) {
         final Map<String, KeysAndAttributes> unproccessedKeys = new HashMap<String, KeysAndAttributes>(size);
         for (int i = 0; i < size; i++) {
-            unproccessedKeys.put("test" + i, KeysAndAttributes.builder_().build_());
+            unproccessedKeys.put("test" + i, KeysAndAttributes.builder().build());
         }
 
         return unproccessedKeys;
@@ -183,7 +183,7 @@ public class BatchLoadRetryStrategyTest {
     private BatchGetItemResult buildDefaultGetItemResult() {
 
         final Map<String, List<Map<String, AttributeValue>>> map = new HashMap<String, List<Map<String, AttributeValue>>>();
-        return BatchGetItemResult.builder_().responses(map).build_();
+        return BatchGetItemResult.builder().responses(map).build();
 
     }
 
@@ -234,11 +234,11 @@ public class BatchLoadRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return WriteRequest.builder_()
-                    .putRequest(PutRequest.builder_()
-                        .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_().s(hash).build_()))
-                        .build_())
-                    .build_();
+            return WriteRequest.builder()
+                    .putRequest(PutRequest.builder()
+                        .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder().s(hash).build()))
+                        .build())
+                    .build();
         }
     }
 
@@ -262,12 +262,12 @@ public class BatchLoadRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return WriteRequest.builder_()
-                    .putRequest(PutRequest.builder_()
-                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_().s(hash)
-                                    .build_()))
-                            .build_())
-                    .build_();
+            return WriteRequest.builder()
+                    .putRequest(PutRequest.builder()
+                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder().s(hash)
+                                    .build()))
+                            .build())
+                    .build();
         }
     }
 
@@ -291,13 +291,13 @@ public class BatchLoadRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return WriteRequest.builder_()
-                    .putRequest(PutRequest.builder_()
-                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_()
+            return WriteRequest.builder()
+                    .putRequest(PutRequest.builder()
+                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder()
                                     .s(hash)
-                                    .build_()))
-                            .build_())
-                    .build_();
+                                    .build()))
+                            .build())
+                    .build();
         }
     }
 }

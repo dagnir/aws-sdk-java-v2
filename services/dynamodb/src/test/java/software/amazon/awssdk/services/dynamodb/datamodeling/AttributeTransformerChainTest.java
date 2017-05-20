@@ -70,8 +70,8 @@ public class AttributeTransformerChainTest {
         Map<String, AttributeValue> values =
                 new HashMap<String, AttributeValue>();
 
-        values.put("test1", AttributeValue.builder_().s("foo").build_());
-        values.put("test2", AttributeValue.builder_().s("bar").build_());
+        values.put("test1", AttributeValue.builder().s("foo").build());
+        values.put("test2", AttributeValue.builder().s("bar").build());
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -96,8 +96,8 @@ public class AttributeTransformerChainTest {
         Map<String, AttributeValue> values =
                 new HashMap<String, AttributeValue>();
 
-        values.put("test1", AttributeValue.builder_().s("foo.one.two").build_());
-        values.put("test2", AttributeValue.builder_().s("bar.one.two").build_());
+        values.put("test1", AttributeValue.builder().s("foo.one.two").build());
+        values.put("test2", AttributeValue.builder().s("bar.one.two").build());
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -122,8 +122,8 @@ public class AttributeTransformerChainTest {
         Map<String, AttributeValue> values =
                 new HashMap<String, AttributeValue>();
 
-        values.put("test1", AttributeValue.builder_().s("foo").build_());
-        values.put("test2", AttributeValue.builder_().s("bar").build_());
+        values.put("test1", AttributeValue.builder().s("foo").build());
+        values.put("test2", AttributeValue.builder().s("bar").build());
 
         Parameters<?> params = new TestParameters<Object>(values);
 
@@ -177,14 +177,14 @@ public class AttributeTransformerChainTest {
         }
 
         private AttributeValue transform(AttributeValue value) {
-            return AttributeValue.builder_().s(value.s() + appendMe).build_();
+            return AttributeValue.builder().s(value.s() + appendMe).build();
         }
 
         private AttributeValue untransform(AttributeValue value) {
             String s = value.s();
             if (s.endsWith(appendMe)) {
-                return AttributeValue.builder_().s(
-                        s.substring(0, s.length() - appendMe.length())).build_();
+                return AttributeValue.builder().s(
+                        s.substring(0, s.length() - appendMe.length())).build();
             } else {
                 return value;
             }

@@ -46,7 +46,7 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
     private Map<String, Object> valueMap;
 
     public UpdateItemSpec() {
-        super(UpdateItemRequest.builder_().build_());
+        super(UpdateItemRequest.builder().build());
     }
 
     @Override
@@ -137,7 +137,7 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
     }
 
     public UpdateItemSpec withUpdateExpression(String updateExpression) {
-        setRequest(getRequest().toBuilder().updateExpression(updateExpression).build_());
+        setRequest(getRequest().toBuilder().updateExpression(updateExpression).build());
         return this;
     }
 
@@ -146,7 +146,7 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
     }
 
     public UpdateItemSpec withConditionExpression(String conditionExpression) {
-        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build_());
+        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build());
         return this;
     }
 
@@ -198,13 +198,13 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
 
     public UpdateItemSpec withReturnConsumedCapacity(
             String returnConsumedCapacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
     public UpdateItemSpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
@@ -214,13 +214,13 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
 
     public UpdateItemSpec withReturnItemCollectionMetrics(
             ReturnItemCollectionMetrics returnItemCollectionMetrics) {
-        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build_());
+        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build());
         return this;
     }
 
     public UpdateItemSpec withReturnItemCollectionMetrics(
             String returnItemCollectionMetrics) {
-        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build_());
+        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build());
         return this;
     }
 
@@ -229,12 +229,12 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
     }
 
     public UpdateItemSpec withReturnValues(ReturnValue returnValues) {
-        setRequest(getRequest().toBuilder().returnValues(returnValues).build_());
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build());
         return this;
     }
 
     public UpdateItemSpec withReturnValues(String returnValues) {
-        setRequest(getRequest().toBuilder().returnValues(returnValues).build_());
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build());
         return this;
     }
 

@@ -47,13 +47,13 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         String subnetId_1 = getSubnetIdInVpc(vpcId, US_EAST_1B);
 
         String dsId = dsClient
-                .createDirectory(CreateDirectoryRequest.builder_().description("This is my directory!")
+                .createDirectory(CreateDirectoryRequest.builder().description("This is my directory!")
                                                              .name("AWS.Java.SDK.Directory").shortName("md").password("My.Awesome.Password.2015")
                                                              .size(DirectorySize.Small).vpcSettings(
-                                DirectoryVpcSettings.builder_().vpcId(vpcId).subnetIds(subnetId_0, subnetId_1).build_()).build_())
+                                DirectoryVpcSettings.builder().vpcId(vpcId).subnetIds(subnetId_0, subnetId_1).build()).build())
                 .directoryId();
 
-        dsClient.deleteDirectory(DeleteDirectoryRequest.builder_().directoryId(dsId).build_());
+        dsClient.deleteDirectory(DeleteDirectoryRequest.builder().directoryId(dsId).build());
     }
 
     private String getVpcId() {
@@ -80,7 +80,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void describeDirectories_InvalidNextToken_ThrowsExceptionWithRequestIdPresent() {
         try {
-            dsClient.describeDirectories(DescribeDirectoriesRequest.builder_().nextToken("invalid").build_());
+            dsClient.describeDirectories(DescribeDirectoriesRequest.builder().nextToken("invalid").build());
         } catch (InvalidNextTokenException e) {
             assertNotNull(e.getRequestId());
         }

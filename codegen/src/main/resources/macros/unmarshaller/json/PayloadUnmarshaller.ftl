@@ -7,7 +7,7 @@
     if (token == null) token = context.nextToken();
     if (token == VALUE_NULL) {
      <#if shape.shapeType == "Response">
-        return ${shape.variable.variableName}Builder.build_();
+        return ${shape.variable.variableName}Builder.build();
     <#else>
         return null;
     </#if>

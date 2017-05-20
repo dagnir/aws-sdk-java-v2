@@ -73,16 +73,16 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     @BeforeClass
     public static void setUpTestData() throws Exception {
         String keyName = "id";
-        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(TABLE_NAME)
-                .keySchema(KeySchemaElement.builder_().attributeName(keyName).keyType(KeyType.HASH).build_())
+                .keySchema(KeySchemaElement.builder().attributeName(keyName).keyType(KeyType.HASH).build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName(keyName).attributeType(
-                                ScalarAttributeType.S).build_())
-                .provisionedThroughput(ProvisionedThroughput.builder_()
+                        AttributeDefinition.builder().attributeName(keyName).attributeType(
+                                ScalarAttributeType.S).build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
                         .readCapacityUnits(10L)
-                        .writeCapacityUnits(5L).build_())
-                .build_();
+                        .writeCapacityUnits(5L).build())
+                .build();
 
         TableUtils.createTableIfNotExists(dynamo, createTableRequest);
         TableUtils.waitUntilActive(dynamo, TABLE_NAME);
@@ -97,9 +97,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDbScanExpression scanExpression = new DynamoDbScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
-                .addFilterCondition("value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                .addFilterCondition("value", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
         scanExpression
-                .addFilterCondition("extraData", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                .addFilterCondition("extraData", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
         List<SimpleClass> list = util.scan(SimpleClass.class, scanExpression);
 
         int count = 0;
@@ -131,8 +131,8 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         DynamoDbScanExpression scanExpression = new DynamoDbScanExpression()
                 .withLimit(SCAN_LIMIT)
                 .withScanFilter(ImmutableMapParameter.of(
-                        "value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL).build_(),
-                        "non-existent-field", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL).build_()
+                        "value", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL).build(),
+                        "non-existent-field", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL).build()
                                                         ))
                 .withConditionalOperator(ConditionalOperator.AND);
 
@@ -150,9 +150,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDbScanExpression scanExpression = new DynamoDbScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
-                .addFilterCondition("value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                .addFilterCondition("value", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
         scanExpression
-                .addFilterCondition("extraData", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                .addFilterCondition("extraData", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
 
         PaginatedParallelScanList<SimpleClass> parallelScanList = util
                 .parallelScan(SimpleClass.class, scanExpression, PARALLEL_SCAN_SEGMENTS);
@@ -188,9 +188,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDbScanExpression scanExpression = new DynamoDbScanExpression().withLimit(SCAN_LIMIT);
         scanExpression
-                .addFilterCondition("value", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                .addFilterCondition("value", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
         scanExpression
-                .addFilterCondition("extraData", Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                .addFilterCondition("extraData", Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
 
         long startTime = System.currentTimeMillis();
         PaginatedScanList<SimpleClass> scanList = util.scan(SimpleClass.class, scanExpression);
@@ -231,9 +231,9 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         DynamoDbScanExpression scanExpression = new DynamoDbScanExpression();
         scanExpression.addFilterCondition("value",
-                                          Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                                          Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
         scanExpression.addFilterCondition("extraData",
-                                          Condition.builder_().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build_());
+                                          Condition.builder().comparisonOperator(ComparisonOperator.NOT_NULL.toString()).build());
         int limit = 3;
         scanExpression.setLimit(limit);
         ScanResultPage<SimpleClass> result = util.scanPage(SimpleClass.class, scanExpression);

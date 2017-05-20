@@ -45,9 +45,9 @@ public class DeviceFarmIntegrationTest extends AwsTestBase {
     @Test
     public void testCreateProject() {
         CreateProjectResult result = client
-                .createProject(CreateProjectRequest.builder_()
+                .createProject(CreateProjectRequest.builder()
                         .name(PROJECT_NAME)
-                        .build_());
+                        .build());
         final Project project = result.project();
         assertNotNull(project);
         assertNotNull(project.arn());
@@ -55,6 +55,6 @@ public class DeviceFarmIntegrationTest extends AwsTestBase {
 
     @Test(expected = AmazonServiceException.class)
     public void testExceptionHandling() {
-        client.listDevicePools(ListDevicePoolsRequest.builder_().nextToken("fake-token").build_());
+        client.listDevicePools(ListDevicePoolsRequest.builder().nextToken("fake-token").build());
     }
 }

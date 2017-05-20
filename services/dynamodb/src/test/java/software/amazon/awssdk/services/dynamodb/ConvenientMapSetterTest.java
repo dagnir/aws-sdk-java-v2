@@ -36,9 +36,9 @@ public class ConvenientMapSetterTest {
     public void testMapEntryAdderMethod() {
 // NOTE(dongie): Convenience setters are not generated
 //        PutItemRequest putItemRequest = new PutItemRequest()
-//                .addItemEntry("hash-key", AttributeValue.builder_().withS("1"))
-//                .addItemEntry("range-key", AttributeValue.builder_().withS("2"))
-//                .addItemEntry("attribute", AttributeValue.builder_().withS("3"));
+//                .addItemEntry("hash-key", AttributeValue.builder().withS("1"))
+//                .addItemEntry("range-key", AttributeValue.builder().withS("2"))
+//                .addItemEntry("attribute", AttributeValue.builder().withS("3"));
 //
 //        Map<String, AttributeValue> item = putItemRequest.getItem();
 //        assertEquals(3, item.size());
@@ -54,8 +54,8 @@ public class ConvenientMapSetterTest {
 //    @Test
 //    public void testPredefinedMapEntryMethod() {
 //        ScanRequest scanRequest = new ScanRequest().withExclusiveStartKey(
-//                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", AttributeValue.builder_().withS("1")),
-//                new AbstractMap.SimpleEntry<String, AttributeValue>("range-key", AttributeValue.builder_().withS("2")));
+//                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", AttributeValue.builder().withS("1")),
+//                new AbstractMap.SimpleEntry<String, AttributeValue>("range-key", AttributeValue.builder().withS("2")));
 //
 //        Map<String, AttributeValue> item = scanRequest.getExclusiveStartKey();
 //        assertEquals(2, item.size());
@@ -67,8 +67,8 @@ public class ConvenientMapSetterTest {
 //    @Test(expected = IllegalArgumentException.class)
 //    public void testDuplicatedKeysException() {
 //        new PutItemRequest()
-//                .addItemEntry("hash-key", AttributeValue.builder_().withS("1"))
-//                .addItemEntry("hash-key", AttributeValue.builder_().withS("2"));
+//                .addItemEntry("hash-key", AttributeValue.builder().withS("1"))
+//                .addItemEntry("hash-key", AttributeValue.builder().withS("2"));
 //    }
 //
 //    /** Test on handling null entry objects. */
@@ -77,14 +77,14 @@ public class ConvenientMapSetterTest {
 //        // hashKey is set as not nullable, and rangeKey is nullable
 //        // so this call should be fine.
 //        ScanRequest scanRequest = new ScanRequest().withExclusiveStartKey(
-//                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", AttributeValue.builder_().withS("1")),
+//                new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", AttributeValue.builder().withS("1")),
 //                null);
 //
 //        // but this call should throw IllegalArgumentException.
 //        try {
 //            scanRequest.withExclusiveStartKey(
 //                    null,
-//                    new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", AttributeValue.builder_().withS("1")));
+//                    new AbstractMap.SimpleEntry<String, AttributeValue>("hash-key", AttributeValue.builder().withS("1")));
 //            fail("Should throw IllegalArgumentException.");
 //        } catch (IllegalArgumentException iae) {
 //            // Ignored or expected.

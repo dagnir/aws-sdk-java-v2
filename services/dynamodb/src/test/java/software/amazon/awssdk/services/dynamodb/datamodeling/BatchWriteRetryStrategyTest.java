@@ -44,13 +44,13 @@ public class BatchWriteRetryStrategyTest {
     private static Map<String, List<WriteRequest>> unprocessedItems;
 
     static {
-        WriteRequest writeReq = WriteRequest.builder_()
-                .putRequest(PutRequest.builder_()
+        WriteRequest writeReq = WriteRequest.builder()
+                .putRequest(PutRequest.builder()
                         .item(Collections.singletonMap(
                                 HASH_ATTR,
-                                AttributeValue.builder_().s("foo").build_()))
-                        .build_())
-                .build_();
+                                AttributeValue.builder().s("foo").build()))
+                        .build())
+                .build();
 
         unprocessedItems = Collections.singletonMap(TABLE_NAME,
                                                     Arrays.asList(writeReq));
@@ -130,14 +130,14 @@ public class BatchWriteRetryStrategyTest {
 
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemSuccess() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(BatchWriteItemResult.builder_()
-                        .unprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()).build_());
+                .andReturn(BatchWriteItemResult.builder()
+                        .unprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()).build());
     }
 
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemReturnUnprocessedItems() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(BatchWriteItemResult.builder_()
-                                .unprocessedItems(unprocessedItems).build_());
+                .andReturn(BatchWriteItemResult.builder()
+                                .unprocessedItems(unprocessedItems).build());
     }
 
     private void expectedBatchWriteItemThrowException(Exception e) {
@@ -196,11 +196,11 @@ public class BatchWriteRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return WriteRequest.builder_()
-                    .putRequest(PutRequest.builder_()
-                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder_().s(hash).build_()))
-                            .build_())
-                    .build_();
+            return WriteRequest.builder()
+                    .putRequest(PutRequest.builder()
+                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder().s(hash).build()))
+                            .build())
+                    .build();
         }
     }
 

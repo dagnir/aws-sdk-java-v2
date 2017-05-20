@@ -47,7 +47,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     private Collection<KeyAttribute> exclusiveStartKey;
 
     public QuerySpec() {
-        super(QueryRequest.builder_().build_());
+        super(QueryRequest.builder().build());
     }
 
     public KeyAttribute getHashKey() {
@@ -81,7 +81,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
      * specified.)
      */
     public QuerySpec withKeyConditionExpression(String keyConditionExpression) {
-        setRequest(getRequest().toBuilder().keyConditionExpression(keyConditionExpression).build_());
+        setRequest(getRequest().toBuilder().keyConditionExpression(keyConditionExpression).build());
         return this;
     }
 
@@ -90,7 +90,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     }
 
     public QuerySpec withAttributesToGet(String... attributes) {
-        setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attributes)).build_());
+        setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attributes)).build());
         return this;
     }
 
@@ -99,7 +99,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     }
 
     public QuerySpec withConditionalOperator(ConditionalOperator op) {
-        setRequest(getRequest().toBuilder().conditionalOperator(op).build_());
+        setRequest(getRequest().toBuilder().conditionalOperator(op).build());
         return this;
     }
 
@@ -108,7 +108,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     }
 
     public QuerySpec withConsistentRead(boolean consistentRead) {
-        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build_());
+        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build());
         return this;
     }
 
@@ -144,7 +144,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
      * a filter expression has been specified.)
      */
     public QuerySpec withFilterExpression(String filterExpression) {
-        setRequest(getRequest().toBuilder().filterExpression(filterExpression).build_());
+        setRequest(getRequest().toBuilder().filterExpression(filterExpression).build());
         return this;
     }
 
@@ -159,7 +159,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
      * if a projection expression has been specified.)
      */
     public QuerySpec withProjectionExpression(String projectionExpression) {
-        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build_());
+        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build());
         return this;
     }
 
@@ -209,12 +209,12 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
 
     public QuerySpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
     public QuerySpec withScanIndexForward(boolean scanIndexForward) {
-        setRequest(getRequest().toBuilder().scanIndexForward(scanIndexForward).build_());
+        setRequest(getRequest().toBuilder().scanIndexForward(scanIndexForward).build());
         return this;
     }
 
@@ -223,7 +223,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     }
 
     public QuerySpec withSelect(Select select) {
-        setRequest(getRequest().toBuilder().select(select).build_());
+        setRequest(getRequest().toBuilder().select(select).build());
         return this;
     }
 

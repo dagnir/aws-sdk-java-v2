@@ -92,9 +92,9 @@ class QueryPage extends Page<Item, QueryOutcome> {
             if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
             }
-            request = request.toBuilder().limit(nextLimit).build_();
+            request = request.toBuilder().limit(nextLimit).build();
         }
-        request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build_();
+        request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build();
         QueryResult result = client.query(request);
         final int nextIndex = index + this.size();
         return new QueryPage(client, spec, request, nextIndex,

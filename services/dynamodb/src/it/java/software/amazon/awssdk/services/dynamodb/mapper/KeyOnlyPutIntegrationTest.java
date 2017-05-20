@@ -65,10 +65,10 @@ public class KeyOnlyPutIntegrationTest extends DynamoDBIntegrationTestBase {
             try {
                 DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression();
                 Map<String, ExpectedAttributeValue> expected = new HashMap<String, ExpectedAttributeValue>();
-                ExpectedAttributeValue expectedVersion = ExpectedAttributeValue.builder_()
-                        .value(AttributeValue.builder_()
-                                           .s("SomeNonExistantValue").build_())
-                        .exists(true).build_();
+                ExpectedAttributeValue expectedVersion = ExpectedAttributeValue.builder()
+                        .value(AttributeValue.builder()
+                                           .s("SomeNonExistantValue").build())
+                        .exists(true).build();
                 expected.put("normalStringAttribute", expectedVersion);
                 saveExpression.setExpected(expected);
 

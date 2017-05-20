@@ -18,7 +18,6 @@ package software.amazon.awssdk.codegen.poet.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
 import java.util.Collections;
@@ -43,7 +42,7 @@ class MapSetters extends AbstractMemberSetters {
     @Override
     public List<MethodSpec> fluent(TypeName returnType) {
         return Collections.singletonList(fluentSetterBuilder(returnType)
-                .addCode(copySetterBody(ParameterizedTypeName.get(typeProvider.mapImplClassName(), keyType(), valueType()))
+                .addCode(copySetterBody()
                         .toBuilder()
                         .addStatement("return this").build())
                 .build());
@@ -52,7 +51,7 @@ class MapSetters extends AbstractMemberSetters {
     @Override
     public List<MethodSpec> beanStyle() {
         MethodSpec.Builder builder = beanStyleSetterBuilder()
-                .addCode(copySetterBody(ParameterizedTypeName.get(typeProvider.mapImplClassName(), keyType(), valueType())));
+                .addCode(copySetterBody());
 
         if (shapeModel().getShapeType() == ShapeType.Exception) {
             builder.addAnnotation(
@@ -71,6 +70,6 @@ class MapSetters extends AbstractMemberSetters {
         if (memberModel().getMapModel().isValueSimple()) {
             return typeProvider.getTypeNameForSimpleType(memberModel().getMapModel().getValueType());
         }
-        return typeProvider.type(memberModel().getMapModel().getValueModel());
+        return typeProvider.fieldType(memberModel().getMapModel().getValueModel());
     }
 }

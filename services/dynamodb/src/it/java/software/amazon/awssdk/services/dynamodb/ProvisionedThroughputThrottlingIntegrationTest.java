@@ -62,8 +62,8 @@ public class ProvisionedThroughputThrottlingIntegrationTest extends DynamoDBTest
     public void testProvisionedThroughputExceededRetryHandling() throws Exception {
         for (int i = 0; i < 20; i++) {
             Map<String, AttributeValue> item = Collections
-                    .singletonMap(HASH_KEY_NAME, AttributeValue.builder_().s(UUID.randomUUID().toString()).build_());
-            dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).build_());
+                    .singletonMap(HASH_KEY_NAME, AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+            dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
         }
     }
 

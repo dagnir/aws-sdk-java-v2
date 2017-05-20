@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 public class ListTablesSpec extends AbstractCollectionSpec<ListTablesRequest> {
 
     public ListTablesSpec() {
-        super(ListTablesRequest.builder_().build_());
+        super(ListTablesRequest.builder().build());
     }
 
     public String getExclusiveStartTableName() {
@@ -33,7 +33,7 @@ public class ListTablesSpec extends AbstractCollectionSpec<ListTablesRequest> {
     }
 
     public ListTablesSpec withExclusiveStartTableName(String exclusiveStartTableName) {
-        setRequest(getRequest().toBuilder().exclusiveStartTableName(exclusiveStartTableName).build_());
+        setRequest(getRequest().toBuilder().exclusiveStartTableName(exclusiveStartTableName).build());
         return this;
     }
 

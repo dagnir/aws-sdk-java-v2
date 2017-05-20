@@ -36,6 +36,7 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
+import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 
@@ -62,6 +63,7 @@ public class AwsServiceModel implements ClassSpec {
         this.interfaceProvider = new AwsShapePublicInterfaceProvider(this.intermediateModel, this.shapeModel);
         this.modelMethodOverrides = new ModelMethodOverrides(this.poetExtensions);
         this.modelBuilderSpecs = new ModelBuilderSpecs(this.shapeModel, this.shapeModelSpec, this.typeProvider,
+                new ServiceModelCopierSpecs(this.intermediateModel),
                 this.poetExtensions);
     }
 
@@ -69,6 +71,7 @@ public class AwsServiceModel implements ClassSpec {
     public TypeSpec poetSpec() {
         TypeSpec.Builder specBuilder = TypeSpec.classBuilder(shapeModel.getShapeName())
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(PoetUtils.GENERATED)
                 .addSuperinterfaces(modelSuperInterfaces())
                 .superclass(modelSuperClass())
                 .addMethods(modelClassMethods())
@@ -116,7 +119,6 @@ public class AwsServiceModel implements ClassSpec {
                 methodSpecs.add(beanStyleBuilderClassMethod());
                 methodSpecs.add(modelMethodOverrides.hashCodeMethod(shapeModel));
                 methodSpecs.add(modelMethodOverrides.equalsMethod(shapeModel));
-                methodSpecs.add(modelMethodOverrides.cloneMethod(className()));
                 methodSpecs.add(modelMethodOverrides.toStringMethod(shapeModel));
                 break;
         }
@@ -135,7 +137,7 @@ public class AwsServiceModel implements ClassSpec {
                     return MethodSpec
                             .methodBuilder(m.getFluentGetterMethodName())
                             .addJavadoc(javadoc)
-                            .returns(typeProvider.type(m))
+                            .returns(typeProvider.fieldType(m))
                             .addModifiers(Modifier.PUBLIC)
                             .addStatement("return $N", m.getVariable().getVariableName())
                             .build();
@@ -198,8 +200,7 @@ public class AwsServiceModel implements ClassSpec {
     }
 
     private MethodSpec builderMethod() {
-        // TODO: Fix when shadowing is fixed and we can remove underscore
-        return MethodSpec.methodBuilder("builder_")
+        return MethodSpec.methodBuilder("builder")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(modelBuilderSpecs.builderInterfaceName())
                 .addStatement("return new $T()", modelBuilderSpecs.builderImplName())
@@ -209,6 +210,7 @@ public class AwsServiceModel implements ClassSpec {
     private MethodSpec toBuilderMethod() {
         return MethodSpec.methodBuilder("toBuilder")
                 .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
                 .returns(modelBuilderSpecs.builderInterfaceName())
                 .addStatement("return new $T(this)", modelBuilderSpecs.builderImplName())
                 .build();

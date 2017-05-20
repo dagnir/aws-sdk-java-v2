@@ -66,7 +66,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void successfulRequest_InvokesAllSuccessCallbacks() {
-        ddb.listTables(ListTablesRequest.builder_().build_());
+        ddb.listTables(ListTablesRequest.builder().build());
 
         verify(mockRequestHandler).beforeMarshalling(any(AmazonWebServiceRequest.class));
         verify(mockRequestHandler).beforeRequest(any(Request.class));
@@ -76,7 +76,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void successfulRequest_BeforeMarshalling_ReplacesOriginalRequest() {
-        ListTablesRequest originalRequest = ListTablesRequest.builder_().build_();
+        ListTablesRequest originalRequest = ListTablesRequest.builder().build();
         ListTablesRequest spiedRequest = spy(originalRequest);
         when(mockRequestHandler.beforeMarshalling(eq(originalRequest))).thenReturn(spiedRequest);
 
@@ -90,7 +90,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void failedRequest_InvokesAllErrorCallbacks() {
         try {
-            ddb.describeTable(DescribeTableRequest.builder_().tableName("some-nonexistent-table-name").build_());
+            ddb.describeTable(DescribeTableRequest.builder().tableName("some-nonexistent-table-name").build());
         } catch (AmazonServiceException expected) {
             // Ignored or expected.
         }
@@ -138,7 +138,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
         };
         ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .listenerConfiguration(ClientListenerConfiguration.builder().addRequestListener(requestHandler).build()).build();
-        ListTablesResult result = ddb.listTables(ListTablesRequest.builder_().build_());
+        ListTablesResult result = ddb.listTables(ListTablesRequest.builder().build());
         // Assert that the unmarshalled response contains our injected table name and not the actual
         // list of tables
         assertThat(result.tableNames().toArray(new String[0]), arrayContaining(injectedTableName));

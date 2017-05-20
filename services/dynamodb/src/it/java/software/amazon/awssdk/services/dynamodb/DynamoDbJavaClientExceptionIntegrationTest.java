@@ -47,7 +47,7 @@ public class DynamoDbJavaClientExceptionIntegrationTest extends AwsTestBase {
     @Test
     public void testResourceNotFoundException() {
         try {
-            ddb.describeTable(DescribeTableRequest.builder_().tableName(UUID.randomUUID().toString()).build_());
+            ddb.describeTable(DescribeTableRequest.builder().tableName(UUID.randomUUID().toString()).build());
             Assert.fail("ResourceNotFoundException is expected.");
         } catch (ResourceNotFoundException e) {
             Assert.assertNotNull(e.getErrorCode());
@@ -75,7 +75,7 @@ public class DynamoDbJavaClientExceptionIntegrationTest extends AwsTestBase {
                 creds.getSessionToken()))).build();
 
         try {
-            client.listTables(ListTablesRequest.builder_().build_());
+            client.listTables(ListTablesRequest.builder().build());
         } catch (AmazonServiceException e) {
             Assert.assertEquals("AccessDeniedException", e.getErrorCode());
             Assert.assertNotNull(e.getErrorMessage());

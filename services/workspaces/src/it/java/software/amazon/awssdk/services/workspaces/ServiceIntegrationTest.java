@@ -32,31 +32,31 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeWorkspaces() {
-        DescribeWorkspacesResult result = client.describeWorkspaces(DescribeWorkspacesRequest.builder_().build_());
+        DescribeWorkspacesResult result = client.describeWorkspaces(DescribeWorkspacesRequest.builder().build());
         assertTrue(result.workspaces().isEmpty());
     }
 
     @Test
     public void describeWorkspaceBundles() {
-        DescribeWorkspaceBundlesResult result = client.describeWorkspaceBundles(DescribeWorkspaceBundlesRequest.builder_().build_());
+        DescribeWorkspaceBundlesResult result = client.describeWorkspaceBundles(DescribeWorkspaceBundlesRequest.builder().build());
         assertTrue(result.bundles().isEmpty());
     }
 
     @Test
     public void describeWorkspaceDirectories() {
-        DescribeWorkspaceDirectoriesResult result = client.describeWorkspaceDirectories(DescribeWorkspaceDirectoriesRequest.builder_().build_());
+        DescribeWorkspaceDirectoriesResult result = client.describeWorkspaceDirectories(DescribeWorkspaceDirectoriesRequest.builder().build());
         assertTrue(result.directories().isEmpty());
     }
 
     @Test
     public void createWorkspaces() {
-        CreateWorkspacesResult result = client.createWorkspaces(CreateWorkspacesRequest.builder_()
-                .workspaces(WorkspaceRequest.builder_()
+        CreateWorkspacesResult result = client.createWorkspaces(CreateWorkspacesRequest.builder()
+                .workspaces(WorkspaceRequest.builder()
                         .userName("hchar")
                         .bundleId("wsb-12345678")
                         .directoryId("d-12345678")
-                        .build_())
-                .build_());
+                        .build())
+                .build());
         assertTrue(result.failedRequests().size() == 1);
     }
 }

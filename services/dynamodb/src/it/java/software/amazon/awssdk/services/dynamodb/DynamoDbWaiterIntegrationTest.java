@@ -53,25 +53,25 @@ public class DynamoDbWaiterIntegrationTest extends AwsIntegrationTestBase {
                 .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
                 .region(Regions.US_WEST_2.getName())
                 .build();
-        client.createTable(CreateTableRequest.builder_().tableName(tableName)
-                                                   .keySchema(KeySchemaElement.builder_().keyType(KeyType.HASH)
-                                                                                        .attributeName("hashKey").build_())
-                                                   .attributeDefinitions(AttributeDefinition.builder_()
+        client.createTable(CreateTableRequest.builder().tableName(tableName)
+                                                   .keySchema(KeySchemaElement.builder().keyType(KeyType.HASH)
+                                                                                        .attributeName("hashKey").build())
+                                                   .attributeDefinitions(AttributeDefinition.builder()
                                                                                      .attributeType(
                                                                                              ScalarAttributeType.S)
-                                                                                     .attributeName("hashKey").build_())
-                                                   .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(5L).writeCapacityUnits(5L).build_()).build_());
+                                                                                     .attributeName("hashKey").build())
+                                                   .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(5L).writeCapacityUnits(5L).build()).build());
     }
 
 
     public void deleteTableWaiterSync_ThrowsResourceNotFoundException_WhenDeleted(
             DynamoDBClient client, String tableName) throws Exception {
-        client.deleteTable(DeleteTableRequest.builder_().tableName(tableName).build_());
+        client.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
         client.waiters()
               .tableNotExists()
-              .run(new WaiterParameters<DescribeTableRequest>().withRequest(DescribeTableRequest.builder_().tableName(tableName).build_()));
+              .run(new WaiterParameters<DescribeTableRequest>().withRequest(DescribeTableRequest.builder().tableName(tableName).build()));
         try {
-            client.describeTable(DescribeTableRequest.builder_().tableName(tableName).build_());
+            client.describeTable(DescribeTableRequest.builder().tableName(tableName).build());
             fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException re) {
             // Ignored or expected.
@@ -83,9 +83,9 @@ public class DynamoDbWaiterIntegrationTest extends AwsIntegrationTestBase {
         client.waiters()
               .tableExists()
               .run(new WaiterParameters<DescribeTableRequest>().withRequest(
-                      DescribeTableRequest.builder_().tableName(tableName).build_()));
+                      DescribeTableRequest.builder().tableName(tableName).build()));
         Assert.assertEquals("Table status is not ACTIVE", "ACTIVE",
-                            client.describeTable(DescribeTableRequest.builder_().tableName(tableName).build_()).table().tableStatus());
+                            client.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table().tableStatus());
         deleteTableWaiterSync_ThrowsResourceNotFoundException_WhenDeleted(client, tableName);
 
     }
@@ -98,7 +98,7 @@ public class DynamoDbWaiterIntegrationTest extends AwsIntegrationTestBase {
                               .tableExists()
                               .runAsync(
                                       new WaiterParameters<DescribeTableRequest>()
-                                              .withRequest(DescribeTableRequest.builder_().tableName(tableName).build_()),
+                                              .withRequest(DescribeTableRequest.builder().tableName(tableName).build()),
                                       new WaiterHandler<DescribeTableRequest>() {
                                           @Override
                                           public void onWaitSuccess(DescribeTableRequest request) {
@@ -115,7 +115,7 @@ public class DynamoDbWaiterIntegrationTest extends AwsIntegrationTestBase {
         assertTrue(onWaitSuccessCalled.get());
         assertFalse(onWaitFailureCalled.get());
         Assert.assertEquals("Table status is not ACTIVE", "ACTIVE",
-                            client.describeTable(DescribeTableRequest.builder_().tableName(tableName).build_()).table().tableStatus());
+                            client.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table().tableStatus());
         deleteTableWaiterSync_ThrowsResourceNotFoundException_WhenDeleted(client, tableName);
     }
 

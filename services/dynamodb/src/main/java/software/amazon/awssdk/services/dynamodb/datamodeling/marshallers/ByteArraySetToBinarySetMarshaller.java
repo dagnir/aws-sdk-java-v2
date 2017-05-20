@@ -50,6 +50,6 @@ public class ByteArraySetToBinarySetMarshaller
             attributes.add(ByteBuffer.wrap(b));
         }
 
-        return AttributeValue.builder_().bs(attributes).build_();
+        return AttributeValue.builder().bs(attributes).build();
     }
 }

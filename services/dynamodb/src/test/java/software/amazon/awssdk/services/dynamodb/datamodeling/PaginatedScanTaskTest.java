@@ -83,7 +83,7 @@ public class PaginatedScanTaskTest {
         stubsuccessfulScan(0);
         stubsuccessfulScan(1);
         when(dynamoDB.scan(isSegmentNumber(2)))
-                .thenThrow(ProvisionedThroughputExceededException.builder_().message("Slow Down!").build_());
+                .thenThrow(ProvisionedThroughputExceededException.builder().message("Slow Down!").build());
         stubsuccessfulScan(3);
         stubsuccessfulScan(4);
 
@@ -105,14 +105,14 @@ public class PaginatedScanTaskTest {
      */
     private void stubsuccessfulScan(int segmentNumber) {
         when(dynamoDB.scan(isSegmentNumber(segmentNumber)))
-                .thenReturn(ScanResult.builder_().items(generateItems()).build_());
+                .thenReturn(ScanResult.builder().items(generateItems()).build());
     }
 
     private Map<String, AttributeValue> generateItems() {
         final int numItems = 10;
         Map<String, AttributeValue> items = new HashMap<String, AttributeValue>(numItems);
         for (int i = 0; i < numItems; i++) {
-            items.put(UUID.randomUUID().toString(), AttributeValue.builder_().s("foo").build_());
+            items.put(UUID.randomUUID().toString(), AttributeValue.builder().s("foo").build());
         }
         return items;
     }
@@ -126,11 +126,11 @@ public class PaginatedScanTaskTest {
     }
 
     private ScanRequest createScanRequest(int segmentNumber) {
-        return ScanRequest.builder_()
+        return ScanRequest.builder()
                 .tableName(TABLE_NAME)
                 .segment(segmentNumber)
                 .totalSegments(TOTAL_SEGMENTS)
-                .build_();
+                .build();
     }
 
     /**

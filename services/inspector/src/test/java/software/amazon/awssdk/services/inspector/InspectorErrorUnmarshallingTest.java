@@ -59,7 +59,7 @@ public class InspectorErrorUnmarshallingTest {
                 "\"Message\":\"User: arn:aws:iam::1234:user/no-perms is not authorized to perform: inspector:ListRulesPackages\"}")));
 
         try {
-            inspector.listRulesPackages(ListRulesPackagesRequest.builder_().build_());
+            inspector.listRulesPackages(ListRulesPackagesRequest.builder().build());
         } catch (AccessDeniedException e) {
             assertEquals("AccessDeniedException", e.getErrorCode());
             assertEquals("ACCESS_DENIED_TO_RULES_PACKAGE", e.inspectorErrorCode());

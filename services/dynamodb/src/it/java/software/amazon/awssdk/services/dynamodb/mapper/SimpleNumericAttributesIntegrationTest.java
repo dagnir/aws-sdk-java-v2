@@ -70,23 +70,23 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, AttributeValue.builder_().s("" + start++).build_());
-            attr.put(INT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(FLOAT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(FLOAT_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(DOUBLE_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(DOUBLE_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(BIG_INTEGER_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(LONG_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(LONG_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + start++).build_());
-            attr.put(BYTE_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
-            attr.put(BYTE_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
-            attr.put(BOOLEAN_ATTRIBUTE, AttributeValue.builder_().n(start++ % 2 == 0 ? "1" : "0").build_());
-            attr.put(BOOLEAN_OBJECT_ATTRIBUTE, AttributeValue.builder_().n(start++ % 2 == 0 ? "1" : "0").build_());
-            attr.put(SHORT_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
-            attr.put(SHORT_OBJECT_ATTRIBUTE, AttributeValue.builder_().n("" + byteStart++).build_());
+            attr.put(KEY_NAME, AttributeValue.builder().s("" + start++).build());
+            attr.put(INT_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(FLOAT_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(FLOAT_OBJECT_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(DOUBLE_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(DOUBLE_OBJECT_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(BIG_INTEGER_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(LONG_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(LONG_OBJECT_ATTRIBUTE, AttributeValue.builder().n("" + start++).build());
+            attr.put(BYTE_ATTRIBUTE, AttributeValue.builder().n("" + byteStart++).build());
+            attr.put(BYTE_OBJECT_ATTRIBUTE, AttributeValue.builder().n("" + byteStart++).build());
+            attr.put(BOOLEAN_ATTRIBUTE, AttributeValue.builder().n(start++ % 2 == 0 ? "1" : "0").build());
+            attr.put(BOOLEAN_OBJECT_ATTRIBUTE, AttributeValue.builder().n(start++ % 2 == 0 ? "1" : "0").build());
+            attr.put(SHORT_ATTRIBUTE, AttributeValue.builder().n("" + byteStart++).build());
+            attr.put(SHORT_OBJECT_ATTRIBUTE, AttributeValue.builder().n("" + byteStart++).build());
             attrs.add(attr);
         }
     }
@@ -99,7 +99,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_NAME).item(attr).build_());
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(attr).build());
         }
     }
 
@@ -235,8 +235,8 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
         DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         mapper.save(obj);
 
-        GetItemResult item = dynamo.getItem(GetItemRequest.builder_().tableName("aws-java-sdk-util").key(
-                mapKey(KEY_NAME, AttributeValue.builder_().s(obj.getKey()).build_())).build_());
+        GetItemResult item = dynamo.getItem(GetItemRequest.builder().tableName("aws-java-sdk-util").key(
+                mapKey(KEY_NAME, AttributeValue.builder().s(obj.getKey()).build())).build());
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {

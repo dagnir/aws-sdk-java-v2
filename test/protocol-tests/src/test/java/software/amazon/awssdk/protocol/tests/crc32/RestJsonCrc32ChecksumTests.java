@@ -75,7 +75,7 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        SimpleResult result = client.simple(SimpleRequest.builder_().build_());
+        SimpleResult result = client.simple(SimpleRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -93,7 +93,7 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        client.simple(SimpleRequest.builder_().build_());
+        client.simple(SimpleRequest.builder().build());
     }
 
     @Test
@@ -111,7 +111,7 @@ public class RestJsonCrc32ChecksumTests {
                 .build();
 
         AllTypesResult result =
-                client.allTypes(AllTypesRequest.builder_().build_());
+                client.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -129,7 +129,7 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        client.allTypes(AllTypesRequest.builder_().build_());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class RestJsonCrc32ChecksumTests {
                 .build();
 
         AllTypesResult result =
-                client.allTypes(AllTypesRequest.builder_().build_());
+                client.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -164,6 +164,6 @@ public class RestJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        client.allTypes(AllTypesRequest.builder_().build_());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 }

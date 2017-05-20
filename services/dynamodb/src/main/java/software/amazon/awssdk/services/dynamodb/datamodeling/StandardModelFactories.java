@@ -235,7 +235,7 @@ final class StandardModelFactories {
         private DynamoDbTypeConverter<AttributeValue, T> getConverter(ConvertibleType<T> type) {
             return new DelegateConverter<AttributeValue, T>(getRule(type).newConverter(type)) {
                 public final AttributeValue convert(T o) {
-                    return o == null ? AttributeValue.builder_().nul(true).build_() : super.convert(o);
+                    return o == null ? AttributeValue.builder().nul(true).build() : super.convert(o);
                 }
             };
         }
@@ -775,7 +775,7 @@ final class StandardModelFactories {
 
         @Override
         public AttributeValue convert(final S o) {
-            final AttributeValue value = AttributeValue.builder_().build_();
+            final AttributeValue value = AttributeValue.builder().build();
             set(value, o);
             return value;
         }

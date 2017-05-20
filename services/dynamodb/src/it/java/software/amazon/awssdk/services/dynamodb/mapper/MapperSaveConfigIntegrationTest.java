@@ -56,15 +56,15 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         String hashKeyValue = UUID.randomUUID().toString();
         Long rangeKeyValue = System.currentTimeMillis();
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(hashKeyName, AttributeValue.builder_().s(hashKeyValue).build_());
-        item.put(rangeKeyName, AttributeValue.builder_().n(rangeKeyValue.toString()).build_());
+        item.put(hashKeyName, AttributeValue.builder().s(hashKeyValue).build());
+        item.put(rangeKeyName, AttributeValue.builder().n(rangeKeyValue.toString()).build());
         if (null != nonKeyAttributeValue) {
-            item.put(nonKeyAttributeName, AttributeValue.builder_().s(nonKeyAttributeValue).build_());
+            item.put(nonKeyAttributeName, AttributeValue.builder().s(nonKeyAttributeValue).build());
         }
         if (null != stringSetAttributeValue) {
-            item.put(stringSetAttributeName, AttributeValue.builder_().ss(stringSetAttributeValue).build_());
+            item.put(stringSetAttributeName, AttributeValue.builder().ss(stringSetAttributeValue).build());
         }
-        dynamo.putItem(PutItemRequest.builder_().tableName(tableName).item(item).build_());
+        dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
 
         /* Returns the item as a modeled object. */
         TestItem testItem = new TestItem();

@@ -49,16 +49,16 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
         mapper = new DynamoDbMapper(ddb, DynamoDbMapperConfig.builder()
                 .withTableNameOverride(new DynamoDbMapperConfig.TableNameOverride(TABLE_NAME))
                 .build()).newTableMapper(GsiWithAlwaysUpdateTimestamp.class);
-        mapper.createTable(ProvisionedThroughput.builder_().readCapacityUnits(5L).writeCapacityUnits(5L).build_());
+        mapper.createTable(ProvisionedThroughput.builder().readCapacityUnits(5L).writeCapacityUnits(5L).build());
         ddb.waiters().tableExists()
-                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
+                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder().tableName(TABLE_NAME).build()));
     }
 
     @After
     public void tearDown() {
         mapper.deleteTableIfExists();
         ddb.waiters().tableNotExists()
-                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder_().tableName(TABLE_NAME).build_()));
+                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder().tableName(TABLE_NAME).build()));
     }
 
     @Test

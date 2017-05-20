@@ -49,7 +49,7 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
                 .limit(InternalUtils.minimum(
                     spec.maxResultSize(),
                     spec.maxPageSize()))
-                .build_();
+                .build();
         spec.setRequest(request);
         QueryResult result = client.query(request);
         QueryOutcome outcome = new QueryOutcome(result);

@@ -4,13 +4,17 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.ResponseMetadata;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
-public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> implements Cloneable {
+@Generated("software.amazon.awssdk:codegen")
+public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> implements
+        ToCopyableBuilder<AllTypesResult.Builder, AllTypesResult> {
     private final String stringMember;
 
     private final Integer integerMember;
@@ -198,7 +202,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
      * . Doing so will ensure that anyone else using the {@code ByteBuffer} will not be affected by changes to the
      * {@code position}.
      * </p>
-     *
+     * 
      * @return
      */
     public ByteBuffer blobArg() {
@@ -253,11 +257,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         return polymorphicTypeWithoutSubTypes;
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -438,16 +443,6 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
     }
 
     @Override
-    public AllTypesResult clone() {
-        try {
-            return (AllTypesResult) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -518,7 +513,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         return sb.toString();
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, AllTypesResult> {
         /**
          *
          * @param stringMember
@@ -608,7 +603,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param mapOfStringToIntegerList
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder mapOfStringToIntegerList(Map<String, List<Integer>> mapOfStringToIntegerList);
+        Builder mapOfStringToIntegerList(Map<String, ? extends Collection<Integer>> mapOfStringToIntegerList);
 
         /**
          *
@@ -693,8 +688,6 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes);
-
-        AllTypesResult build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -744,32 +737,32 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         }
 
         private BeanStyleBuilder(AllTypesResult model) {
-            this.stringMember = model.stringMember;
-            this.integerMember = model.integerMember;
-            this.booleanMember = model.booleanMember;
-            this.floatMember = model.floatMember;
-            this.doubleMember = model.doubleMember;
-            this.longMember = model.longMember;
-            this.simpleList = model.simpleList;
-            this.listOfMaps = model.listOfMaps;
-            this.listOfStructs = model.listOfStructs;
-            this.mapOfStringToIntegerList = model.mapOfStringToIntegerList;
-            this.mapOfStringToString = model.mapOfStringToString;
-            this.mapOfStringToStruct = model.mapOfStringToStruct;
-            this.timestampMember = model.timestampMember;
-            this.structWithNestedTimestampMember = model.structWithNestedTimestampMember;
-            this.blobArg = model.blobArg;
-            this.structWithNestedBlob = model.structWithNestedBlob;
-            this.blobMap = model.blobMap;
-            this.listOfBlobs = model.listOfBlobs;
-            this.recursiveStruct = model.recursiveStruct;
-            this.polymorphicTypeWithSubTypes = model.polymorphicTypeWithSubTypes;
-            this.polymorphicTypeWithoutSubTypes = model.polymorphicTypeWithoutSubTypes;
+            setStringMember(model.stringMember);
+            setIntegerMember(model.integerMember);
+            setBooleanMember(model.booleanMember);
+            setFloatMember(model.floatMember);
+            setDoubleMember(model.doubleMember);
+            setLongMember(model.longMember);
+            setSimpleList(model.simpleList);
+            setListOfMaps(model.listOfMaps);
+            setListOfStructs(model.listOfStructs);
+            setMapOfStringToIntegerList(model.mapOfStringToIntegerList);
+            setMapOfStringToString(model.mapOfStringToString);
+            setMapOfStringToStruct(model.mapOfStringToStruct);
+            setTimestampMember(model.timestampMember);
+            setStructWithNestedTimestampMember(model.structWithNestedTimestampMember);
+            setBlobArg(model.blobArg);
+            setStructWithNestedBlob(model.structWithNestedBlob);
+            setBlobMap(model.blobMap);
+            setListOfBlobs(model.listOfBlobs);
+            setRecursiveStruct(model.recursiveStruct);
+            setPolymorphicTypeWithSubTypes(model.polymorphicTypeWithSubTypes);
+            setPolymorphicTypeWithoutSubTypes(model.polymorphicTypeWithoutSubTypes);
         }
 
         @Override
         public Builder stringMember(String stringMember) {
-            this.stringMember = stringMember;
+            this.stringMember = StringCopier.copyString(stringMember);
             return this;
         }
 
@@ -778,12 +771,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param stringMember
          */
         public void setStringMember(String stringMember) {
-            this.stringMember = stringMember;
+            this.stringMember = StringCopier.copyString(stringMember);
         }
 
         @Override
         public Builder integerMember(Integer integerMember) {
-            this.integerMember = integerMember;
+            this.integerMember = IntegerCopier.copyInteger(integerMember);
             return this;
         }
 
@@ -792,12 +785,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param integerMember
          */
         public void setIntegerMember(Integer integerMember) {
-            this.integerMember = integerMember;
+            this.integerMember = IntegerCopier.copyInteger(integerMember);
         }
 
         @Override
         public Builder booleanMember(Boolean booleanMember) {
-            this.booleanMember = booleanMember;
+            this.booleanMember = BooleanCopier.copyBoolean(booleanMember);
             return this;
         }
 
@@ -806,12 +799,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param booleanMember
          */
         public void setBooleanMember(Boolean booleanMember) {
-            this.booleanMember = booleanMember;
+            this.booleanMember = BooleanCopier.copyBoolean(booleanMember);
         }
 
         @Override
         public Builder floatMember(Float floatMember) {
-            this.floatMember = floatMember;
+            this.floatMember = FloatCopier.copyFloat(floatMember);
             return this;
         }
 
@@ -820,12 +813,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param floatMember
          */
         public void setFloatMember(Float floatMember) {
-            this.floatMember = floatMember;
+            this.floatMember = FloatCopier.copyFloat(floatMember);
         }
 
         @Override
         public Builder doubleMember(Double doubleMember) {
-            this.doubleMember = doubleMember;
+            this.doubleMember = DoubleCopier.copyDouble(doubleMember);
             return this;
         }
 
@@ -834,12 +827,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param doubleMember
          */
         public void setDoubleMember(Double doubleMember) {
-            this.doubleMember = doubleMember;
+            this.doubleMember = DoubleCopier.copyDouble(doubleMember);
         }
 
         @Override
         public Builder longMember(Long longMember) {
-            this.longMember = longMember;
+            this.longMember = LongCopier.copyLong(longMember);
             return this;
         }
 
@@ -848,26 +841,22 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param longMember
          */
         public void setLongMember(Long longMember) {
-            this.longMember = longMember;
+            this.longMember = LongCopier.copyLong(longMember);
         }
 
         @Override
-        public Builder simpleList(Collection simpleList) {
-            if (simpleList == null) {
-                this.simpleList = null;
-            } else {
-                this.simpleList = new ArrayList<String>(simpleList);
-            }
+        public Builder simpleList(Collection<String> simpleList) {
+            this.simpleList = ListOfStringsCopier.copyListOfStrings(simpleList);
             return this;
         }
 
         @Override
         public Builder simpleList(String... simpleList) {
             if (this.simpleList == null) {
-                this.simpleList = new ArrayList<String>(simpleList.length);
+                this.simpleList = new ArrayList<>(simpleList.length);
             }
-            for (String ele : simpleList) {
-                this.simpleList.add(ele);
+            for (String e : simpleList) {
+                this.simpleList.add(StringCopier.copyString(e));
             }
             return this;
         }
@@ -876,12 +865,8 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param simpleList
          */
-        public void setSimpleList(Collection simpleList) {
-            if (simpleList == null) {
-                this.simpleList = null;
-            } else {
-                this.simpleList = new ArrayList<String>(simpleList);
-            }
+        public void setSimpleList(Collection<String> simpleList) {
+            this.simpleList = ListOfStringsCopier.copyListOfStrings(simpleList);
         }
 
         /**
@@ -890,30 +875,26 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          */
         public void setSimpleList(String... simpleList) {
             if (this.simpleList == null) {
-                this.simpleList = new ArrayList<String>(simpleList.length);
+                this.simpleList = new ArrayList<>(simpleList.length);
             }
-            for (String ele : simpleList) {
-                this.simpleList.add(ele);
+            for (String e : simpleList) {
+                this.simpleList.add(StringCopier.copyString(e));
             }
         }
 
         @Override
-        public Builder listOfMaps(Collection listOfMaps) {
-            if (listOfMaps == null) {
-                this.listOfMaps = null;
-            } else {
-                this.listOfMaps = new ArrayList<Map<String, String>>(listOfMaps);
-            }
+        public Builder listOfMaps(Collection<Map<String, String>> listOfMaps) {
+            this.listOfMaps = ListOfMapStringToStringCopier.copyListOfMapStringToString(listOfMaps);
             return this;
         }
 
         @Override
         public Builder listOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
-                this.listOfMaps = new ArrayList<Map<String, String>>(listOfMaps.length);
+                this.listOfMaps = new ArrayList<>(listOfMaps.length);
             }
-            for (Map<String, String> ele : listOfMaps) {
-                this.listOfMaps.add(ele);
+            for (Map<String, String> e : listOfMaps) {
+                this.listOfMaps.add(MapOfStringToStringCopier.copyMapOfStringToString(e));
             }
             return this;
         }
@@ -922,12 +903,8 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param listOfMaps
          */
-        public void setListOfMaps(Collection listOfMaps) {
-            if (listOfMaps == null) {
-                this.listOfMaps = null;
-            } else {
-                this.listOfMaps = new ArrayList<Map<String, String>>(listOfMaps);
-            }
+        public void setListOfMaps(Collection<Map<String, String>> listOfMaps) {
+            this.listOfMaps = ListOfMapStringToStringCopier.copyListOfMapStringToString(listOfMaps);
         }
 
         /**
@@ -936,30 +913,26 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          */
         public void setListOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
-                this.listOfMaps = new ArrayList<Map<String, String>>(listOfMaps.length);
+                this.listOfMaps = new ArrayList<>(listOfMaps.length);
             }
-            for (Map<String, String> ele : listOfMaps) {
-                this.listOfMaps.add(ele);
+            for (Map<String, String> e : listOfMaps) {
+                this.listOfMaps.add(MapOfStringToStringCopier.copyMapOfStringToString(e));
             }
         }
 
         @Override
-        public Builder listOfStructs(Collection listOfStructs) {
-            if (listOfStructs == null) {
-                this.listOfStructs = null;
-            } else {
-                this.listOfStructs = new ArrayList<SimpleStruct>(listOfStructs);
-            }
+        public Builder listOfStructs(Collection<SimpleStruct> listOfStructs) {
+            this.listOfStructs = ListOfSimpleStructsCopier.copyListOfSimpleStructs(listOfStructs);
             return this;
         }
 
         @Override
         public Builder listOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
-                this.listOfStructs = new ArrayList<SimpleStruct>(listOfStructs.length);
+                this.listOfStructs = new ArrayList<>(listOfStructs.length);
             }
-            for (SimpleStruct ele : listOfStructs) {
-                this.listOfStructs.add(ele);
+            for (SimpleStruct e : listOfStructs) {
+                this.listOfStructs.add(SimpleStructCopier.copySimpleStruct(e));
             }
             return this;
         }
@@ -968,12 +941,8 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param listOfStructs
          */
-        public void setListOfStructs(Collection listOfStructs) {
-            if (listOfStructs == null) {
-                this.listOfStructs = null;
-            } else {
-                this.listOfStructs = new ArrayList<SimpleStruct>(listOfStructs);
-            }
+        public void setListOfStructs(Collection<SimpleStruct> listOfStructs) {
+            this.listOfStructs = ListOfSimpleStructsCopier.copyListOfSimpleStructs(listOfStructs);
         }
 
         /**
@@ -982,20 +951,16 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          */
         public void setListOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
-                this.listOfStructs = new ArrayList<SimpleStruct>(listOfStructs.length);
+                this.listOfStructs = new ArrayList<>(listOfStructs.length);
             }
-            for (SimpleStruct ele : listOfStructs) {
-                this.listOfStructs.add(ele);
+            for (SimpleStruct e : listOfStructs) {
+                this.listOfStructs.add(SimpleStructCopier.copySimpleStruct(e));
             }
         }
 
         @Override
-        public Builder mapOfStringToIntegerList(Map<String, List<Integer>> mapOfStringToIntegerList) {
-            if (mapOfStringToIntegerList == null) {
-                this.mapOfStringToIntegerList = null;
-            } else {
-                this.mapOfStringToIntegerList = new HashMap<String, List<Integer>>(mapOfStringToIntegerList);
-            }
+        public Builder mapOfStringToIntegerList(Map<String, ? extends Collection<Integer>> mapOfStringToIntegerList) {
+            this.mapOfStringToIntegerList = MapOfStringToIntegerListCopier.copyMapOfStringToIntegerList(mapOfStringToIntegerList);
             return this;
         }
 
@@ -1003,21 +968,13 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param mapOfStringToIntegerList
          */
-        public void setMapOfStringToIntegerList(Map<String, List<Integer>> mapOfStringToIntegerList) {
-            if (mapOfStringToIntegerList == null) {
-                this.mapOfStringToIntegerList = null;
-            } else {
-                this.mapOfStringToIntegerList = new HashMap<String, List<Integer>>(mapOfStringToIntegerList);
-            }
+        public void setMapOfStringToIntegerList(Map<String, ? extends Collection<Integer>> mapOfStringToIntegerList) {
+            this.mapOfStringToIntegerList = MapOfStringToIntegerListCopier.copyMapOfStringToIntegerList(mapOfStringToIntegerList);
         }
 
         @Override
         public Builder mapOfStringToString(Map<String, String> mapOfStringToString) {
-            if (mapOfStringToString == null) {
-                this.mapOfStringToString = null;
-            } else {
-                this.mapOfStringToString = new HashMap<String, String>(mapOfStringToString);
-            }
+            this.mapOfStringToString = MapOfStringToStringCopier.copyMapOfStringToString(mapOfStringToString);
             return this;
         }
 
@@ -1026,20 +983,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param mapOfStringToString
          */
         public void setMapOfStringToString(Map<String, String> mapOfStringToString) {
-            if (mapOfStringToString == null) {
-                this.mapOfStringToString = null;
-            } else {
-                this.mapOfStringToString = new HashMap<String, String>(mapOfStringToString);
-            }
+            this.mapOfStringToString = MapOfStringToStringCopier.copyMapOfStringToString(mapOfStringToString);
         }
 
         @Override
         public Builder mapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
-            if (mapOfStringToStruct == null) {
-                this.mapOfStringToStruct = null;
-            } else {
-                this.mapOfStringToStruct = new HashMap<String, SimpleStruct>(mapOfStringToStruct);
-            }
+            this.mapOfStringToStruct = MapOfStringToSimpleStructCopier.copyMapOfStringToSimpleStruct(mapOfStringToStruct);
             return this;
         }
 
@@ -1048,16 +997,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param mapOfStringToStruct
          */
         public void setMapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
-            if (mapOfStringToStruct == null) {
-                this.mapOfStringToStruct = null;
-            } else {
-                this.mapOfStringToStruct = new HashMap<String, SimpleStruct>(mapOfStringToStruct);
-            }
+            this.mapOfStringToStruct = MapOfStringToSimpleStructCopier.copyMapOfStringToSimpleStruct(mapOfStringToStruct);
         }
 
         @Override
         public Builder timestampMember(Date timestampMember) {
-            this.timestampMember = timestampMember;
+            this.timestampMember = DateCopier.copyDate(timestampMember);
             return this;
         }
 
@@ -1066,12 +1011,13 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param timestampMember
          */
         public void setTimestampMember(Date timestampMember) {
-            this.timestampMember = timestampMember;
+            this.timestampMember = DateCopier.copyDate(timestampMember);
         }
 
         @Override
         public Builder structWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
-            this.structWithNestedTimestampMember = structWithNestedTimestampMember;
+            this.structWithNestedTimestampMember = StructWithTimestampCopier
+                    .copyStructWithTimestamp(structWithNestedTimestampMember);
             return this;
         }
 
@@ -1080,12 +1026,13 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param structWithNestedTimestampMember
          */
         public void setStructWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
-            this.structWithNestedTimestampMember = structWithNestedTimestampMember;
+            this.structWithNestedTimestampMember = StructWithTimestampCopier
+                    .copyStructWithTimestamp(structWithNestedTimestampMember);
         }
 
         @Override
         public Builder blobArg(ByteBuffer blobArg) {
-            this.blobArg = blobArg;
+            this.blobArg = ByteBufferCopier.copyByteBuffer(blobArg);
             return this;
         }
 
@@ -1104,12 +1051,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param blobArg
          */
         public void setBlobArg(ByteBuffer blobArg) {
-            this.blobArg = blobArg;
+            this.blobArg = ByteBufferCopier.copyByteBuffer(blobArg);
         }
 
         @Override
         public Builder structWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
-            this.structWithNestedBlob = structWithNestedBlob;
+            this.structWithNestedBlob = StructWithNestedBlobTypeCopier.copyStructWithNestedBlobType(structWithNestedBlob);
             return this;
         }
 
@@ -1118,16 +1065,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param structWithNestedBlob
          */
         public void setStructWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
-            this.structWithNestedBlob = structWithNestedBlob;
+            this.structWithNestedBlob = StructWithNestedBlobTypeCopier.copyStructWithNestedBlobType(structWithNestedBlob);
         }
 
         @Override
         public Builder blobMap(Map<String, ByteBuffer> blobMap) {
-            if (blobMap == null) {
-                this.blobMap = null;
-            } else {
-                this.blobMap = new HashMap<String, ByteBuffer>(blobMap);
-            }
+            this.blobMap = BlobMapTypeCopier.copyBlobMapType(blobMap);
             return this;
         }
 
@@ -1136,30 +1079,22 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param blobMap
          */
         public void setBlobMap(Map<String, ByteBuffer> blobMap) {
-            if (blobMap == null) {
-                this.blobMap = null;
-            } else {
-                this.blobMap = new HashMap<String, ByteBuffer>(blobMap);
-            }
+            this.blobMap = BlobMapTypeCopier.copyBlobMapType(blobMap);
         }
 
         @Override
-        public Builder listOfBlobs(Collection listOfBlobs) {
-            if (listOfBlobs == null) {
-                this.listOfBlobs = null;
-            } else {
-                this.listOfBlobs = new ArrayList<ByteBuffer>(listOfBlobs);
-            }
+        public Builder listOfBlobs(Collection<ByteBuffer> listOfBlobs) {
+            this.listOfBlobs = ListOfBlobsTypeCopier.copyListOfBlobsType(listOfBlobs);
             return this;
         }
 
         @Override
         public Builder listOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
-                this.listOfBlobs = new ArrayList<ByteBuffer>(listOfBlobs.length);
+                this.listOfBlobs = new ArrayList<>(listOfBlobs.length);
             }
-            for (ByteBuffer ele : listOfBlobs) {
-                this.listOfBlobs.add(ele);
+            for (ByteBuffer e : listOfBlobs) {
+                this.listOfBlobs.add(ByteBufferCopier.copyByteBuffer(e));
             }
             return this;
         }
@@ -1168,12 +1103,8 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param listOfBlobs
          */
-        public void setListOfBlobs(Collection listOfBlobs) {
-            if (listOfBlobs == null) {
-                this.listOfBlobs = null;
-            } else {
-                this.listOfBlobs = new ArrayList<ByteBuffer>(listOfBlobs);
-            }
+        public void setListOfBlobs(Collection<ByteBuffer> listOfBlobs) {
+            this.listOfBlobs = ListOfBlobsTypeCopier.copyListOfBlobsType(listOfBlobs);
         }
 
         /**
@@ -1182,16 +1113,16 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          */
         public void setListOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
-                this.listOfBlobs = new ArrayList<ByteBuffer>(listOfBlobs.length);
+                this.listOfBlobs = new ArrayList<>(listOfBlobs.length);
             }
-            for (ByteBuffer ele : listOfBlobs) {
-                this.listOfBlobs.add(ele);
+            for (ByteBuffer e : listOfBlobs) {
+                this.listOfBlobs.add(ByteBufferCopier.copyByteBuffer(e));
             }
         }
 
         @Override
         public Builder recursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = recursiveStruct;
+            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
             return this;
         }
 
@@ -1200,12 +1131,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param recursiveStruct
          */
         public void setRecursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = recursiveStruct;
+            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
         }
 
         @Override
         public Builder polymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
-            this.polymorphicTypeWithSubTypes = polymorphicTypeWithSubTypes;
+            this.polymorphicTypeWithSubTypes = BaseTypeCopier.copyBaseType(polymorphicTypeWithSubTypes);
             return this;
         }
 
@@ -1214,12 +1145,12 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param polymorphicTypeWithSubTypes
          */
         public void setPolymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
-            this.polymorphicTypeWithSubTypes = polymorphicTypeWithSubTypes;
+            this.polymorphicTypeWithSubTypes = BaseTypeCopier.copyBaseType(polymorphicTypeWithSubTypes);
         }
 
         @Override
         public Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
-            this.polymorphicTypeWithoutSubTypes = polymorphicTypeWithoutSubTypes;
+            this.polymorphicTypeWithoutSubTypes = SubTypeOneCopier.copySubTypeOne(polymorphicTypeWithoutSubTypes);
             return this;
         }
 
@@ -1228,12 +1159,13 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          * @param polymorphicTypeWithoutSubTypes
          */
         public void setPolymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
-            this.polymorphicTypeWithoutSubTypes = polymorphicTypeWithoutSubTypes;
+            this.polymorphicTypeWithoutSubTypes = SubTypeOneCopier.copySubTypeOne(polymorphicTypeWithoutSubTypes);
         }
 
         @Override
-        public AllTypesResult build_() {
+        public AllTypesResult build() {
             return new AllTypesResult(this);
         }
     }
 }
+

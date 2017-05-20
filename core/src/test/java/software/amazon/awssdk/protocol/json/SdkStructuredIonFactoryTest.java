@@ -155,7 +155,7 @@ public class SdkStructuredIonFactoryTest {
 
         public interface Builder {
             Builder message(String message);
-            InvalidParameterException build_();
+            InvalidParameterException build();
         }
 
         private static class BeanStyleBuilder implements Builder {
@@ -173,7 +173,7 @@ public class SdkStructuredIonFactoryTest {
             }
 
             @Override
-            public InvalidParameterException build_() {
+            public InvalidParameterException build() {
                 return new InvalidParameterException(this);
             }
         }

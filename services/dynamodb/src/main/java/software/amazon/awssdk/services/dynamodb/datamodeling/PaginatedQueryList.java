@@ -81,7 +81,7 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
 
     @Override
     protected synchronized List<T> fetchNextPage() {
-        queryRequest = queryRequest.toBuilder().exclusiveStartKey(queryResult.lastEvaluatedKey()).build_();
+        queryRequest = queryRequest.toBuilder().exclusiveStartKey(queryResult.lastEvaluatedKey()).build();
         queryResult = dynamo.query(DynamoDbMapper.applyUserAgent(queryRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
                 queryResult.items(),

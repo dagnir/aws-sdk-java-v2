@@ -58,7 +58,7 @@ public class MapToMapMarshaller implements MapAttributeMarshaller {
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             AttributeValue value;
             if (entry.getValue() == null) {
-                value = AttributeValue.builder_().nul(true).build_();
+                value = AttributeValue.builder().nul(true).build();
             } else {
                 value = memberMarshaller.marshall(entry.getValue());
             }
@@ -66,7 +66,7 @@ public class MapToMapMarshaller implements MapAttributeMarshaller {
             values.put(entry.getKey(), value);
         }
 
-        AttributeValue result = AttributeValue.builder_().m(values).build_();
+        AttributeValue result = AttributeValue.builder().m(values).build();
         //result.setM(values);
         return result;
     }

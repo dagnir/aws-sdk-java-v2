@@ -1,12 +1,17 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.nio.ByteBuffer;
+import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.StructWithNestedBlobTypeMarshaller;
 
-public class StructWithNestedBlobType implements Cloneable, StructuredPojo {
+@Generated("software.amazon.awssdk:codegen")
+public class StructWithNestedBlobType implements ToCopyableBuilder<StructWithNestedBlobType.Builder, StructWithNestedBlobType>,
+        StructuredPojo {
     private final ByteBuffer nestedBlob;
 
     private StructWithNestedBlobType(BeanStyleBuilder builder) {
@@ -22,18 +27,19 @@ public class StructWithNestedBlobType implements Cloneable, StructuredPojo {
      * . Doing so will ensure that anyone else using the {@code ByteBuffer} will not be affected by changes to the
      * {@code position}.
      * </p>
-     *
+     * 
      * @return
      */
     public ByteBuffer nestedBlob() {
         return nestedBlob;
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -70,16 +76,6 @@ public class StructWithNestedBlobType implements Cloneable, StructuredPojo {
     }
 
     @Override
-    public StructWithNestedBlobType clone() {
-        try {
-            return (StructWithNestedBlobType) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -96,15 +92,13 @@ public class StructWithNestedBlobType implements Cloneable, StructuredPojo {
         StructWithNestedBlobTypeMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, StructWithNestedBlobType> {
         /**
          *
          * @param nestedBlob
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder nestedBlob(ByteBuffer nestedBlob);
-
-        StructWithNestedBlobType build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -114,12 +108,12 @@ public class StructWithNestedBlobType implements Cloneable, StructuredPojo {
         }
 
         private BeanStyleBuilder(StructWithNestedBlobType model) {
-            this.nestedBlob = model.nestedBlob;
+            setNestedBlob(model.nestedBlob);
         }
 
         @Override
         public Builder nestedBlob(ByteBuffer nestedBlob) {
-            this.nestedBlob = nestedBlob;
+            this.nestedBlob = ByteBufferCopier.copyByteBuffer(nestedBlob);
             return this;
         }
 
@@ -138,12 +132,13 @@ public class StructWithNestedBlobType implements Cloneable, StructuredPojo {
          * @param nestedBlob
          */
         public void setNestedBlob(ByteBuffer nestedBlob) {
-            this.nestedBlob = nestedBlob;
+            this.nestedBlob = ByteBufferCopier.copyByteBuffer(nestedBlob);
         }
 
         @Override
-        public StructWithNestedBlobType build_() {
+        public StructWithNestedBlobType build() {
             return new StructWithNestedBlobType(this);
         }
     }
 }
+

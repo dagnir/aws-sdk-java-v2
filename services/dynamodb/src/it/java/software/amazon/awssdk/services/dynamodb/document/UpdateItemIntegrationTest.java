@@ -73,18 +73,18 @@ public class UpdateItemIntegrationTest {
         if (desc == null) {
             // table doesn't exist; let's create it
             KeySchemaElement hashKey =
-                    KeySchemaElement.builder_().attributeName(HASH_KEY).keyType(KeyType.HASH).build_();
+                    KeySchemaElement.builder().attributeName(HASH_KEY).keyType(KeyType.HASH).build();
             KeySchemaElement rangeKey =
-                    KeySchemaElement.builder_().attributeName(RANGE_KEY).keyType(KeyType.RANGE).build_();
-            CreateTableRequest createTableRequest = CreateTableRequest.builder_().
+                    KeySchemaElement.builder().attributeName(RANGE_KEY).keyType(KeyType.RANGE).build();
+            CreateTableRequest createTableRequest = CreateTableRequest.builder().
                     tableName(TABLE_NAME)
                     .keySchema(Arrays.asList(hashKey, rangeKey))
                     .attributeDefinitions(
-                                    AttributeDefinition.builder_().attributeName(HASH_KEY).attributeType(ScalarAttributeType.N).build_(),
-                                    AttributeDefinition.builder_().attributeName(RANGE_KEY).attributeType(ScalarAttributeType.S).build_())
+                                    AttributeDefinition.builder().attributeName(HASH_KEY).attributeType(ScalarAttributeType.N).build(),
+                                    AttributeDefinition.builder().attributeName(RANGE_KEY).attributeType(ScalarAttributeType.S).build())
                     .provisionedThroughput(
-                                    ProvisionedThroughput.builder_().readCapacityUnits(READ_CAPACITY).writeCapacityUnits(WRITE_CAPACITY).build_())
-                    .build_();
+                                    ProvisionedThroughput.builder().readCapacityUnits(READ_CAPACITY).writeCapacityUnits(WRITE_CAPACITY).build())
+                    .build();
             table = dynamoDb.createTable(createTableRequest);
             table.waitForActive();
         }

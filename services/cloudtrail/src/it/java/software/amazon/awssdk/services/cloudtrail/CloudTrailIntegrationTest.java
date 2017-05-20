@@ -63,8 +63,8 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         deleteBucketAndAllContents(s3, BUCKET_NAME);
 
         try {
-            for (Trail trail : cloudTrail.describeTrails(DescribeTrailsRequest.builder_().build_()).trailList()) {
-                cloudTrail.deleteTrail(DeleteTrailRequest.builder_().name(trail.name()).build_());
+            for (Trail trail : cloudTrail.describeTrails(DescribeTrailsRequest.builder().build()).trailList()) {
+                cloudTrail.deleteTrail(DeleteTrailRequest.builder().name(trail.name()).build());
             }
         } catch (Exception e) {
             // Expected.
@@ -109,11 +109,11 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
 
         // create trail
         CreateTrailResult createTrailResult =
-                cloudTrail.createTrail(CreateTrailRequest.builder_()
+                cloudTrail.createTrail(CreateTrailRequest.builder()
                         .name(TRAIL_NAME)
                         .s3BucketName(BUCKET_NAME)
                         .includeGlobalServiceEvents(true)
-                        .build_());
+                        .build());
 
         assertEquals(TRAIL_NAME, createTrailResult.name());
         assertEquals(BUCKET_NAME, createTrailResult.s3BucketName());
@@ -121,11 +121,11 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         assertTrue(createTrailResult.includeGlobalServiceEvents());
 
         // describe trail
-        DescribeTrailsResult describeTrails = cloudTrail.describeTrails(DescribeTrailsRequest.builder_().build_());
+        DescribeTrailsResult describeTrails = cloudTrail.describeTrails(DescribeTrailsRequest.builder().build());
         assertTrue(describeTrails.trailList().size() > 0);
 
         describeTrails = cloudTrail
-                .describeTrails(DescribeTrailsRequest.builder_().trailNameList(TRAIL_NAME).build_());
+                .describeTrails(DescribeTrailsRequest.builder().trailNameList(TRAIL_NAME).build());
         assertTrue(describeTrails.trailList().size() == 1);
         Trail trail = describeTrails.trailList().get(0);
 
@@ -136,12 +136,12 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
 
         // update the trail
         UpdateTrailResult updateTrailResult =
-                cloudTrail.updateTrail(UpdateTrailRequest.builder_()
+                cloudTrail.updateTrail(UpdateTrailRequest.builder()
                         .name(TRAIL_NAME)
                         .s3BucketName(BUCKET_NAME)
                         .includeGlobalServiceEvents(false)
                         .s3KeyPrefix("123")
-                        .build_());
+                        .build());
 
         assertEquals(TRAIL_NAME, updateTrailResult.name());
         assertEquals(BUCKET_NAME, updateTrailResult.s3BucketName());
@@ -149,15 +149,15 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         assertFalse(updateTrailResult.includeGlobalServiceEvents());
 
         // start and stop the logging
-        cloudTrail.startLogging(StartLoggingRequest.builder_().name(TRAIL_NAME).build_());
-        cloudTrail.stopLogging(StopLoggingRequest.builder_().name(TRAIL_NAME).build_());
+        cloudTrail.startLogging(StartLoggingRequest.builder().name(TRAIL_NAME).build());
+        cloudTrail.stopLogging(StopLoggingRequest.builder().name(TRAIL_NAME).build());
 
         // delete the trail
-        cloudTrail.deleteTrail(DeleteTrailRequest.builder_().name(TRAIL_NAME).build_());
+        cloudTrail.deleteTrail(DeleteTrailRequest.builder().name(TRAIL_NAME).build());
 
         // try to get the deleted trail
         DescribeTrailsResult describeTrailResult = cloudTrail
-                .describeTrails(DescribeTrailsRequest.builder_().trailNameList(TRAIL_NAME).build_());
+                .describeTrails(DescribeTrailsRequest.builder().trailNameList(TRAIL_NAME).build());
         assertEquals(0, describeTrailResult.trailList().size());
     }
 }

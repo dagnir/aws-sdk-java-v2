@@ -47,20 +47,20 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
 
         // Create a table
         String keyName = KEY_NAME;
-        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(TABLE_NAME)
-                .keySchema(KeySchemaElement.builder_()
+                .keySchema(KeySchemaElement.builder()
                         .attributeName(keyName)
                         .keyType(KeyType.HASH)
-                        .build_())
+                        .build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName(keyName)
+                        AttributeDefinition.builder().attributeName(keyName)
                                 .attributeType(ScalarAttributeType.S)
-                                .build_())
-                .provisionedThroughput(ProvisionedThroughput.builder_()
+                                .build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
                         .readCapacityUnits(10L)
-                        .writeCapacityUnits(5L).build_())
-                .build_();
+                        .writeCapacityUnits(5L).build())
+                .build();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_NAME);
@@ -72,9 +72,9 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
      * reserved for the region.
      */
     public static void deleteAllTables() {
-        ListTablesResult listTables = dynamo.listTables(ListTablesRequest.builder_().build_());
+        ListTablesResult listTables = dynamo.listTables(ListTablesRequest.builder().build());
         for (String name : listTables.tableNames()) {
-            dynamo.deleteTable(DeleteTableRequest.builder_().tableName(name).build_());
+            dynamo.deleteTable(DeleteTableRequest.builder().tableName(name).build());
         }
     }
 
@@ -83,30 +83,30 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
 
         String keyName = DynamoDBIntegrationTestBase.KEY_NAME;
         String rangeKeyAttributeName = "rangeKey";
-        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(TABLE_WITH_RANGE_ATTRIBUTE)
                 .keySchema(
-                        KeySchemaElement.builder_()
+                        KeySchemaElement.builder()
                                 .attributeName(keyName)
                                 .keyType(KeyType.HASH)
-                                .build_(),
-                        KeySchemaElement.builder_()
+                                .build(),
+                        KeySchemaElement.builder()
                                 .attributeName(rangeKeyAttributeName)
                                 .keyType(KeyType.RANGE)
-                                .build_())
+                                .build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_()
+                        AttributeDefinition.builder()
                                 .attributeName(keyName)
                                 .attributeType(ScalarAttributeType.N)
-                                .build_(),
-                        AttributeDefinition.builder_()
+                                .build(),
+                        AttributeDefinition.builder()
                                 .attributeName(rangeKeyAttributeName)
                                 .attributeType(ScalarAttributeType.N)
-                                .build_())
-                .provisionedThroughput(ProvisionedThroughput.builder_()
+                                .build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
                         .readCapacityUnits(10L)
-                        .writeCapacityUnits(5L).build_())
-                .build_();
+                        .writeCapacityUnits(5L).build())
+                .build();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_WITH_RANGE_ATTRIBUTE);
@@ -116,7 +116,7 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
     protected static void setUpTableWithIndexRangeAttribute(boolean recreateTable) throws Exception {
         setUp();
         if (recreateTable) {
-            dynamo.deleteTable(DeleteTableRequest.builder_().tableName(TABLE_WITH_INDEX_RANGE_ATTRIBUTE).build_());
+            dynamo.deleteTable(DeleteTableRequest.builder().tableName(TABLE_WITH_INDEX_RANGE_ATTRIBUTE).build());
             waitForTableToBecomeDeleted(TABLE_WITH_INDEX_RANGE_ATTRIBUTE);
         }
 
@@ -132,96 +132,96 @@ public class DynamoDBIntegrationTestBase extends DynamoDBTestBase {
         String indexFooCopyName = "index_foo_copy";
         String indexBarCopyName = "index_bar_copy";
 
-        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(TABLE_WITH_INDEX_RANGE_ATTRIBUTE)
                 .keySchema(
-                        KeySchemaElement.builder_()
+                        KeySchemaElement.builder()
                                 .attributeName(keyName)
                                 .keyType(KeyType.HASH)
-                                .build_(),
-                        KeySchemaElement.builder_()
+                                .build(),
+                        KeySchemaElement.builder()
                                 .attributeName(rangeKeyAttributeName)
                                 .keyType(KeyType.RANGE)
-                                .build_())
+                                .build())
                 .localSecondaryIndexes(
-                        LocalSecondaryIndex.builder_()
+                        LocalSecondaryIndex.builder()
                                 .indexName(indexFooName)
                                 .keySchema(
-                                        KeySchemaElement.builder_()
+                                        KeySchemaElement.builder()
                                                 .attributeName(keyName)
                                                 .keyType(KeyType.HASH)
-                                                .build_(),
-                                        KeySchemaElement.builder_()
+                                                .build(),
+                                        KeySchemaElement.builder()
                                                 .attributeName(indexFooRangeKeyAttributeName)
                                                 .keyType(KeyType.RANGE)
-                                                .build_())
-                                .projection(Projection.builder_()
+                                                .build())
+                                .projection(Projection.builder()
                                         .projectionType(ProjectionType.INCLUDE)
                                         .nonKeyAttributes(fooAttributeName)
-                                        .build_())
-                                .build_(),
-                        LocalSecondaryIndex.builder_()
+                                        .build())
+                                .build(),
+                        LocalSecondaryIndex.builder()
                                 .indexName(indexBarName)
                                 .keySchema(
-                                        KeySchemaElement.builder_()
+                                        KeySchemaElement.builder()
                                                 .attributeName(keyName)
                                                 .keyType(KeyType.HASH)
-                                                .build_(),
-                                        KeySchemaElement.builder_()
+                                                .build(),
+                                        KeySchemaElement.builder()
                                                 .attributeName(indexBarRangeKeyAttributeName)
                                                 .keyType(KeyType.RANGE)
-                                                .build_())
-                                .projection(Projection.builder_()
+                                                .build())
+                                .projection(Projection.builder()
                                         .projectionType(ProjectionType.INCLUDE)
                                         .nonKeyAttributes(barAttributeName)
-                                        .build_())
-                                .build_(),
-                        LocalSecondaryIndex.builder_()
+                                        .build())
+                                .build(),
+                        LocalSecondaryIndex.builder()
                                 .indexName(indexFooCopyName)
                                 .keySchema(
-                                        KeySchemaElement.builder_()
+                                        KeySchemaElement.builder()
                                                 .attributeName(keyName)
                                                 .keyType(KeyType.HASH)
-                                                .build_(),
-                                        KeySchemaElement.builder_()
+                                                .build(),
+                                        KeySchemaElement.builder()
                                                 .attributeName(multipleIndexRangeKeyAttributeName)
                                                 .keyType(KeyType.RANGE)
-                                                .build_())
-                                .projection(Projection.builder_()
+                                                .build())
+                                .projection(Projection.builder()
                                         .projectionType(ProjectionType.INCLUDE)
                                         .nonKeyAttributes(fooAttributeName)
-                                        .build_())
-                                .build_(),
-                        LocalSecondaryIndex.builder_()
+                                        .build())
+                                .build(),
+                        LocalSecondaryIndex.builder()
                                 .indexName(indexBarCopyName)
                                 .keySchema(
-                                        KeySchemaElement.builder_()
+                                        KeySchemaElement.builder()
                                                 .attributeName(keyName)
                                                 .keyType(KeyType.HASH)
-                                                .build_(),
-                                        KeySchemaElement.builder_()
+                                                .build(),
+                                        KeySchemaElement.builder()
                                                 .attributeName(multipleIndexRangeKeyAttributeName)
                                                 .keyType(KeyType.RANGE)
-                                                .build_())
-                                .projection(Projection.builder_()
+                                                .build())
+                                .projection(Projection.builder()
                                         .projectionType(ProjectionType.INCLUDE)
                                         .nonKeyAttributes(barAttributeName)
-                                        .build_())
-                                .build_())
+                                        .build())
+                                .build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName(keyName).attributeType(ScalarAttributeType.N).build_(),
-                        AttributeDefinition.builder_().attributeName(rangeKeyAttributeName)
-                                                 .attributeType(ScalarAttributeType.N).build_(),
-                        AttributeDefinition.builder_().attributeName(indexFooRangeKeyAttributeName)
-                                                 .attributeType(ScalarAttributeType.N).build_(),
-                        AttributeDefinition.builder_().attributeName(indexBarRangeKeyAttributeName)
-                                                 .attributeType(ScalarAttributeType.N).build_(),
-                        AttributeDefinition.builder_().attributeName(multipleIndexRangeKeyAttributeName)
-                                                 .attributeType(ScalarAttributeType.N).build_())
-                .provisionedThroughput(ProvisionedThroughput.builder_()
+                        AttributeDefinition.builder().attributeName(keyName).attributeType(ScalarAttributeType.N).build(),
+                        AttributeDefinition.builder().attributeName(rangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build(),
+                        AttributeDefinition.builder().attributeName(indexFooRangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build(),
+                        AttributeDefinition.builder().attributeName(indexBarRangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build(),
+                        AttributeDefinition.builder().attributeName(multipleIndexRangeKeyAttributeName)
+                                                 .attributeType(ScalarAttributeType.N).build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
                         .readCapacityUnits(10L)
-                        .writeCapacityUnits(5L).build_())
-                .build_();
+                        .writeCapacityUnits(5L).build())
+                .build();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_WITH_INDEX_RANGE_ATTRIBUTE);

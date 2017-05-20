@@ -81,7 +81,7 @@ public class AwsJsonExceptionTest {
     }
 
     private void callAllTypes() {
-        client.allTypes(AllTypesRequest.builder_().build_());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {

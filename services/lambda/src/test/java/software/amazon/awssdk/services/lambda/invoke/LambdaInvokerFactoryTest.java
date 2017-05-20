@@ -71,39 +71,39 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_NoArgs_Void_Default() {
-        InvokeRequest request = InvokeRequest.builder_().functionName("doIt").invocationType("RequestResponse")
-                                                   .logType("None").build_();
+        InvokeRequest request = InvokeRequest.builder().functionName("doIt").invocationType("RequestResponse")
+                                                   .logType("None").build();
 
-        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder_()
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder()
                 .statusCode(204)
-                .build_()));
+                .build()));
 
         invoker.doIt();
     }
 
     @Test
     public void test_NoArgs_Void_Async() {
-        InvokeRequest request = InvokeRequest.builder_().functionName("doIt").invocationType("Event")
-                                                   .logType("None").build_();
+        InvokeRequest request = InvokeRequest.builder().functionName("doIt").invocationType("Event")
+                                                   .logType("None").build();
 
-        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder_().statusCode(202).build_()));
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder().statusCode(202).build()));
 
         invoker.doItAsynchronously();
     }
 
     @Test
     public void test_NoArgs_Void_Logs() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("doIt")
                 .invocationType("RequestResponse")
                 .logType("Tail")
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_()
+                CompletableFuture.completedFuture(InvokeResult.builder()
                         .statusCode(204)
                         .logResult("TG9nZ2l0eSBsb2dnaW5n")
-                        .build_()));
+                        .build()));
 
         invoker.doItWithLogs();
     }
@@ -120,11 +120,11 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_NoArgs_String_Default() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("getString")
                 .invocationType("RequestResponse")
                 .logType("None")
-                .build_();
+                .build();
 
         when(mock.invoke(request))
                 .thenReturn(CompletableFuture.completedFuture(getStringSuccessResult()));
@@ -135,30 +135,30 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_String_Void_Default() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("setString")
                 .invocationType("RequestResponse")
                 .logType("None")
                 .payload(ByteBuffer.wrap("\"Hello World\"".getBytes(StandardCharsets.UTF_8)))
-                .build_();
+                .build();
 
-        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder_().statusCode(204).build_()));
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder().statusCode(204).build()));
 
         invoker.setString("Hello World");
     }
 
     @Test
     public void test_List_Map_Default() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("keySet")
                 .invocationType("RequestResponse")
                 .logType("None")
                 .payload(ByteBuffer.wrap("{\"a\":\"b\",\"c\":\"d\"}".getBytes(StandardCharsets.UTF_8)))
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
                 CompletableFuture.completedFuture(
-                        InvokeResult.builder_().statusCode(200).payload(ByteBuffer.wrap("[\"a\",\"c\"]".getBytes())).build_()));
+                        InvokeResult.builder().statusCode(200).payload(ByteBuffer.wrap("[\"a\",\"c\"]".getBytes())).build()));
 
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("a", "b");
@@ -175,16 +175,16 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_Pojo_Pojo_Default() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("transform")
                 .invocationType("RequestResponse")
                 .logType("None")
                 .payload(ByteBuffer.wrap("{\"string\":\"Hello World\",\"integer\":12345}".getBytes(StandardCharsets.UTF_8)))
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_().statusCode(200).payload(
-                        ByteBuffer.wrap("{\"string\":\"Hello Test\",\"integer\":67890}".getBytes())).build_()));
+                CompletableFuture.completedFuture(InvokeResult.builder().statusCode(200).payload(
+                        ByteBuffer.wrap("{\"string\":\"Hello Test\",\"integer\":67890}".getBytes())).build()));
 
         Pojo pojo = new Pojo();
         pojo.setString("Hello World");
@@ -198,19 +198,19 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_UnhandledException() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("fail")
                 .invocationType("RequestResponse")
                 .logType("None")
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_()
+                CompletableFuture.completedFuture(InvokeResult.builder()
                         .statusCode(200)
                         .functionError("Unhandled")
                         .payload(
                                 ByteBuffer.wrap("{\"errorMessage\":\"I'm the message\",\"errorType\":\"BOOM\"}"
-                                                        .getBytes())).build_()));
+                                                        .getBytes())).build()));
 
         try {
             invoker.fail();
@@ -224,20 +224,20 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void unhandledExceptionWithUnknownField_UnmarshallsCorrectly() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("fail")
                 .invocationType("RequestResponse")
                 .logType("None")
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_()
+                CompletableFuture.completedFuture(InvokeResult.builder()
                         .statusCode(200)
                         .functionError("Unhandled")
                         .payload(
                                 ByteBuffer
                                         .wrap("{\"errorMessage\":\"I'm the message\",\"errorType\":\"BOOM\",\"unknownField\": \"foo\"}"
-                                                      .getBytes())).build_()));
+                                                      .getBytes())).build()));
 
         try {
             invoker.fail();
@@ -252,17 +252,17 @@ public class LambdaInvokerFactoryTest {
     @Test
     public void unhandledPythonException_UnmarshallsCorrectly() {
         final String exceptionJson = "{\"stackTrace\":[[\"/var/task/lambda_function.py\",9,\"lambda_handler\",\"raise Exception('Something went wrong')\"]],\"errorType\":\"PythonException\",\"errorMessage\":\"I'm the message\"}";
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("fail")
                 .invocationType("RequestResponse")
                 .logType("None")
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_()
+                CompletableFuture.completedFuture(InvokeResult.builder()
                         .statusCode(200)
                         .functionError("Unhandled")
-                        .payload(ByteBuffer.wrap(exceptionJson.getBytes())).build_()));
+                        .payload(ByteBuffer.wrap(exceptionJson.getBytes())).build()));
 
         try {
             invoker.fail();
@@ -283,18 +283,18 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_HandledException() {
-        InvokeRequest request = InvokeRequest.builder_().functionName("fail").invocationType("RequestResponse")
-                                                   .logType("None").build_();
+        InvokeRequest request = InvokeRequest.builder().functionName("fail").invocationType("RequestResponse")
+                                                   .logType("None").build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_()
+                CompletableFuture.completedFuture(InvokeResult.builder()
                         .statusCode(200)
                         .functionError("Handled")
                         .payload(
                                 ByteBuffer.wrap(("{\"errorMessage\":\"I'm the message\"," +
                                                  "\"errorType\":\"BOOM\"," +
                                                  "\"cause\":{}," +
-                                                 "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes())).build_()));
+                                                 "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes())).build()));
 
         try {
             invoker.fail();
@@ -323,20 +323,20 @@ public class LambdaInvokerFactoryTest {
      */
     @Test
     public void customExceptionTypeWithFullyQualifiedName_ThrowsCustomException() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("fail")
                 .invocationType("RequestResponse")
                 .logType("None")
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_()
+                CompletableFuture.completedFuture(InvokeResult.builder()
                         .statusCode(200)
                         .functionError("Handled")
                         .payload(ByteBuffer.wrap((String.format(
                                 "{\"errorMessage\":\"I'm the message\"," +
                                 "\"errorType\":\"%s\",\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}",
-                                CustomException.class.getName())).getBytes())).build_()));
+                                CustomException.class.getName())).getBytes())).build()));
 
         try {
             invoker.fail();
@@ -363,19 +363,19 @@ public class LambdaInvokerFactoryTest {
      */
     @Test
     public void customExceptionTypeWithShortName_ThrowsCustomException() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("fail")
                 .invocationType("RequestResponse")
                 .logType("None")
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_()
+                CompletableFuture.completedFuture(InvokeResult.builder()
                         .statusCode(200)
                         .functionError("Handled")
                         .payload(
                                 ByteBuffer.wrap(("{\"errorMessage\":\"I'm the message\"," + "\"errorType\":\"CustomException\","
-                                                 + "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes())).build_()));
+                                                 + "\"stackTrace\":[\"abc\",\"def\",\"ghi\"]}").getBytes())).build()));
 
         try {
             invoker.fail();
@@ -397,15 +397,15 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_DeserializationException() {
-        InvokeRequest request = InvokeRequest.builder_()
+        InvokeRequest request = InvokeRequest.builder()
                 .functionName("broken")
                 .invocationType("RequestResponse")
                 .logType("None")
-                .build_();
+                .build();
 
         when(mock.invoke(request)).thenReturn(
                 CompletableFuture.completedFuture(
-                        InvokeResult.builder_().statusCode(200).payload(ByteBuffer.wrap("I'm not even JSON!".getBytes())).build_()));
+                        InvokeResult.builder().statusCode(200).payload(ByteBuffer.wrap("I'm not even JSON!".getBytes())).build()));
 
         try {
             invoker.broken();
@@ -417,12 +417,12 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void test_BogusLog() {
-        InvokeRequest request = InvokeRequest.builder_().functionName("doIt").invocationType("RequestResponse")
-                                                   .logType("Tail").build_();
+        InvokeRequest request = InvokeRequest.builder().functionName("doIt").invocationType("RequestResponse")
+                                                   .logType("Tail").build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_().statusCode(200).logResult("I'm not valid Base-64")
-                                  .payload(ByteBuffer.wrap("I should be ignored".getBytes())).build_()));
+                CompletableFuture.completedFuture(InvokeResult.builder().statusCode(200).logResult("I'm not valid Base-64")
+                                  .payload(ByteBuffer.wrap("I should be ignored".getBytes())).build()));
 
         // Should not fail just because the logged data is invalid.
         invoker.doItWithLogs();
@@ -430,12 +430,12 @@ public class LambdaInvokerFactoryTest {
 
     @Test
     public void testBogusException() {
-        InvokeRequest request = InvokeRequest.builder_().functionName("fail").invocationType("RequestResponse")
-                                                   .logType("None").build_();
+        InvokeRequest request = InvokeRequest.builder().functionName("fail").invocationType("RequestResponse")
+                                                   .logType("None").build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder_().statusCode(200).functionError("Handled")
-                                  .payload(ByteBuffer.wrap("Bogus".getBytes())).build_()));
+                CompletableFuture.completedFuture(InvokeResult.builder().statusCode(200).functionError("Handled")
+                                  .payload(ByteBuffer.wrap("Bogus".getBytes())).build()));
 
         try {
             invoker.fail();
@@ -489,9 +489,9 @@ public class LambdaInvokerFactoryTest {
     }
 
     private InvokeResult getStringSuccessResult() {
-        return InvokeResult.builder_()
+        return InvokeResult.builder()
                 .statusCode(200)
-                .payload(ByteBuffer.wrap("\"OK\"".getBytes())).build_();
+                .payload(ByteBuffer.wrap("\"OK\"".getBytes())).build();
     }
 
 

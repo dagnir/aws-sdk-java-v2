@@ -95,7 +95,7 @@ public class UnmarshallingTestRunner {
         Method builderMethod = null;
 
         try {
-            builderMethod = requestClass.getDeclaredMethod("builder_");
+            builderMethod = requestClass.getDeclaredMethod("builder");
         } catch (NoSuchMethodException ignored) {
             // Ignored
         }
@@ -105,7 +105,7 @@ public class UnmarshallingTestRunner {
 
             Object builderInstance = builderMethod.invoke(null);
 
-            Method buildMethod = builderInstance.getClass().getDeclaredMethod("build_");
+            Method buildMethod = builderInstance.getClass().getDeclaredMethod("build");
             buildMethod.setAccessible(true);
 
             return buildMethod.invoke(builderInstance);

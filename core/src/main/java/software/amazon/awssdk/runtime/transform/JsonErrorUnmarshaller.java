@@ -58,7 +58,7 @@ public class JsonErrorUnmarshaller extends AbstractErrorUnmarshaller<JsonNode> {
             Method beanStyleBuilderMethod = exceptionClass.getDeclaredMethod("beanStyleBuilderClass");
             beanStyleBuilderMethod.setAccessible(true);
             Class<?> beanStyleBuilderClass = (Class<?>) beanStyleBuilderMethod.invoke(null);
-            Method buildMethod = beanStyleBuilderClass.getMethod("build_");
+            Method buildMethod = beanStyleBuilderClass.getMethod("build");
             buildMethod.setAccessible(true);
             Object o = MAPPER.treeToValue(jsonContent, beanStyleBuilderClass);
             return (AmazonServiceException) buildMethod.invoke(o);

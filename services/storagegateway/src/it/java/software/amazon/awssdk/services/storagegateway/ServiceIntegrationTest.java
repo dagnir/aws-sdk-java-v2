@@ -45,19 +45,19 @@ public class ServiceIntegrationTest extends AwsTestBase {
 
     @Test
     public void testListGateways() {
-        ListGatewaysResult listGateways = sg.listGateways(ListGatewaysRequest.builder_().build_());
+        ListGatewaysResult listGateways = sg.listGateways(ListGatewaysRequest.builder().build());
         assertNotNull(listGateways);
         assertThat(listGateways.gateways().size(), greaterThanOrEqualTo(0));
     }
 
     @Test(expected = InvalidGatewayRequestException.class)
     public void deleteGateway_InvalidArn_ThrowsException() {
-        sg.deleteGateway(DeleteGatewayRequest.builder_().gatewayARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").build_());
+        sg.deleteGateway(DeleteGatewayRequest.builder().gatewayARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").build());
     }
 
     @Test(expected = AmazonServiceException.class)
     public void deleteGateway_NullArn_ThrowsAmazonServiceException() {
-        sg.deleteGateway(DeleteGatewayRequest.builder_().build_());
+        sg.deleteGateway(DeleteGatewayRequest.builder().build());
 
     }
 

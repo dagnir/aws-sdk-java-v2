@@ -95,9 +95,9 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
             if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
             }
-            request = request.toBuilder().limit(nextLimit).build_();
+            request = request.toBuilder().limit(nextLimit).build();
         }
-        request = request.toBuilder().exclusiveStartTableName(lastEvaluatedKey).build_();
+        request = request.toBuilder().exclusiveStartTableName(lastEvaluatedKey).build();
         ListTablesResult result = client.listTables(request);
         final int nextIndex = index + this.size();
         return new ListTablesPage(client, spec, request, nextIndex, result);

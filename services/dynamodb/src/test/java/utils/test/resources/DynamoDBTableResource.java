@@ -120,7 +120,7 @@ public abstract class DynamoDBTableResource implements TestResource {
     @Override
     public void delete(boolean waitTillFinished) {
         System.out.println("Deleting " + this + "...");
-        getClient().deleteTable(DeleteTableRequest.builder_().tableName(getCreateTableRequest().tableName()).build_());
+        getClient().deleteTable(DeleteTableRequest.builder().tableName(getCreateTableRequest().tableName()).build());
 
         if (waitTillFinished) {
             System.out.println("Waiting for " + this + " to become deleted...");
@@ -133,8 +133,8 @@ public abstract class DynamoDBTableResource implements TestResource {
         CreateTableRequest createRequest = getCreateTableRequest();
         TableDescription table = null;
         try {
-            table = getClient().describeTable(DescribeTableRequest.builder_().tableName(
-                    createRequest.tableName()).build_()).table();
+            table = getClient().describeTable(DescribeTableRequest.builder().tableName(
+                    createRequest.tableName()).build()).table();
         } catch (AmazonServiceException ase) {
             if (ase.getErrorCode().equalsIgnoreCase("ResourceNotFoundException")) {
                 return ResourceStatus.NOT_EXIST;

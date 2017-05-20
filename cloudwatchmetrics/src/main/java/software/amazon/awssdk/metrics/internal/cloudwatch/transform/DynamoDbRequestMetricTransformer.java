@@ -76,7 +76,7 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                     return Collections.emptyList();
                 }
                 Object awsResponse = response.getAwsResponse();
-                Method method = awsResponse.getClass().getMethod("getConsumedCapacity");
+                Method method = awsResponse.getClass().getMethod("consumedCapacity");
                 Object value = method.invoke(awsResponse);
                 if (!(value instanceof ConsumedCapacity)) {
                     return Collections.emptyList();

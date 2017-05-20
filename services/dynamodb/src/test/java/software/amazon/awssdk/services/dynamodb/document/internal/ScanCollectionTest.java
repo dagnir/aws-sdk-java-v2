@@ -36,7 +36,7 @@ public class ScanCollectionTest {
     @Test
     public void testEmptyResult() {
         ScanCollection col = new ScanCollection(null, new ScanSpec());
-        col.setLastLowLevelResult(new ScanOutcome(ScanResult.builder_().build_()));
+        col.setLastLowLevelResult(new ScanOutcome(ScanResult.builder().build()));
         assertTrue(0 == col.getTotalCount());
         assertTrue(0 == col.getTotalScannedCount());
         assertNull(col.getTotalConsumedCapacity());
@@ -45,26 +45,26 @@ public class ScanCollectionTest {
     @Test
     public void setLastLowLevelResult() {
         ScanCollection col = new ScanCollection(null, new ScanSpec());
-        ScanResult result = ScanResult.builder_()
+        ScanResult result = ScanResult.builder()
                 .count(rand.nextInt())
-                .scannedCount(rand.nextInt()).build_();
+                .scannedCount(rand.nextInt()).build();
 
         Map<String, Capacity> gsi = new HashMap<String, Capacity>();
-        gsi.put("gsi1", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
-        gsi.put("gsi2", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
+        gsi.put("gsi1", Capacity.builder().capacityUnits(rand.nextDouble()).build());
+        gsi.put("gsi2", Capacity.builder().capacityUnits(rand.nextDouble()).build());
 
         Map<String, Capacity> lsi = new HashMap<String, Capacity>();
-        lsi.put("lsi1", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
-        lsi.put("lsi2", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
+        lsi.put("lsi1", Capacity.builder().capacityUnits(rand.nextDouble()).build());
+        lsi.put("lsi2", Capacity.builder().capacityUnits(rand.nextDouble()).build());
 
-        ConsumedCapacity consumedCapacity = ConsumedCapacity.builder_()
+        ConsumedCapacity consumedCapacity = ConsumedCapacity.builder()
                 .capacityUnits(rand.nextDouble())
-                .table(Capacity.builder_().capacityUnits(rand.nextDouble()).build_())
+                .table(Capacity.builder().capacityUnits(rand.nextDouble()).build())
                 .tableName("tableName")
                 .globalSecondaryIndexes(gsi)
-                .localSecondaryIndexes(lsi).build_();
+                .localSecondaryIndexes(lsi).build();
         // Once
-        result = result.toBuilder().consumedCapacity(consumedCapacity).build_();
+        result = result.toBuilder().consumedCapacity(consumedCapacity).build();
         col.setLastLowLevelResult(new ScanOutcome(result));
 
         assertTrue(result.count() == col.getTotalCount());
@@ -98,25 +98,25 @@ public class ScanCollectionTest {
         assertTrue(lsi.get("lsi2").capacityUnits() * 2 == lsiTotal.get("lsi2").capacityUnits());
 
         // A different one
-        ScanResult result3 = ScanResult.builder_()
+        ScanResult result3 = ScanResult.builder()
                 .count(rand.nextInt())
                 .scannedCount(rand.nextInt())
-                .build_();
+                .build();
 
         Map<String, Capacity> gsi3 = new HashMap<String, Capacity>();
-        gsi3.put("gsi3", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
+        gsi3.put("gsi3", Capacity.builder().capacityUnits(rand.nextDouble()).build());
 
         Map<String, Capacity> lsi3 = new HashMap<String, Capacity>();
-        lsi3.put("lsi3", Capacity.builder_().capacityUnits(rand.nextDouble()).build_());
+        lsi3.put("lsi3", Capacity.builder().capacityUnits(rand.nextDouble()).build());
 
-        ConsumedCapacity consumedCapacity3 = ConsumedCapacity.builder_()
+        ConsumedCapacity consumedCapacity3 = ConsumedCapacity.builder()
                 .capacityUnits(rand.nextDouble())
-                .table(Capacity.builder_().capacityUnits(rand.nextDouble()).build_())
+                .table(Capacity.builder().capacityUnits(rand.nextDouble()).build())
                 .tableName("tableName")
                 .globalSecondaryIndexes(gsi3)
                 .localSecondaryIndexes(lsi3)
-                .build_();
-        result3 = result3.toBuilder().consumedCapacity(consumedCapacity3).build_();
+                .build();
+        result3 = result3.toBuilder().consumedCapacity(consumedCapacity3).build();
         col.setLastLowLevelResult(new ScanOutcome(result3));
 
         assertTrue(result.count() * 2 + result3.count() == col.getTotalCount());
@@ -141,9 +141,9 @@ public class ScanCollectionTest {
         assertTrue(lsi3.get("lsi3").capacityUnits() == lsiTotal.get("lsi3").capacityUnits());
 
         // An empty one
-        ScanResult result4 = ScanResult.builder_().build_();
-        ConsumedCapacity consumedCapacity4 = ConsumedCapacity.builder_().build_();
-        result4 = result4.toBuilder().consumedCapacity(consumedCapacity4).build_();
+        ScanResult result4 = ScanResult.builder().build();
+        ConsumedCapacity consumedCapacity4 = ConsumedCapacity.builder().build();
+        result4 = result4.toBuilder().consumedCapacity(consumedCapacity4).build();
         col.setLastLowLevelResult(new ScanOutcome(result4));
 
         // all assertions are expected to be the same as the last set of assertions

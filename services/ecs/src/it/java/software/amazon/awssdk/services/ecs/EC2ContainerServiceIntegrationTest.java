@@ -49,9 +49,9 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
         client = ECSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        CreateClusterResult result = client.createCluster(CreateClusterRequest.builder_()
+        CreateClusterResult result = client.createCluster(CreateClusterRequest.builder()
                 .clusterName(CLUSTER_NAME)
-                .build_());
+                .build());
 
         Assert.assertEquals(CLUSTER_NAME, result.cluster().clusterName());
         Assert.assertNotNull(result.cluster().clusterArn());
@@ -59,9 +59,9 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
         clusterArn = result.cluster().clusterArn();
 
-        while (!client.describeClusters(DescribeClustersRequest.builder_()
+        while (!client.describeClusters(DescribeClustersRequest.builder()
                 .clusters(CLUSTER_NAME)
-                .build_())
+                .build())
                 .clusters()
                 .get(0)
                 .status().equals("ACTIVE")) {
@@ -73,31 +73,31 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
     @AfterClass
     public static void cleanup() {
         if (client != null) {
-            client.deleteCluster(DeleteClusterRequest.builder_().cluster(CLUSTER_NAME).build_());
+            client.deleteCluster(DeleteClusterRequest.builder().cluster(CLUSTER_NAME).build());
         }
     }
 
     @Test
     public void basicTest() {
-        List<String> arns = client.listClusters(ListClustersRequest.builder_().build_()).clusterArns();
+        List<String> arns = client.listClusters(ListClustersRequest.builder().build()).clusterArns();
         Assert.assertNotNull(arns);
         Assert.assertTrue(arns.contains(clusterArn));
 
         RegisterTaskDefinitionResult result =
-                client.registerTaskDefinition(RegisterTaskDefinitionRequest.builder_()
+                client.registerTaskDefinition(RegisterTaskDefinitionRequest.builder()
                                 .family("test")
-                                .containerDefinitions(ContainerDefinition.builder_()
+                                .containerDefinitions(ContainerDefinition.builder()
                                                 .command("command", "command", "command")
                                                 .cpu(1)
                                                 .entryPoint("entryPoint", "entryPoint")
                                                 .image("image")
                                                 .memory(1)
                                                 .name("test")
-                                                .portMappings(PortMapping.builder_()
+                                                .portMappings(PortMapping.builder()
                                                                 .hostPort(12345)
-                                                                .containerPort(6789).build_()
-                                                ).build_()
-                                ).build_()
+                                                                .containerPort(6789).build()
+                                                ).build()
+                                ).build()
                 );
 
         Assert.assertEquals("test", result.taskDefinition().family());
@@ -119,7 +119,7 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
         // Can't deregister task definitions yet... :(
 
-        List<String> taskArns = client.listTaskDefinitions(ListTaskDefinitionsRequest.builder_().build_())
+        List<String> taskArns = client.listTaskDefinitions(ListTaskDefinitionsRequest.builder().build())
                                       .taskDefinitionArns();
 
         Assert.assertNotNull(taskArns);

@@ -259,24 +259,24 @@ public class StandardModelFactoriesV2Test {
 
         assertEquals(1, value.l().size());
         assertEquals(new HashMap<String, AttributeValue>() {{
-                         put("name", AttributeValue.builder_().s("name").build_());
-                         put("value", AttributeValue.builder_().n("123").build_());
+                         put("name", AttributeValue.builder().s("name").build());
+                         put("value", AttributeValue.builder().n("123").build());
                      }},
                      value.l().get(0).m());
 
-        assertEquals(Arrays.asList(AttributeValue.builder_().nul(true).build_()),
+        assertEquals(Arrays.asList(AttributeValue.builder().nul(true).build()),
                      convert("getObjectSet", Collections.<SubClass>singleton(null)).l());
     }
 
     @Test
     public void testList() {
         assertEquals(Arrays.asList(
-                AttributeValue.builder_().s("a").build_(),
-                AttributeValue.builder_().s("b").build_(),
-                AttributeValue.builder_().s("c").build_()),
+                AttributeValue.builder().s("a").build(),
+                AttributeValue.builder().s("b").build(),
+                AttributeValue.builder().s("c").build()),
                      convert("getList", Arrays.asList("a", "b", "c")).l());
 
-        assertEquals(Arrays.asList(AttributeValue.builder_().nul(true).build_()),
+        assertEquals(Arrays.asList(AttributeValue.builder().nul(true).build()),
                      convert("getList", Collections.<String>singletonList(null)).l());
     }
 
@@ -288,8 +288,8 @@ public class StandardModelFactoriesV2Test {
 
         assertEquals(1, value.l().size());
         assertEquals(new HashMap<String, AttributeValue>() {{
-                         put("name", AttributeValue.builder_().s("name").build_());
-                         put("value", AttributeValue.builder_().n("123").build_());
+                         put("name", AttributeValue.builder().s("name").build());
+                         put("value", AttributeValue.builder().n("123").build());
                      }},
                      value.l().get(0).m());
     }
@@ -297,7 +297,7 @@ public class StandardModelFactoriesV2Test {
     @Test
     public void testSetList() {
         assertEquals(
-                Arrays.asList(AttributeValue.builder_().ss("a").build_()),
+                Arrays.asList(AttributeValue.builder().ss("a").build()),
                 convert("getSetList", Arrays.asList(
                         Collections.<String>singleton("a"))).l());
 
@@ -305,16 +305,16 @@ public class StandardModelFactoriesV2Test {
         list.add(null);
 
         assertEquals(
-                Arrays.asList(AttributeValue.builder_().nul(true).build_()),
+                Arrays.asList(AttributeValue.builder().nul(true).build()),
                 convert("getSetList", list).l());
     }
 
     @Test
     public void testMap() {
         assertEquals(new HashMap<String, AttributeValue>() {{
-                         put("a", AttributeValue.builder_().s("b").build_());
-                         put("c", AttributeValue.builder_().s("d").build_());
-                         put("e", AttributeValue.builder_().s("f").build_());
+                         put("a", AttributeValue.builder().s("b").build());
+                         put("c", AttributeValue.builder().s("d").build());
+                         put("e", AttributeValue.builder().s("f").build());
                      }},
                      convert("getMap", new HashMap<String, String>() {{
                          put("a", "b");
@@ -322,22 +322,22 @@ public class StandardModelFactoriesV2Test {
                          put("e", "f");
                      }}).m());
 
-        assertEquals(Collections.singletonMap("a", AttributeValue.builder_().nul(true).build_()),
+        assertEquals(Collections.singletonMap("a", AttributeValue.builder().nul(true).build()),
                      convert("getMap", Collections.<String, String>singletonMap("a", null)).m());
     }
 
     @Test
     public void testSetMap() {
         assertEquals(new HashMap<String, AttributeValue>() {{
-                         put("a", AttributeValue.builder_().ss("a", "b").build_());
+                         put("a", AttributeValue.builder().ss("a", "b").build());
                      }},
                      convert("getSetMap", new HashMap<String, Set<String>>() {{
                          put("a", new TreeSet<String>(Arrays.asList("a", "b")));
                      }}).m());
 
         assertEquals(new HashMap<String, AttributeValue>() {{
-                         put("a", AttributeValue.builder_().ss("a").build_());
-                         put("b", AttributeValue.builder_().nul(true).build_());
+                         put("a", AttributeValue.builder().ss("a").build());
+                         put("b", AttributeValue.builder().nul(true).build());
                      }},
                      convert("getSetMap", new HashMap<String, Set<String>>() {{
                          put("a", new TreeSet<String>(Arrays.asList("a")));
@@ -348,8 +348,8 @@ public class StandardModelFactoriesV2Test {
     @Test
     public void testObject() {
         assertEquals(new HashMap<String, AttributeValue>() {{
-                         put("name", AttributeValue.builder_().s("name").build_());
-                         put("value", AttributeValue.builder_().n("123").build_());
+                         put("name", AttributeValue.builder().s("name").build());
+                         put("value", AttributeValue.builder().n("123").build());
                      }},
                      convert("getObject", new SubClass()).m());
     }

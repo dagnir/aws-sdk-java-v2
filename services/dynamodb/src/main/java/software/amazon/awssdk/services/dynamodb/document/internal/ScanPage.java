@@ -93,9 +93,9 @@ class ScanPage extends Page<Item, ScanOutcome> {
             if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
             }
-            request = request.toBuilder().limit(nextLimit).build_();
+            request = request.toBuilder().limit(nextLimit).build();
         }
-        request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build_();
+        request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build();
         // fire off request to the server side
         ScanResult result = client.scan(request);
         final int nextIndex = index + this.size();

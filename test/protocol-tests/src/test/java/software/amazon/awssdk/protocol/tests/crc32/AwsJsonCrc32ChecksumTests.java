@@ -77,7 +77,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        SimpleResult result = jsonRpc.simple(SimpleRequest.builder_().build_());
+        SimpleResult result = jsonRpc.simple(SimpleRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -102,7 +102,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        SimpleResult result = jsonRpc.simple(SimpleRequest.builder_().build_());
+        SimpleResult result = jsonRpc.simple(SimpleRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -121,7 +121,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        jsonRpc.simple(SimpleRequest.builder_().build_());
+        jsonRpc.simple(SimpleRequest.builder().build());
     }
 
     @Test
@@ -140,7 +140,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .build();
 
         AllTypesResult result =
-                jsonRpc.allTypes(AllTypesRequest.builder_().build_());
+                jsonRpc.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -159,7 +159,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        jsonRpc.allTypes(AllTypesRequest.builder_().build_());
+        jsonRpc.allTypes(AllTypesRequest.builder().build());
     }
 
     @Test
@@ -177,7 +177,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .build();
 
         AllTypesResult result =
-                jsonRpc.allTypes(AllTypesRequest.builder_().build_());
+                jsonRpc.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -195,6 +195,6 @@ public class AwsJsonCrc32ChecksumTests {
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        jsonRpc.allTypes(AllTypesRequest.builder_().build_());
+        jsonRpc.allTypes(AllTypesRequest.builder().build());
     }
 }

@@ -80,9 +80,9 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
         DynamoDbQueryExpression<RangeKeyClass> queryExpression = new DynamoDbQueryExpression<RangeKeyClass>()
                 .withHashKeyValues(keyObject);
         queryExpression.withRangeKeyCondition("rangeKey",
-                                              Condition.builder_().comparisonOperator(ComparisonOperator.GT.toString())
+                                              Condition.builder().comparisonOperator(ComparisonOperator.GT.toString())
                                                              .attributeValueList(
-                                                                     AttributeValue.builder_().n("1.0").build_()).build_()).withLimit(PAGE_SIZE);
+                                                                     AttributeValue.builder().n("1.0").build()).build()).withLimit(PAGE_SIZE);
 
         return mapper.query(RangeKeyClass.class, queryExpression, new DynamoDbMapperConfig(paginationLoadingStrategy));
     }
@@ -94,11 +94,11 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
         // Construct the scan expression with the exact same conditions
         DynamoDbScanExpression scanExpression = new DynamoDbScanExpression();
         scanExpression.addFilterCondition("key",
-                                          Condition.builder_().comparisonOperator(ComparisonOperator.EQ).attributeValueList(
-                                                  AttributeValue.builder_().n(Long.toString(hashKey)).build_()).build_());
+                                          Condition.builder().comparisonOperator(ComparisonOperator.EQ).attributeValueList(
+                                                  AttributeValue.builder().n(Long.toString(hashKey)).build()).build());
         scanExpression.addFilterCondition("rangeKey",
-                                          Condition.builder_().comparisonOperator(ComparisonOperator.GT).attributeValueList(
-                                                  AttributeValue.builder_().n("1.0").build_()).build_());
+                                          Condition.builder().comparisonOperator(ComparisonOperator.GT).attributeValueList(
+                                                  AttributeValue.builder().n("1.0").build()).build());
         scanExpression.setLimit(PAGE_SIZE);
 
         return mapper.scan(RangeKeyClass.class, scanExpression, new DynamoDbMapperConfig(paginationLoadingStrategy));
@@ -112,11 +112,11 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
         // Construct the scan expression with the exact same conditions
         DynamoDbScanExpression scanExpression = new DynamoDbScanExpression();
         scanExpression.addFilterCondition("key",
-                                          Condition.builder_().comparisonOperator(ComparisonOperator.EQ).attributeValueList(
-                                                  AttributeValue.builder_().n(Long.toString(hashKey)).build_()).build_());
+                                          Condition.builder().comparisonOperator(ComparisonOperator.EQ).attributeValueList(
+                                                  AttributeValue.builder().n(Long.toString(hashKey)).build()).build());
         scanExpression.addFilterCondition("rangeKey",
-                                          Condition.builder_().comparisonOperator(ComparisonOperator.GT).attributeValueList(
-                                                  AttributeValue.builder_().n("1.0").build_()).build_());
+                                          Condition.builder().comparisonOperator(ComparisonOperator.GT).attributeValueList(
+                                                  AttributeValue.builder().n("1.0").build()).build());
         scanExpression.setLimit(PAGE_SIZE);
 
         return mapper.parallelScan(RangeKeyClass.class, scanExpression, PARALLEL_SEGMENT,

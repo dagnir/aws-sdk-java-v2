@@ -19,9 +19,10 @@ import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createL
 import static software.amazon.awssdk.utils.FunctionalUtils.safeFunction;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 import software.amazon.awssdk.codegen.emitters.FreemarkerGeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTask;
 import software.amazon.awssdk.codegen.emitters.GeneratorTaskParams;
@@ -33,6 +34,7 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.common.EnumClass;
 import software.amazon.awssdk.codegen.poet.model.AwsServiceModel;
+import software.amazon.awssdk.codegen.poet.model.ServiceModelCopierSpecs;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 class ModelClassGeneratorTasks extends BaseGeneratorTasks {
@@ -47,10 +49,20 @@ class ModelClassGeneratorTasks extends BaseGeneratorTasks {
     @Override
     protected List<GeneratorTask> createTasks() throws Exception {
         info("Emitting model classes");
-        return model.getShapes().entrySet().stream()
+        List<GeneratorTask> tasks = new ArrayList<>();
+
+        model.getShapes().entrySet().stream()
                     .filter(e -> shouldGenerateShape(e.getValue()))
                     .map(safeFunction(e -> createTask(e.getKey(), e.getValue())))
-                    .collect(Collectors.toList());
+                    .forEach(tasks::add);
+
+        if (model.getMetadata().isJsonProtocol()) {
+            new ServiceModelCopierSpecs(model).copierSpecs().stream()
+                    .map(safeFunction(spec -> new PoetGeneratorTask(modelClassDir, model.getFileHeader(), spec)))
+                    .forEach(tasks::add);
+        }
+
+        return tasks;
     }
 
     private boolean shouldGenerateShape(ShapeModel shapeModel) {

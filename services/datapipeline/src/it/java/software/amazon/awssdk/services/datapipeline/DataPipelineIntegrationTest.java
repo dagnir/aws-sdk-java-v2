@@ -60,7 +60,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         try {
-            dataPipeline.deletePipeline(DeletePipelineRequest.builder_().pipelineId(pipelineId).build_());
+            dataPipeline.deletePipeline(DeletePipelineRequest.builder().pipelineId(pipelineId).build());
         } catch (Exception e) {
             // Do nothing.
         }
@@ -70,30 +70,30 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
     public void testPipelineOperations() throws InterruptedException {
         // Create a pipeline.
         CreatePipelineResult createPipelineResult = dataPipeline.createPipeline(
-                CreatePipelineRequest.builder_()
+                CreatePipelineRequest.builder()
                         .name(PIPELINE_NAME)
                         .uniqueId(PIPELINE_ID)
                         .description(PIPELINE_DESCRIPTION)
-                        .build_());
+                        .build());
         pipelineId = createPipelineResult.pipelineId();
         assertNotNull(pipelineId);
 
 
         // Invalid field
-        PipelineObject pipelineObject = PipelineObject.builder_()
+        PipelineObject pipelineObject = PipelineObject.builder()
                 .id(OBJECT_ID + "1")
                 .name(OBJECT_NAME)
-                .fields(Field.builder_()
+                .fields(Field.builder()
                         .key(INVALID_KEY)
                         .stringValue(FIELD_VALUE)
-                        .build_())
-                .build_();
+                        .build())
+                .build();
 
         ValidatePipelineDefinitionResult validatePipelineDefinitionResult =
-                dataPipeline.validatePipelineDefinition(ValidatePipelineDefinitionRequest.builder_()
+                dataPipeline.validatePipelineDefinition(ValidatePipelineDefinitionRequest.builder()
                         .pipelineId(pipelineId)
                         .pipelineObjects(pipelineObject)
-                        .build_());
+                        .build());
         assertTrue(validatePipelineDefinitionResult.errored());
         assertNotNull(validatePipelineDefinitionResult.validationErrors());
         assertTrue(validatePipelineDefinitionResult.validationErrors().size() > 0);
@@ -102,21 +102,21 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(0, validatePipelineDefinitionResult.validationWarnings().size());
 
         // Valid field
-        pipelineObject = PipelineObject.builder_()
+        pipelineObject = PipelineObject.builder()
                 .id(OBJECT_ID)
                 .name(OBJECT_NAME)
-                .fields(Field.builder_()
+                .fields(Field.builder()
                         .key(VALID_KEY)
                         .stringValue(FIELD_VALUE)
-                        .build_())
-                .build_();
+                        .build())
+                .build();
 
         // Validate pipeline definition.
         validatePipelineDefinitionResult =
-                dataPipeline.validatePipelineDefinition(ValidatePipelineDefinitionRequest.builder_()
+                dataPipeline.validatePipelineDefinition(ValidatePipelineDefinitionRequest.builder()
                         .pipelineId(pipelineId)
                         .pipelineObjects(pipelineObject)
-                        .build_());
+                        .build());
         assertFalse(validatePipelineDefinitionResult.errored());
         assertNotNull(validatePipelineDefinitionResult.validationErrors());
         assertEquals(0, validatePipelineDefinitionResult.validationErrors().size());
@@ -125,10 +125,10 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
 
         // Put pipeline definition.
         PutPipelineDefinitionResult putPipelineDefinitionResult =
-                dataPipeline.putPipelineDefinition(PutPipelineDefinitionRequest.builder_()
+                dataPipeline.putPipelineDefinition(PutPipelineDefinitionRequest.builder()
                         .pipelineId(pipelineId)
                         .pipelineObjects(pipelineObject)
-                        .build_());
+                        .build());
         assertFalse(putPipelineDefinitionResult.errored());
         assertNotNull(putPipelineDefinitionResult.validationErrors());
         assertEquals(0, putPipelineDefinitionResult.validationErrors().size());
@@ -137,21 +137,21 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
 
         // Get pipeline definition.
         GetPipelineDefinitionResult pipelineDefinitionResult =
-                dataPipeline.getPipelineDefinition(GetPipelineDefinitionRequest.builder_().pipelineId(pipelineId).build_());
+                dataPipeline.getPipelineDefinition(GetPipelineDefinitionRequest.builder().pipelineId(pipelineId).build());
         assertEquals(1, pipelineDefinitionResult.pipelineObjects().size());
         assertEquals(OBJECT_ID, pipelineDefinitionResult.pipelineObjects().get(0).id());
         assertEquals(OBJECT_NAME, pipelineDefinitionResult.pipelineObjects().get(0).name());
         assertEquals(1, pipelineDefinitionResult.pipelineObjects().get(0).fields().size());
         assertTrue(pipelineDefinitionResult.pipelineObjects().get(0).fields()
-                                              .contains(Field.builder_().key(VALID_KEY).stringValue(FIELD_VALUE)));
+                                              .contains(Field.builder().key(VALID_KEY).stringValue(FIELD_VALUE)));
 
         // Activate a pipeline.
         ActivatePipelineResult activatePipelineResult =
-                dataPipeline.activatePipeline(ActivatePipelineRequest.builder_().pipelineId(pipelineId).build_());
+                dataPipeline.activatePipeline(ActivatePipelineRequest.builder().pipelineId(pipelineId).build());
         assertNotNull(activatePipelineResult);
 
         // List pipeline.
-        ListPipelinesResult listPipelinesResult = dataPipeline.listPipelines(ListPipelinesRequest.builder_().build_());
+        ListPipelinesResult listPipelinesResult = dataPipeline.listPipelines(ListPipelinesRequest.builder().build());
         assertTrue(listPipelinesResult.pipelineIdList().size() > 0);
         assertNotNull(pipelineId, listPipelinesResult.pipelineIdList().get(0).id());
         assertNotNull(PIPELINE_NAME, listPipelinesResult.pipelineIdList().get(0).name());
@@ -160,35 +160,35 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
 
         // Describe objects.
         DescribeObjectsResult describeObjectsResult =
-                dataPipeline.describeObjects(DescribeObjectsRequest.builder_().pipelineId(pipelineId).objectIds(OBJECT_ID).build_());
+                dataPipeline.describeObjects(DescribeObjectsRequest.builder().pipelineId(pipelineId).objectIds(OBJECT_ID).build());
         assertEquals(1, describeObjectsResult.pipelineObjects().size());
         assertEquals(OBJECT_ID, describeObjectsResult.pipelineObjects().get(0).id());
         assertEquals(OBJECT_NAME, describeObjectsResult.pipelineObjects().get(0).name());
         assertTrue(describeObjectsResult.pipelineObjects().get(0).fields()
-                                        .contains(Field.builder_().key(VALID_KEY).stringValue(FIELD_VALUE)));
+                                        .contains(Field.builder().key(VALID_KEY).stringValue(FIELD_VALUE)));
         assertTrue(describeObjectsResult.pipelineObjects().get(0).fields()
-                                        .contains(Field.builder_().key("@pipelineId").stringValue(pipelineId)));
+                                        .contains(Field.builder().key("@pipelineId").stringValue(pipelineId)));
 
         // Describe a pipeline.
         DescribePipelinesResult describepipelinesResult =
-                dataPipeline.describePipelines(DescribePipelinesRequest.builder_().pipelineIds(pipelineId).build_());
+                dataPipeline.describePipelines(DescribePipelinesRequest.builder().pipelineIds(pipelineId).build());
         assertEquals(1, describepipelinesResult.pipelineDescriptionList().size());
         assertEquals(PIPELINE_NAME, describepipelinesResult.pipelineDescriptionList().get(0).name());
         assertEquals(pipelineId, describepipelinesResult.pipelineDescriptionList().get(0).pipelineId());
         assertEquals(PIPELINE_DESCRIPTION, describepipelinesResult.pipelineDescriptionList().get(0).description());
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields().size() > 0);
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder_().key("name").stringValue(PIPELINE_NAME)));
+                                          .contains(Field.builder().key("name").stringValue(PIPELINE_NAME)));
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder_().key("@id").stringValue(pipelineId)));
+                                          .contains(Field.builder().key("@id").stringValue(pipelineId)));
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder_().key("uniqueId").stringValue(PIPELINE_ID)));
+                                          .contains(Field.builder().key("uniqueId").stringValue(PIPELINE_ID)));
 
         // Delete a pipeline.
-        dataPipeline.deletePipeline(DeletePipelineRequest.builder_().pipelineId(pipelineId).build_());
+        dataPipeline.deletePipeline(DeletePipelineRequest.builder().pipelineId(pipelineId).build());
         Thread.sleep(1000 * 5);
         try {
-            describepipelinesResult = dataPipeline.describePipelines(DescribePipelinesRequest.builder_().pipelineIds(pipelineId).build_());
+            describepipelinesResult = dataPipeline.describePipelines(DescribePipelinesRequest.builder().pipelineIds(pipelineId).build());
             if (describepipelinesResult.pipelineDescriptionList().size() > 0) {
                 fail();
             }

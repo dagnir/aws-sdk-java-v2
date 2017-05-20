@@ -42,7 +42,7 @@ public class RandomIdHandler extends RequestHandler2 {
                     (CreateBatchPredictionRequest) request;
 
             if (copy.batchPredictionDataSourceId() == null) {
-                copy = copy.toBuilder().batchPredictionDataSourceId(UUID.randomUUID().toString()).build_();
+                copy = copy.toBuilder().batchPredictionDataSourceId(UUID.randomUUID().toString()).build();
             }
 
             return copy;
@@ -51,7 +51,7 @@ public class RandomIdHandler extends RequestHandler2 {
                     (CreateDataSourceFromRDSRequest) request;
 
             if (copy.dataSourceId() == null) {
-                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build_();
+                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build();
             }
 
             return copy;
@@ -60,7 +60,7 @@ public class RandomIdHandler extends RequestHandler2 {
                     (CreateDataSourceFromRedshiftRequest) request;
 
             if (copy.dataSourceId() == null) {
-                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build_();
+                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build();
             }
 
             return copy;
@@ -69,7 +69,7 @@ public class RandomIdHandler extends RequestHandler2 {
                     (CreateDataSourceFromS3Request) request;
 
             if (copy.dataSourceId() == null) {
-                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build_();
+                copy = copy.toBuilder().dataSourceId(UUID.randomUUID().toString()).build();
             }
 
             return copy;
@@ -78,7 +78,7 @@ public class RandomIdHandler extends RequestHandler2 {
                     (CreateEvaluationRequest) request;
 
             if (copy.evaluationId() == null) {
-                copy = copy.toBuilder().evaluationId(UUID.randomUUID().toString()).build_();
+                copy = copy.toBuilder().evaluationId(UUID.randomUUID().toString()).build();
             }
 
             return copy;
@@ -86,7 +86,7 @@ public class RandomIdHandler extends RequestHandler2 {
             CreateMLModelRequest copy = (CreateMLModelRequest) request;
 
             if (copy.mlModelId() == null) {
-                copy = copy.toBuilder().mlModelId(UUID.randomUUID().toString()).build_();
+                copy = copy.toBuilder().mlModelId(UUID.randomUUID().toString()).build();
             }
 
             return copy;

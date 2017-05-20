@@ -46,7 +46,7 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @Ignore
     @ReviewBeforeRelease("Response metadata has been broken by client/interface refactoring. Fix before release")
     public void responseMetadataInBaseResultIsSameAsMetadataCache() {
-        ListTablesRequest request = ListTablesRequest.builder_().build_();
+        ListTablesRequest request = ListTablesRequest.builder().build();
         ListTablesResult result = dynamoDB.listTables(request);
         assertNotNull(result.getSdkHttpMetadata());
     }
@@ -55,7 +55,7 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @Ignore
     @ReviewBeforeRelease("Response metadata has been broken by client/interface refactoring. Fix before release")
     public void httpMetadataInBaseResultIsValid() {
-        ListTablesResult result = dynamoDB.listTables(ListTablesRequest.builder_().build_());
+        ListTablesResult result = dynamoDB.listTables(ListTablesRequest.builder().build());
         assertEquals(200, result.getSdkHttpMetadata().getHttpStatusCode());
         assertThat(result.getSdkHttpMetadata().getHttpHeaders(), hasKey("x-amz-crc32"));
     }

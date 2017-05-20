@@ -46,7 +46,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
         if (consumedCapacity != null) {
             if (accumulatedConsumedCapacity == null) {
                 // Create a new consumed capacity by cloning the one passed in
-                ConsumedCapacity.Builder cloneBuilder = ConsumedCapacity.builder_();
+                ConsumedCapacity.Builder cloneBuilder = ConsumedCapacity.builder();
 
                 cloneBuilder.capacityUnits(consumedCapacity.capacityUnits());
                 cloneBuilder.globalSecondaryIndexes(
@@ -56,47 +56,47 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
                 cloneBuilder.table(clone(consumedCapacity.table()));
                 cloneBuilder.tableName(consumedCapacity.tableName());
 
-                this.accumulatedConsumedCapacity = cloneBuilder.build_();
+                this.accumulatedConsumedCapacity = cloneBuilder.build();
             } else {
                 // Accumulate the capacity units
                 final Double capunit = accumulatedConsumedCapacity.capacityUnits();
                 final Double delta = consumedCapacity.capacityUnits();
                 if (capunit == null) {
-                    accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder().capacityUnits(delta).build_();
+                    accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder().capacityUnits(delta).build();
                 } else {
                     accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder().capacityUnits(capunit.doubleValue()
-                            + (delta == null ? 0 : delta.doubleValue())).build_();
+                            + (delta == null ? 0 : delta.doubleValue())).build();
                 }
                 // Accumulate the GSI capacities
                 final Map<String, Capacity> gsi = accumulatedConsumedCapacity.globalSecondaryIndexes();
                 if (gsi == null) {
                     accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder().globalSecondaryIndexes(
-                            clone(consumedCapacity.globalSecondaryIndexes())).build_();
+                            clone(consumedCapacity.globalSecondaryIndexes())).build();
                 } else {
                     accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder().globalSecondaryIndexes(add(
                             consumedCapacity.globalSecondaryIndexes(),
-                            accumulatedConsumedCapacity.globalSecondaryIndexes())).build_();
+                            accumulatedConsumedCapacity.globalSecondaryIndexes())).build();
                 }
                 // Accumulate the LSI capacities
                 final Map<String, Capacity> lsi = accumulatedConsumedCapacity.localSecondaryIndexes();
                 if (lsi == null) {
                     accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder().localSecondaryIndexes(
-                            clone(consumedCapacity.localSecondaryIndexes())).build_();
+                            clone(consumedCapacity.localSecondaryIndexes())).build();
                 } else {
                     accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder().localSecondaryIndexes(add(
                             consumedCapacity.localSecondaryIndexes(),
-                            accumulatedConsumedCapacity.localSecondaryIndexes())).build_();
+                            accumulatedConsumedCapacity.localSecondaryIndexes())).build();
                 }
                 // Accumulate table capacity
                 final Capacity tableCapacity = accumulatedConsumedCapacity.table();
                 if (tableCapacity == null) {
                     accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder()
                             .table(clone(consumedCapacity.table()))
-                            .build_();
+                            .build();
                 } else {
                     accumulatedConsumedCapacity = accumulatedConsumedCapacity.toBuilder()
                             .table(add(consumedCapacity.table(),
-                                    accumulatedConsumedCapacity.table())).build_();
+                                    accumulatedConsumedCapacity.table())).build();
                 }
             }
         }
@@ -120,8 +120,8 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
                 if (tocap == null) {
                     to.put(key, clone(fromcap));
                 } else {
-                    to.put(key, Capacity.builder_().capacityUnits(
-                            doubleOf(tocap) + doubleOf(fromcap)).build_());
+                    to.put(key, Capacity.builder().capacityUnits(
+                            doubleOf(tocap) + doubleOf(fromcap)).build());
                 }
             }
         }
@@ -129,7 +129,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     }
 
     private Capacity add(final Capacity from, final Capacity to) {
-        return Capacity.builder_().capacityUnits(doubleOf(from) + doubleOf(to)).build_();
+        return Capacity.builder().capacityUnits(doubleOf(from) + doubleOf(to)).build();
     }
 
     private Map<String, Capacity> clone(Map<String, Capacity> capacityMap) {
@@ -147,7 +147,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
     private Capacity clone(Capacity capacity) {
         return capacity == null
                 ? null
-                : Capacity.builder_().capacityUnits(capacity.capacityUnits()).build_();
+                : Capacity.builder().capacityUnits(capacity.capacityUnits()).build();
     }
 
     private double doubleOf(Capacity cap) {

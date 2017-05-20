@@ -40,18 +40,18 @@ public class ECRIntegrationTest extends AwsIntegrationTestBase {
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         if (ecr != null) {
-            ecr.deleteRepository(DeleteRepositoryRequest.builder_()
+            ecr.deleteRepository(DeleteRepositoryRequest.builder()
                     .repositoryName(REPO_NAME)
-                    .build_());
+                    .build());
         }
     }
 
     @Test
     public void basicTest() {
         CreateRepositoryResult result = ecr.createRepository(
-                CreateRepositoryRequest.builder_()
+                CreateRepositoryRequest.builder()
                         .repositoryName(REPO_NAME)
-                        .build_());
+                        .build());
 
         Assert.assertNotNull(result.repository());
         Assert.assertEquals(result.repository().repositoryName(), REPO_NAME);
@@ -61,9 +61,9 @@ public class ECRIntegrationTest extends AwsIntegrationTestBase {
         String repoArn = result.repository().repositoryArn();
         String registryId = result.repository().registryId();
 
-        Repository repo = ecr.describeRepositories(DescribeRepositoriesRequest.builder_()
+        Repository repo = ecr.describeRepositories(DescribeRepositoriesRequest.builder()
                 .repositoryNames(REPO_NAME)
-                .build_())
+                .build())
                 .repositories().get(0);
 
         Assert.assertEquals(repo.registryId(), registryId);

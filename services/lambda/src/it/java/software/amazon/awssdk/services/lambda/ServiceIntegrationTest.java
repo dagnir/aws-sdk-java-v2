@@ -151,55 +151,55 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
             functionZip.close();
         }
 
-        CreateFunctionResult result = lambda.createFunction(CreateFunctionRequest.builder_()
+        CreateFunctionResult result = lambda.createFunction(CreateFunctionRequest.builder()
                 .description("My cloud function").functionName(FUNCTION_NAME)
-                .code(FunctionCode.builder_().zipFile(ByteBuffer.wrap(functionBits)).build_())
+                .code(FunctionCode.builder().zipFile(ByteBuffer.wrap(functionBits)).build())
                 .handler("helloworld.handler").memorySize(128).runtime(Runtime.Nodejs43).timeout(10)
-                .role(lambdaServiceRoleArn).build_()).join();
+                .role(lambdaServiceRoleArn).build()).join();
 
         checkValid_CreateFunctionResult(result);
     }
 
     @After
     public void deleteFunction() {
-        lambda.deleteFunction(DeleteFunctionRequest.builder_().functionName(FUNCTION_NAME).build_());
+        lambda.deleteFunction(DeleteFunctionRequest.builder().functionName(FUNCTION_NAME).build());
     }
 
     @Test
     public void testFunctionOperations() throws IOException {
 
         // Get function
-        GetFunctionResult getFunc = lambda.getFunction(GetFunctionRequest.builder_().functionName(FUNCTION_NAME).build_()).join();
+        GetFunctionResult getFunc = lambda.getFunction(GetFunctionRequest.builder().functionName(FUNCTION_NAME).build()).join();
         checkValid_GetFunctionResult(getFunc);
 
         // Get function configuration
         GetFunctionConfigurationResult getConfig = lambda
-                .getFunctionConfiguration(GetFunctionConfigurationRequest.builder_().functionName(FUNCTION_NAME).build_()).join();
+                .getFunctionConfiguration(GetFunctionConfigurationRequest.builder().functionName(FUNCTION_NAME).build()).join();
         checkValid_GetFunctionConfigurationResult(getConfig);
 
         // List functions
-        ListFunctionsResult listFunc = lambda.listFunctions(ListFunctionsRequest.builder_().build_()).join();
+        ListFunctionsResult listFunc = lambda.listFunctions(ListFunctionsRequest.builder().build()).join();
         Assert.assertFalse(listFunc.functions().isEmpty());
         for (FunctionConfiguration funcConfig : listFunc.functions()) {
             checkValid_FunctionConfiguration(funcConfig);
         }
 
         // Invoke the function
-        InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(InvokeAsyncRequest.builder_().functionName(
-                FUNCTION_NAME).invokeArgs(new ByteArrayInputStream("{}".getBytes())).build_()).join();
+        InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(InvokeAsyncRequest.builder().functionName(
+                FUNCTION_NAME).invokeArgs(new ByteArrayInputStream("{}".getBytes())).build()).join();
 
         Assert.assertEquals(202, invokeAsyncResult.status().intValue());
 
-        InvokeResult invokeResult = lambda.invoke(InvokeRequest.builder_().functionName(FUNCTION_NAME)
-                .invocationType(InvocationType.Event).payload(ByteBuffer.wrap("{}".getBytes())).build_()).join();
+        InvokeResult invokeResult = lambda.invoke(InvokeRequest.builder().functionName(FUNCTION_NAME)
+                .invocationType(InvocationType.Event).payload(ByteBuffer.wrap("{}".getBytes())).build()).join();
 
         Assert.assertEquals(202, invokeResult.statusCode().intValue());
         Assert.assertNull(invokeResult.logResult());
         Assert.assertEquals(0, invokeResult.payload().remaining());
 
-        invokeResult = lambda.invoke(InvokeRequest.builder_().functionName(FUNCTION_NAME)
+        invokeResult = lambda.invoke(InvokeRequest.builder().functionName(FUNCTION_NAME)
                 .invocationType(InvocationType.RequestResponse).logType(LogType.Tail)
-                .payload(ByteBuffer.wrap("{}".getBytes())).build_()).join();
+                .payload(ByteBuffer.wrap("{}".getBytes())).build()).join();
 
         Assert.assertEquals(200, invokeResult.statusCode().intValue());
 
@@ -213,18 +213,18 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
         // AddEventSourceResult
         CreateEventSourceMappingResult addResult = lambda
-                .createEventSourceMapping(CreateEventSourceMappingRequest.builder_().functionName(FUNCTION_NAME)
-                        .eventSourceArn(streamArn).startingPosition("TRIM_HORIZON").batchSize(100).build_()).join();
+                .createEventSourceMapping(CreateEventSourceMappingRequest.builder().functionName(FUNCTION_NAME)
+                        .eventSourceArn(streamArn).startingPosition("TRIM_HORIZON").batchSize(100).build()).join();
         checkValid_CreateEventSourceMappingResult(addResult);
 
         String eventSourceUUID = addResult.uuid();
 
         // GetEventSource
-        GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(GetEventSourceMappingRequest.builder_()
-                .uuid(eventSourceUUID).build_()).join();
+        GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(GetEventSourceMappingRequest.builder()
+                .uuid(eventSourceUUID).build()).join();
 
         // RemoveEventSource
-        lambda.deleteEventSourceMapping(DeleteEventSourceMappingRequest.builder_().uuid(eventSourceUUID).build_());
+        lambda.deleteEventSourceMapping(DeleteEventSourceMappingRequest.builder().uuid(eventSourceUUID).build());
     }
 
 }

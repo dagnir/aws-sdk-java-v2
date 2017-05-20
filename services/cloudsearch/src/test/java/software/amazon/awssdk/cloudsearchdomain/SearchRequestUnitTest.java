@@ -64,7 +64,7 @@ public class SearchRequestUnitTest {
                             .withStatus(200)
                             .withBody("{\"status\":{\"rid\":\"fooBar\",\"time-ms\":7},\"hits\":{\"found\":0,\"start\":0,\"hit\":[]}}")));
 
-        searchClient.search(SearchRequest.builder_().query("Lord of the Rings").build_());
+        searchClient.search(SearchRequest.builder().query("Lord of the Rings").build());
 
         verify(postRequestedFor(urlMatching("/.*")).withRequestBody(equalTo("format=sdk&pretty=true&q=Lord+of+the+Rings")));
     }

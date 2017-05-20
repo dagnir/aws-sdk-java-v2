@@ -63,9 +63,9 @@ public class LambdaInvokerFactoryNameResolutionTest {
      * successful response
      */
     private void stubSucessfulInvokeResponse() {
-        InvokeResult result = InvokeResult.builder_()
+        InvokeResult result = InvokeResult.builder()
                 .payload(ByteBuffer.wrap(new byte[] {}))
-                .statusCode(200).build_();
+                .statusCode(200).build();
         when(lambda.invoke(any(InvokeRequest.class))).thenReturn(CompletableFuture.completedFuture(result));
     }
 

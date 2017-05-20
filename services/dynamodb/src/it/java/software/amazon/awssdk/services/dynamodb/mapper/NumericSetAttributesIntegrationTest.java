@@ -59,15 +59,15 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, AttributeValue.builder_().s("" + start++).build_());
-            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
-            attr.put(FLOAT_OBJECT_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
-            attr.put(DOUBLE_OBJECT_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
-            attr.put(BIG_INTEGER_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
-            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
-            attr.put(LONG_OBJECT_ATTRIBUTE, AttributeValue.builder_().ns("" + start++, "" + start++, "" + start++).build_());
-            attr.put(BYTE_OBJECT_ATTRIBUTE, AttributeValue.builder_().ns("" + byteStart++, "" + byteStart++, "" + byteStart++).build_());
-            attr.put(BOOLEAN_ATTRIBUTE, AttributeValue.builder_().ns("0", "1").build_());
+            attr.put(KEY_NAME, AttributeValue.builder().s("" + start++).build());
+            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(FLOAT_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(DOUBLE_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(BIG_INTEGER_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(LONG_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(BYTE_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + byteStart++, "" + byteStart++, "" + byteStart++).build());
+            attr.put(BOOLEAN_ATTRIBUTE, AttributeValue.builder().ns("0", "1").build());
             attrs.add(attr);
         }
     }
@@ -80,7 +80,7 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_NAME).item(attr).build_());
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(attr).build());
         }
     }
 

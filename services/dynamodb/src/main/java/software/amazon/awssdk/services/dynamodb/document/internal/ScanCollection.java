@@ -49,7 +49,7 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
                 .limit(InternalUtils.minimum(
                         spec.maxResultSize(),
                         spec.maxPageSize()))
-                .build_();
+                .build();
 
         spec.setRequest(request);
 

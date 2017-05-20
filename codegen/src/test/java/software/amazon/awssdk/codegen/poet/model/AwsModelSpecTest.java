@@ -24,6 +24,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 import software.amazon.awssdk.codegen.C2jModels;
 import software.amazon.awssdk.codegen.IntermediateModelBuilder;
@@ -56,6 +57,6 @@ public class AwsModelSpecTest {
     }
 
     private static String referenceFileFor(ShapeModel shapeModel) {
-        return shapeModel.getShapeName().toLowerCase() + ".java";
+        return shapeModel.getShapeName().toLowerCase(Locale.ENGLISH) + ".java";
     }
 }

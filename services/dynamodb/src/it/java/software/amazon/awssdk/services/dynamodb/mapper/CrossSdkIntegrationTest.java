@@ -61,18 +61,18 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         // Create a table
         String keyName = DynamoDBMapperIntegrationTestBase.KEY_NAME;
         String rangeKey = "rangeKey";
-        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(TABLE_NAME)
-                .keySchema(KeySchemaElement.builder_().attributeName(keyName).keyType(KeyType.HASH).build_(),
-                               KeySchemaElement.builder_().attributeName(rangeKey).keyType(KeyType.RANGE).build_())
+                .keySchema(KeySchemaElement.builder().attributeName(keyName).keyType(KeyType.HASH).build(),
+                               KeySchemaElement.builder().attributeName(rangeKey).keyType(KeyType.RANGE).build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName(keyName).attributeType(
-                                ScalarAttributeType.S).build_(),
-                        AttributeDefinition.builder_().attributeName(rangeKey).attributeType(
-                                ScalarAttributeType.S).build_())
-                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(10L)
-                                                                               .writeCapacityUnits(10L).build_())
-                .build_();
+                        AttributeDefinition.builder().attributeName(keyName).attributeType(
+                                ScalarAttributeType.S).build(),
+                        AttributeDefinition.builder().attributeName(rangeKey).attributeType(
+                                ScalarAttributeType.S).build())
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(10L)
+                                                                               .writeCapacityUnits(10L).build())
+                .build();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_NAME);

@@ -52,10 +52,10 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
     // Test data
     static {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put(KEY_NAME, AttributeValue.builder_().s("" + startKey++).build_());
-        attr.put(BINARY_ATTRIBUTE, AttributeValue.builder_().b(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))).build_());
-        attr.put(BINARY_SET_ATTRIBUTE, AttributeValue.builder_().bs(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)),
-                                                                   ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH + 1))).build_());
+        attr.put(KEY_NAME, AttributeValue.builder().s("" + startKey++).build());
+        attr.put(BINARY_ATTRIBUTE, AttributeValue.builder().b(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))).build());
+        attr.put(BINARY_SET_ATTRIBUTE, AttributeValue.builder().bs(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)),
+                                                                   ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH + 1))).build());
         ATTRIBUTES.add(attr);
 
     }
@@ -68,7 +68,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
 
         // Insert the data
         for (Map<String, AttributeValue> attr : ATTRIBUTES) {
-            dynamo.putItem(PutItemRequest.builder_().tableName(TABLE_NAME).item(attr).build_());
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(attr).build());
         }
     }
 

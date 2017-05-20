@@ -68,12 +68,12 @@ public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
 
     @Test(expected = InvalidNextTokenException.class)
     public void listPipelines_WithInvalidNextToken_ThrowsInvalidNextTokenException() {
-        client.listPipelines(ListPipelinesRequest.builder_().nextToken("invalid_next_token").build_());
+        client.listPipelines(ListPipelinesRequest.builder().nextToken("invalid_next_token").build());
     }
 
     @Test
     public void listActionTypes_WithNoFilter_ReturnsNonEmptyList() {
-        assertThat(client.listActionTypes(ListActionTypesRequest.builder_().build_()).actionTypes().size(), greaterThan(0));
+        assertThat(client.listActionTypes(ListActionTypesRequest.builder().build()).actionTypes().size(), greaterThan(0));
     }
 
     /**
@@ -82,29 +82,29 @@ public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
      */
     @Test
     public void createFindDelete_ActionType() {
-        ActionTypeId actionTypeId = ActionTypeId.builder_()
+        ActionTypeId actionTypeId = ActionTypeId.builder()
                 .category(ActionCategory.Build)
                 .provider("test-provider")
                 .version("1")
                 .owner(ActionOwner.Custom)
-                .build_();
-        ArtifactDetails artifactDetails = ArtifactDetails.builder_()
+                .build();
+        ArtifactDetails artifactDetails = ArtifactDetails.builder()
                 .maximumCount(1)
                 .minimumCount(1)
-                .build_();
-        client.createCustomActionType(CreateCustomActionTypeRequest.builder_()
+                .build();
+        client.createCustomActionType(CreateCustomActionTypeRequest.builder()
                 .category(actionTypeId.category())
                 .provider(actionTypeId.provider())
                 .version(actionTypeId.version())
                 .inputArtifactDetails(artifactDetails)
                 .outputArtifactDetails(artifactDetails)
-                .build_());
-        final ListActionTypesResult actionTypes = client.listActionTypes(ListActionTypesRequest.builder_().build_());
+                .build());
+        final ListActionTypesResult actionTypes = client.listActionTypes(ListActionTypesRequest.builder().build());
         assertTrue(containsActionTypeId(actionTypes.actionTypes(), actionTypeId));
-        client.deleteCustomActionType(DeleteCustomActionTypeRequest.builder_()
+        client.deleteCustomActionType(DeleteCustomActionTypeRequest.builder()
                 .category(actionTypeId.category())
                 .provider(actionTypeId.provider())
-                .version(actionTypeId.version()).build_());
+                .version(actionTypeId.version()).build());
     }
 
 }

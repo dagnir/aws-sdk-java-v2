@@ -44,7 +44,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
     private Collection<KeyAttribute> exclusiveStartKey;
 
     public ScanSpec() {
-        super(ScanRequest.builder_().build_());
+        super(ScanRequest.builder().build());
     }
 
     /**
@@ -87,7 +87,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withConditionalOperator(ConditionalOperator)
      */
     public ScanSpec withConditionalOperator(ConditionalOperator op) {
-        setRequest(getRequest().toBuilder().conditionalOperator(op).build_());
+        setRequest(getRequest().toBuilder().conditionalOperator(op).build());
         return this;
     }
 
@@ -103,9 +103,9 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      */
     public ScanSpec withAttributesToGet(String... attributes) {
         if (attributes == null) {
-            setRequest(getRequest().toBuilder().attributesToGet((String []) null).build_());
+            setRequest(getRequest().toBuilder().attributesToGet((String []) null).build());
         } else {
-            setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attributes)).build_());
+            setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attributes)).build());
         }
         return this;
     }
@@ -126,7 +126,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withFilterExpression(String)
      */
     public ScanSpec withFilterExpression(String filterExpression) {
-        setRequest(getRequest().toBuilder().filterExpression(filterExpression).build_());
+        setRequest(getRequest().toBuilder().filterExpression(filterExpression).build());
         return this;
     }
 
@@ -141,7 +141,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withProjectionExpression(String)
      */
     public ScanSpec withProjectionExpression(String projectionExpression) {
-        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build_());
+        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build());
         return this;
     }
 
@@ -202,7 +202,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withReturnConsumedCapacity(ReturnConsumedCapacity)
      */
     public ScanSpec withReturnConsumedCapacity(ReturnConsumedCapacity capacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build());
         return this;
     }
 
@@ -220,7 +220,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withSelect(Select)
      */
     public ScanSpec withSelect(Select select) {
-        setRequest(getRequest().toBuilder().select(select).build_());
+        setRequest(getRequest().toBuilder().select(select).build());
         return this;
     }
 
@@ -235,7 +235,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withSegment(Integer)
      */
     public ScanSpec withSegment(Integer segment) {
-        setRequest(getRequest().toBuilder().segment(segment).build_());
+        setRequest(getRequest().toBuilder().segment(segment).build());
         return this;
     }
 
@@ -250,7 +250,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withTotalSegments(Integer)
      */
     public ScanSpec withTotalSegments(Integer totalSegments) {
-        setRequest(getRequest().toBuilder().totalSegments(totalSegments).build_());
+        setRequest(getRequest().toBuilder().totalSegments(totalSegments).build());
         return this;
     }
 
@@ -265,7 +265,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#withConsistentRead(Boolean)
      */
     public ScanSpec withConsistentRead(Boolean consistentRead) {
-        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build_());
+        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build());
         return this;
     }
 

@@ -43,7 +43,7 @@ class ListTablesCollection extends TableCollection<ListTablesResult> {
                 .limit(InternalUtils.minimum(
                     spec.maxResultSize(),
                     spec.maxPageSize()))
-                .build_();
+                .build();
         spec.setRequest(request);
         ListTablesResult result = client.listTables(request);
         setLastLowLevelResult(result);

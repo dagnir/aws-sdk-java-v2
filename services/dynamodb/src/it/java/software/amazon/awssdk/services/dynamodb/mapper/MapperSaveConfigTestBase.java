@@ -66,9 +66,9 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
     /**
      * Provisioned Throughput for the test table created in Amazon DynamoDB
      */
-    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = ProvisionedThroughput.builder_()
+    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = ProvisionedThroughput.builder()
             .readCapacityUnits(READ_CAPACITY).writeCapacityUnits(
-                    WRITE_CAPACITY).build_();
+                    WRITE_CAPACITY).build();
     protected static DynamoDbMapper dynamoMapper;
 
     @BeforeClass
@@ -83,7 +83,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
 
     @AfterClass
     public static void tearDown() {
-        dynamo.deleteTable(DeleteTableRequest.builder_().tableName(tableName).build_());
+        dynamo.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
     }
 
     /**
@@ -91,26 +91,26 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
      */
     protected static void createTestTable(
             ProvisionedThroughput provisionedThroughput) {
-        CreateTableRequest createTableRequest = CreateTableRequest.builder_()
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
                 .tableName(tableName)
                 .keySchema(
-                        KeySchemaElement.builder_().attributeName(
+                        KeySchemaElement.builder().attributeName(
                                 hashKeyName).keyType(
-                                KeyType.HASH).build_())
+                                KeyType.HASH).build())
                 .keySchema(
-                        KeySchemaElement.builder_().attributeName(
+                        KeySchemaElement.builder().attributeName(
                                 rangeKeyName).keyType(
-                                KeyType.RANGE).build_())
+                                KeyType.RANGE).build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName(
+                        AttributeDefinition.builder().attributeName(
                                 hashKeyName).attributeType(
-                                ScalarAttributeType.S).build_())
+                                ScalarAttributeType.S).build())
                 .attributeDefinitions(
-                        AttributeDefinition.builder_().attributeName(
+                        AttributeDefinition.builder().attributeName(
                                 rangeKeyName).attributeType(
-                                ScalarAttributeType.N).build_())
+                                ScalarAttributeType.N).build())
                 .provisionedThroughput(provisionedThroughput)
-                .build_();
+                .build();
 
         TableDescription createdTableDescription = dynamo.createTable(
                 createTableRequest).tableDescription();

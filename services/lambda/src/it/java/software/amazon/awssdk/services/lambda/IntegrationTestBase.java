@@ -81,7 +81,7 @@ public class IntegrationTestBase extends AwsTestBase {
         iam.deleteRole(new DeleteRoleRequest().roleName(LAMBDA_SERVICE_ROLE_NAME));
 
         if (kinesis != null) {
-            kinesis.deleteStream(DeleteStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).build_());
+            kinesis.deleteStream(DeleteStreamRequest.builder().streamName(KINESIS_STREAM_NAME).build());
         }
     }
 
@@ -126,9 +126,9 @@ public class IntegrationTestBase extends AwsTestBase {
     protected static void createKinesisStream() {
         kinesis = KinesisClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        kinesis.createStream(CreateStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).shardCount(1).build_());
+        kinesis.createStream(CreateStreamRequest.builder().streamName(KINESIS_STREAM_NAME).shardCount(1).build());
 
-        StreamDescription description = kinesis.describeStream(DescribeStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).build_())
+        StreamDescription description = kinesis.describeStream(DescribeStreamRequest.builder().streamName(KINESIS_STREAM_NAME).build())
                 .streamDescription();
         streamArn = description.streamARN();
 
@@ -140,7 +140,7 @@ public class IntegrationTestBase extends AwsTestBase {
                 // Ignored or expected.
             }
 
-            description = kinesis.describeStream(DescribeStreamRequest.builder_().streamName(KINESIS_STREAM_NAME).build_())
+            description = kinesis.describeStream(DescribeStreamRequest.builder().streamName(KINESIS_STREAM_NAME).build())
                     .streamDescription();
         }
     }

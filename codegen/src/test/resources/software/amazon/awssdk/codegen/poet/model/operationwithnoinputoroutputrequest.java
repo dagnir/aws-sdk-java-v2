@@ -1,16 +1,22 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
+import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
-public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest implements Cloneable {
+@Generated("software.amazon.awssdk:codegen")
+public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest implements
+        ToCopyableBuilder<OperationWithNoInputOrOutputRequest.Builder, OperationWithNoInputOrOutputRequest> {
     private OperationWithNoInputOrOutputRequest(BeanStyleBuilder builder) {
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -39,16 +45,6 @@ public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest
     }
 
     @Override
-    public OperationWithNoInputOrOutputRequest clone() {
-        try {
-            return (OperationWithNoInputOrOutputRequest) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -56,8 +52,7 @@ public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest
         return sb.toString();
     }
 
-    public interface Builder {
-        OperationWithNoInputOrOutputRequest build_();
+    public interface Builder extends CopyableBuilder<Builder, OperationWithNoInputOrOutputRequest> {
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -68,8 +63,9 @@ public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest
         }
 
         @Override
-        public OperationWithNoInputOrOutputRequest build_() {
+        public OperationWithNoInputOrOutputRequest build() {
             return new OperationWithNoInputOrOutputRequest(this);
         }
     }
 }
+

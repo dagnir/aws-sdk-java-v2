@@ -102,12 +102,12 @@ public class DynamoDb implements ListTablesApi, BatchGetItemApi,
                              List<KeySchemaElement> keySchema,
                              List<AttributeDefinition> attributeDefinitions,
                              ProvisionedThroughput provisionedThroughput) {
-        return createTable(CreateTableRequest.builder_()
+        return createTable(CreateTableRequest.builder()
                         .tableName(tableName)
                         .keySchema(keySchema)
                         .attributeDefinitions(attributeDefinitions)
                         .provisionedThroughput(provisionedThroughput)
-                        .build_());
+                        .build());
     }
 
     @Override

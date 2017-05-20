@@ -36,6 +36,6 @@ public class NumberToNumberMarshaller implements NumberAttributeMarshaller {
     @Override
     public AttributeValue marshall(Object obj) {
         Number number = (Number) obj;
-        return AttributeValue.builder_().n(number.toString()).build_();
+        return AttributeValue.builder().n(number.toString()).build();
     }
 }

@@ -36,6 +36,6 @@ public class WafRegionalIntegrationTest extends AwsIntegrationTestBase {
                                                                  .region(Regions.US_WEST_2.getName())
                                                                  .build();
 
-        client.listResourcesForWebACL(ListResourcesForWebACLRequest.builder_().webACLId("foo").build_());
+        client.listResourcesForWebACL(ListResourcesForWebACLRequest.builder().webACLId("foo").build());
     }
 }

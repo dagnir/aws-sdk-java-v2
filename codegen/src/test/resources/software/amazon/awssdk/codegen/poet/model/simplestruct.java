@@ -1,11 +1,15 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
+import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.SimpleStructMarshaller;
 
-public class SimpleStruct implements Cloneable, StructuredPojo {
+@Generated("software.amazon.awssdk:codegen")
+public class SimpleStruct implements ToCopyableBuilder<SimpleStruct.Builder, SimpleStruct>, StructuredPojo {
     private final String stringMember;
 
     private SimpleStruct(BeanStyleBuilder builder) {
@@ -20,11 +24,12 @@ public class SimpleStruct implements Cloneable, StructuredPojo {
         return stringMember;
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -61,16 +66,6 @@ public class SimpleStruct implements Cloneable, StructuredPojo {
     }
 
     @Override
-    public SimpleStruct clone() {
-        try {
-            return (SimpleStruct) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -87,15 +82,13 @@ public class SimpleStruct implements Cloneable, StructuredPojo {
         SimpleStructMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, SimpleStruct> {
         /**
          *
          * @param stringMember
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder stringMember(String stringMember);
-
-        SimpleStruct build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -105,12 +98,12 @@ public class SimpleStruct implements Cloneable, StructuredPojo {
         }
 
         private BeanStyleBuilder(SimpleStruct model) {
-            this.stringMember = model.stringMember;
+            setStringMember(model.stringMember);
         }
 
         @Override
         public Builder stringMember(String stringMember) {
-            this.stringMember = stringMember;
+            this.stringMember = StringCopier.copyString(stringMember);
             return this;
         }
 
@@ -119,12 +112,13 @@ public class SimpleStruct implements Cloneable, StructuredPojo {
          * @param stringMember
          */
         public void setStringMember(String stringMember) {
-            this.stringMember = stringMember;
+            this.stringMember = StringCopier.copyString(stringMember);
         }
 
         @Override
-        public SimpleStruct build_() {
+        public SimpleStruct build() {
             return new SimpleStruct(this);
         }
     }
 }
+

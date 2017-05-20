@@ -70,7 +70,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     @AfterClass
     public static void tearDown() {
         try {
-            dynamo.deleteTable(DeleteTableRequest.builder_().tableName(TABLE_WITH_RANGE_ATTRIBUTE).build_());
+            dynamo.deleteTable(DeleteTableRequest.builder().tableName(TABLE_WITH_RANGE_ATTRIBUTE).build());
         } catch (Exception e) {
             // Ignore.
         }
@@ -193,10 +193,10 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
             @Override
             public BatchGetItemResult answer(InvocationOnMock invocation) throws Throwable {
                 Thread.sleep(3000);
-                BatchGetItemResult result = BatchGetItemResult.builder_()
+                BatchGetItemResult result = BatchGetItemResult.builder()
                         .responses(new HashMap<>())
                         .unprocessedKeys(((BatchGetItemRequest) invocation.getArguments()[0]).requestItems())
-                        .build_();
+                        .build();
                 return result;
             }
         });

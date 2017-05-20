@@ -18,6 +18,8 @@ package software.amazon.awssdk.codegen.poet.model;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
 
+import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
@@ -36,18 +39,21 @@ class ModelBuilderSpecs {
     private final ShapeModel shapeModel;
     private final ShapeModelSpec shapeModelSpec;
     private final TypeProvider typeProvider;
+    private final ServiceModelCopierSpecs serviceModelCopierSpecs;
     private final PoetExtensions poetExtensions;
     private final SettersFactory settersFactory;
 
     public ModelBuilderSpecs(ShapeModel shapeModel,
                              ShapeModelSpec shapeModelSpec,
                              TypeProvider typeProvider,
+                             ServiceModelCopierSpecs serviceModelCopierSpecs,
                              PoetExtensions poetExtensions) {
         this.shapeModel = shapeModel;
         this.shapeModelSpec = shapeModelSpec;
         this.typeProvider = typeProvider;
+        this.serviceModelCopierSpecs = serviceModelCopierSpecs;
         this.poetExtensions = poetExtensions;
-        this.settersFactory = new SettersFactory(this.shapeModel, this.typeProvider);
+        this.settersFactory = new SettersFactory(this.shapeModel, this.typeProvider, this.serviceModelCopierSpecs);
     }
 
     public ClassName builderInterfaceName() {
@@ -60,6 +66,7 @@ class ModelBuilderSpecs {
 
     public TypeSpec builderInterface() {
         TypeSpec.Builder builder = TypeSpec.interfaceBuilder(builderInterfaceName())
+                .addSuperinterface(copyableBuilderSuperInterface())
                 .addModifiers(Modifier.PUBLIC);
 
         shapeModel.getMembers().forEach(m -> builder.addMethods(
@@ -71,12 +78,6 @@ class ModelBuilderSpecs {
                     .addParameter(String.class, "message")
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT).build());
         }
-
-        // TODO: remove once we can implement the buildable interface
-        builder.addMethod(MethodSpec.methodBuilder("build_")
-                .returns(classToBuild())
-                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .build());
 
         return builder.build();
     }
@@ -122,7 +123,7 @@ class ModelBuilderSpecs {
 
         shapeModel.getMembers().forEach(m -> {
             String name = m.getVariable().getVariableName();
-            copyBuilderCtor.addStatement("this.$N = model.$N", name, name);
+            copyBuilderCtor.addStatement("$N(model.$N)", m.getSetterMethodName(), name);
         });
 
         if (exception()) {
@@ -147,8 +148,7 @@ class ModelBuilderSpecs {
     }
 
     private MethodSpec buildMethod() {
-        // FIXME: using 'build_' to avoid clashing with models that have a 'build' property
-        return MethodSpec.methodBuilder("build_")
+        return MethodSpec.methodBuilder("build")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(classToBuild())
@@ -164,11 +164,11 @@ class ModelBuilderSpecs {
         return shapeModel.getShapeType() == ShapeType.Exception;
     }
 
-    // private TypeName copyableBuilderSuperInterface() {
-    //     return ParameterizedTypeName.get(ClassName.get(CopyableBuilder.class),
-    //             classToBuild().nestedClass("Builder"),
-    //             classToBuild());
-    // }
+    private TypeName copyableBuilderSuperInterface() {
+        return ParameterizedTypeName.get(ClassName.get(CopyableBuilder.class),
+                classToBuild().nestedClass("Builder"),
+                classToBuild());
+    }
 
     List<MethodSpec> exceptionMessageSetters() {
         List<MethodSpec> setters = new ArrayList<>();

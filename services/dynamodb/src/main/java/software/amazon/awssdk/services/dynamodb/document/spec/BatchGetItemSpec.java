@@ -37,7 +37,7 @@ public class BatchGetItemSpec extends AbstractSpec<BatchGetItemRequest> {
     private Map<String, KeysAndAttributes> unprocessedKeys;
 
     public BatchGetItemSpec() {
-        super(BatchGetItemRequest.builder_().build_());
+        super(BatchGetItemRequest.builder().build());
     }
 
     public Collection<TableKeysAndAttributes> getTableKeysAndAttributes() {
@@ -69,7 +69,7 @@ public class BatchGetItemSpec extends AbstractSpec<BatchGetItemRequest> {
 
 
     public BatchGetItemSpec withReturnConsumedCapacity(ReturnConsumedCapacity capacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build());
         return this;
     }
 

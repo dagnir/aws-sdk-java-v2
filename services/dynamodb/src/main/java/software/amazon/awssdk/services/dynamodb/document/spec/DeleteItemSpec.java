@@ -43,7 +43,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     private Map<String, Object> valueMap;
 
     public DeleteItemSpec() {
-        super(DeleteItemRequest.builder_().build_());
+        super(DeleteItemRequest.builder().build());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     }
 
     public DeleteItemSpec withConditionExpression(String conditionExpression) {
-        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build_());
+        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build());
         return this;
     }
 
@@ -152,7 +152,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     }
 
     public DeleteItemSpec withConditionalOperator(ConditionalOperator conditionalOperator) {
-        setRequest(getRequest().toBuilder().conditionalOperator(conditionalOperator).build_());
+        setRequest(getRequest().toBuilder().conditionalOperator(conditionalOperator).build());
         return this;
     }
 
@@ -162,7 +162,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
 
     public DeleteItemSpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build_());
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
@@ -172,7 +172,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
 
     public DeleteItemSpec withReturnItemCollectionMetrics(
             ReturnItemCollectionMetrics returnItemCollectionMetrics) {
-        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build_());
+        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build());
         return this;
     }
 
@@ -181,7 +181,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     }
 
     public DeleteItemSpec withReturnValues(ReturnValue returnValues) {
-        setRequest(getRequest().toBuilder().returnValues(returnValues).build_());
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build());
         return this;
     }
 

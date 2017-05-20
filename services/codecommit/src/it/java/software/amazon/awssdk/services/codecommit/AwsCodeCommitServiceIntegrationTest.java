@@ -47,9 +47,9 @@ public class AwsCodeCommitServiceIntegrationTest extends AwsTestBase {
     @AfterClass
     public static void cleanup() {
         try {
-            client.deleteRepository(DeleteRepositoryRequest.builder_()
+            client.deleteRepository(DeleteRepositoryRequest.builder()
                     .repositoryName(REPO_NAME)
-                    .build_());
+                    .build());
         } catch (Exception ignored) {
             System.err.println("Failed to delete repository " + ignored);
         }
@@ -59,15 +59,15 @@ public class AwsCodeCommitServiceIntegrationTest extends AwsTestBase {
     public void testOperations() {
 
         // CreateRepository
-        client.createRepository(CreateRepositoryRequest.builder_()
+        client.createRepository(CreateRepositoryRequest.builder()
                 .repositoryName(REPO_NAME)
                 .repositoryDescription("My test repo")
-                .build_());
+                .build());
 
         // GetRepository
-        RepositoryMetadata repoMd = client.getRepository(GetRepositoryRequest.builder_()
+        RepositoryMetadata repoMd = client.getRepository(GetRepositoryRequest.builder()
                 .repositoryName(REPO_NAME)
-                .build_()
+                .build()
         ).repositoryMetadata();
         Assert.assertEquals(REPO_NAME, repoMd.repositoryName());
         assertValid_RepositoryMetadata(repoMd);
@@ -76,18 +76,18 @@ public class AwsCodeCommitServiceIntegrationTest extends AwsTestBase {
         // the first branch by pushing a commit via git.
 
         // DeleteRepository
-        client.deleteRepository(DeleteRepositoryRequest.builder_()
+        client.deleteRepository(DeleteRepositoryRequest.builder()
                 .repositoryName(REPO_NAME)
-                .build_());
+                .build());
 
     }
 
     @Test(expected = RepositoryDoesNotExistException.class)
     public void testExceptionHandling() {
         String nonExistentRepoName = UUID.randomUUID().toString();
-        client.getRepository(GetRepositoryRequest.builder_()
+        client.getRepository(GetRepositoryRequest.builder()
                 .repositoryName(nonExistentRepoName)
-                .build_());
+                .build());
     }
 
     private void assertValid_RepositoryMetadata(RepositoryMetadata md) {

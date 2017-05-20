@@ -194,7 +194,7 @@ public class TableUtils {
         TableDescription table = null;
         while (System.currentTimeMillis() < endTime) {
             try {
-                table = dynamo.describeTable(DescribeTableRequest.builder_().tableName(tableName).build_()).table();
+                table = dynamo.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
                 if (desiredStatus == null || table.tableStatus().equals(desiredStatus.toString())) {
                     return table;
 

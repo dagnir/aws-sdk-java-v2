@@ -54,7 +54,7 @@ public class ShapeModelReflector {
         Method builderMethod = null;
 
         try {
-            builderMethod = shapeClass.getDeclaredMethod("builder_");
+            builderMethod = shapeClass.getDeclaredMethod("builder");
         } catch (NoSuchMethodException ignored) {
             // Ignored
         }
@@ -67,7 +67,7 @@ public class ShapeModelReflector {
                 initializeFields(structureShape, input, builderInstance);
             }
 
-            Method buildMethod = builderInstance.getClass().getDeclaredMethod("build_");
+            Method buildMethod = builderInstance.getClass().getDeclaredMethod("build");
             buildMethod.setAccessible(true);
             return buildMethod.invoke(builderInstance);
         } else {
@@ -201,7 +201,7 @@ public class ShapeModelReflector {
                 return toInputStream(currentNode);
             default:
                 throw new IllegalArgumentException(
-                        "Unsupported type " + memberModel.getVariable().getSimpleType());
+                        "Unsupported fieldType " + memberModel.getVariable().getSimpleType());
         }
     }
 

@@ -58,8 +58,8 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void createRestApi() {
         CreateRestApiResult createRestApiResult = apiGateway.createRestApi(
-                CreateRestApiRequest.builder_().name(NAME)
-                                          .description(DESCRIPTION).build_());
+                CreateRestApiRequest.builder().name(NAME)
+                                          .description(DESCRIPTION).build());
 
         Assert.assertNotNull(createRestApiResult);
         Assert.assertNotNull(createRestApiResult.description());
@@ -75,19 +75,19 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void deleteRestApiKey() {
         if (restApiId != null) {
-            apiGateway.deleteRestApi(DeleteRestApiRequest.builder_().restApiId(restApiId).build_());
+            apiGateway.deleteRestApi(DeleteRestApiRequest.builder().restApiId(restApiId).build());
         }
     }
 
     @Test
     public void testUpdateRetrieveRestApi() {
-        PatchOperation patch = PatchOperation.builder_().op(Op.Replace)
-                                                   .path("/description").value("updatedDesc").build_();
-        apiGateway.updateRestApi(UpdateRestApiRequest.builder_().restApiId(restApiId)
-                                                           .patchOperations(patch).build_());
+        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+                                                   .path("/description").value("updatedDesc").build();
+        apiGateway.updateRestApi(UpdateRestApiRequest.builder().restApiId(restApiId)
+                                                           .patchOperations(patch).build());
 
         GetRestApiResult getRestApiResult = apiGateway
-                .getRestApi(GetRestApiRequest.builder_().restApiId(restApiId).build_());
+                .getRestApi(GetRestApiRequest.builder().restApiId(restApiId).build());
 
         Assert.assertNotNull(getRestApiResult);
         Assert.assertNotNull(getRestApiResult.description());
@@ -101,8 +101,8 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void testCreateUpdateRetrieveApiKey() {
         CreateApiKeyResult createApiKeyResult = apiGateway
-                .createApiKey(CreateApiKeyRequest.builder_().name(NAME)
-                                                       .description(DESCRIPTION).build_());
+                .createApiKey(CreateApiKeyRequest.builder().name(NAME)
+                                                       .description(DESCRIPTION).build());
 
         Assert.assertNotNull(createApiKeyResult);
         Assert.assertNotNull(createApiKeyResult.description());
@@ -117,13 +117,13 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(createApiKeyResult.name(), NAME);
         Assert.assertEquals(createApiKeyResult.description(), DESCRIPTION);
 
-        PatchOperation patch = PatchOperation.builder_().op(Op.Replace)
-                                                   .path("/description").value("updatedDesc").build_();
-        apiGateway.updateApiKey(UpdateApiKeyRequest.builder_().apiKey(apiKeyId)
-                                                         .patchOperations(patch).build_());
+        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+                                                   .path("/description").value("updatedDesc").build();
+        apiGateway.updateApiKey(UpdateApiKeyRequest.builder().apiKey(apiKeyId)
+                                                         .patchOperations(patch).build());
 
         GetApiKeyResult getApiKeyResult = apiGateway
-                .getApiKey(GetApiKeyRequest.builder_().apiKey(apiKeyId).build_());
+                .getApiKey(GetApiKeyRequest.builder().apiKey(apiKeyId).build());
 
         Assert.assertNotNull(getApiKeyResult);
         Assert.assertNotNull(getApiKeyResult.description());
@@ -141,8 +141,8 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void testResourceOperations() {
         GetResourcesResult resourcesResult = apiGateway
-                .getResources(GetResourcesRequest.builder_()
-                                      .restApiId(restApiId).build_());
+                .getResources(GetResourcesRequest.builder()
+                                      .restApiId(restApiId).build());
         List<Resource> resources = resourcesResult.items();
         Assert.assertEquals(resources.size(), 1);
         Resource rootResource = resources.get(0);
@@ -151,10 +151,10 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         String rootResourceId = rootResource.id();
 
         CreateResourceResult createResourceResult = apiGateway
-                .createResource(CreateResourceRequest.builder_()
+                .createResource(CreateResourceRequest.builder()
                                         .restApiId(restApiId)
                                         .pathPart("fooPath")
-                                        .parentId(rootResourceId).build_());
+                                        .parentId(rootResourceId).build());
         Assert.assertNotNull(createResourceResult);
         Assert.assertNotNull(createResourceResult.id());
         Assert.assertNotNull(createResourceResult.parentId());
@@ -163,17 +163,17 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(createResourceResult.pathPart(), "fooPath");
         Assert.assertEquals(createResourceResult.parentId(), rootResourceId);
 
-        PatchOperation patch = PatchOperation.builder_().op(Op.Replace)
-                                                   .path("/pathPart").value("updatedPath").build_();
-        apiGateway.updateResource(UpdateResourceRequest.builder_()
+        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+                                                   .path("/pathPart").value("updatedPath").build();
+        apiGateway.updateResource(UpdateResourceRequest.builder()
                                           .restApiId(restApiId)
                                           .resourceId(createResourceResult.id())
-                                          .patchOperations(patch).build_());
+                                          .patchOperations(patch).build());
 
         GetResourceResult getResourceResult = apiGateway
-                .getResource(GetResourceRequest.builder_()
+                .getResource(GetResourceRequest.builder()
                                      .restApiId(restApiId)
-                                     .resourceId(createResourceResult.id()).build_());
+                                     .resourceId(createResourceResult.id()).build());
         Assert.assertNotNull(getResourceResult);
         Assert.assertNotNull(getResourceResult.id());
         Assert.assertNotNull(getResourceResult.parentId());
@@ -183,9 +183,9 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(getResourceResult.parentId(), rootResourceId);
 
         PutMethodResult putMethodResult = apiGateway
-                .putMethod(PutMethodRequest.builder_().restApiId(restApiId)
+                .putMethod(PutMethodRequest.builder().restApiId(restApiId)
                                                  .resourceId(createResourceResult.id())
-                                                 .authorizationType("AWS_IAM").httpMethod("PUT").build_());
+                                                 .authorizationType("AWS_IAM").httpMethod("PUT").build());
         Assert.assertNotNull(putMethodResult);
         Assert.assertNotNull(putMethodResult.authorizationType());
         Assert.assertNotNull(putMethodResult.apiKeyRequired());
@@ -194,12 +194,12 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(putMethodResult.httpMethod(), "PUT");
 
         PutIntegrationResult putIntegrationResult = apiGateway
-                .putIntegration(PutIntegrationRequest.builder_()
+                .putIntegration(PutIntegrationRequest.builder()
                                         .restApiId(restApiId)
                                         .resourceId(createResourceResult.id())
                                         .httpMethod("PUT").type(IntegrationType.MOCK)
                                         .uri("http://foo.bar")
-                                        .integrationHttpMethod("GET").build_());
+                                        .integrationHttpMethod("GET").build());
         Assert.assertNotNull(putIntegrationResult);
         Assert.assertNotNull(putIntegrationResult.cacheNamespace());
         Assert.assertNotNull(putIntegrationResult.type());

@@ -60,18 +60,18 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
         setUpCredentials();
         ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        ddb.createTable(CreateTableRequest.builder_()
+        ddb.createTable(CreateTableRequest.builder()
                 .tableName(TABLE)
-                .keySchema(KeySchemaElement.builder_().attributeName(HASH).keyType(KeyType.HASH).build_())
-                .attributeDefinitions(AttributeDefinition.builder_().attributeName(HASH).attributeType(ScalarAttributeType.S).build_())
-                .provisionedThroughput(ProvisionedThroughput.builder_().readCapacityUnits(1L).writeCapacityUnits(1L).build_()).build_());
+                .keySchema(KeySchemaElement.builder().attributeName(HASH).keyType(KeyType.HASH).build())
+                .attributeDefinitions(AttributeDefinition.builder().attributeName(HASH).attributeType(ScalarAttributeType.S).build())
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(1L).writeCapacityUnits(1L).build()).build());
 
         TableUtils.waitUntilActive(ddb, TABLE);
     }
 
     @AfterClass
     public static void tearDown() {
-        ddb.deleteTable(DeleteTableRequest.builder_().tableName(TABLE).build_());
+        ddb.deleteTable(DeleteTableRequest.builder().tableName(TABLE).build());
     }
 
     @Test
@@ -82,20 +82,20 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
         AttributeValue nestedJson = buildNestedMapAttribute(MAX_MAP_DEPTH);
 
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(HASH, AttributeValue.builder_().s("foo").build_());
+        item.put(HASH, AttributeValue.builder().s("foo").build());
         item.put(JSON_MAP_ATTRIBUTE, nestedJson);
 
-        ddb.putItem(PutItemRequest.builder_()
+        ddb.putItem(PutItemRequest.builder()
                 .tableName(TABLE)
                 .item(item)
-                .build_());
+                .build());
 
         // Make sure we can read the max-depth item
-        GetItemResult itemResult = ddb.getItem(GetItemRequest.builder_()
+        GetItemResult itemResult = ddb.getItem(GetItemRequest.builder()
                 .tableName(TABLE)
                 .key(Collections.singletonMap(HASH,
-                        AttributeValue.builder_().s("foo").build_()))
-                .build_());
+                        AttributeValue.builder().s("foo").build()))
+                .build());
         int mapDepth = computeDepthOfNestedMapAttribute(
                 itemResult.item().get(JSON_MAP_ATTRIBUTE));
         Assert.assertEquals(MAX_MAP_DEPTH, mapDepth);
@@ -105,13 +105,13 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
         AttributeValue nestedJson_OverLimit = buildNestedMapAttribute(MAX_MAP_DEPTH + 1);
 
         Map<String, AttributeValue> item_OverLimit = new HashMap<String, AttributeValue>();
-        item_OverLimit.put(HASH, AttributeValue.builder_().s("foo").build_());
+        item_OverLimit.put(HASH, AttributeValue.builder().s("foo").build());
         item_OverLimit.put("json", nestedJson_OverLimit);
 
         try {
-            ddb.putItem(PutItemRequest.builder_()
+            ddb.putItem(PutItemRequest.builder()
                     .tableName(TABLE)
-                    .item(item_OverLimit).build_());
+                    .item(item_OverLimit).build());
             Assert.fail("ValidationException is expected, since the depth exceeds the service limit.");
         } catch (AmazonServiceException expected) {
             // Ignored or expected.
@@ -119,9 +119,9 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
     }
 
     private AttributeValue buildNestedMapAttribute(int depth) {
-        AttributeValue value = AttributeValue.builder_().s("foo").build_();
+        AttributeValue value = AttributeValue.builder().s("foo").build();
         while (depth-- > 0) {
-            value = AttributeValue.builder_().m(Collections.singletonMap(JSON_MAP_NESTED_KEY, value)).build_();
+            value = AttributeValue.builder().m(Collections.singletonMap(JSON_MAP_NESTED_KEY, value)).build();
         }
         return value;
     }

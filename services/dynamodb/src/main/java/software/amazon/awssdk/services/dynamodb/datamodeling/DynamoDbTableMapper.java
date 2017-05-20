@@ -286,8 +286,8 @@ public final class DynamoDbTableMapper<T extends Object, H extends Object, R ext
     public void saveIfNotExists(T object) throws ConditionalCheckFailedException {
         final DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression();
         for (final DynamoDbMapperFieldModel<T, Object> key : model.keys()) {
-            saveExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder_()
-                    .exists(false).build_());
+            saveExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder()
+                    .exists(false).build());
         }
         mapper.<T>save(object, saveExpression);
     }
@@ -304,8 +304,8 @@ public final class DynamoDbTableMapper<T extends Object, H extends Object, R ext
     public void saveIfExists(T object) throws ConditionalCheckFailedException {
         final DynamoDbSaveExpression saveExpression = new DynamoDbSaveExpression();
         for (final DynamoDbMapperFieldModel<T, Object> key : model.keys()) {
-            saveExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder_()
-                    .exists(true).value(key.convert(key.get(object))).build_());
+            saveExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder()
+                    .exists(true).value(key.convert(key.get(object))).build());
         }
         mapper.<T>save(object, saveExpression);
     }
@@ -342,8 +342,8 @@ public final class DynamoDbTableMapper<T extends Object, H extends Object, R ext
     public void deleteIfExists(T object) throws ConditionalCheckFailedException {
         final DynamoDbDeleteExpression deleteExpression = new DynamoDbDeleteExpression();
         for (final DynamoDbMapperFieldModel<T, Object> key : model.keys()) {
-            deleteExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder_()
-                    .exists(true).value(key.convert(key.get(object))).build_());
+            deleteExpression.withExpectedEntry(key.name(), ExpectedAttributeValue.builder()
+                    .exists(true).value(key.convert(key.get(object))).build());
         }
         mapper.delete(object, deleteExpression);
     }
@@ -435,9 +435,9 @@ public final class DynamoDbTableMapper<T extends Object, H extends Object, R ext
      * @see DynamoDBClient#describeTable
      */
     public TableDescription describeTable() {
-        return db.describeTable(DescribeTableRequest.builder_()
+        return db.describeTable(DescribeTableRequest.builder()
                 .tableName(mapper.getTableName(model.targetType(), config))
-                .build_())
+                .build())
                 .table();
     }
 
@@ -456,10 +456,10 @@ public final class DynamoDbTableMapper<T extends Object, H extends Object, R ext
         if (request.globalSecondaryIndexes() != null) {
             modified.globalSecondaryIndexes((Collection<GlobalSecondaryIndex>) null);
             for (GlobalSecondaryIndex gsi : request.globalSecondaryIndexes()) {
-                gsi = gsi.toBuilder().provisionedThroughput(throughput).build_();
+                gsi = gsi.toBuilder().provisionedThroughput(throughput).build();
                 modified.globalSecondaryIndexes(gsi);
             }
-            request = modified.build_();
+            request = modified.build();
         }
         return db.createTable(request).tableDescription();
     }

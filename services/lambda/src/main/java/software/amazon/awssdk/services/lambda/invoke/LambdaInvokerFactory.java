@@ -243,7 +243,7 @@ public final class LambdaInvokerFactory {
          */
         private InvokeRequest buildInvokeRequest(Method method, LambdaFunction annotation, Object input) {
 
-            InvokeRequest.Builder invokeRequestBuilder = InvokeRequest.builder_();
+            InvokeRequest.Builder invokeRequestBuilder = InvokeRequest.builder();
 
             String functionName = config.getLambdaFunctionNameResolver().getFunctionName(method, annotation, config);
 
@@ -268,7 +268,7 @@ public final class LambdaInvokerFactory {
                 }
             }
 
-            return invokeRequestBuilder.build_();
+            return invokeRequestBuilder.build();
         }
 
         private boolean hasQualifier() {

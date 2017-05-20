@@ -38,8 +38,8 @@ public class DateToStringMarshaller implements StringAttributeMarshaller {
 
     @Override
     public AttributeValue marshall(Object obj) {
-        return AttributeValue.builder_().s(
+        return AttributeValue.builder().s(
                 DateUtils.formatIso8601Date((Date) obj))
-                .build_();
+                .build();
     }
 }

@@ -1,12 +1,16 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.util.Date;
+import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.StructWithTimestampMarshaller;
 
-public class StructWithTimestamp implements Cloneable, StructuredPojo {
+@Generated("software.amazon.awssdk:codegen")
+public class StructWithTimestamp implements ToCopyableBuilder<StructWithTimestamp.Builder, StructWithTimestamp>, StructuredPojo {
     private final Date nestedTimestamp;
 
     private StructWithTimestamp(BeanStyleBuilder builder) {
@@ -21,11 +25,12 @@ public class StructWithTimestamp implements Cloneable, StructuredPojo {
         return nestedTimestamp;
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -62,16 +67,6 @@ public class StructWithTimestamp implements Cloneable, StructuredPojo {
     }
 
     @Override
-    public StructWithTimestamp clone() {
-        try {
-            return (StructWithTimestamp) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -88,15 +83,13 @@ public class StructWithTimestamp implements Cloneable, StructuredPojo {
         StructWithTimestampMarshaller.getInstance().marshall(this, protocolMarshaller);
     }
 
-    public interface Builder {
+    public interface Builder extends CopyableBuilder<Builder, StructWithTimestamp> {
         /**
          *
          * @param nestedTimestamp
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder nestedTimestamp(Date nestedTimestamp);
-
-        StructWithTimestamp build_();
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -106,12 +99,12 @@ public class StructWithTimestamp implements Cloneable, StructuredPojo {
         }
 
         private BeanStyleBuilder(StructWithTimestamp model) {
-            this.nestedTimestamp = model.nestedTimestamp;
+            setNestedTimestamp(model.nestedTimestamp);
         }
 
         @Override
         public Builder nestedTimestamp(Date nestedTimestamp) {
-            this.nestedTimestamp = nestedTimestamp;
+            this.nestedTimestamp = DateCopier.copyDate(nestedTimestamp);
             return this;
         }
 
@@ -120,12 +113,13 @@ public class StructWithTimestamp implements Cloneable, StructuredPojo {
          * @param nestedTimestamp
          */
         public void setNestedTimestamp(Date nestedTimestamp) {
-            this.nestedTimestamp = nestedTimestamp;
+            this.nestedTimestamp = DateCopier.copyDate(nestedTimestamp);
         }
 
         @Override
-        public StructWithTimestamp build_() {
+        public StructWithTimestamp build() {
             return new StructWithTimestamp(this);
         }
     }
 }
+

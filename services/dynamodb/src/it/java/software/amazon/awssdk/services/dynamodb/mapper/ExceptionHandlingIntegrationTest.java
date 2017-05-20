@@ -95,8 +95,8 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
     @Test(expected = DynamoDbMappingException.class)
     public void testPrivateKeySetterLoad() throws Exception {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put(KEY_NAME, AttributeValue.builder_().s("abc").build_());
-        dynamo.putItem(PutItemRequest.builder_().tableName("aws-java-sdk-util").item(attr).build_());
+        attr.put(KEY_NAME, AttributeValue.builder().s("abc").build());
+        dynamo.putItem(PutItemRequest.builder().tableName("aws-java-sdk-util").item(attr).build());
         DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.load(PrivateKeySetter.class, "abc");
     }
@@ -135,9 +135,9 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
     @Test(expected = DynamoDbMappingException.class)
     public void testWrongDataType() {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put("integerProperty", AttributeValue.builder_().s("abc").build_());
-        attr.put(KEY_NAME, AttributeValue.builder_().s("" + startKey++).build_());
-        dynamo.putItem(PutItemRequest.builder_().tableName("aws-java-sdk-util").item(attr).build_());
+        attr.put("integerProperty", AttributeValue.builder().s("abc").build());
+        attr.put(KEY_NAME, AttributeValue.builder().s("" + startKey++).build());
+        dynamo.putItem(PutItemRequest.builder().tableName("aws-java-sdk-util").item(attr).build());
         DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.load(NumericFields.class, attr.get(KEY_NAME).s());
     }
@@ -145,9 +145,9 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
     @Test(expected = DynamoDbMappingException.class)
     public void testWrongDataType2() {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put("integerProperty", AttributeValue.builder_().ns("1", "2", "3").build_());
-        attr.put(KEY_NAME, AttributeValue.builder_().s("" + startKey++).build_());
-        dynamo.putItem(PutItemRequest.builder_().tableName("aws-java-sdk-util").item(attr).build_());
+        attr.put("integerProperty", AttributeValue.builder().ns("1", "2", "3").build());
+        attr.put(KEY_NAME, AttributeValue.builder().s("" + startKey++).build());
+        dynamo.putItem(PutItemRequest.builder().tableName("aws-java-sdk-util").item(attr).build());
         DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.load(NumericFields.class, attr.get(KEY_NAME).s());
     }

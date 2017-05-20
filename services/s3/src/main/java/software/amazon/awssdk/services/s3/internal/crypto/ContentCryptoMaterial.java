@@ -165,9 +165,9 @@ final class ContentCryptoMaterial {
     private static SecretKey cekByKms(byte[] cekSecured, String keyWrapAlgo,
                                       EncryptionMaterials materials,
                                       ContentCryptoScheme contentCryptoScheme, KMSClient kms) {
-        DecryptRequest kmsreq = DecryptRequest.builder_()
+        DecryptRequest kmsreq = DecryptRequest.builder()
                 .encryptionContext(materials.getMaterialsDescription())
-                .ciphertextBlob(ByteBuffer.wrap(cekSecured)).build_();
+                .ciphertextBlob(ByteBuffer.wrap(cekSecured)).build();
         DecryptResult result = kms.decrypt(kmsreq);
         return new SecretKeySpec(copyAllBytesFrom(result.plaintext()),
                                  contentCryptoScheme.getKeyGeneratorAlgorithm());
@@ -579,11 +579,11 @@ final class ContentCryptoMaterial {
 
         if (materials.isKmsEnabled()) {
             matdesc = mergeMaterialDescriptions(materials, req);
-            EncryptRequest encryptRequest = EncryptRequest.builder_()
+            EncryptRequest encryptRequest = EncryptRequest.builder()
                     .encryptionContext(matdesc)
                     .keyId(materials.getCustomerMasterKeyId())
                     .plaintext(ByteBuffer.wrap(cek.getEncoded()))
-                    .build_();
+                    .build();
             encryptRequest
                     .withGeneralProgressListener(req.getGeneralProgressListener())
                     .withRequestMetricCollector(req.getRequestMetricCollector())

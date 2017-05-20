@@ -127,13 +127,13 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test(expected = AmazonServiceException.class)
     public void test() {
-        client.generateDataSet(GenerateDataSetRequest.builder_()
+        client.generateDataSet(GenerateDataSetRequest.builder()
                 .dataSetPublicationDate(new Date())
                 .roleNameArn(roleArn).destinationS3BucketName(BUCKET_NAME).snsTopicArn(topicArn)
                 .destinationS3BucketName(BUCKET_NAME).destinationS3Prefix("some-prefix")
                 .dataSetPublicationDate(new Date())
                 .dataSetType(DataSetType.Customer_subscriber_hourly_monthly_subscriptions)
-                .build_());
+                .build());
     }
 
     private String getAssumeRolePolicy() throws Exception {

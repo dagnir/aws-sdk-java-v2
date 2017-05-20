@@ -1,17 +1,23 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
+import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.ResponseMetadata;
+import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.builder.ToCopyableBuilder;
 
-public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<ResponseMetadata> implements Cloneable {
+@Generated("software.amazon.awssdk:codegen")
+public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<ResponseMetadata> implements
+        ToCopyableBuilder<OperationWithNoInputOrOutputResult.Builder, OperationWithNoInputOrOutputResult> {
     private OperationWithNoInputOrOutputResult(BeanStyleBuilder builder) {
     }
 
+    @Override
     public Builder toBuilder() {
         return new BeanStyleBuilder(this);
     }
 
-    public static Builder builder_() {
+    public static Builder builder() {
         return new BeanStyleBuilder();
     }
 
@@ -40,16 +46,6 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<R
     }
 
     @Override
-    public OperationWithNoInputOrOutputResult clone() {
-        try {
-            return (OperationWithNoInputOrOutputResult) super.clone();
-        } catch (Exception e) {
-            throw new IllegalStateException("Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!",
-                    e);
-        }
-    }
-
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -57,8 +53,7 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<R
         return sb.toString();
     }
 
-    public interface Builder {
-        OperationWithNoInputOrOutputResult build_();
+    public interface Builder extends CopyableBuilder<Builder, OperationWithNoInputOrOutputResult> {
     }
 
     private static final class BeanStyleBuilder implements Builder {
@@ -69,8 +64,9 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<R
         }
 
         @Override
-        public OperationWithNoInputOrOutputResult build_() {
+        public OperationWithNoInputOrOutputResult build() {
             return new OperationWithNoInputOrOutputResult(this);
         }
     }
 }
+

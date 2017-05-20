@@ -54,6 +54,6 @@ public class BooleanSetToNumberSetMarshaller
             }
         }
 
-        return AttributeValue.builder_().ns(booleanAttributes).build_();
+        return AttributeValue.builder().ns(booleanAttributes).build();
     }
 }

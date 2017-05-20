@@ -184,11 +184,11 @@ public class Index implements QueryApi, ScanApi {
     public TableDescription updateGsi(
             ProvisionedThroughput provisionedThroughput) {
         return table.updateTable(new UpdateTableSpec()
-                .withGlobalSecondaryIndexUpdates(GlobalSecondaryIndexUpdate.builder_()
-                        .update(UpdateGlobalSecondaryIndexAction.builder_()
+                .withGlobalSecondaryIndexUpdates(GlobalSecondaryIndexUpdate.builder()
+                        .update(UpdateGlobalSecondaryIndexAction.builder()
                                 .indexName(indexName)
-                                .provisionedThroughput(provisionedThroughput).build_())
-                        .build_()));
+                                .provisionedThroughput(provisionedThroughput).build())
+                        .build()));
     }
 
     /**
@@ -205,10 +205,10 @@ public class Index implements QueryApi, ScanApi {
     public TableDescription deleteGsi() {
         return table.updateTable(new UpdateTableSpec()
                 .withGlobalSecondaryIndexUpdates(
-                        GlobalSecondaryIndexUpdate.builder_()
-                                .delete(DeleteGlobalSecondaryIndexAction.builder_()
-                                        .indexName(indexName).build_())
-                                .build_()));
+                        GlobalSecondaryIndexUpdate.builder()
+                                .delete(DeleteGlobalSecondaryIndexAction.builder()
+                                        .indexName(indexName).build())
+                                .build()));
     }
 
     /**

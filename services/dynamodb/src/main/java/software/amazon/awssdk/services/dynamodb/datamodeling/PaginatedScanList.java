@@ -80,7 +80,7 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
 
     @Override
     protected synchronized List<T> fetchNextPage() {
-        scanRequest = scanRequest.toBuilder().exclusiveStartKey(scanResult.lastEvaluatedKey()).build_();
+        scanRequest = scanRequest.toBuilder().exclusiveStartKey(scanResult.lastEvaluatedKey()).build();
         scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(scanRequest));
         return mapper.marshallIntoObjects(mapper.toParameters(
                 scanResult.items(),

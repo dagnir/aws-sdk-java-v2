@@ -44,7 +44,7 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         try {
-            ssm.deleteDocument(DeleteDocumentRequest.builder_().name(DOCUMENT_NAME).build_());
+            ssm.deleteDocument(DeleteDocumentRequest.builder().name(DOCUMENT_NAME).build());
         } catch (Exception e) {
             LOG.error("Failed to delete config document.", e);
         }
@@ -59,14 +59,14 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
     }
 
     private void testDescribeDocument() {
-        DescribeDocumentResult result = ssm.describeDocument(DescribeDocumentRequest.builder_().name(DOCUMENT_NAME).build_());
+        DescribeDocumentResult result = ssm.describeDocument(DescribeDocumentRequest.builder().name(DOCUMENT_NAME).build());
         assertNotNull(result.document());
     }
 
     private void testCreateDocument(String docName, String docContent) {
 
         CreateDocumentResult createResult = ssm
-                .createDocument(CreateDocumentRequest.builder_().name(docName).content(docContent).build_());
+                .createDocument(CreateDocumentRequest.builder().name(docName).content(docContent).build());
 
         DocumentDescription description = createResult.documentDescription();
 
@@ -74,12 +74,12 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
         assertNotNull(description.status());
         assertNotNull(description.createdDate());
 
-        GetDocumentResult getResult = ssm.getDocument(GetDocumentRequest.builder_().name(docName).build_());
+        GetDocumentResult getResult = ssm.getDocument(GetDocumentRequest.builder().name(docName).build());
 
         assertEquals(DOCUMENT_NAME, getResult.name());
         assertEquals(docContent, getResult.content());
 
-        ListDocumentsResult listResult = ssm.listDocuments(ListDocumentsRequest.builder_().build_());
+        ListDocumentsResult listResult = ssm.listDocuments(ListDocumentsRequest.builder().build());
 
         assertFalse("ListDocuments should at least returns one element", listResult.documentIdentifiers().isEmpty());
 
