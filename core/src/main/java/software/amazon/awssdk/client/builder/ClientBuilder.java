@@ -141,7 +141,7 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
     /**
      * Retrieve the value set by {@link #defaultRegionDetectionEnabled(boolean)}.
      */
-    boolean defaultRegionDetectionEnabled();
+    Boolean defaultRegionDetectionEnabled();
 
     /**
      * Whether region detection should be enabled. Region detection is used when the {@link #region()} is not specified. This is
@@ -158,7 +158,7 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
      * <p>If the region is not found in any of the locations above, an exception will be thrown at {@link #build()} time.</p>
      */
     @ReviewBeforeRelease("Should this be moved to an advancedOptions map to hide it from most customers who don't care about it?")
-    B defaultRegionDetectionEnabled(boolean defaultRegionDetectionEnabled);
+    B defaultRegionDetectionEnabled(Boolean defaultRegionDetectionEnabled);
 
     /**
      * Retrieve the region that was configured with {@link #region(String)}.

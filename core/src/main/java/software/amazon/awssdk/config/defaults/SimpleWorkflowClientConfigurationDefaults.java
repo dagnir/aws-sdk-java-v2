@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.config.defaults;
 
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.config.ClientConfiguration;
 
@@ -24,6 +25,6 @@ import software.amazon.awssdk.config.ClientConfiguration;
  * the {@link GlobalClientConfigurationDefaults}, and a lower-priority configuration than the customer-provided configuration.
  */
 @SdkInternalApi
+@ReviewBeforeRelease("Hook up service specific defaults")
 public class SimpleWorkflowClientConfigurationDefaults extends ClientConfigurationDefaults {
-    // TODO hook back up service specific defaults
 }

@@ -62,9 +62,8 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
      * Validate that the provided optional is present, raising an exception if it is not.
      */
     protected final <T> T requireField(String field, Optional<T> requiredConfiguration) {
-        return requiredConfiguration.orElseThrow(() ->
-                                                         new IllegalStateException(String.format(
-                                                                 "The '%s' must be configured in the client builder.", field)));
+        return requiredConfiguration.orElseThrow(() -> new IllegalStateException(String.format(
+                "The '%s' must be configured in the client builder.", field)));
     }
 
     /**

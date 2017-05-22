@@ -65,7 +65,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     private MutableClientConfiguration mutableClientConfiguration = new MutableClientConfiguration();
 
     private String region;
-    private boolean defaultRegionDetectionEnabled = true;
+    private Boolean defaultRegionDetectionEnabled;
     private ExecutorProvider asyncExecutorProvider;
 
     /**
@@ -201,11 +201,17 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     }
 
     /**
-     * Load the region from the default region provider.
+     * Load the region from the default region provider if enabled.
      */
     private Optional<String> regionFromDefaultProvider() {
-        return defaultRegionDetectionEnabled ? Optional.ofNullable(DEFAULT_REGION_PROVIDER.getRegion())
-                                             : Optional.empty();
+        return useRegionProviderChain() ? Optional.ofNullable(DEFAULT_REGION_PROVIDER.getRegion()) : Optional.empty();
+    }
+
+    /**
+     * @return True if loading from region provider chain is allowed per options. False otherwise False otherwise.
+     */
+    private boolean useRegionProviderChain() {
+        return defaultRegionDetectionEnabled == null || defaultRegionDetectionEnabled;
     }
 
     /**
@@ -257,21 +263,21 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     }
 
     @Override
-    public boolean defaultRegionDetectionEnabled() {
+    public Boolean defaultRegionDetectionEnabled() {
         return defaultRegionDetectionEnabled;
     }
 
     @Override
-    public B defaultRegionDetectionEnabled(boolean defaultRegionDetectionEnabled) {
+    public B defaultRegionDetectionEnabled(Boolean defaultRegionDetectionEnabled) {
         this.defaultRegionDetectionEnabled = defaultRegionDetectionEnabled;
         return thisBuilder();
     }
 
-    public boolean isDefaultRegionDetectionEnabled() {
+    public Boolean isDefaultRegionDetectionEnabled() {
         return defaultRegionDetectionEnabled();
     }
 
-    public void setDefaultRegionDetectionEnabled(boolean defaultRegionDetectionEnabled) {
+    public void setDefaultRegionDetectionEnabled(Boolean defaultRegionDetectionEnabled) {
         defaultRegionDetectionEnabled(defaultRegionDetectionEnabled);
     }
 

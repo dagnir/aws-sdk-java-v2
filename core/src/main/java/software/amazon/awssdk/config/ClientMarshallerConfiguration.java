@@ -59,8 +59,7 @@ public final class ClientMarshallerConfiguration
 
     @Override
     public ClientMarshallerConfiguration.Builder toBuilder() {
-        return builder()
-                .gzipEnabled(gzipEnabled);
+        return builder().gzipEnabled(gzipEnabled);
     }
 
     /**

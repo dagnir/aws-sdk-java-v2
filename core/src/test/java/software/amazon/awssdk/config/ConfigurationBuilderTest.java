@@ -96,18 +96,16 @@ public class ConfigurationBuilderTest {
             assertThat(builderProperty.getWriteMethod()).as(builderPropertyName + "'s write method").isNotNull();
 
             // Builders should have a fluent read method matching the configuration object
-            Method builderFluentReadMethod =
-                    Arrays.stream(builderMethods)
-                            .filter(builderMethod -> matchesSignature(configMethod, builderMethod))
-                            .findAny()
-                            .orElseThrow(() -> new AssertionError(builderClass + " can't read " + configMethod.getName()));
+            Method builderFluentReadMethod = Arrays.stream(builderMethods)
+                    .filter(builderMethod -> matchesSignature(configMethod, builderMethod))
+                    .findAny()
+                    .orElseThrow(() -> new AssertionError(builderClass + " can't read " + configMethod.getName()));
 
             // Builders should have a fluent write method for each property
-            Method builderFluentWriteMethod =
-                    Arrays.stream(builderMethods)
-                            .filter(builderMethod -> matchesSignature(configMethod.getName(), builderProperty, builderMethod))
-                            .findAny()
-                            .orElseThrow(() -> new AssertionError(builderClass + " can't write " + configMethod.getName()));
+            Method builderFluentWriteMethod = Arrays.stream(builderMethods)
+                    .filter(builderMethod -> matchesSignature(configMethod.getName(), builderProperty, builderMethod))
+                    .findAny()
+                    .orElseThrow(() -> new AssertionError(builderClass + " can't write " + configMethod.getName()));
 
             // Builder's bean read methods should return a value that can be written to its write methods without
             // raising an exception
