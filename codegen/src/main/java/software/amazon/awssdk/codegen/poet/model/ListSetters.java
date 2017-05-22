@@ -107,6 +107,7 @@ class ListSetters extends AbstractMemberSetters {
     private MethodSpec fluentVarargToListSetter(TypeName returnType) {
         return fluentSetterBuilder(ParameterSpec.builder(asArray(), fieldName()).build(), returnType)
                 .varargs(true)
+                .addAnnotation(SafeVarargs.class)
                 .addCode(varargToListBody().toBuilder().addStatement("return this").build())
                 .build();
     }
@@ -114,6 +115,7 @@ class ListSetters extends AbstractMemberSetters {
     private MethodSpec beanStyleVarargToListSetter() {
         return beanStyleSetterBuilder(ParameterSpec.builder(asArray(), fieldName()).build())
                 .varargs(true)
+                .addAnnotation(SafeVarargs.class)
                 .addCode(varargToListBody())
                 .build();
     }

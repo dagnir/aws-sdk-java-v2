@@ -186,6 +186,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         }
 
         @Override
+        @SafeVarargs
         public Builder listOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
@@ -208,6 +209,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
          *
          * @param listOfListsOfStrings
          */
+        @SafeVarargs
         public void setListOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
@@ -226,6 +228,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         }
 
         @Override
+        @SafeVarargs
         public Builder listOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);
@@ -250,6 +253,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
          *
          * @param listOfListOfListsOfStrings
          */
+        @SafeVarargs
         public void setListOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);

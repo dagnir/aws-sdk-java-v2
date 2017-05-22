@@ -851,6 +851,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         }
 
         @Override
+        @SafeVarargs
         public Builder simpleList(String... simpleList) {
             if (this.simpleList == null) {
                 this.simpleList = new ArrayList<>(simpleList.length);
@@ -873,6 +874,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param simpleList
          */
+        @SafeVarargs
         public void setSimpleList(String... simpleList) {
             if (this.simpleList == null) {
                 this.simpleList = new ArrayList<>(simpleList.length);
@@ -889,6 +891,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         }
 
         @Override
+        @SafeVarargs
         public Builder listOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
                 this.listOfMaps = new ArrayList<>(listOfMaps.length);
@@ -911,6 +914,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param listOfMaps
          */
+        @SafeVarargs
         public void setListOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
                 this.listOfMaps = new ArrayList<>(listOfMaps.length);
@@ -927,6 +931,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         }
 
         @Override
+        @SafeVarargs
         public Builder listOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
                 this.listOfStructs = new ArrayList<>(listOfStructs.length);
@@ -949,6 +954,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param listOfStructs
          */
+        @SafeVarargs
         public void setListOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
                 this.listOfStructs = new ArrayList<>(listOfStructs.length);
@@ -1089,6 +1095,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         }
 
         @Override
+        @SafeVarargs
         public Builder listOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
                 this.listOfBlobs = new ArrayList<>(listOfBlobs.length);
@@ -1111,6 +1118,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
          *
          * @param listOfBlobs
          */
+        @SafeVarargs
         public void setListOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
                 this.listOfBlobs = new ArrayList<>(listOfBlobs.length);

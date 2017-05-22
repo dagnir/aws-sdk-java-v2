@@ -240,6 +240,7 @@ public class RecursiveStructType implements ToCopyableBuilder<RecursiveStructTyp
         }
 
         @Override
+        @SafeVarargs
         public Builder recursiveList(RecursiveStructType... recursiveList) {
             if (this.recursiveList == null) {
                 this.recursiveList = new ArrayList<>(recursiveList.length);
@@ -262,6 +263,7 @@ public class RecursiveStructType implements ToCopyableBuilder<RecursiveStructTyp
          *
          * @param recursiveList
          */
+        @SafeVarargs
         public void setRecursiveList(RecursiveStructType... recursiveList) {
             if (this.recursiveList == null) {
                 this.recursiveList = new ArrayList<>(recursiveList.length);

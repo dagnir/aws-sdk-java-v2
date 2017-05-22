@@ -185,6 +185,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         }
 
         @Override
+        @SafeVarargs
         public Builder listOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
@@ -207,6 +208,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
          *
          * @param listOfListsOfStrings
          */
+        @SafeVarargs
         public void setListOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
@@ -225,6 +227,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         }
 
         @Override
+        @SafeVarargs
         public Builder listOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);
@@ -249,6 +252,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
          *
          * @param listOfListOfListsOfStrings
          */
+        @SafeVarargs
         public void setListOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);
