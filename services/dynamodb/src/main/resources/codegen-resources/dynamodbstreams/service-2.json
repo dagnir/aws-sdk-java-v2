@@ -162,7 +162,7 @@
           "shape": "ListAttributeValue",
           "documentation": "<p>A List data type.</p>"
         },
-        "NUL": {
+        "NULL": {
           "shape": "NullAttributeValue",
           "documentation": "<p>A Null data type.</p>"
         },

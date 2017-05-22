@@ -1302,7 +1302,7 @@
           "shape": "JobStateList",
           "documentation": "<p>The list of job states that will trigger a notification for this job.</p>"
         },
-        "NotifyAllJobStates": {
+        "NotifyAll": {
           "shape": "Boolean",
           "documentation": "<p>Any change in job state will trigger a notification for this job.</p>"
         }
