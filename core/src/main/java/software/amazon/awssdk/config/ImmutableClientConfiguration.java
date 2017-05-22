@@ -162,12 +162,14 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
     }
 
     private void copyMarshallerConfiguration(LegacyClientConfiguration configuration,
-                                             ClientMarshallerConfiguration compressionConfiguration) {
-        compressionConfiguration.gzipEnabled().ifPresent(configuration::setUseGzip);
-        compressionConfiguration.additionalHeaders()
-                .forEach((k, v) -> {
-                    configuration.addHeader(k, v.get(0));
-                });
+                                             ClientMarshallerConfiguration marshallerConfig) {
+        marshallerConfig.gzipEnabled().ifPresent(configuration::setUseGzip);
+        marshallerConfig.additionalHeaders().forEach((header, values) -> {
+            if (values.size() > 1) {
+                throw new IllegalArgumentException("Multiple values under the same header are not supported at this time.");
+            }
+            values.forEach(value -> configuration.addHeader(header, value));
+        });
     }
 
     private void copyMetricsConfiguration(LegacyClientConfiguration configuration,

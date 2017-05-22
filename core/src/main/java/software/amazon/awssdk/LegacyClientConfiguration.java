@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.config.ClientConfiguration;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
@@ -118,7 +119,7 @@ public class LegacyClientConfiguration {
 
     public static final int DEFAULT_MAX_CONSECUTIVE_RETRIES_BEFORE_THROTTLING = 100;
 
-    // TODO hacky hack for now
+    @ReviewBeforeRelease("Hacky hack for now. Should be pushed down to HTTP layer")
     private static final SecureRandom DEFAULT_SECURE_RANDOM = new SecureRandom();
 
     /** A prefix to the HTTP user agent header passed with all HTTP requests.  */
