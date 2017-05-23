@@ -69,6 +69,7 @@ public class ClientHandlerImpl extends ClientHandler {
                 .requestMetricCollector(clientParams.getRequestMetricCollector())
                 .useBrowserCompatibleHostNameVerifier(handlerParams.isDisableStrictHostnameVerification())
                 .calculateCrc32FromCompressedData(handlerParams.isCalculateCrc32FromCompressedDataEnabled())
+                .sdkHttpClient(handlerParams.getClientParams().sdkHttpClient())
                 .build();
     }
 

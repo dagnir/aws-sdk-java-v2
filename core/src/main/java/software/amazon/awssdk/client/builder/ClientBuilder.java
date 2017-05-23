@@ -102,6 +102,20 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
     B listenerConfiguration(ClientListenerConfiguration listenerConfiguration);
 
     /**
+     * Configures the HTTP client used by the service client. Either a client factory may be provided (in which case
+     * the SDK will merge any service specific configuration on top of customer supplied configuration) or provide an already
+     * constructed instance of {@link software.amazon.awssdk.http.SdkHttpClient}. Note that if an {@link
+     * software.amazon.awssdk.http.SdkHttpClient} is provided then it is up to the caller to close it when they are finished with
+     * it, the SDK will only close HTTP clients that it creates.
+     */
+    B httpConfiguration(ClientHttpConfiguration httpConfiguration);
+
+    /**
+     * HTTP client configuration. This will never return null.
+     */
+    ClientHttpConfiguration httpConfiguration();
+
+    /**
      * The credentials that should be used to authenticate the service with AWS.
      */
     @ReviewBeforeRelease("This is AWS-specific, so it should probably be broken out.")
@@ -113,11 +127,12 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
      * <p>The default provider will attempt to identify the credentials automatically using the following logic:
      * <ul>
      * <li>Check the {@link SdkGlobalConfiguration#ACCESS_KEY_ID_ENV_VAR} and {@link SdkGlobalConfiguration#SECRET_KEY_ENV_VAR}
-     *     environment variables.</li>
+     * environment variables.</li>
      * <li>Check the aws.accessKeyId and aws.secretKey java system properties.</li>
      * <li>Check the {user.home}/.aws/credentials file.</li>
-     * <li>If running in EC2, check the {@link ContainerCredentialsProvider#ECS_CONTAINER_CREDENTIALS_PATH} path for a credentials
-     *     file that the security manager allows access to.
+     * <li>If running in EC2, check the {@link ContainerCredentialsProvider#ECS_CONTAINER_CREDENTIALS_PATH} path for a
+     * credentials
+     * file that the security manager allows access to.
      * <li>If running in EC2, check the EC2 metadata service for credentials.</li>
      * </ul>
      *
@@ -139,9 +154,9 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
     B endpointOverride(URI endpointOverride);
 
     /**
-     * Retrieve the value set by {@link #defaultRegionDetectionEnabled(boolean)}.
+     * Retrieve the value set by {@link #defaultRegionDetectionEnabled(Boolean)}.
      */
-    Boolean defaultRegionDetectionEnabled();
+    Optional<Boolean> defaultRegionDetectionEnabled();
 
     /**
      * Whether region detection should be enabled. Region detection is used when the {@link #region()} is not specified. This is
@@ -170,4 +185,5 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
      * behavior described in {@link #defaultRegionDetectionEnabled(boolean)} (assuming it is enabled) will be used.
      */
     B region(String region);
+
 }

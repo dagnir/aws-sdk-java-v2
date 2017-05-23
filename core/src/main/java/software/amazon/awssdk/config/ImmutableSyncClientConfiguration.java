@@ -23,6 +23,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 
@@ -66,6 +67,11 @@ public final class ImmutableSyncClientConfiguration extends ImmutableClientConfi
             @Override
             public SignerProvider getSignerProvider() {
                 return securityConfiguration().signerProvider().orElse(null);
+            }
+
+            @Override
+            public SdkHttpClient sdkHttpClient() {
+                return ImmutableSyncClientConfiguration.this.httpClient();
             }
 
             @Override

@@ -26,11 +26,12 @@ import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.http.apache.ApacheHttpClientFactory;
+import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
 import software.amazon.awssdk.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.http.pipeline.stages.AfterCallbackStage;
@@ -351,14 +352,21 @@ public class AmazonHttpClient implements AutoCloseable {
             HttpClientSettings httpClientSettings = HttpClientSettings
                     .adapt(clientConfig, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData);
             return new AmazonHttpClient(HttpClientDependencies.builder()
-                                                .clientExecutionTimer(new ClientExecutionTimer())
-                                                .config(clientConfig)
-                                                .retryCapacity(createCapacityManager())
-                                                .httpClientSettings(httpClientSettings)
-                                                .retryPolicy(resolveRetryPolicy())
-                                                .sdkHttpClient(resolveSdkHttpClient(httpClientSettings))
-                                                .build(),
+                                                              .clientExecutionTimer(new ClientExecutionTimer())
+                                                              .config(clientConfig)
+                                                              .retryCapacity(createCapacityManager())
+                                                              .httpClientSettings(httpClientSettings)
+                                                              .retryPolicy(resolveRetryPolicy())
+                                                              .sdkHttpClient(resolveSdkHttpClient())
+                                                              .build(),
                                         requestMetricCollector);
+        }
+
+        @ReviewBeforeRelease("Should AmazonHttpClient create a HTTP client if none is provided? This responsibility" +
+                             "is duplicated in DefaultClientBuilder but many tests use AmazonHttpClient directly.")
+        private SdkHttpClient resolveSdkHttpClient() {
+            return sdkHttpClient != null ? sdkHttpClient : ApacheSdkHttpClientFactory.builder()
+                                                                                     .build().createHttpClient();
         }
 
         private CapacityManager createCapacityManager() {
@@ -371,10 +379,6 @@ public class AmazonHttpClient implements AutoCloseable {
 
         private RetryPolicy resolveRetryPolicy() {
             return retryPolicy == null ? new RetryPolicyAdapter(clientConfig.getRetryPolicy(), clientConfig) : retryPolicy;
-        }
-
-        private SdkHttpClient resolveSdkHttpClient(HttpClientSettings httpClientSettings) {
-            return sdkHttpClient != null ? sdkHttpClient : new ApacheHttpClientFactory().create(httpClientSettings);
         }
     }
 
@@ -465,10 +469,10 @@ public class AmazonHttpClient implements AutoCloseable {
 
         private RequestExecutionContext createRequestExecutionDependencies() {
             return RequestExecutionContext.builder()
-                    .request(request)
-                    .requestConfig(resolveRequestConfig())
-                    .executionContext(executionContext)
-                    .build();
+                                          .request(request)
+                                          .requestConfig(resolveRequestConfig())
+                                          .executionContext(executionContext)
+                                          .build();
         }
 
         private RequestConfig resolveRequestConfig() {

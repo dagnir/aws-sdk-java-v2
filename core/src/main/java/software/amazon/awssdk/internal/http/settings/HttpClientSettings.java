@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.internal.http.settings;
 
-import java.net.InetAddress;
-import java.security.SecureRandom;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpClientSettings;
@@ -74,107 +72,13 @@ public class HttpClientSettings implements SdkHttpClientSettings {
     }
 
     @Override
-    public InetAddress getLocalAddress() {
-        return config.getLocalAddress();
-    }
-
-    @Override
-    public String getProxyHost() {
-        return config.getProxyHost();
-    }
-
-    @Override
-    public int getProxyPort() {
-        return config.getProxyPort();
-    }
-
-    @Override
-    public String getProxyUsername() {
-        return config.getProxyUsername();
-    }
-
-    @Override
-    public String getProxyPassword() {
-        return config.getProxyPassword();
-    }
-
-    @Override
-    public String getNonProxyHosts() {
-        return config.getNonProxyHosts();
-    }
-
-    @Override
-    public boolean useReaper() {
-        return config.useReaper();
-    }
-
-    @Override
-    public boolean useGzip() {
-        return config.useGzip();
-    }
-
-    @Override
     public int getSocketTimeout() {
         return config.getSocketTimeout();
     }
 
     @Override
-    public int[] getSocketBufferSize() {
-        return config.getSocketBufferSizeHints();
-    }
-
-    @Override
-    public boolean useTcpKeepAlive() {
-        return config.useTcpKeepAlive();
-    }
-
-    @Override
-    public SecureRandom getSecureRandom() {
-        return config.getSecureRandom();
-    }
-
-    @Override
     public int getConnectionTimeout() {
         return config.getConnectionTimeout();
-    }
-
-    @Override
-    public int getConnectionPoolRequestTimeout() {
-        return config.getConnectionTimeout();
-    }
-
-    @Override
-    public long getConnectionPoolTtl() {
-        return config.getConnectionTtl();
-    }
-
-    @Override
-    public long getMaxIdleConnectionTime() {
-        return config.getConnectionMaxIdleMillis();
-    }
-
-    public int getValidateAfterInactivityMillis() {
-        return config.getValidateAfterInactivityMillis();
-    }
-
-    @Override
-    public String getProxyWorkstation() {
-        return config.getProxyWorkstation();
-    }
-
-    @Override
-    public String getProxyDomain() {
-        return config.getProxyDomain();
-    }
-
-    @Override
-    public boolean isPreemptiveBasicProxyAuth() {
-        return config.isPreemptiveBasicProxyAuth();
-    }
-
-    @Override
-    public boolean isUseExpectContinue() {
-        return config.isUseExpectContinue();
     }
 
 }

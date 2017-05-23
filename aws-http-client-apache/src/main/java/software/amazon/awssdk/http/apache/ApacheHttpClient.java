@@ -29,9 +29,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.pool.ConnPoolControl;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpClientSettings;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
@@ -41,20 +41,21 @@ import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.utils.Validate;
 
-public class ApacheHttpClient implements SdkHttpClient {
+@SdkInternalApi
+class ApacheHttpClient implements SdkHttpClient {
 
     private final ApacheHttpRequestFactory apacheHttpRequestFactory = new ApacheHttpRequestFactory();
     private final ConnectionManagerAwareHttpClient httpClient;
-    private final SdkHttpClientSettings httpClientSettings;
+    private final ApacheHttpRequestConfig requestConfig;
 
-    ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient, SdkHttpClientSettings httpClientSettings) {
+    ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient, ApacheHttpRequestConfig requestConfig) {
         this.httpClient = Validate.notNull(httpClient, "httpClient must not be null.");
-        this.httpClientSettings = Validate.notNull(httpClientSettings, "httpClientSettings must not be null.");
+        this.requestConfig = Validate.notNull(requestConfig, "requestConfig must not be null.");
     }
 
     @Override
     public AbortableCallable<SdkHttpResponse> prepareRequest(SdkHttpRequest request, SdkRequestContext context) {
-        final HttpRequestBase apacheRequest = toApacheRequest(request, httpClientSettings);
+        final HttpRequestBase apacheRequest = toApacheRequest(request);
         return new AbortableCallable<SdkHttpResponse>() {
             @Override
             public SdkHttpResponse call() throws Exception {
@@ -75,7 +76,8 @@ public class ApacheHttpClient implements SdkHttpClient {
         Map<String, Object> metricsContext = new HashMap<>();
         metricsContext.put(AwsRequestMetrics.class.getSimpleName(), awsRequestMetrics);
 
-        final HttpClientContext localRequestContext = ApacheUtils.newClientContext(httpClientSettings, metricsContext);
+        final HttpClientContext localRequestContext = ApacheUtils
+                .newClientContext(requestConfig.proxyConfiguration(), metricsContext);
         try {
             awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpRequestTime);
             final HttpResponse httpResponse = httpClient.execute(apacheRequest, localRequestContext);
@@ -98,8 +100,8 @@ public class ApacheHttpClient implements SdkHttpClient {
 
     }
 
-    private HttpRequestBase toApacheRequest(SdkHttpRequest request, SdkHttpClientSettings options) {
-        return apacheHttpRequestFactory.create(request, options);
+    private HttpRequestBase toApacheRequest(SdkHttpRequest request) {
+        return apacheHttpRequestFactory.create(request, requestConfig);
     }
 
     @Override

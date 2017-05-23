@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
 
 /**
  * An implementation of {@link ClientConfiguration}, {@link SyncClientConfiguration} and {@link AsyncClientConfiguration} that
@@ -39,6 +40,7 @@ public final class MutableClientConfiguration
     private ClientListenerConfiguration listenerConfiguration = ClientListenerConfiguration.builder().build();
     private AwsCredentialsProvider credentialsProvider;
     private URI endpoint;
+    private SdkHttpClient sdkHttpClient;
 
     // AsyncClientConfiguration
     private ExecutorService asyncExecutorService;
@@ -130,6 +132,16 @@ public final class MutableClientConfiguration
 
     public final MutableClientConfiguration asyncExecutorService(ExecutorService executorService) {
         this.asyncExecutorService = executorService;
+        return this;
+    }
+
+    @Override
+    public final SdkHttpClient httpClient() {
+        return sdkHttpClient;
+    }
+
+    public final MutableClientConfiguration httpClient(SdkHttpClient sdkHttpClient) {
+        this.sdkHttpClient = sdkHttpClient;
         return this;
     }
 

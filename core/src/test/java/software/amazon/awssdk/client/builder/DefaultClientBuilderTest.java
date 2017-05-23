@@ -17,6 +17,7 @@ package software.amazon.awssdk.client.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -34,6 +35,7 @@ import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
+import software.amazon.awssdk.http.SdkHttpClient;
 
 /**
  * Validate the functionality of the {@link DefaultClientBuilder}.
@@ -73,6 +75,37 @@ public class DefaultClientBuilderTest {
         assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
             testClientBuilder().build();
         });
+    }
+
+    @Test
+    public void noClientProvided_DefaultHttpClientIsManagedBySdk() {
+        TestClient client = testClientBuilder().region("us-west-1").build();
+        assertThat(client.syncClientConfiguration.httpClient())
+                .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
+    }
+
+    @Test
+    public void clientFactoryProvided_ClientIsManagedBySdk() {
+        TestClient client = testClientBuilder()
+                .region("us-west-1")
+                .httpConfiguration(ClientHttpConfiguration.builder()
+                                                          .httpClientFactory(serviceDefaults -> mock(SdkHttpClient.class))
+                                                          .build())
+                .build();
+        assertThat(client.syncClientConfiguration.httpClient())
+                .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
+    }
+
+    @Test
+    public void explicitClientProvided_ClientIsNotManagedBySdk() {
+        TestClient client = testClientBuilder()
+                .region("us-west-1")
+                .httpConfiguration(ClientHttpConfiguration.builder()
+                                                          .httpClient(mock(SdkHttpClient.class))
+                                                          .build())
+                .build();
+        assertThat(client.syncClientConfiguration.httpClient())
+                .isInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
     }
 
     @Test

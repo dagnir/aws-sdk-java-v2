@@ -29,6 +29,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.retry.RetryPolicy;
 import utils.http.WireMockTestBase;
 import utils.retry.AlwaysRetryCondition;
@@ -67,23 +68,26 @@ public class RetryCountInUserAgentTest extends WireMockTestBase {
     }
 
     private void executeRequest() throws Exception {
-        AmazonHttpClient httpClient = AmazonHttpClient.builder()
-                .clientConfiguration(new LegacyClientConfiguration().withRetryPolicy(buildRetryPolicy())
-                                             .withThrottledRetries(true))
-                .build();
+        AmazonHttpClient httpClient =
+                AmazonHttpClient.builder()
+                                .clientConfiguration(new LegacyClientConfiguration()
+                                                             .withRetryPolicy(buildRetryPolicy())
+                                                             .withThrottledRetries(true))
+                                .sdkHttpClient(ApacheSdkHttpClientFactory.builder().build().createHttpClient())
+                                .build();
         try {
-            httpClient.requestExecutionBuilder().request(newGetRequest(RESOURCE_PATH)).errorResponseHandler(stubErrorHandler())
-                    .execute();
+            httpClient.requestExecutionBuilder()
+                      .request(newGetRequest(RESOURCE_PATH))
+                      .errorResponseHandler(stubErrorHandler())
+                      .execute();
             fail("Expected exception");
         } catch (AmazonServiceException expected) {
             // Ignored or expected.
         }
     }
 
-    public RetryPolicy buildRetryPolicy() {
-        RetryPolicy policy = new RetryPolicy(new AlwaysRetryCondition(), new SimpleArrayBackoffStrategy(BACKOFF_VALUES),
-                                             3, false);
-        return policy;
+    private RetryPolicy buildRetryPolicy() {
+        return new RetryPolicy(new AlwaysRetryCondition(), new SimpleArrayBackoffStrategy(BACKOFF_VALUES), 3, false);
     }
 
 }

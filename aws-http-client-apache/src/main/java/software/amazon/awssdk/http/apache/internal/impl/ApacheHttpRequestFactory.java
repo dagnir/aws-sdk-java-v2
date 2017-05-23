@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.http.apache.internal.impl;
 
+import static software.amazon.awssdk.utils.NumericUtils.saturatedCast;
 import static software.amazon.awssdk.utils.StringUtils.isNotBlank;
 import static software.amazon.awssdk.utils.StringUtils.lowerCase;
 
@@ -33,9 +34,9 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
-import software.amazon.awssdk.http.SdkHttpClientSettings;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.http.apache.ApacheHttpRequestConfig;
 import software.amazon.awssdk.http.apache.internal.RepeatableInputStreamRequestEntity;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
 
@@ -48,7 +49,7 @@ public class ApacheHttpRequestFactory {
 
     private static final List<String> IGNORE_HEADERS = Arrays.asList(HttpHeaders.CONTENT_LENGTH, HttpHeaders.HOST);
 
-    public HttpRequestBase create(final SdkHttpRequest request, final SdkHttpClientSettings settings) {
+    public HttpRequestBase create(final SdkHttpRequest request, final ApacheHttpRequestConfig requestConfig) {
         URI endpoint = request.getEndpoint();
 
         /*
@@ -66,22 +67,21 @@ public class ApacheHttpRequestFactory {
 
         final HttpRequestBase base = createApacheRequest(request, uri, encodedParams);
         addHeadersToRequest(base, request);
-        addRequestConfig(base, request, settings);
+        addRequestConfig(base, request, requestConfig);
 
         return base;
     }
 
     private void addRequestConfig(final HttpRequestBase base,
                                   final SdkHttpRequest request,
-                                  final SdkHttpClientSettings settings) {
+                                  final ApacheHttpRequestConfig requestConfig) {
+        final int connectTimeout = saturatedCast(requestConfig.connectionTimeout().toMillis());
         final RequestConfig.Builder requestConfigBuilder = RequestConfig
                 .custom()
-                .setConnectionRequestTimeout(settings.getConnectionPoolRequestTimeout())
-                .setConnectTimeout(settings.getConnectionTimeout())
-                .setSocketTimeout(settings.getSocketTimeout())
-                .setStaleConnectionCheckEnabled(true) // TODO Handle
-                // deprecation here.
-                .setLocalAddress(settings.getLocalAddress());
+                .setConnectionRequestTimeout(connectTimeout)
+                .setConnectTimeout(connectTimeout)
+                .setSocketTimeout(saturatedCast(requestConfig.socketTimeout().toMillis()))
+                .setLocalAddress(requestConfig.localAddress());
 
         /*
          * Enable 100-continue support for PUT operations, since this is
@@ -90,7 +90,7 @@ public class ApacheHttpRequestFactory {
          * don't want to do this for all operations since it will cause
          * extra latency in the network interaction.
          */
-        if (SdkHttpMethod.PUT == request.getHttpMethod() && settings.isUseExpectContinue()) {
+        if (SdkHttpMethod.PUT == request.getHttpMethod() && requestConfig.expectContinueEnabled()) {
             requestConfigBuilder.setExpectContinueEnabled(true);
         }
 

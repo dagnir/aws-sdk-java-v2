@@ -16,6 +16,7 @@
 package software.amazon.awssdk.http.pipeline.stages;
 
 import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_SDK_TRANSACTION_ID;
+import static software.amazon.awssdk.http.AmazonHttpClient.checkInterrupted;
 
 import java.util.Random;
 import java.util.UUID;
@@ -37,6 +38,7 @@ public class ApplyTransactionIdStage implements RequestToRequestPipeline {
 
     @Override
     public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+        checkInterrupted();
         request.addHeader(HEADER_SDK_TRANSACTION_ID, new UUID(random.nextLong(), random.nextLong()).toString());
         return request;
     }

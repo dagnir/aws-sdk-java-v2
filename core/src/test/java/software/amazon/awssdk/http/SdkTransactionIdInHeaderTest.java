@@ -30,6 +30,7 @@ import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import utils.http.WireMockTestBase;
 
 public class SdkTransactionIdInHeaderTest extends WireMockTestBase {
@@ -58,14 +59,16 @@ public class SdkTransactionIdInHeaderTest extends WireMockTestBase {
     }
 
     private void executeRequest() throws Exception {
-        AmazonHttpClient httpClient = AmazonHttpClient.builder()
-                .clientConfiguration(new LegacyClientConfiguration())
-                .build();
+        AmazonHttpClient httpClient =
+                AmazonHttpClient.builder()
+                                .sdkHttpClient(ApacheSdkHttpClientFactory.builder().build().createHttpClient())
+                                .clientConfiguration(new LegacyClientConfiguration())
+                                .build();
         try {
             httpClient.requestExecutionBuilder()
-                    .request(newGetRequest(RESOURCE_PATH))
-                    .errorResponseHandler(stubErrorHandler())
-                    .execute();
+                      .request(newGetRequest(RESOURCE_PATH))
+                      .errorResponseHandler(stubErrorHandler())
+                      .execute();
             fail("Expected exception");
         } catch (AmazonServiceException expected) {
             // Ignored or expected.

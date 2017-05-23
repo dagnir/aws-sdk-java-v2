@@ -30,35 +30,14 @@ import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.model.Region;
 
 public class AmazonS3ClientTest {
-    private static AmazonS3Client s3;
+
+    private static AmazonS3 s3;
 
     @Before
     public void setup() {
-        s3 = new AmazonS3Client();
-    }
-
-    @After
-    public void cleanup() {
-        s3.shutdown();
-    }
-
-    /**
-     * Test configureRegion for all regions. Note the special treatment of
-     * US_EAST_1.
-     */
-    @Test
-    public void configureRegion() {
-        for (Regions region : Regions.values()) {
-            s3.configureRegion(region);
-            if (region == Regions.US_EAST_1) {
-                Region s3region = s3.getRegion();
-                assertSame(s3region, Region.US_Standard);
-                assertNull(s3region.toString());
-
-            } else {
-                assertEquals(region.getName(), s3.getRegion().toString());
-            }
-        }
+        s3 = AmazonS3Client.builder()
+                .withRegion(Regions.US_EAST_1)
+                .build();
     }
 
     @Test

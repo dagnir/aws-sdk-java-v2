@@ -16,14 +16,15 @@
 package software.amazon.awssdk.config;
 
 import java.net.URI;
-
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
 
 /**
  * An interface that represents all configuration required by an AWS client in order to operate. AWS clients accept
- * implementations of the child interfaces ({@link AsyncClientConfiguration} or {@link SyncClientConfiguration}) when constructed.
+ * implementations of the child interfaces ({@link AsyncClientConfiguration} or {@link SyncClientConfiguration}) when
+ * constructed.
  *
  * <p>Implementations of this interface are not necessarily immutable or thread safe. If thread safety is required, consider
  * creating an immutable representation with {@link ImmutableClientConfiguration}.</p>
@@ -75,4 +76,9 @@ public interface ClientConfiguration {
      * The endpoint with which the SDK should communicate.
      */
     URI endpoint();
+
+    /**
+     * The HTTP client the SDK will use to make HTTP requests.
+     */
+    SdkHttpClient httpClient();
 }

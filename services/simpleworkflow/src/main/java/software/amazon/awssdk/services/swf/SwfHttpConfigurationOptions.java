@@ -13,21 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.simpleworkflow;
+package software.amazon.awssdk.services.swf;
 
-import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
+import java.time.Duration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
+import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 
-/*
- * Factory producing predefined {@link ClientConfiguration} instances for
- * the AmazonSimpleWorkflow client.
- */
 @SdkInternalApi
-public class AmazonSimpleWorkflowLegacyClientConfigurationFactory extends LegacyClientConfigurationFactory {
+class SwfHttpConfigurationOptions {
 
-    @Override
-    protected LegacyClientConfiguration getDefaultConfig() {
-        return super.getDefaultConfig().withMaxConnections(1000).withSocketTimeout(90000);
-    }
+    static final SdkHttpConfigurationOptions OPTIONS = SdkHttpConfigurationOptions.createEmpty()
+            .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Duration.ofMillis(90_000))
+            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, 1000);
 }

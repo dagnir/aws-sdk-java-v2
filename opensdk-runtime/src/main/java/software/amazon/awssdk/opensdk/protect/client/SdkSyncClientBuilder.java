@@ -31,6 +31,8 @@ import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerAsRequestSigner;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
 import software.amazon.awssdk.opensdk.config.ProxyConfiguration;
@@ -271,6 +273,11 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
         @Override
         public RetryPolicy getRetryPolicy() {
             return retryPolicy == null ? getDefaultRetryPolicy() : retryPolicy;
+        }
+
+        @Override
+        public SdkHttpClient sdkHttpClient() {
+            return ApacheSdkHttpClientFactory.builder().build().createHttpClient();
         }
     }
 

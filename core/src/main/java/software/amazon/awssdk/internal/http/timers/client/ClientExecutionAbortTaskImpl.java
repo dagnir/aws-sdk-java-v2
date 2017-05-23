@@ -27,7 +27,7 @@ import software.amazon.awssdk.utils.Validate;
 public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
 
     private final Thread thread;
-    private boolean hasTaskExecuted;
+    private volatile boolean hasTaskExecuted;
     private volatile AbortableCallable<?> currentRequest;
 
     public ClientExecutionAbortTaskImpl(Thread thread) {
@@ -36,18 +36,18 @@ public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
 
     @Override
     public void run() {
-        Validate.notNull(currentRequest, "Current request must not be null.");
-
         hasTaskExecuted = true;
         if (!thread.isInterrupted()) {
             thread.interrupt();
         }
-        currentRequest.abort();
+        if (currentRequest != null) {
+            currentRequest.abort();
+        }
     }
 
     @Override
     public void setCurrentHttpRequest(AbortableCallable<?> newRequest) {
-        this.currentRequest = newRequest;
+        this.currentRequest = Validate.notNull(newRequest, "AbortableCallable cannot be null");
     }
 
     public boolean hasClientExecutionAborted() {

@@ -16,6 +16,7 @@
 package software.amazon.awssdk.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.net.URI;
 import java.security.SecureRandom;
@@ -32,6 +33,7 @@ import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicy;
@@ -50,6 +52,7 @@ public class ImmutableClientConfigurationTest {
     private static final URI ENDPOINT = URI.create("https://www.example.com");
     private static final RetryPolicy RETRY_POLICY = new RetryPolicy(null, null, 10, true);
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+    private static final SdkHttpClient SDK_HTTP_CLIENT = mock(SdkHttpClient.class);
 
     private static final LegacyClientConfiguration EXPECTED_LEGACY_CONFIGURATION =
             new LegacyClientConfiguration()
@@ -91,6 +94,11 @@ public class ImmutableClientConfigurationTest {
         public URI getEndpoint() {
             return ENDPOINT;
         }
+
+        @Override
+        public SdkHttpClient sdkHttpClient() {
+            return SDK_HTTP_CLIENT;
+        }
     };
 
     private static final AwsAsyncClientParams EXPECT_ASYNC_CLIENT_PARAMS = new AwsAsyncClientParams() {
@@ -127,6 +135,11 @@ public class ImmutableClientConfigurationTest {
         @Override
         public ExecutorService getExecutor() {
             return EXECUTOR_SERVICE;
+        }
+
+        @Override
+        public SdkHttpClient sdkHttpClient() {
+            return SDK_HTTP_CLIENT;
         }
     };
 
@@ -232,6 +245,11 @@ public class ImmutableClientConfigurationTest {
         @Override
         public URI endpoint() {
             return ENDPOINT;
+        }
+
+        @Override
+        public SdkHttpClient httpClient() {
+            return SDK_HTTP_CLIENT;
         }
     }
 }

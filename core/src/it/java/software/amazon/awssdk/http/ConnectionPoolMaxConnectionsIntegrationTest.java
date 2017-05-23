@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.http;
 
+import java.time.Duration;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.internal.http.response.EmptyAWSResponseHandler;
@@ -45,17 +47,20 @@ public class ConnectionPoolMaxConnectionsIntegrationTest {
     }
 
     @Test(timeout = 60 * 1000)
-    public void leasing_a_new_connection_fails_with_connection_pool_timeout()
-            throws Exception {
+    public void leasing_a_new_connection_fails_with_connection_pool_timeout() throws Exception {
 
         String localhostEndpoint = "http://localhost:" + server.getPort();
 
-        AmazonHttpClient httpClient = AmazonHttpClient.builder()
-                .clientConfiguration(new LegacyClientConfiguration()
-                                             .withMaxConnections(1)
-                                             .withConnectionTimeout(100)
-                                             .withMaxErrorRetry(0))
-                .build();
+        AmazonHttpClient httpClient =
+                AmazonHttpClient.builder()
+                                .sdkHttpClient(ApacheSdkHttpClientFactory.builder()
+                                                                         .connectionTimeout(Duration.ofMillis(100))
+                                                                         .maxConnections(1)
+                                                                         .build()
+                                                                         .createHttpClient())
+                                .clientConfiguration(new LegacyClientConfiguration()
+                                                             .withMaxErrorRetry(0))
+                                .build();
 
         Request<?> request = new EmptyHttpRequest(localhostEndpoint, HttpMethodName.GET);
 
