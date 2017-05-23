@@ -305,8 +305,7 @@ public class MemberModel extends DocumentationModel {
     }
 
     public String getSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(getSetterDoc());
 
         if ("java.nio.ByteBuffer".equals(
@@ -337,15 +336,13 @@ public class MemberModel extends DocumentationModel {
         }
 
         docBuilder.append(getParamDoc())
-                .append(getEnumDoc())
-                .append("*/");
+                .append(getEnumDoc());
 
         return docBuilder.toString();
     }
 
     public String getGetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(documentation != null ? documentation : DEFAULT_GETTER.replace("%s", name))
                 .append(LINE_SEPARATOR);
 
@@ -374,28 +371,23 @@ public class MemberModel extends DocumentationModel {
 
         docBuilder.append("@return ")
                   .append(stripHtmlTags(variableDesc))
-                  .append(getEnumDoc())
-                  .append("*/");
+                  .append(getEnumDoc());
 
         return docBuilder.toString();
     }
 
     public String getFluentSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(getSetterDoc())
                 .append(getParamDoc())
                 .append(LINE_SEPARATOR)
                 .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
-                .append(getEnumDoc())
-                .append("*/");
-
+                .append(getEnumDoc());
         return docBuilder.toString();
     }
 
     public String getVarargSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(getSetterDoc());
 
         if (listModel != null) {
@@ -407,8 +399,6 @@ public class MemberModel extends DocumentationModel {
                 .append(LINE_SEPARATOR)
                 .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
                 .append(getEnumDoc());
-
-        docBuilder.append("*/");
 
         return docBuilder.toString();
     }

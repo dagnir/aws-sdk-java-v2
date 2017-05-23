@@ -35,14 +35,19 @@
         <#local mapEntryPath = "${unmarshallerLocationName}/entry" />
     </#if>
                 if (context.testExpression("${mapEntryPath}", targetDepth)) {
+                    if (${memberModel.variable.variableName} == null) {
+                        ${memberModel.variable.variableName} = new java.util.HashMap<>();
+                    }
                     Entry<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> entry = ${memberModel.name}MapEntryUnmarshaller.getInstance().unmarshall(context);
-                    ${shapeVarName}.add${memberModel.name}Entry(entry.getKey(), entry.getValue());
+                    // ${shapeVarName}.add${memberModel.name}Entry(entry.getKey(), entry.getValue());
+
+                    ${memberModel.variable.variableName}.put(entry.getKey(), entry.getValue());
                     continue;
                 }
 
 <#else>
                 if (context.testExpression("${unmarshallerLocationName}", targetDepth)) {
-                    ${shapeVarName}.${memberModel.setterMethodName}(${memberModel.variable.simpleType}Unmarshaller.getInstance().unmarshall(context));
+                    ${shapeVarName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.simpleType}Unmarshaller.getInstance().unmarshall(context));
                     continue;
                 }
 </#if>

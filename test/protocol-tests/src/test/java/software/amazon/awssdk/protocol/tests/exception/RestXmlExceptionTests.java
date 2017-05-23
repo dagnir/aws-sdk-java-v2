@@ -83,17 +83,17 @@ public class RestXmlExceptionTests {
 
     @Test
     public void illegalArgumentException_nullPathParam() {
-        assertThrowsIllegalArgumentException(() -> client.multiLocationOperation(new MultiLocationOperationRequest()));
+        assertThrowsIllegalArgumentException(() -> client.multiLocationOperation(MultiLocationOperationRequest.builder().build()));
     }
 
     @Test
     public void illegalArgumentException_emptyPathParam() {
         assertThrowsIllegalArgumentException(() -> client.multiLocationOperation(
-                new MultiLocationOperationRequest().pathParam("")));
+                MultiLocationOperationRequest.builder().pathParam("").build()));
     }
 
     private void callAllTypes() {
-        client.allTypes(new AllTypesRequest());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {

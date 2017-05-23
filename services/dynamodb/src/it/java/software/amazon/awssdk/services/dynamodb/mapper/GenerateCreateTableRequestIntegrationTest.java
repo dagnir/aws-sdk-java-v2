@@ -27,7 +27,6 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.services.dynamodb.ReflectHelper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -43,6 +42,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.util.TableUtils;
 import software.amazon.awssdk.test.util.UnorderedCollectionComparator;
+import software.amazon.awssdk.util.ImmutableObjectUtils;
 import utils.test.util.DynamoDBTestBase;
 
 /**
@@ -69,11 +69,11 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
     }
 
     private static void setProvisionedThroughput(CreateTableRequest request, ProvisionedThroughput throughput) {
-        ReflectHelper.setObjectMember(request, "provisionedThroughput", throughput);
+        ImmutableObjectUtils.setObjectMember(request, "provisionedThroughput", throughput);
         //request.setProvisionedThroughput(throughput);
         if (request.globalSecondaryIndexes() != null) {
             for (GlobalSecondaryIndex gsi : request.globalSecondaryIndexes()) {
-                ReflectHelper.setObjectMember(gsi, "provisionedThroughput", throughput);
+                ImmutableObjectUtils.setObjectMember(gsi, "provisionedThroughput", throughput);
                 //gsi.setProvisionedThroughput(throughput);
             }
         }
@@ -89,7 +89,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
 
     private static String appendCurrentTimeToTableName(CreateTableRequest request) {
         String appendedName = String.format("%s-%d", request.tableName(), System.currentTimeMillis());
-        ReflectHelper.setObjectMember(request, "tableName", appendedName);
+        ImmutableObjectUtils.setObjectMember(request, "tableName", appendedName);
         /// /request.setTableName(appendedName);
         return appendedName;
     }

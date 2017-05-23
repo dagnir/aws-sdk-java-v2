@@ -37,13 +37,13 @@ public class DomainMetadataResultUnmarshallerTest {
         DomainMetadataResult result = new DomainMetadataResultUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
-        assertTrue(result.getItemCount() == 25);
-        assertTrue(result.getItemNamesSizeBytes() == 12345);
-        assertTrue(result.getAttributeNameCount() == 20);
-        assertTrue(result.getAttributeNamesSizeBytes() == 2345);
-        assertTrue(result.getAttributeValueCount() == 25);
-        assertTrue(result.getAttributeValuesSizeBytes() == 1234);
-        assertTrue(result.getTimestamp() == 5555);
+        assertTrue(result.itemCount() == 25);
+        assertTrue(result.itemNamesSizeBytes() == 12345);
+        assertTrue(result.attributeNameCount() == 20);
+        assertTrue(result.attributeNamesSizeBytes() == 2345);
+        assertTrue(result.attributeValueCount() == 25);
+        assertTrue(result.attributeValuesSizeBytes() == 1234);
+        assertTrue(result.timestamp() == 5555);
     }
 
 }

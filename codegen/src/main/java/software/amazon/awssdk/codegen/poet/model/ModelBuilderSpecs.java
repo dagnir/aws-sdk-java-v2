@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.poet.model;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -24,10 +25,14 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
 
 import software.amazon.awssdk.builder.CopyableBuilder;
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
@@ -36,24 +41,23 @@ import software.amazon.awssdk.codegen.poet.PoetExtensions;
  * Provides the Poet specs for model class builders.
  */
 class ModelBuilderSpecs {
+    private final IntermediateModel intermediateModel;
     private final ShapeModel shapeModel;
     private final ShapeModelSpec shapeModelSpec;
     private final TypeProvider typeProvider;
-    private final ServiceModelCopierSpecs serviceModelCopierSpecs;
     private final PoetExtensions poetExtensions;
     private final SettersFactory settersFactory;
 
-    public ModelBuilderSpecs(ShapeModel shapeModel,
+    public ModelBuilderSpecs(IntermediateModel intermediateModel, ShapeModel shapeModel,
                              ShapeModelSpec shapeModelSpec,
                              TypeProvider typeProvider,
-                             ServiceModelCopierSpecs serviceModelCopierSpecs,
                              PoetExtensions poetExtensions) {
+        this.intermediateModel = intermediateModel;
         this.shapeModel = shapeModel;
         this.shapeModelSpec = shapeModelSpec;
         this.typeProvider = typeProvider;
-        this.serviceModelCopierSpecs = serviceModelCopierSpecs;
         this.poetExtensions = poetExtensions;
-        this.settersFactory = new SettersFactory(this.shapeModel, this.typeProvider, this.serviceModelCopierSpecs);
+        this.settersFactory = new SettersFactory(this.shapeModel, this.intermediateModel, this.typeProvider);
     }
 
     public ClassName builderInterfaceName() {
@@ -102,8 +106,35 @@ class ModelBuilderSpecs {
     private List<FieldSpec> fields() {
         List<FieldSpec> fields = shapeModelSpec.fields(Modifier.PRIVATE);
 
+        Map<String, MemberModel> members = shapeModel.getMembers().stream()
+                .collect(Collectors.toMap(m -> shapeModelSpec.asField(m).name, m -> m));
+
+        // Auto initialize any auto construct containers
+        fields = fields.stream()
+                .map(f -> {
+                    MemberModel m = members.get(f.name);
+
+                    if (intermediateModel.getCustomizationConfig().isUseAutoConstructList() && m.isList()) {
+                        return f.toBuilder().initializer(CodeBlock.builder()
+                                .add("new $T<>()", typeProvider.listImplClassName())
+                                .build())
+                                .build();
+                    }
+
+                    if (intermediateModel.getCustomizationConfig().isUseAutoConstructMap() && m.isMap()) {
+                        return f.toBuilder().initializer(CodeBlock.builder()
+                                .add("new $T<>()", typeProvider.mapImplClassName())
+                                .build())
+                                .build();
+                    }
+
+                    return f;
+                })
+                .collect(Collectors.toList());
+
         // Inject a message member for the exception message
         if (exception()) {
+            fields = new ArrayList<>(fields);
             fields.add(FieldSpec.builder(String.class, "message", Modifier.PRIVATE).build());
         }
 

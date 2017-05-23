@@ -15,6 +15,7 @@ package software.amazon.awssdk.services.rds;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -53,7 +55,7 @@ public class PresignRequestHandlerTest {
         CopyDBSnapshotRequest request = makeTestRequest();
         presignHandler.beforeRequest(marshallRequest(request));
 
-        assertNotNull(request.getPreSignedUrl());
+        assertNotNull(request.preSignedUrl());
     }
 
     @Test
@@ -62,11 +64,12 @@ public class PresignRequestHandlerTest {
         // credentials to RDS and checking that they succeeded. Then the
         // request was recreated with all the same parameters but with test
         // credentials.
-        final CopyDBSnapshotRequest request = new CopyDBSnapshotRequest()
+        final CopyDBSnapshotRequest request = CopyDBSnapshotRequest.builder()
                 .sourceDBSnapshotIdentifier("arn:aws:rds:us-east-1:123456789012:snapshot:rds:test-instance-ss-2016-12-20-23-19")
                 .targetDBSnapshotIdentifier("test-instance-ss-copy-2")
                 .sourceRegion("us-east-1")
-                .kmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555");
+                .kmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555")
+                .build();
 
         Calendar c = new GregorianCalendar();
         c.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -92,41 +95,43 @@ public class PresignRequestHandlerTest {
                 "&X-Amz-Credential=foo%2F20161221%2Fus-east-1%2Frds%2Faws4_request" +
                 "&X-Amz-Signature=f839ca3c728dc96e7c978befeac648296b9f778f6724073de4217173859d13d9";
 
-        assertEquals(expectedPreSignedUrl, request.getPreSignedUrl());
+        assertEquals(expectedPreSignedUrl, request.preSignedUrl());
     }
 
     @Test
     public void testSkipsPresigningIfUrlSet() throws URISyntaxException {
-        CopyDBSnapshotRequest mockRequest = mock(CopyDBSnapshotRequest.class);
-        when(mockRequest.getTags()).thenReturn(new SdkInternalList<Tag>());
-        when(mockRequest.getPreSignedUrl()).thenReturn("PRESIGNED");
+        CopyDBSnapshotRequest request = CopyDBSnapshotRequest.builder()
+                .sourceRegion("us-west-2")
+                .preSignedUrl("PRESIGNED")
+                .build();
 
-        presignHandler.beforeRequest(marshallRequest(mockRequest));
 
-        verify(mockRequest, never()).setPreSignedUrl(anyString());
+        presignHandler.beforeRequest(marshallRequest(request));
+
+        assertEquals("PRESIGNED", request.preSignedUrl());
     }
 
     @Test
     public void testSkipsPresigningIfSourceRegionNotSet() throws URISyntaxException {
-        CopyDBSnapshotRequest mockRequest = mock(CopyDBSnapshotRequest.class);
-        when(mockRequest.getTags()).thenReturn(new SdkInternalList<Tag>());
+        CopyDBSnapshotRequest request = CopyDBSnapshotRequest.builder().build();
 
-        presignHandler.beforeRequest(marshallRequest(mockRequest));
+        presignHandler.beforeRequest(marshallRequest(request));
 
-        verify(mockRequest, never()).setPreSignedUrl(anyString());
+        assertNull(request.preSignedUrl());
     }
 
     @Test
     public void testParsesDestinationRegionfromRequestEndpoint() throws URISyntaxException {
-        CopyDBSnapshotRequest request = new CopyDBSnapshotRequest()
-                .sourceRegion("us-east-1");
+        CopyDBSnapshotRequest request = CopyDBSnapshotRequest.builder()
+                .sourceRegion("us-east-1")
+                .build();
         Region destination = RegionUtils.getRegion("us-west-2");
         Request<?> marshalled = marshallRequest(request);
         marshalled.setEndpoint(new URI("https://" + destination.getServiceEndpoint("rds")));
 
         presignHandler.beforeRequest(marshalled);
 
-        final URI presignedUrl = new URI(request.getPreSignedUrl());
+        final URI presignedUrl = new URI(request.preSignedUrl());
         assertTrue(presignedUrl.toString().contains("DestinationRegion=" + destination.getName()));
     }
 
@@ -147,10 +152,11 @@ public class PresignRequestHandlerTest {
     }
 
     private CopyDBSnapshotRequest makeTestRequest() {
-        return new CopyDBSnapshotRequest()
+        return CopyDBSnapshotRequest.builder()
                 .sourceDBSnapshotIdentifier("arn:aws:rds:us-east-1:123456789012:snapshot:rds:test-instance-ss-2016-12-20-23-19")
                 .targetDBSnapshotIdentifier("test-instance-ss-copy-2")
                 .sourceRegion("us-east-1")
-                .kmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555");
+                .kmsKeyId("arn:aws:kms:us-west-2:123456789012:key/11111111-2222-3333-4444-555555555555")
+                .build();
     }
 }

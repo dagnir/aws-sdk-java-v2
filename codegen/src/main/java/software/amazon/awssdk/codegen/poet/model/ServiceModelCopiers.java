@@ -19,32 +19,60 @@ import com.squareup.javapoet.ClassName;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MapModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
+import software.amazon.awssdk.runtime.StandardMemberCopier;
 
-public class ServiceModelCopierSpecs {
+public class ServiceModelCopiers {
     private final IntermediateModel intermediateModel;
     private final PoetExtensions poetExtensions;
     private final TypeProvider typeProvider;
 
-    public ServiceModelCopierSpecs(IntermediateModel intermediateModel) {
+    public ServiceModelCopiers(IntermediateModel intermediateModel) {
         this.intermediateModel = intermediateModel;
         this.poetExtensions = new PoetExtensions(intermediateModel);
-        this.typeProvider = new TypeProvider(this.poetExtensions);
+        this.typeProvider = new TypeProvider(intermediateModel, this.poetExtensions);
     }
 
     public Collection<ClassSpec> copierSpecs() {
-        Map<ClassName, ClassSpec> specs = new HashMap<>();
+        Map<ClassName, ClassSpec> memberSpecs = new HashMap<>();
         allShapeMembers().values().stream()
-                .map(m -> new MemberCopierSpec(typeProvider, m, poetExtensions))
-                .forEach(spec -> specs.put(spec.className(), spec));
+                .filter(m -> !(canCopyReference(m) || canUseStandardCopier(m)))
+                .map(m -> new MemberCopierSpec(m, this, typeProvider))
+                .forEach(spec -> memberSpecs.put(spec.className(), spec));
 
-        return specs.values();
+        return memberSpecs.values();
+    }
+
+    public Optional<ClassName> copierClassFor(MemberModel memberModel) {
+        if (canCopyReference(memberModel)) {
+            return Optional.empty();
+        }
+
+        if (canUseStandardCopier(memberModel)) {
+            return Optional.of(ClassName.get(StandardMemberCopier.class));
+        }
+
+        // FIXME: Ugly hack, but some services (Health) have shapes with names
+        // that differ only in the casing of the first letter, and generating
+        // classes for them breaks on case insensitive filesystems...
+        String shapeName = memberModel.getC2jShape();
+        if (shapeName.substring(0, 1).toLowerCase(Locale.ENGLISH).equals(shapeName.substring(0, 1))) {
+            shapeName = "_" + shapeName;
+        }
+
+        return Optional.of(poetExtensions.getModelClass(shapeName + "Copier"));
+    }
+
+    public String copyMethodName() {
+        return "copy";
     }
 
     private Map<String, MemberModel> allShapeMembers() {
@@ -76,5 +104,35 @@ public class ServiceModelCopierSpecs {
                 putMembersOfMember(valueMember, allMembers);
             }
         }
+    }
+
+    private boolean canUseStandardCopier(MemberModel m) {
+        if (m.isList() || m.isMap() || !m.isSimple()) {
+            return false;
+        }
+
+        String simpleType = m.getVariable().getSimpleType();
+
+        return "Date".equals(simpleType) || "ByteBuffer".equals(simpleType);
+
+    }
+
+    private boolean canCopyReference(MemberModel m) {
+        if (m.isList() || m.isMap()) {
+            return false;
+        }
+
+        if (m.isSimple()) {
+            String simpleType = m.getVariable().getSimpleType();
+            switch (simpleType) {
+                case "Date":
+                case "ByteBuffer":
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        return true;
     }
 }

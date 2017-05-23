@@ -56,15 +56,15 @@ public class PredefinedMetricTransformerTest {
         List<MetricDatum> list = pmt.counterMetricOf(Field.Exception, mockRequest, null, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
-        assertEquals("TestServiceName", datum.getMetricName());
-        assertEquals(StandardUnit.Count.name(), datum.getUnit());
-        assertTrue(datum.getValue() == 1.0);
+        assertEquals("TestServiceName", datum.metricName());
+        assertEquals(StandardUnit.Count.name(), datum.unit());
+        assertTrue(datum.value() == 1.0);
         // Test count of 2 exceptions
         mockRequestMetrics.incrementCounter(Field.Exception);
         list = pmt.counterMetricOf(Field.Exception, mockRequest, null, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         datum = list.get(0);
-        assertTrue(datum.getValue() == 2.0);
+        assertTrue(datum.value() == 2.0);
     }
 
     @Test
@@ -78,15 +78,15 @@ public class PredefinedMetricTransformerTest {
         List<MetricDatum> list = pmt.counterMetricOf(Field.ThrottleException, mockRequest, null, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
-        assertEquals("TestServiceName", datum.getMetricName());
-        assertEquals(StandardUnit.Count.name(), datum.getUnit());
-        assertTrue(datum.getValue() == 1.0);
+        assertEquals("TestServiceName", datum.metricName());
+        assertEquals(StandardUnit.Count.name(), datum.unit());
+        assertTrue(datum.value() == 1.0);
         // Test count of 2 exceptions
         mockRequestMetrics.incrementCounter(Field.ThrottleException);
         list = pmt.counterMetricOf(Field.ThrottleException, mockRequest, null, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         datum = list.get(0);
-        assertTrue(datum.getValue() == 2.0);
+        assertTrue(datum.value() == 2.0);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class PredefinedMetricTransformerTest {
     public void testExceptionMeticReturningTwoDatum() {
         PredefinedMetricTransformer pmt = new PredefinedMetricTransformer();
         DefaultRequest<?> mockRequest = new DefaultRequest<PutMetricDataRequest>(
-                new PutMetricDataRequest(), "TestServiceName");
+                PutMetricDataRequest.builder().build(), "TestServiceName");
         // Note the use of AwsRequestMetrics which means it's enabled
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetricsFullSupport();
         mockRequestMetrics.incrementCounter(Field.Exception);
@@ -123,45 +123,48 @@ public class PredefinedMetricTransformerTest {
         List<MetricDatum> metricData = pmt.counterMetricOf(Field.Exception, mockRequest, null, INCLUDE_REQUEST_TYPE);
         assertTrue(metricData.size() == 2);
         final MetricDatum firstDatum = metricData.get(0);
-        assertEquals("TestServiceName", firstDatum.getMetricName());
-        assertEquals(StandardUnit.Count.name(), firstDatum.getUnit());
-        assertTrue(firstDatum.getValue() == 1.0);
+        assertEquals("TestServiceName", firstDatum.metricName());
+        assertEquals(StandardUnit.Count.name(), firstDatum.unit());
+        assertTrue(firstDatum.value() == 1.0);
         // Check the first dimension
         int diff = DimensionComparator.INSTANCE.compare(
-            new Dimension()
+            Dimension.builder()
                 .name(Dimensions.MetricType.name())
-                .value(Field.Exception.name()),
-        firstDatum.getDimensions().get(0));
+                .value(Field.Exception.name())
+                    .build(),
+        firstDatum.dimensions().get(0));
         assertTrue(diff == 0);
         // Check the second request specific datum
         final MetricDatum secondDatum = metricData.get(1);
         // Check the 1st dimension
         diff = DimensionComparator.INSTANCE.compare(
-                new Dimension()
+                Dimension.builder()
                     .name(Dimensions.MetricType.name())
-                    .value(Field.Exception.name()),
-                    secondDatum.getDimensions().get(0));
+                    .value(Field.Exception.name())
+                        .build(),
+                    secondDatum.dimensions().get(0));
         assertTrue(diff == 0);
         // Check the 2nd dimension
         diff = DimensionComparator.INSTANCE.compare(
-                new Dimension()
+                Dimension.builder()
                     .name(Dimensions.RequestType.name())
-                    .value(mockRequest.getOriginalRequest().getClass().getSimpleName()),
-                    secondDatum.getDimensions().get(1));
+                    .value(mockRequest.getOriginalRequest().getClass().getSimpleName())
+                        .build(),
+                    secondDatum.dimensions().get(1));
         assertTrue(diff == 0);
-        assertEquals(firstDatum.getMetricName(), secondDatum.getMetricName());
-        assertEquals(firstDatum.getTimestamp(), secondDatum.getTimestamp());
-        assertEquals(firstDatum.getUnit(), secondDatum.getUnit());
-        assertEquals(firstDatum.getValue(), secondDatum.getValue());
-        assertEquals(firstDatum.getStatisticValues(), secondDatum.getStatisticValues());
-        assertTrue(firstDatum.getDimensions().size() < secondDatum.getDimensions().size());
+        assertEquals(firstDatum.metricName(), secondDatum.metricName());
+        assertEquals(firstDatum.timestamp(), secondDatum.timestamp());
+        assertEquals(firstDatum.unit(), secondDatum.unit());
+        assertEquals(firstDatum.value(), secondDatum.value());
+        assertEquals(firstDatum.statisticValues(), secondDatum.statisticValues());
+        assertTrue(firstDatum.dimensions().size() < secondDatum.dimensions().size());
     }
 
     @Test
     public void testLatencyMetricEnabled() throws Exception {
         PredefinedMetricTransformer pmt = new PredefinedMetricTransformer();
         DefaultRequest<?> mockRequest = new DefaultRequest<PutMetricDataRequest>(
-            new PutMetricDataRequest(), "TestServiceName");
+            PutMetricDataRequest.builder().build(), "TestServiceName");
         // Note the use of AwsRequestMetrics which means it's enabled
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetricsFullSupport();
         mockRequestMetrics.startEvent(Field.HttpRequestTime);
@@ -171,19 +174,19 @@ public class PredefinedMetricTransformerTest {
         List<MetricDatum> list = pmt.latencyMetricOf(Field.HttpRequestTime, mockRequest, null, INCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
-        assertEquals("TestServiceName", datum.getMetricName());
-        assertEquals(StandardUnit.Milliseconds.name(), datum.getUnit());
-        assertTrue(datum.getValue() >= 100.0);
-        List<Dimension> dims = datum.getDimensions();
+        assertEquals("TestServiceName", datum.metricName());
+        assertEquals(StandardUnit.Milliseconds.name(), datum.unit());
+        assertTrue(datum.value() >= 100.0);
+        List<Dimension> dims = datum.dimensions();
         assertTrue(dims.size() == 2);
         // exclude request dimension
         list = pmt.latencyMetricOf(Field.HttpRequestTime, mockRequest, null, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         datum = list.get(0);
-        assertEquals("TestServiceName", datum.getMetricName());
-        assertEquals(StandardUnit.Milliseconds.name(), datum.getUnit());
-        assertTrue(datum.getValue() >= 100.0);
-        dims = datum.getDimensions();
+        assertEquals("TestServiceName", datum.metricName());
+        assertEquals(StandardUnit.Milliseconds.name(), datum.unit());
+        assertTrue(datum.value() >= 100.0);
+        dims = datum.dimensions();
         assertTrue(dims.size() == 1);
     }
 
@@ -191,7 +194,7 @@ public class PredefinedMetricTransformerTest {
     public void latencyOfClientExecuteTime() throws Exception {
         PredefinedMetricTransformer pmt = new PredefinedMetricTransformer();
         DefaultRequest<?> mockRequest = new DefaultRequest<PutMetricDataRequest>(
-            new PutMetricDataRequest(), "TestServiceName");
+            PutMetricDataRequest.builder().build(), "TestServiceName");
         // Note the use of AwsRequestMetrics which means it's enabled
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetricsFullSupport();
         final long startNano = mockRequestMetrics.getTimingInfo().getStartTimeNano();
@@ -203,10 +206,10 @@ public class PredefinedMetricTransformerTest {
         List<MetricDatum> list = pmt.latencyOfClientExecuteTime(mockRequest, null);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
-        assertEquals("TestServiceName", datum.getMetricName());
-        assertEquals(StandardUnit.Milliseconds.name(), datum.getUnit());
-        assertTrue(datum.getValue() == expectedDuration);
-        List<Dimension> dims = datum.getDimensions();
+        assertEquals("TestServiceName", datum.metricName());
+        assertEquals(StandardUnit.Milliseconds.name(), datum.unit());
+        assertTrue(datum.value() == expectedDuration);
+        List<Dimension> dims = datum.dimensions();
         assertTrue(dims.size() == 2);
         System.err.println(dims);
     }

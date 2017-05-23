@@ -43,7 +43,7 @@ public class AuthenticationErrorsIntegrationTest extends IntegrationTestBase {
                 .build();
 
         try {
-            client.listDomains(new ListDomainsRequest());
+            client.listDomains(ListDomainsRequest.builder().build());
             fail("Expected exception not thrown");
         } catch (AmazonServiceException e) {
             assertEquals("InvalidClientTokenId", e.getErrorCode());
@@ -63,7 +63,7 @@ public class AuthenticationErrorsIntegrationTest extends IntegrationTestBase {
                 .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials(accessKey, "skid")))
                 .build();
         try {
-            client.listDomains(new ListDomainsRequest());
+            client.listDomains(ListDomainsRequest.builder().build());
             fail("Expected exception not thrown");
         } catch (AmazonServiceException e) {
             assertEquals("SignatureDoesNotMatch", e.getErrorCode());

@@ -29,6 +29,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.ec2.model.CopySnapshotRequest;
 import software.amazon.awssdk.util.AwsHostNameUtils;
+import software.amazon.awssdk.util.ImmutableObjectUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
 
@@ -48,16 +49,16 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
             CopySnapshotRequest originalCopySnapshotRequest = (CopySnapshotRequest) originalRequest;
 
             // Return if presigned url is already specified by the user.
-            if (originalCopySnapshotRequest.getPresignedUrl() != null) {
+            if (originalCopySnapshotRequest.presignedUrl() != null) {
                 return;
             }
 
             String serviceName = "ec2";
 
             // The source regions where the snapshot currently resides.
-            String sourceRegion = originalCopySnapshotRequest.getSourceRegion();
+            String sourceRegion = originalCopySnapshotRequest.sourceRegion();
             String sourceSnapshotId = originalCopySnapshotRequest
-                    .getSourceSnapshotId();
+                    .sourceSnapshotId();
 
             /*
              * The region where the snapshot has to be copied from the source.
@@ -68,8 +69,8 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
 
             URI endPointDestination = request.getEndpoint();
             String destinationRegion = originalCopySnapshotRequest
-                                               .getDestinationRegion() != null ? originalCopySnapshotRequest
-                                               .getDestinationRegion() : AwsHostNameUtils
+                                               .destinationRegion() != null ? originalCopySnapshotRequest
+                                               .destinationRegion() : AwsHostNameUtils
                                                .parseRegionName(endPointDestination.getHost(), serviceName);
 
             URI endPointSource = createEndpoint(sourceRegion, serviceName);
@@ -85,14 +86,16 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
 
             signer.presignRequest(requestForPresigning, request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS), null);
 
-            originalCopySnapshotRequest
-                    .setPresignedUrl(generateUrl(requestForPresigning));
-            originalCopySnapshotRequest.setDestinationRegion(destinationRegion);
+            ImmutableObjectUtils.setObjectMember(originalCopySnapshotRequest, "presignedUrl", generateUrl(requestForPresigning));
+            ImmutableObjectUtils.setObjectMember(originalCopySnapshotRequest, "destinationRegion", destinationRegion);
+
             request.addParameter("DestinationRegion", StringUtils
                     .fromString(originalCopySnapshotRequest
-                                        .getDestinationRegion()));
+                                        .destinationRegion()));
             request.addParameter("PresignedUrl", StringUtils
-                    .fromString(originalCopySnapshotRequest.getPresignedUrl()));
+                    .fromString(originalCopySnapshotRequest.presignedUrl()));
+
+
         }
 
     }
@@ -104,10 +107,11 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
             String sourceSnapshotId, String sourceRegion,
             String destinationRegion) {
 
-        CopySnapshotRequest copySnapshotRequest = new CopySnapshotRequest()
+        CopySnapshotRequest copySnapshotRequest = CopySnapshotRequest.builder()
                 .sourceSnapshotId(sourceSnapshotId)
                 .sourceRegion(sourceRegion)
-                .destinationRegion(destinationRegion);
+                .destinationRegion(destinationRegion)
+                .build();
 
         return new CopySnapshotRequestMarshaller()
                 .marshall(copySnapshotRequest);

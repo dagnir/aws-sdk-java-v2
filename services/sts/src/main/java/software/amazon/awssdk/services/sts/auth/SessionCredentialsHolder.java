@@ -32,10 +32,10 @@ final class SessionCredentialsHolder {
     private final Date sessionCredentialsExpiration;
 
     SessionCredentialsHolder(Credentials credentials) {
-        this.sessionCredentials = new AwsSessionCredentials(credentials.getAccessKeyId(),
-                                                            credentials.getSecretAccessKey(),
-                                                            credentials.getSessionToken());
-        this.sessionCredentialsExpiration = credentials.getExpiration();
+        this.sessionCredentials = new AwsSessionCredentials(credentials.accessKeyId(),
+                                                            credentials.secretAccessKey(),
+                                                            credentials.sessionToken());
+        this.sessionCredentialsExpiration = credentials.expiration();
     }
 
     public AwsSessionCredentials getSessionCredentials() {

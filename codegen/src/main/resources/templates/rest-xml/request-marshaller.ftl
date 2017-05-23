@@ -53,12 +53,12 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
         <#if shape.hasPayloadMember>
             <#list shape.members as member>
                 <#if (member.http.isStreaming)>
-                request.setContent(${shape.variable.variableName}.${member.getterMethodName}());
+                request.setContent(${shape.variable.variableName}.${member.fluentGetterMethodName}());
                 if (!request.getHeaders().containsKey("Content-Type")) {
                     request.addHeader("Content-Type", "binary/octet-stream");
                 }
                 <#elseif (member.http.isPayload) && member.variable.variableType = "java.nio.ByteBuffer">
-                request.setContent(BinaryUtils.toStream(${shape.variable.variableName}.${member.getterMethodName}()));
+                request.setContent(BinaryUtils.toStream(${shape.variable.variableName}.${member.fluentGetterMethodName}()));
                 if (!request.getHeaders().containsKey("Content-Type")) {
                     request.addHeader("Content-Type", "binary/octet-stream");
                 }
@@ -68,7 +68,7 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
                     <#-- xmlNameSpaceUri comes from the payload member reference -->
                     XmlWriter xmlWriter = new XmlWriter(stringWriter, "${member.xmlNameSpaceUri}");
 
-                    ${member.variable.variableType} ${member.variable.variableName} = ${shape.variable.variableName}.${member.getterMethodName}();
+                    ${member.variable.variableType} ${member.variable.variableName} = ${shape.variable.variableName}.${member.fluentGetterMethodName}();
                     if (${member.variable.variableName} != null) {
                         xmlWriter.startElement("${member.http.marshallLocationName}");
                         <@MemberMarshallerMacro.content customConfig member.name member.variable.variableName shapes/>

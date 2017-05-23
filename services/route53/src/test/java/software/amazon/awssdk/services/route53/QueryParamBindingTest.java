@@ -43,9 +43,10 @@ public class QueryParamBindingTest {
 
         // https://tt.amazon.com/0048388339
 
-        ListHealthChecksRequest listReq = new ListHealthChecksRequest()
+        ListHealthChecksRequest listReq = ListHealthChecksRequest.builder()
                 .marker(VALUE_WITH_SEMICOLON)
-                .maxItems(VALUE_WITH_AMPERSAND);
+                .maxItems(VALUE_WITH_AMPERSAND)
+                .build();
 
         Request<ListHealthChecksRequest> httpReq_List = new ListHealthChecksRequestMarshaller().marshall(listReq);
         Assert.assertEquals("/2013-04-01/healthcheck", httpReq_List.getResourcePath());
@@ -57,8 +58,9 @@ public class QueryParamBindingTest {
 
         // https://tt.amazon.com/0048675980
 
-        GetHealthCheckLastFailureReasonRequest getFailureReq = new GetHealthCheckLastFailureReasonRequest();
-        getFailureReq.setHealthCheckId(VALUE_WITH_QUESTION_MARK);
+        GetHealthCheckLastFailureReasonRequest getFailureReq = GetHealthCheckLastFailureReasonRequest.builder()
+                .healthCheckId(VALUE_WITH_QUESTION_MARK)
+                .build();
 
         Request<GetHealthCheckLastFailureReasonRequest> httpReq_GetFailure =
                 new GetHealthCheckLastFailureReasonRequestMarshaller().marshall(getFailureReq);

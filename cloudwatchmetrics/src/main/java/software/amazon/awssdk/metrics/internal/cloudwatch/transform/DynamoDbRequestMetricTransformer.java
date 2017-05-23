@@ -88,22 +88,26 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                 }
                 String tableName = consumedCapacity.tableName();
                 List<Dimension> dims = new ArrayList<Dimension>();
-                dims.add(new Dimension()
-                                 .name(Dimensions.MetricType.name())
-                                 .value(metricType.name()));
+                dims.add(Dimension.builder()
+                        .name(Dimensions.MetricType.name())
+                        .value(metricType.name())
+                        .build());
                 // request type specific
-                dims.add(new Dimension()
-                                 .name(Dimensions.RequestType.name())
-                                 .value(requestType(req)));
+                dims.add(Dimension.builder()
+                        .name(Dimensions.RequestType.name())
+                        .value(requestType(req))
+                        .build());
                 // table specific
-                dims.add(new Dimension()
-                                 .name(DynamoDBDimensions.TableName.name())
-                                 .value(tableName));
-                MetricDatum datum = new MetricDatum()
+                dims.add(Dimension.builder()
+                        .name(DynamoDBDimensions.TableName.name())
+                        .value(tableName)
+                        .build());
+                MetricDatum datum = MetricDatum.builder()
                         .metricName(req.getServiceName())
                         .dimensions(dims)
                         .unit(StandardUnit.Count)
-                        .value(units);
+                        .value(units)
+                        .build();
                 return Collections.singletonList(datum);
             default:
                 return Collections.emptyList();

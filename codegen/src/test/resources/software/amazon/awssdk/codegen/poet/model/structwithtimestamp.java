@@ -7,8 +7,11 @@ import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
+import software.amazon.awssdk.runtime.StandardMemberCopier;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.StructWithTimestampMarshaller;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class StructWithTimestamp implements ToCopyableBuilder<StructWithTimestamp.Builder, StructWithTimestamp>, StructuredPojo {
     private final Date nestedTimestamp;
@@ -103,17 +106,13 @@ public class StructWithTimestamp implements ToCopyableBuilder<StructWithTimestam
         }
 
         @Override
-        public Builder nestedTimestamp(Date nestedTimestamp) {
-            this.nestedTimestamp = DateCopier.copyDate(nestedTimestamp);
+        public final Builder nestedTimestamp(Date nestedTimestamp) {
+            this.nestedTimestamp = StandardMemberCopier.copy(nestedTimestamp);
             return this;
         }
 
-        /**
-         *
-         * @param nestedTimestamp
-         */
-        public void setNestedTimestamp(Date nestedTimestamp) {
-            this.nestedTimestamp = DateCopier.copyDate(nestedTimestamp);
+        public final void setNestedTimestamp(Date nestedTimestamp) {
+            this.nestedTimestamp = StandardMemberCopier.copy(nestedTimestamp);
         }
 
         @Override

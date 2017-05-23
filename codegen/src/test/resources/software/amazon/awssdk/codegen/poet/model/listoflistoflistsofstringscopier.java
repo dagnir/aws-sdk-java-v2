@@ -7,14 +7,14 @@ import javax.annotation.Generated;
 
 @Generated("software.amazon.awssdk:codegen")
 final class ListOfListOfListsOfStringsCopier {
-    static List<List<List<String>>> copyListOfListOfListsOfStrings(
+    static List<List<List<String>>> copy(
             Collection<? extends Collection<? extends Collection<String>>> listOfListOfListsOfStringsParam) {
         if (listOfListOfListsOfStringsParam == null) {
             return null;
         }
         List<List<List<String>>> listOfListOfListsOfStringsParamCopy = new ArrayList<>(listOfListOfListsOfStringsParam.size());
         for (Collection<? extends Collection<String>> e : listOfListOfListsOfStringsParam) {
-            listOfListOfListsOfStringsParamCopy.add(ListOfListsOfStringsCopier.copyListOfListsOfStrings(e));
+            listOfListOfListsOfStringsParamCopy.add(ListOfListsOfStringsCopier.copy(e));
         }
         return listOfListOfListsOfStringsParamCopy;
     }

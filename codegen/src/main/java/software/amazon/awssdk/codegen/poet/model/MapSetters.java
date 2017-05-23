@@ -23,20 +23,20 @@ import com.squareup.javapoet.TypeName;
 import java.util.Collections;
 import java.util.List;
 
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 
 class MapSetters extends AbstractMemberSetters {
-    private final TypeProvider typeProvider;
 
-    MapSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
-        super(shapeModel, memberModel, typeProvider);
-        this.typeProvider = typeProvider;
+    MapSetters(IntermediateModel intermediateModel, ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
+        super(intermediateModel, shapeModel, memberModel, typeProvider);
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
-        return Collections.singletonList(fluentSetterDeclaration(memberAsParameter(), returnType).build());
+        return Collections.singletonList(fluentSetterDeclaration(memberAsParameter(), returnType)
+                .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
+                .build());
     }
 
     @Override
@@ -53,23 +53,12 @@ class MapSetters extends AbstractMemberSetters {
         MethodSpec.Builder builder = beanStyleSetterBuilder()
                 .addCode(copySetterBody());
 
-        if (shapeModel().getShapeType() == ShapeType.Exception) {
+        if (annotateJsonProperty()) {
             builder.addAnnotation(
                     AnnotationSpec.builder(JsonProperty.class)
                             .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
         }
 
         return Collections.singletonList(builder.build());
-    }
-
-    private TypeName keyType() {
-        return typeProvider.getTypeNameForSimpleType(memberModel().getMapModel().getKeyType());
-    }
-
-    private TypeName valueType() {
-        if (memberModel().getMapModel().isValueSimple()) {
-            return typeProvider.getTypeNameForSimpleType(memberModel().getMapModel().getValueType());
-        }
-        return typeProvider.fieldType(memberModel().getMapModel().getValueModel());
     }
 }

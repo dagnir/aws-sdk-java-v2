@@ -105,36 +105,43 @@ class BlockingRequestBuilder {
      * Summarizes the given datum into the statistics of the respective unique metric.
      */
     private void summarize(MetricDatum datum, Map<String, MetricDatum> uniqueMetrics) {
-        Double value = datum.getValue();
+        Double value = datum.value();
         if (value == null) {
             return;
         }
-        List<Dimension> dims = datum.getDimensions();
+        List<Dimension> dims = datum.dimensions();
         Collections.sort(dims, DimensionComparator.INSTANCE);
-        String metricName = datum.getMetricName();
+        String metricName = datum.metricName();
         String key = metricName + Jackson.toJsonString(dims);
         MetricDatum statDatum = uniqueMetrics.get(key);
         if (statDatum == null) {
-            statDatum = new MetricDatum()
-                    .dimensions(datum.getDimensions())
+            statDatum = MetricDatum.builder()
+                    .dimensions(datum.dimensions())
                     .metricName(metricName)
-                    .unit(datum.getUnit())
-                    .statisticValues(new StatisticSet()
-                                                 .maximum(value)
-                                                 .minimum(value)
-                                                 .sampleCount(0.0)
-                                                 .sum(0.0))
+                    .unit(datum.unit())
+                    .statisticValues(StatisticSet.builder()
+                            .maximum(value)
+                            .minimum(value)
+                            .sampleCount(0.0)
+                            .sum(0.0)
+                            .build())
+                    .build()
             ;
             uniqueMetrics.put(key, statDatum);
         }
-        StatisticSet stat = statDatum.getStatisticValues();
-        stat.setSampleCount(stat.getSampleCount() + 1.0);
-        stat.setSum(stat.getSum() + value);
-        if (value > stat.getMaximum()) {
-            stat.setMaximum(value);
-        } else if (value < stat.getMinimum()) {
-            stat.setMinimum(value);
+        StatisticSet stat = statDatum.statisticValues();
+
+        StatisticSet.Builder newStatBuilder = stat.toBuilder()
+                .sampleCount(stat.sampleCount() + 1.0)
+                .sum(stat.sum() + value);
+
+        if (value > stat.maximum()) {
+            newStatBuilder.maximum(value);
+        } else if (value < stat.minimum()) {
+            newStatBuilder.minimum(value);
         }
+
+        uniqueMetrics.put(key, statDatum.toBuilder().statisticValues(newStatBuilder.build()).build());
     }
 
     /**
@@ -226,7 +233,7 @@ class BlockingRequestBuilder {
     private Collection<MetricDatum> filterOsMetrics(Collection<MetricDatum> data) {
         Collection<MetricDatum> output = new ArrayList<MetricDatum>(data.size());
         for (MetricDatum datum : data) {
-            if (!OS_METRIC_NAME.equals(datum.getMetricName())) {
+            if (!OS_METRIC_NAME.equals(datum.metricName())) {
                 output.add(datum);
             }
         }
@@ -241,17 +248,18 @@ class BlockingRequestBuilder {
             // To do so, we copy the metric data to avoid mutability problems.
             Collection<MetricDatum> newData = new ArrayList<MetricDatum>(data.size());
             for (MetricDatum md : data) {
-                MetricDatum newMd = cloneMetricDatum(md);
+                MetricDatum.Builder newMdBuilder = cloneMetricDatum(md).toBuilder();
                 for (Dimension dim : extraDims) {
-                    newMd.dimensions(dim);  // add the extra dimensions to the new metric datum
+                    newMdBuilder.dimensions(dim);  // add the extra dimensions to the new metric datum
                 }
-                newData.add(newMd);
+                newData.add(newMdBuilder.build());
             }
             data = newData;
         }
-        return new PutMetricDataRequest()
+        return PutMetricDataRequest.builder()
                 .namespace(namespace)
                 .metricData(data)
+                .build()
                 .withRequestMetricCollector(RequestMetricCollector.NONE)
                 ;
     }
@@ -261,16 +269,17 @@ class BlockingRequestBuilder {
      * Made package private only for testing purposes.
      */
     final MetricDatum cloneMetricDatum(MetricDatum md) {
-        return new MetricDatum()
-                .dimensions(md.getDimensions()) // a new collection is created
-                .metricName(md.getMetricName())
-                .statisticValues(md.getStatisticValues())
-                .timestamp(md.getTimestamp())
-                .unit(md.getUnit())
-                .value(md.getValue());
+        return MetricDatum.builder()
+                .dimensions(md.dimensions()) // a new collection is created
+                .metricName(md.metricName())
+                .statisticValues(md.statisticValues())
+                .timestamp(md.timestamp())
+                .unit(md.unit())
+                .value(md.value())
+                .build();
     }
 
     private Dimension dimension(Dimensions name, String value) {
-        return new Dimension().name(name.toString()).value(value);
+        return Dimension.builder().name(name.toString()).value(value).build();
     }
 }

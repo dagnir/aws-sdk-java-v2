@@ -136,9 +136,9 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
                 .build();
 
         List<ServerCertificateMetadata> serverCertificates = iam.listServerCertificates(
-                new ListServerCertificatesRequest()).getServerCertificateMetadataList();
+                ListServerCertificatesRequest.builder().build()).serverCertificateMetadataList();
         if (!serverCertificates.isEmpty()) {
-            certificateArn = serverCertificates.get(0).getArn();
+            certificateArn = serverCertificates.get(0).arn();
         }
     }
 
@@ -148,16 +148,17 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     @Before
     public void createDefaultLoadBalancer() {
         loadBalancerName = "integ-test-lb-" + System.currentTimeMillis();
-        Listener expectedListener = new Listener().instancePort(8080)
+        Listener expectedListener = Listener.builder().instancePort(8080)
                 .loadBalancerPort(80)
-                .protocol(PROTOCOL);
+                .protocol(PROTOCOL)
+                .build();
 
         // Create a load balancer
         dnsName = elb.createLoadBalancer(
-                new CreateLoadBalancerRequest()
+                CreateLoadBalancerRequest.builder()
                         .loadBalancerName(loadBalancerName)
                         .availabilityZones(AVAILABILITY_ZONE_1)
-                        .listeners(expectedListener)).getDNSName();
+                        .listeners(expectedListener).build()).dnsName();
 
         assertThat(dnsName, not(isEmptyOrNullString()));
     }
@@ -167,16 +168,16 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     public void tearDown() throws Exception {
         if (loadBalancerName != null) {
             try {
-                elb.deleteLoadBalancer(new DeleteLoadBalancerRequest()
-                                               .loadBalancerName(loadBalancerName));
+                elb.deleteLoadBalancer(DeleteLoadBalancerRequest.builder()
+                                               .loadBalancerName(loadBalancerName).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
         }
         if (instanceId != null) {
             try {
-                ec2.terminateInstances(new TerminateInstancesRequest()
-                                               .instanceIds(instanceId));
+                ec2.terminateInstances(TerminateInstancesRequest.builder()
+                                               .instanceIds(instanceId).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
@@ -189,39 +190,39 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void testLoadBalancerInstanceOperations() throws Exception {
         // Start up an EC2 instance to register with our LB
-        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+        RunInstancesRequest runInstancesRequest = RunInstancesRequest.builder()
                 .placement(
-                        new Placement()
-                                .availabilityZone(AVAILABILITY_ZONE_1))
-                .imageId(AMI_ID).minCount(1).maxCount(1);
-        instanceId = ec2.runInstances(runInstancesRequest).getReservation()
-                        .getInstances().get(0).getInstanceId();
+                        Placement.builder()
+                                .availabilityZone(AVAILABILITY_ZONE_1).build())
+                .imageId(AMI_ID).minCount(1).maxCount(1).build();
+        instanceId = ec2.runInstances(runInstancesRequest).reservation()
+                        .instances().get(0).instanceId();
 
         // Register it with our load balancer
         List<Instance> instances = elb.registerInstancesWithLoadBalancer(
-                new RegisterInstancesWithLoadBalancerRequest().instances(
-                        new Instance().instanceId(instanceId))
-                                                              .loadBalancerName(loadBalancerName)).getInstances();
+                RegisterInstancesWithLoadBalancerRequest.builder().instances(
+                        Instance.builder().instanceId(instanceId).build())
+                                                              .loadBalancerName(loadBalancerName).build()).instances();
         assertEquals(1, instances.size());
-        assertEquals(instanceId, instances.get(0).getInstanceId());
+        assertEquals(instanceId, instances.get(0).instanceId());
 
         // Describe it's health
         List<InstanceState> instanceStates = elb.describeInstanceHealth(
-                new DescribeInstanceHealthRequest().instances(
-                        new Instance().instanceId(instanceId))
-                                                   .loadBalancerName(loadBalancerName))
-                                                .getInstanceStates();
+                DescribeInstanceHealthRequest.builder().instances(
+                        Instance.builder().instanceId(instanceId).build())
+                                                   .loadBalancerName(loadBalancerName).build())
+                                                .instanceStates();
         assertEquals(1, instanceStates.size());
-        assertThat(instanceStates.get(0).getDescription(), not(isEmptyOrNullString()));
-        assertEquals(instanceId, instanceStates.get(0).getInstanceId());
-        assertThat(instanceStates.get(0).getReasonCode(), not(isEmptyOrNullString()));
-        assertThat(instanceStates.get(0).getState(), not(isEmptyOrNullString()));
+        assertThat(instanceStates.get(0).description(), not(isEmptyOrNullString()));
+        assertEquals(instanceId, instanceStates.get(0).instanceId());
+        assertThat(instanceStates.get(0).reasonCode(), not(isEmptyOrNullString()));
+        assertThat(instanceStates.get(0).state(), not(isEmptyOrNullString()));
 
         // Deregister it
         instances = elb.deregisterInstancesFromLoadBalancer(
-                new DeregisterInstancesFromLoadBalancerRequest().instances(
-                        new Instance().instanceId(instanceId))
-                                                                .loadBalancerName(loadBalancerName)).getInstances();
+                DeregisterInstancesFromLoadBalancerRequest.builder().instances(
+                        Instance.builder().instanceId(instanceId).build())
+                                                                .loadBalancerName(loadBalancerName).build()).instances();
         assertEquals(0, instances.size());
     }
 
@@ -232,60 +233,60 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void testLoadBalancerOperations() throws Exception {
         // Configure health checks
-        HealthCheck expectedHealthCheck = new HealthCheck().interval(120)
+        HealthCheck expectedHealthCheck = HealthCheck.builder().interval(120)
                                                            .target("HTTP:80/ping").timeout(60)
-                                                           .unhealthyThreshold(9).healthyThreshold(10);
+                                                           .unhealthyThreshold(9).healthyThreshold(10).build();
         HealthCheck createdHealthCheck = elb.configureHealthCheck(
-                new ConfigureHealthCheckRequest().loadBalancerName(
-                        loadBalancerName).healthCheck(expectedHealthCheck))
-                                            .getHealthCheck();
-        assertEquals(expectedHealthCheck.getHealthyThreshold(),
-                     createdHealthCheck.getHealthyThreshold());
-        assertEquals(expectedHealthCheck.getInterval(),
-                     createdHealthCheck.getInterval());
-        assertEquals(expectedHealthCheck.getTarget(),
-                     createdHealthCheck.getTarget());
-        assertEquals(expectedHealthCheck.getTimeout(),
-                     createdHealthCheck.getTimeout());
-        assertEquals(expectedHealthCheck.getUnhealthyThreshold(),
-                     createdHealthCheck.getUnhealthyThreshold());
+                ConfigureHealthCheckRequest.builder().loadBalancerName(
+                        loadBalancerName).healthCheck(expectedHealthCheck).build())
+                                            .healthCheck();
+        assertEquals(expectedHealthCheck.healthyThreshold(),
+                     createdHealthCheck.healthyThreshold());
+        assertEquals(expectedHealthCheck.interval(),
+                     createdHealthCheck.interval());
+        assertEquals(expectedHealthCheck.target(),
+                     createdHealthCheck.target());
+        assertEquals(expectedHealthCheck.timeout(),
+                     createdHealthCheck.timeout());
+        assertEquals(expectedHealthCheck.unhealthyThreshold(),
+                     createdHealthCheck.unhealthyThreshold());
 
         // Describe
         List<LoadBalancerDescription> loadBalancerDescriptions = elb
                 .describeLoadBalancers(
-                        new DescribeLoadBalancersRequest()
-                                .loadBalancerNames(loadBalancerName))
-                .getLoadBalancerDescriptions();
+                        DescribeLoadBalancersRequest.builder()
+                                .loadBalancerNames(loadBalancerName).build())
+                .loadBalancerDescriptions();
         assertEquals(1, loadBalancerDescriptions.size());
         LoadBalancerDescription loadBalancer = loadBalancerDescriptions.get(0);
-        assertEquals(loadBalancerName, loadBalancer.getLoadBalancerName());
-        assertEquals(1, loadBalancer.getAvailabilityZones().size());
-        assertTrue(loadBalancer.getAvailabilityZones().contains(
+        assertEquals(loadBalancerName, loadBalancer.loadBalancerName());
+        assertEquals(1, loadBalancer.availabilityZones().size());
+        assertTrue(loadBalancer.availabilityZones().contains(
                 AVAILABILITY_ZONE_1));
-        assertNotNull(loadBalancer.getCreatedTime());
-        assertEquals(dnsName, loadBalancer.getDNSName());
-        assertEquals(expectedHealthCheck.getTarget(), loadBalancer
-                .getHealthCheck().getTarget());
-        assertTrue(loadBalancer.getInstances().isEmpty());
-        assertEquals(1, loadBalancer.getListenerDescriptions().size());
-        assertEquals(8080, loadBalancer.getListenerDescriptions().get(0)
-                                       .getListener().getInstancePort(), 0.0);
-        assertEquals(80, loadBalancer.getListenerDescriptions().get(0)
-                                     .getListener().getLoadBalancerPort(), 0.0);
-        assertEquals(PROTOCOL, loadBalancer.getListenerDescriptions().get(0)
-                                           .getListener().getProtocol());
-        assertEquals(loadBalancerName, loadBalancer.getLoadBalancerName());
-        assertNotNull(loadBalancer.getSourceSecurityGroup());
-        assertNotNull(loadBalancer.getSourceSecurityGroup().getGroupName());
-        assertNotNull(loadBalancer.getSourceSecurityGroup().getOwnerAlias());
+        assertNotNull(loadBalancer.createdTime());
+        assertEquals(dnsName, loadBalancer.dnsName());
+        assertEquals(expectedHealthCheck.target(), loadBalancer
+                .healthCheck().target());
+        assertTrue(loadBalancer.instances().isEmpty());
+        assertEquals(1, loadBalancer.listenerDescriptions().size());
+        assertEquals(8080, loadBalancer.listenerDescriptions().get(0)
+                                       .listener().instancePort(), 0.0);
+        assertEquals(80, loadBalancer.listenerDescriptions().get(0)
+                                     .listener().loadBalancerPort(), 0.0);
+        assertEquals(PROTOCOL, loadBalancer.listenerDescriptions().get(0)
+                                           .listener().protocol());
+        assertEquals(loadBalancerName, loadBalancer.loadBalancerName());
+        assertNotNull(loadBalancer.sourceSecurityGroup());
+        assertNotNull(loadBalancer.sourceSecurityGroup().groupName());
+        assertNotNull(loadBalancer.sourceSecurityGroup().ownerAlias());
 
         // Enabled AZs
         List<String> availabilityZones = elb
                 .enableAvailabilityZonesForLoadBalancer(
-                        new EnableAvailabilityZonesForLoadBalancerRequest()
+                        EnableAvailabilityZonesForLoadBalancerRequest.builder()
                                 .loadBalancerName(loadBalancerName)
-                                .availabilityZones(AVAILABILITY_ZONE_2))
-                .getAvailabilityZones();
+                                .availabilityZones(AVAILABILITY_ZONE_2).build())
+                .availabilityZones();
         assertEquals(2, availabilityZones.size());
         assertTrue(availabilityZones.contains(AVAILABILITY_ZONE_1));
         assertTrue(availabilityZones.contains(AVAILABILITY_ZONE_2));
@@ -301,81 +302,81 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
 
         // Disable AZs
         availabilityZones = elb.disableAvailabilityZonesForLoadBalancer(
-                new DisableAvailabilityZonesForLoadBalancerRequest()
+                DisableAvailabilityZonesForLoadBalancerRequest.builder()
                         .loadBalancerName(loadBalancerName)
-                        .availabilityZones(AVAILABILITY_ZONE_2))
-                               .getAvailabilityZones();
+                        .availabilityZones(AVAILABILITY_ZONE_2).build())
+                               .availabilityZones();
         assertEquals(1, availabilityZones.size());
         assertTrue(availabilityZones.contains(AVAILABILITY_ZONE_1));
         assertFalse(availabilityZones.contains(AVAILABILITY_ZONE_2));
 
         // Create a new SSL listener
         if (certificateArn != null) {
-            elb.createLoadBalancerListeners(new CreateLoadBalancerListenersRequest()
+            elb.createLoadBalancerListeners(CreateLoadBalancerListenersRequest.builder()
                                                     .loadBalancerName(loadBalancerName).listeners(
-                            new Listener().instancePort(8181)
+                            Listener.builder().instancePort(8181)
                                           .loadBalancerPort(443).protocol("SSL")
-                                          .sslCertificateId(certificateArn)));
+                                          .sslCertificateId(certificateArn).build()).build());
             Thread.sleep(1000 * 5);
             List<ListenerDescription> listenerDescriptions = elb
                     .describeLoadBalancers(
-                            new DescribeLoadBalancersRequest()
-                                    .loadBalancerNames(loadBalancerName))
-                    .getLoadBalancerDescriptions().get(0).getListenerDescriptions();
+                            DescribeLoadBalancersRequest.builder()
+                                    .loadBalancerNames(loadBalancerName).build())
+                    .loadBalancerDescriptions().get(0).listenerDescriptions();
             assertEquals(2, listenerDescriptions.size());
             ListenerDescription sslListener = null;
             for (ListenerDescription listener : listenerDescriptions) {
-                if (listener.getListener().getLoadBalancerPort() == 443) {
+                if (listener.listener().loadBalancerPort() == 443) {
                     sslListener = listener;
                 }
             }
-            assertEquals(certificateArn, sslListener.getListener()
-                                                    .getSSLCertificateId());
+            assertEquals(certificateArn, sslListener.listener()
+                                                    .sslCertificateId());
         }
 
         // Describe LB Policy Types
         List<PolicyTypeDescription> policyTypeDescriptions = elb
-                .describeLoadBalancerPolicyTypes(new DescribeLoadBalancerPolicyTypesRequest()).getPolicyTypeDescriptions();
+                .describeLoadBalancerPolicyTypes(DescribeLoadBalancerPolicyTypesRequest.builder().build()).policyTypeDescriptions();
         assertTrue(policyTypeDescriptions.size() > 0);
-        assertNotNull(policyTypeDescriptions.get(0).getPolicyTypeName());
+        assertNotNull(policyTypeDescriptions.get(0).policyTypeName());
         assertTrue(policyTypeDescriptions.get(0)
-                                         .getPolicyAttributeTypeDescriptions().size() > 0);
+                                         .policyAttributeTypeDescriptions().size() > 0);
         assertNotNull(policyTypeDescriptions.get(0)
-                                            .getPolicyAttributeTypeDescriptions().get(0).getAttributeName());
+                                            .policyAttributeTypeDescriptions().get(0).attributeName());
         assertNotNull(policyTypeDescriptions.get(0)
-                                            .getPolicyAttributeTypeDescriptions().get(0).getAttributeType());
+                                            .policyAttributeTypeDescriptions().get(0).attributeType());
         assertNotNull(policyTypeDescriptions.get(0)
-                                            .getPolicyAttributeTypeDescriptions().get(0).getCardinality());
+                                            .policyAttributeTypeDescriptions().get(0).cardinality());
 
 
         // Modify LB Attributes
-        elb.modifyLoadBalancerAttributes(new ModifyLoadBalancerAttributesRequest()
+        elb.modifyLoadBalancerAttributes(ModifyLoadBalancerAttributesRequest.builder()
                                                  .loadBalancerName(loadBalancerName)
                                                  .loadBalancerAttributes(
-                                                         new LoadBalancerAttributes()
-                                                                 .crossZoneLoadBalancing(new CrossZoneLoadBalancing()
-                                                                                                     .enabled(true))));
+                                                         LoadBalancerAttributes.builder()
+                                                                 .crossZoneLoadBalancing(CrossZoneLoadBalancing.builder()
+                                                                                                     .enabled(true).build()).build()).build());
 
         // Describe LB Attributes
         DescribeLoadBalancerAttributesResult describeLoadBalancerAttributesResult = elb
-                .describeLoadBalancerAttributes(new DescribeLoadBalancerAttributesRequest()
-                                                        .loadBalancerName(loadBalancerName));
+                .describeLoadBalancerAttributes(DescribeLoadBalancerAttributesRequest.builder()
+                                                        .loadBalancerName(loadBalancerName).build());
         CrossZoneLoadBalancing returnedCrossZoneLoadBalancing = describeLoadBalancerAttributesResult
-                .getLoadBalancerAttributes().getCrossZoneLoadBalancing();
-        assertTrue(returnedCrossZoneLoadBalancing.getEnabled());
+                .loadBalancerAttributes().crossZoneLoadBalancing();
+        assertTrue(returnedCrossZoneLoadBalancing.enabled());
 
         if (certificateArn != null) {
             // Set the SSL certificate for an existing listener
-            elb.setLoadBalancerListenerSSLCertificate(new SetLoadBalancerListenerSSLCertificateRequest()
+            elb.setLoadBalancerListenerSSLCertificate(SetLoadBalancerListenerSSLCertificateRequest.builder()
                                                               .loadBalancerName(loadBalancerName)
                                                               .loadBalancerPort(443)
-                                                              .sslCertificateId(certificateArn));
+                                                              .sslCertificateId(certificateArn).build());
 
             // Delete the SSL listener
             Thread.sleep(1000 * 5);
-            elb.deleteLoadBalancerListeners(new DeleteLoadBalancerListenersRequest()
+            elb.deleteLoadBalancerListeners(DeleteLoadBalancerListenersRequest.builder()
                                                     .loadBalancerName(loadBalancerName).loadBalancerPorts(
-                            443));
+                            443).build());
         }
 
     }
@@ -396,16 +397,16 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
             String loadBalancerName, String policyName) {
         List<LoadBalancerDescription> loadBalancers = elb
                 .describeLoadBalancers(
-                        new DescribeLoadBalancersRequest()
-                                .loadBalancerNames(loadBalancerName))
-                .getLoadBalancerDescriptions();
+                        DescribeLoadBalancersRequest.builder()
+                                .loadBalancerNames(loadBalancerName).build())
+                .loadBalancerDescriptions();
         if (loadBalancers.isEmpty()) {
             fail("Unknown load balancer: " + loadBalancerName);
         }
         List<ListenerDescription> listeners = loadBalancers.get(0)
-                                                           .getListenerDescriptions();
+                                                           .listenerDescriptions();
         for (ListenerDescription listener : listeners) {
-            if (listener.getPolicyNames().contains(policyName)) {
+            if (listener.policyNames().contains(policyName)) {
                 return true;
             }
         }
@@ -426,31 +427,31 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
         int timeout = 20;
 
         // Retrieves the load balancer attributes.
-        DescribeLoadBalancerAttributesRequest describeLoadBalancerRequest = new DescribeLoadBalancerAttributesRequest()
-                .loadBalancerName(loadBalancerName);
+        DescribeLoadBalancerAttributesRequest describeLoadBalancerRequest = DescribeLoadBalancerAttributesRequest.builder()
+                .loadBalancerName(loadBalancerName).build();
 
         DescribeLoadBalancerAttributesResult result = elb
                 .describeLoadBalancerAttributes(describeLoadBalancerRequest);
 
         // Connection draining must be FALSE by default.
-        assertFalse(result.getLoadBalancerAttributes().getConnectionDraining()
-                          .getEnabled());
+        assertFalse(result.loadBalancerAttributes().connectionDraining()
+                          .enabled());
 
         // Enable the connection draining attribute
-        LoadBalancerAttributes loadBalancerAttributes = new LoadBalancerAttributes()
-                .connectionDraining(new ConnectionDraining().enabled(
-                        Boolean.TRUE).timeout(timeout));
-        elb.modifyLoadBalancerAttributes(new ModifyLoadBalancerAttributesRequest()
+        LoadBalancerAttributes loadBalancerAttributes = LoadBalancerAttributes.builder()
+                .connectionDraining(ConnectionDraining.builder().enabled(
+                        Boolean.TRUE).timeout(timeout).build()).build();
+        elb.modifyLoadBalancerAttributes(ModifyLoadBalancerAttributesRequest.builder()
                                                  .loadBalancerName(loadBalancerName)
-                                                 .loadBalancerAttributes(loadBalancerAttributes));
+                                                 .loadBalancerAttributes(loadBalancerAttributes).build());
 
         result = elb
-                .describeLoadBalancerAttributes(new DescribeLoadBalancerAttributesRequest()
-                                                        .loadBalancerName(loadBalancerName));
+                .describeLoadBalancerAttributes(DescribeLoadBalancerAttributesRequest.builder()
+                                                        .loadBalancerName(loadBalancerName).build());
 
         // Connection draining must be TRUE now.
-        assertTrue(result.getLoadBalancerAttributes().getConnectionDraining()
-                         .getEnabled());
+        assertTrue(result.loadBalancerAttributes().connectionDraining()
+                         .enabled());
     }
 
     /**
@@ -460,35 +461,33 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     public void testSetLoadBalancerPoliciesOfListener() {
         // Create LB stickiness policy
         String policyName = "java-sdk-policy-" + System.currentTimeMillis();
-        elb.createLBCookieStickinessPolicy(new CreateLBCookieStickinessPolicyRequest(
-                loadBalancerName, policyName));
+        elb.createLBCookieStickinessPolicy(CreateLBCookieStickinessPolicyRequest.builder().loadBalancerName(
+                loadBalancerName).policyName(policyName).build());
 
         // Attach the policy to a listener
-        elb.setLoadBalancerPoliciesOfListener(new SetLoadBalancerPoliciesOfListenerRequest(
-                loadBalancerName, 80, null).policyNames(policyName));
+        elb.setLoadBalancerPoliciesOfListener(SetLoadBalancerPoliciesOfListenerRequest.builder().loadBalancerName(
+                loadBalancerName).loadBalancerPort(80).policyNames(policyName).build());
         assertTrue(doesLoadBalancerHaveListenerWithPolicy(loadBalancerName,
                                                           policyName));
 
         // Describe LB Policies
         List<PolicyDescription> policyDescriptions = elb
                 .describeLoadBalancerPolicies(
-                        new DescribeLoadBalancerPoliciesRequest()
-                                .loadBalancerName(loadBalancerName))
-                .getPolicyDescriptions();
+                        DescribeLoadBalancerPoliciesRequest.builder()
+                                .loadBalancerName(loadBalancerName).build())
+                .policyDescriptions();
         assertTrue(policyDescriptions.size() > 0);
-        assertTrue(policyDescriptions.get(0).getPolicyAttributeDescriptions()
+        assertTrue(policyDescriptions.get(0).policyAttributeDescriptions()
                                      .size() > 0);
-        assertNotNull(policyDescriptions.get(0).getPolicyName());
-        assertNotNull(policyDescriptions.get(0).getPolicyTypeName());
+        assertNotNull(policyDescriptions.get(0).policyName());
+        assertNotNull(policyDescriptions.get(0).policyTypeName());
 
         // Remove the policy from the listener
-        elb.setLoadBalancerPoliciesOfListener(new SetLoadBalancerPoliciesOfListenerRequest(
-                loadBalancerName, 80, null));
+        elb.setLoadBalancerPoliciesOfListener(SetLoadBalancerPoliciesOfListenerRequest.builder().loadBalancerName(loadBalancerName).loadBalancerPort(80).build());
         assertFalse(doesLoadBalancerHaveListenerWithPolicy(loadBalancerName,
                                                            policyName));
 
         // Delete the policy
-        elb.deleteLoadBalancerPolicy(new DeleteLoadBalancerPolicyRequest(
-                loadBalancerName, policyName));
+        elb.deleteLoadBalancerPolicy(DeleteLoadBalancerPolicyRequest.builder().loadBalancerName(loadBalancerName).policyName(policyName).build());
     }
 }

@@ -166,7 +166,7 @@ public class SqsBufferedAsyncClient implements SQSAsyncClient {
             ChangeMessageVisibilityRequest changeMessageVisibilityRequest)
             throws  AmazonClientException {
         ResultConverter.appendUserAgent(changeMessageVisibilityRequest, USER_AGENT);
-        QueueBuffer buffer = getQBuffer(changeMessageVisibilityRequest.getQueueUrl());
+        QueueBuffer buffer = getQBuffer(changeMessageVisibilityRequest.queueUrl());
         return CompletableFuture.completedFuture(buffer.changeMessageVisibilitySync(changeMessageVisibilityRequest));
     }
 
@@ -180,7 +180,7 @@ public class SqsBufferedAsyncClient implements SQSAsyncClient {
     @Override
     public CompletableFuture<SendMessageResult> sendMessage(SendMessageRequest sendMessageRequest) throws
                                                                                        AmazonClientException {
-        QueueBuffer buffer = getQBuffer(sendMessageRequest.getQueueUrl());
+        QueueBuffer buffer = getQBuffer(sendMessageRequest.queueUrl());
         ResultConverter.appendUserAgent(sendMessageRequest, USER_AGENT);
         return CompletableFuture.completedFuture(buffer.sendMessageSync(sendMessageRequest));
     }
@@ -189,7 +189,7 @@ public class SqsBufferedAsyncClient implements SQSAsyncClient {
     public CompletableFuture<ReceiveMessageResult> receiveMessage(ReceiveMessageRequest receiveMessageRequest)
             throws  AmazonClientException {
         ResultConverter.appendUserAgent(receiveMessageRequest, USER_AGENT);
-        QueueBuffer buffer = getQBuffer(receiveMessageRequest.getQueueUrl());
+        QueueBuffer buffer = getQBuffer(receiveMessageRequest.queueUrl());
         return CompletableFuture.completedFuture(buffer.receiveMessageSync(receiveMessageRequest));
     }
 
@@ -204,7 +204,7 @@ public class SqsBufferedAsyncClient implements SQSAsyncClient {
     public CompletableFuture<DeleteMessageResult> deleteMessage(DeleteMessageRequest deleteMessageRequest) throws
             AmazonClientException {
         ResultConverter.appendUserAgent(deleteMessageRequest, USER_AGENT);
-        QueueBuffer buffer = getQBuffer(deleteMessageRequest.getQueueUrl());
+        QueueBuffer buffer = getQBuffer(deleteMessageRequest.queueUrl());
         return CompletableFuture.completedFuture(buffer.deleteMessageSync(deleteMessageRequest));
     }
 

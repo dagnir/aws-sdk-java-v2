@@ -58,14 +58,14 @@ public abstract class IntegrationTestBase extends AwsTestBase {
 
     protected static void sendVerificationEmail() {
         ListVerifiedEmailAddressesResult verifiedEmails =
-                email.listVerifiedEmailAddresses(new ListVerifiedEmailAddressesRequest());
-        for (String email : verifiedEmails.getVerifiedEmailAddresses()) {
+                email.listVerifiedEmailAddresses(ListVerifiedEmailAddressesRequest.builder().build());
+        for (String email : verifiedEmails.verifiedEmailAddresses()) {
             if (email.equals(DESTINATION)) {
                 return;
             }
         }
 
-        email.verifyEmailAddress(new VerifyEmailAddressRequest().emailAddress(DESTINATION));
+        email.verifyEmailAddress(VerifyEmailAddressRequest.builder().emailAddress(DESTINATION).build());
         fail("Please check your email and verify your email address.");
     }
 

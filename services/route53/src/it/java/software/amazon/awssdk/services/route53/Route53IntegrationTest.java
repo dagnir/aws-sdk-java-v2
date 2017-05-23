@@ -89,7 +89,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         try {
-            route53.deleteHostedZone(new DeleteHostedZoneRequest(createdZoneId));
+            route53.deleteHostedZone(DeleteHostedZoneRequest.builder().id(createdZoneId).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
@@ -102,47 +102,47 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     @Test
     public void testRoute53() throws Exception {
         // Create Hosted Zone
-        CreateHostedZoneResult result = route53.createHostedZone(new CreateHostedZoneRequest()
+        CreateHostedZoneResult result = route53.createHostedZone(CreateHostedZoneRequest.builder()
                                                                          .name(ZONE_NAME)
                                                                          .callerReference(CALLER_REFERENCE)
-                                                                         .hostedZoneConfig(new HostedZoneConfig()
-                                                                                                       .comment(COMMENT))
+                                                                         .hostedZoneConfig(HostedZoneConfig.builder()
+                                                                                                       .comment(COMMENT).build()).build()
         );
 
-        createdZoneId = result.getHostedZone().getId();
-        createdZoneChangeId = result.getChangeInfo().getId();
+        createdZoneId = result.hostedZone().id();
+        createdZoneChangeId = result.changeInfo().id();
 
-        assertValidCreatedHostedZone(result.getHostedZone());
-        assertValidDelegationSet(result.getDelegationSet());
-        assertValidChangeInfo(result.getChangeInfo());
-        assertNotNull(result.getLocation());
+        assertValidCreatedHostedZone(result.hostedZone());
+        assertValidDelegationSet(result.delegationSet());
+        assertValidChangeInfo(result.changeInfo());
+        assertNotNull(result.location());
 
 
         // Get Hosted Zone
-        GetHostedZoneRequest hostedZoneRequest = new GetHostedZoneRequest(createdZoneId);
+        GetHostedZoneRequest hostedZoneRequest = GetHostedZoneRequest.builder().id(createdZoneId).build();
         GetHostedZoneResult hostedZoneResult = route53.getHostedZone(hostedZoneRequest);
-        assertValidDelegationSet(hostedZoneResult.getDelegationSet());
-        assertValidCreatedHostedZone(hostedZoneResult.getHostedZone());
+        assertValidDelegationSet(hostedZoneResult.delegationSet());
+        assertValidCreatedHostedZone(hostedZoneResult.hostedZone());
 
         // Create a health check
-        HealthCheckConfig config = new HealthCheckConfig().type("TCP").port(PORT_NUM).ipAddress(IP_ADDRESS);
+        HealthCheckConfig config = HealthCheckConfig.builder().type("TCP").port(PORT_NUM).ipAddress(IP_ADDRESS).build();
         CreateHealthCheckResult createHealthCheckResult = route53.createHealthCheck(
-                new CreateHealthCheckRequest().healthCheckConfig(config).callerReference(CALLER_REFERENCE));
-        healthCheckId = createHealthCheckResult.getHealthCheck().getId();
-        assertNotNull(createHealthCheckResult.getLocation());
-        assertValidHealthCheck(createHealthCheckResult.getHealthCheck());
+                CreateHealthCheckRequest.builder().healthCheckConfig(config).callerReference(CALLER_REFERENCE).build());
+        healthCheckId = createHealthCheckResult.healthCheck().id();
+        assertNotNull(createHealthCheckResult.location());
+        assertValidHealthCheck(createHealthCheckResult.healthCheck());
 
         // Get the health check back
         GetHealthCheckResult gealthCheckResult = route53
-                .getHealthCheck(new GetHealthCheckRequest().healthCheckId(healthCheckId));
-        assertValidHealthCheck(gealthCheckResult.getHealthCheck());
+                .getHealthCheck(GetHealthCheckRequest.builder().healthCheckId(healthCheckId).build());
+        assertValidHealthCheck(gealthCheckResult.healthCheck());
 
         // Delete the health check
-        route53.deleteHealthCheck(new DeleteHealthCheckRequest().healthCheckId(healthCheckId));
+        route53.deleteHealthCheck(DeleteHealthCheckRequest.builder().healthCheckId(healthCheckId).build());
 
         // Get the health check back
         try {
-            gealthCheckResult = route53.getHealthCheck(new GetHealthCheckRequest().healthCheckId(healthCheckId));
+            gealthCheckResult = route53.getHealthCheck(GetHealthCheckRequest.builder().healthCheckId(healthCheckId).build());
             fail();
         } catch (AmazonServiceException e) {
             assertNotNull(e.getMessage());
@@ -151,89 +151,90 @@ public class Route53IntegrationTest extends IntegrationTestBase {
         }
 
         // List Hosted Zones
-        List<HostedZone> hostedZones = route53.listHostedZones(new ListHostedZonesRequest()).getHostedZones();
+        List<HostedZone> hostedZones = route53.listHostedZones(ListHostedZonesRequest.builder().build()).hostedZones();
         assertTrue(hostedZones.size() > 0);
         for (HostedZone hostedZone : hostedZones) {
-            assertNotNull(hostedZone.getCallerReference());
-            assertNotNull(hostedZone.getId());
-            assertNotNull(hostedZone.getName());
+            assertNotNull(hostedZone.callerReference());
+            assertNotNull(hostedZone.id());
+            assertNotNull(hostedZone.name());
         }
 
 
         // List Resource Record Sets
         List<ResourceRecordSet> resourceRecordSets = route53.listResourceRecordSets(
-                new ListResourceRecordSetsRequest(createdZoneId)).getResourceRecordSets();
+                ListResourceRecordSetsRequest.builder().startRecordIdentifier(createdZoneId).build()).resourceRecordSets();
         assertTrue(resourceRecordSets.size() > 0);
         ResourceRecordSet existingResourceRecordSet = resourceRecordSets.get(0);
         for (ResourceRecordSet rrset : resourceRecordSets) {
-            assertNotNull(rrset.getName());
-            assertNotNull(rrset.getType());
-            assertNotNull(rrset.getTTL());
-            assertTrue(rrset.getResourceRecords().size() > 0);
+            assertNotNull(rrset.name());
+            assertNotNull(rrset.type());
+            assertNotNull(rrset.ttl());
+            assertTrue(rrset.resourceRecords().size() > 0);
         }
 
 
         // Get Change
-        ChangeInfo changeInfo = route53.getChange(new GetChangeRequest(createdZoneChangeId)).getChangeInfo();
-        assertTrue(changeInfo.getId().endsWith(createdZoneChangeId));
+        ChangeInfo changeInfo = route53.getChange(GetChangeRequest.builder().id(createdZoneChangeId).build()).changeInfo();
+        assertTrue(changeInfo.id().endsWith(createdZoneChangeId));
         assertValidChangeInfo(changeInfo);
 
 
         // Change Resource Record Sets
-        ResourceRecordSet newResourceRecordSet = new ResourceRecordSet()
+        ResourceRecordSet newResourceRecordSet = ResourceRecordSet.builder()
                 .name(ZONE_NAME)
-                .resourceRecords(existingResourceRecordSet.getResourceRecords())
-                .ttl(existingResourceRecordSet.getTTL() + 100)
-                .type(existingResourceRecordSet.getType());
+                .resourceRecords(existingResourceRecordSet.resourceRecords())
+                .ttl(existingResourceRecordSet.ttl() + 100)
+                .type(existingResourceRecordSet.type())
+                .build();
 
-        changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
+        changeInfo = route53.changeResourceRecordSets(ChangeResourceRecordSetsRequest.builder()
                                                               .hostedZoneId(createdZoneId)
-                                                              .changeBatch(new ChangeBatch().comment(COMMENT)
-                                                                                       .changes(new Change().action(
+                                                              .changeBatch(ChangeBatch.builder().comment(COMMENT)
+                                                                                       .changes(Change.builder().action(
                                                                                                ChangeAction.DELETE)
                                                                                                             .resourceRecordSet(
-                                                                                                                    existingResourceRecordSet),
-                                                                                                    new Change().action(
+                                                                                                                    existingResourceRecordSet).build(),
+                                                                                                    Change.builder().action(
                                                                                                             ChangeAction.CREATE)
                                                                                                             .resourceRecordSet(
-                                                                                                                    newResourceRecordSet))
-                                                              )).getChangeInfo();
+                                                                                                                    newResourceRecordSet).build()).build()
+                                                              ).build()).changeInfo();
         assertValidChangeInfo(changeInfo);
 
         // Add a weighted Resource Record Set so we can reproduce the bug reported by customers
         // when they provide SetIdentifier containing special characters.
         String specialChars = "&<>'\"";
-        newResourceRecordSet = new ResourceRecordSet()
+        newResourceRecordSet =ResourceRecordSet.builder()
                 .name("weighted." + ZONE_NAME)
                 .type(RRType.CNAME)
                 .setIdentifier(specialChars)
                 .weight(0L)
                 .ttl(1000L)
-                .resourceRecords(
-                        new ResourceRecord().value("www.example.com"));
-        changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
+                .resourceRecords(ResourceRecord.builder().value("www.example.com").build())
+                .build();
+        changeInfo = route53.changeResourceRecordSets(ChangeResourceRecordSetsRequest.builder()
                                                               .hostedZoneId(createdZoneId)
                                                               .changeBatch(
-                                                                      new ChangeBatch().comment(COMMENT).changes(
-                                                                              new Change().action(ChangeAction.CREATE)
+                                                                      ChangeBatch.builder().comment(COMMENT).changes(
+                                                                              Change.builder().action(ChangeAction.CREATE)
                                                                                       .resourceRecordSet(
-                                                                                              newResourceRecordSet)))
-        ).getChangeInfo();
+                                                                                              newResourceRecordSet).build()).build()).build()
+        ).changeInfo();
         assertValidChangeInfo(changeInfo);
 
         // Clear up the RR Set
-        changeInfo = route53.changeResourceRecordSets(new ChangeResourceRecordSetsRequest()
+        changeInfo = route53.changeResourceRecordSets(ChangeResourceRecordSetsRequest.builder()
                                                               .hostedZoneId(createdZoneId)
                                                               .changeBatch(
-                                                                      new ChangeBatch().comment(COMMENT).changes(
-                                                                              new Change().action(ChangeAction.DELETE)
+                                                                      ChangeBatch.builder().comment(COMMENT).changes(
+                                                                              Change.builder().action(ChangeAction.DELETE)
                                                                                       .resourceRecordSet(
-                                                                                              newResourceRecordSet)))
-        ).getChangeInfo();
+                                                                                              newResourceRecordSet).build()).build()).build()
+        ).changeInfo();
 
         // Delete Hosted Zone
-        DeleteHostedZoneResult deleteHostedZoneResult = route53.deleteHostedZone(new DeleteHostedZoneRequest(createdZoneId));
-        assertValidChangeInfo(deleteHostedZoneResult.getChangeInfo());
+        DeleteHostedZoneResult deleteHostedZoneResult = route53.deleteHostedZone(DeleteHostedZoneRequest.builder().id(createdZoneId).build());
+        assertValidChangeInfo(deleteHostedZoneResult.changeInfo());
     }
 
 
@@ -244,10 +245,10 @@ public class Route53IntegrationTest extends IntegrationTestBase {
      * @param hostedZone The hosted zone to test.
      */
     private void assertValidCreatedHostedZone(HostedZone hostedZone) {
-        assertEquals(CALLER_REFERENCE, hostedZone.getCallerReference());
-        assertEquals(ZONE_NAME, hostedZone.getName());
-        assertNotNull(hostedZone.getId());
-        assertEquals(COMMENT, hostedZone.getConfig().getComment());
+        assertEquals(CALLER_REFERENCE, hostedZone.callerReference());
+        assertEquals(ZONE_NAME, hostedZone.name());
+        assertNotNull(hostedZone.id());
+        assertEquals(COMMENT, hostedZone.config().comment());
     }
 
     /**
@@ -256,8 +257,8 @@ public class Route53IntegrationTest extends IntegrationTestBase {
      * @param delegationSet The delegation set to test.
      */
     private void assertValidDelegationSet(DelegationSet delegationSet) {
-        assertTrue(delegationSet.getNameServers().size() > 0);
-        for (String server : delegationSet.getNameServers()) {
+        assertTrue(delegationSet.nameServers().size() > 0);
+        for (String server : delegationSet.nameServers()) {
             assertNotNull(server);
         }
     }
@@ -268,17 +269,17 @@ public class Route53IntegrationTest extends IntegrationTestBase {
      * @param change The ChangeInfo object to test.
      */
     private void assertValidChangeInfo(ChangeInfo change) {
-        assertNotNull(change.getId());
-        assertNotNull(change.getStatus());
-        assertNotNull(change.getSubmittedAt());
+        assertNotNull(change.id());
+        assertNotNull(change.status());
+        assertNotNull(change.submittedAt());
     }
 
     private void assertValidHealthCheck(HealthCheck healthCheck) {
-        assertNotNull(CALLER_REFERENCE, healthCheck.getCallerReference());
-        assertNotNull(healthCheck.getId());
-        assertEquals(PORT_NUM, healthCheck.getHealthCheckConfig().getPort().intValue());
-        assertEquals(TYPE, healthCheck.getHealthCheckConfig().getType());
-        assertEquals(IP_ADDRESS, healthCheck.getHealthCheckConfig().getIPAddress());
+        assertNotNull(CALLER_REFERENCE, healthCheck.callerReference());
+        assertNotNull(healthCheck.id());
+        assertEquals(PORT_NUM, healthCheck.healthCheckConfig().port().intValue());
+        assertEquals(TYPE, healthCheck.healthCheckConfig().type());
+        assertEquals(IP_ADDRESS, healthCheck.healthCheckConfig().ipAddress());
     }
 
     /**
@@ -290,7 +291,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     public void testClockSkew() throws AmazonServiceException {
         SdkGlobalTime.setGlobalTimeOffset(3600);
         Route53Client clockSkewClient = Route53Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
-        clockSkewClient.listHostedZones(new ListHostedZonesRequest());
+        clockSkewClient.listHostedZones(ListHostedZonesRequest.builder().build());
         assertTrue("Clockskew is fixed!", SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

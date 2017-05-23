@@ -61,18 +61,18 @@ public class DynamoDbJavaClientExceptionIntegrationTest extends AwsTestBase {
     public void testPermissionError() {
         STSClient sts = STSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        Credentials creds = sts.getFederationToken(new GetFederationTokenRequest()
+        Credentials creds = sts.getFederationToken(GetFederationTokenRequest.builder()
                 .name("NoAccess")
                 .policy(
                         "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Deny\",\"Action\":\"*\",\"Resource\":\"*\"}]}")
-                .durationSeconds(900)).getCredentials();
+                .durationSeconds(900).build()).credentials();
 
 
         DynamoDBClient client = DynamoDBClient.builder().credentialsProvider(
                 new StaticCredentialsProvider(new AwsSessionCredentials(
-                creds.getAccessKeyId(),
-                creds.getSecretAccessKey(),
-                creds.getSessionToken()))).build();
+                creds.accessKeyId(),
+                creds.secretAccessKey(),
+                creds.sessionToken()))).build();
 
         try {
             client.listTables(ListTablesRequest.builder().build());

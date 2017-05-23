@@ -97,22 +97,21 @@ public class MetricUnitTestBase {
 
         Iterator<String> it = records.iterator();
         String record;
-        MetricDatum m;
 
         while (it.hasNext()) {
             record = it.next();
             String fields[] = record.split("[|]");
 
-            m = new MetricDatum();
+            MetricDatum.Builder m = MetricDatum.builder();
             final String metricName = fields[0];
             final String metric = fields[1];
             m.metricName(metricName)
-             .dimensions(new Dimension().name("metric").value(metric))
+             .dimensions(Dimension.builder().name("metric").value(metric).build())
              .timestamp(new Date(Long.parseLong(fields[3])));
             if (fields[4] != null && !fields[4].isEmpty())
-                m.setValue(Double.parseDouble(fields[4]));
-            m.setUnit(fields[6]);
-            queue.add(m);
+                m.value(Double.parseDouble(fields[4]));
+            m.unit(fields[6]);
+            queue.add(m.build());
 
         }
     }

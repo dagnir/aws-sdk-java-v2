@@ -74,7 +74,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
 
     @After
     public void tearDown() throws Exception {
-        buffSqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        buffSqs.deleteQueue(DeleteQueueRequest.builder().queueUrl(queueUrl).build());
         buffSqs.close();
     }
 
@@ -118,8 +118,8 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         Set<String> messages = Collections.synchronizedSet(new HashSet<String>());
         for (int i = 0; i < NUM_MESSAGES; i++) {
             String body = "test message " + i + "_" + System.currentTimeMillis();
-            SendMessageRequest request = new SendMessageRequest().messageBody(body).queueUrl(queueUrl)
-                                                                 .messageAttributes(ATTRIBUTES);
+            SendMessageRequest request = SendMessageRequest.builder().messageBody(body).queueUrl(queueUrl)
+                                                                 .messageAttributes(ATTRIBUTES).build();
 
             sendResults.add(buffSqs.sendMessage(request));
             messages.add(body);
@@ -161,7 +161,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
                 Message theMessage = messages.get(0);
                 assertMessageIsValid(theMessage);
 
-                resultSet.remove(theMessage.getBody());
+                resultSet.remove(theMessage.body());
                 deleteMessage(messages.get(0));
 
                 long totalRunningTime = System.nanoTime() - operationStart;
@@ -174,24 +174,25 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
         }
 
         private List<Message> recieveMessage() throws InterruptedException, ExecutionException {
-            ReceiveMessageRequest recRequest = new ReceiveMessageRequest().maxNumberOfMessages(1).queueUrl(url)
-                                                                          .messageAttributeNames("All");
+            ReceiveMessageRequest recRequest = ReceiveMessageRequest.builder().maxNumberOfMessages(1).queueUrl(url)
+                                                                          .messageAttributeNames("All")
+                    .build();
             Future<ReceiveMessageResult> future = buffSqs.receiveMessage(recRequest);
-            List<Message> messages = future.get().getMessages();
+            List<Message> messages = future.get().messages();
             return messages;
         }
 
         private void assertMessageIsValid(Message theMessage) {
             assertNotNull(theMessage);
-            assertNotNull(theMessage.getMD5OfMessageAttributes());
-            assertNotNull(theMessage.getMessageAttributes());
-            assertThat(theMessage.getMessageAttributes().entrySet(), everyItem(isIn(expectedAttributes.entrySet())));
-            assertThat(theMessage.getMessageAttributes().entrySet(), hasSize(expectedAttributes.size()));
+            assertNotNull(theMessage.md5OfMessageAttributes());
+            assertNotNull(theMessage.messageAttributes());
+            assertThat(theMessage.messageAttributes().entrySet(), everyItem(isIn(expectedAttributes.entrySet())));
+            assertThat(theMessage.messageAttributes().entrySet(), hasSize(expectedAttributes.size()));
         }
 
         private void deleteMessage(Message theMessage) throws InterruptedException, ExecutionException {
-            DeleteMessageRequest deleteRequest = new DeleteMessageRequest().queueUrl(url).receiptHandle(
-                    theMessage.getReceiptHandle());
+            DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder().queueUrl(url).receiptHandle(
+                    theMessage.receiptHandle()).build();
             buffSqs.deleteMessage(deleteRequest).get();
         }
 

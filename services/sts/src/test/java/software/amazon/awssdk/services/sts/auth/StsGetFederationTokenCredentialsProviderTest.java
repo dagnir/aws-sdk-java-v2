@@ -29,12 +29,12 @@ public class StsGetFederationTokenCredentialsProviderTest
         extends StsCredentialsProviderTestBase<GetFederationTokenRequest, GetFederationTokenResult> {
     @Override
     protected GetFederationTokenRequest getRequest() {
-        return new GetFederationTokenRequest();
+        return GetFederationTokenRequest.builder().build();
     }
 
     @Override
     protected GetFederationTokenResult getResponse(Credentials credentials) {
-        return new GetFederationTokenResult().credentials(credentials);
+        return GetFederationTokenResult.builder().credentials(credentials).build();
     }
 
     @Override

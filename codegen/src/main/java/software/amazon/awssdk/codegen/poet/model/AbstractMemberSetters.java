@@ -15,38 +15,46 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 
+import java.util.Optional;
 import javax.lang.model.element.Modifier;
 
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 
 /**
  * Abstract implementation of {@link MemberSetters} to share common functionality.
  */
 abstract class AbstractMemberSetters implements MemberSetters {
-    private ShapeModel shapeModel;
-    private MemberModel memberModel;
-    private TypeProvider typeProvider;
+    private final ShapeModel shapeModel;
+    private final MemberModel memberModel;
+    private final IntermediateModel intermediateModel;
+    private final TypeProvider typeProvider;
+    private final ServiceModelCopiers serviceModelCopiers;
 
-    public AbstractMemberSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
+    public AbstractMemberSetters(IntermediateModel intermediateModel,
+                                 ShapeModel shapeModel,
+                                 MemberModel memberModel,
+                                 TypeProvider typeProvider) {
         this.shapeModel = shapeModel;
         this.memberModel = memberModel;
+        this.intermediateModel = intermediateModel;
         this.typeProvider = typeProvider;
+        this.serviceModelCopiers = new ServiceModelCopiers(intermediateModel);
     }
 
     protected MethodSpec.Builder fluentSetterDeclaration(ParameterSpec parameter, TypeName returnType) {
         return MethodSpec.methodBuilder(memberModel().getFluentSetterMethodName())
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .addParameter(parameter)
-                .returns(returnType)
-                .addJavadoc(PoetUtils.makeJavadocPoetFriendly(memberModel.getFluentSetterDocumentation()));
-
+                .returns(returnType);
     }
 
     protected MethodSpec.Builder fluentSetterBuilder(TypeName returnType) {
@@ -68,15 +76,18 @@ abstract class AbstractMemberSetters implements MemberSetters {
     protected MethodSpec.Builder beanStyleSetterBuilder(ParameterSpec setterParam) {
         return MethodSpec.methodBuilder(memberModel().getBeanStyleSetterMethodName())
                 .addParameter(setterParam)
-                .addJavadoc(PoetUtils.makeJavadocPoetFriendly(memberModel.getSetterDocumentation()))
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
     }
 
     protected CodeBlock copySetterBody() {
-        return CodeBlock.builder()
-                .addStatement("this.$N = $N.$N($N)", fieldName(), MemberCopierSpec.copierClassName(memberModel),
-                        MemberCopierSpec.copyMethodName(memberModel), fieldName())
-                .build();
+        Optional<ClassName> copierClass = serviceModelCopiers.copierClassFor(memberModel);
+
+        return copierClass.map(className -> CodeBlock.builder()
+                .addStatement("this.$N = $T.$N($N)", fieldName(), className,
+                        serviceModelCopiers.copyMethodName(), fieldName())
+                .build()).orElseGet(() -> CodeBlock.builder()
+                .addStatement("this.$N = $N", fieldName(), fieldName())
+                .build());
     }
 
     protected ParameterSpec memberAsParameter() {
@@ -93,5 +104,9 @@ abstract class AbstractMemberSetters implements MemberSetters {
 
     protected String fieldName() {
         return memberModel.getVariable().getVariableName();
+    }
+
+    protected boolean annotateJsonProperty() {
+        return intermediateModel.getMetadata().isJsonProtocol() && shapeModel.getShapeType() == ShapeType.Exception;
     }
 }

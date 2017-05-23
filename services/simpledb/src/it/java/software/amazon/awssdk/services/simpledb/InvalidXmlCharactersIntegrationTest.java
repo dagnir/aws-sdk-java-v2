@@ -44,7 +44,7 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
     /** Releases all resources used by this test. */
     @After
     public void tearDown() throws Exception {
-        sdb.deleteDomain(new DeleteDomainRequest().domainName(domainName));
+        sdb.deleteDomain(DeleteDomainRequest.builder().domainName(domainName).build());
     }
 
     /**
@@ -56,19 +56,19 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
     public void testInvalidXmlCharacters() throws Exception {
         createTestData();
 
-        SelectResult selectResult = sdb.select(new SelectRequest().selectExpression("SELECT * FROM `" + domainName
-                                                                                        + "`"));
+        SelectResult selectResult = sdb.select(SelectRequest.builder().selectExpression("SELECT * FROM `" + domainName
+                                                                                        + "`").build());
 
-        List<Item> items = selectResult.getItems();
+        List<Item> items = selectResult.items();
         assertEquals(1, items.size());
 
         Item item = (Item) items.get(0);
-        assertEquals("base64", item.getAlternateNameEncoding());
+        assertEquals("base64", item.alternateNameEncoding());
 
-        assertEquals(1, item.getAttributes().size());
-        Attribute attribute = (Attribute) item.getAttributes().get(0);
-        assertEquals("base64", attribute.getAlternateNameEncoding());
-        assertEquals("base64", attribute.getAlternateValueEncoding());
+        assertEquals(1, item.attributes().size());
+        Attribute attribute = (Attribute) item.attributes().get(0);
+        assertEquals("base64", attribute.alternateNameEncoding());
+        assertEquals("base64", attribute.alternateValueEncoding());
     }
 
     /*
@@ -81,12 +81,12 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
      * containing non-XML compatible characters.
      */
     private void createTestData() throws Exception {
-        sdb.createDomain(new CreateDomainRequest().domainName(domainName));
+        sdb.createDomain(CreateDomainRequest.builder().domainName(domainName).build());
 
-        ReplaceableAttribute attribute = new ReplaceableAttribute().name(NON_XML_COMPATIBLE_STRING).value(
-                NON_XML_COMPATIBLE_STRING);
-        sdb.putAttributes(new PutAttributesRequest().domainName(domainName).itemName(NON_XML_COMPATIBLE_STRING)
-                                                    .attributes(new ReplaceableAttribute[] {attribute}));
+        ReplaceableAttribute attribute = ReplaceableAttribute.builder().name(NON_XML_COMPATIBLE_STRING).value(
+                NON_XML_COMPATIBLE_STRING).build();
+        sdb.putAttributes(PutAttributesRequest.builder().domainName(domainName).itemName(NON_XML_COMPATIBLE_STRING)
+                                                    .attributes(new ReplaceableAttribute[] {attribute}).build());
 
         // Sleep 5s to let data propagate
         Thread.sleep(5 * 1000);

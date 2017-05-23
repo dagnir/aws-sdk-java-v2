@@ -35,11 +35,10 @@ public class GetAttributesIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testGetAttributesNoSuchDomainException() {
-        GetAttributesRequest request = new GetAttributesRequest();
-
-        request.setItemName("foobar");
-        request.setDomainName("foobarbazbarbashbar");
-
+        GetAttributesRequest request = GetAttributesRequest.builder()
+                .itemName("foobar")
+                .domainName("foobarbazbarbashbar")
+                .build();
         try {
             sdb.getAttributes(request);
             fail("Expected NoSuchDomainException, but wasn't thrown");
@@ -54,17 +53,21 @@ public class GetAttributesIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testGetAttributesMissingParameterException() {
-        GetAttributesRequest request = new GetAttributesRequest();
+        GetAttributesRequest request = GetAttributesRequest.builder()
+                .itemName("foobar")
+                .build();
         try {
-            sdb.getAttributes(request.itemName("foobar"));
+            sdb.getAttributes(request);
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);
         }
 
-        request = new GetAttributesRequest();
+        request = GetAttributesRequest.builder()
+                .domainName("foobar")
+                .build();
         try {
-            sdb.getAttributes(request.domainName("foobar"));
+            sdb.getAttributes(request);
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);

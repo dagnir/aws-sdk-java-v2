@@ -8,6 +8,8 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.SubTypeOneMarshaller;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class SubTypeOne implements ToCopyableBuilder<SubTypeOne.Builder, SubTypeOne>, StructuredPojo {
     private final String subTypeOneMember;
@@ -102,17 +104,13 @@ public class SubTypeOne implements ToCopyableBuilder<SubTypeOne.Builder, SubType
         }
 
         @Override
-        public Builder subTypeOneMember(String subTypeOneMember) {
-            this.subTypeOneMember = StringCopier.copyString(subTypeOneMember);
+        public final Builder subTypeOneMember(String subTypeOneMember) {
+            this.subTypeOneMember = subTypeOneMember;
             return this;
         }
 
-        /**
-         *
-         * @param subTypeOneMember
-         */
-        public void setSubTypeOneMember(String subTypeOneMember) {
-            this.subTypeOneMember = StringCopier.copyString(subTypeOneMember);
+        public final void setSubTypeOneMember(String subTypeOneMember) {
+            this.subTypeOneMember = subTypeOneMember;
         }
 
         @Override

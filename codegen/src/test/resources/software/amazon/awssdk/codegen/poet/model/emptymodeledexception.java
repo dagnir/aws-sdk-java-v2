@@ -4,6 +4,8 @@ import javax.annotation.Generated;
 import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class EmptyModeledException extends JsonProtocolTestsException implements
         ToCopyableBuilder<EmptyModeledException.Builder, EmptyModeledException> {

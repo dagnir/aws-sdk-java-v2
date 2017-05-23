@@ -10,6 +10,8 @@ import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetadata> implements
         ToCopyableBuilder<NestedContainersResult.Builder, NestedContainersResult> {
@@ -134,6 +136,12 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
 
         /**
          *
+         * <p>
+         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
+         * {@link #setListOfListsOfStrings(java.util.Collection)} or
+         * {@link #withListOfListsOfStrings(java.util.Collection)} if you want to override the existing values.
+         * </p>
+         * 
          * @param listOfListsOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -149,6 +157,12 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
 
         /**
          *
+         * <p>
+         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
+         * {@link #setListOfListOfListsOfStrings(java.util.Collection)} or
+         * {@link #withListOfListOfListsOfStrings(java.util.Collection)} if you want to override the existing values.
+         * </p>
+         * 
          * @param listOfListOfListsOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -180,105 +194,83 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         }
 
         @Override
-        public Builder listOfListsOfStrings(Collection<? extends Collection<String>> listOfListsOfStrings) {
-            this.listOfListsOfStrings = ListOfListsOfStringsCopier.copyListOfListsOfStrings(listOfListsOfStrings);
+        public final Builder listOfListsOfStrings(Collection<? extends Collection<String>> listOfListsOfStrings) {
+            this.listOfListsOfStrings = ListOfListsOfStringsCopier.copy(listOfListsOfStrings);
             return this;
         }
 
         @Override
         @SafeVarargs
-        public Builder listOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
+        public final Builder listOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
             }
             for (Collection<String> e : listOfListsOfStrings) {
-                this.listOfListsOfStrings.add(ListOfStringsCopier.copyListOfStrings(e));
+                this.listOfListsOfStrings.add(ListOfStringsCopier.copy(e));
             }
             return this;
         }
 
-        /**
-         *
-         * @param listOfListsOfStrings
-         */
-        public void setListOfListsOfStrings(Collection<? extends Collection<String>> listOfListsOfStrings) {
-            this.listOfListsOfStrings = ListOfListsOfStringsCopier.copyListOfListsOfStrings(listOfListsOfStrings);
+        public final void setListOfListsOfStrings(Collection<? extends Collection<String>> listOfListsOfStrings) {
+            this.listOfListsOfStrings = ListOfListsOfStringsCopier.copy(listOfListsOfStrings);
         }
 
-        /**
-         *
-         * @param listOfListsOfStrings
-         */
         @SafeVarargs
-        public void setListOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
+        public final void setListOfListsOfStrings(Collection<String>... listOfListsOfStrings) {
             if (this.listOfListsOfStrings == null) {
                 this.listOfListsOfStrings = new ArrayList<>(listOfListsOfStrings.length);
             }
             for (Collection<String> e : listOfListsOfStrings) {
-                this.listOfListsOfStrings.add(ListOfStringsCopier.copyListOfStrings(e));
+                this.listOfListsOfStrings.add(ListOfStringsCopier.copy(e));
             }
         }
 
         @Override
-        public Builder listOfListOfListsOfStrings(
+        public final Builder listOfListOfListsOfStrings(
                 Collection<? extends Collection<? extends Collection<String>>> listOfListOfListsOfStrings) {
-            this.listOfListOfListsOfStrings = ListOfListOfListsOfStringsCopier
-                    .copyListOfListOfListsOfStrings(listOfListOfListsOfStrings);
+            this.listOfListOfListsOfStrings = ListOfListOfListsOfStringsCopier.copy(listOfListOfListsOfStrings);
             return this;
         }
 
         @Override
         @SafeVarargs
-        public Builder listOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
+        public final Builder listOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);
             }
             for (Collection<? extends Collection<String>> e : listOfListOfListsOfStrings) {
-                this.listOfListOfListsOfStrings.add(ListOfListsOfStringsCopier.copyListOfListsOfStrings(e));
+                this.listOfListOfListsOfStrings.add(ListOfListsOfStringsCopier.copy(e));
             }
             return this;
         }
 
-        /**
-         *
-         * @param listOfListOfListsOfStrings
-         */
-        public void setListOfListOfListsOfStrings(
+        public final void setListOfListOfListsOfStrings(
                 Collection<? extends Collection<? extends Collection<String>>> listOfListOfListsOfStrings) {
-            this.listOfListOfListsOfStrings = ListOfListOfListsOfStringsCopier
-                    .copyListOfListOfListsOfStrings(listOfListOfListsOfStrings);
+            this.listOfListOfListsOfStrings = ListOfListOfListsOfStringsCopier.copy(listOfListOfListsOfStrings);
         }
 
-        /**
-         *
-         * @param listOfListOfListsOfStrings
-         */
         @SafeVarargs
-        public void setListOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
+        public final void setListOfListOfListsOfStrings(Collection<? extends Collection<String>>... listOfListOfListsOfStrings) {
             if (this.listOfListOfListsOfStrings == null) {
                 this.listOfListOfListsOfStrings = new ArrayList<>(listOfListOfListsOfStrings.length);
             }
             for (Collection<? extends Collection<String>> e : listOfListOfListsOfStrings) {
-                this.listOfListOfListsOfStrings.add(ListOfListsOfStringsCopier.copyListOfListsOfStrings(e));
+                this.listOfListOfListsOfStrings.add(ListOfListsOfStringsCopier.copy(e));
             }
         }
 
         @Override
-        public Builder mapOfStringToListOfListsOfStrings(
+        public final Builder mapOfStringToListOfListsOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListsOfStrings) {
             this.mapOfStringToListOfListsOfStrings = MapOfStringToListOfListsOfStringsCopier
-                    .copyMapOfStringToListOfListsOfStrings(mapOfStringToListOfListsOfStrings);
+                    .copy(mapOfStringToListOfListsOfStrings);
             return this;
         }
 
-        /**
-         *
-         * @param mapOfStringToListOfListsOfStrings
-         */
-        public void setMapOfStringToListOfListsOfStrings(
+        public final void setMapOfStringToListOfListsOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListsOfStrings) {
             this.mapOfStringToListOfListsOfStrings = MapOfStringToListOfListsOfStringsCopier
-                    .copyMapOfStringToListOfListsOfStrings(mapOfStringToListOfListsOfStrings);
+                    .copy(mapOfStringToListOfListsOfStrings);
         }
 
         @Override

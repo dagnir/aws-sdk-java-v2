@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.poet.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
@@ -28,27 +29,41 @@ import com.squareup.javapoet.TypeName;
 import java.util.ArrayList;
 import java.util.List;
 
+import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 
 class ListSetters extends AbstractMemberSetters {
-    private TypeProvider typeProvider;
+    private final TypeProvider typeProvider;
+    private final ServiceModelCopiers serviceModelCopiers;
 
-    public ListSetters(ShapeModel shapeModel, MemberModel memberModel, TypeProvider typeProvider) {
-        super(shapeModel, memberModel, typeProvider);
+    public ListSetters(IntermediateModel intermediateModel,
+                       ShapeModel shapeModel,
+                       MemberModel memberModel,
+                       TypeProvider typeProvider) {
+        super(intermediateModel, shapeModel, memberModel, typeProvider);
         this.typeProvider = typeProvider;
+        this.serviceModelCopiers = new ServiceModelCopiers(intermediateModel);
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
         List<MethodSpec> fluentDeclarations = new ArrayList<>();
 
-        fluentDeclarations.add(fluentSetterDeclaration(memberAsParameter(), returnType).build());
-        fluentDeclarations.add(fluentSetterDeclaration(
-                ParameterSpec.builder(asArray(), fieldName()).build(), returnType).varargs(true).build());
+        fluentDeclarations.add(fluentSetterDeclaration(memberAsParameter(), returnType)
+                .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
+                .build());
+
+        fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(asArray(), fieldName()).build(), returnType)
+                .addJavadoc("$L", memberModel().getVarargSetterDocumentation())
+                .varargs(true)
+                .build());
+
         if (memberModel().getEnumType() != null) {
             fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(
-                    asArrayOfModeledElement(), fieldName()).build(), returnType).varargs(true).build());
+                    asArrayOfModeledEnum(), fieldName()).build(), returnType)
+                    .varargs(true)
+                    .addJavadoc("$L", memberModel().getVarargSetterDocumentation())
+                    .build());
         }
 
         return fluentDeclarations;
@@ -94,7 +109,7 @@ class ListSetters extends AbstractMemberSetters {
         MethodSpec.Builder builder = beanStyleSetterBuilder()
                 .addCode(copySetterBody());
 
-        if (shapeModel().getShapeType() == ShapeType.Exception) {
+        if (annotateJsonProperty()) {
             builder.addAnnotation(
                     AnnotationSpec.builder(JsonProperty.class)
                             .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
@@ -121,7 +136,7 @@ class ListSetters extends AbstractMemberSetters {
     }
 
     private MethodSpec fluentEnumVarargToListSetter(TypeName returnType) {
-        return fluentSetterBuilder(ParameterSpec.builder(asArrayOfModeledElement(), fieldName()).build(), returnType)
+        return fluentSetterBuilder(ParameterSpec.builder(asArrayOfModeledEnum(), fieldName()).build(), returnType)
                 .varargs(true)
                 .addAnnotation(SafeVarargs.class)
                 .addCode(enumVarargToListBody().toBuilder().addStatement("return this").build())
@@ -129,7 +144,7 @@ class ListSetters extends AbstractMemberSetters {
     }
 
     private MethodSpec beanStyleEnumVarargToListSetter() {
-        return beanStyleSetterBuilder(ParameterSpec.builder(asArrayOfModeledElement(), fieldName()).build())
+        return beanStyleSetterBuilder(ParameterSpec.builder(asArrayOfModeledEnum(), fieldName()).build())
                 .varargs(true)
                 .addAnnotation(SafeVarargs.class)
                 .addCode(enumVarargToListBody())
@@ -137,17 +152,20 @@ class ListSetters extends AbstractMemberSetters {
     }
 
     private CodeBlock varargToListBody() {
-        return CodeBlock.builder()
+        CodeBlock.Builder builder = CodeBlock.builder()
                 .beginControlFlow("if (this.$N == null)", fieldName())
                 .addStatement("this.$N = new $T<>($N.length)", fieldName(),
                         typeProvider.listImplClassName(),
                         fieldName())
                 .endControlFlow()
-                .beginControlFlow("for ($T e: $N)", listElementType(), fieldName())
-                .addStatement("this.$N.add($N.$N(e))", fieldName(), MemberCopierSpec.copierClassName(elementModel()),
-                        MemberCopierSpec.copyMethodName(elementModel()))
-                .endControlFlow()
-                .build();
+                .beginControlFlow("for ($T e: $N)", listElementType(), fieldName());
+
+        serviceModelCopiers.copierClassFor(elementModel())
+                .map(copierClass -> builder.addStatement("this.$N.add($T.$N(e))", fieldName(), copierClass,
+                        serviceModelCopiers.copyMethodName()))
+                .orElseGet(() -> builder.addStatement("this.$N.add(e)", fieldName()));
+
+        return builder.endControlFlow().build();
     }
 
     private CodeBlock enumVarargToListBody() {
@@ -158,7 +176,7 @@ class ListSetters extends AbstractMemberSetters {
                                 ClassName.get(String.class)),
                         fieldName())
                 .endControlFlow()
-                .beginControlFlow("for ($T ele : $N)", modeledElement(), fieldName())
+                .beginControlFlow("for ($T ele : $N)", modeledEnumElement(), fieldName())
                 .addStatement("this.$N.add(ele.toString())", fieldName())
                 .endControlFlow()
                 .build();
@@ -168,7 +186,7 @@ class ListSetters extends AbstractMemberSetters {
         return memberModel().getListModel().getListMemberModel();
     }
 
-    private TypeName modeledElement() {
+    private TypeName modeledEnumElement() {
         return typeProvider.getModelClass(memberModel().getEnumType());
     }
 
@@ -176,16 +194,11 @@ class ListSetters extends AbstractMemberSetters {
         return typeProvider.parameterType(elementModel());
     }
 
-    @Override
-    protected ParameterSpec memberAsParameter() {
-        return ParameterSpec.builder(typeProvider.parameterType(memberModel()), fieldName()).build();
-    }
-
     private ArrayTypeName asArray() {
         return ArrayTypeName.of(listElementType());
     }
 
-    private ArrayTypeName asArrayOfModeledElement() {
-        return ArrayTypeName.of(modeledElement());
+    private ArrayTypeName asArrayOfModeledEnum() {
+        return ArrayTypeName.of(modeledEnumElement());
     }
 }

@@ -8,6 +8,8 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.SimpleStructMarshaller;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class SimpleStruct implements ToCopyableBuilder<SimpleStruct.Builder, SimpleStruct>, StructuredPojo {
     private final String stringMember;
@@ -102,17 +104,13 @@ public class SimpleStruct implements ToCopyableBuilder<SimpleStruct.Builder, Sim
         }
 
         @Override
-        public Builder stringMember(String stringMember) {
-            this.stringMember = StringCopier.copyString(stringMember);
+        public final Builder stringMember(String stringMember) {
+            this.stringMember = stringMember;
             return this;
         }
 
-        /**
-         *
-         * @param stringMember
-         */
-        public void setStringMember(String stringMember) {
-            this.stringMember = StringCopier.copyString(stringMember);
+        public final void setStringMember(String stringMember) {
+            this.stringMember = stringMember;
         }
 
         @Override

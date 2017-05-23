@@ -32,7 +32,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 </#if>
 
     public ${shape.shapeName} unmarshall(StaxUnmarshallerContext context) throws Exception {
-        ${shape.shapeName} ${shape.variable.variableName} = new ${shape.shapeName}();
+        ${shape.shapeName}.Builder ${shape.variable.variableName} = ${shape.shapeName}.builder();
         int originalDepth = context.getCurrentDepth();
         int targetDepth = originalDepth + 1;
 
@@ -57,7 +57,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
     <#list shape.members as memberModel>
         <#if memberModel.http.isHeader() >
             context.setCurrentHeader("${memberModel.http.unmarshallLocationName}");
-            ${shape.variable.variableName}.${memberModel.setterMethodName}(
+            ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(
             <#if memberModel.variable.simpleType == "Date">
                 software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
             <#else>
@@ -72,22 +72,43 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 <#if shape.hasStatusCodeMember >
     <#list shape.members as memberModel>
         <#if memberModel.http.isStatusCode() >
-        ${shape.variable.variableName}.${memberModel.setterMethodName}(context.getHttpResponse().getStatusCode());
+        ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(context.getHttpResponse().getStatusCode());
+        </#if>
+
+        // hello world
+
+        <#if memberModel.map>
+        java.util.Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = null;
         </#if>
     </#list>
 </#if>
 
+<#list shape.members as memberModel>
+    <#if memberModel.map>
+        java.util.Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = null;
+    </#if>
+</#list>
+
         while (true) {
             XMLEvent xmlEvent = context.nextEvent();
-            if (xmlEvent.isEndDocument()) return ${shape.variable.variableName};
+            if (xmlEvent.isEndDocument()) {
+            <#-- Set any map members we filled during unmarshalling -->
+<#list shape.members as memberModel>
+    <#if memberModel.map>
+                    ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.variableName});
+    </#if>
+</#list>
+                return ${shape.variable.variableName}.build();
+            }
 
             if (xmlEvent.isAttribute() || xmlEvent.isStartElement()) {
 
 <#if shape.members?has_content>
   <#if shape.customization.artificialResultWrapper?has_content>
     <#assign artificialWrapper = shape.customization.artificialResultWrapper />
+    <#assign setterMethod = shape.getMemberByName(artificialWrapper.wrappedMemberName).fluentSetterMethodName />
     <#-- If it's a result wrapper created by the customization, then we skip xpath test and directly invoke the unmarshaller for the wrapped member -->
-                ${shape.variable.variableName}.set${artificialWrapper.wrappedMemberName}(
+                ${shape.variable.variableName}.${setterMethod}(
                     ${artificialWrapper.wrappedMemberSimpleType}Unmarshaller.getInstance().unmarshall(context)
                     );
                 continue;
@@ -101,7 +122,13 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 </#if>
             } else if (xmlEvent.isEndElement()) {
                 if (context.getCurrentDepth() < originalDepth) {
-                    return ${shape.variable.variableName};
+<#list shape.members as memberModel>
+    <#if memberModel.map>
+                    ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.variableName});
+
+    </#if>
+</#list>
+                    return ${shape.variable.variableName}.build();
                 }
             }
         }

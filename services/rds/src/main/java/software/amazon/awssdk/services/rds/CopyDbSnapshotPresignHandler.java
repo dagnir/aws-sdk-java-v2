@@ -20,6 +20,7 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
 import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
+import software.amazon.awssdk.util.ImmutableObjectUtils;
 
 /**
  * Handler for pre-signing {@link CopyDBSnapshotRequest}.
@@ -40,17 +41,17 @@ public class CopyDbSnapshotPresignHandler extends PresignRequestHandler<CopyDBSn
         return new PresignableRequest() {
             @Override
             public void setPreSignedUrl(String preSignedUrl) {
-                originalRequest.setPreSignedUrl(preSignedUrl);
+                ImmutableObjectUtils.setObjectMember(originalRequest, "preSignedUrl", preSignedUrl);
             }
 
             @Override
             public String getPreSignedUrl() {
-                return originalRequest.getPreSignedUrl();
+                return originalRequest.preSignedUrl();
             }
 
             @Override
             public String getSourceRegion() {
-                return originalRequest.getSourceRegion();
+                return originalRequest.sourceRegion();
             }
 
             @Override

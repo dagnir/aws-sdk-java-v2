@@ -26,18 +26,18 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResult;
 class ResultConverter {
 
     static SendMessageResult convert(SendMessageBatchResultEntry br) {
-        SendMessageResult toReturn = new SendMessageResult();
-        toReturn.setMD5OfMessageBody(br.getMD5OfMessageBody());
-        toReturn.setMessageId(br.getMessageId());
-        toReturn.setMD5OfMessageAttributes(br.getMD5OfMessageAttributes());
-        return toReturn;
+        SendMessageResult.Builder toReturnBuilder = SendMessageResult.builder()
+            .md5OfMessageBody(br.md5OfMessageBody())
+            .messageId(br.messageId())
+            .md5OfMessageAttributes(br.md5OfMessageAttributes());
+        return toReturnBuilder.build();
     }
 
     static Exception convert(BatchResultErrorEntry be) {
-        AmazonServiceException toReturn = new AmazonServiceException(be.getMessage());
+        AmazonServiceException toReturn = new AmazonServiceException(be.message());
 
-        toReturn.setErrorCode(be.getCode());
-        toReturn.setErrorType(be.isSenderFault() ? ErrorType.Client : ErrorType.Service);
+        toReturn.setErrorCode(be.code());
+        toReturn.setErrorType(be.senderFault() ? ErrorType.Client : ErrorType.Service);
         toReturn.setServiceName("AmazonSQS");
 
         return toReturn;

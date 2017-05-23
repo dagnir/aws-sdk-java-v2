@@ -35,6 +35,7 @@ import software.amazon.awssdk.services.ec2.model.Reservation;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.RunInstancesResult;
 import software.amazon.awssdk.services.ec2.model.SpotInstanceRequest;
+import software.amazon.awssdk.util.ImmutableObjectUtils;
 import software.amazon.awssdk.utils.Base64Utils;
 
 public class EC2RequestHandler extends AbstractRequestHandler {
@@ -43,7 +44,7 @@ public class EC2RequestHandler extends AbstractRequestHandler {
         AmazonWebServiceRequest originalRequest = request.getOriginalRequest();
         if (originalRequest instanceof ImportKeyPairRequest) {
             ImportKeyPairRequest importKeyPairRequest = (ImportKeyPairRequest) originalRequest;
-            String publicKeyMaterial = importKeyPairRequest.getPublicKeyMaterial();
+            String publicKeyMaterial = importKeyPairRequest.publicKeyMaterial();
             String encodedKeyMaterial = Base64Utils.encodeAsString(publicKeyMaterial.getBytes(Charsets.UTF_8));
             request.addParameter("PublicKeyMaterial", encodedKeyMaterial);
         } else if (originalRequest instanceof RequestSpotInstancesRequest) {
@@ -53,20 +54,20 @@ public class EC2RequestHandler extends AbstractRequestHandler {
 
             // Marshall the security groups specified only by name
             int groupNameCount = 1;
-            for (String groupName : requestSpotInstancesRequest.getLaunchSpecification().getSecurityGroups()) {
+            for (String groupName : requestSpotInstancesRequest.launchSpecification().securityGroups()) {
                 request.addParameter("LaunchSpecification.SecurityGroup." + groupNameCount++, groupName);
             }
 
             // Then loop through the GroupIdentifier objects and marshall any specified IDs
             // and any additional group names
             int groupIdCount = 1;
-            for (GroupIdentifier group : requestSpotInstancesRequest.getLaunchSpecification().getAllSecurityGroups()) {
-                if (group.getGroupId() != null) {
-                    request.addParameter("LaunchSpecification.SecurityGroupId." + groupIdCount++, group.getGroupId());
+            for (GroupIdentifier group : requestSpotInstancesRequest.launchSpecification().allSecurityGroups()) {
+                if (group.groupId() != null) {
+                    request.addParameter("LaunchSpecification.SecurityGroupId." + groupIdCount++, group.groupId());
                 }
 
-                if (group.getGroupName() != null) {
-                    request.addParameter("LaunchSpecification.SecurityGroup." + groupNameCount++, group.getGroupName());
+                if (group.groupName() != null) {
+                    request.addParameter("LaunchSpecification.SecurityGroup." + groupNameCount++, group.groupName());
                 }
             }
 
@@ -84,14 +85,14 @@ public class EC2RequestHandler extends AbstractRequestHandler {
             // If a RunInstancesRequest doesn't specify a ClientToken, fill one in, otherwise
             // retries could result in unwanted instances being launched in the customer's account.
             RunInstancesRequest runInstancesRequest = (RunInstancesRequest) originalRequest;
-            if (runInstancesRequest.getClientToken() == null) {
+            if (runInstancesRequest.clientToken() == null) {
                 request.addParameter("ClientToken", UUID.randomUUID().toString());
             }
         } else if (originalRequest instanceof ModifyReservedInstancesRequest) {
             // If a ModifyReservedInstancesRequest doesn't specify a ClientToken, fill one in, otherwise
             // retries could result in duplicate requests.
             ModifyReservedInstancesRequest modifyReservedInstancesRequest = (ModifyReservedInstancesRequest) originalRequest;
-            if (modifyReservedInstancesRequest.getClientToken() == null) {
+            if (modifyReservedInstancesRequest.clientToken() == null) {
                 request.addParameter("ClientToken", UUID.randomUUID().toString());
             }
         }
@@ -106,40 +107,40 @@ public class EC2RequestHandler extends AbstractRequestHandler {
          */
         if (response instanceof DescribeSpotInstanceRequestsResult) {
             DescribeSpotInstanceRequestsResult result = (DescribeSpotInstanceRequestsResult) response;
-            for (SpotInstanceRequest spotInstanceRequest : result.getSpotInstanceRequests()) {
-                LaunchSpecification launchSpecification = spotInstanceRequest.getLaunchSpecification();
+            for (SpotInstanceRequest spotInstanceRequest : result.spotInstanceRequests()) {
+                LaunchSpecification launchSpecification = spotInstanceRequest.launchSpecification();
                 populateLaunchSpecificationSecurityGroupNames(launchSpecification);
             }
         } else if (response instanceof RequestSpotInstancesResult) {
             RequestSpotInstancesResult result = (RequestSpotInstancesResult) response;
-            for (SpotInstanceRequest spotInstanceRequest : result.getSpotInstanceRequests()) {
-                LaunchSpecification launchSpecification = spotInstanceRequest.getLaunchSpecification();
+            for (SpotInstanceRequest spotInstanceRequest : result.spotInstanceRequests()) {
+                LaunchSpecification launchSpecification = spotInstanceRequest.launchSpecification();
                 populateLaunchSpecificationSecurityGroupNames(launchSpecification);
             }
         } else if (response instanceof DescribeInstancesResult) {
             DescribeInstancesResult result = (DescribeInstancesResult) response;
-            for (Reservation reservation : result.getReservations()) {
+            for (Reservation reservation : result.reservations()) {
                 populateReservationSecurityGroupNames(reservation);
             }
         } else if (response instanceof RunInstancesResult) {
             RunInstancesResult result = (RunInstancesResult) response;
-            populateReservationSecurityGroupNames(result.getReservation());
+            populateReservationSecurityGroupNames(result.reservation());
         }
     }
 
     private void populateReservationSecurityGroupNames(Reservation reservation) {
         List<String> groupNames = new ArrayList<String>();
-        for (GroupIdentifier group : reservation.getGroups()) {
-            groupNames.add(group.getGroupName());
+        for (GroupIdentifier group : reservation.groups()) {
+            groupNames.add(group.groupName());
         }
-        reservation.setGroupNames(groupNames);
+        ImmutableObjectUtils.setObjectMember(reservation, "groupNames", groupNames);
     }
 
     private void populateLaunchSpecificationSecurityGroupNames(LaunchSpecification launchSpecification) {
         List<String> groupNames = new ArrayList<String>();
-        for (GroupIdentifier group : launchSpecification.getAllSecurityGroups()) {
-            groupNames.add(group.getGroupName());
+        for (GroupIdentifier group : launchSpecification.allSecurityGroups()) {
+            groupNames.add(group.groupName());
         }
-        launchSpecification.setSecurityGroups(groupNames);
+        ImmutableObjectUtils.setObjectMember(launchSpecification, "securityGroups", groupNames);
     }
 }

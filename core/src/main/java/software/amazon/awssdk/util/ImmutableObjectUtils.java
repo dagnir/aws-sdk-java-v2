@@ -13,11 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.dynamodb;
+package software.amazon.awssdk.util;
+
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 import java.util.Arrays;
 
-public class ReflectHelper {
+@ReviewBeforeRelease("Remove before GA")
+public class ImmutableObjectUtils {
     public static <T> void setObjectMember(Object o, String memberName, T value) {
         Arrays.stream(o.getClass().getDeclaredFields())
                 .filter(f -> f.getName().equals(memberName))

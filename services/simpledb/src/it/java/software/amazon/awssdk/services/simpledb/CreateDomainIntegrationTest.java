@@ -35,8 +35,9 @@ public class CreateDomainIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testCreateDomainInvalidParameterValueException() {
-        CreateDomainRequest request = new CreateDomainRequest();
-        request.setDomainName("''''''''''````````^^**&&@@!!??;;::[[{{]]}}||\\``''''");
+        CreateDomainRequest request = CreateDomainRequest.builder()
+                .domainName("''''''''''````````^^**&&@@!!??;;::[[{{]]}}||\\``''''")
+                .build();
         try {
             sdb.createDomain(request);
             fail("Expected InvalidParameterValueException, but wasn't thrown");
@@ -51,7 +52,7 @@ public class CreateDomainIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testCreateDomainMissingParameterException() {
-        CreateDomainRequest request = new CreateDomainRequest();
+        CreateDomainRequest request = CreateDomainRequest.builder().build();
         try {
             sdb.createDomain(request);
             fail("Expected MissingParameterException, but wasn't thrown");

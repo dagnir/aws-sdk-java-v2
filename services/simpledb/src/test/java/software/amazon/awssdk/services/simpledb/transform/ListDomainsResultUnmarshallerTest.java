@@ -37,9 +37,9 @@ public class ListDomainsResultUnmarshallerTest {
         ListDomainsResult result = new ListDomainsResultUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
-        assertTrue(!result.getDomainNames().isEmpty());
-        assertTrue(result.getDomainNames().size() == 2);
-        assertTrue(result.getDomainNames().get(0).equals("DomainOne"));
-        assertTrue(result.getDomainNames().get(1).equals("DomainTwo"));
+        assertTrue(!result.domainNames().isEmpty());
+        assertTrue(result.domainNames().size() == 2);
+        assertTrue(result.domainNames().get(0).equals("DomainOne"));
+        assertTrue(result.domainNames().get(1).equals("DomainTwo"));
     }
 }

@@ -29,13 +29,14 @@ public enum MetricData {
      * replacing the dimensions with the newly specified ones.
      */
     public static MetricDatum newMetricDatum(MetricDatum from, Dimension... dimensions) {
-        return new MetricDatum()
-                .metricName(from.getMetricName())
+        return MetricDatum.builder()
+                .metricName(from.metricName())
                 .dimensions(dimensions)
-                .unit(from.getUnit())
-                .value(from.getValue())
-                .statisticValues(from.getStatisticValues())
-                .timestamp(from.getTimestamp())
+                .unit(from.unit())
+                .value(from.value())
+                .statisticValues(from.statisticValues())
+                .timestamp(from.timestamp())
+                .build()
                 ;
     }
 }

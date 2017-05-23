@@ -15,9 +15,6 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
-import static software.amazon.awssdk.codegen.poet.PoetUtils.escapeLiteralString;
-import static software.amazon.awssdk.codegen.poet.PoetUtils.makeJavadocPoetFriendly;
-
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -58,12 +55,11 @@ public class AwsServiceModel implements ClassSpec {
         this.intermediateModel = intermediateModel;
         this.shapeModel = shapeModel;
         this.poetExtensions = new PoetExtensions(this.intermediateModel);
-        this.typeProvider = new TypeProvider(this.poetExtensions);
+        this.typeProvider = new TypeProvider(intermediateModel, this.poetExtensions);
         this.shapeModelSpec = new ShapeModelSpec(this.shapeModel, typeProvider, poetExtensions);
         this.interfaceProvider = new AwsShapePublicInterfaceProvider(this.intermediateModel, this.shapeModel);
         this.modelMethodOverrides = new ModelMethodOverrides(this.poetExtensions);
-        this.modelBuilderSpecs = new ModelBuilderSpecs(this.shapeModel, this.shapeModelSpec, this.typeProvider,
-                new ServiceModelCopierSpecs(this.intermediateModel),
+        this.modelBuilderSpecs = new ModelBuilderSpecs(intermediateModel, this.shapeModel, this.shapeModelSpec, this.typeProvider,
                 this.poetExtensions);
     }
 
@@ -79,7 +75,7 @@ public class AwsServiceModel implements ClassSpec {
                 .addTypes(nestedModelClassTypes());
 
         if (shapeModel.getDocumentation() != null) {
-            specBuilder.addJavadoc(escapeLiteralString(shapeModel.getDocumentation()));
+            specBuilder.addJavadoc("$L", shapeModel.getDocumentation());
         }
 
         return specBuilder.build();
@@ -133,10 +129,9 @@ public class AwsServiceModel implements ClassSpec {
     private List<MethodSpec> memberGetters() {
         return shapeModel.getMembers().stream()
                 .map(m -> {
-                    String javadoc = makeJavadocPoetFriendly(m.getGetterDocumentation());
                     return MethodSpec
                             .methodBuilder(m.getFluentGetterMethodName())
-                            .addJavadoc(javadoc)
+                            .addJavadoc("$L", m.getGetterDocumentation())
                             .returns(typeProvider.fieldType(m))
                             .addModifiers(Modifier.PUBLIC)
                             .addStatement("return $N", m.getVariable().getVariableName())

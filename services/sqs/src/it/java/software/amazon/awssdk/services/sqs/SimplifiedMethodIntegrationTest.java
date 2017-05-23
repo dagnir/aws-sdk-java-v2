@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 
 import org.junit.After;
 import org.junit.Test;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.sqs.model.AddPermissionRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -57,125 +58,126 @@ import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
  * these use the simplified variants of the operation methods rather then the typical methods that
  * take some form of a request object.
  */
+@ReviewBeforeRelease("Enable or delete based on result of simple methods story")
 public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
-
-    private static final String ATTRIBUTE_VALUE = "42";
-    private static final String ATTRIBUTE_NAME = "VisibilityTimeout";
-    private static final String MESSAGE_BODY = "foobarbazbar";
-
-    private final String queueName = getUniqueQueueName();
-    private String queueUrl;
-
-    /**
-     * Releases all resources used by these tests.
-     */
-    @After
-    public void tearDown() throws Exception {
-        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
-    }
-
-    @Test
-    public void testSimplifiedMethods() throws InterruptedException {
-        runCreateQueueTest();
-        runGetQueueTest();
-        runListQueuesTest();
-        runSetAttributesTest();
-        runAddPermissionTest();
-        runRemovePermissionTest();
-        runSendMessageTest();
-        ReceiveMessageResult receiveMessageResult = runReceiveMessageTest();
-        runSendMessageBatchTest();
-        String receiptHandle = runChangeMessageVisibilityTest(receiveMessageResult);
-        runDeleteMessageTest(receiptHandle);
-    }
-
-    private void runCreateQueueTest() {
-        queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
-        assertNotEmpty(queueUrl);
-    }
-
-    private void runGetQueueTest() {
-        GetQueueUrlResult getQueueUrlResult = sqs.getQueueUrl(new GetQueueUrlRequest(queueName)).join();
-        assertEquals(queueUrl, getQueueUrlResult.getQueueUrl());
-    }
-
-    private void runListQueuesTest() {
-        ListQueuesResult listQueuesResult = sqs.listQueues(new ListQueuesRequest(queueName)).join();
-        assertEquals(1, listQueuesResult.getQueueUrls().size());
-        assertEquals(queueUrl, listQueuesResult.getQueueUrls().get(0));
-    }
-
-    private void runSetAttributesTest() throws InterruptedException {
-        Map<String, String> attributes = new HashMap<String, String>();
-        attributes.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
-        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes)).join();
-
-        Thread.sleep(1000 * 10);
-        GetQueueAttributesResult queueAttributesResult = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl,
-                Arrays.asList(ATTRIBUTE_NAME))).join();
-        assertEquals(1, queueAttributesResult.getAttributes().size());
-        Map<String, String> attributes2 = queueAttributesResult.getAttributes();
-        assertEquals(1, attributes2.size());
-        assertNotNull(attributes2.get(ATTRIBUTE_NAME));
-    }
-
-    private void runAddPermissionTest() {
-        sqs.addPermission(new AddPermissionRequest(queueUrl, "foo-label", Arrays.asList(getAccountId()),
-                Arrays.asList("SendMessage", "DeleteMessage"))).join();
-    }
-
-    private void runRemovePermissionTest() throws InterruptedException {
-        Thread.sleep(1000 * 2);
-        sqs.removePermission(new RemovePermissionRequest(queueUrl, "foo-label")).join();
-    }
-
-    private void runSendMessageTest() {
-        for (int i = 0; i < 10; i++) {
-            SendMessageResult sendMessageResult = sqs.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)).join();
-            assertNotEmpty(sendMessageResult.getMessageId());
-            assertNotEmpty(sendMessageResult.getMD5OfMessageBody());
-        }
-    }
-
-    private ReceiveMessageResult runReceiveMessageTest() {
-        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join();
-        assertThat(receiveMessageResult.getMessages(), not(empty()));
-        Message message = receiveMessageResult.getMessages().get(0);
-        assertEquals(MESSAGE_BODY, message.getBody());
-        assertNotEmpty(message.getMD5OfBody());
-        assertNotEmpty(message.getMessageId());
-        assertNotEmpty(message.getReceiptHandle());
-
-        for (Iterator<Entry<String, String>> iterator = message.getAttributes().entrySet().iterator(); iterator
-                .hasNext(); ) {
-            Entry<String, String> entry = iterator.next();
-            assertNotEmpty((entry.getKey()));
-            assertNotEmpty((entry.getValue()));
-        }
-        return receiveMessageResult;
-    }
-
-    private void runSendMessageBatchTest() {
-        SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest(queueUrl, Arrays.asList(
-                new SendMessageBatchRequestEntry().id("1").messageBody("1"), new SendMessageBatchRequestEntry()
-                        .id("2").messageBody("2"), new SendMessageBatchRequestEntry().id("3")
-                        .messageBody("3"), new SendMessageBatchRequestEntry().id("4").messageBody("4"),
-                new SendMessageBatchRequestEntry().id("5").messageBody("5")))).join();
-
-        assertNotNull(sendMessageBatchResult.getFailed());
-        assertThat(sendMessageBatchResult.getSuccessful().size(), greaterThan(0));
-        assertNotNull(sendMessageBatchResult.getSuccessful().get(0).getId());
-        assertNotNull(sendMessageBatchResult.getSuccessful().get(0).getMD5OfMessageBody());
-        assertNotNull(sendMessageBatchResult.getSuccessful().get(0).getMessageId());
-    }
-
-    private String runChangeMessageVisibilityTest(ReceiveMessageResult receiveMessageResult) {
-        String receiptHandle = (receiveMessageResult.getMessages().get(0)).getReceiptHandle();
-        sqs.changeMessageVisibility(new ChangeMessageVisibilityRequest(queueUrl, receiptHandle, 123));
-        return receiptHandle;
-    }
-
-    private void runDeleteMessageTest(String receiptHandle) {
-        sqs.deleteMessage(new DeleteMessageRequest(queueUrl, receiptHandle));
-    }
+//
+//    private static final String ATTRIBUTE_VALUE = "42";
+//    private static final String ATTRIBUTE_NAME = "VisibilityTimeout";
+//    private static final String MESSAGE_BODY = "foobarbazbar";
+//
+//    private final String queueName = getUniqueQueueName();
+//    private String queueUrl;
+//
+//    /**
+//     * Releases all resources used by these tests.
+//     */
+//    @After
+//    public void tearDown() throws Exception {
+//        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+//    }
+//
+//    @Test
+//    public void testSimplifiedMethods() throws InterruptedException {
+//        runCreateQueueTest();
+//        runGetQueueTest();
+//        runListQueuesTest();
+//        runSetAttributesTest();
+//        runAddPermissionTest();
+//        runRemovePermissionTest();
+//        runSendMessageTest();
+//        ReceiveMessageResult receiveMessageResult = runReceiveMessageTest();
+//        runSendMessageBatchTest();
+//        String receiptHandle = runChangeMessageVisibilityTest(receiveMessageResult);
+//        runDeleteMessageTest(receiptHandle);
+//    }
+//
+//    private void runCreateQueueTest() {
+//        queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
+//        assertNotEmpty(queueUrl);
+//    }
+//
+//    private void runGetQueueTest() {
+//        GetQueueUrlResult getQueueUrlResult = sqs.getQueueUrl(new GetQueueUrlRequest(queueName)).join();
+//        assertEquals(queueUrl, getQueueUrlResult.getQueueUrl());
+//    }
+//
+//    private void runListQueuesTest() {
+//        ListQueuesResult listQueuesResult = sqs.listQueues(new ListQueuesRequest(queueName)).join();
+//        assertEquals(1, listQueuesResult.getQueueUrls().size());
+//        assertEquals(queueUrl, listQueuesResult.getQueueUrls().get(0));
+//    }
+//
+//    private void runSetAttributesTest() throws InterruptedException {
+//        Map<String, String> attributes = new HashMap<String, String>();
+//        attributes.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
+//        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes)).join();
+//
+//        Thread.sleep(1000 * 10);
+//        GetQueueAttributesResult queueAttributesResult = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl,
+//                Arrays.asList(ATTRIBUTE_NAME))).join();
+//        assertEquals(1, queueAttributesResult.getAttributes().size());
+//        Map<String, String> attributes2 = queueAttributesResult.getAttributes();
+//        assertEquals(1, attributes2.size());
+//        assertNotNull(attributes2.get(ATTRIBUTE_NAME));
+//    }
+//
+//    private void runAddPermissionTest() {
+//        sqs.addPermission(new AddPermissionRequest(queueUrl, "foo-label", Arrays.asList(getAccountId()),
+//                Arrays.asList("SendMessage", "DeleteMessage"))).join();
+//    }
+//
+//    private void runRemovePermissionTest() throws InterruptedException {
+//        Thread.sleep(1000 * 2);
+//        sqs.removePermission(new RemovePermissionRequest(queueUrl, "foo-label")).join();
+//    }
+//
+//    private void runSendMessageTest() {
+//        for (int i = 0; i < 10; i++) {
+//            SendMessageResult sendMessageResult = sqs.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)).join();
+//            assertNotEmpty(sendMessageResult.getMessageId());
+//            assertNotEmpty(sendMessageResult.md5OfMessageBody());
+//        }
+//    }
+//
+//    private ReceiveMessageResult runReceiveMessageTest() {
+//        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join();
+//        assertThat(receiveMessageResult.messages(), not(empty()));
+//        Message message = receiveMessageResult.messages().get(0);
+//        assertEquals(MESSAGE_BODY, message.body());
+//        assertNotEmpty(message.md5OfBody());
+//        assertNotEmpty(message.getMessageId());
+//        assertNotEmpty(message.getReceiptHandle());
+//
+//        for (Iterator<Entry<String, String>> iterator = message.getAttributes().entrySet().iterator(); iterator
+//                .hasNext(); ) {
+//            Entry<String, String> entry = iterator.next();
+//            assertNotEmpty((entry.getKey()));
+//            assertNotEmpty((entry.getValue()));
+//        }
+//        return receiveMessageResult;
+//    }
+//
+//    private void runSendMessageBatchTest() {
+//        SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest(queueUrl, Arrays.asList(
+//                new SendMessageBatchRequestEntry().id("1").messageBody("1"), new SendMessageBatchRequestEntry()
+//                        .id("2").messageBody("2"), new SendMessageBatchRequestEntry().id("3")
+//                        .messageBody("3"), new SendMessageBatchRequestEntry().id("4").messageBody("4"),
+//                new SendMessageBatchRequestEntry().id("5").messageBody("5")))).join();
+//
+//        assertNotNull(sendMessageBatchResult.getFailed());
+//        assertThat(sendMessageBatchResult.getSuccessful().size(), greaterThan(0));
+//        assertNotNull(sendMessageBatchResult.getSuccessful().get(0).getId());
+//        assertNotNull(sendMessageBatchResult.getSuccessful().get(0).md5OfMessageBody());
+//        assertNotNull(sendMessageBatchResult.getSuccessful().get(0).getMessageId());
+//    }
+//
+//    private String runChangeMessageVisibilityTest(ReceiveMessageResult receiveMessageResult) {
+//        String receiptHandle = (receiveMessageResult.messages().get(0)).getReceiptHandle();
+//        sqs.changeMessageVisibility(new ChangeMessageVisibilityRequest(queueUrl, receiptHandle, 123));
+//        return receiptHandle;
+//    }
+//
+//    private void runDeleteMessageTest(String receiptHandle) {
+//        sqs.deleteMessage(new DeleteMessageRequest(queueUrl, receiptHandle));
+//    }
 }

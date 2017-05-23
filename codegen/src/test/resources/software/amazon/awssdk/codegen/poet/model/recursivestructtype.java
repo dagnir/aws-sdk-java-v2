@@ -12,6 +12,8 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.RecursiveStructTypeMarshaller;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class RecursiveStructType implements ToCopyableBuilder<RecursiveStructType.Builder, RecursiveStructType>, StructuredPojo {
     private final String noRecurse;
@@ -173,6 +175,12 @@ public class RecursiveStructType implements ToCopyableBuilder<RecursiveStructTyp
 
         /**
          *
+         * <p>
+         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
+         * {@link #setRecursiveList(java.util.Collection)} or {@link #withRecursiveList(java.util.Collection)} if you
+         * want to override the existing values.
+         * </p>
+         * 
          * @param recursiveList
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -206,85 +214,65 @@ public class RecursiveStructType implements ToCopyableBuilder<RecursiveStructTyp
         }
 
         @Override
-        public Builder noRecurse(String noRecurse) {
-            this.noRecurse = StringCopier.copyString(noRecurse);
+        public final Builder noRecurse(String noRecurse) {
+            this.noRecurse = noRecurse;
             return this;
         }
 
-        /**
-         *
-         * @param noRecurse
-         */
-        public void setNoRecurse(String noRecurse) {
-            this.noRecurse = StringCopier.copyString(noRecurse);
+        public final void setNoRecurse(String noRecurse) {
+            this.noRecurse = noRecurse;
         }
 
         @Override
-        public Builder recursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
+        public final Builder recursiveStruct(RecursiveStructType recursiveStruct) {
+            this.recursiveStruct = recursiveStruct;
             return this;
         }
 
-        /**
-         *
-         * @param recursiveStruct
-         */
-        public void setRecursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
+        public final void setRecursiveStruct(RecursiveStructType recursiveStruct) {
+            this.recursiveStruct = recursiveStruct;
         }
 
         @Override
-        public Builder recursiveList(Collection<RecursiveStructType> recursiveList) {
-            this.recursiveList = RecursiveListTypeCopier.copyRecursiveListType(recursiveList);
+        public final Builder recursiveList(Collection<RecursiveStructType> recursiveList) {
+            this.recursiveList = RecursiveListTypeCopier.copy(recursiveList);
             return this;
         }
 
         @Override
         @SafeVarargs
-        public Builder recursiveList(RecursiveStructType... recursiveList) {
+        public final Builder recursiveList(RecursiveStructType... recursiveList) {
             if (this.recursiveList == null) {
                 this.recursiveList = new ArrayList<>(recursiveList.length);
             }
             for (RecursiveStructType e : recursiveList) {
-                this.recursiveList.add(RecursiveStructTypeCopier.copyRecursiveStructType(e));
+                this.recursiveList.add(e);
             }
             return this;
         }
 
-        /**
-         *
-         * @param recursiveList
-         */
-        public void setRecursiveList(Collection<RecursiveStructType> recursiveList) {
-            this.recursiveList = RecursiveListTypeCopier.copyRecursiveListType(recursiveList);
+        public final void setRecursiveList(Collection<RecursiveStructType> recursiveList) {
+            this.recursiveList = RecursiveListTypeCopier.copy(recursiveList);
         }
 
-        /**
-         *
-         * @param recursiveList
-         */
         @SafeVarargs
-        public void setRecursiveList(RecursiveStructType... recursiveList) {
+        public final void setRecursiveList(RecursiveStructType... recursiveList) {
             if (this.recursiveList == null) {
                 this.recursiveList = new ArrayList<>(recursiveList.length);
             }
             for (RecursiveStructType e : recursiveList) {
-                this.recursiveList.add(RecursiveStructTypeCopier.copyRecursiveStructType(e));
+                this.recursiveList.add(e);
             }
         }
 
         @Override
-        public Builder recursiveMap(Map<String, RecursiveStructType> recursiveMap) {
-            this.recursiveMap = RecursiveMapTypeCopier.copyRecursiveMapType(recursiveMap);
+        public final Builder recursiveMap(Map<String, RecursiveStructType> recursiveMap) {
+            this.recursiveMap = RecursiveMapTypeCopier.copy(recursiveMap);
             return this;
         }
 
-        /**
-         *
-         * @param recursiveMap
-         */
-        public void setRecursiveMap(Map<String, RecursiveStructType> recursiveMap) {
-            this.recursiveMap = RecursiveMapTypeCopier.copyRecursiveMapType(recursiveMap);
+        public final void setRecursiveMap(Map<String, RecursiveStructType> recursiveMap) {
+            this.recursiveMap = RecursiveMapTypeCopier.copy(recursiveMap);
         }
 
         @Override

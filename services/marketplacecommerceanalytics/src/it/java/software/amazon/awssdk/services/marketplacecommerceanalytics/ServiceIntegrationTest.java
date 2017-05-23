@@ -82,39 +82,39 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private void setupResources() throws IOException, Exception {
         s3.createBucket(BUCKET_NAME);
-        topicArn = sns.createTopic(new CreateTopicRequest(TOPIC_NAME)).getTopicArn();
+        topicArn = sns.createTopic(CreateTopicRequest.builder().name(TOPIC_NAME).build()).topicArn();
         policyArn = createPolicy();
         roleArn = createRole();
-        iam.attachRolePolicy(new AttachRolePolicyRequest().roleName(ROLE_NAME).policyArn(policyArn));
+        iam.attachRolePolicy(AttachRolePolicyRequest.builder().roleName(ROLE_NAME).policyArn(policyArn).build());
     }
 
     private String createPolicy() throws IOException {
-        CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest().policyName(POLICY_NAME)
-                                                                           .policyDocument(getPolicyDocument());
-        return iam.createPolicy(createPolicyRequest).getPolicy().getArn();
+        CreatePolicyRequest createPolicyRequest = CreatePolicyRequest.builder().policyName(POLICY_NAME)
+                                                                           .policyDocument(getPolicyDocument()).build();
+        return iam.createPolicy(createPolicyRequest).policy().arn();
     }
 
     private String createRole() throws Exception {
-        CreateRoleRequest createRoleRequest = new CreateRoleRequest().roleName(ROLE_NAME)
-                                                                     .assumeRolePolicyDocument(getAssumeRolePolicy());
-        return iam.createRole(createRoleRequest).getRole().getArn();
+        CreateRoleRequest createRoleRequest = CreateRoleRequest.builder().roleName(ROLE_NAME)
+                                                                     .assumeRolePolicyDocument(getAssumeRolePolicy()).build();
+        return iam.createRole(createRoleRequest).role().arn();
     }
 
     @After
     public void tearDown() {
         try {
-            iam.detachRolePolicy(new DetachRolePolicyRequest().roleName(ROLE_NAME).policyArn(policyArn));
-            iam.deleteRole(new DeleteRoleRequest().roleName(ROLE_NAME));
+            iam.detachRolePolicy(DetachRolePolicyRequest.builder().roleName(ROLE_NAME).policyArn(policyArn).build());
+            iam.deleteRole(DeleteRoleRequest.builder().roleName(ROLE_NAME).build());
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            iam.deletePolicy(new DeletePolicyRequest().policyArn(policyArn));
+            iam.deletePolicy(DeletePolicyRequest.builder().policyArn(policyArn).build());
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            sns.deleteTopic(new DeleteTopicRequest(topicArn));
+            sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
         } catch (Exception e) {
             e.printStackTrace();
         }

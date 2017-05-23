@@ -58,13 +58,13 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
 
     @After
     public void tearDown() throws Exception {
-        buffSqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        buffSqs.deleteQueue(DeleteQueueRequest.builder().queueUrl(queueUrl).build());
         buffSqs.close();
     }
 
     @Test
     public void receiveMessage_NoMessagesOnQueue_ReturnsEmptyListOfMessages() {
-        assertEquals(0, buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join().getMessages().size());
+        assertEquals(0, buffSqs.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueUrl).build()).join().messages().size());
     }
 
     @Test
@@ -75,14 +75,14 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
         List<SendMessageBatchRequestEntry> messages = new ArrayList<SendMessageBatchRequestEntry>();
         final int numOfTestMessages = 10;
         for (int messageNum = 1; messageNum <= numOfTestMessages; messageNum++) {
-            messages.add(new SendMessageBatchRequestEntry(String.valueOf(messageNum), "test-" + messageNum));
+            messages.add(SendMessageBatchRequestEntry.builder().messageBody(String.valueOf(messageNum)).id("test-" + messageNum).build());
         }
         // Use the normal client so we don't have to wait for the buffered messages to be sent
-        sqsClient.sendMessageBatch(new SendMessageBatchRequest(queueUrl).entries(messages));
-        assertThat(buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join().getMessages().size(), greaterThan(0));
+        sqsClient.sendMessageBatch(SendMessageBatchRequest.builder().queueUrl(queueUrl).entries(messages).build());
+        assertThat(buffSqs.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueUrl).build()).join().messages().size(), greaterThan(0));
         // Make sure they are expired by waiting twice the timeout
         Thread.sleep((visiblityTimeoutSeconds * 2) * 1000);
-        assertThat(buffSqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join().getMessages().size(), greaterThan(0));
+        assertThat(buffSqs.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueUrl).build()).join().messages().size(), greaterThan(0));
     }
 
     /**
@@ -97,9 +97,10 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
         new Random().nextBytes(bytes);
         final String randomString = new String(bytes, StringUtils.UTF8);
 
-        SendMessageRequest request = new SendMessageRequest()
+        SendMessageRequest request = SendMessageRequest.builder()
                 .messageBody(randomString)
-                .queueUrl(queueUrl);
+                .queueUrl(queueUrl)
+                .build();
         buffSqs.sendMessage(request);
     }
 
@@ -113,14 +114,15 @@ public class BufferedSqsIntegrationTest extends IntegrationTestBase {
     public void receiveMessage_WhenMessagesAreOnTheQueueAndLongPollIsEnabled_ReturnsMessage() throws Exception {
         String body = "test message_" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString();
         // Use the normal client so we don't have to wait for the buffered messages to be sent
-        sqsClient.sendMessage(new SendMessageRequest().messageBody(body).queueUrl(queueUrl));
+        sqsClient.sendMessage(SendMessageRequest.builder().messageBody(body).queueUrl(queueUrl).build());
         long start = System.nanoTime();
 
-        ReceiveMessageRequest receiveRq = new ReceiveMessageRequest().maxNumberOfMessages(1)
-                                                                     .waitTimeSeconds(60).queueUrl(queueUrl);
-        List<Message> messages = buffSqs.receiveMessage(receiveRq).join().getMessages();
+        ReceiveMessageRequest receiveRq = ReceiveMessageRequest.builder().maxNumberOfMessages(1)
+                                                                     .waitTimeSeconds(60).queueUrl(queueUrl)
+                .build();
+        List<Message> messages = buffSqs.receiveMessage(receiveRq).join().messages();
         assertThat(messages, hasSize(1));
-        assertEquals(body, messages.get(0).getBody());
+        assertEquals(body, messages.get(0).body());
 
         long total = System.nanoTime() - start;
 

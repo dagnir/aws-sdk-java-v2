@@ -8,6 +8,8 @@ import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.BaseTypeMarshaller;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class BaseType implements ToCopyableBuilder<BaseType.Builder, BaseType>, StructuredPojo {
     private final String baseMember;
@@ -102,17 +104,13 @@ public class BaseType implements ToCopyableBuilder<BaseType.Builder, BaseType>, 
         }
 
         @Override
-        public Builder baseMember(String baseMember) {
-            this.baseMember = StringCopier.copyString(baseMember);
+        public final Builder baseMember(String baseMember) {
+            this.baseMember = baseMember;
             return this;
         }
 
-        /**
-         *
-         * @param baseMember
-         */
-        public void setBaseMember(String baseMember) {
-            this.baseMember = StringCopier.copyString(baseMember);
+        public final void setBaseMember(String baseMember) {
+            this.baseMember = baseMember;
         }
 
         @Override

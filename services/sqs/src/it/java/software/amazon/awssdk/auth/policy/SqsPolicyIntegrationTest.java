@@ -48,7 +48,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
      */
     @After
     public void tearDown() throws Exception {
-        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        sqs.deleteQueue(DeleteQueueRequest.builder().queueUrl(queueUrl).build());
     }
 
     /**
@@ -57,7 +57,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
     @Test
     public void testPolicies() throws Exception {
         String queueName = getUniqueQueueName();
-        queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
+        queueUrl = sqs.createQueue(CreateQueueRequest.builder().queueName(queueName).build()).join().queueUrl();
 
         Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withPrincipals(Principal.ALL_USERS)
                 .withActions(SQSActions.SendMessage, SQSActions.ReceiveMessage)
@@ -71,6 +71,6 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
         Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("Policy", policy.toJson());
 
-        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
+        sqs.setQueueAttributes(SetQueueAttributesRequest.builder().queueUrl(queueUrl).attributes(attributes).build());
     }
 }

@@ -22,25 +22,24 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import java.util.Locale;
 import javax.lang.model.element.Modifier;
 
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.intermediate.MapModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
-import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.runtime.StandardMemberCopier;
 
 class MemberCopierSpec implements ClassSpec {
-    private final TypeProvider typeProvider;
     private final MemberModel memberModel;
-    private final PoetExtensions poetExtensions;
+    private final ServiceModelCopiers serviceModelCopiers;
+    private final TypeProvider typeProvider;
 
-    MemberCopierSpec(TypeProvider typeProvider, MemberModel memberModel, PoetExtensions poetExtensions) {
-        this.typeProvider = typeProvider;
+    MemberCopierSpec(MemberModel memberModel, ServiceModelCopiers serviceModelCopiers, TypeProvider typeProvider) {
         this.memberModel = memberModel;
-        this.poetExtensions = poetExtensions;
+        this.serviceModelCopiers = serviceModelCopiers;
+        this.typeProvider = typeProvider;
     }
 
     @Override
@@ -54,7 +53,7 @@ class MemberCopierSpec implements ClassSpec {
 
     @Override
     public ClassName className() {
-        return poetExtensions.getModelClass(copierClassName(memberModel));
+        return serviceModelCopiers.copierClassFor(memberModel).get();
     }
 
     private MethodSpec copyMethod() {
@@ -63,17 +62,13 @@ class MemberCopierSpec implements ClassSpec {
 
     private MethodSpec.Builder copyMethodProto() {
         TypeName parameterType = typeProvider.parameterType(memberModel);
-        return MethodSpec.methodBuilder(copyMethodName(memberModel))
+        return MethodSpec.methodBuilder(serviceModelCopiers.copyMethodName())
                 .addModifiers(Modifier.STATIC)
                 .addParameter(ParameterSpec.builder(parameterType, memberParamName()).build())
                 .returns(typeProvider.fieldType(memberModel));
     }
 
     private CodeBlock copyMethodBody() {
-        if (memberModel.isSimple()) {
-            return simpleTypeCopyBody(memberModel);
-        }
-
         if (memberModel.isMap()) {
             return mapCopyBody();
         }
@@ -82,82 +77,63 @@ class MemberCopierSpec implements ClassSpec {
             return listCopyBody();
         }
 
-        return copyBuildableCopyBody();
-    }
-
-    private CodeBlock simpleTypeCopyBody(MemberModel memberModel) {
-        final String paramName = memberParamName();
-        final String simpleType = memberModel.getVariable().getSimpleType();
-        switch (simpleType) {
-            case "Date":
-                return CodeBlock.builder()
-                        .beginControlFlow("if ($N == null)", paramName)
-                        .addStatement("return null")
-                        .endControlFlow()
-                        .addStatement("return new Date($N.getTime())", paramName).build();
-            case "ByteBuffer":
-                return CodeBlock.builder()
-                        .beginControlFlow("if ($N == null)", paramName)
-                        .addStatement("return null")
-                        .endControlFlow()
-                        .addStatement("return $N.duplicate()", paramName).build();
-            case "Short":
-            case "Integer":
-            case "Long":
-            case "Float":
-            case "Double":
-            case "Boolean":
-            case "String":
-            case "InputStream":
-            default:
-                return CodeBlock.builder().addStatement("return $N", paramName).build();
-        }
+        return modelCopyBody();
     }
 
     private CodeBlock listCopyBody() {
         String paramName = memberParamName();
         MemberModel listMember = memberModel.getListModel().getListMemberModel();
         String copyName = paramName + "Copy";
-        return CodeBlock.builder()
+        CodeBlock.Builder builder = CodeBlock.builder()
                 .beginControlFlow("if ($N == null)", memberParamName())
                 .addStatement("return null")
                 .endControlFlow()
                 .addStatement("$T $N = new $T<>($N.size())", typeProvider.fieldType(memberModel), copyName,
                         typeProvider.listImplClassName(), paramName)
-                .beginControlFlow("for ($T e : $N)", typeProvider.parameterType(listMember), paramName)
-                .addStatement("$N.add($N.$N(e))", copyName, copierClassName(listMember), copyMethodName(listMember))
+                .beginControlFlow("for ($T e : $N)", typeProvider.parameterType(listMember), paramName);
+
+        CodeBlock.Builder elementCopyExprBuilder = CodeBlock.builder();
+        serviceModelCopiers.copierClassFor(listMember)
+                .map(copyClass -> elementCopyExprBuilder.add("$T.$N(e)", copyClass, serviceModelCopiers.copyMethodName()))
+                .orElseGet(() -> elementCopyExprBuilder.add("e"));
+
+        return builder.addStatement("$N.add($L)", copyName, elementCopyExprBuilder.build())
                 .endControlFlow()
-                .addStatement("return $N", copyName)
-                .build();
+                .addStatement("return $N", copyName).build();
     }
 
     private CodeBlock mapCopyBody() {
         MapModel mapModel = memberModel.getMapModel();
         String paramName = memberParamName();
         String copyName = paramName + "Copy";
-        return CodeBlock.builder()
+        CodeBlock.Builder builder = CodeBlock.builder()
                 .beginControlFlow("if ($N == null)", memberParamName())
                 .addStatement("return null")
                 .endControlFlow()
                 .addStatement("$T $N = new $T<>($N.size())", typeProvider.fieldType(memberModel),
                         copyName, typeProvider.mapImplClassName(), memberParamName())
-                .beginControlFlow("for ($T e : $N.entrySet())", typeProvider.mapEntryType(mapModel), paramName)
-                .addStatement("$N.put($N.$N(e.getKey()), $N.$N(e.getValue()))", copyName,
-                        copierClassName(mapModel.getKeyType()),
-                        simpleTypeCopyMethodName(mapModel.getKeyType()),
-                        copierClassName(mapModel.getValueModel()),
-                        copyMethodName(mapModel.getValueModel()))
+                .beginControlFlow("for ($T e : $N.entrySet())", typeProvider.mapEntryType(mapModel), paramName);
+
+
+        CodeBlock keyCopyExpr = CodeBlock.of("$T.$N(e.getKey())",
+                ClassName.get(StandardMemberCopier.class), serviceModelCopiers.copyMethodName());
+
+        CodeBlock.Builder valueCopyExprBuilder = CodeBlock.builder();
+        serviceModelCopiers.copierClassFor(mapModel.getValueModel())
+                .map(copyClass -> valueCopyExprBuilder.add("$T.$N(e.getValue())", copyClass,
+                        serviceModelCopiers.copyMethodName()))
+                .orElseGet(() -> valueCopyExprBuilder.add("e.getValue()"));
+
+        return builder.addStatement("$N.put($L, $L)", copyName, keyCopyExpr, valueCopyExprBuilder.build())
                 .endControlFlow()
                 .addStatement("return $N", copyName)
                 .build();
     }
 
-    private CodeBlock copyBuildableCopyBody() {
+    private CodeBlock modelCopyBody() {
+        // These are immutable so just return the instance
         return CodeBlock.builder()
-                .beginControlFlow("if ($N == null)", memberParamName())
-                .addStatement("return null")
-                .endControlFlow()
-                .addStatement("return $N.toBuilder().build()", memberParamName())
+                .addStatement("return $N", memberParamName())
                 .build();
     }
 
@@ -166,33 +142,5 @@ class MemberCopierSpec implements ClassSpec {
             return Utils.unCapitialize(memberModel.getVariable().getSimpleType()) + "Param";
         }
         return Utils.unCapitialize(memberModel.getC2jShape()) + "Param";
-    }
-
-    public static String simpleTypeCopyMethodName(String simpleType) {
-        return "copy" + simpleType;
-    }
-
-    public static String copierClassName(MemberModel memberModel) {
-        if (memberModel.isSimple()) {
-            return copierClassName(memberModel.getVariable().getSimpleType());
-        }
-        return copierClassName(memberModel.getC2jShape());
-    }
-
-    public static String copierClassName(String type) {
-        // TODO: Ugly hack, but some services (Health) have shapes with the
-        // same name, only differing in case of the first letter
-        String first = type.substring(0, 1);
-        if (first.toLowerCase(Locale.ENGLISH).equals(first)) {
-            return "_" + type + "Copier";
-        }
-        return type + "Copier";
-    }
-
-    public static String copyMethodName(MemberModel memberModel) {
-        if (memberModel.isSimple()) {
-            return simpleTypeCopyMethodName(memberModel.getVariable().getSimpleType());
-        }
-        return "copy" + memberModel.getC2jShape();
     }
 }

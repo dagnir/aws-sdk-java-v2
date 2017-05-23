@@ -57,21 +57,30 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     }
 
     private String getVpcId() {
-        List<Vpc> vpcs = ec2Client.describeVpcs(new DescribeVpcsRequest()).getVpcs();
+        List<Vpc> vpcs = ec2Client.describeVpcs(DescribeVpcsRequest.builder().build()).vpcs();
         if (vpcs.isEmpty()) {
             Assert.fail("No VPC found in this account.");
         }
-        return vpcs.get(0).getVpcId();
+        return vpcs.get(0).vpcId();
     }
 
     private String getSubnetIdInVpc(String vpcId, String az) {
-        List<Subnet> subnets = ec2Client.describeSubnets(new DescribeSubnetsRequest()
-                                                                 .filters(new Filter("vpc-id").values(vpcId), new Filter("availabilityZone").values(az)))
-                                        .getSubnets();
+        List<Subnet> subnets = ec2Client.describeSubnets(DescribeSubnetsRequest.builder()
+                .filters(
+                        Filter.builder()
+                                .name("vpc-id")
+                                .values(vpcId)
+                                .build(),
+                        Filter.builder()
+                                .name("availabilityZone")
+                                .values(az)
+                                .build())
+                .build())
+                .subnets();
         if (subnets.isEmpty()) {
             Assert.fail("No Subnet found in VPC " + vpcId + " AvailabilityZone: " + az);
         }
-        return subnets.get(0).getSubnetId();
+        return subnets.get(0).subnetId();
     }
 
     /**

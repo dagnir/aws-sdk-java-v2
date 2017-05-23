@@ -7,13 +7,13 @@ import javax.annotation.Generated;
 
 @Generated("software.amazon.awssdk:codegen")
 final class ListOfIntegersCopier {
-    static List<Integer> copyListOfIntegers(Collection<Integer> listOfIntegersParam) {
+    static List<Integer> copy(Collection<Integer> listOfIntegersParam) {
         if (listOfIntegersParam == null) {
             return null;
         }
         List<Integer> listOfIntegersParamCopy = new ArrayList<>(listOfIntegersParam.size());
         for (Integer e : listOfIntegersParam) {
-            listOfIntegersParamCopy.add(IntegerCopier.copyInteger(e));
+            listOfIntegersParamCopy.add(e);
         }
         return listOfIntegersParamCopy;
     }

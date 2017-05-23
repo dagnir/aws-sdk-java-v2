@@ -10,7 +10,10 @@ import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
+import software.amazon.awssdk.runtime.StandardMemberCopier;
 
+/**
+ */
 @Generated("software.amazon.awssdk:codegen")
 public class AllTypesRequest extends AmazonWebServiceRequest implements
         ToCopyableBuilder<AllTypesRequest.Builder, AllTypesRequest> {
@@ -564,6 +567,12 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
 
         /**
          *
+         * <p>
+         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
+         * {@link #setSimpleList(java.util.Collection)} or {@link #withSimpleList(java.util.Collection)} if you want to
+         * override the existing values.
+         * </p>
+         * 
          * @param simpleList
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -578,6 +587,12 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
 
         /**
          *
+         * <p>
+         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
+         * {@link #setListOfMaps(java.util.Collection)} or {@link #withListOfMaps(java.util.Collection)} if you want to
+         * override the existing values.
+         * </p>
+         * 
          * @param listOfMaps
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -592,6 +607,12 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
 
         /**
          *
+         * <p>
+         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
+         * {@link #setListOfStructs(java.util.Collection)} or {@link #withListOfStructs(java.util.Collection)} if you
+         * want to override the existing values.
+         * </p>
+         * 
          * @param listOfStructs
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -662,6 +683,12 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
 
         /**
          *
+         * <p>
+         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
+         * {@link #setListOfBlobs(java.util.Collection)} or {@link #withListOfBlobs(java.util.Collection)} if you want
+         * to override the existing values.
+         * </p>
+         * 
          * @param listOfBlobs
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -760,413 +787,301 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
         }
 
         @Override
-        public Builder stringMember(String stringMember) {
-            this.stringMember = StringCopier.copyString(stringMember);
+        public final Builder stringMember(String stringMember) {
+            this.stringMember = stringMember;
             return this;
         }
 
-        /**
-         *
-         * @param stringMember
-         */
-        public void setStringMember(String stringMember) {
-            this.stringMember = StringCopier.copyString(stringMember);
+        public final void setStringMember(String stringMember) {
+            this.stringMember = stringMember;
         }
 
         @Override
-        public Builder integerMember(Integer integerMember) {
-            this.integerMember = IntegerCopier.copyInteger(integerMember);
+        public final Builder integerMember(Integer integerMember) {
+            this.integerMember = integerMember;
             return this;
         }
 
-        /**
-         *
-         * @param integerMember
-         */
-        public void setIntegerMember(Integer integerMember) {
-            this.integerMember = IntegerCopier.copyInteger(integerMember);
+        public final void setIntegerMember(Integer integerMember) {
+            this.integerMember = integerMember;
         }
 
         @Override
-        public Builder booleanMember(Boolean booleanMember) {
-            this.booleanMember = BooleanCopier.copyBoolean(booleanMember);
+        public final Builder booleanMember(Boolean booleanMember) {
+            this.booleanMember = booleanMember;
             return this;
         }
 
-        /**
-         *
-         * @param booleanMember
-         */
-        public void setBooleanMember(Boolean booleanMember) {
-            this.booleanMember = BooleanCopier.copyBoolean(booleanMember);
+        public final void setBooleanMember(Boolean booleanMember) {
+            this.booleanMember = booleanMember;
         }
 
         @Override
-        public Builder floatMember(Float floatMember) {
-            this.floatMember = FloatCopier.copyFloat(floatMember);
+        public final Builder floatMember(Float floatMember) {
+            this.floatMember = floatMember;
             return this;
         }
 
-        /**
-         *
-         * @param floatMember
-         */
-        public void setFloatMember(Float floatMember) {
-            this.floatMember = FloatCopier.copyFloat(floatMember);
+        public final void setFloatMember(Float floatMember) {
+            this.floatMember = floatMember;
         }
 
         @Override
-        public Builder doubleMember(Double doubleMember) {
-            this.doubleMember = DoubleCopier.copyDouble(doubleMember);
+        public final Builder doubleMember(Double doubleMember) {
+            this.doubleMember = doubleMember;
             return this;
         }
 
-        /**
-         *
-         * @param doubleMember
-         */
-        public void setDoubleMember(Double doubleMember) {
-            this.doubleMember = DoubleCopier.copyDouble(doubleMember);
+        public final void setDoubleMember(Double doubleMember) {
+            this.doubleMember = doubleMember;
         }
 
         @Override
-        public Builder longMember(Long longMember) {
-            this.longMember = LongCopier.copyLong(longMember);
+        public final Builder longMember(Long longMember) {
+            this.longMember = longMember;
             return this;
         }
 
-        /**
-         *
-         * @param longMember
-         */
-        public void setLongMember(Long longMember) {
-            this.longMember = LongCopier.copyLong(longMember);
+        public final void setLongMember(Long longMember) {
+            this.longMember = longMember;
         }
 
         @Override
-        public Builder simpleList(Collection<String> simpleList) {
-            this.simpleList = ListOfStringsCopier.copyListOfStrings(simpleList);
+        public final Builder simpleList(Collection<String> simpleList) {
+            this.simpleList = ListOfStringsCopier.copy(simpleList);
             return this;
         }
 
         @Override
         @SafeVarargs
-        public Builder simpleList(String... simpleList) {
+        public final Builder simpleList(String... simpleList) {
             if (this.simpleList == null) {
                 this.simpleList = new ArrayList<>(simpleList.length);
             }
             for (String e : simpleList) {
-                this.simpleList.add(StringCopier.copyString(e));
+                this.simpleList.add(e);
             }
             return this;
         }
 
-        /**
-         *
-         * @param simpleList
-         */
-        public void setSimpleList(Collection<String> simpleList) {
-            this.simpleList = ListOfStringsCopier.copyListOfStrings(simpleList);
+        public final void setSimpleList(Collection<String> simpleList) {
+            this.simpleList = ListOfStringsCopier.copy(simpleList);
         }
 
-        /**
-         *
-         * @param simpleList
-         */
         @SafeVarargs
-        public void setSimpleList(String... simpleList) {
+        public final void setSimpleList(String... simpleList) {
             if (this.simpleList == null) {
                 this.simpleList = new ArrayList<>(simpleList.length);
             }
             for (String e : simpleList) {
-                this.simpleList.add(StringCopier.copyString(e));
+                this.simpleList.add(e);
             }
         }
 
         @Override
-        public Builder listOfMaps(Collection<Map<String, String>> listOfMaps) {
-            this.listOfMaps = ListOfMapStringToStringCopier.copyListOfMapStringToString(listOfMaps);
+        public final Builder listOfMaps(Collection<Map<String, String>> listOfMaps) {
+            this.listOfMaps = ListOfMapStringToStringCopier.copy(listOfMaps);
             return this;
         }
 
         @Override
         @SafeVarargs
-        public Builder listOfMaps(Map<String, String>... listOfMaps) {
+        public final Builder listOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
                 this.listOfMaps = new ArrayList<>(listOfMaps.length);
             }
             for (Map<String, String> e : listOfMaps) {
-                this.listOfMaps.add(MapOfStringToStringCopier.copyMapOfStringToString(e));
+                this.listOfMaps.add(MapOfStringToStringCopier.copy(e));
             }
             return this;
         }
 
-        /**
-         *
-         * @param listOfMaps
-         */
-        public void setListOfMaps(Collection<Map<String, String>> listOfMaps) {
-            this.listOfMaps = ListOfMapStringToStringCopier.copyListOfMapStringToString(listOfMaps);
+        public final void setListOfMaps(Collection<Map<String, String>> listOfMaps) {
+            this.listOfMaps = ListOfMapStringToStringCopier.copy(listOfMaps);
         }
 
-        /**
-         *
-         * @param listOfMaps
-         */
         @SafeVarargs
-        public void setListOfMaps(Map<String, String>... listOfMaps) {
+        public final void setListOfMaps(Map<String, String>... listOfMaps) {
             if (this.listOfMaps == null) {
                 this.listOfMaps = new ArrayList<>(listOfMaps.length);
             }
             for (Map<String, String> e : listOfMaps) {
-                this.listOfMaps.add(MapOfStringToStringCopier.copyMapOfStringToString(e));
+                this.listOfMaps.add(MapOfStringToStringCopier.copy(e));
             }
         }
 
         @Override
-        public Builder listOfStructs(Collection<SimpleStruct> listOfStructs) {
-            this.listOfStructs = ListOfSimpleStructsCopier.copyListOfSimpleStructs(listOfStructs);
+        public final Builder listOfStructs(Collection<SimpleStruct> listOfStructs) {
+            this.listOfStructs = ListOfSimpleStructsCopier.copy(listOfStructs);
             return this;
         }
 
         @Override
         @SafeVarargs
-        public Builder listOfStructs(SimpleStruct... listOfStructs) {
+        public final Builder listOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
                 this.listOfStructs = new ArrayList<>(listOfStructs.length);
             }
             for (SimpleStruct e : listOfStructs) {
-                this.listOfStructs.add(SimpleStructCopier.copySimpleStruct(e));
+                this.listOfStructs.add(e);
             }
             return this;
         }
 
-        /**
-         *
-         * @param listOfStructs
-         */
-        public void setListOfStructs(Collection<SimpleStruct> listOfStructs) {
-            this.listOfStructs = ListOfSimpleStructsCopier.copyListOfSimpleStructs(listOfStructs);
+        public final void setListOfStructs(Collection<SimpleStruct> listOfStructs) {
+            this.listOfStructs = ListOfSimpleStructsCopier.copy(listOfStructs);
         }
 
-        /**
-         *
-         * @param listOfStructs
-         */
         @SafeVarargs
-        public void setListOfStructs(SimpleStruct... listOfStructs) {
+        public final void setListOfStructs(SimpleStruct... listOfStructs) {
             if (this.listOfStructs == null) {
                 this.listOfStructs = new ArrayList<>(listOfStructs.length);
             }
             for (SimpleStruct e : listOfStructs) {
-                this.listOfStructs.add(SimpleStructCopier.copySimpleStruct(e));
+                this.listOfStructs.add(e);
             }
         }
 
         @Override
-        public Builder mapOfStringToIntegerList(Map<String, ? extends Collection<Integer>> mapOfStringToIntegerList) {
-            this.mapOfStringToIntegerList = MapOfStringToIntegerListCopier.copyMapOfStringToIntegerList(mapOfStringToIntegerList);
+        public final Builder mapOfStringToIntegerList(Map<String, ? extends Collection<Integer>> mapOfStringToIntegerList) {
+            this.mapOfStringToIntegerList = MapOfStringToIntegerListCopier.copy(mapOfStringToIntegerList);
             return this;
         }
 
-        /**
-         *
-         * @param mapOfStringToIntegerList
-         */
-        public void setMapOfStringToIntegerList(Map<String, ? extends Collection<Integer>> mapOfStringToIntegerList) {
-            this.mapOfStringToIntegerList = MapOfStringToIntegerListCopier.copyMapOfStringToIntegerList(mapOfStringToIntegerList);
+        public final void setMapOfStringToIntegerList(Map<String, ? extends Collection<Integer>> mapOfStringToIntegerList) {
+            this.mapOfStringToIntegerList = MapOfStringToIntegerListCopier.copy(mapOfStringToIntegerList);
         }
 
         @Override
-        public Builder mapOfStringToString(Map<String, String> mapOfStringToString) {
-            this.mapOfStringToString = MapOfStringToStringCopier.copyMapOfStringToString(mapOfStringToString);
+        public final Builder mapOfStringToString(Map<String, String> mapOfStringToString) {
+            this.mapOfStringToString = MapOfStringToStringCopier.copy(mapOfStringToString);
             return this;
         }
 
-        /**
-         *
-         * @param mapOfStringToString
-         */
-        public void setMapOfStringToString(Map<String, String> mapOfStringToString) {
-            this.mapOfStringToString = MapOfStringToStringCopier.copyMapOfStringToString(mapOfStringToString);
+        public final void setMapOfStringToString(Map<String, String> mapOfStringToString) {
+            this.mapOfStringToString = MapOfStringToStringCopier.copy(mapOfStringToString);
         }
 
         @Override
-        public Builder mapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
-            this.mapOfStringToStruct = MapOfStringToSimpleStructCopier.copyMapOfStringToSimpleStruct(mapOfStringToStruct);
+        public final Builder mapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
+            this.mapOfStringToStruct = MapOfStringToSimpleStructCopier.copy(mapOfStringToStruct);
             return this;
         }
 
-        /**
-         *
-         * @param mapOfStringToStruct
-         */
-        public void setMapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
-            this.mapOfStringToStruct = MapOfStringToSimpleStructCopier.copyMapOfStringToSimpleStruct(mapOfStringToStruct);
+        public final void setMapOfStringToStruct(Map<String, SimpleStruct> mapOfStringToStruct) {
+            this.mapOfStringToStruct = MapOfStringToSimpleStructCopier.copy(mapOfStringToStruct);
         }
 
         @Override
-        public Builder timestampMember(Date timestampMember) {
-            this.timestampMember = DateCopier.copyDate(timestampMember);
+        public final Builder timestampMember(Date timestampMember) {
+            this.timestampMember = StandardMemberCopier.copy(timestampMember);
             return this;
         }
 
-        /**
-         *
-         * @param timestampMember
-         */
-        public void setTimestampMember(Date timestampMember) {
-            this.timestampMember = DateCopier.copyDate(timestampMember);
+        public final void setTimestampMember(Date timestampMember) {
+            this.timestampMember = StandardMemberCopier.copy(timestampMember);
         }
 
         @Override
-        public Builder structWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
-            this.structWithNestedTimestampMember = StructWithTimestampCopier
-                    .copyStructWithTimestamp(structWithNestedTimestampMember);
+        public final Builder structWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
+            this.structWithNestedTimestampMember = structWithNestedTimestampMember;
             return this;
         }
 
-        /**
-         *
-         * @param structWithNestedTimestampMember
-         */
-        public void setStructWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
-            this.structWithNestedTimestampMember = StructWithTimestampCopier
-                    .copyStructWithTimestamp(structWithNestedTimestampMember);
+        public final void setStructWithNestedTimestampMember(StructWithTimestamp structWithNestedTimestampMember) {
+            this.structWithNestedTimestampMember = structWithNestedTimestampMember;
         }
 
         @Override
-        public Builder blobArg(ByteBuffer blobArg) {
-            this.blobArg = ByteBufferCopier.copyByteBuffer(blobArg);
+        public final Builder blobArg(ByteBuffer blobArg) {
+            this.blobArg = StandardMemberCopier.copy(blobArg);
             return this;
         }
 
-        /**
-         * <p>
-         * AWS SDK for Java performs a Base64 encoding on this field before sending this request to AWS service by
-         * default. Users of the SDK should not perform Base64 encoding on this field.
-         * </p>
-         * <p>
-         * Warning: ByteBuffers returned by the SDK are mutable. Changes to the content or position of the byte buffer
-         * will be seen by all objects that have a reference to this object. It is recommended to call
-         * ByteBuffer.duplicate() or ByteBuffer.asReadOnlyBuffer() before using or reading from the buffer. This
-         * behavior will be changed in a future major version of the SDK.
-         * </p>
-         *
-         * @param blobArg
-         */
-        public void setBlobArg(ByteBuffer blobArg) {
-            this.blobArg = ByteBufferCopier.copyByteBuffer(blobArg);
+        public final void setBlobArg(ByteBuffer blobArg) {
+            this.blobArg = StandardMemberCopier.copy(blobArg);
         }
 
         @Override
-        public Builder structWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
-            this.structWithNestedBlob = StructWithNestedBlobTypeCopier.copyStructWithNestedBlobType(structWithNestedBlob);
+        public final Builder structWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
+            this.structWithNestedBlob = structWithNestedBlob;
             return this;
         }
 
-        /**
-         *
-         * @param structWithNestedBlob
-         */
-        public void setStructWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
-            this.structWithNestedBlob = StructWithNestedBlobTypeCopier.copyStructWithNestedBlobType(structWithNestedBlob);
+        public final void setStructWithNestedBlob(StructWithNestedBlobType structWithNestedBlob) {
+            this.structWithNestedBlob = structWithNestedBlob;
         }
 
         @Override
-        public Builder blobMap(Map<String, ByteBuffer> blobMap) {
-            this.blobMap = BlobMapTypeCopier.copyBlobMapType(blobMap);
+        public final Builder blobMap(Map<String, ByteBuffer> blobMap) {
+            this.blobMap = BlobMapTypeCopier.copy(blobMap);
             return this;
         }
 
-        /**
-         *
-         * @param blobMap
-         */
-        public void setBlobMap(Map<String, ByteBuffer> blobMap) {
-            this.blobMap = BlobMapTypeCopier.copyBlobMapType(blobMap);
+        public final void setBlobMap(Map<String, ByteBuffer> blobMap) {
+            this.blobMap = BlobMapTypeCopier.copy(blobMap);
         }
 
         @Override
-        public Builder listOfBlobs(Collection<ByteBuffer> listOfBlobs) {
-            this.listOfBlobs = ListOfBlobsTypeCopier.copyListOfBlobsType(listOfBlobs);
+        public final Builder listOfBlobs(Collection<ByteBuffer> listOfBlobs) {
+            this.listOfBlobs = ListOfBlobsTypeCopier.copy(listOfBlobs);
             return this;
         }
 
         @Override
         @SafeVarargs
-        public Builder listOfBlobs(ByteBuffer... listOfBlobs) {
+        public final Builder listOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
                 this.listOfBlobs = new ArrayList<>(listOfBlobs.length);
             }
             for (ByteBuffer e : listOfBlobs) {
-                this.listOfBlobs.add(ByteBufferCopier.copyByteBuffer(e));
+                this.listOfBlobs.add(StandardMemberCopier.copy(e));
             }
             return this;
         }
 
-        /**
-         *
-         * @param listOfBlobs
-         */
-        public void setListOfBlobs(Collection<ByteBuffer> listOfBlobs) {
-            this.listOfBlobs = ListOfBlobsTypeCopier.copyListOfBlobsType(listOfBlobs);
+        public final void setListOfBlobs(Collection<ByteBuffer> listOfBlobs) {
+            this.listOfBlobs = ListOfBlobsTypeCopier.copy(listOfBlobs);
         }
 
-        /**
-         *
-         * @param listOfBlobs
-         */
         @SafeVarargs
-        public void setListOfBlobs(ByteBuffer... listOfBlobs) {
+        public final void setListOfBlobs(ByteBuffer... listOfBlobs) {
             if (this.listOfBlobs == null) {
                 this.listOfBlobs = new ArrayList<>(listOfBlobs.length);
             }
             for (ByteBuffer e : listOfBlobs) {
-                this.listOfBlobs.add(ByteBufferCopier.copyByteBuffer(e));
+                this.listOfBlobs.add(StandardMemberCopier.copy(e));
             }
         }
 
         @Override
-        public Builder recursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
+        public final Builder recursiveStruct(RecursiveStructType recursiveStruct) {
+            this.recursiveStruct = recursiveStruct;
             return this;
         }
 
-        /**
-         *
-         * @param recursiveStruct
-         */
-        public void setRecursiveStruct(RecursiveStructType recursiveStruct) {
-            this.recursiveStruct = RecursiveStructTypeCopier.copyRecursiveStructType(recursiveStruct);
+        public final void setRecursiveStruct(RecursiveStructType recursiveStruct) {
+            this.recursiveStruct = recursiveStruct;
         }
 
         @Override
-        public Builder polymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
-            this.polymorphicTypeWithSubTypes = BaseTypeCopier.copyBaseType(polymorphicTypeWithSubTypes);
+        public final Builder polymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
+            this.polymorphicTypeWithSubTypes = polymorphicTypeWithSubTypes;
             return this;
         }
 
-        /**
-         *
-         * @param polymorphicTypeWithSubTypes
-         */
-        public void setPolymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
-            this.polymorphicTypeWithSubTypes = BaseTypeCopier.copyBaseType(polymorphicTypeWithSubTypes);
+        public final void setPolymorphicTypeWithSubTypes(BaseType polymorphicTypeWithSubTypes) {
+            this.polymorphicTypeWithSubTypes = polymorphicTypeWithSubTypes;
         }
 
         @Override
-        public Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
-            this.polymorphicTypeWithoutSubTypes = SubTypeOneCopier.copySubTypeOne(polymorphicTypeWithoutSubTypes);
+        public final Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
+            this.polymorphicTypeWithoutSubTypes = polymorphicTypeWithoutSubTypes;
             return this;
         }
 
-        /**
-         *
-         * @param polymorphicTypeWithoutSubTypes
-         */
-        public void setPolymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
-            this.polymorphicTypeWithoutSubTypes = SubTypeOneCopier.copySubTypeOne(polymorphicTypeWithoutSubTypes);
+        public final void setPolymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes) {
+            this.polymorphicTypeWithoutSubTypes = polymorphicTypeWithoutSubTypes;
         }
 
         @Override

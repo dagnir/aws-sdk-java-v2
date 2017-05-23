@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.dynamodb.ReflectHelper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperFieldModel.DynamoDbAttributeType;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperFieldModel.Reflect;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperModelFactory.TableFactory;
@@ -45,6 +44,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTypeConvert
 import software.amazon.awssdk.services.dynamodb.datamodeling.StandardBeanProperties.Bean;
 import software.amazon.awssdk.services.dynamodb.datamodeling.StandardBeanProperties.Beans;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.util.ImmutableObjectUtils;
 
 /**
  * Pre-defined strategies for mapping between Java types and DynamoDB types.
@@ -265,16 +265,16 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, AttributeValue o) {
-                ReflectHelper.setObjectMember(value, "s", o.s());
-                ReflectHelper.setObjectMember(value, "n", o.n());
-                ReflectHelper.setObjectMember(value, "b", o.b());
-                ReflectHelper.setObjectMember(value, "ss", o.ss());
-                ReflectHelper.setObjectMember(value, "ns", o.ns());
-                ReflectHelper.setObjectMember(value, "bs", o.bs());
-                ReflectHelper.setObjectMember(value, "bool", o.bool());
-                ReflectHelper.setObjectMember(value, "l", o.l());
-                ReflectHelper.setObjectMember(value, "m", o.m());
-                ReflectHelper.setObjectMember(value, "nul", o.nul());
+                ImmutableObjectUtils.setObjectMember(value, "s", o.s());
+                ImmutableObjectUtils.setObjectMember(value, "n", o.n());
+                ImmutableObjectUtils.setObjectMember(value, "b", o.b());
+                ImmutableObjectUtils.setObjectMember(value, "ss", o.ss());
+                ImmutableObjectUtils.setObjectMember(value, "ns", o.ns());
+                ImmutableObjectUtils.setObjectMember(value, "bs", o.bs());
+                ImmutableObjectUtils.setObjectMember(value, "bool", o.bool());
+                ImmutableObjectUtils.setObjectMember(value, "l", o.l());
+                ImmutableObjectUtils.setObjectMember(value, "m", o.m());
+                ImmutableObjectUtils.setObjectMember(value, "nul", o.nul());
             }
         }
 
@@ -303,7 +303,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, String o) {
-                ReflectHelper.setObjectMember(value, "s", o);
+                ImmutableObjectUtils.setObjectMember(value, "s", o);
             }
 
             @Override
@@ -337,7 +337,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, String o) {
-                ReflectHelper.setObjectMember(value, "n", o);
+                ImmutableObjectUtils.setObjectMember(value, "n", o);
                 //value.setN(o);
             }
         }
@@ -367,7 +367,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, ByteBuffer o) {
-                ReflectHelper.setObjectMember(value, "b", o);
+                ImmutableObjectUtils.setObjectMember(value, "b", o);
                 //value.setB(o);
             }
         }
@@ -397,7 +397,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, List<String> o) {
-                ReflectHelper.setObjectMember(value, "ss", o);
+                ImmutableObjectUtils.setObjectMember(value, "ss", o);
                 //value.setSS(o);
             }
         }
@@ -427,7 +427,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, List<String> o) {
-                ReflectHelper.setObjectMember(value, "ns", o);
+                ImmutableObjectUtils.setObjectMember(value, "ns", o);
                 //value.setNS(o);
             }
         }
@@ -457,7 +457,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, List<ByteBuffer> o) {
-                ReflectHelper.setObjectMember(value, "bs", o);
+                ImmutableObjectUtils.setObjectMember(value, "bs", o);
                 //value.setBS(o);
             }
         }
@@ -512,7 +512,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue o, Boolean value) {
-                ReflectHelper.setObjectMember(o, "bool", value);
+                ImmutableObjectUtils.setObjectMember(o, "bool", value);
                 //o.setBOOL(value);
             }
 
@@ -562,7 +562,7 @@ final class StandardModelFactories {
              */
             @Override
             public void set(AttributeValue o, String value) {
-                ReflectHelper.setObjectMember(o, "n", value);
+                ImmutableObjectUtils.setObjectMember(o, "n", value);
                 //o.setN(value);
             }
         }
@@ -592,7 +592,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, List<AttributeValue> o) {
-                ReflectHelper.setObjectMember(value, "l", o);
+                ImmutableObjectUtils.setObjectMember(value, "l", o);
                 //value.setL(o);
             }
         }
@@ -644,7 +644,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, List<AttributeValue> o) {
-                ReflectHelper.setObjectMember(value, "l", o);
+                ImmutableObjectUtils.setObjectMember(value, "l", o);
                 //value.setL(o);
             }
         }
@@ -677,7 +677,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, Map<String, AttributeValue> o) {
-                ReflectHelper.setObjectMember(value, "m", o);
+                ImmutableObjectUtils.setObjectMember(value, "m", o);
                 //value.setM(o);
             }
         }
@@ -720,7 +720,7 @@ final class StandardModelFactories {
 
             @Override
             public void set(AttributeValue value, Map<String, AttributeValue> o) {
-                ReflectHelper.setObjectMember(value, "m", o);
+                ImmutableObjectUtils.setObjectMember(value, "m", o);
                 //value.setM(o);
             }
         }

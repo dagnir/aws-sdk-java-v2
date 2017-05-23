@@ -42,9 +42,9 @@ public class SecurityGroupUtils {
      */
     public static boolean doesSecurityGroupExist(EC2Client ec2, String securityGroupName) throws AmazonClientException {
 
-        DescribeSecurityGroupsRequest securityGroupsRequest =
-                new DescribeSecurityGroupsRequest()
-                        .groupNames(securityGroupName);
+        DescribeSecurityGroupsRequest securityGroupsRequest = DescribeSecurityGroupsRequest.builder()
+                .groupNames(securityGroupName)
+                .build();
 
         try {
             ec2.describeSecurityGroups(securityGroupsRequest);

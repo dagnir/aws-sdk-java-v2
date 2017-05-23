@@ -35,9 +35,10 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 public class SqsIntegrationTest extends IntegrationTestBase {
 
     private String getQueueCreationDate(SQSAsyncClient sqs, String queueURL) {
-        GetQueueAttributesRequest request = new GetQueueAttributesRequest(queueURL)
-                .attributeNames(QueueAttributeName.CreatedTimestamp.toString());
-        Map<String, String> attributes = sqs.getQueueAttributes(request).join().getAttributes();
+        GetQueueAttributesRequest request = GetQueueAttributesRequest.builder().queueUrl(queueURL)
+                .attributeNames(QueueAttributeName.CreatedTimestamp.toString())
+                .build();
+        Map<String, String> attributes = sqs.getQueueAttributes(request).join().attributes();
         return attributes.get(QueueAttributeName.CreatedTimestamp.toString());
     }
 
@@ -54,11 +55,11 @@ public class SqsIntegrationTest extends IntegrationTestBase {
         SdkGlobalConfiguration.setGlobalTimeOffset(skew);
         assertEquals(skew, SdkGlobalConfiguration.getGlobalTimeOffset());
         SQSAsyncClient sqsClient = createSqsAyncClient();
-        sqsClient.listQueues(new ListQueuesRequest());
+        sqsClient.listQueues(ListQueuesRequest.builder().build());
         assertThat("Clockskew is fixed!", SdkGlobalConfiguration.getGlobalTimeOffset(), lessThan(skew));
         // subsequent changes to the global time offset won't affect existing client
         SdkGlobalConfiguration.setGlobalTimeOffset(skew);
-        sqsClient.listQueues(new ListQueuesRequest());
+        sqsClient.listQueues(ListQueuesRequest.builder().build());
         assertEquals(skew, SdkGlobalConfiguration.getGlobalTimeOffset());
         sqsClient.close();
 

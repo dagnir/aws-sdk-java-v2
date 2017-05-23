@@ -73,12 +73,12 @@ public class IntegrationTestBase extends AwsTestBase {
 
     @AfterClass
     public static void tearDown() {
-        iam.detachRolePolicy(new DetachRolePolicyRequest().roleName(LAMBDA_SERVICE_ROLE_NAME).policyArn(
-                roleExecutionPolicyArn));
+        iam.detachRolePolicy(DetachRolePolicyRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME).policyArn(
+                roleExecutionPolicyArn).build());
 
-        iam.deletePolicy(new DeletePolicyRequest().policyArn(roleExecutionPolicyArn));
+        iam.deletePolicy(DeletePolicyRequest.builder().policyArn(roleExecutionPolicyArn).build());
 
-        iam.deleteRole(new DeleteRoleRequest().roleName(LAMBDA_SERVICE_ROLE_NAME));
+        iam.deleteRole(DeleteRoleRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME).build());
 
         if (kinesis != null) {
             kinesis.deleteStream(DeleteStreamRequest.builder().streamName(KINESIS_STREAM_NAME).build());
@@ -109,18 +109,17 @@ public class IntegrationTestBase extends AwsTestBase {
     private static void createLambdaServiceRole() {
         iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        CreateRoleResult result = iam.createRole(new CreateRoleRequest().roleName(LAMBDA_SERVICE_ROLE_NAME)
-                                                                        .assumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
+        CreateRoleResult result = iam.createRole(CreateRoleRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME)
+                                                                        .assumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY).build());
 
-        lambdaServiceRoleArn = result.getRole().getArn();
+        lambdaServiceRoleArn = result.role().arn();
 
         roleExecutionPolicyArn = iam
-                .createPolicy(
-                        new CreatePolicyRequest().policyName(LAMBDA_SERVICE_ROLE_POLICY_NAME).policyDocument(
-                                LAMBDA_ROLE_EXECUTION_POLICY)).getPolicy().getArn();
+                .createPolicy(CreatePolicyRequest.builder().policyName(LAMBDA_SERVICE_ROLE_POLICY_NAME).policyDocument(
+                                LAMBDA_ROLE_EXECUTION_POLICY).build()).policy().arn();
 
-        iam.attachRolePolicy(new AttachRolePolicyRequest().roleName(LAMBDA_SERVICE_ROLE_NAME).policyArn(
-                roleExecutionPolicyArn));
+        iam.attachRolePolicy(AttachRolePolicyRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME).policyArn(
+                roleExecutionPolicyArn).build());
     }
 
     protected static void createKinesisStream() {

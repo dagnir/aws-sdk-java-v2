@@ -235,13 +235,13 @@ public class AwsJavaMailTransport extends Transport {
         try {
             OutputStream byteOutput = new ByteArrayOutputStream();
             m.writeTo(byteOutput);
-            SendRawEmailRequest req = new SendRawEmailRequest();
+            SendRawEmailRequest.Builder req = SendRawEmailRequest.builder();
             byte[] messageByteArray = ((ByteArrayOutputStream) byteOutput)
                     .toByteArray();
-            RawMessage message = new RawMessage();
-            message.setData(ByteBuffer.wrap(messageByteArray));
-            req.setRawMessage(message);
-            return req;
+            RawMessage message = RawMessage.builder()
+                    .data(ByteBuffer.wrap(messageByteArray)).build();
+            req.rawMessage(message);
+            return req.build();
         } catch (Exception e) {
             Address[] sent = new Address[0];
             Address[] unsent = new Address[0];
@@ -272,7 +272,7 @@ public class AwsJavaMailTransport extends Transport {
         try {
             appendUserAgent(req, USER_AGENT);
             SendRawEmailResult resp = this.emailService.sendRawEmail(req);
-            lastMessageId = resp.getMessageId();
+            lastMessageId = resp.messageId();
             sent = m.getAllRecipients();
             unsent = new Address[0];
             invalid = new Address[0];

@@ -31,7 +31,6 @@ import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.codegen.model.intermediate.DocumentationModel;
 import software.amazon.awssdk.codegen.model.intermediate.HasDeprecation;
-import software.amazon.awssdk.utils.StringUtils;
 
 public final class PoetUtils {
     public static final AnnotationSpec GENERATED =
@@ -67,23 +66,6 @@ public final class PoetUtils {
 
     public static void addJavadoc(Consumer<String> builder, DocumentationModel docModel) {
         addJavadoc(builder, docModel.getDocumentation());
-    }
-
-    public static String escapeLiteralString(String javadoc) {
-        if (isNotBlank(javadoc)) {
-            return javadoc.replace("$", "$$");
-        }
-        return javadoc;
-    }
-
-    public static String makeJavadocPoetFriendly(String javadoc) {
-        if (StringUtils.isNotBlank(javadoc)) {
-            return escapeLiteralString(javadoc)
-                    .trim()
-                    // remove javadoc start/stop
-                    .substring(3, javadoc.length() - 2);
-        }
-        return javadoc;
     }
 
     public static TypeSpec.Builder createEnumBuilder(ClassName name) {

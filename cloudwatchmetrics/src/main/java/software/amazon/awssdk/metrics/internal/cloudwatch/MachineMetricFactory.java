@@ -70,14 +70,16 @@ class MachineMetricFactory {
             long val = values.get(i).longValue();
             // skip zero values in some cases
             if (val != 0 || metric.includeZeroValue()) {
-                MetricDatum datum = new MetricDatum()
+                MetricDatum datum = MetricDatum.builder()
                         .metricName(metric.getMetricName())
                         .dimensions(
-                                new Dimension()
+                                Dimension.builder()
                                         .name(metric.getDimensionName())
-                                        .value(metric.name()))
+                                        .value(metric.name())
+                                        .build())
                         .unit(unit)
-                        .value((double) val);
+                        .value((double) val)
+                        .build();
                 list.add(datum);
             }
         }

@@ -7,13 +7,13 @@ import javax.annotation.Generated;
 
 @Generated("software.amazon.awssdk:codegen")
 final class RecursiveListTypeCopier {
-    static List<RecursiveStructType> copyRecursiveListType(Collection<RecursiveStructType> recursiveListTypeParam) {
+    static List<RecursiveStructType> copy(Collection<RecursiveStructType> recursiveListTypeParam) {
         if (recursiveListTypeParam == null) {
             return null;
         }
         List<RecursiveStructType> recursiveListTypeParamCopy = new ArrayList<>(recursiveListTypeParam.size());
         for (RecursiveStructType e : recursiveListTypeParam) {
-            recursiveListTypeParamCopy.add(RecursiveStructTypeCopier.copyRecursiveStructType(e));
+            recursiveListTypeParamCopy.add(e);
         }
         return recursiveListTypeParamCopy;
     }

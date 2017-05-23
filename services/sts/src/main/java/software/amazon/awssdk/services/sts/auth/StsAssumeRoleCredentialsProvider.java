@@ -57,7 +57,7 @@ public class StsAssumeRoleCredentialsProvider extends StsCredentialsProvider {
 
     @Override
     protected Credentials getUpdatedCredentials(STSClient stsClient) {
-        return stsClient.assumeRole(assumeRoleRequest).getCredentials();
+        return stsClient.assumeRole(assumeRoleRequest).credentials();
     }
 
     /**
