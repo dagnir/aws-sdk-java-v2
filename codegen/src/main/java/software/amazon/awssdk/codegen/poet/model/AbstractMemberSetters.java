@@ -58,7 +58,7 @@ abstract class AbstractMemberSetters implements MemberSetters {
                 .addParameter(setterParam)
                 .addAnnotation(Override.class)
                 .returns(returnType)
-                .addModifiers(Modifier.PUBLIC);
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
     }
 
     protected MethodSpec.Builder beanStyleSetterBuilder() {
@@ -69,7 +69,7 @@ abstract class AbstractMemberSetters implements MemberSetters {
         return MethodSpec.methodBuilder(memberModel().getBeanStyleSetterMethodName())
                 .addParameter(setterParam)
                 .addJavadoc(PoetUtils.makeJavadocPoetFriendly(memberModel.getSetterDocumentation()))
-                .addModifiers(Modifier.PUBLIC);
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
     }
 
     protected CodeBlock copySetterBody() {

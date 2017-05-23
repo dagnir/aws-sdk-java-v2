@@ -123,6 +123,7 @@ class ListSetters extends AbstractMemberSetters {
     private MethodSpec fluentEnumVarargToListSetter(TypeName returnType) {
         return fluentSetterBuilder(ParameterSpec.builder(asArrayOfModeledElement(), fieldName()).build(), returnType)
                 .varargs(true)
+                .addAnnotation(SafeVarargs.class)
                 .addCode(enumVarargToListBody().toBuilder().addStatement("return this").build())
                 .build();
     }
@@ -130,6 +131,7 @@ class ListSetters extends AbstractMemberSetters {
     private MethodSpec beanStyleEnumVarargToListSetter() {
         return beanStyleSetterBuilder(ParameterSpec.builder(asArrayOfModeledElement(), fieldName()).build())
                 .varargs(true)
+                .addAnnotation(SafeVarargs.class)
                 .addCode(enumVarargToListBody())
                 .build();
     }
