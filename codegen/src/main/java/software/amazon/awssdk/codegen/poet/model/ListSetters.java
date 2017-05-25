@@ -32,10 +32,12 @@ import java.util.List;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 class ListSetters extends AbstractMemberSetters {
     private final TypeProvider typeProvider;
     private final ServiceModelCopiers serviceModelCopiers;
+    private final PoetExtensions poetExtensions;
 
     public ListSetters(IntermediateModel intermediateModel,
                        ShapeModel shapeModel,
@@ -44,6 +46,7 @@ class ListSetters extends AbstractMemberSetters {
         super(intermediateModel, shapeModel, memberModel, typeProvider);
         this.typeProvider = typeProvider;
         this.serviceModelCopiers = new ServiceModelCopiers(intermediateModel);
+        this.poetExtensions = new PoetExtensions(intermediateModel);
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
@@ -187,7 +190,7 @@ class ListSetters extends AbstractMemberSetters {
     }
 
     private TypeName modeledEnumElement() {
-        return typeProvider.getModelClass(memberModel().getEnumType());
+        return poetExtensions.getModelClass(memberModel().getEnumType());
     }
 
     private TypeName listElementType() {

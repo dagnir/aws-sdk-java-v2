@@ -55,12 +55,12 @@ public class AwsServiceModel implements ClassSpec {
         this.intermediateModel = intermediateModel;
         this.shapeModel = shapeModel;
         this.poetExtensions = new PoetExtensions(this.intermediateModel);
-        this.typeProvider = new TypeProvider(intermediateModel, this.poetExtensions);
+        this.typeProvider = new TypeProvider(intermediateModel);
         this.shapeModelSpec = new ShapeModelSpec(this.shapeModel, typeProvider, poetExtensions);
         this.interfaceProvider = new AwsShapePublicInterfaceProvider(this.intermediateModel, this.shapeModel);
         this.modelMethodOverrides = new ModelMethodOverrides(this.poetExtensions);
-        this.modelBuilderSpecs = new ModelBuilderSpecs(intermediateModel, this.shapeModel, this.shapeModelSpec, this.typeProvider,
-                this.poetExtensions);
+        this.modelBuilderSpecs = new ModelBuilderSpecs(intermediateModel, this.shapeModel, this.shapeModelSpec,
+                this.typeProvider);
     }
 
     @Override

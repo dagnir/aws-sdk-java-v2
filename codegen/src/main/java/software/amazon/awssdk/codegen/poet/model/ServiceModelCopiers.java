@@ -38,7 +38,7 @@ public class ServiceModelCopiers {
     public ServiceModelCopiers(IntermediateModel intermediateModel) {
         this.intermediateModel = intermediateModel;
         this.poetExtensions = new PoetExtensions(intermediateModel);
-        this.typeProvider = new TypeProvider(intermediateModel, this.poetExtensions);
+        this.typeProvider = new TypeProvider(intermediateModel);
     }
 
     public Collection<ClassSpec> copierSpecs() {
@@ -114,7 +114,6 @@ public class ServiceModelCopiers {
         String simpleType = m.getVariable().getSimpleType();
 
         return "Date".equals(simpleType) || "ByteBuffer".equals(simpleType);
-
     }
 
     private boolean canCopyReference(MemberModel m) {

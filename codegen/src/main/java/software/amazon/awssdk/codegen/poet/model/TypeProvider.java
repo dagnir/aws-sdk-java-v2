@@ -47,9 +47,9 @@ class TypeProvider {
     private final IntermediateModel intermediateModel;
     private final PoetExtensions poetExtensions;
 
-    public TypeProvider(IntermediateModel intermediateModel, PoetExtensions poetExtensions) {
+    public TypeProvider(IntermediateModel intermediateModel) {
         this.intermediateModel = intermediateModel;
-        this.poetExtensions = poetExtensions;
+        this.poetExtensions = new PoetExtensions(intermediateModel);
     }
 
     public ClassName listImplClassName() {
@@ -75,6 +75,7 @@ class TypeProvider {
             return ParameterizedTypeName.get(ClassName.get(List.class), elementType);
         } else if (memberModel.isMap()) {
             MapModel mapModel = memberModel.getMapModel();
+
             TypeName keyType;
             if (mapModel.isKeySimple()) {
                 keyType = getTypeNameForSimpleType(mapModel.getKeyType());
@@ -128,7 +129,6 @@ class TypeProvider {
             keyType = getTypeNameForSimpleType(mapModel.getKeyType());
         } else {
             keyType = parameterType(mapModel.getKeyModel());
-
         }
 
         TypeName valueType = parameterType(mapModel.getValueModel());
@@ -160,10 +160,5 @@ class TypeProvider {
                 .map(ClassName::get)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Unsupported simple fieldType " + simpleType));
-
-    }
-
-    public TypeName getModelClass(String name) {
-        return poetExtensions.getModelClass(name);
     }
 }

@@ -69,7 +69,6 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
         }
 
         return superInterfaces;
-
     }
 
     @Override

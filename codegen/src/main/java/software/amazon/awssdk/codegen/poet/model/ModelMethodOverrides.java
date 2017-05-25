@@ -95,21 +95,6 @@ public class ModelMethodOverrides {
         return toStringMethodBuilder.build();
     }
 
-    public MethodSpec cloneMethod(ClassName className) {
-        return MethodSpec.methodBuilder("clone")
-                .returns(className)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .beginControlFlow("try")
-                .addStatement("return ($T) super.clone()", className)
-                .endControlFlow()
-                .beginControlFlow("catch ($T e)", Exception.class)
-                .addStatement("throw new IllegalStateException(\"Got a $N from Object.clone() even though we're Cloneable!\", e)",
-                        CloneNotSupportedException.class.getSimpleName())
-                .endControlFlow()
-                .build();
-    }
-
     public MethodSpec hashCodeMethod(ShapeModel shapeModel) {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("hashCode")
                 .returns(int.class)

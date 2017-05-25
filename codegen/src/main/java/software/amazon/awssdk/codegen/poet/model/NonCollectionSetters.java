@@ -28,16 +28,17 @@ import java.util.List;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 class NonCollectionSetters extends AbstractMemberSetters {
-    private final TypeProvider typeProvider;
+    private final PoetExtensions poetExtensions;
 
     NonCollectionSetters(IntermediateModel intermediateModel,
                          ShapeModel shapeModel,
                          MemberModel memberModel,
                          TypeProvider typeProvider) {
         super(intermediateModel, shapeModel, memberModel, typeProvider);
-        this.typeProvider = typeProvider;
+        this.poetExtensions = new PoetExtensions(intermediateModel);
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
@@ -120,6 +121,6 @@ class NonCollectionSetters extends AbstractMemberSetters {
     }
 
     private ParameterSpec modeledParam() {
-        return ParameterSpec.builder(typeProvider.getModelClass(memberModel().getShape().getShapeName()), fieldName()).build();
+        return ParameterSpec.builder(poetExtensions.getModelClass(memberModel().getShape().getShapeName()), fieldName()).build();
     }
 }

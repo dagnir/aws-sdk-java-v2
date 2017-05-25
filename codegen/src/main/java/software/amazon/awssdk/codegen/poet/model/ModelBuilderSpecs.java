@@ -50,13 +50,12 @@ class ModelBuilderSpecs {
 
     public ModelBuilderSpecs(IntermediateModel intermediateModel, ShapeModel shapeModel,
                              ShapeModelSpec shapeModelSpec,
-                             TypeProvider typeProvider,
-                             PoetExtensions poetExtensions) {
+                             TypeProvider typeProvider) {
         this.intermediateModel = intermediateModel;
         this.shapeModel = shapeModel;
         this.shapeModelSpec = shapeModelSpec;
         this.typeProvider = typeProvider;
-        this.poetExtensions = poetExtensions;
+        this.poetExtensions = new PoetExtensions(this.intermediateModel);
         this.settersFactory = new SettersFactory(this.shapeModel, this.intermediateModel, this.typeProvider);
     }
 
