@@ -25,15 +25,15 @@ import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpRequestAdapter;
-import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
 
 /**
  * Delegate to the HTTP implementation to make an HTTP request and receive the response.
  */
-public class MakeHttpRequestStage implements RequestPipeline<Request<?>, SdkHttpResponse> {
+public class MakeHttpRequestStage implements RequestPipeline<Request<?>, SdkHttpFullResponse> {
 
     private final SdkHttpClient sdkHttpClient;
 
@@ -44,22 +44,22 @@ public class MakeHttpRequestStage implements RequestPipeline<Request<?>, SdkHttp
     /**
      * Returns the response from executing one httpClientSettings request; or null for retry.
      */
-    public SdkHttpResponse execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public SdkHttpFullResponse execute(Request<?> request, RequestExecutionContext context) throws Exception {
         AmazonHttpClient.checkInterrupted();
         final ProgressListener listener = context.requestConfig().getProgressListener();
 
         publishProgress(listener, ProgressEventType.HTTP_REQUEST_STARTED_EVENT);
-        final SdkHttpResponse httpResponse = executeHttpRequest(request, context);
+        final SdkHttpFullResponse httpResponse = executeHttpRequest(request, context);
         publishProgress(listener, ProgressEventType.HTTP_REQUEST_COMPLETED_EVENT);
 
         return httpResponse;
     }
 
-    private SdkHttpResponse executeHttpRequest(Request<?> request, RequestExecutionContext context) throws Exception {
-        final AbortableCallable<SdkHttpResponse> requestCallable = sdkHttpClient
-                .prepareRequest(new SdkHttpRequestAdapter(request), SdkRequestContext.builder()
-                        .metrics(context.awsRequestMetrics())
-                        .build());
+    private SdkHttpFullResponse executeHttpRequest(Request<?> request, RequestExecutionContext context) throws Exception {
+        final AbortableCallable<SdkHttpFullResponse> requestCallable = sdkHttpClient
+                .prepareRequest(new SdkHttpFullRequestAdapter(request), SdkRequestContext.builder()
+                                                                                         .metrics(context.awsRequestMetrics())
+                                                                                         .build());
 
         context.getClientExecutionTrackerTask().setCurrentHttpRequest(requestCallable);
         return requestCallable.call();

@@ -34,8 +34,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import software.amazon.awssdk.http.SdkHttpClientSettings;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
-import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.apache.internal.RepeatableInputStreamRequestEntity;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
 
@@ -48,7 +48,7 @@ public class ApacheHttpRequestFactory {
 
     private static final List<String> IGNORE_HEADERS = Arrays.asList(HttpHeaders.CONTENT_LENGTH, HttpHeaders.HOST);
 
-    public HttpRequestBase create(final SdkHttpRequest request, final SdkHttpClientSettings settings) {
+    public HttpRequestBase create(final SdkHttpFullRequest request, final SdkHttpClientSettings settings) {
         URI endpoint = request.getEndpoint();
 
         /*
@@ -72,7 +72,7 @@ public class ApacheHttpRequestFactory {
     }
 
     private void addRequestConfig(final HttpRequestBase base,
-                                  final SdkHttpRequest request,
+                                  final SdkHttpFullRequest request,
                                   final SdkHttpClientSettings settings) {
         final RequestConfig.Builder requestConfigBuilder = RequestConfig
                 .custom()
@@ -98,7 +98,7 @@ public class ApacheHttpRequestFactory {
     }
 
 
-    private HttpRequestBase createApacheRequest(SdkHttpRequest request, String uri, String encodedParams) {
+    private HttpRequestBase createApacheRequest(SdkHttpFullRequest request, String uri, String encodedParams) {
         switch (request.getHttpMethod()) {
             case HEAD:
                 return new HttpHead(uri);
@@ -119,7 +119,7 @@ public class ApacheHttpRequestFactory {
         }
     }
 
-    private HttpRequestBase wrapEntity(SdkHttpRequest request,
+    private HttpRequestBase wrapEntity(SdkHttpFullRequest request,
                                        HttpEntityEnclosingRequestBase entityEnclosingRequest,
                                        String encodedParams) {
 
@@ -147,7 +147,7 @@ public class ApacheHttpRequestFactory {
     /**
      * Configures the headers in the specified Apache HTTP request.
      */
-    private void addHeadersToRequest(HttpRequestBase httpRequest, SdkHttpRequest request) {
+    private void addHeadersToRequest(HttpRequestBase httpRequest, SdkHttpFullRequest request) {
 
         httpRequest.addHeader(HttpHeaders.HOST, getHostHeaderValue(request.getEndpoint()));
 

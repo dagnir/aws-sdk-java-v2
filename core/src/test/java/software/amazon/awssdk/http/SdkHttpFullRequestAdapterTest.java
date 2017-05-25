@@ -29,14 +29,14 @@ import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.util.StringInputStream;
 
-public class SdkHttpRequestAdapterTest {
+public class SdkHttpFullRequestAdapterTest {
 
     @Test
     public void adaptHeaders_AdaptsValuesToSingletonLists() {
         Request<Void> request = new DefaultRequest<>("foo");
         request.addHeader("HeaderOne", "valOne");
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getHeaders().get("HeaderOne"), hasSize(1));
         assertThat(adapted.getHeaders().get("HeaderOne").get(0), equalTo("valOne"));
@@ -47,7 +47,7 @@ public class SdkHttpRequestAdapterTest {
         Request<Void> request = new DefaultRequest<>("foo");
         request.addHeader("HeaderOne", null);
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getHeaders().get("HeaderOne"), hasSize(1));
         assertThat(adapted.getHeaders().get("HeaderOne").get(0), nullValue());
@@ -58,7 +58,7 @@ public class SdkHttpRequestAdapterTest {
         Request<Void> request = new DefaultRequest<>("foo");
         request.setEndpoint(URI.create("http://shorea.com"));
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getEndpoint(), equalTo(request.getEndpoint()));
     }
@@ -68,7 +68,7 @@ public class SdkHttpRequestAdapterTest {
         Request<Void> request = new DefaultRequest<>("foo");
         request.addParameter("QueryParam", "value");
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getParameters().get("QueryParam"), hasSize(1));
         assertThat(adapted.getParameters().get("QueryParam").get(0), equalTo("value"));
@@ -79,7 +79,7 @@ public class SdkHttpRequestAdapterTest {
         Request<Void> request = new DefaultRequest<>("foo");
         request.addParameters("QueryParam", Arrays.asList("foo", "bar", "baz"));
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getParameters().get("QueryParam"), hasSize(3));
         assertThat(adapted.getParameters().get("QueryParam"), hasItems("foo", "bar", "baz"));
@@ -90,7 +90,7 @@ public class SdkHttpRequestAdapterTest {
         Request<Void> request = new DefaultRequest<>("foo");
         request.setResourcePath("/foo/bar");
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getResourcePath(), equalTo("/foo/bar"));
     }
@@ -100,7 +100,7 @@ public class SdkHttpRequestAdapterTest {
         Request<Void> request = new DefaultRequest<>("foo");
         request.setHttpMethod(HttpMethodName.GET);
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getHttpMethod(), equalTo(SdkHttpMethod.GET));
     }
@@ -111,7 +111,7 @@ public class SdkHttpRequestAdapterTest {
         Request<Void> request = new DefaultRequest<>("foo");
         request.setContent(contents);
 
-        SdkHttpRequest adapted = new SdkHttpRequestAdapter(request);
+        SdkHttpFullRequest adapted = new SdkHttpFullRequestAdapter(request);
 
         assertThat(adapted.getContent(), equalTo(contents));
     }

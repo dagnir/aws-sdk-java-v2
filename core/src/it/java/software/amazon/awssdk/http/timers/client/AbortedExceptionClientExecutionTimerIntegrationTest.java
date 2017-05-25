@@ -30,7 +30,6 @@ import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.C
 
 import java.io.InputStream;
 import java.util.List;
-import org.apache.http.pool.ConnPoolControl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +44,7 @@ import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils;
@@ -61,7 +60,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockSer
     private SdkHttpClient sdkHttpClient;
 
     @Mock
-    private AbortableCallable<SdkHttpResponse> abortableCallable;
+    private AbortableCallable<SdkHttpFullResponse> abortableCallable;
 
     @Before
     public void setup() throws Exception {
@@ -72,9 +71,9 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockSer
                                              .withMaxErrorRetry(0))
                 .sdkHttpClient(sdkHttpClient)
                 .build();
-        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
-                                                          .statusCode(200)
-                                                          .build());
+        when(abortableCallable.call()).thenReturn(SdkHttpFullResponse.builder()
+                                                                     .statusCode(200)
+                                                                     .build());
     }
 
     @Override
@@ -109,10 +108,10 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockSer
     @Test
     public void clientInterruptedDuringResponseHandlers_DoesNotLeakConnection() throws Exception {
         InputStream mockContent = mock(InputStream.class);
-        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
-                                                          .statusCode(200)
-                                                          .content(mockContent)
-                                                          .build());
+        when(abortableCallable.call()).thenReturn(SdkHttpFullResponse.builder()
+                                                                     .statusCode(200)
+                                                                     .content(mockContent)
+                                                                     .build());
         interruptCurrentThreadAfterDelay(1000);
         List<RequestHandler2> requestHandlers = RequestHandlerTestUtils
                 .buildRequestHandlerList(new SlowRequestHandler().withAfterResponseWaitInSeconds(10));

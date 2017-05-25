@@ -13,22 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http;
+package software.amazon.awssdk.http.async;
 
-public interface SdkHttpResponse extends SdkHttpHeaders {
-
-    /**
-     * Returns the HTTP status text associated with this response.
-     *
-     * @return The HTTP status text associated with this response.
-     */
-    String getStatusText();
+public interface SdkAsyncHttpClient extends AutoCloseable {
 
     /**
-     * Returns the HTTP status code (ex: 200, 404, etc) associated with this
-     * response.
+     * Create an {@link AbortableRunnable} that can be used to execute the HTTP request.
      *
-     * @return The HTTP status code associated with this response.
+     * @param requestProvider Representation of an HTTP requestProvider.
+     * @param handler The handler that will be called when data is received.
+     *
+     * @return Task that can execute an HTTP requestProvider and can be aborted.
      */
-    int getStatusCode();
+    AbortableRunnable prepareRequest(SdkHttpRequestProvider requestProvider, SdkHttpResponseHandler handler);
 }

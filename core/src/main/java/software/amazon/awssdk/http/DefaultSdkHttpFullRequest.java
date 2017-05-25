@@ -17,27 +17,29 @@ package software.amazon.awssdk.http;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.TreeMap;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**
- * Internal implementation of {@link SdkHttpRequest}. Provided to HTTP implement to execute a request.
+ * Internal implementation of {@link SdkHttpFullRequest}. Provided to HTTP implement to execute a request.
  */
 @SdkInternalApi
-public class DefaultSdkHttpRequest implements SdkHttpRequest {
+public class DefaultSdkHttpFullRequest implements SdkHttpFullRequest {
 
-    private final Map<String, List<String>> headers;
+    private final Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final String resourcePath;
     private final Map<String, List<String>> queryParameters;
     private final URI endpoint;
     private final SdkHttpMethod httpMethod;
     private final InputStream content;
 
-    private DefaultSdkHttpRequest(Builder builder) {
-        this.headers = builder.headers;
+    private DefaultSdkHttpFullRequest(Builder builder) {
+        headers.putAll(builder.headers);
         this.resourcePath = builder.resourcePath;
         this.queryParameters = builder.queryParameters;
         this.endpoint = builder.endpoint;
@@ -51,10 +53,9 @@ public class DefaultSdkHttpRequest implements SdkHttpRequest {
     }
 
     @Override
-    public Optional<String> getFirstHeader(String headerName) {
-        return Optional.ofNullable(headers.get(headerName))
-                .filter(h -> !h.isEmpty())
-                .map(h -> h.get(0));
+    public Collection<String> getValuesForHeader(String header) {
+        Collection<String> values = headers.get(header);
+        return values != null ? values : Collections.emptyList();
     }
 
     @Override
@@ -83,14 +84,14 @@ public class DefaultSdkHttpRequest implements SdkHttpRequest {
     }
 
     /**
-     * @return Builder instance to construct a {@link DefaultSdkHttpRequest}.
+     * @return Builder instance to construct a {@link DefaultSdkHttpFullRequest}.
      */
     static Builder builder() {
         return new Builder();
     }
 
     /**
-     * Builder for a {@link DefaultSdkHttpRequest}.
+     * Builder for a {@link DefaultSdkHttpFullRequest}.
      */
     public static final class Builder {
 
@@ -135,10 +136,10 @@ public class DefaultSdkHttpRequest implements SdkHttpRequest {
         }
 
         /**
-         * @return An immutable {@link DefaultSdkHttpRequest} object.
+         * @return An immutable {@link DefaultSdkHttpFullRequest} object.
          */
-        public SdkHttpRequest build() {
-            return new DefaultSdkHttpRequest(this);
+        public SdkHttpFullRequest build() {
+            return new DefaultSdkHttpFullRequest(this);
         }
     }
 

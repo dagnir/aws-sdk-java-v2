@@ -18,15 +18,15 @@ package software.amazon.awssdk.http.pipeline.stages;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponseAdapter;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
- * Adapt our new {@link SdkHttpResponse} representation, to the legacy {@link HttpResponse} representation.
+ * Adapt our new {@link SdkHttpFullResponse} representation, to the legacy {@link HttpResponse} representation.
  */
-public class HttpResponseAdaptingStage implements RequestPipeline<SdkHttpResponse, HttpResponse> {
+public class HttpResponseAdaptingStage implements RequestPipeline<SdkHttpFullResponse, HttpResponse> {
 
     private final HttpClientSettings httpClientSettings;
 
@@ -35,7 +35,7 @@ public class HttpResponseAdaptingStage implements RequestPipeline<SdkHttpRespons
     }
 
     @Override
-    public HttpResponse execute(SdkHttpResponse input, RequestExecutionContext context) throws Exception {
+    public HttpResponse execute(SdkHttpFullResponse input, RequestExecutionContext context) throws Exception {
         return SdkHttpResponseAdapter.adapt(httpClientSettings, context.request(), input);
     }
 }

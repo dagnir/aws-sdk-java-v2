@@ -16,6 +16,8 @@
 package software.amazon.awssdk.http;
 
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -28,14 +30,14 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  */
 @SdkInternalApi
 @Immutable
-class DefaultSdkHttpResponse implements SdkHttpResponse {
+class DefaultSdkHttpFullResponse implements SdkHttpFullResponse {
 
     private final String statusText;
     private final int statusCode;
     private final InputStream content;
     private final Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-    DefaultSdkHttpResponse(Builder builder) {
+    DefaultSdkHttpFullResponse(Builder builder) {
         this.statusCode = builder.statusCode;
         this.statusText = builder.statusText;
         this.content = builder.content;
@@ -48,8 +50,9 @@ class DefaultSdkHttpResponse implements SdkHttpResponse {
     }
 
     @Override
-    public List<String> getHeaderValues(String headerName) {
-        return headers.get(headerName);
+    public Collection<String> getValuesForHeader(String header) {
+        Collection<String> values = headers.get(header);
+        return values != null ? values : Collections.emptyList();
     }
 
     @Override
@@ -66,6 +69,5 @@ class DefaultSdkHttpResponse implements SdkHttpResponse {
     public int getStatusCode() {
         return statusCode;
     }
-
 
 }

@@ -25,13 +25,13 @@ import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 
 /**
- * Adapts a {@link SdkHttpResponse} object to the legacy {@link HttpResponse}.
+ * Adapts a {@link SdkHttpFullResponse} object to the legacy {@link HttpResponse}.
  *
- * TODO this should eventually be removed and SdkHttpResponse should completely replace HttpResponse
+ * TODO this should eventually be removed and SdkHttpFullResponse should completely replace HttpResponse
  */
 public class SdkHttpResponseAdapter {
 
-    public static HttpResponse adapt(HttpClientSettings httpSettings, Request<?> request, SdkHttpResponse awsHttpResponse) {
+    public static HttpResponse adapt(HttpClientSettings httpSettings, Request<?> request, SdkHttpFullResponse awsHttpResponse) {
         final HttpResponse httpResponse = new HttpResponse(request);
         httpResponse.setStatusCode(awsHttpResponse.getStatusCode());
         httpResponse.setStatusText(awsHttpResponse.getStatusText());
@@ -50,7 +50,7 @@ public class SdkHttpResponseAdapter {
     }
 
     private static InputStream getContent(HttpClientSettings httpSettings,
-                                          SdkHttpResponse awsHttpResponse,
+                                          SdkHttpFullResponse awsHttpResponse,
                                           HttpResponse httpResponse) {
         final Optional<Long> crc32Checksum = getCrc32Checksum(httpResponse);
         if (shouldDecompress(httpResponse)) {
