@@ -44,38 +44,38 @@ public class DimensionComparatorTest {
     @Test
     public void test() {
         // Test case entry format: from, to, expected-result
-        Object[][] cases =  
-        { 
-            {   Dimension.builder().name("dim1").value("val1"),
-                Dimension.builder().name("dim1").value("val1"), 
+        Object[][] cases =
+        {
+            {   Dimension.builder().name("dim1").value("val1").build(),
+                Dimension.builder().name("dim1").value("val1").build(),
                 0
             },
-            {   Dimension.builder().name("dim2").value("val2"),
-                Dimension.builder().name("dim2").value("val2x"),
+            {   Dimension.builder().name("dim2").value("val2").build(),
+                Dimension.builder().name("dim2").value("val2x").build(),
                 -1
             },
-            {   Dimension.builder().name("dim2").value("val2x"),
-                Dimension.builder().name("dim2").value("val2"),
+            {   Dimension.builder().name("dim2").value("val2x").build(),
+                Dimension.builder().name("dim2").value("val2").build(),
                 1
             },
-            {   Dimension.builder().name("dim3").value("val2x"),
-                Dimension.builder().name("dim2").value("val2x"),
+            {   Dimension.builder().name("dim3").value("val2x").build(),
+                Dimension.builder().name("dim2").value("val2x").build(),
                 1
             },
-            {   Dimension.builder().name(null).value("val2x"),
-                Dimension.builder().name("dim2").value("val2x"),
+            {   Dimension.builder().name(null).value("val2x").build(),
+                Dimension.builder().name("dim2").value("val2x").build(),
                 -1
             },
-            {   Dimension.builder().name(null).value("val2x"),
-                Dimension.builder().name(null).value("val2x"),
+            {   Dimension.builder().name(null).value("val2x").build(),
+                Dimension.builder().name(null).value("val2x").build(),
                 0
             },
-            {   Dimension.builder().name(null).value(null),
-                Dimension.builder().name(null).value("val2x"),
+            {   Dimension.builder().name(null).value(null).build(),
+                Dimension.builder().name(null).value("val2x").build(),
                 -1
             },
-            {   Dimension.builder().name(null).value(null),
-                Dimension.builder().name(null).value(null),
+            {   Dimension.builder().name(null).value(null).build(),
+                Dimension.builder().name(null).value(null).build(),
                 0
             },
         };
