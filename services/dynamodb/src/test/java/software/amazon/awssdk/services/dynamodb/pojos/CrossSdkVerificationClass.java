@@ -60,7 +60,7 @@ public class CrossSdkVerificationClass {
     private Set<Calendar> calendarSetAttribute;
 
     // these are kind of pointless, but here for completeness
-    private Set<Boolean> booleansetAttribute;
+    private Set<Boolean> booleanSetAttribute;
 
     @DynamoDbHashKey
     public String getKey() {
@@ -249,12 +249,12 @@ public class CrossSdkVerificationClass {
         this.calendarSetAttribute = calendarSetAttribute;
     }
 
-    public Set<Boolean> booleansetAttribute() {
-        return booleansetAttribute;
+    public Set<Boolean> booleanSetAttribute() {
+        return booleanSetAttribute;
     }
 
-    public void setBooleansetAttribute(Set<Boolean> booleansetAttribute) {
-        this.booleansetAttribute = booleansetAttribute;
+    public void setBooleanSetAttribute(Set<Boolean> booleanSetAttribute) {
+        this.booleanSetAttribute = booleanSetAttribute;
     }
 
     public Set<String> stringSetAttribute() {
@@ -274,7 +274,7 @@ public class CrossSdkVerificationClass {
         result = prime * result + ((bigIntegerAttribute == null) ? 0 : bigIntegerAttribute.hashCode());
         result = prime * result + ((bigIntegerSetAttribute == null) ? 0 : bigIntegerSetAttribute.hashCode());
         result = prime * result + ((booleanAttribute == null) ? 0 : booleanAttribute.hashCode());
-        result = prime * result + ((booleansetAttribute == null) ? 0 : booleansetAttribute.hashCode());
+        result = prime * result + ((booleanSetAttribute == null) ? 0 : booleanSetAttribute.hashCode());
         result = prime * result + ((byteAttribute == null) ? 0 : byteAttribute.hashCode());
         result = prime * result + ((byteSetAttribute == null) ? 0 : byteSetAttribute.hashCode());
         result = prime * result + ((calendarAttribute == null) ? 0 : calendarAttribute.hashCode());
@@ -344,11 +344,11 @@ public class CrossSdkVerificationClass {
         } else if (!booleanAttribute.equals(other.booleanAttribute)) {
             return false;
         }
-        if (booleansetAttribute == null) {
-            if (other.booleansetAttribute != null) {
+        if (booleanSetAttribute == null) {
+            if (other.booleanSetAttribute != null) {
                 return false;
             }
-        } else if (!booleansetAttribute.equals(other.booleansetAttribute)) {
+        } else if (!booleanSetAttribute.equals(other.booleanSetAttribute)) {
             return false;
         }
         if (byteAttribute == null) {

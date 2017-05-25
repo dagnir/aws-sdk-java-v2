@@ -108,8 +108,8 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         assertNotNull(obj.bigIntegerSetAttribute());
         assertEquals(3, obj.bigIntegerSetAttribute().size());
         assertNotNull(obj.booleanAttribute());
-        assertNotNull(obj.booleansetAttribute());
-        assertEquals(2, obj.booleansetAttribute().size());
+        assertNotNull(obj.booleanSetAttribute());
+        assertEquals(2, obj.booleanSetAttribute().size());
         assertNotNull(obj.byteAttribute());
         assertNotNull(obj.byteSetAttribute());
         assertEquals(3, obj.byteSetAttribute().size());
@@ -227,7 +227,7 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         obj.setBigIntegerSetAttribute(
                 toSet(new BigInteger("" + start++), new BigInteger("" + start++), new BigInteger("" + start++)));
         obj.setBooleanAttribute(start++ % 2 == 0);
-        obj.setBooleansetAttribute(toSet(true, false));
+        obj.setBooleanSetAttribute(toSet(true, false));
         obj.setByteAttribute((byte) start++);
         obj.setByteSetAttribute(toSet((byte) start++, (byte) start++, (byte) start++));
         obj.setCalendarAttribute(getUniqueCalendar());

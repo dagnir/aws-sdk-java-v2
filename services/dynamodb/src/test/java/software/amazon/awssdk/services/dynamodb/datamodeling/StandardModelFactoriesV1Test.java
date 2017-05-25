@@ -136,7 +136,7 @@ public class StandardModelFactoriesV1Test {
     }
 
     @Test
-    public void testBooleanset() {
+    public void testBooleanSet() {
         assertEquals(Collections.singletonList("1"),
                      convert("getBooleanSet", Collections.singleton(true)).ns());
 

@@ -178,7 +178,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         DynamoDbMapperConfig config = new DynamoDbMapperConfig(ConversionSchemas.V1);
         DynamoDbMapper mapper = new DynamoDbMapper(dynamo, config);
 
-        NonsetCollectionType obj = new NonsetCollectionType();
+        NonSetCollectionType obj = new NonSetCollectionType();
         obj.setKey("" + startKey++);
         obj.setBadlyMapped(new ArrayList<String>());
         obj.badlyMapped().add("abc");
@@ -450,7 +450,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
     }
 
     @DynamoDbTable(tableName = "aws-java-sdk-util")
-    public static class NonsetCollectionType {
+    public static class NonSetCollectionType {
 
         private String key;
         private List<String> badlyMapped;

@@ -296,7 +296,7 @@ public final class ConversionSchemas {
                          ByteArraySetToBinarySetMarshaller.instance()));
     }
 
-    private static void addV1BooleansetMarshallers(
+    private static void addV1BooleanSetMarshallers(
             List<Pair<ArgumentMarshaller>> list) {
 
         list.add(Pair.of(Boolean.class,
@@ -941,7 +941,7 @@ public final class ConversionSchemas {
                     new ArrayList<Pair<ArgumentMarshaller>>();
 
             addStandardDateSetMarshallers(list);
-            addV1BooleansetMarshallers(list);
+            addV1BooleanSetMarshallers(list);
             addStandardNumberSetMarshallers(list);
             addStandardStringSetMarshallers(list);
             addStandardBinarySetMarshallers(list);
@@ -975,7 +975,7 @@ public final class ConversionSchemas {
                     new ArrayList<Pair<ArgumentMarshaller>>();
 
             addStandardDateSetMarshallers(list);
-            addV1BooleansetMarshallers(list);
+            addV1BooleanSetMarshallers(list);
             addStandardNumberSetMarshallers(list);
             addStandardStringSetMarshallers(list);
             addStandardBinarySetMarshallers(list);

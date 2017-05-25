@@ -140,7 +140,7 @@ public class StandardModelFactoriesV2Test {
     }
 
     @Test
-    public void testBooleanset() {
+    public void testBooleanSet() {
         // Set<Boolean> (which is silly but technically valid) gets mapped to
         // a List of Booleans now via the ObjectSetToListMarshaller.
         AttributeValue value =
