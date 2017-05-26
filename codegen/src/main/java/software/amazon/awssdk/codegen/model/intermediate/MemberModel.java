@@ -133,16 +133,6 @@ public class MemberModel extends DocumentationModel {
         return this;
     }
 
-    // TODO: Remove when all marshallers switch over to new style
-    public String getGetterMethodName() {
-        return getBeanStyleGetterMethodName();
-    }
-
-    // TODO: Remove when all marshallers switch over to new style
-    public void setGetterMethodName(String getterMethodName) {
-        setBeanStyleGetterMethodName(getterMethodName);
-    }
-
     public String getFluentGetterMethodName() {
         return fluentGetterMethodName;
     }
