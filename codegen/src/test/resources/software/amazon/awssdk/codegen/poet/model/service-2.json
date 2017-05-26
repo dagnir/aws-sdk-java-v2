@@ -108,11 +108,11 @@
       "type":"list",
       "member":{"shape":"Integer"}
     },
-    "ListOfListOfListsOfStrings":{
+    "ListOfListOfListOfStrings":{
       "type":"list",
-      "member":{"shape":"ListOfListsOfStrings"}
+      "member":{"shape":"ListOfListOfStrings"}
     },
-    "ListOfListsOfStrings":{
+    "ListOfListOfStrings":{
       "type":"list",
       "member":{"shape":"ListOfStrings"}
     },
@@ -134,10 +134,10 @@
       "key":{"shape":"String"},
       "value":{"shape":"ListOfIntegers"}
     },
-    "MapOfStringToListOfListsOfStrings":{
+    "MapOfStringToListOfListOfStrings":{
       "type":"map",
       "key":{"shape":"String"},
-      "value":{"shape":"ListOfListsOfStrings"}
+      "value":{"shape":"ListOfListOfStrings"}
     },
     "MapOfStringToSimpleStruct":{
       "type":"map",
@@ -152,9 +152,9 @@
     "NestedContainersStructure":{
       "type":"structure",
       "members":{
-        "ListOfListsOfStrings":{"shape":"ListOfListsOfStrings"},
-        "ListOfListOfListsOfStrings":{"shape":"ListOfListOfListsOfStrings"},
-        "MapOfStringToListOfListsOfStrings":{"shape":"MapOfStringToListOfListsOfStrings"}
+        "ListOfListOfStrings":{"shape":"ListOfListOfStrings"},
+        "ListOfListOfListOfStrings":{"shape":"ListOfListOfListOfStrings"},
+        "MapOfStringToListOfListOfStrings":{"shape":"MapOfStringToListOfListOfStrings"}
       }
     },
     "RecursiveListType":{
