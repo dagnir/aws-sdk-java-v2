@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.utils;
 
+import static software.amazon.awssdk.utils.StringUtils.lowerCase;
+
 import java.util.function.Supplier;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -137,7 +139,8 @@ public final class Logger {
      * @return whether or not that level is enable
      */
     public boolean isLoggingLevelEnabled(String logLevel) {
-        switch (logLevel.toLowerCase()) {
+        String lowerLogLevel = lowerCase(logLevel);
+        switch (lowerLogLevel) {
             case "debug":
                 return log.isDebugEnabled();
             case "trace":
@@ -151,7 +154,7 @@ public final class Logger {
             case "fatal":
                 return log.isFatalEnabled();
             default:
-                throw new IllegalArgumentException("Unknown log level: " + logLevel.toLowerCase());
+                throw new IllegalArgumentException("Unknown log level: " + lowerLogLevel);
         }
     }
 
