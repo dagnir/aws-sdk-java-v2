@@ -38,7 +38,7 @@ public class ChannelPipelineInitializer extends AbstractChannelPoolHandler {
         this.sslContext = sslContext;
 
         List<ChannelHandler> tmpHandlers = new ArrayList<>();
-        if (log.underlyingLogger().isDebugEnabled()) {
+        if (log.isLoggingLevelEnabled("debug")) {
             tmpHandlers.add(new LoggingHandler(log::debug));
         }
         tmpHandlers.add(new ResponseHandler());

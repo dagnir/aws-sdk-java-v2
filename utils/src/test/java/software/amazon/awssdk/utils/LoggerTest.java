@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.utils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -189,5 +190,11 @@ public class LoggerTest {
         when(log.isErrorEnabled()).thenReturn(false);
 
         sut.error(supplierThatThrows, throwable);
+    }
+
+    @Test
+    public void logLevelCanBeChecked() {
+        when(log.isErrorEnabled()).thenReturn(true);
+        assertThat(sut.isLoggingLevelEnabled("error")).isTrue();
     }
 }

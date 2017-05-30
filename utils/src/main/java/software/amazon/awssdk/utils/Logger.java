@@ -132,11 +132,27 @@ public final class Logger {
     }
 
     /**
-     * Gets the underlying logger for access to lower-level functions
-     * @return log - the underlying log instance
+     * Determines if the log-level passed is enabled
+     * @param logLevel a string representation of the log level, e.g. "debug"
+     * @return whether or not that level is enable
      */
-    public Log underlyingLogger() {
-        return log;
+    public boolean isLoggingLevelEnabled(String logLevel) {
+        switch (logLevel.toLowerCase()) {
+            case "debug":
+                return log.isDebugEnabled();
+            case "trace":
+                return log.isTraceEnabled();
+            case "error":
+                return log.isErrorEnabled();
+            case "info":
+                return log.isInfoEnabled();
+            case "warn":
+                return log.isWarnEnabled();
+            case "fatal":
+                return log.isFatalEnabled();
+            default:
+                throw new IllegalArgumentException("Unknown log level: " + logLevel.toLowerCase());
+        }
     }
 
     /**
