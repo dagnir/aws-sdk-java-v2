@@ -50,23 +50,6 @@ public final class RequestAdapter {
     }
 
     private static HttpMethod toNettyHttpMethod(SdkHttpMethod method) {
-        switch (method) {
-            case GET:
-                return HttpMethod.GET;
-            case POST:
-                return HttpMethod.POST;
-            case PUT:
-                return HttpMethod.PUT;
-            case DELETE:
-                return HttpMethod.DELETE;
-            case PATCH:
-                return HttpMethod.PATCH;
-            case HEAD:
-                return HttpMethod.HEAD;
-            case OPTIONS:
-                return HttpMethod.OPTIONS;
-            default:
-                throw new IllegalArgumentException("Unknown http method: " + method);
-        }
+        return HttpMethod.valueOf(method.name());
     }
 }
