@@ -20,7 +20,6 @@ import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -176,11 +175,6 @@ public abstract class AmazonWebServiceClient {
                 .useBrowserCompatibleHostNameVerifier(!useStrictHostNameVerification())
                 .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
                 .build();
-    }
-
-    /* Check the profiling system property and return true if set. */
-    protected static boolean isProfilingEnabled() {
-        return System.getProperty(SdkGlobalConfiguration.PROFILING_SYSTEM_PROPERTY) != null;
     }
 
     /**
@@ -467,7 +461,7 @@ public abstract class AmazonWebServiceClient {
 
     protected ExecutionContext createExecutionContext(AmazonWebServiceRequest req,
                                                       SignerProvider signerProvider) {
-        boolean isMetricsEnabled = isRequestMetricsEnabled(req) || isProfilingEnabled();
+        boolean isMetricsEnabled = isRequestMetricsEnabled(req);
         return ExecutionContext.builder()
                 .withRequestHandler2s(requestHandler2s)
                 .withUseRequestMetrics(isMetricsEnabled)

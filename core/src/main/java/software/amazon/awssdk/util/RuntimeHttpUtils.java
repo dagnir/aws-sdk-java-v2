@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
@@ -32,12 +33,11 @@ public class RuntimeHttpUtils {
     private static final String SPACE = " ";
 
     private static final String AWS_EXECUTION_ENV_PREFIX = "exec-env/";
-    private static final String AWS_EXECUTION_ENV_NAME = "AWS_EXECUTION_ENV";
 
     public static String getUserAgent(final LegacyClientConfiguration config, final String userAgentMarker) {
         String userDefinedPrefix = config != null ? config.getUserAgentPrefix() : "";
         String userDefinedSuffix = config != null ? config.getUserAgentSuffix() : "";
-        String awsExecutionEnvironment = getEnvironmentVariable(AWS_EXECUTION_ENV_NAME);
+        String awsExecutionEnvironment = AwsSystemSetting.AWS_EXECUTION_ENV.getStringValue().orElse(null);
 
         StringBuilder userAgent = new StringBuilder(userDefinedPrefix.trim());
 
@@ -58,15 +58,6 @@ public class RuntimeHttpUtils {
         }
 
         return userAgent.toString();
-    }
-
-    private static String getEnvironmentVariable(String environmentVariableName) {
-        try {
-            return System.getenv(environmentVariableName);
-        } catch (Exception e) {
-            // Return an empty string if unable to get environment variable
-            return "";
-        }
     }
 
     /**

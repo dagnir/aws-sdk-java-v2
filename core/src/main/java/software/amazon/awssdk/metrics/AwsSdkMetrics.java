@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.metrics;
 
-import static software.amazon.awssdk.SdkGlobalConfiguration.DEFAULT_METRICS_SYSTEM_PROPERTY;
-
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.SdkGlobalConfiguration;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
@@ -39,8 +37,8 @@ import software.amazon.awssdk.util.AwsServiceMetrics;
  * Used to control the default AWS SDK metric collection system.
  * <p>
  * The default metric collection of the Java AWS SDK is disabled by default. To
- * enable it, simply specify the system property
- * <b>"software.amazon.awssdk.sdk.enableDefaultMetrics"</b> when starting up the JVM.
+ * enable it, simply specify the system property <b>"aws.defaultMetrics"</b>
+ * when starting up the JVM.
  * When the system property is specified, a default metric collector will be
  * started at the AWS SDK level. The default implementation uploads the
  * request/response metrics captured to Amazon CloudWatch using AWS credentials
@@ -254,7 +252,7 @@ public enum AwsSdkMetrics {
     private static boolean dirtyEnabling;
 
     static {
-        String defaultMetrics = System.getProperty(DEFAULT_METRICS_SYSTEM_PROPERTY);
+        String defaultMetrics = AwsSystemSetting.AWS_DEFAULT_METRICS.getStringValue().orElse(null);
         DEFAULT_METRICS_ENABLED = defaultMetrics != null;
         if (DEFAULT_METRICS_ENABLED) {
             String[] values = defaultMetrics.split(",");
@@ -401,9 +399,8 @@ public enum AwsSdkMetrics {
     /**
      * Returns a non-null request metric collector for the SDK. If no custom
      * request metric collector has previously been specified via
-     * {@link #setMetricCollector(MetricCollector)} and the
-     * {@link SdkGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY} has been set, then this method
-     * will initialize and return the default metric collector provided by the
+     * {@link #setMetricCollector(MetricCollector)} and the {@link AwsSystemSetting#AWS_DEFAULT_METRICS} has been set, then this
+     * method will initialize and return the default metric collector provided by the
      * AWS SDK on a best-attempt basis.
      */
     public static <T extends RequestMetricCollector> T getRequestMetricCollector() {
@@ -502,7 +499,7 @@ public enum AwsSdkMetrics {
 
     /**
      * Returns true if the system property
-     * {@link SdkGlobalConfiguration#DEFAULT_METRICS_SYSTEM_PROPERTY} has been
+     * {@link AwsSystemSetting#AWS_DEFAULT_METRICS} has been
      * set; false otherwise.
      */
     public static boolean isDefaultMetricsEnabled() {

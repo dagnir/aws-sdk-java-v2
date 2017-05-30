@@ -523,25 +523,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the value for the given system property.
-     */
-    private String getSystemProperty(String property) {
-        return System.getProperty(property);
-    }
-
-    /**
-     * Returns the Java system property for proxy host depending on
-     * {@link #getProtocol()}: i.e. if protocol is https, returns
-     * the value of the system property https.proxyHost, otherwise
-     * returns value of http.proxyHost.
-     */
-    private String getProxyHostProperty() {
-        return getProtocol() == Protocol.HTTPS
-               ? getSystemProperty("https.proxyHost")
-               : getSystemProperty("http.proxyHost");
-    }
-
-    /**
      * Returns the optional proxy host the client will connect
      * through.  Returns either the proxyHost set on this object, or
      * if not provided, checks the value of the Java system property
@@ -552,7 +533,7 @@ public class LegacyClientConfiguration {
      * @return The proxy host the client will connect through.
      */
     public String getProxyHost() {
-        return (proxyHost != null) ? proxyHost : getProxyHostProperty();
+        return proxyHost;
     }
 
     /**
@@ -579,24 +560,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the Java system property for proxy port depending on
-     * {@link #getProtocol()}: i.e. if protocol is https, returns
-     * the value of the system property https.proxyPort, otherwise
-     * returns value of http.proxyPort.  Defaults to {@link this.proxyPort}
-     * if the system property is not set with a valid port number.
-     */
-    private int getProxyPortProperty() {
-        final String proxyPortString = (getProtocol() == Protocol.HTTPS)
-                                       ? getSystemProperty("https.proxyPort")
-                                       : getSystemProperty("http.proxyPort");
-        try {
-            return Integer.parseInt(proxyPortString);
-        } catch (NumberFormatException e) {
-            return proxyPort;
-        }
-    }
-
-    /**
      * Returns the optional proxy port the client will connect
      * through.  Returns either the proxyPort set on this object, or
      * if not provided, checks the value of the Java system property
@@ -607,7 +570,7 @@ public class LegacyClientConfiguration {
      * @return The proxy port the client will connect through.
      */
     public int getProxyPort() {
-        return (proxyPort >= 0) ? proxyPort : getProxyPortProperty();
+        return proxyPort;
     }
 
     /**
@@ -634,18 +597,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the Java system property for proxy user name depending on
-     * {@link #getProtocol()}: i.e. if protocol is https, returns
-     * the value of the system property https.proxyUser, otherwise
-     * returns value of http.proxyUser.
-     */
-    private String getProxyUsernameProperty() {
-        return (getProtocol() == Protocol.HTTPS)
-               ? getSystemProperty("https.proxyUser")
-               : getSystemProperty("http.proxyUser");
-    }
-
-    /**
      * Returns the optional proxy user name to use if connecting
      * through a proxy.  Returns either the proxyUsername set on this
      * object, or if not provided, checks the value of the Java system
@@ -658,7 +609,7 @@ public class LegacyClientConfiguration {
      *         proxy.
      */
     public String getProxyUsername() {
-        return (proxyUsername != null) ? proxyUsername : getProxyUsernameProperty();
+        return proxyUsername;
     }
 
     /**
@@ -684,18 +635,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the Java system property for proxy password depending on
-     * {@link #getProtocol()}: i.e. if protocol is https, returns
-     * the value of the system property https.proxyPassword, otherwise
-     * returns value of http.proxyPassword.
-     */
-    private String getProxyPasswordProperty() {
-        return (getProtocol() == Protocol.HTTPS)
-               ? getSystemProperty("https.proxyPassword")
-               : getSystemProperty("http.proxyPassword");
-    }
-
-    /**
      * Returns the optional proxy password to use if connecting
      * through a proxy.  Returns either the proxyPassword set on this
      * object, or if not provided, checks the value of the Java system
@@ -707,7 +646,7 @@ public class LegacyClientConfiguration {
      * @return The password to use when connecting through a proxy.
      */
     public String getProxyPassword() {
-        return (proxyPassword != null) ? proxyPassword : getProxyPasswordProperty();
+        return proxyPassword;
     }
 
     /**
@@ -804,14 +743,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the Java system property for nonProxyHosts. We still honor this property even
-     * {@link #getProtocol()} is https, see http://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html.
-     */
-    private String getNonProxyHostsProperty() {
-        return getSystemProperty("http.nonProxyHosts");
-    }
-
-    /**
      * Returns the optional hosts the client will access without going
      * through the proxy. Returns either the nonProxyHosts set on this
      * object, or if not provided, checks the value of the Java system property
@@ -821,7 +752,7 @@ public class LegacyClientConfiguration {
      * @return The hosts the client will connect through bypassing the proxy.
      */
     public String getNonProxyHosts() {
-        return nonProxyHosts != null ? nonProxyHosts : getNonProxyHostsProperty();
+        return nonProxyHosts;
     }
 
     /**
@@ -1130,8 +1061,7 @@ public class LegacyClientConfiguration {
      * @return true if retry throttling will be used
      */
     public boolean useThrottledRetries() {
-        return throttleRetries || getSystemProperty(
-                SdkGlobalConfiguration.RETRY_THROTTLING_SYSTEM_PROPERTY) != null;
+        return throttleRetries;
     }
 
     /**

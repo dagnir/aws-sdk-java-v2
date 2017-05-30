@@ -34,8 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.internal.EC2CredentialsUtils;
 import software.amazon.awssdk.util.json.Jackson;
 
@@ -418,8 +418,7 @@ public class EC2MetadataUtils {
      * Returns the host address of the Amazon EC2 Instance Metadata Service.
      */
     public static String getHostAddressForEc2MetadataService() {
-        String host = System.getProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
-        return host != null ? host : EC2_METADATA_SERVICE_URL;
+        return AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.getStringValueOrThrow();
     }
 
     /**

@@ -24,7 +24,7 @@ import software.amazon.awssdk.util.EC2MetadataUtils;
  * Attempts to load region information from the EC2 Metadata service. If the application is not
  * running on EC2 this provider will return null.
  */
-public class InstanceMetadataRegionProvider extends AwsRegionProvider {
+public class InstanceProfileRegionProvider extends AwsRegionProvider {
 
     /**
      * Cache region as it will not change during the lifetime of the JVM.
@@ -47,7 +47,7 @@ public class InstanceMetadataRegionProvider extends AwsRegionProvider {
         try {
             return EC2MetadataUtils.getEC2InstanceRegion();
         } catch (AmazonClientException sce) {
-            LogFactory.getLog(InstanceMetadataRegionProvider.class)
+            LogFactory.getLog(InstanceProfileRegionProvider.class)
                       .debug("Ignoring failure to retrieve the region: " + sce.getMessage());
             return null;
         }

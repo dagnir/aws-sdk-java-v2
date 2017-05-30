@@ -68,7 +68,6 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
@@ -1940,15 +1939,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         MD5DigestCalculatingInputStream md5DigestStream = null;
         try {
             Request<PutObjectRequest> request = createRequest(bucketName, key, putObjectRequest, HttpMethodName.PUT);
-            // Make backward compatible with buffer size via system property
-            final Integer bufsize = Constants.getS3StreamBufferSize();
-            if (bufsize != null) {
-                AmazonWebServiceRequest awsreq = request.getOriginalRequest();
-                // Note awsreq is never null at this point even if the original
-                // request was
-                awsreq.getRequestClientOptions()
-                      .setReadLimit(bufsize.intValue());
-            }
+
             if (putObjectRequest.getAccessControlList() != null) {
                 addAclHeaders(request, putObjectRequest.getAccessControlList());
             } else if (putObjectRequest.getCannedAcl() != null) {
@@ -3465,15 +3456,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                     // unlimited mark-and-reset
                     isCurr = ReleasableInputStream.wrap(isCurr);
                 }
-                // Make backward compatible with buffer size via system property
-                final Integer bufsize = Constants.getS3StreamBufferSize();
-                if (bufsize != null) {
-                    AmazonWebServiceRequest awsreq = request.getOriginalRequest();
-                    // Note awsreq is never null at this point even if the original
-                    // request was
-                    awsreq.getRequestClientOptions()
-                          .setReadLimit(bufsize.intValue());
-                }
             } else {
                 try {
                     isCurr = new ResettableInputStream(fileOrig);
@@ -4253,7 +4235,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             executionContext.setCredentialsProvider(CredentialUtils.getCredentialsProvider(request.getOriginalRequest(),
                                                                                            awsCredentialsProvider));
 
-            validateRequestBeforeTransmit(request);
             response = client.execute(request, responseHandler, errorResponseHandler, executionContext);
 
             return response.getAwsResponse();
@@ -4282,32 +4263,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         } finally {
             endClientExecution(awsRequestMetrics, request, response);
         }
-    }
-
-    private void validateRequestBeforeTransmit(Request<?> request) {
-        boolean implicitCrossRegionForbidden = areImplicitGlobalClientsDisabled();
-        boolean explicitCrossRegionEnabled = clientOptions.isForceGlobalBucketAccessEnabled();
-
-        // The region must be set if implicit cross region clients are not allowed
-        if (noExplicitRegionProvided(request) && implicitCrossRegionForbidden && !explicitCrossRegionEnabled) {
-            String error = String.format("While the %s system property is enabled, Amazon S3 clients cannot be used without " +
-                                         "first configuring a region or explicitly enabling global bucket access discovery " +
-                                         "in the S3 client builder.",
-                                         SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
-            throw new IllegalStateException(error);
-        }
-    }
-
-    /**
-     * Returns true in the event that the {@link SdkGlobalConfiguration#DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY}
-     * is non-null and not "false".
-     *
-     * If this system property is set, S3 clients may not act in a cross-region manner unless cross-region behavior is
-     * explicitly enabled, using options like {@link AmazonS3ClientBuilder#enableForceGlobalBucketAccess()}.
-     */
-    private boolean areImplicitGlobalClientsDisabled() {
-        String setting = System.getProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
-        return setting != null && !setting.equals("false");
     }
 
     private boolean shouldPerformHeadRequestToFindRegion(Request<?> request, String bucket) {

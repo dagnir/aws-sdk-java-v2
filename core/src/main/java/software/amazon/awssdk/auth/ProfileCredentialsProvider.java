@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.auth;
 
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.auth.profile.ProfilesConfigFile;
-import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
 
 /**
  * Credentials provider based on AWS configuration profiles. This provider vends AWSCredentials from the profile configuration
@@ -46,7 +46,8 @@ public class ProfileCredentialsProvider extends FileSystemCredentialsProvider {
      */
     private ProfileCredentialsProvider(Builder builder) {
         this.profilesConfigFile = builder.profilesConfigFile != null ? builder.profilesConfigFile : new ProfilesConfigFile();
-        this.profileName = builder.profileName != null ? builder.profileName : new AwsProfileNameLoader().loadProfileName();
+        this.profileName = builder.profileName != null ? builder.profileName
+                                                       : AwsSystemSetting.AWS_DEFAULT_PROFILE.getStringValueOrThrow();
     }
 
     /**

@@ -25,14 +25,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import software.amazon.awssdk.SdkGlobalConfiguration;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.util.EC2MetadataUtilsServer;
 
 /**
  * Tests broken up by fixture.
  */
 @RunWith(Enclosed.class)
-public class InstanceMetadataRegionProviderTest {
+public class InstanceProfileRegionProviderTest {
 
     /**
      * If the EC2 metadata service is running it should return the region the server is mocked
@@ -49,20 +49,19 @@ public class InstanceMetadataRegionProviderTest {
             server = new EC2MetadataUtilsServer("localhost", 0);
             server.start();
 
-            System.setProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
+            System.setProperty(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.property(),
                                "http://localhost:" + server.getLocalPort());
         }
 
         @AfterClass
         public static void tearDownFixture() throws IOException {
             server.stop();
-            System.clearProperty(
-                    SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
+            System.clearProperty(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.property());
         }
 
         @Before
         public void setup() {
-            regionProvider = new InstanceMetadataRegionProvider();
+            regionProvider = new InstanceProfileRegionProvider();
         }
 
         @Test
@@ -83,9 +82,8 @@ public class InstanceMetadataRegionProviderTest {
 
         @Before
         public void setup() {
-            System.setProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
-                               "http://localhost:54123");
-            regionProvider = new InstanceMetadataRegionProvider();
+            System.setProperty(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.property(), "http://localhost:54123");
+            regionProvider = new InstanceProfileRegionProvider();
         }
 
         @Test

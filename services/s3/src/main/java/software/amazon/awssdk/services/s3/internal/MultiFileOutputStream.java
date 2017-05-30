@@ -27,6 +27,7 @@ import org.joda.time.format.DateTimeFormat;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.services.s3.OnFileDelete;
 import software.amazon.awssdk.services.s3.UploadObjectObserver;
+import software.amazon.awssdk.utils.JavaSystemSetting;
 
 /**
  * Used to split an output stream into multiple files for purposes such as
@@ -61,7 +62,7 @@ public class MultiFileOutputStream extends OutputStream implements OnFileDelete 
      * this stream is considered fully initialized.
      */
     public MultiFileOutputStream() {
-        root = new File(System.getProperty("java.io.tmpdir"));
+        root = new File(JavaSystemSetting.TEMP_DIRECTORY.getStringValueOrThrow());
         namePrefix = yyMMddhhmmss() + "." + UUID.randomUUID();
     }
 

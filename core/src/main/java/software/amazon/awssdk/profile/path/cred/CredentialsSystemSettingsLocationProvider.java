@@ -16,26 +16,20 @@
 package software.amazon.awssdk.profile.path.cred;
 
 import java.io.File;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 
 /**
- * If {@value #CREDENTIAL_PROFILES_FILE_ENVIRONMENT_VARIABLE} environment variable is set then the
- * shared credentials file is source from it's location.
+ * If the 'AWS_CONFIG_FILE' environment variable or 'aws.configFile' system property is set, then the shared credentials file is
+ * source from it's location. If both are specified, the system property will be used.
  */
 @SdkInternalApi
-public class CredentialsEnvVarOverrideLocationProvider implements AwsProfileFileLocationProvider {
-
-    private static final String CREDENTIAL_PROFILES_FILE_ENVIRONMENT_VARIABLE = "AWS_CREDENTIAL_PROFILES_FILE";
-
+public class CredentialsSystemSettingsLocationProvider implements AwsProfileFileLocationProvider {
     @Override
     public File getLocation() {
-        String credentialProfilesFileOverride = System
-                .getenv(CREDENTIAL_PROFILES_FILE_ENVIRONMENT_VARIABLE);
-        if (credentialProfilesFileOverride == null) {
-            return null;
-        } else {
-            return new File(credentialProfilesFileOverride);
-        }
+        return AwsSystemSetting.AWS_CONFIG_FILE.getStringValue()
+                                               .map(File::new)
+                                               .orElse(null);
     }
 }
