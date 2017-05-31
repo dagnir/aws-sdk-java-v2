@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -31,7 +32,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.SdkClientException;
@@ -39,9 +39,9 @@ import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.runtime.io.SdkDigestInputStream;
 import software.amazon.awssdk.util.SdkHttpUtils;
-import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.BinaryUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 /**
  * Abstract base class for AWS signing protocol implementations. Provides
@@ -74,7 +74,7 @@ public abstract class AbstractAwsSigner implements Signer {
     private static byte[] doHash(String text) throws SdkClientException {
         try {
             MessageDigest md = getMessageDigestInstance();
-            md.update(text.getBytes(StringUtils.UTF8));
+            md.update(text.getBytes(StandardCharsets.UTF_8));
             return md.digest();
         } catch (Exception e) {
             throw new SdkClientException(
@@ -98,7 +98,7 @@ public abstract class AbstractAwsSigner implements Signer {
      */
     protected String signAndBase64Encode(String data, String key,
                                          SigningAlgorithm algorithm) throws SdkClientException {
-        return signAndBase64Encode(data.getBytes(StringUtils.UTF8), key, algorithm);
+        return signAndBase64Encode(data.getBytes(StandardCharsets.UTF_8), key, algorithm);
     }
 
     /**
@@ -108,7 +108,7 @@ public abstract class AbstractAwsSigner implements Signer {
     protected String signAndBase64Encode(byte[] data, String key,
                                          SigningAlgorithm algorithm) throws SdkClientException {
         try {
-            byte[] signature = sign(data, key.getBytes(StringUtils.UTF8), algorithm);
+            byte[] signature = sign(data, key.getBytes(StandardCharsets.UTF_8), algorithm);
             return Base64Utils.encodeAsString(signature);
         } catch (Exception e) {
             throw new SdkClientException(
@@ -119,7 +119,7 @@ public abstract class AbstractAwsSigner implements Signer {
 
     public byte[] signWithMac(String stringData, Mac mac) {
         try {
-            return mac.doFinal(stringData.getBytes(StringUtils.UTF8));
+            return mac.doFinal(stringData.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             throw new SdkClientException(
                     "Unable to calculate a request signature: "
@@ -130,7 +130,7 @@ public abstract class AbstractAwsSigner implements Signer {
     public byte[] sign(String stringData, byte[] key,
                        SigningAlgorithm algorithm) throws SdkClientException {
         try {
-            byte[] data = stringData.getBytes(StringUtils.UTF8);
+            byte[] data = stringData.getBytes(StandardCharsets.UTF_8);
             return sign(data, key, algorithm);
         } catch (Exception e) {
             throw new SdkClientException(
@@ -368,42 +368,25 @@ public abstract class AbstractAwsSigner implements Signer {
     }
 
     /**
-     * Loads the individual access key ID and secret key from the specified
-     * credentials, ensuring that access to the credentials is synchronized on
-     * the credentials object itself, and trimming any extra whitespace from the
+     * Loads the individual access key ID and secret key from the specified credentials, trimming any extra whitespace from the
      * credentials.
-     * <p>
-     * Returns either a {@link BasicSessionCredentials} or a
-     * {@link BasicAwsCredentials} object, depending on the input type.
+     *
+     * <p>Returns either a {@link AwsSessionCredentials} or a {@link AwsCredentials} object, depending on the input type.
      *
      * @return A new credentials object with the sanitized credentials.
      */
     protected AwsCredentials sanitizeCredentials(AwsCredentials credentials) {
-        String accessKeyId = null;
-        String secretKey = null;
-        String token = null;
-        synchronized (credentials) {
-            accessKeyId = credentials.getAwsAccessKeyId();
-            secretKey = credentials.getAwsSecretKey();
-            if (credentials instanceof AwsSessionCredentials) {
-                token = ((AwsSessionCredentials) credentials).getSessionToken();
-            }
-        }
-        if (secretKey != null) {
-            secretKey = secretKey.trim();
-        }
-        if (accessKeyId != null) {
-            accessKeyId = accessKeyId.trim();
-        }
-        if (token != null) {
-            token = token.trim();
-        }
+        String accessKeyId = StringUtils.trim(credentials.accessKeyId());
+        String secretKey = StringUtils.trim(credentials.secretAccessKey());
 
         if (credentials instanceof AwsSessionCredentials) {
-            return new BasicSessionCredentials(accessKeyId, secretKey, token);
+            AwsSessionCredentials sessionCredentials = (AwsSessionCredentials) credentials;
+            return new AwsSessionCredentials(accessKeyId,
+                                             secretKey,
+                                             StringUtils.trim(sessionCredentials.sessionToken()));
         }
 
-        return new BasicAwsCredentials(accessKeyId, secretKey);
+        return new AwsCredentials(accessKeyId, secretKey);
     }
 
     /**
@@ -414,7 +397,7 @@ public abstract class AbstractAwsSigner implements Signer {
      * @return The converted String object.
      */
     protected String newString(byte[] bytes) {
-        return new String(bytes, StringUtils.UTF8);
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     /**

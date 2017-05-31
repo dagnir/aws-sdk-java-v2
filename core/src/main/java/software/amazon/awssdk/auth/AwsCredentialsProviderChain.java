@@ -15,124 +15,159 @@
 
 package software.amazon.awssdk.auth;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.SdkClientException;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import software.amazon.awssdk.utils.IoUtils;
+import software.amazon.awssdk.utils.Logger;
+import software.amazon.awssdk.utils.Validate;
 
 /**
- * {@link AwsCredentialsProvider} implementation that chains together multiple
- * credentials providers. When a caller first requests credentials from this provider,
- * it calls all the providers in the chain, in the original order specified,
- * until one can provide credentials, and then returns those credentials. If all
- * of the credential providers in the chain have been called, and none of them
- * can provide credentials, then this class will throw an exception indicated
- * that no credentials are available.
- * <p>
- * By default, this class will remember the first credentials provider in the chain
- * that was able to provide credentials, and will continue to use that provider when
- * credentials are requested in the future, instead of traversing the chain each time.
- * This behavior can be controlled through the {@link #setReuseLastProvider(boolean)} method.
+ * {@link AwsCredentialsProvider} implementation that chains together multiple credentials providers.
+ *
+ * <p>When a caller first requests credentials from this provider, it calls all the providers in the chain, in the original order
+ * specified, until one can provide credentials, and then returns those credentials. If all of the credential providers in the
+ * chain have been called, and none of them can provide credentials, then this class will throw an exception indicated that no
+ * credentials are available.</p>
+ *
+ * <p>By default, this class will remember the first credentials provider in the chain that was able to provide credentials, and
+ * will continue to use that provider when credentials are requested in the future, instead of traversing the chain each time.
+ * This behavior can be controlled through the {@link Builder#reuseLastProviderEnabled(Boolean)} method.</p>
+ *
+ * <p>This chain implements {@link AutoCloseable}. When closed, it will call the {@link AutoCloseable#close()} on any credential
+ * providers in the chain that need to be closed.</p>
  */
-public class AwsCredentialsProviderChain implements AwsCredentialsProvider {
+public final class AwsCredentialsProviderChain implements AwsCredentialsProvider, AutoCloseable {
+    private static final Logger LOG = Logger.loggerFor(AwsCredentialsProviderChain.class);
 
-    private static final Log LOG = LogFactory.getLog(AwsCredentialsProviderChain.class);
+    private final List<AwsCredentialsProvider> credentialsProviders;
 
-    private final List<AwsCredentialsProvider> credentialsProviders =
-            new LinkedList<AwsCredentialsProvider>();
+    private final boolean reuseLastProviderEnabled;
 
-    private boolean reuseLastProvider = true;
-    private AwsCredentialsProvider lastUsedProvider;
+    private volatile AwsCredentialsProvider lastUsedProvider;
 
     /**
-     * Constructs a new AWSCredentialsProviderChain with the specified credential providers. When
-     * credentials are requested from this provider, it will call each of these credential providers
-     * in the same order specified here until one of them returns AWS security credentials.
-     *
-     * @param credentialsProviders
-     *            The chain of credentials providers.
+     * @see #builder()
      */
-    public AwsCredentialsProviderChain(List<? extends AwsCredentialsProvider> credentialsProviders) {
-        if (credentialsProviders == null || credentialsProviders.size() == 0) {
-            throw new IllegalArgumentException("No credential providers specified");
-        }
-        this.credentialsProviders.addAll(credentialsProviders);
+    private AwsCredentialsProviderChain(Builder builder) {
+        this.reuseLastProviderEnabled = builder.reuseLastProviderEnabled;
+        this.credentialsProviders = Collections.unmodifiableList(
+                Validate.notEmpty(builder.credentialsProviders, "No credential providers were specified."));
     }
 
     /**
-     * Constructs a new AWSCredentialsProviderChain with the specified credential providers. When
-     * credentials are requested from this provider, it will call each of these credential providers
-     * in the same order specified here until one of them returns AWS security credentials.
-     *
-     * @param credentialsProviders
-     *            The chain of credentials providers.
+     * Get a new builder for creating a {@link AwsCredentialsProviderChain}.
      */
-    public AwsCredentialsProviderChain(AwsCredentialsProvider... credentialsProviders) {
-        if (credentialsProviders == null || credentialsProviders.length == 0) {
-            throw new IllegalArgumentException("No credential providers specified");
-        }
-
-        for (AwsCredentialsProvider provider : credentialsProviders) {
-            this.credentialsProviders.add(provider);
-        }
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
-     * Returns true if this chain will reuse the last successful credentials
-     * provider for future credentials requests, otherwise, false if it will
-     * search through the chain each time.
-     *
-     * @return True if this chain will reuse the last successful credentials
-     *         provider for future credentials requests.
+     * Create an AWS credentials provider chain with default configuration that checks the given credential providers.
+     * @param awsCredentialsProviders The credentials providers that should be checked for credentials, in the order they should
+     *                                be checked.
+     * @return A credential provider chain that checks the provided credential providers in order.
      */
-    public boolean getReuseLastProvider() {
-        return reuseLastProvider;
+    public static AwsCredentialsProviderChain of(AwsCredentialsProvider... awsCredentialsProviders) {
+        return builder().credentialsProviders(awsCredentialsProviders).build();
     }
 
-    /**
-     * Enables or disables caching of the last successful credentials provider
-     * in this chain. Reusing the last successful credentials provider will
-     * typically return credentials faster than searching through the chain.
-     *
-     * @param b
-     *            Whether to enable or disable reusing the last successful
-     *            credentials provider for future credentials requests instead
-     *            of searching through the whole chain.
-     */
-    public void setReuseLastProvider(boolean b) {
-        this.reuseLastProvider = b;
-    }
-
-    public AwsCredentials getCredentials() {
-        if (reuseLastProvider && lastUsedProvider != null) {
+    @Override
+    public Optional<AwsCredentials> getCredentials() {
+        if (reuseLastProviderEnabled && lastUsedProvider != null) {
             return lastUsedProvider.getCredentials();
         }
 
         for (AwsCredentialsProvider provider : credentialsProviders) {
             try {
-                AwsCredentials credentials = provider.getCredentials();
+                Optional<AwsCredentials> credentials = provider.getCredentials();
 
-                if (credentials.getAwsAccessKeyId() != null &&
-                    credentials.getAwsSecretKey() != null) {
-                    LOG.debug("Loading credentials from " + provider.toString());
+                if (credentials.isPresent()) {
+                    LOG.debug(() -> "Loading credentials from " + provider.toString());
 
                     lastUsedProvider = provider;
                     return credentials;
                 }
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 // Ignore any exceptions and move onto the next provider
-                LOG.debug("Unable to load credentials from " + provider.toString() +
-                          ": " + e.getMessage());
+                LOG.debug(() -> "Unable to load credentials from " + provider.toString() + ": " + e.getMessage(), e);
             }
         }
 
-        throw new SdkClientException("Unable to load AWS credentials from any provider in the chain");
+        return Optional.empty();
     }
 
-    public void refresh() {
-        for (AwsCredentialsProvider provider : credentialsProviders) {
-            provider.refresh();
+    @Override
+    public void close() {
+        credentialsProviders.stream()
+                            .filter(AutoCloseable.class::isInstance)
+                            .map(AutoCloseable.class::cast)
+                            .forEach(c -> IoUtils.closeQuietly(c, null));
+    }
+
+    @Override
+    public String toString() {
+        String credentialProviders = credentialsProviders.stream().map(Object::toString).collect(Collectors.joining(", "));
+        return getClass().getSimpleName() + "(" + credentialProviders + ")";
+    }
+
+    /**
+     * A builder for a {@link AwsCredentialsProviderChain} that allows controlling its behavior.
+     */
+    public static class Builder {
+        private Boolean reuseLastProviderEnabled = true;
+        private List<AwsCredentialsProvider> credentialsProviders = new ArrayList<>();
+
+        /**
+         * Created with {@link #builder()}.
+         */
+        private Builder() {}
+
+        /**
+         * Controls whether the chain should reuse the last successful credentials provider in the chain. Reusing the last
+         * successful credentials provider will typically return credentials faster than searching through the chain.
+         *
+         * <p>By default, this is enabled.</p>
+         */
+        public Builder reuseLastProviderEnabled(Boolean reuseLastProviderEnabled) {
+            this.reuseLastProviderEnabled = reuseLastProviderEnabled;
+            return this;
+        }
+
+        /**
+         * Configure the credentials providers that should be checked for credentials, in the order they should be checked.
+         */
+        public Builder credentialsProviders(Collection<? extends AwsCredentialsProvider> credentialsProviders) {
+            this.credentialsProviders = new ArrayList<>(credentialsProviders);
+            return this;
+        }
+
+        /**
+         * Configure the credentials providers that should be checked for credentials, in the order they should be checked.
+         */
+        public Builder credentialsProviders(AwsCredentialsProvider... credentialsProviders) {
+            return credentialsProviders(Arrays.asList(credentialsProviders));
+        }
+
+        /**
+         * Add a credential provider to the chain, after the credential providers that have already been configured.
+         */
+        public Builder addCredentialsProvider(AwsCredentialsProvider credentialsProviders) {
+            this.credentialsProviders.add(credentialsProviders);
+            return this;
+        }
+
+        /**
+         * Constructs a new AWSCredentialsProviderChain with the specified credential providers. When credentials are requested
+         * from this provider, it will call each of these credential providers in the same order specified here until one of them
+         * returns AWS security credentials.
+         */
+        public AwsCredentialsProviderChain build() {
+            return new AwsCredentialsProviderChain(this);
         }
     }
 }

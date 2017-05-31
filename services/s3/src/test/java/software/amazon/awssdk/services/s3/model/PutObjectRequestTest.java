@@ -34,7 +34,6 @@ import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestClientOptions.Marker;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.event.SyncProgressListener;
@@ -47,7 +46,6 @@ public class PutObjectRequestTest {
     public static void verifyBaseBeforeCopy(final AmazonWebServiceRequest to) {
         assertNull(to.getCustomRequestHeaders());
         assertSame(ProgressListener.NOOP, to.getGeneralProgressListener());
-        assertNull(to.getRequestCredentials());
         assertNull(to.getRequestMetricCollector());
 
         assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == to
@@ -68,7 +66,6 @@ public class PutObjectRequestTest {
         assertEquals("v1", headers.get("k1"));
         assertEquals("v2", headers.get("k2"));
         assertSame(listener, to.getGeneralProgressListener());
-        assertSame(credentials, to.getRequestCredentials());
         assertSame(collector, to.getRequestMetricCollector());
 
         assertTrue(1234 == to.getReadLimit());
@@ -159,8 +156,8 @@ public class PutObjectRequestTest {
             public void progressChanged(ProgressEvent progressEvent) {
             }
         };
-        final AwsCredentials credentials = new BasicAwsCredentials("accesskey",
-                                                                   "accessid");
+        final AwsCredentials credentials = new AwsCredentials("accesskey",
+                                                              "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override
             public void collectMetrics(Request<?> request, Response<?> response) {

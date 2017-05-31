@@ -19,7 +19,7 @@ import static software.amazon.awssdk.services.s3.model.CryptoMode.EncryptionOnly
 
 import java.io.File;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
@@ -55,7 +55,7 @@ class S3CryptoModuleEo extends S3CryptoModuleBase<MultipartUploadCbcContext> {
     S3CryptoModuleEo(S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(null, s3, new DefaultAwsCredentialsProviderChain(),
+        this(null, s3, new DefaultCredentialsProvider(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 
@@ -65,7 +65,7 @@ class S3CryptoModuleEo extends S3CryptoModuleBase<MultipartUploadCbcContext> {
     S3CryptoModuleEo(KMSClient kms, S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(kms, s3, new DefaultAwsCredentialsProviderChain(),
+        this(kms, s3, new DefaultCredentialsProvider(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 

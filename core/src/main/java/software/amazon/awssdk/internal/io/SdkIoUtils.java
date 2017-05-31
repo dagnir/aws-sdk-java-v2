@@ -19,10 +19,14 @@ import java.io.Closeable;
 import java.io.IOException;
 import software.amazon.awssdk.log.InternalLogApi;
 import software.amazon.awssdk.log.InternalLogFactory;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Utilities for IO operations.
+ *
+ * @deprecated Use {@link IoUtils}
  */
+@Deprecated
 public enum SdkIoUtils {
     ;
     private static final InternalLogApi DEFAULT_LOG = InternalLogFactory.getLog(SdkIoUtils.class);

@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.metrics;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.InetAddress;
 
 /**
@@ -92,21 +90,6 @@ public interface MetricAdminMBean {
      * null if the default is to be used.
      */
     public void setRegion(String region);
-
-    /**
-     * Returns the last set AWS credential file; or null if there is none.
-     */
-    public String getCredentialFile();
-
-    /**
-     * Sets the AWS credential file used by the default AWS SDK metric collector
-     * for accessing CloudWatch.
-     *
-     * @param filepath
-     *            must be a valid path to an AWS credential property file.
-     */
-    public void setCredentialFile(String filepath)
-            throws FileNotFoundException, IOException;
 
     /**
      * Returns the internal metric queue size to be used for the default AWS SDK

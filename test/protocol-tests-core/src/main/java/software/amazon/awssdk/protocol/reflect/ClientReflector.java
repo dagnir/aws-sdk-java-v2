@@ -19,8 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
@@ -88,8 +88,8 @@ public class ClientReflector {
     /**
      * @return Dummy credentials to create client with.
      */
-    private AwsStaticCredentialsProvider getMockCredentials() {
-        return new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid"));
+    private StaticCredentialsProvider getMockCredentials() {
+        return new StaticCredentialsProvider(new AwsCredentials("akid", "skid"));
     }
 
     /**

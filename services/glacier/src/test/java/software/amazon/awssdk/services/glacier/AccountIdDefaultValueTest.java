@@ -28,9 +28,8 @@ import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.glacier.model.ListVaultsRequest;
 
 /**
@@ -46,7 +45,7 @@ public class AccountIdDefaultValueTest {
     @Before
     public void setup() {
         glacier = GlacierClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials("akid", "skid")))
+                .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
                 .region("us-west-2").endpointOverride(URI.create(getEndpoint()))
                 .build();
     }

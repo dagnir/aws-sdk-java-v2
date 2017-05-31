@@ -16,10 +16,10 @@
 package software.amazon.awssdk.regions;
 
 import java.io.File;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.profile.internal.AllProfiles;
-import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
 import software.amazon.awssdk.auth.profile.internal.BasicProfile;
 import software.amazon.awssdk.auth.profile.internal.BasicProfileConfigLoader;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
@@ -36,7 +36,7 @@ public class AwsProfileRegionProvider extends AwsRegionProvider {
     private final BasicProfileConfigLoader profileConfigLoader;
 
     public AwsProfileRegionProvider() {
-        this(AwsProfileNameLoader.INSTANCE.loadProfileName());
+        this(AwsSystemSetting.AWS_DEFAULT_PROFILE.getStringValueOrThrow());
     }
 
     public AwsProfileRegionProvider(String profileName) {

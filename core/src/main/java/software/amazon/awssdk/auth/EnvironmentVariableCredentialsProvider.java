@@ -15,46 +15,19 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
-import software.amazon.awssdk.util.StringUtils;
+import java.util.Optional;
+import software.amazon.awssdk.utils.SystemSetting;
 
 /**
- * {@link AwsCredentialsProvider} implementation that provides credentials
- * by looking at the: <code>AWS_ACCESS_KEY_ID</code> (or <code>AWS_ACCESS_KEY</code>) and
- * <code>AWS_SECRET_KEY</code> (or <code>AWS_SECRET_ACCESS_KEY</code>) environment variables.
+ * {@link AwsCredentialsProvider} implementation that loads credentials from the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and
+ * AWS_SESSION_TOKEN environment variables.
  */
-public class EnvironmentVariableCredentialsProvider implements AwsCredentialsProvider {
+public class EnvironmentVariableCredentialsProvider extends SystemSettingsCredentialsProvider {
     @Override
-    public AwsCredentials getCredentials() {
-        String accessKey = System.getenv(SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR);
-        String secretKey = System.getenv(SdkGlobalConfiguration.SECRET_KEY_ENV_VAR);
-
-        accessKey = StringUtils.trim(accessKey);
-        secretKey = StringUtils.trim(secretKey);
-        String sessionToken =
-                StringUtils.trim(System.getenv(SdkGlobalConfiguration.AWS_SESSION_TOKEN_ENV_VAR));
-
-        if (StringUtils.isNullOrEmpty(accessKey)
-            || StringUtils.isNullOrEmpty(secretKey)) {
-
-            throw new SdkClientException("Unable to load AWS credentials from environment variables (" +
-                                         SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR + "  and " +
-                                         SdkGlobalConfiguration.SECRET_KEY_ENV_VAR + ")");
-        }
-
-        return sessionToken == null ?
-               new BasicAwsCredentials(accessKey, secretKey)
-                                    :
-               new BasicSessionCredentials(accessKey, secretKey, sessionToken);
-    }
-
-    @Override
-    public void refresh() {
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
+    protected Optional<String> loadSetting(SystemSetting setting) {
+        // CHECKSTYLE:OFF - Customers should be able to specify a credentials provider that only looks at the environment
+        // variables, but not the system properties. For that reason, we're only checking the environment variable here.
+        return Optional.ofNullable(System.getenv(setting.environmentVariable()));
+        // CHECKSTYLE:ON
     }
 }

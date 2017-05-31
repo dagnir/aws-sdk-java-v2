@@ -20,7 +20,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
@@ -57,11 +56,11 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("aws-dr-tools-test");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
 
-        assertEquals("ACCESS_KEY_ID", credentials.getAwsAccessKeyId());
-        assertEquals("SECRET_ACCESS_KEY", credentials.getAwsSecretKey());
-        assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
+        assertEquals("ACCESS_KEY_ID", credentials.accessKeyId());
+        assertEquals("SECRET_ACCESS_KEY", credentials.secretAccessKey());
+        assertEquals("TOKEN_TOKEN_TOKEN", credentials.sessionToken());
     }
 
     /**
@@ -74,11 +73,11 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("test-credentials");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
 
-        assertEquals("ACCESS_KEY_ID", credentials.getAwsAccessKeyId());
-        assertEquals("SECRET_ACCESS_KEY", credentials.getAwsSecretKey());
-        assertEquals("TOKEN_TOKEN_TOKEN", credentials.getSessionToken());
+        assertEquals("ACCESS_KEY_ID", credentials.accessKeyId());
+        assertEquals("SECRET_ACCESS_KEY", credentials.secretAccessKey());
+        assertEquals("TOKEN_TOKEN_TOKEN", credentials.sessionToken());
     }
 
     /**
@@ -118,39 +117,12 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         }
     }
 
-    /**
-     * Tests by initiating a refresh thread in parallel which refreshes the
-     * credentials. Next call to credentials provider will result in refreshing
-     * and getting new credentials.
-     */
-    @Test
-    public void testMultipleThreadsLoadingAndRefreshingCredentials()
-            throws Exception {
-        mockServer.setResponseFileName("sessionResponse");
-        mockServer.setAvailableSecurityCredentials("test-credentials");
-
-        InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider
-                .getCredentials();
-
-        assertNotNull(credentials);
-
-        new RefreshThread(credentialsProvider).join();
-
-        AwsSessionCredentials newCredentials = (AwsSessionCredentials) credentialsProvider
-                .getCredentials();
-
-        assertNotNull(newCredentials);
-
-        assertNotSame(credentials, newCredentials);
-    }
-
     @Test(expected = AmazonClientException.class)
     public void canBeConfiguredToOnlyRefreshCredentialsAfterFirstCallToGetCredentials() throws InterruptedException {
         mockServer.setResponseFileName("sessionResponseExpired");
         mockServer.setAvailableSecurityCredentials("test-credentials");
 
-        InstanceProfileCredentialsProvider credentialsProvider = InstanceProfileCredentialsProvider.createAsyncRefreshingProvider(false);
+        InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
         Thread.sleep(1000);
 
         //Hacky assert but we know that this mockServer will create an exception that will be logged, if there's no log entry
@@ -159,20 +131,4 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
 
         credentialsProvider.getCredentials();
     }
-
-    private class RefreshThread extends Thread {
-
-        private InstanceProfileCredentialsProvider provider;
-
-        public RefreshThread(InstanceProfileCredentialsProvider provider) {
-            this.provider = provider;
-            this.start();
-        }
-
-        @Override
-        public void run() {
-            this.provider.refresh();
-        }
-    }
-
 }

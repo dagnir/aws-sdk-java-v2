@@ -26,9 +26,8 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AnonymousAwsCredentials;
+import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.Aws4Signer;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
@@ -99,7 +98,7 @@ public class DefaultClientBuilderTest {
     }
 
     private ClientBuilder<TestClientBuilder, TestClient> testClientBuilder() {
-        return new TestClientBuilder().credentialsProvider(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()))
+        return new TestClientBuilder().credentialsProvider(new AnonymousCredentialsProvider())
                                       .defaultRegionDetectionEnabled(false);
     }
 

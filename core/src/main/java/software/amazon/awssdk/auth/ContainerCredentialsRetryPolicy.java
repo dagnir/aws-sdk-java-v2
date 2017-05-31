@@ -26,23 +26,6 @@ class ContainerCredentialsRetryPolicy implements CredentialsEndpointRetryPolicy 
     /** Max number of times a request is retried before failing. */
     private static final int MAX_RETRIES = 5;
 
-    private static volatile ContainerCredentialsRetryPolicy instance;
-
-    private ContainerCredentialsRetryPolicy() {
-
-    }
-
-    public static ContainerCredentialsRetryPolicy getInstance() {
-        if (instance == null) {
-            synchronized (ContainerCredentialsRetryPolicy.class) {
-                if (instance == null) {
-                    instance = new ContainerCredentialsRetryPolicy();
-                }
-            }
-        }
-        return instance;
-    }
-
     @Override
     public boolean shouldRetry(int retriesAttempted, CredentialsEndpointRetryParameters retryParams) {
         if (retriesAttempted >= MAX_RETRIES) {

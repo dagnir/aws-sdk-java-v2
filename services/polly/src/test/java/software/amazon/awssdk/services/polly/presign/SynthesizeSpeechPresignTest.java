@@ -31,9 +31,9 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.Aws4Signer;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.SdkClock;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.auth.presign.PresignerParams;
@@ -51,8 +51,8 @@ public class SynthesizeSpeechPresignTest {
 
     private static final SdkClock CLOCK = new SdkClock.MockClock(SIGNER_DATE);
 
-    private static final AwsCredentialsProvider CREDENTIALS = new AwsStaticCredentialsProvider(
-            new BasicAwsCredentials("akid", "skid"));
+    private static final AwsCredentialsProvider CREDENTIALS = new StaticCredentialsProvider(
+            new AwsCredentials("akid", "skid"));
 
     private PollyClientPresigners presigners;
 

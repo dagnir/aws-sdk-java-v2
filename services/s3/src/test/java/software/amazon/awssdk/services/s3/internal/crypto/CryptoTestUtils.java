@@ -49,7 +49,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.PropertiesCredentials;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.internal.MD5DigestCalculatingInputStream;
 import software.amazon.awssdk.services.s3.model.ListVersionsRequest;
@@ -58,9 +57,10 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.services.s3.model.S3VersionSummary;
 import software.amazon.awssdk.services.s3.model.VersionListing;
+import software.amazon.awssdk.test.AwsTestBase;
+import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.utils.Base16;
 import software.amazon.awssdk.utils.Base64Utils;
-import software.amazon.awssdk.util.StringUtils;
 
 //import org.bouncycastle.util.encoders.Base64;
 
@@ -428,9 +428,7 @@ public class CryptoTestUtils {
     }
 
     public static AwsCredentials awsTestCredentials() throws IOException {
-        return new PropertiesCredentials(new File(
-                System.getProperty("user.home")
-                + "/.aws/awsTestAccount.properties"));
+        return AwsTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
     }
 
     public static Provider newBouncyCastleProvider()

@@ -30,9 +30,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
-import software.amazon.awssdk.internal.StaticCredentialsProvider;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesResult;
@@ -54,8 +54,8 @@ public class AwsJsonCrc32ChecksumTests {
     private static final String JSON_BODY_EXTRA_DATA_GZIP = "compressed_json_body_with_extra_data.gz";
     private static final String JSON_BODY_EXTRA_DATA_GZIP_Crc32_CHECKSUM = "1561543715";
 
-    private static final StaticCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new StaticCredentialsProvider(
-            new BasicAwsCredentials("foo", "bar"));
+    private static final StaticCredentialsProvider FAKE_CREDENTIALS_PROVIDER =
+            new StaticCredentialsProvider(new AwsCredentials("foo", "bar"));
 
     @BeforeClass
     public static void setup() {

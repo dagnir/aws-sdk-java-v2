@@ -18,6 +18,8 @@ package software.amazon.awssdk.util;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.utils.JavaSystemSetting;
 
 /**
  * @see http://www.oracle.com/technetwork/java/javase/versioning-naming-139433.html
@@ -35,7 +37,8 @@ public class JavaVersionParser {
                                                                          MAJOR_VERSION_FAMILY_PATTERN, MAJOR_VERSION_PATTERN,
                                                                          MAINTENANCE_NUMBER_PATTERN, UPDATE_NUMBER_PATTERN));
 
-    private static final JavaVersion CURRENT_JAVA_VERSION = parseJavaVersion(System.getProperty(JAVA_VERSION_PROPERTY));
+    private static final JavaVersion CURRENT_JAVA_VERSION =
+            parseJavaVersion(JavaSystemSetting.JAVA_VERSION.getStringValue().orElse(null));
 
     private JavaVersionParser() {
     }
@@ -47,7 +50,8 @@ public class JavaVersionParser {
         return CURRENT_JAVA_VERSION;
     }
 
-    public static JavaVersion parseJavaVersion(final String fullVersionString) {
+    @SdkInternalApi
+    static JavaVersion parseJavaVersion(final String fullVersionString) {
         if (!StringUtils.isNullOrEmpty(fullVersionString)) {
             final Matcher matcher = VERSION_REGEX.matcher(fullVersionString);
             if (matcher.matches()) {

@@ -18,7 +18,7 @@ package software.amazon.awssdk.protocol.json;
 import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
@@ -140,7 +140,7 @@ public class SdkJsonProtocolFactory {
     }
 
     private boolean isCborEnabled() {
-        return metadata.isSupportsCbor() && !SdkGlobalConfiguration.isCborDisabled();
+        return metadata.isSupportsCbor() && AwsSystemSetting.AWS_CBOR_ENABLED.getBooleanValueOrThrow();
     }
 
     private boolean isIonEnabled() {
@@ -148,6 +148,6 @@ public class SdkJsonProtocolFactory {
     }
 
     boolean isIonBinaryEnabled() {
-        return !SdkGlobalConfiguration.isIonBinaryDisabled();
+        return AwsSystemSetting.AWS_BINARY_ION_ENABLED.getBooleanValueOrThrow();
     }
 }

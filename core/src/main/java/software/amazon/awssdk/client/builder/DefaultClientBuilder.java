@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
 import software.amazon.awssdk.config.ClientMetricsConfiguration;
@@ -165,7 +165,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
              */
             @Override
             protected AwsCredentialsProvider getCredentialsDefault() {
-                return new DefaultAwsCredentialsProviderChain();
+                return new DefaultCredentialsProvider();
             }
 
             /**
@@ -273,7 +273,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         return thisBuilder();
     }
 
-    public Boolean isDefaultRegionDetectionEnabled() {
+    public Boolean getDefaultRegionDetectionEnabled() {
         return defaultRegionDetectionEnabled();
     }
 

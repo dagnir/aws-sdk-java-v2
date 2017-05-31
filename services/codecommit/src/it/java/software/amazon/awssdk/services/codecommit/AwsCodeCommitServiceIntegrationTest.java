@@ -22,7 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.codecommit.model.CreateRepositoryRequest;
 import software.amazon.awssdk.services.codecommit.model.DeleteRepositoryRequest;
 import software.amazon.awssdk.services.codecommit.model.GetRepositoryRequest;
@@ -41,7 +41,7 @@ public class AwsCodeCommitServiceIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws FileNotFoundException, IOException {
         setUpCredentials();
-        client = CodeCommitClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        client = CodeCommitClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
     }
 
     @AfterClass

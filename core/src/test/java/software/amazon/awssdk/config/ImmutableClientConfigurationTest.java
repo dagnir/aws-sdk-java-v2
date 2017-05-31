@@ -18,7 +18,6 @@ package software.amazon.awssdk.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
-import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +27,7 @@ import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
@@ -43,10 +42,9 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 @SuppressWarnings("deprecation") // Intentional use of deprecated class
 public class ImmutableClientConfigurationTest {
     private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final RequestHandler2 REQUEST_HANDLER = new RequestHandler2() {
     };
-    private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new DefaultAwsCredentialsProviderChain();
+    private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private static final URI ENDPOINT = URI.create("https://www.example.com");
     private static final RetryPolicy RETRY_POLICY = new RetryPolicy(null, null, 10, true);
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
@@ -181,47 +179,47 @@ public class ImmutableClientConfigurationTest {
         @Override
         public ClientTimeoutConfiguration timeoutConfiguration() {
             return ClientTimeoutConfiguration.builder()
-                    .httpRequestTimeout(Duration.ofSeconds(2))
-                    .totalExecutionTimeout(Duration.ofSeconds(4))
-                    .build();
+                                             .httpRequestTimeout(Duration.ofSeconds(2))
+                                             .totalExecutionTimeout(Duration.ofSeconds(4))
+                                             .build();
         }
 
         @Override
         public ClientMarshallerConfiguration marshallerConfiguration() {
             return ClientMarshallerConfiguration.builder()
-                    .gzipEnabled(true)
-                    .addAdditionalHeader("header", "value")
-                    .build();
+                                                .gzipEnabled(true)
+                                                .addAdditionalHeader("header", "value")
+                                                .build();
         }
 
         @Override
         public ClientMetricsConfiguration metricsConfiguration() {
             return ClientMetricsConfiguration.builder()
-                    .requestMetricCollector(RequestMetricCollector.NONE)
-                    .userAgentPrefix("userAgentPrefix")
-                    .userAgentSuffix("userAgentSuffix")
-                    .build();
+                                             .requestMetricCollector(RequestMetricCollector.NONE)
+                                             .userAgentPrefix("userAgentPrefix")
+                                             .userAgentSuffix("userAgentSuffix")
+                                             .build();
         }
 
         @Override
         public ClientSecurityConfiguration securityConfiguration() {
             return ClientSecurityConfiguration.builder()
-                    .signerProvider(SIGNER_PROVIDER)
-                    .build();
+                                              .signerProvider(SIGNER_PROVIDER)
+                                              .build();
         }
 
         @Override
         public ClientRetryConfiguration retryConfiguration() {
             return ClientRetryConfiguration.builder()
-                    .retryPolicy(RETRY_POLICY)
-                    .build();
+                                           .retryPolicy(RETRY_POLICY)
+                                           .build();
         }
 
         @Override
         public ClientListenerConfiguration listenerConfiguration() {
             return ClientListenerConfiguration.builder()
-                    .addRequestListener(REQUEST_HANDLER)
-                    .build();
+                                              .addRequestListener(REQUEST_HANDLER)
+                                              .build();
         }
 
         @Override

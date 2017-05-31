@@ -15,26 +15,26 @@
 
 package software.amazon.awssdk.auth;
 
-import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
-
+import java.util.Optional;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.utils.Validate;
 
 /**
- * Decorates a {@link AwsCredentialsProvider} to instrument with metrics. See
- * {@link software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field#CredentialsRequestTime}.
+ * Decorates a {@link AwsCredentialsProvider} to publish credential loading time metrics.
+ *
+ * @see AwsRequestMetrics.Field#CredentialsRequestTime
  */
 public class MetricsReportingCredentialsProvider implements AwsCredentialsProvider {
-
     private final AwsCredentialsProvider delegate;
     private final AwsRequestMetrics awsRequestMetrics;
 
     public MetricsReportingCredentialsProvider(AwsCredentialsProvider delegate, AwsRequestMetrics awsRequestMetrics) {
-        this.delegate = assertNotNull(delegate, "Delegate Credentials Provider");
-        this.awsRequestMetrics = awsRequestMetrics;
+        this.delegate = Validate.notNull(delegate, "Delegate must not be null.");
+        this.awsRequestMetrics = Validate.notNull(awsRequestMetrics, "Metrics must not be null.");
     }
 
     @Override
-    public AwsCredentials getCredentials() {
+    public Optional<AwsCredentials> getCredentials() {
         awsRequestMetrics.startEvent(AwsRequestMetrics.Field.CredentialsRequestTime);
         try {
             return delegate.getCredentials();
@@ -44,7 +44,7 @@ public class MetricsReportingCredentialsProvider implements AwsCredentialsProvid
     }
 
     @Override
-    public void refresh() {
-        delegate.refresh();
+    public String toString() {
+        return getClass().getSimpleName() + "(" + delegate + ")";
     }
 }

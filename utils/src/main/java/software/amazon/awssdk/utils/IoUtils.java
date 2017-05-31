@@ -16,7 +16,6 @@
 package software.amazon.awssdk.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -63,11 +62,11 @@ public enum IoUtils {
      * @param is the given closeable
      * @param log logger used to log any failure should the close fail
      */
-    public static void closeQuietly(Closeable is, Log log) {
+    public static void closeQuietly(AutoCloseable is, Log log) {
         if (is != null) {
             try {
                 is.close();
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 Log logger = log == null ? DEFAULT_LOG : log;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Ignore failure in closing the Closeable", ex);

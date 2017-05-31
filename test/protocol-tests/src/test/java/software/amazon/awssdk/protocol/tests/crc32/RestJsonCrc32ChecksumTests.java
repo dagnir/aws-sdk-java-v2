@@ -30,11 +30,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
 import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
@@ -50,8 +48,8 @@ public class RestJsonCrc32ChecksumTests {
     private static final String JSON_BODY_Crc32_CHECKSUM = "3049587505";
     private static final String JSON_BODY_GZIP_Crc32_CHECKSUM = "3023995622";
     private static final String RESOURCE_PATH = "/2016-03-11/allTypes";
-    private static final AwsCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new AwsStaticCredentialsProvider(
-            new BasicAwsCredentials("foo", "bar"));
+    private static final AwsCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new StaticCredentialsProvider(
+            new AwsCredentials("foo", "bar"));
     @Rule
     public WireMockRule mockServer = new WireMockRule(WireMockConfiguration.wireMockConfig()
             .port(0)

@@ -71,7 +71,7 @@ public class Constants {
 
     public static final String AUTHORIZER_NAME_PREFIX = "I";
 
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static final String LINE_SEPARATOR = System.lineSeparator();
 
     public static final Log LOGGER = LogFactory.getLog("software.amazon.awssdk.javasdk.codegen");
 

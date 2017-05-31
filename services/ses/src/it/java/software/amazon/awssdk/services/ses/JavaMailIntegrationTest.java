@@ -55,8 +55,8 @@ public class JavaMailIntegrationTest extends IntegrationTestBase {
         // Get JavaMail Properties and Setup Session
         Properties props = new Properties();
         props.setProperty("mail.transport.protocol", "aws");
-        props.setProperty("mail.aws.user", credentials.getAwsAccessKeyId());
-        props.setProperty("mail.aws.password", credentials.getAwsSecretKey());
+        props.setProperty("mail.aws.user", credentials.accessKeyId());
+        props.setProperty("mail.aws.password", credentials.secretAccessKey());
         props.setProperty("mail.debug", "true");
         session = Session.getInstance(props);
     }
@@ -68,8 +68,8 @@ public class JavaMailIntegrationTest extends IntegrationTestBase {
     @Test
     public void testMultipleMessagesWithOneConnect() throws Exception {
         Transport t = new AwsJavaMailTransport(session, null);
-        t.connect(credentials.getAwsAccessKeyId(), credentials
-                .getAwsSecretKey());
+        t.connect(credentials.accessKeyId(), credentials
+                .secretAccessKey());
         Address[] a = {new InternetAddress(ADDITIONAL_DESTINATION)};
         t.sendMessage(getTestTextEmail(true), null);
         t.sendMessage(getTestMimeEmail(true), a);

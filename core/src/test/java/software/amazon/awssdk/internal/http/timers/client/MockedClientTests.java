@@ -31,7 +31,7 @@ import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.internal.http.response.NullResponseHandler;
 import software.amazon.awssdk.internal.http.timers.ClientExecutionAndRequestTimerTestUtils;
 import software.amazon.awssdk.internal.http.timers.TimeoutTestConstants;
@@ -47,14 +47,14 @@ public class MockedClientTests {
     private SdkHttpClient sdkHttpClient;
 
     @Mock
-    private AbortableCallable<SdkHttpResponse> sdkResponse;
+    private AbortableCallable<SdkHttpFullResponse> sdkResponse;
 
     @Before
     public void setup() throws Exception {
         when(sdkHttpClient.prepareRequest(any(), any())).thenReturn(sdkResponse);
-        when(sdkResponse.call()).thenReturn(SdkHttpResponse.builder()
-                                                    .statusCode(200)
-                                                    .build());
+        when(sdkResponse.call()).thenReturn(SdkHttpFullResponse.builder()
+                                                               .statusCode(200)
+                                                               .build());
     }
 
     @Test

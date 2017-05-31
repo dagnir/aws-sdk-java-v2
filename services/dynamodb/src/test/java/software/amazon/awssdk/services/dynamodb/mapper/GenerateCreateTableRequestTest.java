@@ -24,8 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AnonymousAwsCredentials;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
@@ -49,7 +48,7 @@ public class GenerateCreateTableRequestTest extends DynamoDBTestBase {
     @BeforeClass
     public static void setUp() {
         dynamo = DynamoDBClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(new AnonymousAwsCredentials()))
+                .credentialsProvider(new AnonymousCredentialsProvider())
                 .region(Regions.US_WEST_2.getName())
                 .build();
         mapper = new DynamoDBMapper(dynamo);

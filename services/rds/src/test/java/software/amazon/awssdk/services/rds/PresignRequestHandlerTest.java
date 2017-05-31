@@ -29,7 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import org.junit.Test;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionUtils;
@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarsha
  * Unit Tests for {@link PresignRequestHandler}
  */
 public class PresignRequestHandlerTest {
-    private static final BasicAwsCredentials CREDENTIALS = new BasicAwsCredentials("foo", "bar");
+    private static final AwsCredentials CREDENTIALS = new AwsCredentials("foo", "bar");
     private static final Region DESTINATION_REGION = RegionUtils.getRegion("us-west-2");
 
     private static PresignRequestHandler<CopyDBSnapshotRequest> presignHandler = new CopyDbSnapshotPresignHandler();

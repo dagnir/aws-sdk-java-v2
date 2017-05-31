@@ -108,7 +108,9 @@ public class XpathUtils {
     private static void speedUpDtmManager() throws Exception {
         // https://github.com/aws/aws-sdk-java/issues/238
         // http://stackoverflow.com/questions/6340802/java-xpath-apache-jaxp-implementation-performance
+        // CHECKSTYLE:OFF - We need to load system properties from third-party libraries.
         if (System.getProperty(DTM_MANAGER_DEFAULT_PROP_NAME) == null) {
+            // CHECKSTYLE:ON
             Class<?> xPathContextClass = Class.forName(XPATH_CONTEXT_CLASS_NAME);
             Method getDtmManager = xPathContextClass.getMethod("getDTMManager");
             Object xPathContext = xPathContextClass.newInstance();
@@ -129,7 +131,9 @@ public class XpathUtils {
      * Xalan document factory.
      */
     private static void speedUpDcoumentBuilderFactory() {
+        // CHECKSTYLE:OFF - We need to load system properties from third-party libraries.
         if (System.getProperty(DOCUMENT_BUILDER_FACTORY_PROP_NAME) == null) {
+            // CHECKSTYLE:ON
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             if (DOCUMENT_BUILDER_FACTORY_IMPL_CLASS_NAME.equals(factory.getClass().getName())) {
                 // This would avoid the file system to be accessed every time

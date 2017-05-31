@@ -20,7 +20,8 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.ProfileCredentialsService;
 import software.amazon.awssdk.auth.profile.internal.securitytoken.RoleInfo;
 import software.amazon.awssdk.services.sts.STSClient;
-import software.amazon.awssdk.services.sts.auth.StsAssumeRoleSessionCredentialsProvider;
+import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider;
+import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 
 /**
  * Loaded via reflection by the core module when role assumption is configured in a
@@ -30,10 +31,14 @@ public class StsProfileCredentialsService implements ProfileCredentialsService {
     @ReviewBeforeRelease("How should the STS client be cleaned up?")
     @Override
     public AwsCredentialsProvider getAssumeRoleCredentialsProvider(RoleInfo targetRoleInfo) {
-        return new StsAssumeRoleSessionCredentialsProvider.Builder(targetRoleInfo.getRoleArn(),
-                                                                   targetRoleInfo.getRoleSessionName())
-                .withStsClient(STSClient.builder().credentialsProvider(targetRoleInfo.getLongLivedCredentialsProvider()).build())
-                .withExternalId(targetRoleInfo.getExternalId())
-                .build();
+        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest().withRoleArn(targetRoleInfo.getRoleArn())
+                                                                     .withRoleSessionName(targetRoleInfo.getRoleSessionName())
+                                                                     .withExternalId(targetRoleInfo.getExternalId());
+        STSClient stsClient = STSClient.builder().credentialsProvider(targetRoleInfo.getLongLivedCredentialsProvider()).build();
+
+        return StsAssumeRoleCredentialsProvider.builder()
+                                               .refreshRequest(assumeRoleRequest)
+                                               .stsClient(stsClient)
+                                               .build();
     }
 }

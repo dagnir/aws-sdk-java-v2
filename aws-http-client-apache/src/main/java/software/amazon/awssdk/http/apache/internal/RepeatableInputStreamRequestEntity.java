@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.InputStreamEntity;
-import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
  * Custom implementation of {@link org.apache.http.HttpEntity} that delegates to an
@@ -69,7 +69,7 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
      * @param request The details of the request being written out (content type,
      *                content length, and content).
      */
-    public RepeatableInputStreamRequestEntity(final SdkHttpRequest request) {
+    public RepeatableInputStreamRequestEntity(final SdkHttpFullRequest request) {
         setChunked(false);
 
         /*
@@ -78,7 +78,7 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
          * buffer the entire stream contents into memory to determine
          * the content length.
          */
-        long contentLength = request.getFirstHeader("Content-Length")
+        long contentLength = request.getFirstHeaderValue("Content-Length")
                 .map(this::parseContentLength)
                 .orElse(-1L);
 
@@ -88,7 +88,7 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
         setContent(content);
         setContentLength(contentLength);
 
-        request.getFirstHeader("Content-Type").ifPresent(contentType -> {
+        request.getFirstHeaderValue("Content-Type").ifPresent(contentType -> {
             inputStreamRequestEntity.setContentType(contentType);
             setContentType(contentType);
         });
@@ -106,7 +106,7 @@ public class RepeatableInputStreamRequestEntity extends BasicHttpEntity {
     /**
      * @return The request content input stream or an empty input stream if there is no content.
      */
-    private InputStream getContent(SdkHttpRequest request) {
+    private InputStream getContent(SdkHttpFullRequest request) {
         return (request.getContent() == null) ? new ByteArrayInputStream(new byte[0]) :
                 request.getContent();
     }

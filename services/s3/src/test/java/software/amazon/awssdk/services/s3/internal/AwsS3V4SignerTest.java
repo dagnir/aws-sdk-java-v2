@@ -31,7 +31,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.auth.AwsChunkedEncodingInputStream;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.runtime.io.SdkBufferedInputStream;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -202,8 +202,8 @@ public class AwsS3V4SignerTest {
         return marshalledRequest;
     }
 
-    private BasicAwsCredentials mockCredentials() {
-        return new BasicAwsCredentials("akid", "skid");
+    private AwsCredentials mockCredentials() {
+        return new AwsCredentials("akid", "skid");
     }
 
     private String mockServiceName() {
