@@ -16,15 +16,14 @@
 package software.amazon.awssdk.profile.path;
 
 import java.io.File;
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.utils.JavaSystemSetting;
 
 /**
  * Base provider for all location providers that source a file from the ~/.aws directory.
  */
 @SdkInternalApi
 public abstract class AwsDirectoryBasePathProvider implements AwsProfileFileLocationProvider {
-
     /**
      * @return File of ~/.aws directory.
      */
@@ -33,11 +32,6 @@ public abstract class AwsDirectoryBasePathProvider implements AwsProfileFileLoca
     }
 
     private String getHomeDirectory() {
-        String userHome = System.getProperty("user.home");
-        if (userHome == null) {
-            throw new SdkClientException(
-                    "Unable to load AWS profiles: " + "'user.home' System property is not set.");
-        }
-        return userHome;
+        return JavaSystemSetting.USER_HOME.getStringValueOrThrow();
     }
 }

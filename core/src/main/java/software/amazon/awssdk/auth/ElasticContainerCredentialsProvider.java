@@ -18,12 +18,11 @@ package software.amazon.awssdk.auth;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
 import software.amazon.awssdk.utils.Logger;
-import software.amazon.awssdk.utils.SystemUtils;
-import software.amazon.awssdk.utils.Validate;
 
 /**
  * {@link AwsCredentialsProvider} implementation that loads credentials from the Amazon Elastic Container Service.
@@ -32,17 +31,7 @@ import software.amazon.awssdk.utils.Validate;
  * environment. If the environment variable is not set, this credentials provider will always return null.</p>
  */
 public class ElasticContainerCredentialsProvider implements AwsCredentialsProvider, AutoCloseable {
-    /**
-     * Environment variable to get the Amazon ECS credentials resource path.
-     */
-    static final String ECS_CONTAINER_CREDENTIALS_PATH = "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI";
-
     private static final Logger LOG = Logger.loggerFor(ElasticContainerCredentialsProvider.class);
-
-    /**
-     * Default endpoint from which we should retrieve the Amazon ECS credentials.
-     */
-    private static final String ECS_CREDENTIALS_ENDPOINT = "http://169.254.170.2";
 
     /**
      * The client to use to fetch the Amazon ECS credentials.
@@ -61,9 +50,11 @@ public class ElasticContainerCredentialsProvider implements AwsCredentialsProvid
      */
     private ElasticContainerCredentialsProvider(Builder builder) {
         if (!isEnabled()) {
-            LOG.debug(() -> "ECS credentials environment variable (" + ECS_CONTAINER_CREDENTIALS_PATH + ") was not set or could "
-                            + "not be accessed due to the security manager. ECS container credentials will not be loaded until "
-                            + "this environment variable is available.");
+            LOG.debug(() -> String.format("The ECS credentials environment variable (%s) and system property (%s) were not set"
+                                          + "or could not be accessed due to the security manager. ECS container credentials "
+                                          + "will not be loaded until this environment variable is available.",
+                                          AwsSystemSetting.AWS_CONTAINER_SERVICE_ENDPOINT.environmentVariable(),
+                                          AwsSystemSetting.AWS_CONTAINER_SERVICE_ENDPOINT.property()));
         }
 
         this.credentialsFetcher = new EC2CredentialsProvider(builder.credentialsEndpointProvider,
@@ -95,7 +86,7 @@ public class ElasticContainerCredentialsProvider implements AwsCredentialsProvid
     }
 
     private static boolean isEnabled() {
-        return SystemUtils.getSetting(ECS_CONTAINER_CREDENTIALS_PATH).isPresent();
+        return AwsSystemSetting.AWS_CONTAINER_CREDENTIALS_PATH.getStringValue().isPresent();
     }
 
     /**
@@ -104,11 +95,8 @@ public class ElasticContainerCredentialsProvider implements AwsCredentialsProvid
     private static class EcsCredentialsEndpointProvider extends CredentialsEndpointProvider {
         @Override
         public URI getCredentialsEndpoint() throws URISyntaxException {
-            String path = SystemUtils.getSetting(ECS_CONTAINER_CREDENTIALS_PATH)
-                                     .orElseThrow(() -> new IllegalStateException("The " + ECS_CONTAINER_CREDENTIALS_PATH +
-                                                                                  " environment variable was disabled."));
-            Validate.notEmpty(path, "The environment variable %s is empty.", ECS_CONTAINER_CREDENTIALS_PATH);
-            return new URI(ECS_CREDENTIALS_ENDPOINT + path);
+            return new URI(AwsSystemSetting.AWS_CONTAINER_SERVICE_ENDPOINT.getStringValueOrThrow() +
+                           AwsSystemSetting.AWS_CONTAINER_CREDENTIALS_PATH.getStringValueOrThrow());
         }
 
         @Override

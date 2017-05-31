@@ -277,39 +277,6 @@ public class Utils {
     }
 
     /**
-     * Retrieve system property by name, failing if it's not found
-     *
-     * @return Value of property if it exists
-     */
-    public static String getRequiredSystemProperty(String propertyName, String errorMsgIfNotFound) {
-        String propertyValue = System.getProperty(propertyName);
-        if (propertyValue == null) {
-            throw new RuntimeException(errorMsgIfNotFound);
-        }
-        return propertyValue;
-    }
-
-    /**
-     * Retrieve optional system property by name, returning null if not found
-     *
-     * @return Value of property if it exists, null if it does not
-     */
-    public static String getOptionalSystemProperty(String propertyName) {
-        return System.getProperty(propertyName);
-    }
-
-    /**
-     * Throws IllegalArgumentException with the specified error message if the input
-     * is null, otherwise return the input as is.
-     */
-    public static <T> T assertNotNull(T argument, String msg) {
-        if (argument == null) {
-            throw new IllegalArgumentException(msg);
-        }
-        return argument;
-    }
-
-    /**
      * Search for intermediate shape model by its c2j name.
      *
      * @return ShapeModel

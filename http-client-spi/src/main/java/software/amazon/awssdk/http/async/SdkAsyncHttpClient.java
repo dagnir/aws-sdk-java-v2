@@ -13,21 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.http.async;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-
-/**
- * Interface for providing AWS region information. Implementations are free to use any strategy for
- * providing region information.
- */
-public abstract class AwsRegionProvider {
+public interface SdkAsyncHttpClient extends AutoCloseable {
 
     /**
-     * @return Region name to use or null if region information is not available.
+     * Create an {@link AbortableRunnable} that can be used to execute the HTTP request.
+     *
+     * @param requestProvider Representation of an HTTP requestProvider.
+     * @param handler The handler that will be called when data is received.
+     *
+     * @return Task that can execute an HTTP requestProvider and can be aborted.
      */
-    @ReviewBeforeRelease("Should this be Optional and have the same contract as credential providers?")
-    public abstract String getRegion() throws SdkClientException;
-
+    AbortableRunnable prepareRequest(SdkHttpRequestProvider requestProvider, SdkHttpResponseHandler handler);
 }

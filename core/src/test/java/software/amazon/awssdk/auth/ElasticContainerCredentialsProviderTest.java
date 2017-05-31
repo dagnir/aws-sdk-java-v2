@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 
 /**
@@ -67,7 +68,7 @@ public class ElasticContainerCredentialsProviderTest {
     @Test
     public void testGetCredentialsReturnsValidResponseFromEcsEndpoint() {
         try {
-            System.setProperty(ElasticContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH, "");
+            System.setProperty(AwsSystemSetting.AWS_CONTAINER_CREDENTIALS_PATH.property(), "");
 
             stubForSuccessResponse();
 
@@ -78,7 +79,7 @@ public class ElasticContainerCredentialsProviderTest {
             assertThat(credentials.secretAccessKey()).isEqualTo(SECRET_ACCESS_KEY);
             assertThat(credentials.sessionToken()).isEqualTo(TOKEN);
         } finally {
-            System.clearProperty(ElasticContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH);
+            System.clearProperty(AwsSystemSetting.AWS_CONTAINER_CREDENTIALS_PATH.property());
         }
     }
 

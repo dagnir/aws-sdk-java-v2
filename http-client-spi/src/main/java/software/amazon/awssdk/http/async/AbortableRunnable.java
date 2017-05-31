@@ -13,19 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.http.async;
 
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
+public interface AbortableRunnable extends Runnable {
 
-/**
- * Loads region information from the '{@value SdkGlobalConfiguration#AWS_REGION_ENV_VAR}'
- * environment variable.
- */
-public class AwsEnvVarOverrideRegionProvider extends AwsRegionProvider {
-
-    @Override
-    public String getRegion() throws SdkClientException {
-        return System.getenv(SdkGlobalConfiguration.AWS_REGION_ENV_VAR);
-    }
+    /**
+     * Aborts the execution of the task. Multiple calls to abort or calling abort an already aborted runnable
+     * should return without error.
+     */
+    void abort();
 }

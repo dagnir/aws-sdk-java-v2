@@ -46,7 +46,7 @@ public class AmazonHttpClientTest {
     private SdkHttpClient sdkHttpClient;
 
     @Mock
-    private AbortableCallable<SdkHttpResponse> abortableCallable;
+    private AbortableCallable<SdkHttpFullResponse> abortableCallable;
 
     private AmazonHttpClient client;
 
@@ -130,10 +130,10 @@ public class AmazonHttpClientTest {
                 .request(request)
                 .execute(handler);
 
-        ArgumentCaptor<SdkHttpRequest> httpRequestCaptor = ArgumentCaptor.forClass(SdkHttpRequest.class);
+        ArgumentCaptor<SdkHttpFullRequest> httpRequestCaptor = ArgumentCaptor.forClass(SdkHttpFullRequest.class);
         verify(sdkHttpClient).prepareRequest(httpRequestCaptor.capture(), any());
 
-        final String userAgent = httpRequestCaptor.getValue().getFirstHeader("User-Agent")
+        final String userAgent = httpRequestCaptor.getValue().getFirstHeaderValue("User-Agent")
                 .orElseThrow(() -> new AssertionError("User-Agent header was not found"));
 
         Assert.assertTrue(userAgent.startsWith(prefix));
@@ -162,8 +162,8 @@ public class AmazonHttpClientTest {
     }
 
     private void stubSuccessfulResponse() throws Exception {
-        when(abortableCallable.call()).thenReturn(SdkHttpResponse.builder()
-                                                          .statusCode(200)
-                                                          .build());
+        when(abortableCallable.call()).thenReturn(SdkHttpFullResponse.builder()
+                                                                     .statusCode(200)
+                                                                     .build());
     }
 }

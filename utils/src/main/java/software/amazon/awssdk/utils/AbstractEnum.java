@@ -44,7 +44,7 @@ public abstract class AbstractEnum {
 
     @Override
     public boolean equals(Object other) {
-        return other.getClass().equals(this.getClass()) && ((AbstractEnum) other).value.equals(this.value);
+        return other != null && other.getClass().equals(this.getClass()) && ((AbstractEnum) other).value.equals(this.value);
     }
 }
 

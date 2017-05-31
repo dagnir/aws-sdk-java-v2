@@ -26,16 +26,16 @@ import java.util.Optional;
 import software.amazon.awssdk.Request;
 
 /**
- * Adapts a {@link Request} to the new {@link SdkHttpRequest} interface.
+ * Adapts a {@link Request} to the new {@link SdkHttpFullRequest} interface.
  *
- * TODO this should eventually be removed and SdkHttpRequest should completely replace Request
+ * TODO this should eventually be removed and SdkHttpFullRequest should completely replace Request
  */
-public class SdkHttpRequestAdapter implements SdkHttpRequest {
+public class SdkHttpFullRequestAdapter implements SdkHttpFullRequest {
 
     private final Request<?> request;
     private final Map<String, List<String>> headers;
 
-    public SdkHttpRequestAdapter(Request<?> request) {
+    public SdkHttpFullRequestAdapter(Request<?> request) {
         this.request = request;
         this.headers = request.getHeaders().entrySet().stream()
                 .collect(toMap(Map.Entry::getKey, e -> singletonList(e.getValue())));
@@ -47,8 +47,8 @@ public class SdkHttpRequestAdapter implements SdkHttpRequest {
     }
 
     @Override
-    public Optional<String> getFirstHeader(String headerName) {
-        return Optional.ofNullable(headers.get(headerName))
+    public Optional<String> getFirstHeaderValue(String header) {
+        return Optional.ofNullable(headers.get(header))
                 .filter(h -> h.size() > 0)
                 .map(h -> h.get(0));
     }

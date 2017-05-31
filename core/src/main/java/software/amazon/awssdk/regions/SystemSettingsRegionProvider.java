@@ -15,19 +15,16 @@
 
 package software.amazon.awssdk.regions;
 
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 /**
- * Interface for providing AWS region information. Implementations are free to use any strategy for
- * providing region information.
+ * Loads region information from the 'aws.defaultRegion' system property or the 'AWS_DEFAULT_REGION' environment variable. If both
+ * are specified, the system property will be used.
  */
-public abstract class AwsRegionProvider {
-
-    /**
-     * @return Region name to use or null if region information is not available.
-     */
-    @ReviewBeforeRelease("Should this be Optional and have the same contract as credential providers?")
-    public abstract String getRegion() throws SdkClientException;
-
+public class SystemSettingsRegionProvider extends AwsRegionProvider {
+    @Override
+    public String getRegion() throws SdkClientException {
+        return AwsSystemSetting.AWS_DEFAULT_REGION.getStringValue().orElse(null);
+    }
 }

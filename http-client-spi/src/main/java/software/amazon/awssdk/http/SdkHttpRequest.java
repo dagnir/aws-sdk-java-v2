@@ -15,36 +15,11 @@
 
 package software.amazon.awssdk.http;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-/**
- * Represents a request being sent to an Amazon Web Service, including the
- * parameters being sent as part of the request, the endpoint to which the
- * request should be sent, etc.
- *
- * <p>This class should not be implemented outside of the SDK.</p>
- */
-public interface SdkHttpRequest {
-
-    /**
-     * Returns a map of all the headers included in this request.
-     *
-     * @return A map of all the headers included in this request.
-     */
-    Map<String, List<String>> getHeaders();
-
-    /**
-     * Gets the first value of the given header, if it's present. This is useful for headers like 'Content-Type' or
-     * 'Content-Length' of which there is expected to be only one value if present.
-     *
-     * @param headerName Name of header to get first value for.
-     * @return Empty optional if header is not present, otherwise fulfilled optional containing first value of the header.
-     */
-    Optional<String> getFirstHeader(String headerName);
+public interface SdkHttpRequest extends SdkHttpHeaders {
 
     /**
      * Returns the path to the resource being requested.
@@ -55,6 +30,8 @@ public interface SdkHttpRequest {
 
     /**
      * Returns a map of all parameters in this request.
+     * <br/>
+     * Should never be null, if there are no parameters an empty map is returned.
      *
      * @return A map of all parameters in this request.
      */
@@ -75,13 +52,4 @@ public interface SdkHttpRequest {
      * @return The HTTP method to use when sending this request.
      */
     SdkHttpMethod getHttpMethod();
-
-    /**
-     * Returns the optional stream containing the payload data to include for
-     * this request. Not all requests will contain payload data.
-     *
-     * @return The optional stream containing the payload data to include for this request.
-     */
-    InputStream getContent();
-
 }

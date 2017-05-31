@@ -16,23 +16,20 @@
 package software.amazon.awssdk.profile.path.config;
 
 import java.io.File;
-import software.amazon.awssdk.SdkGlobalConfiguration;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
 
 /**
- * If the {@value SdkGlobalConfiguration#AWS_CONFIG_FILE_ENV_VAR} environment variable is set then we source
- * the config file from the location specified.
+ * If the 'AWS_CONFIG_FILE' environment variable or 'aws.configFile' system property is set, then we source the config file from
+ * the location specified. If both are specified, the system property is used.
  */
 @SdkInternalApi
-public class ConfigEnvVarOverrideLocationProvider implements AwsProfileFileLocationProvider {
-
+public class SystemSettingsProfileLocationProvider implements AwsProfileFileLocationProvider {
     @Override
     public File getLocation() {
-        String overrideLocation = System.getenv(SdkGlobalConfiguration.AWS_CONFIG_FILE_ENV_VAR);
-        if (overrideLocation != null) {
-            return new File(overrideLocation);
-        }
-        return null;
+        return AwsSystemSetting.AWS_CONFIG_FILE.getStringValue()
+                                               .map(File::new)
+                                               .orElse(null);
     }
 }
