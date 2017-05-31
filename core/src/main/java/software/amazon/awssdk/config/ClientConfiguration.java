@@ -33,29 +33,6 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
                      + "make it easier to find the required configuration, like endpoint? This would also make it clear why "
                      + "the credential configuration is separated from the other security configuration.")
 public interface ClientConfiguration {
-    /**
-     * Override configuration related to the AWS HTTP communication layer. This will never return null.
-     */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientHttpConfiguration httpConfiguration();
-
-    /**
-     * Override configuration that defines how to communicate via an HTTP proxy. This will never return null.
-     */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientHttpProxyConfiguration httpProxyConfiguration();
-
-    /**
-     * Override configuration related to the TCP communication layer. This will never return null.
-     */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientTcpConfiguration tcpConfiguration();
-
-    /**
-     * Override configuration related to the IP communication layer. This will never return null.
-     */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientIpConfiguration ipConfiguration();
 
     /**
      * Override configuration specifying request and response timeouts within the SDK. This will never return null.

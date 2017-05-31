@@ -59,7 +59,10 @@ public class DynamoDBJavaClientExceptionIntegrationTest extends AwsTestBase {
 
     @Test
     public void testPermissionError() {
-        STSClient sts = STSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        STSClient sts = STSClient.builder()
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region("us-east-1")
+                .build();
 
         Credentials creds = sts.getFederationToken(new GetFederationTokenRequest()
                 .withName("NoAccess")

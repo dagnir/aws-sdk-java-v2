@@ -26,7 +26,6 @@ import software.amazon.awssdk.auth.policy.actions.SQSActions;
 import software.amazon.awssdk.auth.policy.conditions.DateCondition;
 import software.amazon.awssdk.auth.policy.conditions.DateCondition.DateComparisonType;
 import software.amazon.awssdk.services.sqs.IntegrationTestBase;
-import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.auth.policy.resources.SqsQueueResource;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
@@ -48,7 +47,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
      */
     @After
     public void tearDown() throws Exception {
-        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        sqsAsync.deleteQueue(new DeleteQueueRequest(queueUrl));
     }
 
     /**
@@ -57,7 +56,7 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
     @Test
     public void testPolicies() throws Exception {
         String queueName = getUniqueQueueName();
-        queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
+        queueUrl = sqsAsync.createQueue(new CreateQueueRequest(queueName)).join().getQueueUrl();
 
         Policy policy = new Policy().withStatements(new Statement(Effect.Allow).withPrincipals(Principal.ALL_USERS)
                 .withActions(SQSActions.SendMessage, SQSActions.ReceiveMessage)
@@ -71,6 +70,6 @@ public class SqsPolicyIntegrationTest extends IntegrationTestBase {
         Map<String, String> attributes = new HashMap<String, String>();
         attributes.put("Policy", policy.toJson());
 
-        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
+        sqsAsync.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
     }
 }

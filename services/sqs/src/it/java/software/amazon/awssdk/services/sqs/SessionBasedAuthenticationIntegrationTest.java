@@ -20,6 +20,7 @@ import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsProvider;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 
 /**
  * Smoke test of using session-based auth to connect to SQS
@@ -30,9 +31,15 @@ public class SessionBasedAuthenticationIntegrationTest extends IntegrationTestBa
     public void clientWithStsSessionCredentials_CanMakeCallsToSqs() throws Exception {
         setUpCredentials();
 
-        STSClient stsClient = STSClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
+        STSClient stsClient = STSClient.builder()
+                                       .region("us-east-1")
+                                       .credentialsProvider(new StaticCredentialsProvider(credentials))
+                                       .build();
         StsGetSessionTokenCredentialsProvider sessionCredentials =
-                StsGetSessionTokenCredentialsProvider.builder().stsClient(stsClient).build();
+                StsGetSessionTokenCredentialsProvider.builder()
+                                                     .stsClient(stsClient)
+                                                     .refreshRequest(new GetSessionTokenRequest())
+                                                     .build();
         SQSAsyncClient sqsClient = SQSAsyncClient.builder().credentialsProvider(sessionCredentials).build();
         String queueUrl = createQueue(sqsClient);
         sqsClient.deleteQueue(new DeleteQueueRequest(queueUrl));

@@ -49,7 +49,10 @@ public class WafIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        client = WAFClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        client = WAFClient.builder()
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region("us-east-1")
+                .build();
 
     }
 

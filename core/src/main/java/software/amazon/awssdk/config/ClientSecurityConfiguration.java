@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.config;
 
-import java.security.SecureRandom;
 import java.util.Optional;
 import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
@@ -28,15 +27,14 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
  */
 public final class ClientSecurityConfiguration
         implements ToCopyableBuilder<ClientSecurityConfiguration.Builder, ClientSecurityConfiguration> {
+
     private final SignerProvider signerProvider;
-    private final SecureRandom secureRandom;
 
     /**
      * Initialize this configuration. Private to require use of {@link #builder()}.
      */
     private ClientSecurityConfiguration(DefaultClientSecurityConfigurationBuilder builder) {
         this.signerProvider = builder.signerProvider;
-        this.secureRandom = builder.secureRandom;
     }
 
     /**
@@ -48,8 +46,7 @@ public final class ClientSecurityConfiguration
 
     @Override
     public ClientSecurityConfiguration.Builder toBuilder() {
-        return builder().signerProvider(signerProvider)
-                        .secureRandom(secureRandom);
+        return builder().signerProvider(signerProvider);
     }
 
     /**
@@ -60,16 +57,6 @@ public final class ClientSecurityConfiguration
     public Optional<SignerProvider> signerProvider() {
         return Optional.ofNullable(signerProvider);
     }
-
-    /**
-     * The secure random instance to use in the SDK when secure values are needed.
-     *
-     * @see Builder#secureRandom(SecureRandom)
-     */
-    public Optional<SecureRandom> secureRandom() {
-        return Optional.ofNullable(secureRandom);
-    }
-
 
     /**
      * A builder for {@link ClientSecurityConfiguration}.
@@ -89,17 +76,6 @@ public final class ClientSecurityConfiguration
          */
         Builder signerProvider(SignerProvider signerProvider);
 
-        /**
-         * @see ClientSecurityConfiguration#secureRandom().
-         */
-        Optional<SecureRandom> secureRandom();
-
-        /**
-         * Configure the secure random instance to use in the SDK when secure values are needed.
-         *
-         * @see Builder#secureRandom(SecureRandom)
-         */
-        Builder secureRandom(SecureRandom secureRandom);
     }
 
     /**
@@ -107,7 +83,6 @@ public final class ClientSecurityConfiguration
      */
     private static final class DefaultClientSecurityConfigurationBuilder implements Builder {
         private SignerProvider signerProvider;
-        private SecureRandom secureRandom;
 
         @Override
         public Optional<SignerProvider> signerProvider() {
@@ -126,25 +101,6 @@ public final class ClientSecurityConfiguration
 
         public void setSignerProvider(SignerProvider signerProvider) {
             signerProvider(signerProvider);
-        }
-
-        @Override
-        public Optional<SecureRandom> secureRandom() {
-            return Optional.ofNullable(secureRandom);
-        }
-
-        @Override
-        public Builder secureRandom(SecureRandom secureRandom) {
-            this.secureRandom = secureRandom;
-            return this;
-        }
-
-        public SecureRandom getSecureRandom() {
-            return secureRandom;
-        }
-
-        public void setSecureRandom(SecureRandom secureRandom) {
-            secureRandom(secureRandom);
         }
 
         @Override

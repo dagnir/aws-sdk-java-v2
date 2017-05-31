@@ -27,8 +27,7 @@ import software.amazon.awssdk.builder.ToCopyableBuilder;
  */
 public final class ClientTimeoutConfiguration
         implements ToCopyableBuilder<ClientTimeoutConfiguration.Builder, ClientTimeoutConfiguration> {
-    private final Duration socketTimeout;
-    private final Duration connectionTimeout;
+
     private final Duration httpRequestTimeout;
     private final Duration totalExecutionTimeout;
 
@@ -36,18 +35,14 @@ public final class ClientTimeoutConfiguration
      * Initialize this configuration. Private to require use of {@link #builder()}.
      */
     private ClientTimeoutConfiguration(DefaultClientTimeoutConfigurationBuilder builder) {
-        this.socketTimeout = builder.socketTimeout;
-        this.connectionTimeout = builder.connectionTimeout;
         this.httpRequestTimeout = builder.httpRequestTimeout;
         this.totalExecutionTimeout = builder.totalExecutionTimeout;
     }
 
     @Override
     public ClientTimeoutConfiguration.Builder toBuilder() {
-        return builder().socketTimeout(socketTimeout)
-                        .connectionTimeout(connectionTimeout)
-                        .httpRequestTimeout(httpRequestTimeout)
-                        .totalExecutionTimeout(totalExecutionTimeout);
+        return builder().httpRequestTimeout(httpRequestTimeout)
+                .totalExecutionTimeout(totalExecutionTimeout);
     }
 
     /**
@@ -55,26 +50,6 @@ public final class ClientTimeoutConfiguration
      */
     public static Builder builder() {
         return new DefaultClientTimeoutConfigurationBuilder();
-    }
-
-    /**
-     * The amount of time to wait for data to be transferred over an established, open connection before the connection is timed
-     * out. A duration of 0 means infinity, and is not recommended.
-     *
-     * @see Builder#socketTimeout(Duration)
-     */
-    public Optional<Duration> socketTimeout() {
-        return Optional.ofNullable(socketTimeout);
-    }
-
-    /**
-     * The amount of time to wait when initially establishing a connection before giving up and timing out. A duration of 0 means
-     * infinity, and is not recommended.
-     *
-     * @see Builder#connectionTimeout(Duration)
-     */
-    public Optional<Duration> connectionTimeout() {
-        return Optional.ofNullable(connectionTimeout);
     }
 
     /**
@@ -103,7 +78,8 @@ public final class ClientTimeoutConfiguration
      * <p>This feature requires buffering the entire response (for non-streaming APIs) into memory to enforce a hard timeout when
      * reading the response. For APIs that return large responses this could be expensive.</p>
      *
-     * <p>The client execution timeout feature doesn't have strict guarantees on how quickly a request is aborted when the timeout
+     * <p>The client execution timeout feature doesn't have strict guarantees on how quickly a request is aborted when the
+     * timeout
      * is breached. The typical case aborts the request within a few milliseconds but there may occasionally be requests that
      * don't get aborted until several seconds after the timer has been breached. Because of this, the client execution timeout
      * feature should not be used when absolute precision is needed.</p>
@@ -126,32 +102,6 @@ public final class ClientTimeoutConfiguration
     public interface Builder extends CopyableBuilder<Builder, ClientTimeoutConfiguration> {
 
         /**
-         * @see ClientTimeoutConfiguration#socketTimeout().
-         */
-        Optional<Duration> socketTimeout();
-
-        /**
-         * Configure the amount of time to wait when initially establishing a connection before giving up and timing out. A
-         * duration of 0 means infinity, and is not recommended.
-         *
-         * @see ClientTimeoutConfiguration#socketTimeout()
-         */
-        Builder socketTimeout(Duration socketTimeout);
-
-        /**
-         * @see ClientTimeoutConfiguration#connectionTimeout().
-         */
-        Optional<Duration> connectionTimeout();
-
-        /**
-         * Configure the amount of time to wait when initially establishing a connection before giving up and timing out. A
-         * duration of 0 means infinity, and is not recommended.
-         *
-         * @see ClientTimeoutConfiguration#connectionTimeout()
-         */
-        Builder connectionTimeout(Duration connectionTimeout);
-
-        /**
          * @see ClientTimeoutConfiguration#httpRequestTimeout().
          */
         Optional<Duration> httpRequestTimeout();
@@ -165,7 +115,8 @@ public final class ClientTimeoutConfiguration
          *
          * <p>The request timeout feature doesn't have strict guarantees on how quickly a request is aborted when the timeout is
          * breached. The typical case aborts the request within a few milliseconds but there may occasionally be requests that
-         * don't get aborted until several seconds after the timer has been breached. Because of this, the request timeout feature
+         * don't get aborted until several seconds after the timer has been breached. Because of this, the request timeout
+         * feature
          * should not be used when absolute precision is needed.</p>
          *
          * @see ClientTimeoutConfiguration#httpRequestTimeout()
@@ -203,48 +154,8 @@ public final class ClientTimeoutConfiguration
      * An SDK-internal implementation of {@link Builder}.
      */
     private static final class DefaultClientTimeoutConfigurationBuilder implements Builder {
-        private Duration socketTimeout;
-        private Duration connectionTimeout;
         private Duration httpRequestTimeout;
         private Duration totalExecutionTimeout;
-
-        @Override
-        public Optional<Duration> socketTimeout() {
-            return Optional.ofNullable(socketTimeout);
-        }
-
-        @Override
-        public Builder socketTimeout(Duration socketTimeout) {
-            this.socketTimeout = socketTimeout;
-            return this;
-        }
-
-        public Duration getSocketTimeout() {
-            return socketTimeout;
-        }
-
-        public void setSocketTimeout(Duration socketTimeout) {
-            socketTimeout(socketTimeout);
-        }
-
-        @Override
-        public Optional<Duration> connectionTimeout() {
-            return Optional.ofNullable(connectionTimeout);
-        }
-
-        @Override
-        public Builder connectionTimeout(Duration connectionTimeout) {
-            this.connectionTimeout = connectionTimeout;
-            return this;
-        }
-
-        public Duration getConnectionTimeout() {
-            return connectionTimeout;
-        }
-
-        public void setConnectionTimeout(Duration connectionTimeout) {
-            connectionTimeout(connectionTimeout);
-        }
 
         @Override
         public Optional<Duration> httpRequestTimeout() {

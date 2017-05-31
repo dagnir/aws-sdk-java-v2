@@ -232,12 +232,13 @@ public class SendQueueBuffer {
          * maxBatchOpenMs elapses. The total number of batch task in flight is controlled by the
          * inflightOperationBatch semaphore capped at maxInflightOutboundBatches.
          */
-        QueueBufferFuture<R, ResultT> theFuture;
+        QueueBufferFuture<R, ResultT> theFuture = null;
         try {
             synchronized (operationLock) {
-                theFuture = openOutboundBatchTask[0].addRequest(request, callback);
+                if (openOutboundBatchTask[0] != null) {
+                    theFuture = openOutboundBatchTask[0].addRequest(request, callback);
+                }
                 if (openOutboundBatchTask[0] == null || theFuture == null) {
-
                     OBT obt = (OBT) newOutboundBatchTask(request);
                     inflightOperationBatches.acquire();
                     openOutboundBatchTask[0] = obt;
