@@ -6,8 +6,10 @@ import java.util.UUID;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
@@ -101,6 +103,8 @@ public class TT0035900619IntegrationTest {
     }
 
     @Test
+    @ReviewBeforeRelease("Custom retry policy not yet implemented in code generator")
+    @Ignore // TODO
     public void testFakeIOException_MaxRetries() {
         AmazonHttpClient.configUnreliableTestConditions(
                 new UnreliableTestConfig()

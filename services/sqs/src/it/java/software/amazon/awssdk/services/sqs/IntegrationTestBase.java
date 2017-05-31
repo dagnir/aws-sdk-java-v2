@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import org.junit.Before;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -45,9 +44,15 @@ public class IntegrationTestBase extends AwsTestBase {
      */
     private static final Random random = new Random(System.currentTimeMillis());
     /**
-     * The SQS client for all tests to use.
+     * The Async SQS client for all tests to use.
      */
-    protected SQSAsyncClient sqs;
+    protected SQSAsyncClient sqsAsync;
+
+    /**
+     * The Sync SQS client for all tests to use.
+     */
+    protected SQSClient sqsSync;
+
     /**
      * Account ID of the AWS Account identified by the credentials provider setup in AWSTestBase.
      * Cached for performance
@@ -60,13 +65,19 @@ public class IntegrationTestBase extends AwsTestBase {
      */
     @Before
     public void setUp() {
-        sqs = createSqsAyncClient();
+        sqsAsync = createSqsAyncClient();
+        sqsSync = createSqsSyncClient();
     }
 
     public static SQSAsyncClient createSqsAyncClient() {
         return SQSAsyncClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Regions.US_EAST_1.getName())
+                .build();
+    }
+
+    public static SQSClient createSqsSyncClient() {
+        return SQSClient.builder()
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
     }
 
@@ -129,7 +140,10 @@ public class IntegrationTestBase extends AwsTestBase {
      */
     protected String getAccountId() {
         if (accountId == null) {
-            IAMClient iamClient = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+            IAMClient iamClient = IAMClient.builder()
+                    .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                    .region("us-east-1")
+                    .build();
             accountId = parseAccountIdFromArn(iamClient.getUser(GetUserRequest.builder().build()).user().arn());
         }
         return accountId;

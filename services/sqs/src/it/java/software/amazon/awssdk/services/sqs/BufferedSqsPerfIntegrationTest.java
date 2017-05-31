@@ -77,7 +77,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
         config.setMaxInflightOutboundBatches(1000);
         config.setMaxInflightReceiveBatches(100);
         config.setMaxDoneReceiveBatches(100);
-        SQSAsyncClient buffSqs = new SqsBufferedAsyncClient(sqs, config);
+        SQSAsyncClient buffSqs = new SqsBufferedAsyncClient(sqsAsync, config);
 
         BasicConfigurator.resetConfiguration();
         Logger logger = Logger.getRootLogger();

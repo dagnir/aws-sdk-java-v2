@@ -19,21 +19,18 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.config.ClientConfiguration;
-import software.amazon.awssdk.config.ClientHttpConfiguration;
-import software.amazon.awssdk.config.ClientHttpProxyConfiguration;
-import software.amazon.awssdk.config.ClientIpConfiguration;
 import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
 import software.amazon.awssdk.config.ClientMetricsConfiguration;
 import software.amazon.awssdk.config.ClientRetryConfiguration;
 import software.amazon.awssdk.config.ClientSecurityConfiguration;
-import software.amazon.awssdk.config.ClientTcpConfiguration;
 import software.amazon.awssdk.config.ClientTimeoutConfiguration;
 import software.amazon.awssdk.config.MutableClientConfiguration;
 
@@ -64,11 +61,11 @@ public abstract class ClientConfigurationDefaults {
      * Apply async defaults to a mutable configuration object. This will potentially override any values that are absent from the
      * provided configuration, but should never override something that is already present.
      */
+    @ReviewBeforeRelease("Hardcodes thread pool default but that should go away anyways when we switch to NIO")
     public final void applyAsyncDefaults(MutableClientConfiguration config) {
         applyDefaultValues(config);
 
-        Integer maxConnections = config.tcpConfiguration().maxConnections().orElse(null);
-        config.asyncExecutorService(applyDefault(config.asyncExecutorService(), () -> getAsyncExecutorDefault(maxConnections)));
+        config.asyncExecutorService(applyDefault(config.asyncExecutorService(), () -> getAsyncExecutorDefault(50)));
     }
 
     /**
@@ -76,10 +73,6 @@ public abstract class ClientConfigurationDefaults {
      * are absent from the provided configuration, but should never override something that is already present.
      */
     private void applyDefaultValues(MutableClientConfiguration config) {
-        config.httpConfiguration(applyDefaultValues(config.httpConfiguration(), this::applyHttpDefaults));
-        config.httpProxyConfiguration(applyDefaultValues(config.httpProxyConfiguration(), this::applyHttpProxyDefaults));
-        config.tcpConfiguration(applyDefaultValues(config.tcpConfiguration(), this::applyTcpDefaults));
-        config.ipConfiguration(applyDefaultValues(config.ipConfiguration(), this::applyIpDefaults));
         config.timeoutConfiguration(applyDefaultValues(config.timeoutConfiguration(), this::applyTimeoutDefaults));
         config.marshallerConfiguration(applyDefaultValues(config.marshallerConfiguration(), this::applyMarshallerDefaults));
         config.metricsConfiguration(applyDefaultValues(config.metricsConfiguration(), this::applyMetricsDefaults));
@@ -88,38 +81,6 @@ public abstract class ClientConfigurationDefaults {
         config.listenerConfiguration(applyDefaultValues(config.listenerConfiguration(), this::applyListenerDefaults));
         config.credentialsProvider(applyDefault(config.credentialsProvider(), this::getCredentialsDefault));
         config.endpoint(applyDefault(config.endpoint(), this::getEndpointDefault));
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyHttpDefaults(ClientHttpConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyHttpProxyDefaults(ClientHttpProxyConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyTcpDefaults(ClientTcpConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyIpDefaults(ClientIpConfiguration.Builder builder) {
-
     }
 
     /**
