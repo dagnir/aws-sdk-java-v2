@@ -22,8 +22,7 @@ import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTableMapper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
@@ -43,8 +42,8 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
     @Before
     public void setup() {
         ddb = DynamoDBClient.builder()
-                .credentialsProvider(new StaticCredentialsProvider(credentials))
-                .region(Regions.US_WEST_2.getName())
+                .region(Region.US_WEST_2)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
         mapper = new DynamoDbMapper(ddb, DynamoDbMapperConfig.builder()
                 .withTableNameOverride(new DynamoDbMapperConfig.TableNameOverride(TABLE_NAME))

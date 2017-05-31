@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.internal.partitions.model;
+package software.amazon.awssdk.internal.region.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
@@ -47,7 +47,6 @@ public class Service {
 
     public Service(@JsonProperty(value = "endpoints") Map<String, Endpoint> endpoints) {
         this.endpoints = ValidationUtils.assertNotNull(endpoints, "endpoints");
-
     }
 
     /**

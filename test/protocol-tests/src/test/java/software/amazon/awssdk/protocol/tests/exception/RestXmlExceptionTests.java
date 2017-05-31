@@ -27,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocolrestxml.ProtocolRestXmlClient;
 import software.amazon.awssdk.services.protocolrestxml.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestxml.model.EmptyModeledException;
@@ -46,7 +47,7 @@ public class RestXmlExceptionTests {
     public void setupClient() {
         client = ProtocolRestXmlClient.builder()
                                   .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
-                                  .region("us-east-1")
+                                  .region(Region.US_EAST_1)
                                   .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                   .build();
     }

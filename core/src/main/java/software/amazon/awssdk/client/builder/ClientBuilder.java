@@ -26,6 +26,7 @@ import software.amazon.awssdk.config.ClientMetricsConfiguration;
 import software.amazon.awssdk.config.ClientRetryConfiguration;
 import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.config.ClientTimeoutConfiguration;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * This includes required and optional override configuration required by every client builder. An instance can be acquired by
@@ -130,7 +131,7 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
 
     /**
      * Configure the endpoint with which the SDK should communicate. This will take precedent over the endpoint derived from the
-     * {@link #region()}. Even when this is used, the {@link #region(String)} must still be specified for the purposes of message
+     * {@link #region()}. Even when this is used, the {@link #region(Region)} must still be specified for the purposes of message
      * signing.
      */
     B endpointOverride(URI endpointOverride);
@@ -159,13 +160,13 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
     B defaultRegionDetectionEnabled(Boolean defaultRegionDetectionEnabled);
 
     /**
-     * Retrieve the region that was configured with {@link #region(String)}.
+     * Retrieve the region that was configured with {@link #region(Region)}.
      */
-    Optional<String> region();
+    Optional<Region> region();
 
     /**
      * Configure the region with which the SDK should communicate. If this is not specified when creating a client, the
      * behavior described in {@link #defaultRegionDetectionEnabled(boolean)} (assuming it is enabled) will be used.
      */
-    B region(String region);
+    B region(Region region);
 }

@@ -13,19 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
-
-import software.amazon.awssdk.internal.partitions.PartitionsLoader;
+package software.amazon.awssdk.regions.providers;
 
 /**
- * A factory to create {@link RegionMetadata}
+ * Default region provider chain used when no explicit region is supplied to a client builder.
  */
-public class RegionMetadataFactory {
+public class DefaultAwsRegionProviderChain extends AwsRegionProviderChain {
 
-    private RegionMetadataFactory() {
-    }
-
-    public static RegionMetadata create() {
-        return new RegionMetadata(new PartitionsLoader().build());
+    public DefaultAwsRegionProviderChain() {
+        super(new SystemSettingsRegionProvider(), new AwsProfileRegionProvider(),
+              new InstanceProfileRegionProvider());
     }
 }

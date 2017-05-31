@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.internal.partitions;
+package software.amazon.awssdk.regions;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -23,26 +23,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.internal.partitions.model.Partitions;
-import software.amazon.awssdk.regions.RegionMetadata;
+import software.amazon.awssdk.internal.region.PartitionMetadataProvider;
+import software.amazon.awssdk.internal.region.model.Partitions;
 import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Loads all the partition files into memory.
  */
 @SdkInternalApi
-public class PartitionsLoader {
+public class RegionMetadataLoader {
+
+    private static volatile PartitionMetadataProvider provider;
 
     /**
      * class path from where all partition files are loaded.
      */
-    public static final String PARTITIONS_RESOURCE_PATH =
-            "software/amazon/awssdk/internal/partitions/endpoints.json";
+    private static final String PARTITIONS_RESOURCE_PATH =
+            "software/amazon/awssdk/internal/region/endpoints.json";
 
     /**
      * override class path from where all partition files are loaded.
      */
-    public static final String PARTITIONS_OVERRIDE_RESOURCE_PATH =
+    private static final String PARTITIONS_OVERRIDE_RESOURCE_PATH =
             "software/amazon/awssdk/partitions/override/endpoints.json";
 
     /**
@@ -57,11 +59,7 @@ public class PartitionsLoader {
     /**
      * classloader to to be used for loading the partitions.
      */
-    private final ClassLoader classLoader;
-
-    public PartitionsLoader() {
-        this.classLoader = PartitionsLoader.class.getClassLoader();
-    }
+    private static final ClassLoader CLASS_LOADER = RegionMetadataLoader.class.getClassLoader();
 
     /**
      * Loads the partition files from the {@link #PARTITIONS_OVERRIDE_RESOURCE_PATH}. If no files are present, then
@@ -69,24 +67,40 @@ public class PartitionsLoader {
      * <p/>
      * Builds the {@link RegionMetadata} from the partition files.
      */
-    public PartitionMetadataProvider build() {
+    protected static RegionMetadata getRegionMetadata(Region region) {
+        if (provider == null) {
+            build();
+        }
 
-        InputStream stream = classLoader
+        return provider.getRegionMetadata(region);
+    }
+
+    protected static ServiceMetadata getServiceMetadata(String serviceEndpointPrefix) {
+        if (provider == null) {
+            build();
+        }
+
+        return provider.getServiceMetadata(serviceEndpointPrefix);
+    }
+
+    protected static void build() {
+
+        InputStream stream = CLASS_LOADER
                 .getResourceAsStream(PARTITIONS_OVERRIDE_RESOURCE_PATH);
 
         if (stream != null) {
-            return new PartitionMetadataProvider(
+            provider = new PartitionMetadataProvider(
                     loadPartitionFromStream(stream, PARTITIONS_OVERRIDE_RESOURCE_PATH).getPartitions());
         } else {
-            stream = classLoader.getResourceAsStream(PARTITIONS_RESOURCE_PATH);
+            stream = CLASS_LOADER.getResourceAsStream(PARTITIONS_RESOURCE_PATH);
             if (stream == null) {
                 throw new SdkClientException("Unable to load partition metadata from " + PARTITIONS_RESOURCE_PATH);
             }
-            return new PartitionMetadataProvider(loadPartitionFromStream(stream, PARTITIONS_RESOURCE_PATH).getPartitions());
+            provider = new PartitionMetadataProvider(loadPartitionFromStream(stream, PARTITIONS_RESOURCE_PATH).getPartitions());
         }
     }
 
-    private Partitions loadPartitionFromStream(InputStream stream, String location) {
+    private static Partitions loadPartitionFromStream(InputStream stream, String location) {
 
         try {
 

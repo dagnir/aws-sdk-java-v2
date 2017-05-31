@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.regions.providers;
 
 import java.io.File;
 import software.amazon.awssdk.AwsSystemSetting;
@@ -23,7 +23,8 @@ import software.amazon.awssdk.auth.profile.internal.AllProfiles;
 import software.amazon.awssdk.auth.profile.internal.BasicProfile;
 import software.amazon.awssdk.auth.profile.internal.BasicProfileConfigLoader;
 import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
-import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.utils.StringUtils;
 
 /**
  * Loads region information from the shared AWS config file. Uses the default profile unless
@@ -53,12 +54,12 @@ public class AwsProfileRegionProvider extends AwsRegionProvider {
     }
 
     @Override
-    public String getRegion() throws SdkClientException {
+    public Region getRegion() throws SdkClientException {
         File configFile = locationProvider.getLocation();
         if (configFile != null && configFile.exists()) {
             BasicProfile profile = loadProfile(configFile);
-            if (profile != null && !StringUtils.isNullOrEmpty(profile.getRegion())) {
-                return profile.getRegion();
+            if (profile != null && !StringUtils.isEmpty(profile.getRegion())) {
+                return Region.of(profile.getRegion());
             }
         }
         return null;

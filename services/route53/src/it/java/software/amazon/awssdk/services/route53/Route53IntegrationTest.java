@@ -26,6 +26,7 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkGlobalTime;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.route53.model.Change;
 import software.amazon.awssdk.services.route53.model.ChangeAction;
 import software.amazon.awssdk.services.route53.model.ChangeBatch;
@@ -291,7 +292,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     public void testClockSkew() throws AmazonServiceException {
         SdkGlobalTime.setGlobalTimeOffset(3600);
         Route53Client clockSkewClient = Route53Client.builder()
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
         clockSkewClient.listHostedZones(ListHostedZonesRequest.builder().build());

@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.s3.model;
 import java.io.Serializable;
 import java.security.Provider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoRuntime;
 
 /**
@@ -283,64 +282,6 @@ public class CryptoConfiguration implements Cloneable, Serializable {
      * region is specified. This KMS region parameter is ignored when the AWS
      * KMS client of the S3 encryption client is explicitly passed in by the
      * users, instead of being implicitly created.
-     *
-     * @Deprecated This method is not forward compatible. Throws
-     *     IllegalArguementException when a new region is encountered.
-     *
-     * @use {@link #getAwsKmsRegion()} instead
-     */
-    @Deprecated
-    public Regions getKmsRegion() {
-        if (awskmsRegion == null) {
-            return null;
-        }
-        return Regions.fromName(awskmsRegion.getName());
-    }
-
-    /**
-     * Sets the KMS region for the AWS KMS client when such client is internally
-     * instantiated instead of externally passed in by users; or null if no
-     * explicit KMS region is explicitly configured.This KMS region parameter is
-     * ignored when the AWS KMS client of the S3 encryption client is explicitly
-     * passed in by the users, instead of being implicitly created.
-     *
-     * @Deprecated This method is not forward compatible. Doesn't handle new regions.
-     *
-     * @use {@link #setAwsKmsRegion(software.amazon.awssdk.regions.Region)} instead
-     */
-    @Deprecated
-    public void setKmsRegion(Regions kmsRegion) {
-        if (kmsRegion != null) {
-            setAwsKmsRegion(Region.getRegion(kmsRegion));
-        } else {
-            setAwsKmsRegion(null);
-        }
-    }
-
-    /**
-     * Fluent API for setting the KMS region for the AWS KMS client when such
-     * client is internally instantiated instead of externally passed in by
-     * users; or null if no explicit KMS region is explicitly configured.This
-     * KMS region parameter is ignored when the AWS KMS client of the S3
-     * encryption client is explicitly passed in by the users, instead of being
-     * implicitly created.
-     *
-     * @Deprecated This method is not forward compatible. Doesn't handle new regions.
-     *
-     * @use {@link #withAwsKmsRegion(software.amazon.awssdk.regions.Region)} AwsKmsRegion} instead
-     */
-    @Deprecated
-    public CryptoConfiguration withKmsRegion(Regions kmsRegion) {
-        setKmsRegion(kmsRegion);
-        return this;
-    }
-
-    /**
-     * Returns the the KMS region explicitly specified for the AWS KMS client
-     * when such client is internally instantiated; or null if no explicit KMS
-     * region is specified. This KMS region parameter is ignored when the AWS
-     * KMS client of the S3 encryption client is explicitly passed in by the
-     * users, instead of being implicitly created.
      */
     public Region getAwsKmsRegion() {
         return awskmsRegion;
@@ -421,16 +362,6 @@ public class CryptoConfiguration implements Cloneable, Serializable {
         @Override
         public CryptoConfiguration withIgnoreMissingInstructionFile(
                 boolean ignoreMissingInstructionFile) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setKmsRegion(Regions kmsRegion) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public CryptoConfiguration withKmsRegion(Regions kmsRegion) {
             throw new UnsupportedOperationException();
         }
     }

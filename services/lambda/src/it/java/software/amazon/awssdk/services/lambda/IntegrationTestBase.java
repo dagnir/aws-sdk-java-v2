@@ -24,6 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
@@ -109,7 +110,7 @@ public class IntegrationTestBase extends AwsTestBase {
     private static void createLambdaServiceRole() {
         iam = IAMClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .build();
 
         CreateRoleResult result = iam.createRole(CreateRoleRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME)

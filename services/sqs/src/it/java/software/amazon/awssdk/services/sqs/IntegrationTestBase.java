@@ -15,13 +15,8 @@
 
 package software.amazon.awssdk.services.sqs;
 
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 import org.junit.Before;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -29,6 +24,13 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.util.StringUtils;
+
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Base class for SQS integration tests. Provides convenience methods for creating test data, and
@@ -72,12 +74,14 @@ public class IntegrationTestBase extends AwsTestBase {
     public static SQSAsyncClient createSqsAyncClient() {
         return SQSAsyncClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Region.US_EAST_1)
                 .build();
     }
 
     public static SQSClient createSqsSyncClient() {
         return SQSClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Region.US_EAST_1)
                 .build();
     }
 
@@ -142,7 +146,7 @@ public class IntegrationTestBase extends AwsTestBase {
         if (accountId == null) {
             IAMClient iamClient = IAMClient.builder()
                     .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                    .region("us-east-1")
+                    .region(Region.US_EAST_1)
                     .build();
             accountId = parseAccountIdFromArn(iamClient.getUser(GetUserRequest.builder().build()).user().arn());
         }

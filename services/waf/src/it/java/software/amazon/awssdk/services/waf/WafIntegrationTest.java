@@ -21,6 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.waf.model.ChangeAction;
 import software.amazon.awssdk.services.waf.model.CreateIPSetRequest;
 import software.amazon.awssdk.services.waf.model.CreateIPSetResult;
@@ -51,7 +52,7 @@ public class WafIntegrationTest extends AwsTestBase {
         setUpCredentials();
         client = WAFClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .build();
 
     }

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.regions.providers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -108,7 +108,7 @@ public class AwsProfileRegionProviderTest {
                 .of(ProfileKeyConstants.REGION, expectedRegion));
         final AllProfiles profiles = new AllProfiles(ImmutableMapParameter.of(PROFILE, profile));
         stubLoadProfile(profiles);
-        assertEquals(expectedRegion, regionProvider.getRegion());
+        assertEquals(expectedRegion, regionProvider.getRegion().value());
     }
 
     private void stubLoadProfile(AllProfiles toReturn) {

@@ -13,10 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.regions.providers;
+
+import java.util.Optional;
 
 import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * Loads region information from the 'aws.defaultRegion' system property or the 'AWS_DEFAULT_REGION' environment variable. If both
@@ -24,7 +27,14 @@ import software.amazon.awssdk.SdkClientException;
  */
 public class SystemSettingsRegionProvider extends AwsRegionProvider {
     @Override
-    public String getRegion() throws SdkClientException {
-        return AwsSystemSetting.AWS_DEFAULT_REGION.getStringValue().orElse(null);
+    public Region getRegion() throws SdkClientException {
+
+        Optional<String> regionString = AwsSystemSetting.AWS_DEFAULT_REGION.getStringValue();
+
+        if (regionString.isPresent()) {
+            return Region.of(regionString.get());
+        }
+
+        return null;
     }
 }

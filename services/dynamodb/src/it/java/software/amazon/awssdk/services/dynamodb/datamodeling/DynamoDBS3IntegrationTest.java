@@ -22,11 +22,11 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.UUID;
 import org.junit.Test;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.dynamodb.pojos.S3LinksTestClass;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.test.util.RandomTempFile;
 
 public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
@@ -42,8 +42,8 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
     public void testManuallyFilledContext() throws Exception {
         DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new StaticCredentialsProvider(credentials));
         S3ClientCache s3cc = mapper.s3ClientCache();
-        s3cc.useClient(s3East);
-        s3cc.useClient(s3West);
+        s3cc.useClient(s3East, Region.US_EAST_1);
+        s3cc.useClient(s3West, Region.US_WEST_2);
         tryCreateItem(mapper);
     }
 
@@ -53,7 +53,7 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
         S3LinksTestClass obj = new S3LinksTestClass();
         obj.setKey("" + ++startKey);
-        S3Link linkWest = mapper.createS3Link(Region.US_West_2, DynamoDBS3IntegrationTestBase.WEST_BUCKET, westKey);
+        S3Link linkWest = mapper.createS3Link(Region.US_WEST_2, DynamoDBS3IntegrationTestBase.WEST_BUCKET, westKey);
         obj.setS3LinkWest(linkWest);
         mapper.save(obj);
         obj = mapper.load(S3LinksTestClass.class, obj.getKey());
@@ -66,7 +66,7 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
         assertObjectExists(s3West, obj.s3LinkWest().bucketName(), westKey);
 
-        S3Link linkEast = mapper.createS3Link(Region.US_Standard, DynamoDBS3IntegrationTestBase.EAST_BUCKET, eastKey);
+        S3Link linkEast = mapper.createS3Link(Region.US_EAST_1, DynamoDBS3IntegrationTestBase.EAST_BUCKET, eastKey);
         obj.setS3LinkEast(linkEast);
         assertObjectDoesntExist(s3East, obj.s3LinkEast().bucketName(), eastKey);
         pubObjectReq = new PutObjectRequest(linkEast.bucketName(), linkEast.getKey(),

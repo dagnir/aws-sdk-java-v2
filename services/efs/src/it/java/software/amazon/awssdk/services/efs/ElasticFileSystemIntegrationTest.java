@@ -22,7 +22,7 @@ import java.util.UUID;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.efs.model.CreateFileSystemRequest;
 import software.amazon.awssdk.services.efs.model.DeleteFileSystemRequest;
 import software.amazon.awssdk.services.efs.model.DescribeFileSystemsRequest;
@@ -38,7 +38,7 @@ public class ElasticFileSystemIntegrationTest extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setupFixture() throws Exception {
-        client = EFSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_WEST_2.getName()).build();
+        client = EFSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_WEST_2).build();
     }
 
     @After

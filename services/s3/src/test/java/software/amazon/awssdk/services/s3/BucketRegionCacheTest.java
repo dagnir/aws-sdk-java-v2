@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.s3;
 import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
 
 public class BucketRegionCacheTest {
 
@@ -39,15 +38,6 @@ public class BucketRegionCacheTest {
         AmazonS3Client s3 = new AmazonS3Client();
         s3.setEndpoint(REGION_ENDPOINT);
         s3.setSignerRegionOverride("AWSS4SignerType");
-        URI uri = s3.resolveServiceEndpoint(FAKE_BUCKET_NAME);
-        Assert.assertEquals(REGION_ENDPOINT, uri.getHost());
-    }
-
-    @Test
-    public void testBucketRegionCacheWithRegionSet_ReturnsEndpointConfigured() {
-        AmazonS3Client s3 = new AmazonS3Client();
-        s3.configureRegion(Regions.EU_CENTRAL_1);
-
         URI uri = s3.resolveServiceEndpoint(FAKE_BUCKET_NAME);
         Assert.assertEquals(REGION_ENDPOINT, uri.getHost());
     }

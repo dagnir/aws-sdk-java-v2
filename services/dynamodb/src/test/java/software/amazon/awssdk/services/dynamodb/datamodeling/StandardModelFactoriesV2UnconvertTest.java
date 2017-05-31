@@ -34,11 +34,11 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.pojos.SubClass;
 import software.amazon.awssdk.services.dynamodb.pojos.TestClass;
 import software.amazon.awssdk.services.dynamodb.pojos.UnannotatedSubClass;
-import software.amazon.awssdk.services.s3.model.Region;
 
 public class StandardModelFactoriesV2UnconvertTest {
 
@@ -506,7 +506,7 @@ public class StandardModelFactoriesV2UnconvertTest {
 
         assertEquals("bucket", link.bucketName());
         assertEquals("key", link.getKey());
-        assertEquals(Region.US_Standard, link.s3Region());
+        assertEquals(Region.US_EAST_1, link.s3Region());
     }
 
     public Object unconvert(String getter, String setter, AttributeValue value) {

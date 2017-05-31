@@ -26,6 +26,7 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.protocol.model.TestCase;
 import software.amazon.awssdk.protocol.wiremock.WireMockUtils;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * Reflection utils to create the client class and invoke operation methods.
@@ -73,7 +74,7 @@ public class ClientReflector {
             Object untypedBuilder = interfaceClass.getMethod("builder").invoke(null);
             ClientBuilder<?, ?> builder = (ClientBuilder<?, ?>) untypedBuilder;
             return builder.credentialsProvider(getMockCredentials())
-                          .region("us-east-1")
+                          .region(Region.US_EAST_1)
                           .endpointOverride(URI.create(getEndpoint()))
                           .build();
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {

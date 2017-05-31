@@ -33,6 +33,7 @@ import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * Validate the functionality of the {@link DefaultClientBuilder}.
@@ -44,7 +45,7 @@ public class DefaultClientBuilderTest {
 
     @Test
     public void buildIncludesServiceDefaults() {
-        TestClient client = testClientBuilder().region("us-west-1").build();
+        TestClient client = testClientBuilder().region(Region.US_WEST_1).build();
         assertThat(client.syncClientConfiguration.securityConfiguration().signerProvider()).hasValue(SIGNER_PROVIDER);
         assertThat(client.asyncClientConfiguration.securityConfiguration().signerProvider()).hasValue(SIGNER_PROVIDER);
         assertThat(client.signingRegion).isNotNull();
@@ -52,19 +53,19 @@ public class DefaultClientBuilderTest {
 
     @Test
     public void buildWithRegionShouldHaveCorrectEndpointAndSigningRegion() {
-        TestClient client = testClientBuilder().region("us-west-1").build();
+        TestClient client = testClientBuilder().region(Region.US_WEST_1).build();
 
         assertThat(client.syncClientConfiguration.endpoint())
                 .hasToString("https://" + ENDPOINT_PREFIX + ".us-west-1.amazonaws.com");
-        assertThat(client.signingRegion).isEqualTo("us-west-1");
+        assertThat(client.signingRegion).isEqualTo(Region.US_WEST_1);
     }
 
     @Test
     public void buildWithEndpointShouldHaveCorrectEndpointAndSigningRegion() {
-        TestClient client = testClientBuilder().region("us-west-1").endpointOverride(ENDPOINT).build();
+        TestClient client = testClientBuilder().region(Region.US_WEST_1).endpointOverride(ENDPOINT).build();
 
         assertThat(client.syncClientConfiguration.endpoint()).isEqualTo(ENDPOINT);
-        assertThat(client.signingRegion).isEqualTo("us-west-1");
+        assertThat(client.signingRegion).isEqualTo(Region.US_WEST_1);
     }
 
     @Test
@@ -105,11 +106,11 @@ public class DefaultClientBuilderTest {
     private static class TestClient {
         private final ImmutableSyncClientConfiguration syncClientConfiguration;
         private final ImmutableAsyncClientConfiguration asyncClientConfiguration;
-        private final String signingRegion;
+        private final Region signingRegion;
 
         public TestClient(ImmutableSyncClientConfiguration syncClientConfiguration,
                           ImmutableAsyncClientConfiguration asyncClientConfiguration,
-                          String signingRegion) {
+                          Region signingRegion) {
             this.syncClientConfiguration = syncClientConfiguration;
             this.asyncClientConfiguration = asyncClientConfiguration;
             this.signingRegion = signingRegion;

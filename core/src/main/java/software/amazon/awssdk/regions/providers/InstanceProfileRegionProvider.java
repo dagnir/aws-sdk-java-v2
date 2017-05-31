@@ -13,11 +13,12 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.regions.providers;
 
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.util.EC2MetadataUtils;
 
 /**
@@ -32,7 +33,7 @@ public class InstanceProfileRegionProvider extends AwsRegionProvider {
     private volatile String region;
 
     @Override
-    public String getRegion() throws SdkClientException {
+    public Region getRegion() throws SdkClientException {
         if (region == null) {
             synchronized (this) {
                 if (region == null) {
@@ -40,7 +41,8 @@ public class InstanceProfileRegionProvider extends AwsRegionProvider {
                 }
             }
         }
-        return region;
+
+        return region == null ? null : Region.of(region);
     }
 
     private String tryDetectRegion() {

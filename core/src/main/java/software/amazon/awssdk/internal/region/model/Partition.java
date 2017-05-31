@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.internal.partitions.model;
+package software.amazon.awssdk.internal.region.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class Partition {
     /**
      * Supported regions.
      */
-    private final Map<String, Region> regions;
+    private final Map<String, PartitionRegion> regions;
 
     /**
      * Supported services;
@@ -62,7 +62,7 @@ public class Partition {
     private Endpoint defaults;
 
     public Partition(@JsonProperty(value = "partition") String partition,
-                     @JsonProperty(value = "regions") Map<String, Region>
+                     @JsonProperty(value = "regions") Map<String, PartitionRegion>
                              regions,
                      @JsonProperty(value = "services") Map<String,
                              Service> services) {
@@ -137,7 +137,7 @@ public class Partition {
     /**
      * Returns the set of regions associated with the partition.
      */
-    public Map<String, Region> getRegions() {
+    public Map<String, PartitionRegion> getRegions() {
         return regions;
     }
 

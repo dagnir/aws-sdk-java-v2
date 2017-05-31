@@ -63,7 +63,8 @@ public class JsonErrorUnmarshaller extends AbstractErrorUnmarshaller<JsonNode> {
             Object o = MAPPER.treeToValue(jsonContent, beanStyleBuilderClass);
             return (AmazonServiceException) buildMethod.invoke(o);
         } catch (NoSuchMethodException e) {
-            // This exception is not the new style with a builder, assume it's still the old style that we can directly map from JSON
+            // This exception is not the new style with a builder, assume it's still the old
+            // style that we can directly map from JSON
             return MAPPER.treeToValue(jsonContent, exceptionClass);
         }
     }

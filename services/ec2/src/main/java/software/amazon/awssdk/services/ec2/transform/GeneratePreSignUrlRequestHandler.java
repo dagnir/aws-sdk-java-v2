@@ -26,7 +26,8 @@ import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.regions.ServiceMetadata;
+import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.CopySnapshotRequest;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.ImmutableObjectUtils;
@@ -135,14 +136,14 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
 
     private URI createEndpoint(String regionName, String serviceName) {
 
-        final Region region = RegionUtils.getRegion(regionName);
+        final Region region = Region.of(regionName);
 
         if (region == null) {
             throw new AmazonClientException("{" + serviceName + ", " + regionName + "} was not "
                                             + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
-        return toUri(region.getServiceEndpoint(serviceName));
+        return ServiceMetadata.of(EC2Client.SERVICE_NAME).endpointFor(region);
     }
 
     /** Returns the endpoint as a URI. */

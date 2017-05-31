@@ -13,15 +13,26 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.internal.region.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import software.amazon.awssdk.utils.Validate;
 
 /**
- * Default region provider chain used when no explicit region is supplied to a client builder.
+ * Metadata about a region in partition.
  */
-public class DefaultAwsRegionProviderChain extends AwsRegionProviderChain {
+public class PartitionRegion {
 
-    public DefaultAwsRegionProviderChain() {
-        super(new SystemSettingsRegionProvider(), new AwsProfileRegionProvider(),
-              new InstanceProfileRegionProvider());
+    /**
+     * description of the region.
+     */
+    private final String description;
+
+    public PartitionRegion(@JsonProperty(value = "description") String description) {
+        this.description = Validate.notNull(description, "Region description");
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -28,6 +28,7 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocolquery.ProtocolQueryClient;
 import software.amazon.awssdk.services.protocolquery.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolquery.model.EmptyModeledException;
@@ -46,7 +47,7 @@ public class QueryExceptionTests {
     public void setupClient() {
         client = ProtocolQueryClient.builder()
                                     .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
-                                    .region("us-east-1")
+                                    .region(Region.US_EAST_1)
                                     .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                     .build();
     }

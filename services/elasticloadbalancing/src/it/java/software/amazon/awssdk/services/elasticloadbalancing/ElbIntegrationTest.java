@@ -30,7 +30,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.Placement;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
@@ -91,7 +91,7 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
     /**
      * Region to run tests against. Must be us-east-1 since AZ's are hardcoded
      */
-    private static final String REGION = Regions.US_EAST_1.getName();
+    private static final Region REGION = Region.US_EAST_1;
 
     /** The ELB client used in these tests. */
     private static ElasticLoadBalancingClient elb;

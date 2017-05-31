@@ -21,7 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
@@ -68,16 +68,16 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private void setupClients() {
         s3 = new AmazonS3Client(getCredentials());
-        s3.configureRegion(Regions.US_EAST_1);
+        s3.setRegion(Region.US_EAST_1);
 
         client = MarketplaceCommerceAnalyticsClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Regions.US_EAST_1.getName())
+                .region(Region.US_EAST_1)
                 .build();
 
-        sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
+        sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_EAST_1).build();
 
-        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
+        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_EAST_1).build();
     }
 
     private void setupResources() throws IOException, Exception {

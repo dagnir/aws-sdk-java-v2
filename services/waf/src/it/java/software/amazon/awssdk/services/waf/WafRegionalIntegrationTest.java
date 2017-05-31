@@ -16,10 +16,9 @@
 package software.amazon.awssdk.services.waf;
 
 import org.junit.Test;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.waf.model.ListResourcesForWebACLRequest;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.waf.model.WAFNonexistentItemException;
+import software.amazon.awssdk.services.waf.model.ListResourcesForWebACLRequest;
 import software.amazon.awssdk.services.wafregional.WAFRegionalClient;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
@@ -32,8 +31,8 @@ public class WafRegionalIntegrationTest extends AwsIntegrationTestBase {
     @Test(expected = WAFNonexistentItemException.class)
     public void smokeTest() {
         final WAFRegionalClient client = WAFRegionalClient.builder()
-                                                                 .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
-                                                                 .region(Regions.US_WEST_2.getName())
+                                                                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                                                                 .region(Region.US_WEST_2)
                                                                  .build();
 
         client.listResourcesForWebACL(ListResourcesForWebACLRequest.builder().webACLId("foo").build());

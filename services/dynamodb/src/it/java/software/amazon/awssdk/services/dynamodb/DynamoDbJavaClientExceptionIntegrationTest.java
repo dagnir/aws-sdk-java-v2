@@ -23,6 +23,7 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.AwsSessionCredentials;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
@@ -61,7 +62,7 @@ public class DynamoDbJavaClientExceptionIntegrationTest extends AwsTestBase {
     public void testPermissionError() {
         STSClient sts = STSClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .build();
 
         Credentials creds = sts.getFederationToken(GetFederationTokenRequest.builder()

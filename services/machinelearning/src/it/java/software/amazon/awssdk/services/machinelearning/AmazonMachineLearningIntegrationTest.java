@@ -22,7 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromS3Request;
 import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromS3Result;
 import software.amazon.awssdk.services.machinelearning.model.CreateMLModelRequest;
@@ -100,13 +100,13 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
         client = MachineLearningClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Regions.US_EAST_1.getName())
+                .region(Region.US_EAST_1)
                 .build();
     }
 
     private static void setUpS3() {
         s3 = new AmazonS3Client(credentials);
-        s3.configureRegion(Regions.US_WEST_2);
+        s3.setRegion(Region.US_WEST_2);
 
         s3.createBucket(BUCKET_NAME);
 

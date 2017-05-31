@@ -17,7 +17,7 @@ package software.amazon.awssdk.kms.utils;
 
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.CreateAliasRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
@@ -34,10 +34,10 @@ public class KmsClientTestExtensions {
 
     private final KMSClient client;
 
-    public KmsClientTestExtensions(AwsCredentials awsCredentials, Regions region) {
+    public KmsClientTestExtensions(AwsCredentials awsCredentials, Region region) {
         this.client = KMSClient.builder()
                 .credentialsProvider(new StaticCredentialsProvider(awsCredentials))
-                .region(region.getName())
+                .region(region)
                 .build();
     }
 

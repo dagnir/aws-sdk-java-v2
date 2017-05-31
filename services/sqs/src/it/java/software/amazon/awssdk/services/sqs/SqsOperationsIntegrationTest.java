@@ -150,7 +150,7 @@ public class SqsOperationsIntegrationTest extends IntegrationTestBase {
 
     private void runAddPermissionTest() {
         sqsSync.addPermission(AddPermissionRequest.builder().actions(new String[]{"SendMessage", "DeleteMessage"})
-                                        .awsAccountIds(new String[]{getAccountId()}).label("foo-label")
+                                        .awsAccountIds(getAccountId()).label("foo-label")
                                         .queueUrl(queueUrl).build());
     }
 

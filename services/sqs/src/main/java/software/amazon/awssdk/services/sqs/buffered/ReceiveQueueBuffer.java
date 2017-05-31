@@ -490,7 +490,9 @@ public class ReceiveQueueBuffer {
 
             try {
                 visibilityDeadlineNano = System.nanoTime() + visibilityTimeoutNanos;
-                ReceiveMessageRequest.Builder requestBuilder = ReceiveMessageRequest.builder().queueUrl(qUrl).maxNumberOfMessages(config.getMaxBatchSize());
+                ReceiveMessageRequest.Builder requestBuilder = ReceiveMessageRequest.builder()
+                        .queueUrl(qUrl)
+                        .maxNumberOfMessages(config.getMaxBatchSize());
 
                 if (config.getVisibilityTimeoutSeconds() > 0) {
                     requestBuilder.visibilityTimeout(config.getVisibilityTimeoutSeconds());

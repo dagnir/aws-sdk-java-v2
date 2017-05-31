@@ -31,6 +31,7 @@ import org.junit.Test;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.EmptyModeledException;
@@ -54,7 +55,7 @@ public class RestJsonExceptionTests {
     public void setupClient() {
         client = ProtocolRestJsonClient.builder()
                                        .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
-                                       .region("us-east-1")
+                                       .region(Region.US_EAST_1)
                                        .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                        .build();
     }

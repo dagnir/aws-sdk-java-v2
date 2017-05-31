@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudsearchdomain.CloudSearchDomainClient;
 import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
 
@@ -48,7 +49,7 @@ public class SearchRequestUnitTest {
     public void testSetup() {
         searchClient = CloudSearchDomainClient.builder()
                                               .credentialsProvider(new StaticCredentialsProvider(CREDENTIALS))
-                                              .region("us-east-1")
+                                              .region(Region.US_EAST_1)
                                               .endpointOverride(URI.create("http://localhost:" + wireMockRule.port()))
                                               .build();
     }

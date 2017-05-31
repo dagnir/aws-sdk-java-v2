@@ -25,8 +25,6 @@ import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 
 /**
  * Integration tests for the SQS Java client.
- *
- * @author Jason Fulghum fulghum@amazon.com
  */
 public class SqsIntegrationTest extends IntegrationTestBase {
 

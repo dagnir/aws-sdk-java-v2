@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.regions.providers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -26,6 +26,8 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import software.amazon.awssdk.AwsSystemSetting;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.providers.InstanceProfileRegionProvider;
 import software.amazon.awssdk.util.EC2MetadataUtilsServer;
 
 /**
@@ -66,13 +68,13 @@ public class InstanceProfileRegionProviderTest {
 
         @Test
         public void metadataServiceRunning_ProvidesCorrectRegion() {
-            assertEquals("us-east-1", regionProvider.getRegion());
+            assertEquals(Region.US_EAST_1, regionProvider.getRegion());
         }
 
     }
 
     /**
-     * If the EC2 metdata service is not present then the provider should just return null instead
+     * If the EC2 metadata service is not present then the provider should just return null instead
      * of failing. This is to allow the provider to be used in a chain context where another
      * provider further down the chain may be able to provide the region.
      */
@@ -87,7 +89,7 @@ public class InstanceProfileRegionProviderTest {
         }
 
         @Test
-        public void metadataServiceRunning_ProvidesCorrectRegion() {
+        public void metadataServiceNotRunning_ProvidesCorrectRegion() {
             assertNull(regionProvider.getRegion());
         }
 

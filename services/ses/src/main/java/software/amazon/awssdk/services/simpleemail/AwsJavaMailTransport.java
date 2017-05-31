@@ -36,6 +36,7 @@ import javax.mail.internet.MimeMessage;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SESClient;
 import software.amazon.awssdk.services.ses.SESClientBuilder;
 import software.amazon.awssdk.services.ses.model.RawMessage;
@@ -339,10 +340,10 @@ public class AwsJavaMailTransport extends Transport {
 
         if (!isNullOrEmpty(host)) {
             String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
-            builder.region(region).endpointOverride(URI.create(host));
+            builder.region(Region.of(region)).endpointOverride(URI.create(host));
         } else if (this.httpsEndpoint != null) {
             String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
-            builder.region(region).endpointOverride(URI.create(httpsEndpoint));
+            builder.region(Region.of(region)).endpointOverride(URI.create(httpsEndpoint));
         }
 
         emailService = builder.build();

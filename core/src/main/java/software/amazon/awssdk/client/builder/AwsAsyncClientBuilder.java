@@ -22,7 +22,7 @@ import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
-import software.amazon.awssdk.regions.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 
 /**
  * Base class for all service specific async client builders.

@@ -33,6 +33,7 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesResult;
@@ -72,7 +73,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
@@ -97,7 +98,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
@@ -116,7 +117,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcCustomizedClient jsonRpc = ProtocolJsonRpcCustomizedClient.builder()
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
@@ -134,7 +135,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
@@ -154,7 +155,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
@@ -171,7 +172,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();
@@ -190,7 +191,7 @@ public class AwsJsonCrc32ChecksumTests {
 
         ProtocolJsonRpcClient jsonRpc = ProtocolJsonRpcClient.builder()
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
                 .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
                 .build();

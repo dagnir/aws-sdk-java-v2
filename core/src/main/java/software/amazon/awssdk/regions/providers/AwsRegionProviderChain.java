@@ -13,15 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.regions.providers;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProviderChain;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * Composite {@link AwsRegionProvider} that sequentially delegates to a chain of providers looking
@@ -34,15 +36,15 @@ public class AwsRegionProviderChain extends AwsRegionProvider {
     private final List<AwsRegionProvider> providers;
 
     public AwsRegionProviderChain(AwsRegionProvider... providers) {
-        this.providers = new ArrayList<AwsRegionProvider>(providers.length);
+        this.providers = new ArrayList<>(providers.length);
         Collections.addAll(this.providers, providers);
     }
 
     @Override
-    public String getRegion() throws SdkClientException {
+    public Region getRegion() throws SdkClientException {
         for (AwsRegionProvider provider : providers) {
             try {
-                final String region = provider.getRegion();
+                final Region region = provider.getRegion();
                 if (region != null) {
                     return region;
                 }
@@ -52,9 +54,7 @@ public class AwsRegionProviderChain extends AwsRegionProvider {
                           ": " + e.getMessage());
             }
         }
-        // Note: This is a bug in the provider chain. The chain should return null when no region is found according to
-        // the interface, but an exception is thrown  here instead. This class is used in too many places to change now.
-        // TODO: In 2.0, be sure this bug does not carry through.
-        throw new SdkClientException("Unable to load region information from any provider in the chain");
+
+        return null;
     }
 }

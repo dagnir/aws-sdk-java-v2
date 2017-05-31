@@ -13,27 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.internal.partitions.model;
+package software.amazon.awssdk.regions;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import software.amazon.awssdk.util.ValidationUtils;
+import java.net.URI;
+import java.util.List;
 
-/**
- * Metadata about a region in partition.
- */
-public class Region {
+public interface ServiceMetadata {
 
-    /**
-     * description of the region.
-     */
-    private final String description;
+    URI endpointFor(Region region);
 
-    public Region(@JsonProperty(value = "description") String description) {
-        this.description = ValidationUtils.assertNotNull(description, "Region description");
+    List<Region> regions();
 
-    }
-
-    public String getDescription() {
-        return description;
+    static ServiceMetadata of(String serviceEndpointPrefix) {
+        return RegionMetadataLoader.getServiceMetadata(serviceEndpointPrefix);
     }
 }

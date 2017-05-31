@@ -25,6 +25,7 @@ import java.net.URL;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.internal.BucketNameUtils;
@@ -34,7 +35,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResult;
-import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.S3ObjectInputStream;
 import software.amazon.awssdk.services.s3.model.SetObjectAclRequest;
@@ -136,13 +136,13 @@ public class S3Link {
         String regionAsString;
         if (region == null) {
             if (BucketNameUtils.isDnsBucketName(bucketName)) {
-                regionAsString = Region.US_Standard.getFirstRegionId();
+                regionAsString = Region.US_EAST_1.value();
             } else {
                 throw new IllegalArgumentException("Region must be specified for bucket that cannot be addressed using " +
                                                    "virtual host style");
             }
         } else {
-            regionAsString = region.getFirstRegionId();
+            regionAsString = region.value();
         }
         return regionAsString;
     }
@@ -165,7 +165,7 @@ public class S3Link {
      * @return S3 region.
      */
     public Region s3Region() {
-        return Region.fromValue(getRegion());
+        return Region.of(getRegion());
     }
 
     /**

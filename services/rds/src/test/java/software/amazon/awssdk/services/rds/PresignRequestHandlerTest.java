@@ -30,12 +30,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import org.junit.Test;
+import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.regions.ServiceMetadata;
 import software.amazon.awssdk.runtime.SdkInternalList;
+import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
 import software.amazon.awssdk.services.rds.model.Tag;
 import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
@@ -45,7 +47,7 @@ import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarsha
  */
 public class PresignRequestHandlerTest {
     private static final AwsCredentials CREDENTIALS = new AwsCredentials("foo", "bar");
-    private static final Region DESTINATION_REGION = RegionUtils.getRegion("us-west-2");
+    private static final Region DESTINATION_REGION = Region.of("us-west-2");
 
     private static PresignRequestHandler<CopyDBSnapshotRequest> presignHandler = new CopyDbSnapshotPresignHandler();
     private final CopyDBSnapshotRequestMarshaller marshaller = new CopyDBSnapshotRequestMarshaller();
@@ -125,14 +127,16 @@ public class PresignRequestHandlerTest {
         CopyDBSnapshotRequest request = CopyDBSnapshotRequest.builder()
                 .sourceRegion("us-east-1")
                 .build();
-        Region destination = RegionUtils.getRegion("us-west-2");
+        Region destination = Region.of("us-west-2");
         Request<?> marshalled = marshallRequest(request);
-        marshalled.setEndpoint(new URI("https://" + destination.getServiceEndpoint("rds")));
+        marshalled.setEndpoint(new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
+                .withRegion(DESTINATION_REGION)
+                .getServiceEndpoint());
 
         presignHandler.beforeRequest(marshalled);
 
         final URI presignedUrl = new URI(request.preSignedUrl());
-        assertTrue(presignedUrl.toString().contains("DestinationRegion=" + destination.getName()));
+        assertTrue(presignedUrl.toString().contains("DestinationRegion=" + destination.value()));
     }
 
     @Test
@@ -146,7 +150,9 @@ public class PresignRequestHandlerTest {
 
     private Request<?> marshallRequest(CopyDBSnapshotRequest request) throws URISyntaxException {
         Request<?> marshalled = marshaller.marshall(request);
-        marshalled.setEndpoint(new URI("https://" + DESTINATION_REGION.getServiceEndpoint("rds")));
+        marshalled.setEndpoint(new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
+                .withRegion(DESTINATION_REGION)
+                .getServiceEndpoint());
         marshalled.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, CREDENTIALS);
         return marshalled;
     }

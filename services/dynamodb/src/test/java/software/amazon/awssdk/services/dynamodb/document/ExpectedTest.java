@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
@@ -297,7 +297,7 @@ public class ExpectedTest {
     @Test
     @Ignore // FIXME: failes with "region cannot be null"
     public void testExpected_DuplicateAttribute() {
-        Table fakeTable = new Table(DynamoDBClient.builder().region(Regions.US_WEST_2.name()).build(), "fake-table");
+        Table fakeTable = new Table(DynamoDBClient.builder().region(Region.US_WEST_2).build(), "fake-table");
         try {
             fakeTable.putItem(new Item(),
                               new Expected("foo").eq("bar"),

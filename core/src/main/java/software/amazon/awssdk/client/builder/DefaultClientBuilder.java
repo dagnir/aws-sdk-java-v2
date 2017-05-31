@@ -34,9 +34,9 @@ import software.amazon.awssdk.config.MutableClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.GlobalClientConfigurationDefaults;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
-import software.amazon.awssdk.regions.AwsRegionProvider;
-import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
-import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.util.EndpointUtils;
 import software.amazon.awssdk.utils.OptionalUtils;
 
@@ -64,7 +64,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
 
     private MutableClientConfiguration mutableClientConfiguration = new MutableClientConfiguration();
 
-    private String region;
+    private Region region;
     private Boolean defaultRegionDetectionEnabled;
     private ExecutorProvider asyncExecutorProvider;
 
@@ -108,7 +108,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * class's signer. This will never return null.
      */
     @ReviewBeforeRelease("Signing region is not always endpoint region. When dust settles with region refactor revisit this")
-    protected final String signingRegion() {
+    protected final Region signingRegion() {
         return resolveRegion().orElseThrow(() -> new IllegalStateException("The signing region could not be determined."));
     }
 
@@ -189,7 +189,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     /**
      * Resolve the region that should be used based on the customer's configuration.
      */
-    private Optional<String> resolveRegion() {
+    private Optional<Region> resolveRegion() {
         return OptionalUtils.firstPresent(region(), this::regionFromDefaultProvider);
     }
 
@@ -203,7 +203,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     /**
      * Load the region from the default region provider if enabled.
      */
-    private Optional<String> regionFromDefaultProvider() {
+    private Optional<Region> regionFromDefaultProvider() {
         return useRegionProviderChain() ? Optional.ofNullable(DEFAULT_REGION_PROVIDER.getRegion()) : Optional.empty();
     }
 
@@ -218,28 +218,27 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * Load the endpoint from the resolved region.
      */
     private Optional<URI> endpointFromRegion() {
-        return resolveRegion().map(r -> EndpointUtils.buildEndpoint(DEFAULT_ENDPOINT_PROTOCOL, serviceEndpointPrefix(),
-                                                                    RegionUtils.getRegion(r)));
+        return resolveRegion().map(r -> EndpointUtils.buildEndpoint(DEFAULT_ENDPOINT_PROTOCOL, serviceEndpointPrefix(), r));
     }
 
     // Getters and Setters
 
     @Override
-    public final Optional<String> region() {
+    public final Optional<Region> region() {
         return Optional.ofNullable(region);
     }
 
     @Override
-    public final B region(String region) {
+    public final B region(Region region) {
         this.region = region;
         return thisBuilder();
     }
 
-    public final String getRegion() {
+    public final Region getRegion() {
         return region;
     }
 
-    public final void setRegion(String region) {
+    public final void setRegion(Region region) {
         region(region);
     }
 

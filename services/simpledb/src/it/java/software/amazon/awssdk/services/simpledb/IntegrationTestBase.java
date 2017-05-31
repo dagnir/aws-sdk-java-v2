@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
 import software.amazon.awssdk.services.simpledb.model.DeletableItem;
@@ -75,11 +76,11 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         setUpCredentials();
         sdb = SimpleDBClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .build();
         sdbAsync = SimpleDBAsyncClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region("us-east-1")
+                .region(Region.US_EAST_1)
                 .build();
     }
 

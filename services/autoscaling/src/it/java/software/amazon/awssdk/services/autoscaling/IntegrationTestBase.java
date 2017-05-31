@@ -17,8 +17,8 @@ package software.amazon.awssdk.services.autoscaling;
 
 import java.io.IOException;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.autoscaling.model.CreateAutoScalingGroupRequest;
 import software.amazon.awssdk.services.autoscaling.model.CreateLaunchConfigurationRequest;
 import software.amazon.awssdk.services.sns.SNSClient;
@@ -36,7 +36,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     /**
      * Region has to be us-east-1 to find AMI '{@value #AMI_ID}'.
      */
-    private static final String REGION = Regions.US_EAST_1.getName();
+    private static final Region REGION = Region.US_EAST_1;
 
     /*
      * Test data values

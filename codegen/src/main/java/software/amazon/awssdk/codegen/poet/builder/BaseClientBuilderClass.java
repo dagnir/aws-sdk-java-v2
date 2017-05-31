@@ -111,7 +111,7 @@ public class BaseClientBuilderClass implements ClassSpec {
     private CodeBlock v4SignerDefinitionMethodBody() {
         return CodeBlock.of("$T signer = new $T();\n" +
                             "signer.setServiceName(\"$L\");\n" +
-                            "signer.setRegionName(signingRegion());\n" +
+                            "signer.setRegionName(signingRegion().value());\n" +
                             "return new $T(signer);\n",
                             Aws4Signer.class,
                             Aws4Signer.class,

@@ -13,9 +13,10 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.regions;
+package software.amazon.awssdk.regions.providers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.regions.Region;
 
 public class AwsRegionProviderChainTest {
 
@@ -33,7 +35,7 @@ public class AwsRegionProviderChainTest {
         AwsRegionProvider providerThree = mock(AwsRegionProvider.class);
         AwsRegionProviderChain chain = new AwsRegionProviderChain(providerOne, providerTwo,
                                                                   providerThree);
-        final String expectedRegion = "some-region-string";
+        final Region expectedRegion = Region.of("some-region-string");
         when(providerOne.getRegion()).thenReturn(expectedRegion);
         assertEquals(expectedRegion, chain.getRegion());
 
@@ -43,7 +45,7 @@ public class AwsRegionProviderChainTest {
 
     @Test
     public void lastProviderInChainGivesRegionInformation() {
-        final String expectedRegion = "some-region-string";
+        final Region expectedRegion = Region.of("some-region-string");
         AwsRegionProviderChain chain = new AwsRegionProviderChain(new NeverAwsRegionProvider(),
                                                                   new NeverAwsRegionProvider(),
                                                                   new StaticAwsRegionProvider(
@@ -53,7 +55,7 @@ public class AwsRegionProviderChainTest {
 
     @Test
     public void providerThrowsException_ContinuesToNextInChain() {
-        final String expectedRegion = "some-region-string";
+        final Region expectedRegion = Region.of("some-region-string");
         AwsRegionProviderChain chain = new AwsRegionProviderChain(new NeverAwsRegionProvider(),
                                                                   new FaultyAwsRegionProvider(),
                                                                   new StaticAwsRegionProvider(
@@ -67,7 +69,7 @@ public class AwsRegionProviderChainTest {
      */
     @Test(expected = Error.class)
     public void providerThrowsError_DoesNotContinueChain() {
-        final String expectedRegion = "some-region-string";
+        final Region expectedRegion = Region.of("some-region-string");
         AwsRegionProviderChain chain = new AwsRegionProviderChain(new NeverAwsRegionProvider(),
                                                                   new FatalAwsRegionProvider(),
                                                                   new StaticAwsRegionProvider(
@@ -75,44 +77,44 @@ public class AwsRegionProviderChainTest {
         assertEquals(expectedRegion, chain.getRegion());
     }
 
-    @Test(expected = AmazonClientException.class)
-    public void noProviderGivesRegion_ThrowsAmazonClientException() {
+    @Test
+    public void noProviderGivesRegion_ReturnsNull() {
         AwsRegionProviderChain chain = new AwsRegionProviderChain(new NeverAwsRegionProvider(),
                                                                   new NeverAwsRegionProvider(),
                                                                   new NeverAwsRegionProvider());
-        chain.getRegion();
+        assertNull(chain.getRegion());
     }
 
     private static class NeverAwsRegionProvider extends AwsRegionProvider {
         @Override
-        public String getRegion() throws AmazonClientException {
+        public Region getRegion() throws AmazonClientException {
             return null;
         }
     }
 
     private static class StaticAwsRegionProvider extends AwsRegionProvider {
-        private final String region;
+        private final Region region;
 
-        public StaticAwsRegionProvider(String region) {
+        public StaticAwsRegionProvider(Region region) {
             this.region = region;
         }
 
         @Override
-        public String getRegion() {
+        public Region getRegion() {
             return region;
         }
     }
 
     private static class FaultyAwsRegionProvider extends AwsRegionProvider {
         @Override
-        public String getRegion() throws AmazonClientException {
+        public Region getRegion() throws AmazonClientException {
             throw new AmazonClientException("Unable to fetch region info");
         }
     }
 
     private static class FatalAwsRegionProvider extends AwsRegionProvider {
         @Override
-        public String getRegion() throws AmazonClientException {
+        public Region getRegion() throws AmazonClientException {
             throw new Error("Something really bad happened");
         }
     }

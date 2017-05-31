@@ -46,8 +46,8 @@ import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.regions.AwsRegionProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 import utils.builder.StaticExecutorFactory;
 
 public class AwsClientBuilderTest {
@@ -72,7 +72,7 @@ public class AwsClientBuilderTest {
 
         //@formatter:off
         AmazonConcreteClient client = new ConcreteSyncBuilder()
-                .withRegion(Regions.EU_CENTRAL_1)
+                .withRegion(Region.EU_CENTRAL_1)
                 .withClientConfiguration(new LegacyClientConfiguration().withSocketTimeout(1234))
                 .withCredentials(credentials)
                 .withMetricsCollector(metrics)
@@ -132,7 +132,7 @@ public class AwsClientBuilderTest {
 
     @Test
     public void explicitRegionIsSet_UsesRegionToConstructEndpoint() {
-        URI actualUri = new ConcreteAsyncBuilder().withRegion(Regions.US_WEST_2).build().getAsyncParams().getEndpoint();
+        URI actualUri = new ConcreteAsyncBuilder().withRegion(Region.US_WEST_2).build().getAsyncParams().getEndpoint();
         assertEquals(URI.create("https://mockprefix.us-west-2.amazonaws.com"), actualUri);
     }
 
@@ -144,7 +144,7 @@ public class AwsClientBuilderTest {
     @Test
     public void regionImplicitlyProvided_UsesRegionToConstructEndpoint() {
         AwsRegionProvider mockRegionProvider = mock(AwsRegionProvider.class);
-        when(mockRegionProvider.getRegion()).thenReturn("ap-southeast-2");
+        when(mockRegionProvider.getRegion()).thenReturn(Region.AP_SOUTHEAST_2);
         final URI actualUri = new ConcreteAsyncBuilder(mockRegionProvider).build().getAsyncParams().getEndpoint();
         assertEquals(URI.create("https://mockprefix.ap-southeast-2.amazonaws.com"), actualUri);
     }
@@ -236,7 +236,7 @@ public class AwsClientBuilderTest {
      * @return A {@link ConcreteAsyncBuilder} instance with an explicitly configured region.
      */
     private ConcreteAsyncBuilder builderWithRegion() {
-        return new ConcreteAsyncBuilder().withRegion(Regions.AP_NORTHEAST_1);
+        return new ConcreteAsyncBuilder().withRegion(Region.AP_NORTHEAST_1);
     }
 
     private List<RequestHandler2> createRequestHandlerList(RequestHandler2... handlers) {

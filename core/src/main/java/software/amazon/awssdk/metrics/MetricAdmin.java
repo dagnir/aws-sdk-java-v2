@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.metrics;
 
+import software.amazon.awssdk.regions.Region;
+
 /**
  *  Administration of AwsSdkMetrics as an MBean.
  */
@@ -66,7 +68,8 @@ public class MetricAdmin implements MetricAdminMBean {
 
     @Override
     public String getRegion() {
-        return AwsSdkMetrics.getRegion().getName();
+        Region region = AwsSdkMetrics.getRegion();
+        return region == null ? null : region.value();
     }
 
     @Override

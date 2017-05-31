@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.internal.partitions.model;
+package software.amazon.awssdk.internal.region.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
