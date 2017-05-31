@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.auth;
 
-import static software.amazon.awssdk.SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +24,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.util.EC2MetadataUtils;
 
 /**
@@ -79,8 +78,10 @@ public class EC2MetadataServiceMock {
         try {
             ServerSocket serverSocket = new ServerSocket(0);
 
-            System.setProperty(EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY, "http://localhost:" + serverSocket.getLocalPort());
-            System.out.println("Started mock metadata service at: " + System.getProperty(EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY));
+            System.setProperty(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.property(),
+                               "http://localhost:" + serverSocket.getLocalPort());
+            System.out.println("Started mock metadata service at: " +
+                               System.getProperty(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.property()));
 
             return serverSocket;
         } catch (IOException ioe) {

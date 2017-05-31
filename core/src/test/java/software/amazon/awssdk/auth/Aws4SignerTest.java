@@ -90,7 +90,7 @@ public class Aws4SignerTest {
                 "Signature=e73e20539446307a5dc71252dbd5b97e861f1d1267456abda3ebd8d57e519951";
 
 
-        AwsCredentials credentials = new BasicAwsCredentials("access", "secret");
+        AwsCredentials credentials = new AwsCredentials("access", "secret");
         // Test request without 'x-amz-sha256' header
         SignableRequest<?> request = generateBasicRequest();
 
@@ -122,7 +122,7 @@ public class Aws4SignerTest {
         final String expectedAmzHeader = "19810216T063000Z";
         final String expectedAmzExpires = "604800";
 
-        AwsCredentials credentials = new BasicAwsCredentials("access", "secret");
+        AwsCredentials credentials = new AwsCredentials("access", "secret");
         // Test request without 'x-amz-sha256' header
 
         SignableRequest<?> request = generateBasicRequest();
@@ -147,7 +147,7 @@ public class Aws4SignerTest {
      */
     @Test
     public void testAnonymous() throws Exception {
-        AwsCredentials credentials = new AnonymousAwsCredentials();
+        AwsCredentials credentials = new AnonymousCredentialsProvider().getCredentialsOrThrow();
         SignableRequest<?> request = generateBasicRequest();
 
         Calendar c = new GregorianCalendar();
@@ -166,7 +166,7 @@ public class Aws4SignerTest {
      */
     @Test
     public void xAmznTraceId_NotSigned() throws Exception {
-        AwsCredentials credentials = new BasicAwsCredentials("akid", "skid");
+        AwsCredentials credentials = new AwsCredentials("akid", "skid");
         SignableRequest<?> request = generateBasicRequest();
         request.addHeader("X-Amzn-Trace-Id", " Root=1-584b150a-708479cb060007ffbf3ee1da;Parent=36d3dbcfd150aac9;Sampled=1");
 

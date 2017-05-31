@@ -34,8 +34,8 @@ import javax.mail.event.TransportEvent;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.ses.SESClient;
 import software.amazon.awssdk.services.ses.SESClientBuilder;
 import software.amazon.awssdk.services.ses.model.RawMessage;
@@ -334,7 +334,7 @@ public class AwsJavaMailTransport extends Transport {
 
         if (this.emailService == null) {
             // Use the supplied credentials.
-            builder.credentialsProvider(new AwsStaticCredentialsProvider(new BasicAwsCredentials(awsAccessKey, awsSecretKey)));
+            builder.credentialsProvider(new StaticCredentialsProvider(new AwsCredentials(awsAccessKey, awsSecretKey)));
         }
 
         if (!isNullOrEmpty(host)) {

@@ -33,15 +33,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceClient;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.builder.AwsClientBuilder.EndpointConfiguration;
@@ -91,13 +90,13 @@ public class AwsClientBuilderTest {
     public void credentialsNotExplicitlySet_UsesDefaultCredentialChain() throws Exception {
         AwsAsyncClientParams params = builderWithRegion().build().getAsyncParams();
         assertThat(params.getCredentialsProvider(),
-                   instanceOf(DefaultAwsCredentialsProviderChain.class));
+                   instanceOf(DefaultCredentialsProvider.class));
     }
 
     @Test
     public void credentialsExplicitlySet_UsesExplicitCredentials() throws Exception {
-        AwsCredentialsProvider provider = new AwsStaticCredentialsProvider(
-                new BasicAwsCredentials("akid", "skid"));
+        AwsCredentialsProvider provider = new StaticCredentialsProvider(
+                new AwsCredentials("akid", "skid"));
         AwsAsyncClientParams params = builderWithRegion().withCredentials(provider).build()
                                                          .getAsyncParams();
         assertEquals(provider, params.getCredentialsProvider());

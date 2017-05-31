@@ -18,9 +18,7 @@ package software.amazon.awssdk.kms.utils;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.kms.KMSClient;
 
 /**
  * Caches the ids of both a non default KMS key reserved for s3 integration testing and the default

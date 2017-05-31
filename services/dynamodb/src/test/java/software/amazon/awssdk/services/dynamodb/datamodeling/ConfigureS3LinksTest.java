@@ -22,7 +22,7 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.services.s3.model.Region;
 
 public class ConfigureS3LinksTest {
@@ -31,7 +31,7 @@ public class ConfigureS3LinksTest {
 
     @Before
     public void setUp() throws Exception {
-        s3cc = new S3ClientCache(new BasicAwsCredentials("mock", "mock"));
+        s3cc = new S3ClientCache(new AwsCredentials("mock", "mock"));
     }
 
     @Test

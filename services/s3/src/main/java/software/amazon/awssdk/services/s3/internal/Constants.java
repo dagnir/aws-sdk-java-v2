@@ -15,11 +15,7 @@
 
 package software.amazon.awssdk.services.s3.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.RequestClientOptions;
-import software.amazon.awssdk.SdkGlobalConfiguration;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.SseAlgorithm;
 
 /**
@@ -90,8 +86,6 @@ public class Constants {
     public static final String REQUESTER_PAYS = "requester";
     public static final String SSE_AWS_KMS_ENCRYPTION_SCHEME =
             SseAlgorithm.KMS.getAlgorithm();
-    /** Shared logger for client events. */
-    private static Log log = LogFactory.getLog(AmazonS3Client.class);
 
     /**
      * Returns the buffer size override if it is specified in the system property,
@@ -99,37 +93,6 @@ public class Constants {
      */
     @Deprecated
     public static int getStreamBufferSize() {
-        int streamBufferSize = DEFAULT_STREAM_BUFFER_SIZE;
-        String bufferSizeOverride =
-                System.getProperty(SdkGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
-
-        if (bufferSizeOverride != null) {
-            try {
-                streamBufferSize = Integer.parseInt(bufferSizeOverride);
-            } catch (Exception e) {
-                log.warn("Unable to parse buffer size override from value: " + bufferSizeOverride);
-            }
-        }
-        return streamBufferSize;
-    }
-
-    /**
-     * Returns the value of the system property
-     * {@link SdkGlobalConfiguration#DEFAULT_S3_STREAM_BUFFER_SIZE} as an
-     * Integer; or null if not set. This method exists for backward
-     * compatibility reasons.
-     */
-    public static Integer getS3StreamBufferSize() {
-        String s =
-                System.getProperty(SdkGlobalConfiguration.DEFAULT_S3_STREAM_BUFFER_SIZE);
-        if (s == null) {
-            return null;
-        }
-        try {
-            return Integer.valueOf(s);
-        } catch (Exception e) {
-            log.warn("Unable to parse buffer size override from value: " + s);
-        }
-        return null;
+        return DEFAULT_STREAM_BUFFER_SIZE;
     }
 }

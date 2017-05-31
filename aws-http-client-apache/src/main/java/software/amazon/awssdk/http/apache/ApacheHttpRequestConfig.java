@@ -24,7 +24,8 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  * all of these settings are supplied when creating the client.
  */
 @SdkInternalApi
-class ApacheHttpRequestConfig {
+// TODO move to internal
+public class ApacheHttpRequestConfig {
 
     private final Duration socketTimeout;
     private final Duration connectionTimeout;

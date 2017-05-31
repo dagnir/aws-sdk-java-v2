@@ -19,7 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
-import org.junit.After;
 import org.junit.Test;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -34,12 +33,6 @@ import software.amazon.awssdk.util.StringInputStream;
 public class SkipMd5CheckStrategyTest {
 
     private final SkipMd5CheckStrategy strategy = SkipMd5CheckStrategy.INSTANCE;
-
-    @After
-    public void tearDown() {
-        System.clearProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY);
-        System.clearProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY);
-    }
 
     @Test
     public void getObject_NormalRequest_ShouldNotSkipClientSideValidation() {
@@ -71,19 +64,6 @@ public class SkipMd5CheckStrategyTest {
         GetObjectRequest request = newGetObjectRequest();
         request.setRange(0, Long.MAX_VALUE);
         assertTrue(strategy.skipClientSideValidation(request, newObjectMetadata()));
-    }
-
-    @Test
-    public void getObject_GetObjectValidationDisabledByProperty_ShouldSkipClientSideValidation() {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        GetObjectRequest request = newGetObjectRequest();
-        assertTrue(strategy.skipClientSideValidationPerRequest(request));
-    }
-
-    @Test
-    public void getObject_GetObjectValidationDisabledByProperty_ShouldSkipClientSideValidationPerResponse() {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        assertTrue(strategy.skipClientSideValidationPerGetResponse(newObjectMetadata()));
     }
 
     @Test
@@ -175,29 +155,6 @@ public class SkipMd5CheckStrategyTest {
     }
 
     @Test
-    public void putObject_PutObjectValidationDisabledByProperty_ShouldSkipClientSideValidation()
-            throws UnsupportedEncodingException {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        PutObjectRequest request = newPutObjectRequest();
-        assertTrue(strategy.skipClientSideValidationPerRequest(request));
-    }
-
-    @Test
-    public void putObject_PutObjectValidationDisabledByProperty_ShouldSkipServerSideValidation()
-            throws UnsupportedEncodingException {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        PutObjectRequest request = newPutObjectRequest();
-        assertTrue(strategy.skipServerSideValidation(request));
-    }
-
-    @Test
-    public void putObject_PutObjectValidationDisabledByProperty_ShouldSkipClientSideValidationPerResponse()
-            throws UnsupportedEncodingException {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        assertTrue(strategy.skipClientSideValidationPerPutResponse(newObjectMetadata()));
-    }
-
-    @Test
     public void uploadPart_NormalRequest_ShouldNotSkipClientSideValidation() {
         UploadPartRequest request = new UploadPartRequest();
         assertFalse(strategy.skipClientSideValidationPerRequest(request));
@@ -223,20 +180,6 @@ public class SkipMd5CheckStrategyTest {
         UploadPartRequest request = new UploadPartRequest();
         request.setSseCustomerKey(new SseCustomerKey("some-key"));
         assertTrue(strategy.skipClientSideValidationPerRequest(request));
-    }
-
-    @Test
-    public void uploadPart_PutObjectValidationDisabledByProperty_ShouldSkipClientSideValidation() {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        UploadPartRequest request = new UploadPartRequest();
-        assertTrue(strategy.skipClientSideValidationPerRequest(request));
-    }
-
-    @Test
-    public void uploadPart_PutObjectValidationDisabledByProperty_ShouldSkipServerSideValidation() {
-        System.setProperty(SkipMd5CheckStrategy.DISABLE_PUT_OBJECT_MD5_VALIDATION_PROPERTY, "true");
-        UploadPartRequest request = new UploadPartRequest();
-        assertTrue(strategy.skipServerSideValidation(request));
     }
 
     @Test

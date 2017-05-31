@@ -42,7 +42,6 @@ import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.auth.AwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.PropertiesFileCredentialsProvider;
-import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
 import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.internal.crypto.CryptoTestUtils;

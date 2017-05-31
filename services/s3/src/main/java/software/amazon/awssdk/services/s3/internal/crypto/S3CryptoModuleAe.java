@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.Map;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.internal.S3Direct;
@@ -81,7 +81,7 @@ class S3CryptoModuleAe extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
     S3CryptoModuleAe(S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(null, s3, new DefaultAwsCredentialsProviderChain(),
+        this(null, s3, new DefaultCredentialsProvider(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 
@@ -91,7 +91,7 @@ class S3CryptoModuleAe extends S3CryptoModuleBase<MultipartUploadCryptoContext> 
     S3CryptoModuleAe(KMSClient kms, S3Direct s3,
                      EncryptionMaterialsProvider encryptionMaterialsProvider,
                      CryptoConfiguration cryptoConfig) {
-        this(kms, s3, new DefaultAwsCredentialsProviderChain(),
+        this(kms, s3, new DefaultCredentialsProvider(),
              encryptionMaterialsProvider, cryptoConfig);
     }
 

@@ -30,6 +30,6 @@ public interface SdkHttpClient extends AutoCloseable {
      * @param requestContext Contains any extra dependencies needed like metrics object.
      * @return Task that can execute an HTTP request and can be aborted.
      */
-    AbortableCallable<SdkHttpResponse> prepareRequest(SdkHttpRequest request, SdkRequestContext requestContext);
+    AbortableCallable<SdkHttpFullResponse> prepareRequest(SdkHttpFullRequest request, SdkRequestContext requestContext);
 
 }

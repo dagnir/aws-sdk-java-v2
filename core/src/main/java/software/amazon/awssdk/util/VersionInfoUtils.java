@@ -16,6 +16,7 @@
 package software.amazon.awssdk.util;
 
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.jar.JarInputStream;
 import org.apache.commons.logging.Log;
@@ -23,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.internal.config.InternalConfig;
 import software.amazon.awssdk.utils.IoUtils;
+import software.amazon.awssdk.utils.JavaSystemSetting;
 
 /**
  * Utility class for accessing AWS SDK versioning information.
@@ -146,20 +148,19 @@ public class VersionInfoUtils {
         ua = ua
                 .replace("{platform}", StringUtils.lowerCase(getPlatform()))
                 .replace("{version}", getVersion())
-                .replace("{os.name}", replaceSpaces(System.getProperty("os.name")))
-                .replace("{os.version}", replaceSpaces(System.getProperty("os.version")))
-                .replace("{java.vm.name}", replaceSpaces(System.getProperty("java.vm.name")))
-                .replace("{java.vm.version}", replaceSpaces(System.getProperty("java.vm.version")))
-                .replace("{java.version}", replaceSpaces(System.getProperty("java.version")))
+                .replace("{os.name}", replaceSpaces(JavaSystemSetting.OS_NAME.getStringValue().orElse(null)))
+                .replace("{os.version}", replaceSpaces(JavaSystemSetting.OS_VERSION.getStringValue().orElse(null)))
+                .replace("{java.vm.name}", replaceSpaces(JavaSystemSetting.JAVA_VM_NAME.getStringValue().orElse(null)))
+                .replace("{java.vm.version}", replaceSpaces(JavaSystemSetting.JAVA_VM_VERSION.getStringValue().orElse(null)))
+                .replace("{java.version}", replaceSpaces(JavaSystemSetting.JAVA_VERSION.getStringValue().orElse(null)))
                 .replace("{additional.languages}", getAdditionalJvmLanguages());
 
-        String language = System.getProperty("user.language");
-        String region = System.getProperty("user.region");
+        Optional<String> language = JavaSystemSetting.USER_LANGUAGE.getStringValue();
+        Optional<String> region = JavaSystemSetting.USER_REGION.getStringValue();
 
         String languageAndRegion = "";
-        if (language != null && region != null) {
-            languageAndRegion =
-                    " " + replaceSpaces(language) + "_" + replaceSpaces(region);
+        if (language.isPresent() && region.isPresent()) {
+            languageAndRegion = " " + replaceSpaces(language.get()) + "_" + replaceSpaces(region.get());
         }
         ua = ua.replace("{language.and.region}", languageAndRegion);
 

@@ -17,33 +17,35 @@ package software.amazon.awssdk.util;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestConfig;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 
 public class CredentialUtils {
-
     /**
      *  Returns the credentials provider that will be used to fetch the
      *  credentials when signing the request. Request specific credentials
      *  takes precedence over the credentials/credentials provider set in the
      *  client.
      */
-    public static AwsCredentialsProvider getCredentialsProvider(
-            AmazonWebServiceRequest req,
-            AwsCredentialsProvider base) {
-
+    public static AwsCredentialsProvider getCredentialsProvider(AmazonWebServiceRequest req, AwsCredentialsProvider base) {
         if (req != null && req.getRequestCredentialsProvider() != null) {
             return req.getRequestCredentialsProvider();
         }
         return base;
     }
 
-    public static AwsCredentialsProvider getCredentialsProvider(
-            RequestConfig requestConfig,
-            AwsCredentialsProvider base) {
-
+    public static AwsCredentialsProvider getCredentialsProvider(RequestConfig requestConfig, AwsCredentialsProvider base) {
         if (requestConfig.getCredentialsProvider() != null) {
             return requestConfig.getCredentialsProvider();
         }
         return base;
+    }
+
+    /**
+     * Determine whether the provided credentials are anonymous credentials, indicating that the customer is not attempting to
+     * authenticate themselves.
+     */
+    public static boolean isAnonymous(AwsCredentials credentials) {
+        return credentials.secretAccessKey() == null && credentials.accessKeyId() == null;
     }
 }

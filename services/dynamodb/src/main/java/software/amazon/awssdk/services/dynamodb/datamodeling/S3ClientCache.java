@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.AmazonS3;
@@ -39,7 +39,7 @@ public class S3ClientCache {
 
     @Deprecated
     S3ClientCache(AwsCredentials credentials) {
-        this(new AwsStaticCredentialsProvider(credentials));
+        this(new StaticCredentialsProvider(credentials));
     }
 
     /**

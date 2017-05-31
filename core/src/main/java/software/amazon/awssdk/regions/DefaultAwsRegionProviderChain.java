@@ -21,7 +21,7 @@ package software.amazon.awssdk.regions;
 public class DefaultAwsRegionProviderChain extends AwsRegionProviderChain {
 
     public DefaultAwsRegionProviderChain() {
-        super(new AwsEnvVarOverrideRegionProvider(), new AwsProfileRegionProvider(),
-              new InstanceMetadataRegionProvider());
+        super(new SystemSettingsRegionProvider(), new AwsProfileRegionProvider(),
+              new InstanceProfileRegionProvider());
     }
 }

@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
 import software.amazon.awssdk.config.ClientMetricsConfiguration;
@@ -39,8 +39,8 @@ import software.amazon.awssdk.handlers.HandlerChainFactory;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
-import software.amazon.awssdk.http.SdkHttpRequest;
-import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.regions.AwsRegionProvider;
@@ -160,7 +160,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     private SdkHttpClient resolveSdkHttpClient() {
         return httpConfiguration.toEither()
                                 .map(e -> e.map(NonManagedSdkHttpClient::new,
-                                                factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
+                                    factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
                                 .orElse(createDefaultHttpClient());
     }
 
@@ -206,7 +206,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
              */
             @Override
             protected AwsCredentialsProvider getCredentialsDefault() {
-                return new DefaultAwsCredentialsProviderChain();
+                return new DefaultCredentialsProvider();
             }
 
             /**
@@ -508,12 +508,13 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     static class NonManagedSdkHttpClient implements SdkHttpClient {
         private final SdkHttpClient delegate;
 
-        public NonManagedSdkHttpClient(SdkHttpClient delegate) {
+        private NonManagedSdkHttpClient(SdkHttpClient delegate) {
             this.delegate = notNull(delegate, "SdkHttpClient must not be null");
         }
 
         @Override
-        public AbortableCallable<SdkHttpResponse> prepareRequest(SdkHttpRequest request, SdkRequestContext requestContext) {
+        public AbortableCallable<SdkHttpFullResponse> prepareRequest(SdkHttpFullRequest request,
+                                                                     SdkRequestContext requestContext) {
             return delegate.prepareRequest(request, requestContext);
         }
 

@@ -30,6 +30,7 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.log.InternalLogApi;
 import software.amazon.awssdk.log.InternalLogFactory;
+import software.amazon.awssdk.util.CredentialUtils;
 import software.amazon.awssdk.util.DateUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.util.StringUtils;
@@ -60,7 +61,7 @@ public class Aws3Signer extends AbstractAwsSigner {
     @Override
     public void sign(SignableRequest<?> request, AwsCredentials credentials) throws SdkClientException {
         // annonymous credentials, don't sign
-        if (credentials instanceof AnonymousAwsCredentials) {
+        if (CredentialUtils.isAnonymous(credentials)) {
             return;
         }
 
@@ -117,11 +118,11 @@ public class Aws3Signer extends AbstractAwsSigner {
         }
 
         String signature = signAndBase64Encode(bytesToSign,
-                                               sanitizedCredentials.getAwsSecretKey(), SIGNING_ALGORITHM);
+                                               sanitizedCredentials.secretAccessKey(), SIGNING_ALGORITHM);
 
         StringBuilder builder = new StringBuilder();
         builder.append(isHttps ? HTTPS_SCHEME : HTTP_SCHEME).append(" ");
-        builder.append("AWSAccessKeyId=" + sanitizedCredentials.getAwsAccessKeyId() + ",");
+        builder.append("AWSAccessKeyId=" + sanitizedCredentials.accessKeyId() + ",");
         builder.append("Algorithm=" + SIGNING_ALGORITHM.toString() + ",");
 
         if (!isHttps) {
@@ -213,7 +214,7 @@ public class Aws3Signer extends AbstractAwsSigner {
 
     @Override
     protected void addSessionCredentials(SignableRequest<?> request, AwsSessionCredentials credentials) {
-        request.addHeader("x-amz-security-token", credentials.getSessionToken());
+        request.addHeader("x-amz-security-token", credentials.sessionToken());
     }
 
 }

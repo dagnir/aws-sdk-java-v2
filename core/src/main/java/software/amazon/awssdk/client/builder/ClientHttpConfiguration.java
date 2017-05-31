@@ -24,7 +24,6 @@ import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
-import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.utils.Either;
 
 /**

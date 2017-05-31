@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.SdkGlobalConfiguration;
+import software.amazon.awssdk.AwsSystemSetting;
 
 public class EC2MetadataUtilsIntegrationTest {
 
@@ -29,14 +29,11 @@ public class EC2MetadataUtilsIntegrationTest {
 
     @BeforeClass
     public static void setUp() throws IOException {
-
-
         SERVER = new EC2MetadataUtilsServer("localhost", 0);
         SERVER.start();
 
-        System.setProperty(
-                SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY,
-                "http://localhost:" + SERVER.getLocalPort());
+        System.setProperty(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.property(),
+                           "http://localhost:" + SERVER.getLocalPort());
     }
 
     @AfterClass
@@ -45,7 +42,7 @@ public class EC2MetadataUtilsIntegrationTest {
             SERVER.stop();
         }
 
-        System.clearProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
+        System.clearProperty(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.property());
     }
 
     @Test

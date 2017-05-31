@@ -46,6 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -67,16 +68,16 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.Presigner;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerFactory;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressInputStream;
 import software.amazon.awssdk.event.ProgressListener;
@@ -304,6 +305,7 @@ import software.amazon.awssdk.utils.Base16;
 import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.utils.IoUtils;
+import software.amazon.awssdk.utils.OptionalUtils;
 
 /**
  * <p>
@@ -425,7 +427,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client() {
-        this(new S3CredentialsProviderChain());
+        this(new S3CredentialsProvider());
     }
 
     /**
@@ -463,7 +465,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client(AwsCredentials awsCredentials, LegacyClientConfiguration clientConfiguration) {
-        this(new AwsStaticCredentialsProvider(awsCredentials), clientConfiguration);
+        this(new StaticCredentialsProvider(awsCredentials), clientConfiguration);
     }
 
     /**
@@ -590,7 +592,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client(LegacyClientConfiguration clientConfiguration) {
-        this(new S3CredentialsProviderChain(), clientConfiguration);
+        this(new S3CredentialsProvider(), clientConfiguration);
     }
 
     /**
@@ -1937,15 +1939,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         MD5DigestCalculatingInputStream md5DigestStream = null;
         try {
             Request<PutObjectRequest> request = createRequest(bucketName, key, putObjectRequest, HttpMethodName.PUT);
-            // Make backward compatible with buffer size via system property
-            final Integer bufsize = Constants.getS3StreamBufferSize();
-            if (bufsize != null) {
-                AmazonWebServiceRequest awsreq = request.getOriginalRequest();
-                // Note awsreq is never null at this point even if the original
-                // request was
-                awsreq.getRequestClientOptions()
-                      .setReadLimit(bufsize.intValue());
-            }
+
             if (putObjectRequest.getAccessControlList() != null) {
                 addAclHeaders(request, putObjectRequest.getAccessControlList());
             } else if (putObjectRequest.getCannedAcl() != null) {
@@ -3161,9 +3155,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         if (signer instanceof Presigner) {
             // If we have a signer which knows how to presign requests,
             // delegate directly to it.
-            AwsCredentials credentials = CredentialUtils.getCredentialsProvider(request.getOriginalRequest(),
-                                                                                awsCredentialsProvider)
-                                                        .getCredentials();
+            AwsCredentials credentials =
+                    CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
+                                   .getCredentialsOrThrow();
             ((Presigner) signer).presignRequest(request, credentials, req.getExpiration());
         } else {
             // Otherwise use the default presigning method, which is hardcoded
@@ -3461,15 +3455,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                     // When isCurr is a FileInputStream, this wrapping enables
                     // unlimited mark-and-reset
                     isCurr = ReleasableInputStream.wrap(isCurr);
-                }
-                // Make backward compatible with buffer size via system property
-                final Integer bufsize = Constants.getS3StreamBufferSize();
-                if (bufsize != null) {
-                    AmazonWebServiceRequest awsreq = request.getOriginalRequest();
-                    // Note awsreq is never null at this point even if the original
-                    // request was
-                    awsreq.getRequestClientOptions()
-                          .setReadLimit(bufsize.intValue());
                 }
             } else {
                 try {
@@ -3910,7 +3895,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
         new S3QueryStringSigner(methodName.toString(), resourcePath, expiration)
                 .sign(request, CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
-                                              .getCredentials());
+                                              .getCredentialsOrThrow());
 
         // The Amazon S3 DevPay token header is a special exception and can be safely moved
         // from the request's headers into the query string to ensure that it travels along
@@ -4250,7 +4235,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             executionContext.setCredentialsProvider(CredentialUtils.getCredentialsProvider(request.getOriginalRequest(),
                                                                                            awsCredentialsProvider));
 
-            validateRequestBeforeTransmit(request);
             response = client.execute(request, responseHandler, errorResponseHandler, executionContext);
 
             return response.getAwsResponse();
@@ -4279,32 +4263,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         } finally {
             endClientExecution(awsRequestMetrics, request, response);
         }
-    }
-
-    private void validateRequestBeforeTransmit(Request<?> request) {
-        boolean implicitCrossRegionForbidden = areImplicitGlobalClientsDisabled();
-        boolean explicitCrossRegionEnabled = clientOptions.isForceGlobalBucketAccessEnabled();
-
-        // The region must be set if implicit cross region clients are not allowed
-        if (noExplicitRegionProvided(request) && implicitCrossRegionForbidden && !explicitCrossRegionEnabled) {
-            String error = String.format("While the %s system property is enabled, Amazon S3 clients cannot be used without " +
-                                         "first configuring a region or explicitly enabling global bucket access discovery " +
-                                         "in the S3 client builder.",
-                                         SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
-            throw new IllegalStateException(error);
-        }
-    }
-
-    /**
-     * Returns true in the event that the {@link SdkGlobalConfiguration#DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY}
-     * is non-null and not "false".
-     *
-     * If this system property is set, S3 clients may not act in a cross-region manner unless cross-region behavior is
-     * explicitly enabled, using options like {@link AmazonS3ClientBuilder#enableForceGlobalBucketAccess()}.
-     */
-    private boolean areImplicitGlobalClientsDisabled() {
-        String setting = System.getProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
-        return setting != null && !setting.equals("false");
     }
 
     private boolean shouldPerformHeadRequestToFindRegion(Request<?> request, String bucket) {
@@ -5097,20 +5055,20 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
     }
 
     /**
-     * AWS credentials provider chain for Amazon S3 that looks for credentials in
-     * the {@link DefaultAwsCredentialsProviderChain}. If the {@link DefaultAwsCredentialsProviderChain}
-     * returns null, S3 falls back to anonymous access.
+     * AWS credentials provider chain for Amazon S3 that looks for credentials in the {@link DefaultCredentialsProvider}.
+     * If the {@link DefaultCredentialsProvider} cannot find any credentials, fall back to anonymous access.
      */
-    private static class S3CredentialsProviderChain extends DefaultAwsCredentialsProviderChain {
+    private static class S3CredentialsProvider extends DefaultCredentialsProvider {
+        private static final AwsCredentials ANONYMOUS_CREDENTIALS = new AnonymousCredentialsProvider().getCredentialsOrThrow();
 
         @Override
-        public AwsCredentials getCredentials() {
-            try {
-                return super.getCredentials();
-            } catch (AmazonClientException ace) {
-                log.debug("No credentials available; falling back to anonymous access");
-            }
-            return null;
+        public Optional<AwsCredentials> getCredentials() {
+            return OptionalUtils.firstPresent(super.getCredentials(), () -> Optional.of(ANONYMOUS_CREDENTIALS));
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName();
         }
     }
 }

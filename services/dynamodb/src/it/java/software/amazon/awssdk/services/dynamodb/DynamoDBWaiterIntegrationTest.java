@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -50,7 +50,7 @@ public class DynamoDBWaiterIntegrationTest extends AwsIntegrationTestBase {
         tableName = getClass().getSimpleName() + "-" + System.currentTimeMillis();
         client = DynamoDBClient
                 .builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
+                .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
                 .region(Regions.US_WEST_2.getName())
                 .build();
         client.createTable(new CreateTableRequest().withTableName(tableName)

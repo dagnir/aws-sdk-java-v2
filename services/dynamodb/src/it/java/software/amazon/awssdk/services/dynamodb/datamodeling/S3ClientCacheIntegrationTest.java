@@ -25,19 +25,14 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.auth.DefaultAwsCredentialsProviderChain;
-import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.s3.AmazonS3ClientBuilder;
-import software.amazon.awssdk.services.s3.model.Region;
 
 public class S3ClientCacheIntegrationTest {
     private AwsCredentials credentials;
 
     @Before
     public void setUp() {
-        credentials = new BasicAwsCredentials("mock", "mock");
+        credentials = new AwsCredentials("mock", "mock");
     }
 
     @Test

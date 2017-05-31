@@ -17,7 +17,7 @@ package software.amazon.awssdk.auth;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
+import java.util.Optional;
 import org.junit.Test;
 
 public class AwsCredentialsProviderChainTest {
@@ -32,7 +32,9 @@ public class AwsCredentialsProviderChainTest {
         MockCredentialsProvider provider1 = new MockCredentialsProvider();
         provider1.throwException = true;
         MockCredentialsProvider provider2 = new MockCredentialsProvider();
-        AwsCredentialsProviderChain chain = new AwsCredentialsProviderChain(provider1, provider2);
+        AwsCredentialsProviderChain chain = AwsCredentialsProviderChain.builder()
+                                                                       .credentialsProviders(provider1, provider2)
+                                                                       .build();
 
         assertEquals(0, provider1.getCredentialsCallCount);
         assertEquals(0, provider2.getCredentialsCallCount);
@@ -60,8 +62,10 @@ public class AwsCredentialsProviderChainTest {
         MockCredentialsProvider provider1 = new MockCredentialsProvider();
         provider1.throwException = true;
         MockCredentialsProvider provider2 = new MockCredentialsProvider();
-        AwsCredentialsProviderChain chain = new AwsCredentialsProviderChain(Arrays.asList(provider1, provider2));
-        chain.setReuseLastProvider(false);
+        AwsCredentialsProviderChain chain = AwsCredentialsProviderChain.builder()
+                                                                       .credentialsProviders(provider1, provider2)
+                                                                       .reuseLastProviderEnabled(false)
+                                                                       .build();
 
         assertEquals(0, provider1.getCredentialsCallCount);
         assertEquals(0, provider2.getCredentialsCallCount);
@@ -76,16 +80,16 @@ public class AwsCredentialsProviderChainTest {
     }
 
 
-    private static final class MockCredentialsProvider extends AwsStaticCredentialsProvider {
+    private static final class MockCredentialsProvider extends StaticCredentialsProvider {
         public int getCredentialsCallCount = 0;
         public boolean throwException = false;
 
         public MockCredentialsProvider() {
-            super(new BasicAwsCredentials("accessKey", "secretKey"));
+            super(new AwsCredentials("accessKey", "secretKey"));
         }
 
         @Override
-        public AwsCredentials getCredentials() {
+        public Optional<AwsCredentials> getCredentials() {
             getCredentialsCallCount++;
 
             if (throwException) {

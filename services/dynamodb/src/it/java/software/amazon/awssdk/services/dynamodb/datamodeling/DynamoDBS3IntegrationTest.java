@@ -22,7 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.UUID;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.dynamodb.pojos.S3LinksTestClass;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -35,12 +35,12 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
     @Test
     public void testCredentialContext() throws Exception {
-        tryCreateItem(new DynamoDBMapper(dynamo, new AwsStaticCredentialsProvider(credentials)));
+        tryCreateItem(new DynamoDBMapper(dynamo, new StaticCredentialsProvider(credentials)));
     }
 
     @Test
     public void testManuallyFilledContext() throws Exception {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new AwsStaticCredentialsProvider(credentials));
+        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new StaticCredentialsProvider(credentials));
         S3ClientCache s3cc = mapper.getS3ClientCache();
         s3cc.useClient(s3East);
         s3cc.useClient(s3West);

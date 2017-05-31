@@ -17,10 +17,8 @@ package software.amazon.awssdk.client.builder;
 
 import java.net.URI;
 import java.util.Optional;
-import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.ContainerCredentialsProvider;
 import software.amazon.awssdk.builder.SdkBuilder;
 import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.config.ClientMarshallerConfiguration;
@@ -124,16 +122,14 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
     /**
      * Configure the credentials that should be used to authenticate with AWS.
      *
-     * <p>The default provider will attempt to identify the credentials automatically using the following logic:
+     * <p>The default provider will attempt to identify the credentials automatically using the following checks:
      * <ul>
-     * <li>Check the {@link SdkGlobalConfiguration#ACCESS_KEY_ID_ENV_VAR} and {@link SdkGlobalConfiguration#SECRET_KEY_ENV_VAR}
-     * environment variables.</li>
-     * <li>Check the aws.accessKeyId and aws.secretKey java system properties.</li>
-     * <li>Check the {user.home}/.aws/credentials file.</li>
-     * <li>If running in EC2, check the {@link ContainerCredentialsProvider#ECS_CONTAINER_CREDENTIALS_PATH} path for a
-     * credentials
-     * file that the security manager allows access to.
-     * <li>If running in EC2, check the EC2 metadata service for credentials.</li>
+     *   <li>Java System Properties - <code>aws.accessKeyId</code> and <code>aws.secretKey</code></li>
+     *   <li>Environment Variables - <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code></li>
+     *   <li>Credential profiles file at the default location (~/.aws/credentials) shared by all AWS SDKs and the AWS CLI</li>
+     *   <li>Credentials delivered through the Amazon EC2 container service if AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" environment
+     *   variable is set and security manager has permission to access the variable,</li>
+     *   <li>Instance profile credentials delivered through the Amazon EC2 metadata service</li>
      * </ul>
      *
      * <p>If the credentials are not found in any of the locations above, an exception will be thrown at {@link #build()} time.
@@ -164,9 +160,10 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
      *
      * <p>By default, this will attempt to identify the endpoint automatically using the following logic:
      * <ol>
-     * <li>Check the {@link SdkGlobalConfiguration#AWS_REGION_ENV_VAR} environment variable for the region.</li>
-     * <li>Check the {user.home}/.aws/credentials and {user.home}/.aws/config files for the region.</li>
-     * <li>If running in EC2, check the EC2 metadata service for the region.</li>
+     *     <li>Check the 'aws.defaultRegion' system property for the region.</li>
+     *     <li>Check the 'AWS_DEFAULT_REGION' environment variable for the region.</li>
+     *     <li>Check the {user.home}/.aws/credentials and {user.home}/.aws/config files for the region.</li>
+     *     <li>If running in EC2, check the EC2 metadata service for the region.</li>
      * </ol>
      * </p>
      *
@@ -182,7 +179,7 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
 
     /**
      * Configure the region with which the SDK should communicate. If this is not specified when creating a client, the
-     * behavior described in {@link #defaultRegionDetectionEnabled(boolean)} (assuming it is enabled) will be used.
+     * behavior described in {@link #defaultRegionDetectionEnabled(Boolean)} (assuming it is enabled) will be used.
      */
     B region(String region);
 

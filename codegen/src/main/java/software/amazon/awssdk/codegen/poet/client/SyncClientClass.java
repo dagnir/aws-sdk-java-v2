@@ -60,9 +60,7 @@ public class SyncClientClass implements ClassSpec {
 
         Builder classBuilder = PoetUtils.createClassBuilder(className)
                 .addSuperinterface(interfaceClass)
-                .addField(FieldSpec.builder(ClientHandler.class, "clientHandler")
-                        .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                        .build())
+                .addField(ClientHandler.class, "clientHandler", Modifier.PRIVATE, Modifier.FINAL)
                 .addField(protocolSpec.protocolFactory(model))
                 .addField(clientParamsField())
                 .addMethod(constructor())
