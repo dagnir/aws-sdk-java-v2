@@ -44,19 +44,19 @@ public class ElasticFileSystemIntegrationTest extends AwsIntegrationTestBase {
     @After
     public void tearDown() {
         if (!StringUtils.isNullOrEmpty(fileSystemId)) {
-            client.deleteFileSystem(new DeleteFileSystemRequest().withFileSystemId(fileSystemId));
+            client.deleteFileSystem(DeleteFileSystemRequest.builder().fileSystemId(fileSystemId).build());
         }
     }
 
     @Test
     public void describeFileSystems_ReturnsNonNull() {
-        assertNotNull(client.describeFileSystems(new DescribeFileSystemsRequest()));
+        assertNotNull(client.describeFileSystems(DescribeFileSystemsRequest.builder().build()));
     }
 
     @Test
     public void describeFileSystem_NonExistentFileSystem_ThrowsException() {
         try {
-            client.describeFileSystems(new DescribeFileSystemsRequest().withFileSystemId("fs-00000000"));
+            client.describeFileSystems(DescribeFileSystemsRequest.builder().fileSystemId("fs-00000000").build());
         } catch (FileSystemNotFoundException e) {
             assertEquals("FileSystemNotFound", e.getErrorCode());
         }
@@ -68,12 +68,12 @@ public class ElasticFileSystemIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void createFileSystem_WithDuplicateCreationToken_ThrowsExceptionWithFileSystemIdPresent() {
         String creationToken = UUID.randomUUID().toString();
-        this.fileSystemId = client.createFileSystem(new CreateFileSystemRequest().withCreationToken(creationToken))
-                                  .getFileSystemId();
+        this.fileSystemId = client.createFileSystem(CreateFileSystemRequest.builder().creationToken(creationToken).build())
+                                  .fileSystemId();
         try {
-            client.createFileSystem(new CreateFileSystemRequest().withCreationToken(creationToken)).getFileSystemId();
+            client.createFileSystem(CreateFileSystemRequest.builder().creationToken(creationToken).build()).fileSystemId();
         } catch (FileSystemAlreadyExistsException e) {
-            assertEquals(fileSystemId, e.getFileSystemId());
+            assertEquals(fileSystemId, e.fileSystemId());
         }
     }
 }

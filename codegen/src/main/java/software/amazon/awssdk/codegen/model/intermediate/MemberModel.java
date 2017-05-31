@@ -42,12 +42,6 @@ public class MemberModel extends DocumentationModel {
 
     private VariableModel setterModel;
 
-    private String getterMethodName;
-
-    private String setterMethodName;
-
-    private String fluentSetterMethodName;
-
     private ReturnTypeModel getterModel;
 
     private ParameterHttpMapping http;
@@ -65,6 +59,14 @@ public class MemberModel extends DocumentationModel {
     private boolean idempotencyToken;
 
     private ShapeModel shape;
+
+    private String fluentGetterMethodName;
+
+    private String fluentSetterMethodName;
+
+    private String beanStyleGetterName;
+
+    private String beanStyleSetterName;
 
     public String getName() {
         return name;
@@ -131,27 +133,56 @@ public class MemberModel extends DocumentationModel {
         return this;
     }
 
-    public String getGetterMethodName() {
-        return getterMethodName;
+    public String getFluentGetterMethodName() {
+        return fluentGetterMethodName;
     }
 
-    public void setGetterMethodName(String getterMethodName) {
-        this.getterMethodName = getterMethodName;
+    public void setFluentGetterMethodName(String fluentGetterMethodName) {
+        this.fluentGetterMethodName = fluentGetterMethodName;
     }
 
-    public MemberModel withGetterMethodName(String getterMethodName) {
-        setGetterMethodName(getterMethodName);
+    public MemberModel withFluentGetterMethodName(String getterMethodName) {
+        setFluentGetterMethodName(getterMethodName);
         return this;
     }
 
+    public String getBeanStyleGetterMethodName() {
+        return beanStyleGetterName;
+    }
+
+    public void setBeanStyleGetterMethodName(String beanStyleGetterName) {
+        this.beanStyleGetterName = beanStyleGetterName;
+    }
+
+    public MemberModel withBeanStyleGetterMethodName(String beanStyleGetterName) {
+        this.beanStyleGetterName = beanStyleGetterName;
+        return this;
+    }
+
+    public String getBeanStyleSetterMethodName() {
+        return beanStyleSetterName;
+    }
+
+    public void setBeanStyleSetterMethodName(String beanStyleSetterName) {
+        this.beanStyleSetterName = beanStyleSetterName;
+    }
+
+    public MemberModel withBeanStyleSetterMethodName(String beanStyleSetterName) {
+        this.beanStyleSetterName = beanStyleSetterName;
+        return this;
+    }
+
+    // TODO: Remove when all marshallers switch over to new style
     public String getSetterMethodName() {
-        return setterMethodName;
+        return getBeanStyleSetterMethodName();
     }
 
+    // TODO: Remove when all marshallers switch over to new style
     public void setSetterMethodName(String setterMethodName) {
-        this.setterMethodName = setterMethodName;
+        setBeanStyleGetterMethodName(setterMethodName);
     }
 
+    // TODO: Remove when all marshallers switch over to new style
     public MemberModel withSetterMethodName(String setterMethodName) {
         setSetterMethodName(setterMethodName);
         return this;
@@ -264,8 +295,7 @@ public class MemberModel extends DocumentationModel {
     }
 
     public String getSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(getSetterDoc());
 
         if ("java.nio.ByteBuffer".equals(
@@ -296,15 +326,13 @@ public class MemberModel extends DocumentationModel {
         }
 
         docBuilder.append(getParamDoc())
-                .append(getEnumDoc())
-                .append("*/");
+                .append(getEnumDoc());
 
         return docBuilder.toString();
     }
 
     public String getGetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(documentation != null ? documentation : DEFAULT_GETTER.replace("%s", name))
                 .append(LINE_SEPARATOR);
 
@@ -333,28 +361,23 @@ public class MemberModel extends DocumentationModel {
 
         docBuilder.append("@return ")
                   .append(stripHtmlTags(variableDesc))
-                  .append(getEnumDoc())
-                  .append("*/");
+                  .append(getEnumDoc());
 
         return docBuilder.toString();
     }
 
     public String getFluentSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(getSetterDoc())
                 .append(getParamDoc())
                 .append(LINE_SEPARATOR)
                 .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
-                .append(getEnumDoc())
-                .append("*/");
-
+                .append(getEnumDoc());
         return docBuilder.toString();
     }
 
     public String getVarargSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder("/**");
-
+        StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(getSetterDoc());
 
         if (listModel != null) {
@@ -366,8 +389,6 @@ public class MemberModel extends DocumentationModel {
                 .append(LINE_SEPARATOR)
                 .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
                 .append(getEnumDoc());
-
-        docBuilder.append("*/");
 
         return docBuilder.toString();
     }

@@ -64,17 +64,22 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
     }
 
     private CreateTableRequest createTableRequest() {
-        return new CreateTableRequest().withTableName(tableName).withKeySchema(
-                new KeySchemaElement().withKeyType(KeyType.HASH).withAttributeName(HASH_KEY_NAME))
-                                       .withAttributeDefinitions(new AttributeDefinition().withAttributeName(HASH_KEY_NAME)
-                                                                                          .withAttributeType(ScalarAttributeType.S))
-                                       .withProvisionedThroughput(
-                                               new ProvisionedThroughput().withReadCapacityUnits(READ_CAPACITY)
-                                                                          .withWriteCapacityUnits(WRITE_CAPACITY));
+        return CreateTableRequest.builder()
+                .tableName(tableName)
+                .keySchema(KeySchemaElement.builder()
+                        .keyType(KeyType.HASH)
+                        .attributeName(HASH_KEY_NAME).build())
+                .attributeDefinitions(AttributeDefinition.builder()
+                        .attributeName(HASH_KEY_NAME)
+                        .attributeType(ScalarAttributeType.S).build())
+                .provisionedThroughput(ProvisionedThroughput.builder()
+                        .readCapacityUnits(READ_CAPACITY)
+                        .writeCapacityUnits(WRITE_CAPACITY).build())
+                .build();
     }
 
     private DeleteTableRequest deleteTableRequest() {
-        return new DeleteTableRequest().withTableName(tableName);
+        return DeleteTableRequest.builder().tableName(tableName).build();
     }
 
     private void createTable() {
@@ -88,10 +93,10 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
 
     @After
     public void tearDown() throws InterruptedException {
-        if (getTableStatus() != null) {
-            if (!getTableStatus().equals(TableStatus.DELETING)) {
+        if (tableStatus() != null) {
+            if (!tableStatus().equals(TableStatus.DELETING)) {
                 TableUtils.waitUntilActive(ddb, tableName);
-                ddb.deleteTable(new DeleteTableRequest(tableName));
+                ddb.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
             }
             waitUntilTableDeleted();
         }
@@ -100,9 +105,9 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
     /**
      * @return Table status or null if it doesn't exist.
      */
-    private String getTableStatus() {
+    private String tableStatus() {
         try {
-            return ddb.describeTable(new DescribeTableRequest(tableName)).getTable().getTableStatus();
+            return ddb.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table().tableStatus();
         } catch (ResourceNotFoundException e) {
             return null;
         }
@@ -115,7 +120,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
         long endTime = startTime + 5 * 60 * 1000;
         while (System.currentTimeMillis() < endTime) {
             try {
-                ddb.describeTable(new DescribeTableRequest(tableName));
+                ddb.describeTable(DescribeTableRequest.builder().tableName(tableName).build());
                 Thread.sleep(1000);
             } catch (ResourceNotFoundException e) {
                 return;
@@ -143,7 +148,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
         createTable();
         TableUtils.waitUntilActive(ddb, tableName);
         assertEquals(TableStatus.ACTIVE.toString(),
-                     ddb.describeTable(new DescribeTableRequest(tableName)).getTable().getTableStatus());
+                     ddb.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table().tableStatus());
     }
 
     @Test(expected = TableNeverTransitionedToStateException.class, timeout = TEST_TIMEOUT)
@@ -164,7 +169,7 @@ public class TableUtilsIntegrationTest extends AwsIntegrationTestBase {
     public void waitUntilExists_MethodBlocksUntilTableExists() throws InterruptedException {
         createTable();
         TableUtils.waitUntilExists(ddb, tableName);
-        assertNotNull(ddb.describeTable(new DescribeTableRequest(tableName)));
+        assertNotNull(ddb.describeTable(DescribeTableRequest.builder().tableName(tableName).build()));
     }
 
     @Test(expected = AmazonClientException.class, timeout = TEST_TIMEOUT)

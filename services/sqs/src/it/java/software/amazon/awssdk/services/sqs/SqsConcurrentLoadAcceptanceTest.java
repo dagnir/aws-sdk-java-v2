@@ -57,8 +57,8 @@ public class SqsConcurrentLoadAcceptanceTest extends IntegrationTestBase {
     private class WorkerThread extends Thread {
         @Override
         public void run() {
-            sqs.listQueues(new ListQueuesRequest());
-            sqs.listQueues(new ListQueuesRequest());
+            sqs.listQueues(ListQueuesRequest.builder().build());
+            sqs.listQueues(ListQueuesRequest.builder().build());
         }
     }
 

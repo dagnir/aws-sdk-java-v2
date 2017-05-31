@@ -44,13 +44,13 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
     private Collection<KeyAttribute> exclusiveStartKey;
 
     public ScanSpec() {
-        super(new ScanRequest());
+        super(ScanRequest.builder().build());
     }
 
     /**
-     * @see ScanRequest#getScanFilter()
+     * @see ScanRequest#scanFilter()
      */
-    public Collection<ScanFilter> getScanFilters() {
+    public Collection<ScanFilter> scanFilters() {
         return scanFilters;
     }
 
@@ -80,14 +80,14 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#getConditionalOperator()
      */
     public String getConditionalOperator() {
-        return getRequest().getConditionalOperator();
+        return getRequest().conditionalOperator();
     }
 
     /**
      * @see ScanRequest#withConditionalOperator(ConditionalOperator)
      */
     public ScanSpec withConditionalOperator(ConditionalOperator op) {
-        getRequest().setConditionalOperator(op);
+        setRequest(getRequest().toBuilder().conditionalOperator(op).build());
         return this;
     }
 
@@ -95,7 +95,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#getAttributesToGet()
      */
     public List<String> getAttributesToGet() {
-        return getRequest().getAttributesToGet();
+        return getRequest().attributesToGet();
     }
 
     /**
@@ -103,9 +103,9 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      */
     public ScanSpec withAttributesToGet(String... attributes) {
         if (attributes == null) {
-            getRequest().setAttributesToGet(null);
+            setRequest(getRequest().toBuilder().attributesToGet((String []) null).build());
         } else {
-            getRequest().setAttributesToGet(Arrays.asList(attributes));
+            setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attributes)).build());
         }
         return this;
     }
@@ -114,19 +114,19 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * Any query filters will be ignored if a filter expression has been
      * specified. When a filter expression is specified, the corresponding
      * name-map and value-map can also be specified via
-     * {@link #withNameMap(Map)} and {@link #withValueMap(Map)}.
+     * {@link #withNameMap(Map)} and {@link #valueMap(Map)}.
      *
      * @see ScanRequest#getFilterExpression()
      */
     public String getFilterExpression() {
-        return getRequest().getFilterExpression();
+        return getRequest().filterExpression();
     }
 
     /**
      * @see ScanRequest#withFilterExpression(String)
      */
     public ScanSpec withFilterExpression(String filterExpression) {
-        getRequest().setFilterExpression(filterExpression);
+        setRequest(getRequest().toBuilder().filterExpression(filterExpression).build());
         return this;
     }
 
@@ -134,21 +134,21 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#getProjectionExpression()
      */
     public String getProjectionExpression() {
-        return getRequest().getProjectionExpression();
+        return getRequest().projectionExpression();
     }
 
     /**
      * @see ScanRequest#withProjectionExpression(String)
      */
     public ScanSpec withProjectionExpression(String projectionExpression) {
-        getRequest().setProjectionExpression(projectionExpression);
+        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build());
         return this;
     }
 
     /**
      * @see ScanRequest#getExpressionAttributeNames()
      */
-    public Map<String, String> getNameMap() {
+    public Map<String, String> nameMap() {
         return nameMap;
     }
 
@@ -172,7 +172,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
     /**
      * @see ScanRequest#getExpressionAttributeValues()
      */
-    public Map<String, Object> getValueMap() {
+    public Map<String, Object> valueMap() {
         return valueMap;
     }
 
@@ -182,7 +182,7 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      *
      * @see ScanRequest#withExpressionAttributeValues(Map)
      */
-    public ScanSpec withValueMap(Map<String, Object> valueMap) {
+    public ScanSpec valueMap(Map<String, Object> valueMap) {
         if (valueMap == null) {
             this.valueMap = null;
         } else {
@@ -195,47 +195,47 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#getReturnConsumedCapacity()
      */
     public String getReturnConsumedCapacity() {
-        return getRequest().getReturnConsumedCapacity();
+        return getRequest().returnConsumedCapacity();
     }
 
     /**
      * @see ScanRequest#withReturnConsumedCapacity(ReturnConsumedCapacity)
      */
     public ScanSpec withReturnConsumedCapacity(ReturnConsumedCapacity capacity) {
-        getRequest().setReturnConsumedCapacity(capacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build());
         return this;
     }
 
     /**
      * Specifies the attributes to be returned.
      *
-     * @see ScanRequest#getSelect()
+     * @see ScanRequest#select()
      */
     // ALL_ATTRIBUTES | ALL_PROJECTED_ATTRIBUTES | SPECIFIC_ATTRIBUTES | COUNT
-    public String getSelect() {
-        return getRequest().getSelect();
+    public String select() {
+        return getRequest().select();
     }
 
     /**
      * @see ScanRequest#withSelect(Select)
      */
     public ScanSpec withSelect(Select select) {
-        getRequest().setSelect(select);
+        setRequest(getRequest().toBuilder().select(select).build());
         return this;
     }
 
     /**
-     * @see ScanRequest#getSegment()
+     * @see ScanRequest#segment()
      */
-    public Integer getSegment() {
-        return getRequest().getSegment();
+    public Integer segment() {
+        return getRequest().segment();
     }
 
     /**
      * @see ScanRequest#withSegment(Integer)
      */
     public ScanSpec withSegment(Integer segment) {
-        getRequest().setSegment(segment);
+        setRequest(getRequest().toBuilder().segment(segment).build());
         return this;
     }
 
@@ -243,14 +243,14 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#getTotalSegments()
      */
     public Integer getTotalSegments() {
-        return getRequest().getTotalSegments();
+        return getRequest().totalSegments();
     }
 
     /**
      * @see ScanRequest#withTotalSegments(Integer)
      */
     public ScanSpec withTotalSegments(Integer totalSegments) {
-        getRequest().setTotalSegments(totalSegments);
+        setRequest(getRequest().toBuilder().totalSegments(totalSegments).build());
         return this;
     }
 
@@ -258,14 +258,14 @@ public class ScanSpec extends AbstractCollectionSpec<ScanRequest> {
      * @see ScanRequest#isConsistentRead()
      */
     public Boolean isConsistentRead() {
-        return getRequest().isConsistentRead();
+        return getRequest().consistentRead();
     }
 
     /**
      * @see ScanRequest#withConsistentRead(Boolean)
      */
     public ScanSpec withConsistentRead(Boolean consistentRead) {
-        getRequest().withConsistentRead(consistentRead);
+        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build());
         return this;
     }
 

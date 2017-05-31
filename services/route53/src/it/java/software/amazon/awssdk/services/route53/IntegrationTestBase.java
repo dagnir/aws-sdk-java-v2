@@ -39,7 +39,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         setUpCredentials();
         route53 = Route53Client.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Regions.US_EAST_1.getName())
+                .region(Regions.US_EAST_1.name())
                 .build();
     }
 

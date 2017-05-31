@@ -34,14 +34,14 @@ public class PredictEndpointHandler extends RequestHandler2 {
     public void beforeRequest(Request<?> request) {
         if (request.getOriginalRequest() instanceof PredictRequest) {
             PredictRequest pr = (PredictRequest) request.getOriginalRequest();
-            if (pr.getPredictEndpoint() == null) {
+            if (pr.predictEndpoint() == null) {
                 throw new AmazonClientException(
                         "PredictRequest.PredictEndpoint is required!");
             }
 
             try {
 
-                request.setEndpoint(new URI(pr.getPredictEndpoint()));
+                request.setEndpoint(new URI(pr.predictEndpoint()));
 
             } catch (URISyntaxException e) {
                 throw new AmazonClientException(

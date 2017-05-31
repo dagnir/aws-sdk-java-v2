@@ -466,12 +466,12 @@ public class SendQueueBuffer {
         @Override
         protected boolean isOkToAdd(SendMessageRequest request) {
             return (requests.size() < config.getMaxBatchSize())
-                   && ((request.getMessageBody().getBytes().length + batchSizeBytes) < config.getMaxBatchSizeBytes());
+                   && ((request.messageBody().getBytes().length + batchSizeBytes) < config.getMaxBatchSizeBytes());
         }
 
         @Override
         protected void onRequestAdded(SendMessageRequest request) {
-            batchSizeBytes += request.getMessageBody().getBytes().length;
+            batchSizeBytes += request.messageBody().getBytes().length;
         }
 
         @Override
@@ -487,31 +487,31 @@ public class SendQueueBuffer {
                 return;
             }
 
-            SendMessageBatchRequest batchRequest = new SendMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
+            SendMessageBatchRequest.Builder batchRequestBuilder = SendMessageBatchRequest.builder().queueUrl(qUrl);
 
             List<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>(requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
-                entries.add(new SendMessageBatchRequestEntry().withId(Integer.toString(i))
-                                                              .withMessageBody(requests.get(i).getMessageBody())
-                                                              .withDelaySeconds(requests.get(i).getDelaySeconds())
-                                                              .withMessageAttributes(requests.get(i).getMessageAttributes()));
+                entries.add(SendMessageBatchRequestEntry.builder().id(Integer.toString(i))
+                                                              .messageBody(requests.get(i).messageBody())
+                                                              .delaySeconds(requests.get(i).delaySeconds())
+                                                              .messageAttributes(requests.get(i).messageAttributes()).build());
             }
-            batchRequest.setEntries(entries);
+            SendMessageBatchRequest batchRequest = batchRequestBuilder.entries(entries).build();
 
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
             SendMessageBatchResult batchResult;
 
             batchResult = sqsClient.sendMessageBatch(batchRequest).join();
 
-            for (SendMessageBatchResultEntry entry : batchResult.getSuccessful()) {
-                int index = Integer.parseInt(entry.getId());
+            for (SendMessageBatchResultEntry entry : batchResult.successful()) {
+                int index = Integer.parseInt(entry.id());
                 futures.get(index).setSuccess(ResultConverter.convert(entry));
             }
 
-            for (BatchResultErrorEntry errorEntry : batchResult.getFailed()) {
-                int index = Integer.parseInt(errorEntry.getId());
-                if (errorEntry.isSenderFault()) {
+            for (BatchResultErrorEntry errorEntry : batchResult.failed()) {
+                int index = Integer.parseInt(errorEntry.id());
+                if (errorEntry.senderFault()) {
                     futures.get(index).setFailure(ResultConverter.convert(errorEntry));
                 } else {
                     // retry.
@@ -538,27 +538,28 @@ public class SendQueueBuffer {
                 return;
             }
 
-            DeleteMessageBatchRequest batchRequest = new DeleteMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
+            DeleteMessageBatchRequest.Builder batchRequestBuilder = DeleteMessageBatchRequest.builder().queueUrl(qUrl);
 
             List<DeleteMessageBatchRequestEntry> entries = new ArrayList<DeleteMessageBatchRequestEntry>(
                     requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
-                entries.add(new DeleteMessageBatchRequestEntry().withId(Integer.toString(i)).withReceiptHandle(
-                        requests.get(i).getReceiptHandle()));
+                entries.add(DeleteMessageBatchRequestEntry.builder().id(Integer.toString(i)).receiptHandle(
+                        requests.get(i).receiptHandle()).build());
             }
-            batchRequest.setEntries(entries);
+            DeleteMessageBatchRequest batchRequest = batchRequestBuilder.entries(entries).build();
+
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
             DeleteMessageBatchResult batchResult = sqsClient.deleteMessageBatch(batchRequest).join();
 
-            for (DeleteMessageBatchResultEntry entry : batchResult.getSuccessful()) {
-                int index = Integer.parseInt(entry.getId());
+            for (DeleteMessageBatchResultEntry entry : batchResult.successful()) {
+                int index = Integer.parseInt(entry.id());
                 futures.get(index).setSuccess(null);
             }
 
-            for (BatchResultErrorEntry errorEntry : batchResult.getFailed()) {
-                int index = Integer.parseInt(errorEntry.getId());
-                if (errorEntry.isSenderFault()) {
+            for (BatchResultErrorEntry errorEntry : batchResult.failed()) {
+                int index = Integer.parseInt(errorEntry.id());
+                if (errorEntry.senderFault()) {
                     futures.get(index).setFailure(ResultConverter.convert(errorEntry));
                 } else {
                     try {
@@ -584,30 +585,32 @@ public class SendQueueBuffer {
                 return;
             }
 
-            ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
-                    .withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
+            ChangeMessageVisibilityBatchRequest.Builder batchRequestBuilder = ChangeMessageVisibilityBatchRequest.builder()
+                    .queueUrl(qUrl);
 
             List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                     requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
-                entries.add(new ChangeMessageVisibilityBatchRequestEntry()
-                                    .withId(Integer.toString(i))
-                                    .withReceiptHandle(requests.get(i).getReceiptHandle())
-                                    .withVisibilityTimeout(requests.get(i).getVisibilityTimeout()));
+                entries.add(ChangeMessageVisibilityBatchRequestEntry.builder()
+                                    .id(Integer.toString(i))
+                                    .receiptHandle(requests.get(i).receiptHandle())
+                                    .visibilityTimeout(requests.get(i).visibilityTimeout()).build());
             }
-            batchRequest.setEntries(entries);
+
+            ChangeMessageVisibilityBatchRequest batchRequest = batchRequestBuilder.entries(entries).build();
+
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
             ChangeMessageVisibilityBatchResult batchResult = sqsClient.changeMessageVisibilityBatch(batchRequest).join();
 
-            for (ChangeMessageVisibilityBatchResultEntry entry : batchResult.getSuccessful()) {
-                int index = Integer.parseInt(entry.getId());
+            for (ChangeMessageVisibilityBatchResultEntry entry : batchResult.successful()) {
+                int index = Integer.parseInt(entry.id());
                 futures.get(index).setSuccess(null);
             }
 
-            for (BatchResultErrorEntry errorEntry : batchResult.getFailed()) {
-                int index = Integer.parseInt(errorEntry.getId());
-                if (errorEntry.isSenderFault()) {
+            for (BatchResultErrorEntry errorEntry : batchResult.failed()) {
+                int index = Integer.parseInt(errorEntry.id());
+                if (errorEntry.senderFault()) {
                     futures.get(index).setFailure(ResultConverter.convert(errorEntry));
                 } else {
                     try {

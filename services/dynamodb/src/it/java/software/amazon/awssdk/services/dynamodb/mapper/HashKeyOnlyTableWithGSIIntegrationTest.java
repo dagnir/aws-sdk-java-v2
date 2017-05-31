@@ -23,12 +23,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBIndexHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBIndexRangeKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBQueryExpression;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbIndexHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbIndexRangeKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbQueryExpression;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.PaginatedQueryList;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -58,23 +58,25 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
     public static void setUp() throws Exception {
         DynamoDBTestBase.setUpTestBase();
         List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
-        keySchema.add(new KeySchemaElement("id", KeyType.HASH));
+        keySchema.add(KeySchemaElement.builder().attributeName("id").keyType(KeyType.HASH).build());
 
-        CreateTableRequest req = new CreateTableRequest(HASH_KEY_ONLY_TABLE_NAME, keySchema)
-                .withProvisionedThroughput(new ProvisionedThroughput(10L, 10L))
-                .withAttributeDefinitions(
-                        new AttributeDefinition("id", ScalarAttributeType.S),
-                        new AttributeDefinition("status", ScalarAttributeType.S),
-                        new AttributeDefinition("ts", ScalarAttributeType.S))
-                .withGlobalSecondaryIndexes(
-                        new GlobalSecondaryIndex()
-                                .withProvisionedThroughput(new ProvisionedThroughput(10L, 10L))
-                                .withIndexName("statusAndCreation")
-                                .withKeySchema(
-                                        new KeySchemaElement("status", KeyType.HASH),
-                                        new KeySchemaElement("ts", KeyType.RANGE))
-                                .withProjection(
-                                        new Projection().withProjectionType(ProjectionType.ALL)));
+        CreateTableRequest req = CreateTableRequest.builder()
+                .tableName(HASH_KEY_ONLY_TABLE_NAME)
+                .keySchema(keySchema)
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(10L).writeCapacityUnits(10L).build())
+                .attributeDefinitions(
+                        AttributeDefinition.builder().attributeName("id").attributeType(ScalarAttributeType.S).build(),
+                        AttributeDefinition.builder().attributeName("status").attributeType(ScalarAttributeType.S).build(),
+                        AttributeDefinition.builder().attributeName("ts").attributeType(ScalarAttributeType.S).build())
+                .globalSecondaryIndexes(
+                        GlobalSecondaryIndex.builder()
+                                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(10L).writeCapacityUnits(10L).build())
+                                .indexName("statusAndCreation")
+                                .keySchema(
+                                        KeySchemaElement.builder().attributeName("status").keyType(KeyType.HASH).build(),
+                                        KeySchemaElement.builder().attributeName("ts").keyType(KeyType.RANGE).build())
+                                .projection(
+                                        Projection.builder().projectionType(ProjectionType.ALL).build()).build()).build();
 
         TableUtils.createTableIfNotExists(dynamo, req);
         TableUtils.waitUntilActive(dynamo, HASH_KEY_ONLY_TABLE_NAME);
@@ -82,7 +84,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
 
     @AfterClass
     public static void tearDown() throws Exception {
-        dynamo.deleteTable(new DeleteTableRequest(HASH_KEY_ONLY_TABLE_NAME));
+        dynamo.deleteTable(DeleteTableRequest.builder().tableName(HASH_KEY_ONLY_TABLE_NAME).build());
     }
 
     /**
@@ -90,7 +92,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
      */
     @Test
     public void testGSIQuery() throws Exception {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         String status = "foo-status";
 
         User user = new User();
@@ -99,28 +101,28 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
         user.setTs("321");
         mapper.save(user);
 
-        DynamoDBQueryExpression<User> expr = new DynamoDBQueryExpression<User>()
+        DynamoDbQueryExpression<User> expr = new DynamoDbQueryExpression<User>()
                 .withIndexName("statusAndCreation")
                 .withLimit(100)
                 .withConsistentRead(false)
                 .withHashKeyValues(user)
                 .withRangeKeyCondition("ts",
-                                       new Condition()
-                                               .withComparisonOperator(ComparisonOperator.GT)
-                                               .withAttributeValueList(new AttributeValue("100")));
+                                       Condition.builder()
+                                               .comparisonOperator(ComparisonOperator.GT)
+                                               .attributeValueList(AttributeValue.builder().s("100").build()).build());
 
         PaginatedQueryList<User> query = mapper.query(User.class, expr);
         assertEquals(1, query.size());
-        assertEquals(status, query.get(0).getStatus());
+        assertEquals(status, query.get(0).status());
     }
 
-    @DynamoDBTable(tableName = HASH_KEY_ONLY_TABLE_NAME)
+    @DynamoDbTable(tableName = HASH_KEY_ONLY_TABLE_NAME)
     public static class User {
         private String id;
         private String status;
         private String ts;
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getId() {
             return id;
         }
@@ -129,8 +131,8 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
             this.id = id;
         }
 
-        @DynamoDBIndexHashKey(globalSecondaryIndexName = "statusAndCreation")
-        public String getStatus() {
+        @DynamoDbIndexHashKey(globalSecondaryIndexName = "statusAndCreation")
+        public String status() {
             return status;
         }
 
@@ -138,7 +140,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
             this.status = status;
         }
 
-        @DynamoDBIndexRangeKey(globalSecondaryIndexName = "statusAndCreation")
+        @DynamoDbIndexRangeKey(globalSecondaryIndexName = "statusAndCreation")
         public String getTs() {
             return ts;
         }

@@ -56,7 +56,7 @@ public class RangeKeyCondition {
         return kcond;
     }
 
-    public Object[] getValues() {
+    public Object[] values() {
         return values == null ? null : values.clone();
     }
 
@@ -66,7 +66,7 @@ public class RangeKeyCondition {
      */
     public RangeKeyCondition eq(Object val) {
         kcond = KeyConditions.EQ;
-        return withValues(val);
+        return values(val);
     }
 
     /**
@@ -75,7 +75,7 @@ public class RangeKeyCondition {
      */
     public RangeKeyCondition beginsWith(String val) {
         kcond = KeyConditions.BEGINS_WITH;
-        return withValues(val);
+        return values(val);
     }
 
     /**
@@ -84,7 +84,7 @@ public class RangeKeyCondition {
      */
     public RangeKeyCondition between(Object low, Object hi) {
         kcond = KeyConditions.BETWEEN;
-        return withValues(low, hi);
+        return values(low, hi);
     }
 
     /**
@@ -93,7 +93,7 @@ public class RangeKeyCondition {
      */
     public RangeKeyCondition ge(Object val) {
         kcond = KeyConditions.GE;
-        return withValues(val);
+        return values(val);
     }
 
     /**
@@ -102,7 +102,7 @@ public class RangeKeyCondition {
      */
     public RangeKeyCondition gt(Object val) {
         kcond = KeyConditions.GT;
-        return withValues(val);
+        return values(val);
     }
 
     /**
@@ -111,7 +111,7 @@ public class RangeKeyCondition {
      */
     public RangeKeyCondition le(Object val) {
         kcond = KeyConditions.LE;
-        return withValues(val);
+        return values(val);
     }
 
     /**
@@ -120,10 +120,10 @@ public class RangeKeyCondition {
      */
     public RangeKeyCondition lt(Object val) {
         kcond = KeyConditions.LT;
-        return withValues(val);
+        return values(val);
     }
 
-    private RangeKeyCondition withValues(Object... values) {
+    private RangeKeyCondition values(Object... values) {
         this.values = values;
         return this;
     }

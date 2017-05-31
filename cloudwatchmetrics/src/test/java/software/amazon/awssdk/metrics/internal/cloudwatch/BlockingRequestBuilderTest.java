@@ -20,29 +20,31 @@ public class BlockingRequestBuilderTest {
     public void cloneMetricDatum() {
         BlockingRequestBuilder b = new BlockingRequestBuilder(new CloudWatchMetricConfig(), null);
         Collection<Dimension> dimensions = Collections.emptyList();
-        MetricDatum md = new MetricDatum().withDimensions(dimensions);
-        assertNotSame("Expect a new collection to be created", md.getDimensions(), dimensions);
-        assertTrue(0 == md.getDimensions().size());
-        md.withDimensions(new Dimension().withName("Name1").withValue("Value1"));
-        assertTrue(1 == md.getDimensions().size());
-        md.withDimensions(new Dimension().withName("Name2").withValue("Value2"));
-        assertTrue(2 == md.getDimensions().size());
-        md.withMetricName("MetricName");
-        md.withStatisticValues(new StatisticSet().withMaximum(100.0)
-                .withMinimum(10.0).withSampleCount(12.34).withSum(99.9));
-        md.withTimestamp(new Date());
-        md.withUnit(StandardUnit.Milliseconds);
-        md.withValue(56.78);
+        MetricDatum md = MetricDatum.builder().dimensions(dimensions).build();
+        assertNotSame("Expect a new collection to be created", md.dimensions(), dimensions);
+        assertTrue(0 == md.dimensions().size());
+        md = md.toBuilder().dimensions(Dimension.builder().name("Name1").value("Value1").build()).build();
+        assertTrue(1 == md.dimensions().size());
+        md = md.toBuilder().dimensions(Dimension.builder().name("Name2").value("Value2").build()).build();
+        assertTrue(2 == md.dimensions().size());
+        md = md.toBuilder()
+                .metricName("MetricName")
+                .statisticValues(StatisticSet.builder().maximum(100.0)
+                .minimum(10.0).sampleCount(12.34).sum(99.9).build())
+                .timestamp(new Date())
+                .unit(StandardUnit.Milliseconds)
+                .value(56.78)
+                .build();
 
         MetricDatum md2 = b.cloneMetricDatum(md);
 
-        assertNotSame(md.getDimensions(), md2.getDimensions());
-        assertTrue(Arrays.equals(md.getDimensions().toArray(), md2.getDimensions().toArray()));
-        assertEquals(md.getMetricName(), md2.getMetricName());
-        assertEquals(md.getStatisticValues(), md2.getStatisticValues());
-        assertEquals(md.getTimestamp(), md2.getTimestamp());
-        assertEquals(md.getUnit(), md2.getUnit());
-        assertEquals(md.getValue(), md2.getValue());
+        assertNotSame(md.dimensions(), md2.dimensions());
+        assertTrue(Arrays.equals(md.dimensions().toArray(), md2.dimensions().toArray()));
+        assertEquals(md.metricName(), md2.metricName());
+        assertEquals(md.statisticValues(), md2.statisticValues());
+        assertEquals(md.timestamp(), md2.timestamp());
+        assertEquals(md.unit(), md2.unit());
+        assertEquals(md.value(), md2.value());
     }
 
 }

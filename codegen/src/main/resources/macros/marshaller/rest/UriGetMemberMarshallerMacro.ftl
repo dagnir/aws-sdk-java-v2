@@ -1,3 +1,3 @@
 <#macro content getterFunctionPrefix, member>
-    ${getterFunctionPrefix + "." + member.getterMethodName + "()"}
+    ${getterFunctionPrefix + "." + member.fluentGetterMethodName + "()"}
 </#macro>

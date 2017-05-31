@@ -40,8 +40,9 @@ public class DomainMetadataIntegrationTest extends IntegrationTestBase {
     public void testDomainMetadataInvalidParameterException() {
         final String imaginaryDomainName = "AnImaginaryDomainNameThatDoesntExist";
 
-        DomainMetadataRequest request = new DomainMetadataRequest();
-        request.setDomainName(imaginaryDomainName);
+        DomainMetadataRequest request = DomainMetadataRequest.builder()
+                .domainName(imaginaryDomainName)
+                .build();
 
         try {
             sdb.domainMetadata(request);
@@ -49,8 +50,8 @@ public class DomainMetadataIntegrationTest extends IntegrationTestBase {
         } catch (NoSuchDomainException e) {
             assertValidException(e);
 
-            assertNotNull(e.getBoxUsage());
-            assertTrue(e.getBoxUsage().floatValue() > 0);
+            assertNotNull(e.boxUsage());
+            assertTrue(e.boxUsage().floatValue() > 0);
 
             assertEquals(400, e.getStatusCode());
         }
@@ -62,7 +63,7 @@ public class DomainMetadataIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testDomainMetadataMissingParameterException() {
-        DomainMetadataRequest request = new DomainMetadataRequest();
+        DomainMetadataRequest request = DomainMetadataRequest.builder().build();
 
         try {
             sdb.domainMetadata(request);
@@ -70,8 +71,8 @@ public class DomainMetadataIntegrationTest extends IntegrationTestBase {
         } catch (MissingParameterException e) {
             assertValidException(e);
 
-            assertNotNull(e.getBoxUsage());
-            assertTrue(e.getBoxUsage().floatValue() > 0);
+            assertNotNull(e.boxUsage());
+            assertTrue(e.boxUsage().floatValue() > 0);
 
             assertEquals(400, e.getStatusCode());
         }

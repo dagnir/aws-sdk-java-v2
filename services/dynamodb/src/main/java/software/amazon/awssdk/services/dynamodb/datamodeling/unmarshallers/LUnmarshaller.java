@@ -17,15 +17,15 @@ package software.amazon.awssdk.services.dynamodb.datamodeling.unmarshallers;
 
 import java.lang.reflect.Method;
 import software.amazon.awssdk.services.dynamodb.datamodeling.ArgumentUnmarshaller;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMappingException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 abstract class LUnmarshaller implements ArgumentUnmarshaller {
 
     @Override
     public void typeCheck(AttributeValue value, Method setter) {
-        if (value.getL() == null) {
-            throw new DynamoDBMappingException("Expected L in value " + value + " when invoking " + setter);
+        if (value.l() == null) {
+            throw new DynamoDbMappingException("Expected L in value " + value + " when invoking " + setter);
         }
     }
 

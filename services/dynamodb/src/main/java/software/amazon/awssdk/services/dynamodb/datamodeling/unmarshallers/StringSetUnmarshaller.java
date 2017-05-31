@@ -36,6 +36,6 @@ public class StringSetUnmarshaller extends SsUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return new HashSet<String>(value.getSS());
+        return new HashSet<String>(value.ss());
     }
 }

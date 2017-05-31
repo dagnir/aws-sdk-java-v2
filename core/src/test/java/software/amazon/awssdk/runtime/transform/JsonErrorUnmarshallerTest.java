@@ -20,6 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -90,24 +91,66 @@ public class JsonErrorUnmarshallerTest {
         private String customField;
         private Integer customInt;
 
-        public CustomException(String errorMessage) {
-            super(errorMessage);
+        public CustomException(BeanStyleBuilder builder) {
+            super(builder.message);
+            this.customField = builder.customField;
+            this.customInt = builder.customInt;
         }
 
         public String getCustomField() {
             return customField;
         }
 
-        public void setCustomField(String customField) {
-            this.customField = customField;
-        }
 
         public Integer getCustomInt() {
             return customInt;
         }
 
-        public void setCustomInt(Integer customInt) {
-            this.customInt = customInt;
+        public static Class<?> beanStyleBuilderClass() {
+            return BeanStyleBuilder.class;
+        }
+
+        public interface Builder {
+            Builder customField(String customField);
+            Builder customInt(Integer customInt);
+
+            CustomException build();
+        }
+
+        private static class BeanStyleBuilder implements Builder {
+            private String customField;
+            private Integer customInt;
+            private String message;
+
+            @Override
+            public Builder customField(String customField) {
+                this.customField = customField;
+                return this;
+            }
+
+            public void setCustomField(String customField) {
+                this.customField = customField;
+            }
+
+            @Override
+            public Builder customInt(Integer customInt) {
+                this.customInt = customInt;
+                return this;
+            }
+
+            public void setCustomInt(Integer customInt) {
+                this.customInt = customInt;
+            }
+
+            @JsonProperty("message")
+            public void setMessage(String message) {
+                this.message = message;
+            }
+
+            @Override
+            public CustomException build() {
+                return new CustomException(this);
+            }
         }
 
     }

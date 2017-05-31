@@ -173,7 +173,7 @@ public class QueryExceptionTests {
     }
 
     private void callAllTypes() {
-        client.allTypes(new AllTypesRequest());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {

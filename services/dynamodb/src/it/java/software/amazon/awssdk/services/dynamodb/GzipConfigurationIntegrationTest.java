@@ -60,20 +60,25 @@ public class GzipConfigurationIntegrationTest extends AwsIntegrationTestBase {
 
     @AfterClass
     public static void tearDown() {
-        dynamo.deleteTable(new DeleteTableRequest().withTableName(TABLE_NAME));
+        dynamo.deleteTable(DeleteTableRequest.builder().tableName(TABLE_NAME).build());
     }
 
     private static void createTable() throws TableNeverTransitionedToStateException, InterruptedException {
-        dynamo.createTable(new CreateTableRequest()
-                .withTableName(TABLE_NAME)
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(KEY_NAME)
-                                .withAttributeType(ScalarAttributeType.S))
-                .withKeySchema(
-                        new KeySchemaElement().withKeyType(KeyType.HASH)
-                                .withAttributeName(KEY_NAME))
-                .withProvisionedThroughput(
-                        new ProvisionedThroughput(100L, 100L)));
+        dynamo.createTable(CreateTableRequest.builder()
+                .tableName(TABLE_NAME)
+                .attributeDefinitions(
+                        AttributeDefinition.builder()
+                            .attributeName(KEY_NAME)
+                            .attributeType(ScalarAttributeType.S)
+                            .build())
+                .keySchema(
+                        KeySchemaElement.builder()
+                            .keyType(KeyType.HASH)
+                            .attributeName(KEY_NAME)
+                            .build())
+                .provisionedThroughput(
+                        ProvisionedThroughput.builder().readCapacityUnits(100L).writeCapacityUnits(100L).build())
+                .build());
 
         TableUtils.waitUntilActive(dynamo, TABLE_NAME);
     }
@@ -81,23 +86,25 @@ public class GzipConfigurationIntegrationTest extends AwsIntegrationTestBase {
     @SuppressWarnings("serial")
     private static void putItems(int count) {
         for (int i = 0; i < count; ++i) {
-            dynamo.putItem(new PutItemRequest().withTableName(TABLE_NAME)
-                    .withItem(new HashMap<String, AttributeValue>() {
+            dynamo.putItem(PutItemRequest.builder()
+                    .tableName(TABLE_NAME)
+                    .item(new HashMap<String, AttributeValue>() {
                         {
-                            put(KEY_NAME, new AttributeValue().withS(UUID
-                                    .randomUUID().toString()));
-                            put(VALUE_NAME, new AttributeValue().withS(UUID
-                                    .randomUUID().toString()));
+                            put(KEY_NAME, AttributeValue.builder()
+                                    .s(UUID.randomUUID().toString()).build());
+                            put(VALUE_NAME, AttributeValue.builder()
+                                    .s(UUID.randomUUID().toString()).build());
                         }
-                    }));
+                    })
+                    .build());
         }
     }
 
     @Test
     public void gzipConfigurationIntegrationTest() throws TableNeverTransitionedToStateException,
             InterruptedException {
-        int count = dynamo.scan(new ScanRequest().withTableName(TABLE_NAME))
-                .getCount();
+        int count = dynamo.scan(ScanRequest.builder().tableName(TABLE_NAME).build())
+                .count();
         Assert.assertEquals(ITEMS_COUNT, count);
     }
 

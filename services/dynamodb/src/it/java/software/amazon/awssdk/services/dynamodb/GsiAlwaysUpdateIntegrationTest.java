@@ -24,9 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTableMapper;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTableMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.pojos.GsiWithAlwaysUpdateTimestamp;
@@ -38,7 +38,7 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
             GsiAlwaysUpdateIntegrationTest.class.getSimpleName() + "-" + System.currentTimeMillis();
 
     private DynamoDBClient ddb;
-    private DynamoDBTableMapper<GsiWithAlwaysUpdateTimestamp, String, String> mapper;
+    private DynamoDbTableMapper<GsiWithAlwaysUpdateTimestamp, String, String> mapper;
 
     @Before
     public void setup() {
@@ -46,19 +46,19 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
                 .credentialsProvider(new StaticCredentialsProvider(credentials))
                 .region(Regions.US_WEST_2.getName())
                 .build();
-        mapper = new DynamoDBMapper(ddb, DynamoDBMapperConfig.builder()
-                .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(TABLE_NAME))
+        mapper = new DynamoDbMapper(ddb, DynamoDbMapperConfig.builder()
+                .withTableNameOverride(new DynamoDbMapperConfig.TableNameOverride(TABLE_NAME))
                 .build()).newTableMapper(GsiWithAlwaysUpdateTimestamp.class);
-        mapper.createTable(new ProvisionedThroughput(5L, 5L));
+        mapper.createTable(ProvisionedThroughput.builder().readCapacityUnits(5L).writeCapacityUnits(5L).build());
         ddb.waiters().tableExists()
-                .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
+                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder().tableName(TABLE_NAME).build()));
     }
 
     @After
     public void tearDown() {
         mapper.deleteTableIfExists();
         ddb.waiters().tableNotExists()
-                .run(new WaiterParameters<DescribeTableRequest>(new DescribeTableRequest(TABLE_NAME)));
+                .run(new WaiterParameters<DescribeTableRequest>(DescribeTableRequest.builder().tableName(TABLE_NAME).build()));
     }
 
     @Test
@@ -71,11 +71,11 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
                 .setRangeKey(rangeKey));
         final GsiWithAlwaysUpdateTimestamp created = mapper.load(hashKey, rangeKey);
         // Have to store it since the mapper will auto update any generated values in the saved object.
-        Long createdDate = created.getLastModifiedDate();
+        Long createdDate = created.lastModifiedDate();
         // Need to wait a bit for the timestamps to actually be different
         Thread.sleep(1000);
         mapper.save(created);
         final GsiWithAlwaysUpdateTimestamp updated = mapper.load(hashKey, rangeKey);
-        assertNotEquals(createdDate, updated.getLastModifiedDate());
+        assertNotEquals(createdDate, updated.lastModifiedDate());
     }
 }

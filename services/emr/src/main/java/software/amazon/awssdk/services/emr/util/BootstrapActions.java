@@ -31,7 +31,7 @@ import software.amazon.awssdk.util.StringUtils;
  * BootstrapActions bootstrapActions = new BootstrapActions();
  *
  * RunJobFlowRequest request = new RunJobFlowRequest()
- *       .withName("Job Flow With Bootstrap Actions")
+ *       .name("Job Flow With Bootstrap Actions")
  *       .withBootstrapActions(
  *             bootstrapActions.newRunIf(
  *                 "instance.isMaster=true",
@@ -45,7 +45,7 @@ import software.amazon.awssdk.util.StringUtils;
  *            .withInstanceCount(5)
  *            .withKeepJobFlowAliveWhenNoSteps(true)
  *            .withMasterInstanceType("m1.small")
- *            .withSlaveInstanceType("m1.small"));
+ *            .slaveInstanceType("m1.small"));
  *
  * RunJobFlowResult result = emr.runJobFlow(request);
  * </pre>
@@ -75,15 +75,16 @@ public class BootstrapActions {
      * @return A BootstrapActionConfig to be provided when running a job flow.
      */
     public BootstrapActionConfig newRunIf(String condition, BootstrapActionConfig config) {
-        List<String> args = config.getScriptBootstrapAction().getArgs();
+        List<String> args = config.scriptBootstrapAction().args();
         args.add(0, condition);
-        args.add(1, config.getScriptBootstrapAction().getPath());
+        args.add(1, config.scriptBootstrapAction().path());
 
-        return new BootstrapActionConfig()
-                .withName("Run If, " + config.getName())
-                .withScriptBootstrapAction(new ScriptBootstrapActionConfig()
-                                                   .withPath("s3://" + bucket + "/bootstrap-actions/run-if")
-                                                   .withArgs(args));
+        return BootstrapActionConfig.builder()
+                .name("Run If, " + config.name())
+                .scriptBootstrapAction(ScriptBootstrapActionConfig.builder()
+                        .path("s3://" + bucket + "/bootstrap-actions/run-if")
+                        .args(args).build())
+                .build();
     }
 
     /**
@@ -217,11 +218,12 @@ public class BootstrapActions {
          * @return an object which can be used in a RunJobflow call.
          */
         public BootstrapActionConfig build() {
-            return new BootstrapActionConfig()
-                    .withName("Configure Hadoop")
-                    .withScriptBootstrapAction(new ScriptBootstrapActionConfig()
-                                                       .withPath("s3://" + bucket + "/bootstrap-actions/configure-hadoop")
-                                                       .withArgs(args));
+            return BootstrapActionConfig.builder()
+                    .name("Configure Hadoop")
+                    .scriptBootstrapAction(ScriptBootstrapActionConfig.builder()
+                            .path("s3://" + bucket + "/bootstrap-actions/configure-hadoop")
+                            .args(args).build())
+                    .build();
         }
     }
 
@@ -276,11 +278,12 @@ public class BootstrapActions {
                 args.add("--replace");
             }
 
-            return new BootstrapActionConfig()
-                    .withName("Configure Daemons")
-                    .withScriptBootstrapAction(new ScriptBootstrapActionConfig()
-                                                       .withPath("s3://" + bucket + "/bootstrap-actions/configure-daemons")
-                                                       .withArgs(args));
+            return BootstrapActionConfig.builder()
+                    .name("Configure Daemons")
+                    .scriptBootstrapAction(ScriptBootstrapActionConfig.builder()
+                            .path("s3://" + bucket + "/bootstrap-actions/configure-daemons")
+                            .args(args).build())
+                    .build();
         }
     }
 }

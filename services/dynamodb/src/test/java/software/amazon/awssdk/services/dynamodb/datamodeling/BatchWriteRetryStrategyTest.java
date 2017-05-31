@@ -25,8 +25,8 @@ import org.easymock.IExpectationSetters;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.BatchWriteRetryStrategy;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper.FailedBatch;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.BatchWriteRetryStrategy;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
@@ -44,23 +44,25 @@ public class BatchWriteRetryStrategyTest {
     private static Map<String, List<WriteRequest>> unprocessedItems;
 
     static {
-        WriteRequest writeReq = new WriteRequest()
-                .withPutRequest(new PutRequest()
-                                        .withItem(Collections.singletonMap(
-                                                HASH_ATTR,
-                                                new AttributeValue("foo"))));
+        WriteRequest writeReq = WriteRequest.builder()
+                .putRequest(PutRequest.builder()
+                        .item(Collections.singletonMap(
+                                HASH_ATTR,
+                                AttributeValue.builder().s("foo").build()))
+                        .build())
+                .build();
 
         unprocessedItems = Collections.singletonMap(TABLE_NAME,
                                                     Arrays.asList(writeReq));
     }
 
     private DynamoDBClient ddbMock;
-    private DynamoDBMapper mapper;
+    private DynamoDbMapper mapper;
 
     @Before
     public void setup() {
         ddbMock = createMock(DynamoDBClient.class);
-        mapper = new DynamoDBMapper(
+        mapper = new DynamoDbMapper(
                 ddbMock,
                 getConfigWithCustomBatchWriteRetryStrategy(
                         new BatchWriteRetryStrategyWithNoDelay(MAX_RETRY)));
@@ -128,15 +130,14 @@ public class BatchWriteRetryStrategyTest {
 
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemSuccess() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(new BatchWriteItemResult()
-                                   .withUnprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()));
+                .andReturn(BatchWriteItemResult.builder()
+                        .unprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()).build());
     }
 
     private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemReturnUnprocessedItems() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(
-                        new BatchWriteItemResult()
-                                .withUnprocessedItems(unprocessedItems));
+                .andReturn(BatchWriteItemResult.builder()
+                                .unprocessedItems(unprocessedItems).build());
     }
 
     private void expectedBatchWriteItemThrowException(Exception e) {
@@ -144,9 +145,9 @@ public class BatchWriteRetryStrategyTest {
                 .andThrow(e);
     }
 
-    private DynamoDBMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
+    private DynamoDbMapperConfig getConfigWithCustomBatchWriteRetryStrategy(
             BatchWriteRetryStrategy batchWriteRetryStrategy) {
-        return new DynamoDBMapperConfig.Builder()
+        return new DynamoDbMapperConfig.Builder()
                 .withBatchWriteRetryStrategy(batchWriteRetryStrategy)
                 .build();
     }
@@ -161,7 +162,7 @@ public class BatchWriteRetryStrategyTest {
         }
 
         @Override
-        public int getMaxRetryOnUnprocessedItems(
+        public int maxRetryOnUnprocessedItems(
                 Map<String, List<WriteRequest>> batchWriteItemInput) {
             return maxRetry;
         }
@@ -175,7 +176,7 @@ public class BatchWriteRetryStrategyTest {
 
     }
 
-    @DynamoDBTable(tableName = TABLE_NAME)
+    @DynamoDbTable(tableName = TABLE_NAME)
     public static class Item {
 
         private String hash;
@@ -184,8 +185,8 @@ public class BatchWriteRetryStrategyTest {
             this.hash = hash;
         }
 
-        @DynamoDBHashKey
-        @DynamoDBAttribute(attributeName = HASH_ATTR)
+        @DynamoDbHashKey
+        @DynamoDbAttribute(attributeName = HASH_ATTR)
         public String getHash() {
             return hash;
         }
@@ -195,9 +196,11 @@ public class BatchWriteRetryStrategyTest {
         }
 
         public WriteRequest toPutSaveRequest() {
-            return new WriteRequest()
-                    .withPutRequest(new PutRequest(
-                            Collections.singletonMap(HASH_ATTR, new AttributeValue(hash))));
+            return WriteRequest.builder()
+                    .putRequest(PutRequest.builder()
+                            .item(Collections.singletonMap(HASH_ATTR, AttributeValue.builder().s(hash).build()))
+                            .build())
+                    .build();
         }
     }
 

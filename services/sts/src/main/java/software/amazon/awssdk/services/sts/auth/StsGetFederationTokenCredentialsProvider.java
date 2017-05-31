@@ -58,7 +58,7 @@ public class StsGetFederationTokenCredentialsProvider extends StsCredentialsProv
 
     @Override
     protected Credentials getUpdatedCredentials(STSClient stsClient) {
-        return stsClient.getFederationToken(getFederationTokenRequest).getCredentials();
+        return stsClient.getFederationToken(getFederationTokenRequest).credentials();
     }
 
     /**

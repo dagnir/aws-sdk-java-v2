@@ -29,12 +29,12 @@ public class StsGetSessionTokenCredentialsProviderTest
         extends StsCredentialsProviderTestBase<GetSessionTokenRequest, GetSessionTokenResult> {
     @Override
     protected GetSessionTokenRequest getRequest() {
-        return new GetSessionTokenRequest();
+        return GetSessionTokenRequest.builder().build();
     }
 
     @Override
     protected GetSessionTokenResult getResponse(Credentials credentials) {
-        return new GetSessionTokenResult().withCredentials(credentials);
+        return GetSessionTokenResult.builder().credentials(credentials).build();
     }
 
     @Override

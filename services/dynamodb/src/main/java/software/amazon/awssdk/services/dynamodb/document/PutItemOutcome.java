@@ -40,7 +40,7 @@ public class PutItemOutcome {
      */
     public Item getItem() {
         Map<String, Object> attributes =
-                InternalUtils.toSimpleMapValue(result.getAttributes());
+                InternalUtils.toSimpleMapValue(result.attributes());
         Item item = Item.fromMap(attributes);
         return item;
     }

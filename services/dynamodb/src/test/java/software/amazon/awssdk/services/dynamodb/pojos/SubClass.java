@@ -16,9 +16,9 @@
 package software.amazon.awssdk.services.dynamodb.pojos;
 
 import java.nio.ByteBuffer;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBDocument;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbDocument;
 
-@DynamoDBDocument
+@DynamoDbDocument
 public class SubClass {
 
     private String name;
@@ -74,8 +74,8 @@ public class SubClass {
         SubClass that = (SubClass) o;
 
         return equals(this.name, that.name)
-               && equals(this.value, that.value)
-               && equals(this.bb, that.bb);
+                && equals(this.value, that.value)
+                && equals(this.bb, that.bb);
     }
 
     @Override

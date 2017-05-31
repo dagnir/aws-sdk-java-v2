@@ -517,8 +517,8 @@ public class ItemTest {
                 .withNumberSet("numSetA", BigDecimal.ONE, BigDecimal.ZERO)
                 .withBinarySet("binarySetA", new byte[] {00, 11}, new byte[] {22, 33})
                 .withBinarySet("byteBufferSetA",
-                               ByteBuffer.wrap(new byte[] {44, 55}),
-                               ByteBuffer.wrap(new byte[] {66, 77}));
+                        ByteBuffer.wrap(new byte[] {44, 55}),
+                        ByteBuffer.wrap(new byte[] {66, 77}));
         String json = item.toJsonPretty();
         System.out.println(json);
         System.out.println("byte[]{1,2,3} => " + Base64Utils.encodeAsString(new byte[] {1, 2, 3}));
@@ -899,9 +899,9 @@ public class ItemTest {
     @Test
     public void testEquals() {
         assertEquals(new Item().with("foo", "fooval").with("bar", "barval"),
-                     new Item().with("foo", "fooval").with("bar", "barval"));
+                new Item().with("foo", "fooval").with("bar", "barval"));
         assertEquals(new Item().with("foo", "fooval").with("bar", "barval"),
-                     new Item().withPrimaryKey(new PrimaryKey("foo", "fooval", "bar", "barval")));
+                new Item().withPrimaryKey(new PrimaryKey("foo", "fooval", "bar", "barval")));
 
         assertFalse(new Item().equals(new Object()));
         assertFalse(new Item().equals(null));

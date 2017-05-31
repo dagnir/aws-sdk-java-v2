@@ -123,15 +123,15 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
         if (client != null) {
             if (mlModelId != null) {
                 try {
-                    client.deleteRealtimeEndpoint(new DeleteRealtimeEndpointRequest()
-                                                          .withMLModelId(mlModelId));
+                    client.deleteRealtimeEndpoint(DeleteRealtimeEndpointRequest.builder()
+                                                          .mlModelId(mlModelId).build());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
                 try {
-                    client.deleteMLModel(new DeleteMLModelRequest()
-                                                 .withMLModelId(mlModelId));
+                    client.deleteMLModel(DeleteMLModelRequest.builder()
+                                                 .mlModelId(mlModelId).build());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -139,8 +139,8 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
             if (dataSourceId != null) {
                 try {
-                    client.deleteDataSource(new DeleteDataSourceRequest()
-                                                    .withDataSourceId(dataSourceId));
+                    client.deleteDataSource(DeleteDataSourceRequest.builder()
+                                                    .dataSourceId(dataSourceId).build());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -167,30 +167,33 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
     @Test
     public void testBinary() throws Exception {
         CreateDataSourceFromS3Result result =
-                client.createDataSourceFromS3(new CreateDataSourceFromS3Request()
-                                                      .withDataSpec(new S3DataSpec()
-                                                                            .withDataLocationS3(DATA_LOCATION_S3)
-                                                                            .withDataSchema(DATA_SCHEMA))
-                                                      .withComputeStatistics(true)
-                                                      .withDataSourceId("data_" + System.currentTimeMillis()));
+                client.createDataSourceFromS3(CreateDataSourceFromS3Request.builder()
+                        .dataSpec(S3DataSpec.builder()
+                                .dataLocationS3(DATA_LOCATION_S3)
+                                .dataSchema(DATA_SCHEMA).build())
+                        .computeStatistics(true)
+                        .dataSourceId("data_" + System.currentTimeMillis())
+                        .build());
 
-        dataSourceId = result.getDataSourceId();
+        dataSourceId = result.dataSourceId();
 
         Assert.assertEquals("COMPLETED", waitForDataSource());
 
         CreateMLModelResult result2 =
-                client.createMLModel(new CreateMLModelRequest()
-                                             .withTrainingDataSourceId(dataSourceId)
-                                             .withMLModelType(MLModelType.BINARY)
-                                             .withMLModelId("mlid_" + System.currentTimeMillis()));
+                client.createMLModel(CreateMLModelRequest.builder()
+                        .trainingDataSourceId(dataSourceId)
+                        .mlModelType(MLModelType.BINARY)
+                        .mlModelId("mlid_" + System.currentTimeMillis())
+                        .build());
 
-        mlModelId = result2.getMLModelId();
+        mlModelId = result2.mlModelId();
 
         Assert.assertEquals("COMPLETED", waitForMlModel());
 
 
-        client.createRealtimeEndpoint(new CreateRealtimeEndpointRequest()
-                                              .withMLModelId(mlModelId));
+        client.createRealtimeEndpoint(CreateRealtimeEndpointRequest.builder()
+                .mlModelId(mlModelId)
+                .build());
 
         String uri = waitUntilMounted();
 
@@ -206,24 +209,27 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
             }
         };
 
-        Prediction prediction = client.predict(new PredictRequest().withPredictEndpoint(uri)
-                                                                   .withMLModelId(mlModelId)
-                                                                   .withRecord(record)).getPrediction();
-        System.out.println(prediction.getPredictedLabel());
-        System.out.println(prediction.getPredictedValue());
-        System.out.println(prediction.getPredictedScores());
-        System.out.println(prediction.getDetails());
+        Prediction prediction = client.predict(PredictRequest.builder()
+                .predictEndpoint(uri)
+                .mlModelId(mlModelId)
+                .record(record).build())
+                .prediction();
+        System.out.println(prediction.predictedLabel());
+        System.out.println(prediction.predictedValue());
+        System.out.println(prediction.predictedScores());
+        System.out.println(prediction.details());
     }
 
     private String waitForDataSource() throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
             GetDataSourceResult result =
-                    client.getDataSource(new GetDataSourceRequest()
-                                                 .withDataSourceId(dataSourceId));
+                    client.getDataSource(GetDataSourceRequest.builder()
+                            .dataSourceId(dataSourceId)
+                            .build());
 
             System.out.println(result);
 
-            String status = result.getStatus();
+            String status = result.status();
             switch (EntityStatus.valueOf(status)) {
                 case PENDING:
                 case INPROGRESS:
@@ -248,12 +254,13 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
     private String waitForMlModel() throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
             GetMLModelResult result =
-                    client.getMLModel(new GetMLModelRequest()
-                                              .withMLModelId(mlModelId));
+                    client.getMLModel(GetMLModelRequest.builder()
+                            .mlModelId(mlModelId)
+                            .build());
 
             System.out.println(result);
 
-            String status = result.getStatus();
+            String status = result.status();
             switch (EntityStatus.valueOf(status)) {
                 case PENDING:
                 case INPROGRESS:
@@ -278,21 +285,22 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
     private String waitUntilMounted() throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
             GetMLModelResult result =
-                    client.getMLModel(new GetMLModelRequest()
-                                              .withMLModelId(mlModelId));
+                    client.getMLModel(GetMLModelRequest.builder()
+                            .mlModelId(mlModelId)
+                            .build());
 
             System.out.println(result);
 
-            RealtimeEndpointInfo info = result.getEndpointInfo();
+            RealtimeEndpointInfo info = result.endpointInfo();
             if (info == null) {
                 Thread.sleep(1000);
                 continue;
             }
 
-            String status = info.getEndpointStatus();
+            String status = info.endpointStatus();
             switch (RealtimeEndpointStatus.valueOf(status)) {
                 case READY:
-                    return info.getEndpointUrl();
+                    return info.endpointUrl();
 
                 case UPDATING:
                     Thread.sleep(1000);

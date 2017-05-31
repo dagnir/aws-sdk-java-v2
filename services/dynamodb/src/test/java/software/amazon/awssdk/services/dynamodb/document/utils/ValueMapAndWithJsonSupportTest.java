@@ -31,7 +31,7 @@ public class ValueMapAndWithJsonSupportTest {
     private static final String KEY = "somekey";
 
     @Test(expected = AmazonClientException.class)
-    public void valueMapCreationShouldFailIfNoJsonStringIsUsedAsValue() {
+    public void valueMapCreationshouldFailIfNoJsonstringIsUsedAsValue() {
         new ValueMap().withJson("a", NO_JSON_STRING);
     }
 

@@ -24,10 +24,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTypeConvertedJson;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTypeConvertedJson;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
@@ -43,25 +43,25 @@ public class TypeConvertedJsonTest {
 
     @Test
     public void responseWithUnmappedField_IgnoresUnknownFieldAndUnmarshallsCorrectly() {
-        final DynamoDBMapper mapper = new DynamoDBMapper(ddb);
+        final DynamoDbMapper mapper = new DynamoDbMapper(ddb);
         when(ddb.getItem(any(GetItemRequest.class)))
-                .thenReturn(new GetItemResult().withItem(
-                        ImmutableMapParameter.of("hashKey", new AttributeValue(HASH_KEY),
-                                                 "jsonMappedPojo", new AttributeValue(
-                                        "{\"knownField\": \"knownValue\", \"unknownField\": \"unknownValue\"}")
-                                                )));
+                .thenReturn(GetItemResult.builder().item(
+                        ImmutableMapParameter.of("hashKey", AttributeValue.builder().s(HASH_KEY).build(),
+                                                 "jsonMappedPojo", AttributeValue.builder().s(
+                                        "{\"knownField\": \"knownValue\", \"unknownField\": \"unknownValue\"}").build()
+                                                )).build());
 
         final TopLevelPojo pojo = mapper.load(new TopLevelPojo().setHashKey(HASH_KEY));
         assertEquals("knownValue", pojo.getJsonMappedPojo().getKnownField());
     }
 
-    @DynamoDBTable(tableName = "TestTable")
+    @DynamoDbTable(tableName = "TestTable")
     public static class TopLevelPojo {
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKey;
 
-        @DynamoDBTypeConvertedJson
+        @DynamoDbTypeConvertedJson
         private JsonMappedPojo jsonMappedPojo;
 
         public String getHashKey() {

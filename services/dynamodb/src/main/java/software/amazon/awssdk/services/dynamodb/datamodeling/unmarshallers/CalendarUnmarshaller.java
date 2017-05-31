@@ -39,7 +39,7 @@ public class CalendarUnmarshaller extends SUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(DateUtils.parseIso8601Date(value.getS()));
+        cal.setTime(DateUtils.parseIso8601Date(value.s()));
         return cal;
     }
 }

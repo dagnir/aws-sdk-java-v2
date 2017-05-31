@@ -28,7 +28,7 @@ import software.amazon.awssdk.util.CollectionUtils;
 /**
  * An exception representing the failed execution of a remote Lambda function.
  *
- * @see InvokeResult#getFunctionError()
+ * @see InvokeResult#functionError()
  */
 public class LambdaFunctionException extends AmazonClientException {
 
@@ -72,7 +72,7 @@ public class LambdaFunctionException extends AmazonClientException {
 
     /**
      * @return true if this was a Handled error
-     * @see InvokeResult#getFunctionError()
+     * @see InvokeResult#functionError()
      */
     public boolean isHandled() {
         return "Handled".equals(functionError);

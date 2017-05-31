@@ -50,7 +50,7 @@ public class PhoneNumber {
         this.exchange = exchange;
     }
 
-    public String getSubscriber() {
+    public String subscriber() {
         return this.subscriber;
     }
 

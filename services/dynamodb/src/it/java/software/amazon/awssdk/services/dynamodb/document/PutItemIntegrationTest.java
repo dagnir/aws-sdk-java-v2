@@ -37,21 +37,21 @@ public class PutItemIntegrationTest extends IntegrationTestBase {
         Table table = dynamo.getTable(HASH_ONLY_TABLE_NAME);
         PutItemOutcome out = table.putItem(
                 new Item().with(HASH_KEY_NAME, "allDataTypes")
-                          .withBinary("binary", new byte[] {1, 2, 3, 4})
-                          .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                          .withBoolean("booleanTrue", true)
-                          .withBoolean("booleanFalse", false)
-                          .withInt("intAttr", 1234)
-                          .withList("listAtr", "abc", "123")
-                          .withMap("mapAttr",
-                                   new ValueMap()
-                                           .withString("key1", "value1")
-                                           .withInt("key2", 999))
-                          .withNull("nullAttr")
-                          .withNumber("numberAttr", 999.1234)
-                          .withString("stringAttr", "bla")
-                          .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz")
-                                          );
+                        .withBinary("binary", new byte[] {1, 2, 3, 4})
+                        .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
+                        .withBoolean("booleanTrue", true)
+                        .withBoolean("booleanFalse", false)
+                        .withInt("intAttr", 1234)
+                        .withList("listAtr", "abc", "123")
+                        .withMap("mapAttr",
+                                new ValueMap()
+                                        .withString("key1", "value1")
+                                        .withInt("key2", 999))
+                        .withNull("nullAttr")
+                        .withNumber("numberAttr", 999.1234)
+                        .withString("stringAttr", "bla")
+                        .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz")
+        );
         System.out.println(out);
     }
 
@@ -60,13 +60,13 @@ public class PutItemIntegrationTest extends IntegrationTestBase {
         Table table = dynamoOld.getTable(HASH_ONLY_TABLE_NAME);
         PutItemOutcome out = table.putItem(
                 new Item().with(HASH_KEY_NAME, "priorDataTypes")
-                          .withBinary("binary", new byte[] {1, 2, 3, 4})
-                          .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
-                          .withInt("intAttr", 1234)
-                          .withNumber("numberAttr", 999.1234)
-                          .withString("stringAttr", "bla")
-                          .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz")
-                                          );
+                        .withBinary("binary", new byte[] {1, 2, 3, 4})
+                        .withBinarySet("binarySet", new byte[] {5, 6}, new byte[] {7, 8})
+                        .withInt("intAttr", 1234)
+                        .withNumber("numberAttr", 999.1234)
+                        .withString("stringAttr", "bla")
+                        .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz")
+        );
         System.out.println(out);
     }
 
@@ -88,9 +88,9 @@ public class PutItemIntegrationTest extends IntegrationTestBase {
                 .withInt("intAttr", 1234)
                 .withList("listAtr", "abc", "123")
                 .withMap("mapAttr",
-                         new ValueMap()
-                                 .withString("key1", "value1")
-                                 .withInt("key2", 999))
+                        new ValueMap()
+                                .withString("key1", "value1")
+                                .withInt("key2", 999))
                 .withNull("nullAttr")
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")
@@ -103,13 +103,13 @@ public class PutItemIntegrationTest extends IntegrationTestBase {
                                 new Expected(HASH_KEY_NAME).notContains("xyz"),
                                 new Expected("intAttr").between(1, 9999))
                         .withReturnValues(ReturnValue.ALL_OLD)
-                                          );
+        );
 
         Assert.assertTrue(ItemTestUtils.equalsItem(oldItem, out.getItem()));
 
         Item getNewItem = table.getItem(new GetItemSpec()
-                                                .withPrimaryKey(HASH_KEY_NAME, "allDataTypesViaSpec")
-                                                .withConsistentRead(true));
+                .withPrimaryKey(HASH_KEY_NAME, "allDataTypesViaSpec")
+                .withConsistentRead(true));
         Assert.assertTrue(ItemTestUtils.equalsItem(newItem, getNewItem));
 
     }
@@ -133,20 +133,20 @@ public class PutItemIntegrationTest extends IntegrationTestBase {
                 .withInt("intAttr", 1234)
                 .withList("listAtr", "abc", "123")
                 .withMap("mapAttr",
-                         new ValueMap()
-                                 .withString("key1", "value1")
-                                 .withInt("key2", 999))
+                        new ValueMap()
+                                .withString("key1", "value1")
+                                .withInt("key2", 999))
                 .withNull("nullAttr")
                 .withNumber("numberAttr", 999.1234)
                 .withString("stringAttr", "bla")
                 .withStringSet("stringSetAttr", "da", "di", "foo", "bar", "bazz");
         PutItemOutcome out = table.putItem(newItem,
-                                           "NOT (contains (#pk, :hashkeyAttr)) AND (intAttr BETWEEN :lo AND :hi)",
-                                           new NameMap().with("#pk", "hashkeyAttr"),
-                                           new ValueMap()
-                                                   .withString(":hashkeyAttr", "xyz")
-                                                   .withInt(":lo", 1)
-                                                   .withInt(":hi", 9999));
+                "NOT (contains (#pk, :hashkeyAttr)) AND (intAttr BETWEEN :lo AND :hi)",
+                new NameMap().with("#pk", "hashkeyAttr"),
+                new ValueMap()
+                        .withString(":hashkeyAttr", "xyz")
+                        .withInt(":lo", 1)
+                        .withInt(":hi", 9999));
 
         // By default PutItem returns no attributes
         Assert.assertNull(out.getItem());

@@ -37,6 +37,6 @@ public class ByteBufferSetUnmarshaller extends BsUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return new HashSet<ByteBuffer>(value.getBS());
+        return new HashSet<ByteBuffer>(value.bs());
     }
 }

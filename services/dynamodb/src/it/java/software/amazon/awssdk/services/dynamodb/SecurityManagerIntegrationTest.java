@@ -42,7 +42,7 @@ public class SecurityManagerIntegrationTest extends AwsIntegrationTestBase {
         SecurityManager securityManager = new SecurityManager();
         System.setSecurityManager(securityManager);
         DynamoDBClient ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
-        assertNotNull(ddb.listTables(new ListTablesRequest()));
+        assertNotNull(ddb.listTables(ListTablesRequest.builder().build()));
     }
 
     private String getPolicyUrl() {

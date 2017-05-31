@@ -82,17 +82,17 @@ public class IntegrationTestBase extends AwsTestBase {
     }
 
     protected static MessageAttributeValue createRandomStringAttributeValue() {
-        return new MessageAttributeValue().withDataType("String").withStringValue(UUID.randomUUID().toString());
+        return MessageAttributeValue.builder().dataType("String").stringValue(UUID.randomUUID().toString()).build();
     }
 
     protected static MessageAttributeValue createRandomNumberAttributeValue() {
-        return new MessageAttributeValue().withDataType("Number").withStringValue(Integer.toString(random.nextInt()));
+        return MessageAttributeValue.builder().dataType("Number").stringValue(Integer.toString(random.nextInt())).build();
     }
 
     protected static MessageAttributeValue createRandomBinaryAttributeValue() {
         byte[] randomBytes = new byte[10];
         random.nextBytes(randomBytes);
-        return new MessageAttributeValue().withDataType("Binary").withBinaryValue(ByteBuffer.wrap(randomBytes));
+        return MessageAttributeValue.builder().dataType("Binary").binaryValue(ByteBuffer.wrap(randomBytes)).build();
     }
 
     protected static Map<String, MessageAttributeValue> createRandomAttributeValues(int attrNumber) {
@@ -124,8 +124,8 @@ public class IntegrationTestBase extends AwsTestBase {
      * @return The queue url for the created queue
      */
     protected String createQueue(SQSAsyncClient sqsClient) {
-        CreateQueueResult res = sqsClient.createQueue(new CreateQueueRequest(getUniqueQueueName())).join();
-        return res.getQueueUrl();
+        CreateQueueResult res = sqsClient.createQueue(CreateQueueRequest.builder().queueName(getUniqueQueueName()).build()).join();
+        return res.queueUrl();
     }
 
     /**
@@ -144,7 +144,7 @@ public class IntegrationTestBase extends AwsTestBase {
                     .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                     .region("us-east-1")
                     .build();
-            accountId = parseAccountIdFromArn(iamClient.getUser(new GetUserRequest()).getUser().getArn());
+            accountId = parseAccountIdFromArn(iamClient.getUser(GetUserRequest.builder().build()).user().arn());
         }
         return accountId;
     }

@@ -42,6 +42,6 @@ public class SessionBasedAuthenticationIntegrationTest extends IntegrationTestBa
                                                      .build();
         SQSAsyncClient sqsClient = SQSAsyncClient.builder().credentialsProvider(sessionCredentials).build();
         String queueUrl = createQueue(sqsClient);
-        sqsClient.deleteQueue(new DeleteQueueRequest(queueUrl));
+        sqsClient.deleteQueue(DeleteQueueRequest.builder().queueUrl(queueUrl).build());
     }
 }

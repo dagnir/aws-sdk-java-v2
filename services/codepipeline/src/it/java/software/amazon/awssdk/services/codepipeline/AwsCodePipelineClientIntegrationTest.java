@@ -59,7 +59,7 @@ public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
      */
     private static boolean containsActionTypeId(List<ActionType> actionTypes, ActionTypeId actionTypeId) {
         for (ActionType actionType : actionTypes) {
-            if (actionType.getId().equals(actionTypeId)) {
+            if (actionType.id().equals(actionTypeId)) {
                 return true;
             }
         }
@@ -68,12 +68,12 @@ public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
 
     @Test(expected = InvalidNextTokenException.class)
     public void listPipelines_WithInvalidNextToken_ThrowsInvalidNextTokenException() {
-        client.listPipelines(new ListPipelinesRequest().withNextToken("invalid_next_token"));
+        client.listPipelines(ListPipelinesRequest.builder().nextToken("invalid_next_token").build());
     }
 
     @Test
     public void listActionTypes_WithNoFilter_ReturnsNonEmptyList() {
-        assertThat(client.listActionTypes(new ListActionTypesRequest()).getActionTypes().size(), greaterThan(0));
+        assertThat(client.listActionTypes(ListActionTypesRequest.builder().build()).actionTypes().size(), greaterThan(0));
     }
 
     /**
@@ -82,19 +82,29 @@ public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
      */
     @Test
     public void createFindDelete_ActionType() {
-        ActionTypeId actionTypeId = new ActionTypeId().withCategory(ActionCategory.Build).withProvider("test-provider")
-                                                      .withVersion("1").withOwner(ActionOwner.Custom);
-        ArtifactDetails artifactDetails = new ArtifactDetails().withMaximumCount(1).withMinimumCount(1);
-        client.createCustomActionType(new CreateCustomActionTypeRequest().withCategory(actionTypeId.getCategory())
-                                                                         .withProvider(actionTypeId.getProvider())
-                                                                         .withVersion(actionTypeId.getVersion())
-                                                                         .withInputArtifactDetails(artifactDetails)
-                                                                         .withOutputArtifactDetails(artifactDetails));
-        final ListActionTypesResult actionTypes = client.listActionTypes(new ListActionTypesRequest());
-        assertTrue(containsActionTypeId(actionTypes.getActionTypes(), actionTypeId));
-        client.deleteCustomActionType(new DeleteCustomActionTypeRequest().withCategory(actionTypeId.getCategory())
-                                                                         .withProvider(actionTypeId.getProvider())
-                                                                         .withVersion(actionTypeId.getVersion()));
+        ActionTypeId actionTypeId = ActionTypeId.builder()
+                .category(ActionCategory.Build)
+                .provider("test-provider")
+                .version("1")
+                .owner(ActionOwner.Custom)
+                .build();
+        ArtifactDetails artifactDetails = ArtifactDetails.builder()
+                .maximumCount(1)
+                .minimumCount(1)
+                .build();
+        client.createCustomActionType(CreateCustomActionTypeRequest.builder()
+                .category(actionTypeId.category())
+                .provider(actionTypeId.provider())
+                .version(actionTypeId.version())
+                .inputArtifactDetails(artifactDetails)
+                .outputArtifactDetails(artifactDetails)
+                .build());
+        final ListActionTypesResult actionTypes = client.listActionTypes(ListActionTypesRequest.builder().build());
+        assertTrue(containsActionTypeId(actionTypes.actionTypes(), actionTypeId));
+        client.deleteCustomActionType(DeleteCustomActionTypeRequest.builder()
+                .category(actionTypeId.category())
+                .provider(actionTypeId.provider())
+                .version(actionTypeId.version()).build());
     }
 
 }

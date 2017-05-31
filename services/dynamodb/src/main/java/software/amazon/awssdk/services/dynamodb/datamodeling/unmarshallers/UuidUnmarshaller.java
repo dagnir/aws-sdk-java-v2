@@ -36,6 +36,6 @@ public class UuidUnmarshaller extends SUnmarshaller {
 
     @Override
     public UUID unmarshall(AttributeValue value) {
-        return UUID.fromString(value.getS());
+        return UUID.fromString(value.s());
     }
 }

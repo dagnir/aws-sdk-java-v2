@@ -68,15 +68,15 @@ public class ParallelScanIntegrationTest extends DynamoDBTestBase {
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
         Random random = new Random();
         for (int hashKeyValue = 0; hashKeyValue < itemNumber; hashKeyValue++) {
-            item.put(HASH_KEY_NAME, new AttributeValue().withN(Integer.toString(hashKeyValue)));
-            item.put(ATTRIBUTE_RANDOM, new AttributeValue().withN(Integer.toString(random.nextInt(itemNumber))));
+            item.put(HASH_KEY_NAME, AttributeValue.builder().n(Integer.toString(hashKeyValue)).build());
+            item.put(ATTRIBUTE_RANDOM, AttributeValue.builder().n(Integer.toString(random.nextInt(itemNumber))).build());
             if (hashKeyValue < itemNumber / 2) {
-                item.put(ATTRIBUTE_FOO, new AttributeValue().withN(Integer.toString(hashKeyValue)));
+                item.put(ATTRIBUTE_FOO, AttributeValue.builder().n(Integer.toString(hashKeyValue)).build());
             } else {
-                item.put(ATTRIBUTE_BAR, new AttributeValue().withN(Integer.toString(hashKeyValue)));
+                item.put(ATTRIBUTE_BAR, AttributeValue.builder().n(Integer.toString(hashKeyValue)).build());
             }
 
-            dynamo.putItem(new PutItemRequest(tableName, item));
+            dynamo.putItem(PutItemRequest.builder().tableName(tableName).item(item).build());
             item.clear();
         }
     }
@@ -91,39 +91,41 @@ public class ParallelScanIntegrationTest extends DynamoDBTestBase {
         /**
          * Only one segment.
          */
-        ScanRequest scanRequest = new ScanRequest(tableName)
-                .withScanFilter(Collections.singletonMap(
+        ScanRequest scanRequest = ScanRequest.builder()
+                .tableName(tableName)
+                .scanFilter(Collections.singletonMap(
                         ATTRIBUTE_RANDOM,
-                        new Condition()
-                                .withAttributeValueList(
-                                        new AttributeValue().withN("" + itemNumber / 2))
-                                .withComparisonOperator(
-                                        ComparisonOperator.LT.toString())))
-                .withTotalSegments(1).withSegment(0);
+                        Condition.builder()
+                                .attributeValueList(
+                                        AttributeValue.builder().n("" + itemNumber / 2).build())
+                                .comparisonOperator(
+                                        ComparisonOperator.LT.toString()).build()))
+                .totalSegments(1).segment(0).build();
         ScanResult scanResult = dynamo.scan(scanRequest);
-        assertEquals((Object) itemNumber, (Object) scanResult.getScannedCount());
-        int filteredItems = scanResult.getCount();
+        assertEquals((Object) itemNumber, (Object) scanResult.scannedCount());
+        int filteredItems = scanResult.count();
 
         /**
          * Multiple segments.
          */
         int totalSegments = 10;
-        int filteredItemsInSegments = 0;
+        int filteredItemsInsegments = 0;
         for (int segment = 0; segment < totalSegments; segment++) {
-            scanRequest = new ScanRequest(tableName)
-                    .withScanFilter(
+            scanRequest = ScanRequest.builder()
+                    .tableName(tableName)
+                    .scanFilter(
                             Collections.singletonMap(
                                     ATTRIBUTE_RANDOM,
-                                    new Condition().withAttributeValueList(
-                                            new AttributeValue().withN(""
-                                                                       + itemNumber / 2))
-                                                   .withComparisonOperator(
+                                    Condition.builder().attributeValueList(
+                                            AttributeValue.builder().n(""
+                                                                       + itemNumber / 2).build())
+                                                   .comparisonOperator(
                                                            ComparisonOperator.LT
-                                                                   .toString())))
-                    .withTotalSegments(totalSegments).withSegment(segment);
+                                                                   .toString()).build()))
+                    .totalSegments(totalSegments).segment(segment).build();
             scanResult = dynamo.scan(scanRequest);
-            filteredItemsInSegments += scanResult.getCount();
+            filteredItemsInsegments += scanResult.count();
         }
-        assertEquals(filteredItems, filteredItemsInSegments);
+        assertEquals(filteredItems, filteredItemsInsegments);
     }
 }

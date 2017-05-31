@@ -39,7 +39,7 @@ public class QueryOutcome {
      * Returns a non-null list of the returned items; can be empty.
      */
     public List<Item> getItems() {
-        return InternalUtils.toItemList(result.getItems());
+        return InternalUtils.toItemList(result.items());
     }
 
     /**

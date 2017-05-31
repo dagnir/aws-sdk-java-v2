@@ -50,6 +50,6 @@ public class CalendarSetToStringSetMarshaller
             timestamps.add(DateUtils.formatIso8601Date(date.getTime()));
         }
 
-        return new AttributeValue().withSS(timestamps);
+        return AttributeValue.builder().ss(timestamps).build();
     }
 }

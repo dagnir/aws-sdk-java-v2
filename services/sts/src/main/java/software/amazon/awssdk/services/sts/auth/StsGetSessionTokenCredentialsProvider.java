@@ -57,7 +57,7 @@ public class StsGetSessionTokenCredentialsProvider extends StsCredentialsProvide
 
     @Override
     protected Credentials getUpdatedCredentials(STSClient stsClient) {
-        return stsClient.getSessionToken(getSessionTokenRequest).getCredentials();
+        return stsClient.getSessionToken(getSessionTokenRequest).credentials();
     }
 
     /**

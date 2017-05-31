@@ -19,6 +19,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.PascalCaseStrategy;
+
+import java.lang.reflect.Method;
+
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
@@ -50,7 +53,19 @@ public class JsonErrorUnmarshaller extends AbstractErrorUnmarshaller<JsonNode> {
 
     @Override
     public AmazonServiceException unmarshall(JsonNode jsonContent) throws Exception {
-        return MAPPER.treeToValue(jsonContent, exceptionClass);
+        // FIXME: dirty hack below
+        try {
+            Method beanStyleBuilderMethod = exceptionClass.getDeclaredMethod("beanStyleBuilderClass");
+            beanStyleBuilderMethod.setAccessible(true);
+            Class<?> beanStyleBuilderClass = (Class<?>) beanStyleBuilderMethod.invoke(null);
+            Method buildMethod = beanStyleBuilderClass.getMethod("build");
+            buildMethod.setAccessible(true);
+            Object o = MAPPER.treeToValue(jsonContent, beanStyleBuilderClass);
+            return (AmazonServiceException) buildMethod.invoke(o);
+        } catch (NoSuchMethodException e) {
+            // This exception is not the new style with a builder, assume it's still the old style that we can directly map from JSON
+            return MAPPER.treeToValue(jsonContent, exceptionClass);
+        }
     }
 
     /**

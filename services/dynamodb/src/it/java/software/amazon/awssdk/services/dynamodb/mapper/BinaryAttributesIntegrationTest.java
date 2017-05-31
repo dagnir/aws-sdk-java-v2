@@ -33,7 +33,7 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.BinaryAttributeByteArrayClass;
@@ -52,10 +52,10 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
     // Test data
     static {
         Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-        attr.put(KEY_NAME, new AttributeValue().withS("" + startKey++));
-        attr.put(BINARY_ATTRIBUTE, new AttributeValue().withB(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))));
-        attr.put(BINARY_SET_ATTRIBUTE, new AttributeValue().withBS(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)),
-                                                                   ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH + 1))));
+        attr.put(KEY_NAME, AttributeValue.builder().s("" + startKey++).build());
+        attr.put(BINARY_ATTRIBUTE, AttributeValue.builder().b(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))).build());
+        attr.put(BINARY_SET_ATTRIBUTE, AttributeValue.builder().bs(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)),
+                                                                   ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH + 1))).build());
         ATTRIBUTES.add(attr);
 
     }
@@ -68,29 +68,29 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
 
         // Insert the data
         for (Map<String, AttributeValue> attr : ATTRIBUTES) {
-            dynamo.putItem(new PutItemRequest(TABLE_NAME, attr));
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(attr).build());
         }
     }
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : ATTRIBUTES) {
             // test BinaryAttributeClass
-            BinaryAttributeByteBufferClass x = util.load(BinaryAttributeByteBufferClass.class, attr.get(KEY_NAME).getS());
-            assertEquals(x.getKey(), attr.get(KEY_NAME).getS());
-            assertEquals(x.getBinaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)));
-            assertTrue(x.getBinarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))));
-            assertTrue(x.getBinarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH + 1))));
+            BinaryAttributeByteBufferClass x = util.load(BinaryAttributeByteBufferClass.class, attr.get(KEY_NAME).s());
+            assertEquals(x.getKey(), attr.get(KEY_NAME).s());
+            assertEquals(x.binaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)));
+            assertTrue(x.binarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))));
+            assertTrue(x.binarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH + 1))));
 
             // test BinaryAttributeByteArrayClass
-            BinaryAttributeByteArrayClass y = util.load(BinaryAttributeByteArrayClass.class, attr.get(KEY_NAME).getS());
-            assertEquals(y.getKey(), attr.get(KEY_NAME).getS());
-            assertTrue(Arrays.equals(y.getBinaryAttribute(), (generateByteArray(CONTENT_LENGTH))));
-            assertEquals(2, y.getBinarySetAttribute().size());
-            assertTrue(setContainsBytes(y.getBinarySetAttribute(), generateByteArray(CONTENT_LENGTH)));
-            assertTrue(setContainsBytes(y.getBinarySetAttribute(), generateByteArray(CONTENT_LENGTH + 1)));
+            BinaryAttributeByteArrayClass y = util.load(BinaryAttributeByteArrayClass.class, attr.get(KEY_NAME).s());
+            assertEquals(y.getKey(), attr.get(KEY_NAME).s());
+            assertTrue(Arrays.equals(y.binaryAttribute(), (generateByteArray(CONTENT_LENGTH))));
+            assertEquals(2, y.binarySetAttribute().size());
+            assertTrue(setContainsBytes(y.binarySetAttribute(), generateByteArray(CONTENT_LENGTH)));
+            assertTrue(setContainsBytes(y.binarySetAttribute(), generateByteArray(CONTENT_LENGTH + 1)));
         }
 
     }
@@ -104,7 +104,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
             byteBufferObjs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (BinaryAttributeByteBufferClass obj : byteBufferObjs) {
             util.save(obj);
         }
@@ -112,8 +112,8 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
         for (BinaryAttributeByteBufferClass obj : byteBufferObjs) {
             BinaryAttributeByteBufferClass loaded = util.load(BinaryAttributeByteBufferClass.class, obj.getKey());
             assertEquals(loaded.getKey(), obj.getKey());
-            assertEquals(loaded.getBinaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)));
-            assertTrue(loaded.getBinarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))));
+            assertEquals(loaded.binaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)));
+            assertTrue(loaded.binarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH))));
         }
 
         // test BinaryAttributeByteArrayClass
@@ -130,9 +130,9 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
         for (BinaryAttributeByteArrayClass obj : bytesObjs) {
             BinaryAttributeByteArrayClass loaded = util.load(BinaryAttributeByteArrayClass.class, obj.getKey());
             assertEquals(loaded.getKey(), obj.getKey());
-            assertTrue(Arrays.equals(loaded.getBinaryAttribute(), (generateByteArray(CONTENT_LENGTH))));
-            assertEquals(1, loaded.getBinarySetAttribute().size());
-            assertTrue(setContainsBytes(loaded.getBinarySetAttribute(), generateByteArray(CONTENT_LENGTH)));
+            assertTrue(Arrays.equals(loaded.binaryAttribute(), (generateByteArray(CONTENT_LENGTH))));
+            assertEquals(1, loaded.binarySetAttribute().size());
+            assertTrue(setContainsBytes(loaded.binarySetAttribute(), generateByteArray(CONTENT_LENGTH)));
         }
     }
 
@@ -144,24 +144,24 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
         // test BinaryAttributeClass
         BinaryAttributeByteBufferClass byteBufferObj = getUniqueByteBufferObject(CONTENT_LENGTH);
         byteBufferObj.setBinarySetAttribute(null);
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.save(byteBufferObj);
 
         BinaryAttributeByteBufferClass loadedX = util.load(BinaryAttributeByteBufferClass.class, byteBufferObj.getKey());
         assertEquals(loadedX.getKey(), byteBufferObj.getKey());
-        assertEquals(loadedX.getBinaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)));
-        assertEquals(loadedX.getBinarySetAttribute(), null);
+        assertEquals(loadedX.binaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH)));
+        assertEquals(loadedX.binarySetAttribute(), null);
 
 
         // test removing an attribute
-        assertNotNull(byteBufferObj.getBinaryAttribute());
+        assertNotNull(byteBufferObj.binaryAttribute());
         byteBufferObj.setBinaryAttribute(null);
         util.save(byteBufferObj);
 
         loadedX = util.load(BinaryAttributeByteBufferClass.class, byteBufferObj.getKey());
         assertEquals(loadedX.getKey(), byteBufferObj.getKey());
-        assertEquals(loadedX.getBinaryAttribute(), null);
-        assertEquals(loadedX.getBinarySetAttribute(), null);
+        assertEquals(loadedX.binaryAttribute(), null);
+        assertEquals(loadedX.binarySetAttribute(), null);
 
         // test BinaryAttributeByteArrayClass
         BinaryAttributeByteArrayClass bytesObj = getUniqueBytesObject(CONTENT_LENGTH);
@@ -170,19 +170,19 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
 
         BinaryAttributeByteArrayClass loadedY = util.load(BinaryAttributeByteArrayClass.class, bytesObj.getKey());
         assertEquals(loadedY.getKey(), bytesObj.getKey());
-        assertTrue(Arrays.equals(loadedY.getBinaryAttribute(), generateByteArray(CONTENT_LENGTH)));
-        assertEquals(loadedY.getBinarySetAttribute(), null);
+        assertTrue(Arrays.equals(loadedY.binaryAttribute(), generateByteArray(CONTENT_LENGTH)));
+        assertEquals(loadedY.binarySetAttribute(), null);
 
 
         // test removing an attribute
-        assertNotNull(bytesObj.getBinaryAttribute());
+        assertNotNull(bytesObj.binaryAttribute());
         bytesObj.setBinaryAttribute(null);
         util.save(bytesObj);
 
         loadedY = util.load(BinaryAttributeByteArrayClass.class, bytesObj.getKey());
         assertEquals(loadedY.getKey(), bytesObj.getKey());
-        assertEquals(loadedY.getBinaryAttribute(), null);
-        assertEquals(loadedY.getBinarySetAttribute(), null);
+        assertEquals(loadedY.binaryAttribute(), null);
+        assertEquals(loadedY.binarySetAttribute(), null);
     }
 
     @Test
@@ -194,7 +194,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
             byteBufferObjs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (BinaryAttributeByteBufferClass obj : byteBufferObjs) {
             util.save(obj);
         }
@@ -206,8 +206,8 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
 
             BinaryAttributeByteBufferClass loaded = util.load(BinaryAttributeByteBufferClass.class, obj.getKey());
             assertEquals(loaded.getKey(), obj.getKey());
-            assertEquals(loaded.getBinaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH - 1)));
-            assertTrue(loaded.getBinarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH - 1))));
+            assertEquals(loaded.binaryAttribute(), ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH - 1)));
+            assertTrue(loaded.binarySetAttribute().contains(ByteBuffer.wrap(generateByteArray(CONTENT_LENGTH - 1))));
 
         }
 
@@ -229,9 +229,9 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
 
             BinaryAttributeByteArrayClass loaded = util.load(BinaryAttributeByteArrayClass.class, obj.getKey());
             assertEquals(loaded.getKey(), obj.getKey());
-            assertTrue(Arrays.equals(loaded.getBinaryAttribute(), (generateByteArray(CONTENT_LENGTH - 1))));
-            assertEquals(1, loaded.getBinarySetAttribute().size());
-            assertTrue(setContainsBytes(loaded.getBinarySetAttribute(), generateByteArray(CONTENT_LENGTH - 1)));
+            assertTrue(Arrays.equals(loaded.binaryAttribute(), (generateByteArray(CONTENT_LENGTH - 1))));
+            assertEquals(1, loaded.binarySetAttribute().size());
+            assertTrue(setContainsBytes(loaded.binarySetAttribute(), generateByteArray(CONTENT_LENGTH - 1)));
 
         }
     }
@@ -240,7 +240,7 @@ public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTe
     public void testDelete() throws Exception {
         // test BinaryAttributeClass
         BinaryAttributeByteBufferClass byteBufferObj = getUniqueByteBufferObject(CONTENT_LENGTH);
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         util.save(byteBufferObj);
 
         util.delete(byteBufferObj);

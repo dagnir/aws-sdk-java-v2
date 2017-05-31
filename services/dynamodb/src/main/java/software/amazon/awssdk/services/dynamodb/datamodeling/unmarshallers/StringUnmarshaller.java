@@ -35,6 +35,6 @@ public class StringUnmarshaller extends SUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return value.getS();
+        return value.s();
     }
 }

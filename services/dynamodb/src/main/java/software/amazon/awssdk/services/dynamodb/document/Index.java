@@ -184,11 +184,11 @@ public class Index implements QueryApi, ScanApi {
     public TableDescription updateGsi(
             ProvisionedThroughput provisionedThroughput) {
         return table.updateTable(new UpdateTableSpec()
-                                         .withGlobalSecondaryIndexUpdates(
-                                                 new GlobalSecondaryIndexUpdate().withUpdate(
-                                                         new UpdateGlobalSecondaryIndexAction()
-                                                                 .withIndexName(indexName)
-                                                                 .withProvisionedThroughput(provisionedThroughput))));
+                .withGlobalSecondaryIndexUpdates(GlobalSecondaryIndexUpdate.builder()
+                        .update(UpdateGlobalSecondaryIndexAction.builder()
+                                .indexName(indexName)
+                                .provisionedThroughput(provisionedThroughput).build())
+                        .build()));
     }
 
     /**
@@ -204,10 +204,11 @@ public class Index implements QueryApi, ScanApi {
      */
     public TableDescription deleteGsi() {
         return table.updateTable(new UpdateTableSpec()
-                                         .withGlobalSecondaryIndexUpdates(
-                                                 new GlobalSecondaryIndexUpdate().withDelete(
-                                                         new DeleteGlobalSecondaryIndexAction()
-                                                                 .withIndexName(indexName))));
+                .withGlobalSecondaryIndexUpdates(
+                        GlobalSecondaryIndexUpdate.builder()
+                                .delete(DeleteGlobalSecondaryIndexAction.builder()
+                                        .indexName(indexName).build())
+                                .build()));
     }
 
     /**
@@ -232,11 +233,11 @@ public class Index implements QueryApi, ScanApi {
         retry:
         for (; ; ) {
             TableDescription desc = table.waitForActive();
-            final List<GlobalSecondaryIndexDescription> list = desc.getGlobalSecondaryIndexes();
+            final List<GlobalSecondaryIndexDescription> list = desc.globalSecondaryIndexes();
             if (list != null) {
                 for (GlobalSecondaryIndexDescription d : list) {
-                    if (d.getIndexName().equals(indexName)) {
-                        final String status = d.getIndexStatus();
+                    if (d.indexName().equals(indexName)) {
+                        final String status = d.indexStatus();
                         switch (IndexStatus.fromValue(status)) {
                             case ACTIVE:
                                 return desc;
@@ -280,11 +281,11 @@ public class Index implements QueryApi, ScanApi {
         retry:
         for (; ; ) {
             final TableDescription desc = getTable().waitForActive();
-            List<GlobalSecondaryIndexDescription> list = desc.getGlobalSecondaryIndexes();
+            List<GlobalSecondaryIndexDescription> list = desc.globalSecondaryIndexes();
             if (list != null) {
                 for (GlobalSecondaryIndexDescription d : list) {
-                    if (d.getIndexName().equals(indexName)) {
-                        final String status = d.getIndexStatus();
+                    if (d.indexName().equals(indexName)) {
+                        final String status = d.indexStatus();
                         if (IndexStatus.fromValue(status) == IndexStatus.DELETING) {
                             Thread.sleep(SLEEP_TIME_MILLIS);
                             continue retry;
@@ -321,11 +322,11 @@ public class Index implements QueryApi, ScanApi {
         retry:
         for (; ; ) {
             TableDescription desc = table.waitForActive();
-            List<GlobalSecondaryIndexDescription> list = desc.getGlobalSecondaryIndexes();
+            List<GlobalSecondaryIndexDescription> list = desc.globalSecondaryIndexes();
             if (list != null) {
-                for (GlobalSecondaryIndexDescription d : desc.getGlobalSecondaryIndexes()) {
-                    if (d.getIndexName().equals(indexName)) {
-                        final String status = d.getIndexStatus();
+                for (GlobalSecondaryIndexDescription d : desc.globalSecondaryIndexes()) {
+                    if (d.indexName().equals(indexName)) {
+                        final String status = d.indexStatus();
                         if (IndexStatus.fromValue(status) == IndexStatus.ACTIVE) {
                             return desc;
                         }

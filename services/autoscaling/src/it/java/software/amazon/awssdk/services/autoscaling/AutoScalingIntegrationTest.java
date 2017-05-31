@@ -139,23 +139,23 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
     public void tearDown() {
         if (autoScalingGroupName != null) {
             try {
-                autoscaling.deleteAutoScalingGroup(new DeleteAutoScalingGroupRequest().withAutoScalingGroupName(
-                        autoScalingGroupName).withForceDelete(true));
+                autoscaling.deleteAutoScalingGroup(DeleteAutoScalingGroupRequest.builder().autoScalingGroupName(
+                        autoScalingGroupName).forceDelete(true).build());
             } catch (Exception e) {
                 // Ignored.
             }
         }
         if (launchConfigurationName != null) {
             try {
-                autoscaling.deleteLaunchConfiguration(new DeleteLaunchConfigurationRequest()
-                                                              .withLaunchConfigurationName(launchConfigurationName));
+                autoscaling.deleteLaunchConfiguration(DeleteLaunchConfigurationRequest.builder()
+                                                              .launchConfigurationName(launchConfigurationName).build());
             } catch (Exception e) {
                 // Ignored.
             }
         }
         if (topicARN != null) {
             try {
-                sns.deleteTopic(new DeleteTopicRequest(topicARN));
+                sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicARN).build());
             } catch (Exception e) {
                 // Ignored.
             }
@@ -203,50 +203,55 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
 
         String encodedUserData = new String(Base64.encodeBase64(userData.getBytes()));
 
-        BlockDeviceMapping blockDeviceMapping1 = new BlockDeviceMapping();
-        blockDeviceMapping1.setDeviceName("xvdh");
-        blockDeviceMapping1.setNoDevice(true);
+        BlockDeviceMapping blockDeviceMapping1 = BlockDeviceMapping.builder()
+            .deviceName("xvdh")
+            .noDevice(true)
+            .build();
 
-        BlockDeviceMapping blockDeviceMapping2 = new BlockDeviceMapping();
 
-        Ebs ebs = new Ebs();
-        ebs.setDeleteOnTermination(true);
-        ebs.setVolumeType("io1");
-        ebs.setVolumeSize(10);
-        ebs.setIops(100);
+        Ebs ebs = Ebs.builder()
+            .deleteOnTermination(true)
+            .volumeType("io1")
+            .volumeSize(10)
+            .iops(100)
+            .build();
 
-        blockDeviceMapping2.setEbs(ebs);
-        blockDeviceMapping2.setDeviceName("/dev/sdh");
+        BlockDeviceMapping blockDeviceMapping2 = BlockDeviceMapping.builder()
+            .ebs(ebs)
+            .deviceName("/dev/sdh")
+            .build();
 
         // Create a LaunchConfigurationGroup
-        CreateLaunchConfigurationRequest createRequest = new CreateLaunchConfigurationRequest()
-                .withLaunchConfigurationName(launchConfigurationName).withImageId(AMI_ID)
-                .withInstanceType(INSTANCE_TYPE).withSecurityGroups("default").withUserData(encodedUserData)
-                .withAssociatePublicIpAddress(false);
+        CreateLaunchConfigurationRequest createRequest = CreateLaunchConfigurationRequest.builder()
+                .launchConfigurationName(launchConfigurationName).imageId(AMI_ID)
+                .instanceType(INSTANCE_TYPE).securityGroups("default").userData(encodedUserData)
+                .associatePublicIpAddress(false)
+                .blockDeviceMappings(Arrays.asList(blockDeviceMapping1, blockDeviceMapping2))
+                .build();
 
-        createRequest.setBlockDeviceMappings(Arrays.asList(blockDeviceMapping1, blockDeviceMapping2));
         autoscaling.createLaunchConfiguration(createRequest);
 
         // Describe it
-        DescribeLaunchConfigurationsRequest describeRequest = new DescribeLaunchConfigurationsRequest()
-                .withLaunchConfigurationNames(launchConfigurationName);
+        DescribeLaunchConfigurationsRequest describeRequest = DescribeLaunchConfigurationsRequest.builder()
+                .launchConfigurationNames(launchConfigurationName).build();
+        
         DescribeLaunchConfigurationsResult result = autoscaling.describeLaunchConfigurations(describeRequest);
-        List<LaunchConfiguration> launchConfigurations = result.getLaunchConfigurations();
+        List<LaunchConfiguration> launchConfigurations = result.launchConfigurations();
         assertEquals(1, launchConfigurations.size());
         LaunchConfiguration launchConfiguration = launchConfigurations.get(0);
-        assertNotNull(launchConfiguration.getCreatedTime());
-        assertEquals(AMI_ID, launchConfiguration.getImageId());
-        assertEquals(INSTANCE_TYPE, launchConfiguration.getInstanceType());
-        assertEquals(launchConfigurationName, launchConfiguration.getLaunchConfigurationName());
-        assertEquals("default", launchConfiguration.getSecurityGroups().get(0));
-        assertEquals(encodedUserData, launchConfiguration.getUserData());
-        assertEquals(false, launchConfiguration.getAssociatePublicIpAddress());
-        assertThat(result.getLaunchConfigurations().get(0).getBlockDeviceMappings(),
+        assertNotNull(launchConfiguration.createdTime());
+        assertEquals(AMI_ID, launchConfiguration.imageId());
+        assertEquals(INSTANCE_TYPE, launchConfiguration.instanceType());
+        assertEquals(launchConfigurationName, launchConfiguration.launchConfigurationName());
+        assertEquals("default", launchConfiguration.securityGroups().get(0));
+        assertEquals(encodedUserData, launchConfiguration.userData());
+        assertEquals(false, launchConfiguration.associatePublicIpAddress());
+        assertThat(result.launchConfigurations().get(0).blockDeviceMappings(),
                    containsInAnyOrder(blockDeviceMapping1, blockDeviceMapping2));
 
         // Delete it
-        autoscaling.deleteLaunchConfiguration(new DeleteLaunchConfigurationRequest()
-                                                      .withLaunchConfigurationName(launchConfigurationName));
+        autoscaling.deleteLaunchConfiguration(DeleteLaunchConfigurationRequest.builder()
+                                                      .launchConfigurationName(launchConfigurationName).build());
     }
 
 
@@ -261,61 +266,61 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         createLaunchConfiguration(launchConfigurationName);
 
         // Create an AutoScalingGroup
-        CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+        CreateAutoScalingGroupRequest createRequest = CreateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1).build();
         autoscaling.createAutoScalingGroup(createRequest);
 
         // Set desired capacity
-        autoscaling.setDesiredCapacity(new SetDesiredCapacityRequest().withAutoScalingGroupName(autoScalingGroupName)
-                                                                      .withDesiredCapacity(1));
+        autoscaling.setDesiredCapacity(SetDesiredCapacityRequest.builder().autoScalingGroupName(autoScalingGroupName)
+                                                                      .desiredCapacity(1).build());
 
         // Describe
         DescribeAutoScalingGroupsResult result = autoscaling
-                .describeAutoScalingGroups(new DescribeAutoScalingGroupsRequest()
-                                                   .withAutoScalingGroupNames(autoScalingGroupName));
-        List<AutoScalingGroup> autoScalingGroups = result.getAutoScalingGroups();
+                .describeAutoScalingGroups(DescribeAutoScalingGroupsRequest.builder()
+                                                   .autoScalingGroupNames(autoScalingGroupName).build());
+        List<AutoScalingGroup> autoScalingGroups = result.autoScalingGroups();
         assertEquals(1, autoScalingGroups.size());
         AutoScalingGroup group = autoScalingGroups.get(0);
         // TODO: Commenting out until AutoScaling is ready to release their next API update
-        // assertEquals("Active", group.getScalingMode());
-        assertEquals(1, group.getAvailabilityZones().size());
-        assertEquals(AVAILABILITY_ZONE, group.getAvailabilityZones().get(0));
-        assertEquals(autoScalingGroupName, group.getAutoScalingGroupName());
-        assertNotNull(group.getCreatedTime());
-        assertEquals(1, group.getDesiredCapacity().intValue());
-        assertEquals(0, group.getInstances().size());
-        assertEquals(launchConfigurationName, group.getLaunchConfigurationName());
-        assertEquals(0, group.getLoadBalancerNames().size());
-        assertEquals(2, group.getMaxSize().intValue());
-        assertEquals(1, group.getMinSize().intValue());
-        assertEquals(1, group.getTerminationPolicies().size());
-        assertEquals("Default", group.getTerminationPolicies().get(0));
+        // assertEquals("Active", group.scalingMode());
+        assertEquals(1, group.availabilityZones().size());
+        assertEquals(AVAILABILITY_ZONE, group.availabilityZones().get(0));
+        assertEquals(autoScalingGroupName, group.autoScalingGroupName());
+        assertNotNull(group.createdTime());
+        assertEquals(1, group.desiredCapacity().intValue());
+        assertEquals(0, group.instances().size());
+        assertEquals(launchConfigurationName, group.launchConfigurationName());
+        assertEquals(0, group.loadBalancerNames().size());
+        assertEquals(2, group.maxSize().intValue());
+        assertEquals(1, group.minSize().intValue());
+        assertEquals(1, group.terminationPolicies().size());
+        assertEquals("Default", group.terminationPolicies().get(0));
 
         // Update
-        UpdateAutoScalingGroupRequest updateRequest = new UpdateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withMaxSize(3).withDefaultCooldown(3).withMinSize(2)
-                .withTerminationPolicies(TERMINATION_POLICY);
+        UpdateAutoScalingGroupRequest updateRequest = UpdateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).maxSize(3).defaultCooldown(3).minSize(2)
+                .terminationPolicies(TERMINATION_POLICY).build();
         autoscaling.updateAutoScalingGroup(updateRequest);
 
         // Check our updates
-        result = autoscaling.describeAutoScalingGroups(new DescribeAutoScalingGroupsRequest()
-                                                               .withAutoScalingGroupNames(autoScalingGroupName));
-        autoScalingGroups = result.getAutoScalingGroups();
+        result = autoscaling.describeAutoScalingGroups(DescribeAutoScalingGroupsRequest.builder()
+                                                               .autoScalingGroupNames(autoScalingGroupName).build());
+        autoScalingGroups = result.autoScalingGroups();
         assertEquals(1, autoScalingGroups.size());
         group = autoScalingGroups.get(0);
-        assertEquals((double) 3, (double) group.getMaxSize(), 0.0);
-        assertEquals((double) 3, (double) group.getDefaultCooldown(), 0.0);
-        assertEquals((double) 2, (double) group.getMinSize(), 0.0);
-        assertEquals(1, group.getTerminationPolicies().size());
-        assertEquals(TERMINATION_POLICY, group.getTerminationPolicies().get(0));
+        assertEquals((double) 3, (double) group.maxSize(), 0.0);
+        assertEquals((double) 3, (double) group.defaultCooldown(), 0.0);
+        assertEquals((double) 2, (double) group.minSize(), 0.0);
+        assertEquals(1, group.terminationPolicies().size());
+        assertEquals(TERMINATION_POLICY, group.terminationPolicies().get(0));
 
         // Describe the scaling activity of our group
-        DescribeScalingActivitiesRequest describeActivityRequest = new DescribeScalingActivitiesRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withMaxRecords(20);
+        DescribeScalingActivitiesRequest describeActivityRequest = DescribeScalingActivitiesRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).maxRecords(20).build();
         DescribeScalingActivitiesResult describeScalingActivitiesResult = autoscaling
                 .describeScalingActivities(describeActivityRequest);
-        describeScalingActivitiesResult.getActivities();
+        describeScalingActivitiesResult.activities();
     }
 
 
@@ -330,60 +335,65 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         createLaunchConfiguration(launchConfigurationName);
 
         // Create an AutoScalingGroup
-        CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+        CreateAutoScalingGroupRequest createRequest = CreateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1).build();
         autoscaling.createAutoScalingGroup(createRequest);
 
         // Put a Policy
-        PutScalingPolicyRequest putScalingPolicyRequest = new PutScalingPolicyRequest();
-        putScalingPolicyRequest.setAutoScalingGroupName(autoScalingGroupName);
-        putScalingPolicyRequest.setPolicyName(TEST_POLICY_NAME);
-        putScalingPolicyRequest.setScalingAdjustment(TEST_SCALING_ADJUSTMENT);
-        putScalingPolicyRequest.setAdjustmentType(TEST_ADJUSTMENT_TYPE);
-        putScalingPolicyRequest.setCooldown(TEST_COOLDOWN);
+        PutScalingPolicyRequest putScalingPolicyRequest = PutScalingPolicyRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .policyName(TEST_POLICY_NAME)
+            .scalingAdjustment(TEST_SCALING_ADJUSTMENT)
+            .adjustmentType(TEST_ADJUSTMENT_TYPE)
+            .cooldown(TEST_COOLDOWN)
+            .build();
 
         PutScalingPolicyResult putScalingPolicyResult = autoscaling.putScalingPolicy(putScalingPolicyRequest);
         assertNotNull(putScalingPolicyResult);
-        assertNotNull(putScalingPolicyResult.getPolicyARN());
+        assertNotNull(putScalingPolicyResult.policyARN());
 
         // Describe the Policy
-        DescribePoliciesRequest describePoliciesRequest = new DescribePoliciesRequest();
-        describePoliciesRequest.setAutoScalingGroupName(autoScalingGroupName);
+        DescribePoliciesRequest describePoliciesRequest = DescribePoliciesRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .build();
 
         DescribePoliciesResult describePoliciesResult = autoscaling.describePolicies(describePoliciesRequest);
         assertNotNull(describePoliciesResult);
-        assertEquals(1, describePoliciesResult.getScalingPolicies().size());
+        assertEquals(1, describePoliciesResult.scalingPolicies().size());
 
-        ScalingPolicy policy = describePoliciesResult.getScalingPolicies().get(0);
-        assertEquals(autoScalingGroupName, policy.getAutoScalingGroupName());
-        assertEquals(TEST_POLICY_NAME, policy.getPolicyName());
-        assertEquals(TEST_ADJUSTMENT_TYPE, policy.getAdjustmentType());
-        assertEquals(TEST_SCALING_ADJUSTMENT, policy.getScalingAdjustment());
-        assertEquals(TEST_COOLDOWN, policy.getCooldown());
-        assertEquals(0, policy.getAlarms().size());
-        assertNotNull(policy.getPolicyARN());
+        ScalingPolicy policy = describePoliciesResult.scalingPolicies().get(0);
+        assertEquals(autoScalingGroupName, policy.autoScalingGroupName());
+        assertEquals(TEST_POLICY_NAME, policy.policyName());
+        assertEquals(TEST_ADJUSTMENT_TYPE, policy.adjustmentType());
+        assertEquals(TEST_SCALING_ADJUSTMENT, policy.scalingAdjustment());
+        assertEquals(TEST_COOLDOWN, policy.cooldown());
+        assertEquals(0, policy.alarms().size());
+        assertNotNull(policy.policyARN());
 
         // Execute the Policy
-        ExecutePolicyRequest executePolicyRequest = new ExecutePolicyRequest();
-        executePolicyRequest.setAutoScalingGroupName(autoScalingGroupName);
-        executePolicyRequest.setPolicyName(TEST_POLICY_NAME);
+        ExecutePolicyRequest executePolicyRequest = ExecutePolicyRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .policyName(TEST_POLICY_NAME)
+            .build();
 
         autoscaling.executePolicy(executePolicyRequest);
 
         // Delete the Policy
-        DeletePolicyRequest deletePolicyRequest = new DeletePolicyRequest();
-        deletePolicyRequest.setAutoScalingGroupName(autoScalingGroupName);
-        deletePolicyRequest.setPolicyName(TEST_POLICY_NAME);
+        DeletePolicyRequest deletePolicyRequest = DeletePolicyRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .policyName(TEST_POLICY_NAME)
+            .build();
 
         autoscaling.deletePolicy(deletePolicyRequest);
 
-        describePoliciesRequest = new DescribePoliciesRequest();
-        describePoliciesRequest.setAutoScalingGroupName(autoScalingGroupName);
+        describePoliciesRequest = DescribePoliciesRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .build();
 
         describePoliciesResult = autoscaling.describePolicies(describePoliciesRequest);
         assertNotNull(describePoliciesResult);
-        assertEquals(0, describePoliciesResult.getScalingPolicies().size());
+        assertEquals(0, describePoliciesResult.scalingPolicies().size());
     }
 
 
@@ -398,54 +408,59 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         createLaunchConfiguration(launchConfigurationName);
 
         // Create an AutoScalingGroup
-        CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+        CreateAutoScalingGroupRequest createRequest = CreateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1)
+                .build();
         autoscaling.createAutoScalingGroup(createRequest);
 
         // Describe the Action
-        PutScheduledUpdateGroupActionRequest putScheduledUpdateGroupActionRequest = new PutScheduledUpdateGroupActionRequest();
-        putScheduledUpdateGroupActionRequest.setAutoScalingGroupName(autoScalingGroupName);
-        putScheduledUpdateGroupActionRequest.setScheduledActionName(TEST_ACTION_NAME);
-        putScheduledUpdateGroupActionRequest.setStartTime(TEST_ACTION_TIME);
-        putScheduledUpdateGroupActionRequest.setMinSize(TEST_MIN_SIZE);
-        putScheduledUpdateGroupActionRequest.setMaxSize(TEST_MAX_SIZE);
-        putScheduledUpdateGroupActionRequest.setDesiredCapacity(TEST_DESIRED_CAPACITY);
+        PutScheduledUpdateGroupActionRequest putScheduledUpdateGroupActionRequest = PutScheduledUpdateGroupActionRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .scheduledActionName(TEST_ACTION_NAME)
+            .startTime(TEST_ACTION_TIME)
+            .minSize(TEST_MIN_SIZE)
+            .maxSize(TEST_MAX_SIZE)
+            .desiredCapacity(TEST_DESIRED_CAPACITY)
+            .build();
 
         autoscaling.putScheduledUpdateGroupAction(putScheduledUpdateGroupActionRequest);
 
         // Describe the Action
-        DescribeScheduledActionsRequest describeScheduledActionsRequest = new DescribeScheduledActionsRequest();
-        describeScheduledActionsRequest.setAutoScalingGroupName(autoScalingGroupName);
+        DescribeScheduledActionsRequest describeScheduledActionsRequest = DescribeScheduledActionsRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .build();
 
         DescribeScheduledActionsResult describeScheduledActionsResult = autoscaling
                 .describeScheduledActions(describeScheduledActionsRequest);
         assertNotNull(describeScheduledActionsResult);
-        assertEquals(1, describeScheduledActionsResult.getScheduledUpdateGroupActions().size());
+        assertEquals(1, describeScheduledActionsResult.scheduledUpdateGroupActions().size());
 
         ScheduledUpdateGroupAction scheduledUpdateGroupAction = describeScheduledActionsResult
-                .getScheduledUpdateGroupActions().get(0);
-        assertEquals(autoScalingGroupName, scheduledUpdateGroupAction.getAutoScalingGroupName());
-        assertEquals(TEST_ACTION_NAME, scheduledUpdateGroupAction.getScheduledActionName());
-        assertEquals(TEST_MIN_SIZE, scheduledUpdateGroupAction.getMinSize());
-        assertEquals(TEST_MAX_SIZE, scheduledUpdateGroupAction.getMaxSize());
-        assertEquals(TEST_DESIRED_CAPACITY, scheduledUpdateGroupAction.getDesiredCapacity());
+                .scheduledUpdateGroupActions().get(0);
+        assertEquals(autoScalingGroupName, scheduledUpdateGroupAction.autoScalingGroupName());
+        assertEquals(TEST_ACTION_NAME, scheduledUpdateGroupAction.scheduledActionName());
+        assertEquals(TEST_MIN_SIZE, scheduledUpdateGroupAction.minSize());
+        assertEquals(TEST_MAX_SIZE, scheduledUpdateGroupAction.maxSize());
+        assertEquals(TEST_DESIRED_CAPACITY, scheduledUpdateGroupAction.desiredCapacity());
         // assertEquals( TEST_ACTION_TIME.getTime(), scheduledUpdateGroupAction.getTime().getTime()
         // );
 
         // Delete the Action
-        DeleteScheduledActionRequest deleteScheduledActionRequest = new DeleteScheduledActionRequest();
-        deleteScheduledActionRequest.setAutoScalingGroupName(autoScalingGroupName);
-        deleteScheduledActionRequest.setScheduledActionName(TEST_ACTION_NAME);
+        DeleteScheduledActionRequest deleteScheduledActionRequest = DeleteScheduledActionRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .scheduledActionName(TEST_ACTION_NAME)
+            .build();
 
         autoscaling.deleteScheduledAction(deleteScheduledActionRequest);
 
-        describeScheduledActionsRequest = new DescribeScheduledActionsRequest();
-        describeScheduledActionsRequest.setAutoScalingGroupName(autoScalingGroupName);
+        describeScheduledActionsRequest = DescribeScheduledActionsRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .build();
 
         describeScheduledActionsResult = autoscaling.describeScheduledActions(describeScheduledActionsRequest);
         assertNotNull(describeScheduledActionsResult);
-        assertEquals(0, describeScheduledActionsResult.getScheduledUpdateGroupActions().size());
+        assertEquals(0, describeScheduledActionsResult.scheduledUpdateGroupActions().size());
     }
 
 
@@ -460,25 +475,27 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         createLaunchConfiguration(launchConfigurationName);
 
         // Create an AutoScalingGroup
-        CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+        CreateAutoScalingGroupRequest createRequest = CreateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1).build();
         autoscaling.createAutoScalingGroup(createRequest);
 
         // Describe Instances
         DescribeAutoScalingInstancesResult describeAutoScalingInstancesResult = autoscaling
-                .describeAutoScalingInstances(new DescribeAutoScalingInstancesRequest());
+                .describeAutoScalingInstances(DescribeAutoScalingInstancesRequest.builder().build());
         assertNotNull(describeAutoScalingInstancesResult);
 
         // Suspend Processes
-        SuspendProcessesRequest suspendProcessesRequest = new SuspendProcessesRequest();
-        suspendProcessesRequest.setAutoScalingGroupName(autoScalingGroupName);
+        SuspendProcessesRequest suspendProcessesRequest = SuspendProcessesRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .build();
 
         autoscaling.suspendProcesses(suspendProcessesRequest);
 
         // Resume Processes
-        ResumeProcessesRequest resumeProcessesRequest = new ResumeProcessesRequest();
-        resumeProcessesRequest.setAutoScalingGroupName(autoScalingGroupName);
+        ResumeProcessesRequest resumeProcessesRequest = ResumeProcessesRequest.builder()
+            .autoScalingGroupName(autoScalingGroupName)
+            .build();
 
         autoscaling.resumeProcesses(resumeProcessesRequest);
     }
@@ -495,41 +512,41 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         createLaunchConfiguration(launchConfigurationName);
 
         // Create an AutoScalingGroup
-        CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+        CreateAutoScalingGroupRequest createRequest = CreateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1)
+                .build();
         autoscaling.createAutoScalingGroup(createRequest);
 
         // Describe Notification Types
-        List<String> notificationTypes = autoscaling.describeAutoScalingNotificationTypes(new DescribeAutoScalingNotificationTypesRequest())
-                                                    .getAutoScalingNotificationTypes();
+        List<String> notificationTypes = autoscaling.describeAutoScalingNotificationTypes(DescribeAutoScalingNotificationTypesRequest.builder().build())
+                                                    .autoScalingNotificationTypes();
         assertTrue(notificationTypes.size() > 1);
         String notificationType = notificationTypes.get(0);
         assertNotEmpty(notificationType);
 
         // PutNotificationConfiguration
-        topicARN = sns.createTopic(
-                new CreateTopicRequest("java-sdk-autoscaling-integ-test-" + System.currentTimeMillis())).getTopicArn();
-        PutNotificationConfigurationRequest putRequest = new PutNotificationConfigurationRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withNotificationTypes(notificationType)
-                .withTopicARN(topicARN);
+        topicARN = sns.createTopic(CreateTopicRequest.builder().name("java-sdk-autoscaling-integ-test-" + System.currentTimeMillis()).build()).topicArn();
+        PutNotificationConfigurationRequest putRequest = PutNotificationConfigurationRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).notificationTypes(notificationType)
+                .topicARN(topicARN).build();
         autoscaling.putNotificationConfiguration(putRequest);
 
         // DescribeNotificationConfiguration
-        DescribeNotificationConfigurationsRequest describeRequest = new DescribeNotificationConfigurationsRequest()
-                .withAutoScalingGroupNames(autoScalingGroupName);
+        DescribeNotificationConfigurationsRequest describeRequest = DescribeNotificationConfigurationsRequest.builder()
+                .autoScalingGroupNames(autoScalingGroupName).build();
         List<NotificationConfiguration> notificationConfigurations = autoscaling.describeNotificationConfigurations(
-                describeRequest).getNotificationConfigurations();
+                describeRequest).notificationConfigurations();
         assertEquals(1, notificationConfigurations.size());
-        assertEquals(autoScalingGroupName, notificationConfigurations.get(0).getAutoScalingGroupName());
-        assertEquals(notificationType, notificationConfigurations.get(0).getNotificationType());
-        assertEquals(topicARN, notificationConfigurations.get(0).getTopicARN());
+        assertEquals(autoScalingGroupName, notificationConfigurations.get(0).autoScalingGroupName());
+        assertEquals(notificationType, notificationConfigurations.get(0).notificationType());
+        assertEquals(topicARN, notificationConfigurations.get(0).topicARN());
 
         // DeleteNotificationConfiguration
-        autoscaling.deleteNotificationConfiguration(new DeleteNotificationConfigurationRequest()
-                                                            .withAutoScalingGroupName(autoScalingGroupName)
-                                                            .withTopicARN(topicARN));
-        assertEquals(0, autoscaling.describeNotificationConfigurations(describeRequest).getNotificationConfigurations()
+        autoscaling.deleteNotificationConfiguration(DeleteNotificationConfigurationRequest.builder()
+                                                            .autoScalingGroupName(autoScalingGroupName)
+                                                            .topicARN(topicARN).build());
+        assertEquals(0, autoscaling.describeNotificationConfigurations(describeRequest).notificationConfigurations()
                                    .size());
     }
 
@@ -545,9 +562,9 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         createLaunchConfiguration(launchConfigurationName);
 
         // Create an AutoScalingGroup
-        CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(autoScalingGroupName).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+        CreateAutoScalingGroupRequest createRequest = CreateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(autoScalingGroupName).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1).build();
         autoscaling.createAutoScalingGroup(createRequest);
 
         Map<String, String> tags = new HashMap<String, String>();
@@ -558,39 +575,39 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         // all (which is the case when we set the tag value as null in the
         // request). So if we do `tags.put("tag3", null)`, the test would fail.
         tags.put("tag3", "");
-        autoscaling.createOrUpdateTags(new CreateOrUpdateTagsRequest().withTags(convertTagList(tags,
-                                                                                               autoScalingGroupName)));
+        autoscaling.createOrUpdateTags(CreateOrUpdateTagsRequest.builder().tags(convertTagList(tags,
+                                                                                               autoScalingGroupName)).build());
 
-        Filter filter = new Filter().withName("auto-scaling-group").withValues(autoScalingGroupName);
+        Filter filter = Filter.builder().name("auto-scaling-group").values(autoScalingGroupName).build();
 
-        DescribeTagsResult describeTags = autoscaling.describeTags(new DescribeTagsRequest().withFilters(filter));
-        assertEquals(3, describeTags.getTags().size());
-        for (TagDescription tag : describeTags.getTags()) {
-            assertEquals(autoScalingGroupName, tag.getResourceId());
-            assertEquals(tags.get(tag.getKey()), tag.getValue());
-            assertTrue(tag.getPropagateAtLaunch());
+        DescribeTagsResult describeTags = autoscaling.describeTags(DescribeTagsRequest.builder().filters(filter).build());
+        assertEquals(3, describeTags.tags().size());
+        for (TagDescription tag : describeTags.tags()) {
+            assertEquals(autoScalingGroupName, tag.resourceId());
+            assertEquals(tags.get(tag.key()), tag.value());
+            assertTrue(tag.propagateAtLaunch());
         }
 
         // Now delete the tags
-        autoscaling.deleteTags(new DeleteTagsRequest().withTags(convertTagList(tags, autoScalingGroupName)));
+        autoscaling.deleteTags(DeleteTagsRequest.builder().tags(convertTagList(tags, autoScalingGroupName)).build());
 
-        describeTags = autoscaling.describeTags(new DescribeTagsRequest().withFilters(filter));
-        assertEquals(0, describeTags.getTags().size());
+        describeTags = autoscaling.describeTags(DescribeTagsRequest.builder().filters(filter).build());
+        assertEquals(0, describeTags.tags().size());
     }
 
     @Test
     public void testDescribeTerminationPolicyTypes() {
         DescribeTerminationPolicyTypesResult describeAdjustmentTypesResult = autoscaling
-                .describeTerminationPolicyTypes(new DescribeTerminationPolicyTypesRequest());
-        assertEquals(TERMINATION_POLICIES.toArray(), describeAdjustmentTypesResult.getTerminationPolicyTypes()
+                .describeTerminationPolicyTypes(DescribeTerminationPolicyTypesRequest.builder().build());
+        assertEquals(TERMINATION_POLICIES.toArray(), describeAdjustmentTypesResult.terminationPolicyTypes()
                                                                                   .toArray());
     }
 
     private Collection<Tag> convertTagList(Map<String, String> tags, String groupName) {
         Collection<Tag> converted = new LinkedList<Tag>();
         for (String key : tags.keySet()) {
-            Tag tag = new Tag().withKey(key).withValue(tags.get(key)).withResourceType("auto-scaling-group")
-                               .withResourceId(groupName).withPropagateAtLaunch(true);
+            Tag tag = Tag.builder().key(key).value(tags.get(key)).resourceType("auto-scaling-group")
+                               .resourceId(groupName).propagateAtLaunch(true).build();
             converted.add(tag);
         }
         return converted;
@@ -607,7 +624,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
     public void testClockSkewAs() {
         SdkGlobalTime.setGlobalTimeOffset(3600);
         AutoScalingClient clockSkewClient = AutoScalingClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
-        clockSkewClient.describePolicies(new DescribePoliciesRequest());
+        clockSkewClient.describePolicies(DescribePoliciesRequest.builder().build());
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

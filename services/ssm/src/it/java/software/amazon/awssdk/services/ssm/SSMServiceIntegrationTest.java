@@ -44,7 +44,7 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         try {
-            ssm.deleteDocument(new DeleteDocumentRequest().withName(DOCUMENT_NAME));
+            ssm.deleteDocument(DeleteDocumentRequest.builder().name(DOCUMENT_NAME).build());
         } catch (Exception e) {
             LOG.error("Failed to delete config document.", e);
         }
@@ -59,29 +59,29 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
     }
 
     private void testDescribeDocument() {
-        DescribeDocumentResult result = ssm.describeDocument(new DescribeDocumentRequest().withName(DOCUMENT_NAME));
-        assertNotNull(result.getDocument());
+        DescribeDocumentResult result = ssm.describeDocument(DescribeDocumentRequest.builder().name(DOCUMENT_NAME).build());
+        assertNotNull(result.document());
     }
 
     private void testCreateDocument(String docName, String docContent) {
 
         CreateDocumentResult createResult = ssm
-                .createDocument(new CreateDocumentRequest().withName(docName).withContent(docContent));
+                .createDocument(CreateDocumentRequest.builder().name(docName).content(docContent).build());
 
-        DocumentDescription description = createResult.getDocumentDescription();
+        DocumentDescription description = createResult.documentDescription();
 
-        assertEquals(docName, description.getName());
-        assertNotNull(description.getStatus());
-        assertNotNull(description.getCreatedDate());
+        assertEquals(docName, description.name());
+        assertNotNull(description.status());
+        assertNotNull(description.createdDate());
 
-        GetDocumentResult getResult = ssm.getDocument(new GetDocumentRequest().withName(docName));
+        GetDocumentResult getResult = ssm.getDocument(GetDocumentRequest.builder().name(docName).build());
 
-        assertEquals(DOCUMENT_NAME, getResult.getName());
-        assertEquals(docContent, getResult.getContent());
+        assertEquals(DOCUMENT_NAME, getResult.name());
+        assertEquals(docContent, getResult.content());
 
-        ListDocumentsResult listResult = ssm.listDocuments(new ListDocumentsRequest());
+        ListDocumentsResult listResult = ssm.listDocuments(ListDocumentsRequest.builder().build());
 
-        assertFalse("ListDocuments should at least returns one element", listResult.getDocumentIdentifiers().isEmpty());
+        assertFalse("ListDocuments should at least returns one element", listResult.documentIdentifiers().isEmpty());
 
     }
 

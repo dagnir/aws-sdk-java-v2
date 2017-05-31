@@ -94,7 +94,7 @@ public class RestJsonExceptionTests {
                         .willReturn(aResponse()
                                             .withStatus(404)
                                             .withHeader("x-amzn-ErrorType", "EmptyModeledException")));
-        assertThrowsException(() -> client.headOperation(new HeadOperationRequest()), EmptyModeledException.class);
+        assertThrowsException(() -> client.headOperation(HeadOperationRequest.builder().build()), EmptyModeledException.class);
     }
 
     @Test
@@ -103,23 +103,22 @@ public class RestJsonExceptionTests {
                         .willReturn(aResponse()
                                             .withStatus(404)
                                             .withHeader("x-amzn-ErrorType", "SomeUnknownType")));
-        assertThrowsServiceBaseException(() -> client.headOperation(new HeadOperationRequest()));
+        assertThrowsServiceBaseException(() -> client.headOperation(HeadOperationRequest.builder().build()));
     }
 
     @Test
     public void nullPathParam_ThrowsSdkClientException() {
-        assertThrowsSdkClientException(() -> client.multiLocationOperation(new MultiLocationOperationRequest()));
+        assertThrowsSdkClientException(() -> client.multiLocationOperation(MultiLocationOperationRequest.builder().build()));
     }
 
     @Test
     public void emptyPathParam_ThrowsSdkClientException() {
-        assertThrowsSdkClientException(() -> client.multiLocationOperation(
-                new MultiLocationOperationRequest().withPathParam("")));
+        assertThrowsSdkClientException(() -> client.multiLocationOperation(MultiLocationOperationRequest.builder().pathParam("").build()));
     }
 
 
     private void callAllTypes() {
-        client.allTypes(new AllTypesRequest());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {

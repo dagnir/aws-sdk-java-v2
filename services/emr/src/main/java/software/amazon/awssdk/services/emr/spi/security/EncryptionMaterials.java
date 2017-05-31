@@ -43,7 +43,7 @@ public class EncryptionMaterials implements Serializable {
      *
      * @return the symmetric key stored in this EncryptionMaterials object.
      */
-    public SecretKey getSymmetricKey() {
+    public SecretKey symmetricKey() {
         return this.symmetricKey;
     }
 

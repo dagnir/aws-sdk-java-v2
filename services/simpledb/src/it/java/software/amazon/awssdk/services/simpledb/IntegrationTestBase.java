@@ -142,7 +142,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         List<String> attributeNames = new ArrayList<String>();
         for (int i = 0; i < attributes.size(); i++) {
             ReplaceableAttribute attribute = (ReplaceableAttribute) attributes.get(i);
-            attributeNames.add(attribute.getName());
+            attributeNames.add(attribute.name());
         }
 
         return attributeNames;
@@ -152,8 +152,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         List<DeletableItem> deletableItems = new ArrayList<DeletableItem>();
         for (int i = 0; i < items.size(); i++) {
             ReplaceableItem replaceableItem = (ReplaceableItem) items.get(i);
-            deletableItems.add(new DeletableItem(replaceableItem.getName(), newAttributeList(replaceableItem
-                                                                                                     .getAttributes())));
+            deletableItems.add(DeletableItem.builder().name(replaceableItem.name()).attributes(newAttributeList(replaceableItem
+                                                                                                     .attributes())).build());
         }
 
         return deletableItems;
@@ -163,7 +163,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         List<Attribute> attributes = new ArrayList<Attribute>();
         for (int i = 0; i < replaceableAttributes.size(); i++) {
             ReplaceableAttribute replaceableAttribute = (ReplaceableAttribute) replaceableAttributes.get(i);
-            attributes.add(new Attribute(replaceableAttribute.getName(), replaceableAttribute.getValue()));
+            attributes.add(Attribute.builder().name(replaceableAttribute.name()).value(replaceableAttribute.value()).build());
         }
 
         return attributes;
@@ -173,8 +173,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      * Tries to delete the specified domain.
      */
     protected static void deleteDomain(String domainName) {
-        DeleteDomainRequest request = new DeleteDomainRequest();
-        sdb.deleteDomain(request.withDomainName(domainName));
+        DeleteDomainRequest request = DeleteDomainRequest.builder().domainName(domainName).build();
+        sdb.deleteDomain(request);
     }
 
     /**
@@ -182,8 +182,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      */
     protected boolean doesDomainExist(String domainName) {
         try {
-            DomainMetadataRequest request = new DomainMetadataRequest();
-            sdb.domainMetadata(request.withDomainName(domainName));
+            DomainMetadataRequest request = DomainMetadataRequest.builder().domainName(domainName).build();
+            sdb.domainMetadata(request);
             return true;
         } catch (NoSuchDomainException e) {
             return false;
@@ -194,8 +194,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      * Creates the specified domain.
      */
     protected void createDomain(String domainName) {
-        CreateDomainRequest request = new CreateDomainRequest();
-        sdb.createDomain(request.withDomainName(domainName));
+        CreateDomainRequest request = CreateDomainRequest.builder().domainName(domainName).build();
+        sdb.createDomain(request);
     }
 
     /**
@@ -217,12 +217,13 @@ public abstract class IntegrationTestBase extends AwsTestBase {
             // Ignored or expected.
         }
 
-        SelectRequest request = new SelectRequest();
-        request.setSelectExpression("select * from `" + domainName + "`");
-        request.setConsistentRead(Boolean.TRUE);
+        SelectRequest request = SelectRequest.builder()
+                .selectExpression("select * from `" + domainName + "`")
+                .consistentRead(Boolean.TRUE)
+                .build();
         SelectResult selectResult = sdb.select(request);
 
-        assertItemsPresent(expectedItems, selectResult.getItems());
+        assertItemsPresent(expectedItems, selectResult.items());
     }
 
     /**
@@ -271,7 +272,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
             /*
              * TODO: Eventually we'll want to handle multiple values for a single attribute.
              */
-            attributeValuesByName.put(attribute.getName(), attribute.getValue());
+            attributeValuesByName.put(attribute.name(), attribute.value());
         }
 
         return attributeValuesByName;
@@ -296,14 +297,15 @@ public abstract class IntegrationTestBase extends AwsTestBase {
                                                String itemName,
                                                String domainName,
                                                List<String> attributeNames) {
-        GetAttributesRequest request = new GetAttributesRequest();
-        request.setDomainName(domainName);
-        request.setAttributeNames(attributeNames);
-        request.setItemName(itemName);
-        request.setConsistentRead(Boolean.TRUE);
+        GetAttributesRequest request = GetAttributesRequest.builder()
+                .domainName(domainName)
+                .attributeNames(attributeNames)
+                .itemName(itemName)
+                .consistentRead(Boolean.TRUE)
+                .build();
 
         GetAttributesResult result = sdb.getAttributes(request);
-        Map<String, String> attributeValuesByName = convertAttributesToMap(result.getAttributes());
+        Map<String, String> attributeValuesByName = convertAttributesToMap(result.attributes());
 
         for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {
             String expectedAttributeName = (String) iterator.next();
@@ -332,7 +334,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
 
         for (Iterator iterator = items.iterator(); iterator.hasNext(); ) {
             Item item = (Item) iterator.next();
-            attributesByItemName.put(item.getName(), convertAttributesToMap(item.getAttributes()));
+            attributesByItemName.put(item.name(), convertAttributesToMap(item.attributes()));
         }
 
         return attributesByItemName;
@@ -354,14 +356,14 @@ public abstract class IntegrationTestBase extends AwsTestBase {
 
             Map<String, String> attributeValuesByName = new HashMap<String, String>();
 
-            for (Iterator attributeIterator = item.getAttributes().iterator(); attributeIterator.hasNext(); ) {
+            for (Iterator attributeIterator = item.attributes().iterator(); attributeIterator.hasNext(); ) {
                 ReplaceableAttribute attribute = (ReplaceableAttribute) attributeIterator.next();
 
                 // TODO: what about attributes with multiple values?
-                attributeValuesByName.put(attribute.getName(), attribute.getValue());
+                attributeValuesByName.put(attribute.name(), attribute.value());
             }
 
-            attributesByItemName.put(item.getName(), attributeValuesByName);
+            attributesByItemName.put(item.name(), attributeValuesByName);
         }
 
         return attributesByItemName;

@@ -32,7 +32,7 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
@@ -59,15 +59,15 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, new AttributeValue().withS("" + start++));
-            attr.put(INTEGER_ATTRIBUTE, new AttributeValue().withNS("" + start++, "" + start++, "" + start++));
-            attr.put(FLOAT_OBJECT_ATTRIBUTE, new AttributeValue().withNS("" + start++, "" + start++, "" + start++));
-            attr.put(DOUBLE_OBJECT_ATTRIBUTE, new AttributeValue().withNS("" + start++, "" + start++, "" + start++));
-            attr.put(BIG_INTEGER_ATTRIBUTE, new AttributeValue().withNS("" + start++, "" + start++, "" + start++));
-            attr.put(BIG_DECIMAL_ATTRIBUTE, new AttributeValue().withNS("" + start++, "" + start++, "" + start++));
-            attr.put(LONG_OBJECT_ATTRIBUTE, new AttributeValue().withNS("" + start++, "" + start++, "" + start++));
-            attr.put(BYTE_OBJECT_ATTRIBUTE, new AttributeValue().withNS("" + byteStart++, "" + byteStart++, "" + byteStart++));
-            attr.put(BOOLEAN_ATTRIBUTE, new AttributeValue().withNS("0", "1"));
+            attr.put(KEY_NAME, AttributeValue.builder().s("" + start++).build());
+            attr.put(INTEGER_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(FLOAT_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(DOUBLE_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(BIG_INTEGER_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(BIG_DECIMAL_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(LONG_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + start++, "" + start++, "" + start++).build());
+            attr.put(BYTE_OBJECT_ATTRIBUTE, AttributeValue.builder().ns("" + byteStart++, "" + byteStart++, "" + byteStart++).build());
+            attr.put(BOOLEAN_ATTRIBUTE, AttributeValue.builder().ns("0", "1").build());
             attrs.add(attr);
         }
     }
@@ -80,27 +80,27 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(new PutItemRequest(TABLE_NAME, attr));
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(attr).build());
         }
     }
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
-            NumberSetAttributeClass x = util.load(NumberSetAttributeClass.class, attr.get(KEY_NAME).getS());
-            assertEquals(x.getKey(), attr.get(KEY_NAME).getS());
+            NumberSetAttributeClass x = util.load(NumberSetAttributeClass.class, attr.get(KEY_NAME).s());
+            assertEquals(x.getKey(), attr.get(KEY_NAME).s());
 
             // Convert all numbers to the most inclusive type for easy comparison
-            assertNumericSetsEquals(x.getBigDecimalAttribute(), attr.get(BIG_DECIMAL_ATTRIBUTE).getNS());
-            assertNumericSetsEquals(x.getBigIntegerAttribute(), attr.get(BIG_INTEGER_ATTRIBUTE).getNS());
-            assertNumericSetsEquals(x.getFloatObjectAttribute(), attr.get(FLOAT_OBJECT_ATTRIBUTE).getNS());
-            assertNumericSetsEquals(x.getDoubleObjectAttribute(), attr.get(DOUBLE_OBJECT_ATTRIBUTE).getNS());
-            assertNumericSetsEquals(x.getIntegerAttribute(), attr.get(INTEGER_ATTRIBUTE).getNS());
-            assertNumericSetsEquals(x.getLongObjectAttribute(), attr.get(LONG_OBJECT_ATTRIBUTE).getNS());
-            assertNumericSetsEquals(x.getByteObjectAttribute(), attr.get(BYTE_OBJECT_ATTRIBUTE).getNS());
-            assertSetsEqual(toSet("0", "1"), attr.get(BOOLEAN_ATTRIBUTE).getNS());
+            assertNumericSetsEquals(x.bigDecimalAttribute(), attr.get(BIG_DECIMAL_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.bigIntegerAttribute(), attr.get(BIG_INTEGER_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.getFloatObjectAttribute(), attr.get(FLOAT_OBJECT_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.getDoubleObjectAttribute(), attr.get(DOUBLE_OBJECT_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.getIntegerAttribute(), attr.get(INTEGER_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.longObjectAttribute(), attr.get(LONG_OBJECT_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.byteObjectAttribute(), attr.get(BYTE_OBJECT_ATTRIBUTE).ns());
+            assertSetsEqual(toSet("0", "1"), attr.get(BOOLEAN_ATTRIBUTE).ns());
         }
     }
 
@@ -112,7 +112,7 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (NumberSetAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -131,7 +131,7 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (NumberSetAttributeClass obj : objs) {
             util.save(obj);
         }

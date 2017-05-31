@@ -33,14 +33,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.ConversionSchema;
 import software.amazon.awssdk.services.dynamodb.datamodeling.ConversionSchemas;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperFieldModel;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMappingException;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTyped;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperFieldModel;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMappingException;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTyped;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbNativeBoolean;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
@@ -63,37 +64,37 @@ public class V2CompatibleBooleansTest {
     /**
      * Mapper with default config.
      */
-    private DynamoDBMapper defaultMapper;
+    private DynamoDbMapper defaultMapper;
 
     /**
      * Mapper explicitly using {@link ConversionSchemas#V2_COMPATIBLE}
      */
-    private DynamoDBMapper v2CompatMapper;
+    private DynamoDbMapper v2CompatMapper;
 
     /**
      * Mapper explicitly using {@link ConversionSchemas#V1}
      */
-    private DynamoDBMapper v1Mapper;
+    private DynamoDbMapper v1Mapper;
 
     /**
      * Mapper explicitly using {@link ConversionSchemas#V2}
      */
-    private DynamoDBMapper v2Mapper;
+    private DynamoDbMapper v2Mapper;
 
     @Before
     public void setup() {
-        defaultMapper = new DynamoDBMapper(ddb);
+        defaultMapper = new DynamoDbMapper(ddb);
         v2CompatMapper = buildMapper(ConversionSchemas.V2_COMPATIBLE);
         v1Mapper = buildMapper(ConversionSchemas.V1);
         v2Mapper = buildMapper(ConversionSchemas.V2);
         // Just stub dummy response for all save related tests
-        when(ddb.updateItem(any(UpdateItemRequest.class))).thenReturn(new UpdateItemResult());
+        when(ddb.updateItem(any(UpdateItemRequest.class))).thenReturn(UpdateItemResult.builder().build());
     }
 
-    private DynamoDBMapper buildMapper(ConversionSchema schema) {
-        return new DynamoDBMapper(ddb, DynamoDBMapperConfig.builder()
-                                                           .withConversionSchema(schema)
-                                                           .build());
+    private DynamoDbMapper buildMapper(ConversionSchema schema) {
+        return new DynamoDbMapper(ddb, DynamoDbMapperConfig.builder()
+                .withConversionSchema(schema)
+                .build());
     }
 
     /**
@@ -102,29 +103,29 @@ public class V2CompatibleBooleansTest {
     @Test
     public void saveBooleanUsingDefaultConverters_MarshallsIntoNumber() {
         defaultMapper.save(new UnitTestPojo().setHashKey(HASH_KEY).setBooleanAttr(true));
-        verifyAttributeUpdatedWithValue("booleanAttr", new AttributeValue().withN("1"));
+        verifyAttributeUpdatedWithValue("booleanAttr", AttributeValue.builder().n("1").build());
     }
 
     @Test
     public void saveBooleanUsingV1Schema_MarshallsIntoNumber() {
         v1Mapper.save(new UnitTestPojo().setHashKey(HASH_KEY).setBooleanAttr(true));
-        verifyAttributeUpdatedWithValue("booleanAttr", new AttributeValue().withN("1"));
+        verifyAttributeUpdatedWithValue("booleanAttr", AttributeValue.builder().n("1").build());
     }
 
     @Test
     public void saveBooleanUsingV2Compat_MarshallsIntoNumber() {
         v2CompatMapper.save(new UnitTestPojo().setHashKey(HASH_KEY).setBooleanAttr(true));
-        verifyAttributeUpdatedWithValue("booleanAttr", new AttributeValue().withN("1"));
+        verifyAttributeUpdatedWithValue("booleanAttr", AttributeValue.builder().n("1").build());
     }
 
     @Test
     public void saveBooleanUsingV2Schema_MarshallsIntoNativeBool() {
         v2Mapper.save(new UnitTestPojo().setHashKey(HASH_KEY).setBooleanAttr(true));
-        verifyAttributeUpdatedWithValue("booleanAttr", new AttributeValue().withBOOL(true));
+        verifyAttributeUpdatedWithValue("booleanAttr", AttributeValue.builder().bool(true).build());
     }
 
     /**
-     * {@link software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBNativeBoolean} or {@link DynamoDBTyped} can force
+     * {@link DynamoDbNativeBoolean} or {@link DynamoDbTyped} can force
      * native
      * boolean marshalling.
      */
@@ -148,13 +149,13 @@ public class V2CompatibleBooleansTest {
         saveCoercedNativeBoolean_MarshallsIntoNativeBoolean(v2Mapper);
     }
 
-    private void saveCoercedNativeBoolean_MarshallsIntoNativeBoolean(DynamoDBMapper mapper) {
+    private void saveCoercedNativeBoolean_MarshallsIntoNativeBoolean(DynamoDbMapper mapper) {
         mapper.save(new UnitTestPojo().setNativeBoolean(true).setHashKey(HASH_KEY));
-        verifyAttributeUpdatedWithValue("nativeBoolean", new AttributeValue().withBOOL(true));
+        verifyAttributeUpdatedWithValue("nativeBoolean", AttributeValue.builder().bool(true).build());
     }
 
     /**
-     * {@link DynamoDBTyped} can force numeric boolean conversion even when using V2 schema.
+     * {@link DynamoDbTyped} can force numeric boolean conversion even when using V2 schema.
      */
     @Test
     public void saveCoercedNumericBooleanUsingDefaultConverters_MarshallsIntoNumericBool() {
@@ -176,18 +177,21 @@ public class V2CompatibleBooleansTest {
         saveCoercedNumericBoolean_MarshallsIntoNumericBoolean(v2Mapper);
     }
 
-    private void saveCoercedNumericBoolean_MarshallsIntoNumericBoolean(DynamoDBMapper mapper) {
+    private void saveCoercedNumericBoolean_MarshallsIntoNumericBoolean(DynamoDbMapper mapper) {
         mapper.save(new UnitTestPojo().setNumericBoolean(true).setHashKey(HASH_KEY));
-        verifyAttributeUpdatedWithValue("numericBoolean", new AttributeValue().withN("1"));
+        verifyAttributeUpdatedWithValue("numericBoolean", AttributeValue.builder().n("1").build());
     }
 
     @Test
     public void saveBooleanListUsingDefaultConverters_MarshallsIntoListOfNumbers() {
         defaultMapper.save(new UnitTestPojoWithList()
-                                   .setBooleanList(Arrays.asList(Boolean.FALSE, Boolean.TRUE))
-                                   .setHashKey(HASH_KEY));
-        verifyAttributeUpdatedWithValue("booleanList", new AttributeValue().withL(new AttributeValue().withN("0"),
-                                                                                  new AttributeValue().withN("1")));
+                .setBooleanList(Arrays.asList(Boolean.FALSE, Boolean.TRUE))
+                .setHashKey(HASH_KEY));
+        verifyAttributeUpdatedWithValue("booleanList", AttributeValue.builder()
+                .l(
+                        AttributeValue.builder().n("0").build(),
+                        AttributeValue.builder().n("1").build())
+                .build());
     }
 
     /**
@@ -199,82 +203,84 @@ public class V2CompatibleBooleansTest {
     private void verifyAttributeUpdatedWithValue(String attributeName, AttributeValue expected) {
         ArgumentCaptor<UpdateItemRequest> updateItemRequestCaptor = ArgumentCaptor.forClass(UpdateItemRequest.class);
         verify(ddb).updateItem(updateItemRequestCaptor.capture());
-        assertEquals(expected, updateItemRequestCaptor.getValue().getAttributeUpdates().get(attributeName).getValue());
+        assertEquals(expected, updateItemRequestCaptor.getValue().attributeUpdates().get(attributeName).value());
     }
 
     @Test
     public void loadNumericBooleanUsingDefaultConverters_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withN("1"));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().n("1").build());
         final UnitTestPojo pojo = loadPojo(defaultMapper);
         assertTrue(pojo.getBooleanAttr());
     }
 
     @Test
     public void loadNumericBooleanUsingV1Schema_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withN("1"));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().n("1").build());
         final UnitTestPojo pojo = loadPojo(v1Mapper);
         assertTrue(pojo.getBooleanAttr());
     }
 
     @Test
     public void loadNumericBooleanUsingV2CompatSchema_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withN("1"));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().n("1").build());
         final UnitTestPojo pojo = loadPojo(v2CompatMapper);
         assertTrue(pojo.getBooleanAttr());
     }
 
     @Test
     public void loadNumericBooleanUsingV2_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withN("1"));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().n("1").build());
         final UnitTestPojo pojo = loadPojo(v2Mapper);
         assertTrue(pojo.getBooleanAttr());
     }
 
     @Test
     public void loadNativeBooleanUsingDefaultConverters_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withBOOL(true));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().bool(true).build());
         final UnitTestPojo pojo = loadPojo(defaultMapper);
         assertTrue(pojo.getBooleanAttr());
     }
-
+//
     /**
      * V1 schema does not handle native bool types by default
      */
-    @Test(expected = DynamoDBMappingException.class)
+    @Test(expected = DynamoDbMappingException.class)
     public void loadNativeBooleanUsingV1Schema_FailsToUnmarshall() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withBOOL(true));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().bool(true).build());
         loadPojo(v1Mapper);
     }
 
     /**
-     * Native bool support can be forced in V1 schema with @{@link DynamoDBTyped}.
+     * Native bool support can be forced in V1 schema with @{@link DynamoDbTyped}.
      */
     @Test
     public void loadCoercedNativeBooleanUsingV1Schema_UnmarshallsCorrectly() {
-        stubGetItemRequest("nativeBoolean", new AttributeValue().withBOOL(true));
+        stubGetItemRequest("nativeBoolean", AttributeValue.builder().bool(true).build());
         final UnitTestPojo pojo = loadPojo(v1Mapper);
         assertTrue(pojo.getNativeBoolean());
     }
 
     @Test
     public void loadNativeBooleanUsingV2CompatSchema_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withBOOL(true));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().bool(true).build());
         final UnitTestPojo pojo = loadPojo(v2CompatMapper);
         assertTrue(pojo.getBooleanAttr());
     }
 
     @Test
     public void loadNativeBooleanUsingV2_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanAttr", new AttributeValue().withBOOL(true));
+        stubGetItemRequest("booleanAttr", AttributeValue.builder().bool(true).build());
         final UnitTestPojo pojo = loadPojo(v2Mapper);
         assertTrue(pojo.getBooleanAttr());
     }
 
     @Test
     public void loadNativeBooleanListUsingDefaultConverters_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanList", new AttributeValue()
-                .withL(new AttributeValue().withBOOL(true),
-                       new AttributeValue().withBOOL(false)));
+        stubGetItemRequest("booleanList", AttributeValue.builder()
+                .l(
+                        AttributeValue.builder().bool(true).build(),
+                        AttributeValue.builder().bool(false).build()
+                ).build());
         final UnitTestPojoWithList pojo = loadListPojo(defaultMapper);
 
         assertTrue(pojo.getBooleanList().get(0));
@@ -283,22 +289,24 @@ public class V2CompatibleBooleansTest {
 
     @Test
     public void loadNumericBooleanListUsingDefaultConverters_UnmarshallsCorrectly() {
-        stubGetItemRequest("booleanList", new AttributeValue()
-                .withL(new AttributeValue().withN("1"),
-                       new AttributeValue().withN("0")));
+        stubGetItemRequest("booleanList", AttributeValue.builder()
+                .l(
+                        AttributeValue.builder().n("1").build(),
+                        AttributeValue.builder().n("0").build()
+                ).build());
         final UnitTestPojoWithList pojo = loadListPojo(defaultMapper);
 
         assertTrue(pojo.getBooleanList().get(0));
         assertFalse(pojo.getBooleanList().get(1));
     }
 
-    private UnitTestPojoWithList loadListPojo(DynamoDBMapper mapper) {
+    private UnitTestPojoWithList loadListPojo(DynamoDbMapper mapper) {
         UnitTestPojoWithList pojo = new UnitTestPojoWithList();
         pojo.setHashKey(HASH_KEY);
         return mapper.load(pojo);
     }
 
-    private UnitTestPojo loadPojo(DynamoDBMapper mapper) {
+    private UnitTestPojo loadPojo(DynamoDbMapper mapper) {
         return mapper.load(new UnitTestPojo().setHashKey(HASH_KEY));
     }
 
@@ -319,24 +327,24 @@ public class V2CompatibleBooleansTest {
      * @param attributeValue Value of additional attribute.
      */
     private GetItemResult createGetItemResult(String attributeName, AttributeValue attributeValue) {
-        return new GetItemResult().withItem(
-                ImmutableMapParameter.of("hashKey", new AttributeValue(HASH_KEY),
-                                         attributeName, attributeValue));
+        return GetItemResult.builder().item(
+                ImmutableMapParameter.of("hashKey", AttributeValue.builder().s(HASH_KEY).build(),
+                        attributeName, attributeValue)).build();
     }
 
-    @DynamoDBTable(tableName = "UnitTestTable")
+    @DynamoDbTable(tableName = "UnitTestTable")
     public static class UnitTestPojo {
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         private String hashKey;
 
-        @DynamoDBAttribute
+        @DynamoDbAttribute
         private Boolean booleanAttr;
 
-        @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.BOOL)
+        @DynamoDbTyped(DynamoDbMapperFieldModel.DynamoDbAttributeType.BOOL)
         private Boolean nativeBoolean;
 
-        @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
+        @DynamoDbTyped(DynamoDbMapperFieldModel.DynamoDbAttributeType.N)
         private Boolean numericBoolean;
 
 
@@ -380,7 +388,7 @@ public class V2CompatibleBooleansTest {
 
     public static class UnitTestPojoWithList extends UnitTestPojo {
 
-        @DynamoDBAttribute
+        @DynamoDbAttribute
         private List<Boolean> booleanList;
 
         public List<Boolean> getBooleanList() {

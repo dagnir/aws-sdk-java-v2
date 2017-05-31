@@ -60,11 +60,13 @@ public class KmsClientTestExtensions {
     public String getNonDefaultKeyId() {
         String keyId = findKeyIdByAlias(NON_DEFAULT_KEY_ALIAS);
         if (keyId == null) {
-            CreateKeyResult result = client.createKey(new CreateKeyRequest()
-                                                       .withDescription("KMS key used for S3 Integration tests"));
-            client.createAlias(new CreateAliasRequest().withTargetKeyId(result.getKeyMetadata().getKeyId()).withAliasName(
-                    NON_DEFAULT_KEY_ALIAS));
-            return result.getKeyMetadata().getKeyId();
+            CreateKeyResult result = client.createKey(CreateKeyRequest.builder()
+                    .description("KMS key used for S3 Integration tests")
+                    .build());
+            client.createAlias(CreateAliasRequest.builder()
+                    .targetKeyId(result.keyMetadata().keyId())
+                    .aliasName(NON_DEFAULT_KEY_ALIAS).build());
+            return result.keyMetadata().keyId();
         } else {
             return keyId;
         }
@@ -79,7 +81,7 @@ public class KmsClientTestExtensions {
      */
     public String findKeyIdByAlias(String keyAlias) {
         try {
-            return client.describeKey(new DescribeKeyRequest().withKeyId(keyAlias)).getKeyMetadata().getKeyId();
+            return client.describeKey(DescribeKeyRequest.builder().keyId(keyAlias).build()).keyMetadata().keyId();
         } catch (NotFoundException e) {
             return null;
         }

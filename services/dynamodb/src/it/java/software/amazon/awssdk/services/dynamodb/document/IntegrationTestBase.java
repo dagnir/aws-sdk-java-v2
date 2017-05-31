@@ -58,17 +58,18 @@ public class IntegrationTestBase {
     protected static final String GSI_RANGE_KEY_NAME = "gsiRangekeyAttr";
     // attribute names for the LSI keys (Note an LSI must share the same hash key as the table.)
     protected static final String LSI_RANGE_KEY_NAME = "lsiRangekeyAttr";
-    private static final ProvisionedThroughput THRUPUT = new ProvisionedThroughput(1L, 2L);
-    private static final Projection PROJECTION = new Projection().withProjectionType(ProjectionType.ALL);
-    protected static DynamoDB dynamo;
-    protected static DynamoDB dynamoOld;
+    private static final ProvisionedThroughput THRUPUT = ProvisionedThroughput.builder()
+            .readCapacityUnits(1L).writeCapacityUnits(2L).build();
+    private static final Projection PROJECTION = Projection.builder().projectionType(ProjectionType.ALL).build();
+    protected static DynamoDb dynamo;
+    protected static DynamoDb dynamoOld;
 
     //    private static final boolean IS_SERVICE_BUILDER_USED = false;
     @BeforeClass
     public static void setup() throws InterruptedException {
-        dynamoOld = new DynamoDB(DynamoDBClient.builder().credentialsProvider(new StaticCredentialsProvider(awsTestCredentials())).build());
+        dynamoOld = new DynamoDb(DynamoDBClient.builder().credentialsProvider(new StaticCredentialsProvider(awsTestCredentials())).build());
         DynamoDBClient client = DynamoDBClient.builder().credentialsProvider(new StaticCredentialsProvider(awsTestCredentials())).build();
-        dynamo = new DynamoDB(client);
+        dynamo = new DynamoDb(client);
         createTable_hashKeyOnly();
         createTable_rangeKey();
     }
@@ -82,32 +83,55 @@ public class IntegrationTestBase {
     // Creates a hashkey only table with 2 GSI,
     // one hashkey only, the other hashkey and rangekey
     private static void createTable_hashKeyOnly() throws InterruptedException {
-        DynamoDB[] ddbs = {dynamo, dynamoOld};
-        for (DynamoDB ddb : ddbs) {
+        DynamoDb[] ddbs = {dynamo, dynamoOld};
+        for (DynamoDb ddb : ddbs) {
             Table table = ddb.getTable(HASH_ONLY_TABLE_NAME);
             TableDescription desc = table.waitForActiveOrDelete();
             if (desc == null) {
                 // table doesn't exist; let's create it
-                ddb.createTable(new CreateTableRequest()
-                                        .withTableName(HASH_ONLY_TABLE_NAME)
-                                        .withAttributeDefinitions(
-                                                new AttributeDefinition(HASH_KEY_NAME, ScalarAttributeType.S),
-                                                new AttributeDefinition(GSI_HASH_KEY_NAME, ScalarAttributeType.S),
-                                                new AttributeDefinition(GSI_RANGE_KEY_NAME, ScalarAttributeType.N)
-                                                                 )
-                                        .withKeySchema(new KeySchemaElement(HASH_KEY_NAME, KeyType.HASH))
-                                        .withGlobalSecondaryIndexes(
-                                                new GlobalSecondaryIndex().withIndexName(HASH_ONLY_GSI_NAME)
-                                                                          .withKeySchema(new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH))
-                                                                          .withProjection(PROJECTION)
-                                                                          .withProvisionedThroughput(THRUPUT),
-                                                new GlobalSecondaryIndex().withIndexName(RANGE_GSI_NAME)
-                                                                          .withKeySchema(
-                                                                                  new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH),
-                                                                                  new KeySchemaElement(GSI_RANGE_KEY_NAME, KeyType.RANGE))
-                                                                          .withProjection(PROJECTION)
-                                                                          .withProvisionedThroughput(THRUPUT)
-                                                                   ).withProvisionedThroughput(THRUPUT));
+                ddb.createTable(CreateTableRequest.builder()
+                        .tableName(HASH_ONLY_TABLE_NAME)
+                        .attributeDefinitions(
+                                AttributeDefinition.builder()
+                                        .attributeName(HASH_KEY_NAME)
+                                        .attributeType(ScalarAttributeType.S)
+                                        .build(),
+                                AttributeDefinition.builder()
+                                        .attributeName(GSI_HASH_KEY_NAME)
+                                        .attributeType(ScalarAttributeType.S)
+                                        .build(),
+                                AttributeDefinition.builder()
+                                        .attributeName(GSI_RANGE_KEY_NAME)
+                                        .attributeType(ScalarAttributeType.N)
+                                        .build())
+                        .keySchema(KeySchemaElement.builder()
+                                .attributeName(HASH_KEY_NAME)
+                                .keyType(KeyType.HASH)
+                                .build())
+                        .globalSecondaryIndexes(
+                                GlobalSecondaryIndex.builder()
+                                        .indexName(HASH_ONLY_GSI_NAME)
+                                        .keySchema(KeySchemaElement.builder()
+                                                .attributeName(GSI_HASH_KEY_NAME)
+                                                .keyType(KeyType.HASH)
+                                                .build())
+                                        .projection(PROJECTION)
+                                        .provisionedThroughput(THRUPUT).build(),
+                                GlobalSecondaryIndex.builder()
+                                        .indexName(RANGE_GSI_NAME)
+                                        .keySchema(KeySchemaElement.builder()
+                                                        .attributeName(GSI_HASH_KEY_NAME)
+                                                        .keyType(KeyType.HASH)
+                                                        .build(),
+                                                KeySchemaElement.builder()
+                                                        .attributeName(GSI_RANGE_KEY_NAME)
+                                                        .keyType(KeyType.RANGE)
+                                                        .build())
+                                        .projection(PROJECTION)
+                                        .provisionedThroughput(THRUPUT)
+                                        .build())
+                        .provisionedThroughput(THRUPUT)
+                        .build());
                 // waits until table becomes active
                 table.waitForActive();
             }
@@ -118,46 +142,48 @@ public class IntegrationTestBase {
     // (one hashkey only, the other hashkey and rangekey)
     // and an LSI (which must have a rangekey and share the hashkey with the table)
     private static void createTable_rangeKey() throws InterruptedException {
-        DynamoDB[] ddbs = {dynamo, dynamoOld};
-        for (DynamoDB ddb : ddbs) {
+        DynamoDb[] ddbs = {dynamo, dynamoOld};
+        for (DynamoDb ddb : ddbs) {
             Table table = ddb.getTable(RANGE_TABLE_NAME);
             TableDescription desc = table.waitForActiveOrDelete();
             if (desc == null) {
                 // table doesn't exist; let's create it
-                CreateTableRequest req = new CreateTableRequest()
-                        .withTableName(RANGE_TABLE_NAME)
-                        .withAttributeDefinitions(
-                                new AttributeDefinition(HASH_KEY_NAME, ScalarAttributeType.S),
-                                new AttributeDefinition(RANGE_KEY_NAME, ScalarAttributeType.N),
-                                new AttributeDefinition(LSI_RANGE_KEY_NAME, ScalarAttributeType.N),
-                                new AttributeDefinition(GSI_HASH_KEY_NAME, ScalarAttributeType.S),
-                                new AttributeDefinition(GSI_RANGE_KEY_NAME, ScalarAttributeType.N)
-                                                 )
-                        .withKeySchema(
-                                new KeySchemaElement(HASH_KEY_NAME, KeyType.HASH),
-                                new KeySchemaElement(RANGE_KEY_NAME, KeyType.RANGE))
-                        .withProvisionedThroughput(THRUPUT)
-                        .withGlobalSecondaryIndexes(
-                                new GlobalSecondaryIndex()
-                                        .withIndexName(HASH_ONLY_GSI_NAME)
-                                        .withKeySchema(new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH))
-                                        .withProjection(PROJECTION)
-                                        .withProvisionedThroughput(THRUPUT),
-                                new GlobalSecondaryIndex()
-                                        .withIndexName(RANGE_GSI_NAME)
-                                        .withKeySchema(
-                                                new KeySchemaElement(GSI_HASH_KEY_NAME, KeyType.HASH),
-                                                new KeySchemaElement(GSI_RANGE_KEY_NAME, KeyType.RANGE))
-                                        .withProjection(PROJECTION)
-                                        .withProvisionedThroughput(THRUPUT))
-                        .withLocalSecondaryIndexes(
-                                new LocalSecondaryIndex()
-                                        .withIndexName(LSI_NAME)
-                                        .withKeySchema(
-                                                new KeySchemaElement(HASH_KEY_NAME, KeyType.HASH),
-                                                new KeySchemaElement(LSI_RANGE_KEY_NAME, KeyType.RANGE))
-                                        .withProjection(PROJECTION)
-                                                  );
+                CreateTableRequest req = CreateTableRequest.builder()
+                        .tableName(RANGE_TABLE_NAME)
+                        .attributeDefinitions(
+                                AttributeDefinition.builder().attributeName(HASH_KEY_NAME).attributeType(ScalarAttributeType.S).build(),
+                                AttributeDefinition.builder().attributeName(RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build(),
+                                AttributeDefinition.builder().attributeName(LSI_RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build(),
+                                AttributeDefinition.builder().attributeName(GSI_HASH_KEY_NAME).attributeType(ScalarAttributeType.S).build(),
+                                AttributeDefinition.builder().attributeName(GSI_RANGE_KEY_NAME).attributeType(ScalarAttributeType.N).build()
+                        )
+                        .keySchema(
+                                KeySchemaElement.builder().attributeName(HASH_KEY_NAME).keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName(RANGE_KEY_NAME).keyType(KeyType.RANGE).build())
+                        .provisionedThroughput(THRUPUT)
+                        .globalSecondaryIndexes(
+                                GlobalSecondaryIndex.builder()
+                                        .indexName(HASH_ONLY_GSI_NAME)
+                                        .keySchema(KeySchemaElement.builder().attributeName(GSI_HASH_KEY_NAME).keyType(KeyType.HASH).build())
+                                        .projection(PROJECTION)
+                                        .provisionedThroughput(THRUPUT)
+                                        .build(),
+                                GlobalSecondaryIndex.builder()
+                                        .indexName(RANGE_GSI_NAME)
+                                        .keySchema(
+                                                KeySchemaElement.builder().attributeName(GSI_HASH_KEY_NAME).keyType(KeyType.HASH).build(),
+                                                KeySchemaElement.builder().attributeName(GSI_RANGE_KEY_NAME).keyType(KeyType.RANGE).build())
+                                        .projection(PROJECTION)
+                                        .provisionedThroughput(THRUPUT)
+                                        .build())
+                        .localSecondaryIndexes(
+                                LocalSecondaryIndex.builder()
+                                        .indexName(LSI_NAME)
+                                        .keySchema(
+                                                KeySchemaElement.builder().attributeName(HASH_KEY_NAME).keyType(KeyType.HASH).build(),
+                                                KeySchemaElement.builder().attributeName(LSI_RANGE_KEY_NAME).keyType(KeyType.RANGE).build())
+                                        .projection(PROJECTION).build()
+                                                  ).build();
                 ddb.createTable(req);
                 // waits until table becomes active
                 table.waitForActive();
@@ -182,7 +208,7 @@ public class IntegrationTestBase {
         Assert.assertTrue("Expect " + greater + " > " + less, greater > less);
     }
 
-    protected void putDataToRangeTable(DynamoDB dynamo, String hashKeyValue,
+    protected void putDataToRangeTable(DynamoDb dynamo, String hashKeyValue,
                                        int rangeKeyValueFrom, int rangeKeyValueTo) {
         Table table = dynamo.getTable(RANGE_TABLE_NAME);
         Item item = new Item()

@@ -41,7 +41,7 @@ public class GetItemOutcome {
      */
     public Item getItem() {
         Map<String, Object> attributes =
-                InternalUtils.toSimpleMapValue(result.getItem());
+                InternalUtils.toSimpleMapValue(result.item());
         Item item = Item.fromMap(attributes);
         return item;
     }

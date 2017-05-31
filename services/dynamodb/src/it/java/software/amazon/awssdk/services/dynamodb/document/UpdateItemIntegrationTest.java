@@ -31,7 +31,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.ProfileCredentialsProvider;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.spec.GetItemSpec;
 import software.amazon.awssdk.services.dynamodb.document.utils.NameMap;
@@ -52,7 +51,7 @@ public class UpdateItemIntegrationTest {
     private static final Long FIRST_CUSTOMER_ID = 1000L;
     private static final String ADDRESS_TYPE_HOME = "home";
     private static final String ADDRESS_TYPE_WORK = "work";
-    private static DynamoDB dynamoDb;
+    private static DynamoDb dynamoDb;
     private static String TABLE_NAME = "UpdateItemIntegrationTest";
     private static String HASH_KEY = "customer_id";
     private static String RANGE_KEY = "address_type";
@@ -62,7 +61,7 @@ public class UpdateItemIntegrationTest {
         DynamoDBClient client = DynamoDBClient.builder()
                                               .credentialsProvider(AwsIntegrationTestBase.CREDENTIALS_PROVIDER_CHAIN)
                                               .build();
-        dynamoDb = new DynamoDB(client);
+        dynamoDb = new DynamoDb(client);
 
         createTable();
         fillInData();
@@ -74,16 +73,18 @@ public class UpdateItemIntegrationTest {
         if (desc == null) {
             // table doesn't exist; let's create it
             KeySchemaElement hashKey =
-                    new KeySchemaElement(HASH_KEY, KeyType.HASH);
+                    KeySchemaElement.builder().attributeName(HASH_KEY).keyType(KeyType.HASH).build();
             KeySchemaElement rangeKey =
-                    new KeySchemaElement(RANGE_KEY, KeyType.RANGE);
-            CreateTableRequest createTableRequest =
-                    new CreateTableRequest(TABLE_NAME, Arrays.asList(hashKey, rangeKey))
-                            .withAttributeDefinitions(
-                                    new AttributeDefinition(HASH_KEY, ScalarAttributeType.N),
-                                    new AttributeDefinition(RANGE_KEY, ScalarAttributeType.S))
-                            .withProvisionedThroughput(
-                                    new ProvisionedThroughput(READ_CAPACITY, WRITE_CAPACITY));
+                    KeySchemaElement.builder().attributeName(RANGE_KEY).keyType(KeyType.RANGE).build();
+            CreateTableRequest createTableRequest = CreateTableRequest.builder().
+                    tableName(TABLE_NAME)
+                    .keySchema(Arrays.asList(hashKey, rangeKey))
+                    .attributeDefinitions(
+                                    AttributeDefinition.builder().attributeName(HASH_KEY).attributeType(ScalarAttributeType.N).build(),
+                                    AttributeDefinition.builder().attributeName(RANGE_KEY).attributeType(ScalarAttributeType.S).build())
+                    .provisionedThroughput(
+                                    ProvisionedThroughput.builder().readCapacityUnits(READ_CAPACITY).writeCapacityUnits(WRITE_CAPACITY).build())
+                    .build();
             table = dynamoDb.createTable(createTableRequest);
             table.waitForActive();
         }

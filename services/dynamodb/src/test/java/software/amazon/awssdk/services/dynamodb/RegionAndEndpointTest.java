@@ -37,11 +37,11 @@ public class RegionAndEndpointTest {
 //
 //        Assert.assertEquals(endpoint, client.getEndpointHost());
 //
-//        Aws4Signer signer = client.getSigner();
-//        Assert.assertEquals(DYNAMODB, signer.getServiceName());
+//        Aws4Signer signer = client.signer();
+//        Assert.assertEquals(DYNAMODB, signer.serviceName());
 //        // Current don't have a better way to verify the signer region
 //        Assert.assertEquals(US_WEST_2,
-//                            AwsHostNameUtils.parseRegionName(endpoint, signer.getServiceName()));
+//                            AwsHostNameUtils.parseRegionName(endpoint, signer.serviceName()));
 //    }
 //
 //    @Test
@@ -54,8 +54,8 @@ public class RegionAndEndpointTest {
 //
 //        Assert.assertEquals(endpoint, client.getEndpointHost());
 //
-//        Aws4Signer signer = client.getSigner();
-//        Assert.assertEquals(DYNAMODB, signer.getServiceName());
+//        Aws4Signer signer = client.signer();
+//        Assert.assertEquals(DYNAMODB, signer.serviceName());
 //        Assert.assertEquals("non-standard-region", signer.getRegionName());
 //    }
 //
@@ -67,11 +67,11 @@ public class RegionAndEndpointTest {
 //
 //        Assert.assertEquals("streams.dynamodb.us-west-2.amazonaws.com", client.getEndpointHost());
 //
-//        Aws4Signer signer = client.getSigner();
-//        Assert.assertEquals(DYNAMODB, signer.getServiceName());
+//        Aws4Signer signer = client.signer();
+//        Assert.assertEquals(DYNAMODB, signer.serviceName());
 //        // Current don't have a better way to verify the signer region
 //        Assert.assertEquals(US_WEST_2,
-//                            AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.getServiceName()));
+//                            AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.serviceName()));
 //    }
 //
 //    @Test
@@ -82,11 +82,11 @@ public class RegionAndEndpointTest {
 //
 //        Assert.assertEquals("streams.dynamodb.cn-north-1.amazonaws.com.cn", client.getEndpointHost());
 //
-//        Aws4Signer signer = client.getSigner();
-//        Assert.assertEquals(DYNAMODB, signer.getServiceName());
+//        Aws4Signer signer = client.signer();
+//        Assert.assertEquals(DYNAMODB, signer.serviceName());
 //        // Current don't have a better way to verify the signer region
 //        Assert.assertEquals(CN_NORTH_1,
-//                            AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.getServiceName()));
+//                            AwsHostNameUtils.parseRegionName(client.getEndpointHost(), signer.serviceName()));
 //    }
 //
 //    /**
@@ -94,8 +94,8 @@ public class RegionAndEndpointTest {
 //     * fields that we need for testing.
 //     */
 //    static class TestAmazonDynamoDBStreamsClient extends AmazonDynamoDBStreamsClient {
-//        public Aws4Signer getSigner() {
-//            return (Aws4Signer) super.getSigner();
+//        public Aws4Signer signer() {
+//            return (Aws4Signer) super.signer();
 //        }
 //
 //        public String getEndpointHost() {

@@ -37,18 +37,21 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
         this.client = client;
         this.spec = spec;
         Map<String, AttributeValue> startKey = spec.getRequest()
-                                                   .getExclusiveStartKey();
+                                                   .exclusiveStartKey();
         this.startKey = startKey == null ? null : new LinkedHashMap<String, AttributeValue>(startKey);
     }
 
     @Override
     public Page<Item, ScanOutcome> firstPage() {
         ScanRequest request = spec.getRequest();
-        request.setExclusiveStartKey(startKey);
+        request = request.toBuilder()
+                .exclusiveStartKey(startKey)
+                .limit(InternalUtils.minimum(
+                        spec.maxResultSize(),
+                        spec.maxPageSize()))
+                .build();
 
-        request.setLimit(InternalUtils.minimum(
-                spec.getMaxResultSize(),
-                spec.getMaxPageSize()));
+        spec.setRequest(request);
 
         ScanResult result = client.scan(request);
         ScanOutcome outcome = new ScanOutcome(result);
@@ -58,13 +61,13 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
 
     @Override
     public Integer getMaxResultSize() {
-        return spec.getMaxResultSize();
+        return spec.maxResultSize();
     }
 
     protected void setLastLowLevelResult(ScanOutcome lowLevelResult) {
         super.setLastLowLevelResult(lowLevelResult);
-        ScanResult result = lowLevelResult.getScanResult();
-        accumulateStats(result.getConsumedCapacity(), result.getCount(),
-                        result.getScannedCount());
+        ScanResult result = lowLevelResult.scanResult();
+        accumulateStats(result.consumedCapacity(), result.count(),
+                        result.scannedCount());
     }
 }

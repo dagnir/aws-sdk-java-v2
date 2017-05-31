@@ -22,6 +22,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
+
+import java.lang.reflect.Method;
+
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.protocol.asserts.unmarshalling.UnmarshallingTestContext;
@@ -86,7 +89,30 @@ public class UnmarshallingTestRunner {
      */
     private Object createRequestObject(String operationName) throws Exception {
         final String requestClassName = getModelFqcn(getOperationRequestClassName(operationName));
-        return Class.forName(requestClassName).newInstance();
+
+        Class<?> requestClass = Class.forName(requestClassName);
+
+        Method builderMethod = null;
+
+        try {
+            builderMethod = requestClass.getDeclaredMethod("builder");
+        } catch (NoSuchMethodException ignored) {
+            // Ignored
+        }
+
+        if (builderMethod != null) {
+            builderMethod.setAccessible(true);
+
+            Object builderInstance = builderMethod.invoke(null);
+
+            Method buildMethod = builderInstance.getClass().getDeclaredMethod("build");
+            buildMethod.setAccessible(true);
+
+            return buildMethod.invoke(builderInstance);
+        } else {
+            return requestClass.newInstance();
+        }
+
     }
 
     private UnmarshallingTestContext createContext(String operationName) {

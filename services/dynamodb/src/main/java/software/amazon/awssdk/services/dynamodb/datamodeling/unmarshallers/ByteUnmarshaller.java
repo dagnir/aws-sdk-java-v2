@@ -35,6 +35,6 @@ public class ByteUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return Byte.valueOf(value.getN());
+        return Byte.valueOf(value.n());
     }
 }

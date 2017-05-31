@@ -67,13 +67,25 @@ public interface NamingStrategy {
      * @param memberName Member name to name getter for.
      * @return Name of the getter method for a model class member.
      */
-    String getGetterMethodName(String memberName);
+    String getFluentGetterMethodName(String memberName);
+
+    /**
+     * @param memberName Member name to name getter for.
+     * @return Name of the JavaBean getter method for model class member.
+     */
+    String getBeanStyleGetterMethodName(String memberName);
 
     /**
      * @param memberName Member name to name setter for.
      * @return Name of the setter method for a model class member.
      */
     String getSetterMethodName(String memberName);
+
+    /**
+     * @param memberName Member name to name setter for.
+     * @return Name of the JavaBean setter method for model class member.
+     */
+    String getBeanStyleSetterMethodName(String memberName);
 
     /**
      * @param memberName Member name to name fluent setter for.

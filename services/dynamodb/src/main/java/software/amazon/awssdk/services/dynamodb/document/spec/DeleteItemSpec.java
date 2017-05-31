@@ -43,7 +43,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     private Map<String, Object> valueMap;
 
     public DeleteItemSpec() {
-        super(new DeleteItemRequest());
+        super(DeleteItemRequest.builder().build());
     }
 
     @Override
@@ -101,15 +101,15 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     }
 
     public String getConditionExpression() {
-        return getRequest().getConditionExpression();
+        return getRequest().conditionExpression();
     }
 
     public DeleteItemSpec withConditionExpression(String conditionExpression) {
-        getRequest().setConditionExpression(conditionExpression);
+        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build());
         return this;
     }
 
-    public Map<String, String> getNameMap() {
+    public Map<String, String> nameMap() {
         return nameMap;
     }
 
@@ -129,7 +129,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
         return this;
     }
 
-    public Map<String, Object> getValueMap() {
+    public Map<String, Object> valueMap() {
         return valueMap;
     }
 
@@ -137,7 +137,7 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
      * Applicable only when an expression has been specified. Used to
      * specify the actual values for the attribute-value placeholders.
      */
-    public DeleteItemSpec withValueMap(Map<String, Object> valueMap) {
+    public DeleteItemSpec valueMap(Map<String, Object> valueMap) {
         if (valueMap == null) {
             this.valueMap = null;
         } else {
@@ -148,40 +148,40 @@ public class DeleteItemSpec extends AbstractSpecWithPrimaryKey<DeleteItemRequest
     }
 
     public String getConditionalOperator() {
-        return getRequest().getConditionalOperator();
+        return getRequest().conditionalOperator();
     }
 
     public DeleteItemSpec withConditionalOperator(ConditionalOperator conditionalOperator) {
-        getRequest().setConditionalOperator(conditionalOperator);
+        setRequest(getRequest().toBuilder().conditionalOperator(conditionalOperator).build());
         return this;
     }
 
     public String getReturnConsumedCapacity() {
-        return getRequest().getReturnConsumedCapacity();
+        return getRequest().returnConsumedCapacity();
     }
 
     public DeleteItemSpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        getRequest().setReturnConsumedCapacity(returnConsumedCapacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
     public String getReturnItemCollectionMetrics() {
-        return getRequest().getReturnItemCollectionMetrics();
+        return getRequest().returnItemCollectionMetrics();
     }
 
     public DeleteItemSpec withReturnItemCollectionMetrics(
             ReturnItemCollectionMetrics returnItemCollectionMetrics) {
-        getRequest().setReturnItemCollectionMetrics(returnItemCollectionMetrics);
+        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build());
         return this;
     }
 
     public String getReturnValues() {
-        return getRequest().getReturnValues();
+        return getRequest().returnValues();
     }
 
     public DeleteItemSpec withReturnValues(ReturnValue returnValues) {
-        getRequest().setReturnValues(returnValues);
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build());
         return this;
     }
 
