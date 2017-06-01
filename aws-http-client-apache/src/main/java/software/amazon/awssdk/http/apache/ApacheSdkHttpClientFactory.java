@@ -41,14 +41,6 @@ import software.amazon.awssdk.http.apache.internal.Defaults;
  */
 public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
 
-    @ReviewBeforeRelease("Confirm defaults")
-    private static final SdkHttpConfigurationOptions GLOBAL_DEFAULTS = SdkHttpConfigurationOptions
-            .builder()
-            .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Defaults.SOCKET_TIMEOUT)
-            .option(SdkHttpConfigurationOption.CONNECTION_TIMEOUT, Defaults.CONNECTION_TIMEOUT)
-            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, Defaults.MAX_CONNECTIONS)
-            .build();
-
     private final SdkHttpConfigurationOptions standardOptions;
     private final ProxyConfiguration proxyConfiguration;
     private final Optional<InetAddress> localAddress;
@@ -91,7 +83,7 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
 
     @Override
     public SdkHttpClient createHttpClientWithDefaults(SdkHttpConfigurationOptions serviceDefaults) {
-        SdkHttpConfigurationOptions resolvedOptions = standardOptions.merge(serviceDefaults).merge(GLOBAL_DEFAULTS);
+        SdkHttpConfigurationOptions resolvedOptions = standardOptions.merge(serviceDefaults).mergeGlobalDefaults();
         return new ApacheHttpClientFactory().create(this, resolvedOptions, createRequestConfig(resolvedOptions));
     }
 

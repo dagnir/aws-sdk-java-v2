@@ -52,7 +52,7 @@ public final class SdkHttpConfigurationOption<T> {
      * should be true. S3 however uses wildcard certificates for virtual bucket address (bucketname.s3.amazonaws.com) and
      * needs to disable strict hostname verification to allow for wildcard certs.
      */
-    public static final SdkHttpConfigurationOption<Integer> USE_STRICT_HOSTNAME_VERIFICATION =
+    public static final SdkHttpConfigurationOption<Boolean> USE_STRICT_HOSTNAME_VERIFICATION =
             new SdkHttpConfigurationOption<>("UseStrictHostnameVerification");
 
     private final String name;

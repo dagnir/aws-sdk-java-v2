@@ -15,9 +15,11 @@
 
 package software.amazon.awssdk.http;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.annotation.Immutable;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 /**
@@ -29,6 +31,23 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 public final class SdkHttpConfigurationOptions {
 
     private static final SdkHttpConfigurationOptions EMPTY = builder().build();
+
+    private static final Duration SOCKET_TIMEOUT = Duration.ofSeconds(50);
+
+    private static final Duration CONNECTION_TIMEOUT = Duration.ofSeconds(10);
+
+    private static final int MAX_CONNECTIONS = 50;
+
+    private static final Boolean USE_STRICT_HOSTNAME_VERIFICATION = Boolean.TRUE;
+
+    @ReviewBeforeRelease("Confirm defaults")
+    private static final SdkHttpConfigurationOptions GLOBAL_DEFAULTS = SdkHttpConfigurationOptions
+            .builder()
+            .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, SOCKET_TIMEOUT)
+            .option(SdkHttpConfigurationOption.CONNECTION_TIMEOUT, CONNECTION_TIMEOUT)
+            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, MAX_CONNECTIONS)
+            .option(SdkHttpConfigurationOption.USE_STRICT_HOSTNAME_VERIFICATION, USE_STRICT_HOSTNAME_VERIFICATION)
+            .build();
 
     private final Map<SdkHttpConfigurationOption<?>, Object> options;
 
@@ -66,6 +85,10 @@ public final class SdkHttpConfigurationOptions {
         Map<SdkHttpConfigurationOption<?>, Object> currentOptions = new HashMap<>(options);
         lowerPrecedence.options.forEach(currentOptions::putIfAbsent);
         return new SdkHttpConfigurationOptions(currentOptions);
+    }
+
+    public SdkHttpConfigurationOptions mergeGlobalDefaults() {
+        return merge(GLOBAL_DEFAULTS);
     }
 
     /**

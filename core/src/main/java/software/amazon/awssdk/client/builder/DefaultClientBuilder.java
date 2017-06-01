@@ -161,7 +161,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     private SdkHttpClient resolveSdkHttpClient() {
         return httpConfiguration.toEither()
                                 .map(e -> e.map(NonManagedSdkHttpClient::new,
-                                                factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
+                                    factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
                                 .orElse(createDefaultHttpClient());
     }
 
