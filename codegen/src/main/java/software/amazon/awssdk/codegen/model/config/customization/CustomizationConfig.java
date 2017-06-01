@@ -184,6 +184,13 @@ public class CustomizationConfig {
      */
     private String shareModelsWith;
 
+    /**
+     * Expression to return a service specific instance of {@link software.amazon.awssdk.http.SdkHttpConfigurationOptions}. If
+     * present, the client builder will override the hook to return service specific HTTP config and inject this expression into
+     * that method. At some point we may want to have a more data driven way to declare these settings but right now we don't
+     * have any requirements to necessitate that and referencing handwritten code is simpler. See SWF customization.config
+     * for an example.
+     */
     private String serviceSpecificHttpConfig;
 
     private CustomizationConfig() {

@@ -123,7 +123,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * @return The service defaults that should be applied.
      */
     protected SdkHttpConfigurationOptions serviceSpecificHttpConfig() {
-        return SdkHttpConfigurationOptions.createEmpty();
+        return SdkHttpConfigurationOptions.empty();
     }
 
     /**

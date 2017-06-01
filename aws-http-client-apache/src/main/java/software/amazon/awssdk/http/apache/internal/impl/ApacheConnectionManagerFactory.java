@@ -19,7 +19,6 @@ import static software.amazon.awssdk.utils.NumericUtils.saturatedCast;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -55,7 +54,7 @@ public class ApacheConnectionManagerFactory {
                 null,
                 DefaultSchemePortResolver.INSTANCE,
                 null,
-                configuration.connectionPoolTtl().map(Duration::toMillis).orElse(Defaults.CONNECTION_POOL_TTL),
+                configuration.connectionPoolTtl().orElse(Defaults.CONNECTION_POOL_TTL).toMillis(),
                 TimeUnit.MILLISECONDS);
 
         cm.setDefaultMaxPerRoute(standardOptions.option(SdkHttpConfigurationOption.MAX_CONNECTIONS));

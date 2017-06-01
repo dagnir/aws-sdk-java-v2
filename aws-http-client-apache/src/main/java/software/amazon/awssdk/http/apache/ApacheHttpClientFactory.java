@@ -24,6 +24,7 @@ import org.apache.http.impl.client.HttpClients;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
+import software.amazon.awssdk.http.apache.internal.ApacheHttpRequestConfig;
 import software.amazon.awssdk.http.apache.internal.Defaults;
 import software.amazon.awssdk.http.apache.internal.SdkHttpRequestExecutor;
 import software.amazon.awssdk.http.apache.internal.SdkProxyRoutePlanner;
@@ -81,9 +82,8 @@ class ApacheHttpClientFactory {
                      "Proxy Port: " + proxyConfiguration.proxyPort());
 
             builder.setRoutePlanner(new SdkProxyRoutePlanner(
-                    // TODO verify toString usage here
                     proxyConfiguration.proxyHost(), proxyConfiguration.proxyPort(),
-                    proxyConfiguration.nonProxyHosts().toString()));
+                    proxyConfiguration.nonProxyHosts()));
 
             if (isAuthenticatedProxy(proxyConfiguration)) {
                 builder.setDefaultCredentialsProvider(ApacheUtils.newProxyCredentialsProvider(proxyConfiguration));

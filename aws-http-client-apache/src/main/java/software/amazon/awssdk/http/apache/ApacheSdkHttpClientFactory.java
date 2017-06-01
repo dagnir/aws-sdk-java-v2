@@ -23,6 +23,7 @@ import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
+import software.amazon.awssdk.http.apache.internal.ApacheHttpRequestConfig;
 import software.amazon.awssdk.http.apache.internal.Defaults;
 
 /**
@@ -42,10 +43,11 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
 
     @ReviewBeforeRelease("Confirm defaults")
     private static final SdkHttpConfigurationOptions GLOBAL_DEFAULTS = SdkHttpConfigurationOptions
-            .createEmpty()
+            .builder()
             .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Defaults.SOCKET_TIMEOUT)
             .option(SdkHttpConfigurationOption.CONNECTION_TIMEOUT, Defaults.CONNECTION_TIMEOUT)
-            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, Defaults.MAX_CONNECTIONS);
+            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, Defaults.MAX_CONNECTIONS)
+            .build();
 
     private final SdkHttpConfigurationOptions standardOptions;
     private final ProxyConfiguration proxyConfiguration;
@@ -55,7 +57,7 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
     private final Optional<Duration> maxIdleConnectionTimeout;
 
     private ApacheSdkHttpClientFactory(DefaultBuilder builder) {
-        this.standardOptions = builder.standardOptions.copy();
+        this.standardOptions = builder.standardOptions.build();
         this.proxyConfiguration = builder.proxyConfiguration();
         this.localAddress = builder.localAddress();
         this.expectContinueEnabled = builder.expectContinueEnabled();
@@ -84,7 +86,7 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
     }
 
     public SdkHttpClient createHttpClient() {
-        return createHttpClientWithDefaults(SdkHttpConfigurationOptions.createEmpty());
+        return createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty());
     }
 
     @Override
@@ -158,7 +160,7 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
     @ReviewBeforeRelease("Review the options we expose and revisit organization of options.")
     private static final class DefaultBuilder implements Builder {
 
-        private final SdkHttpConfigurationOptions standardOptions = SdkHttpConfigurationOptions.createEmpty();
+        private final SdkHttpConfigurationOptions.Builder standardOptions = SdkHttpConfigurationOptions.builder();
         private ProxyConfiguration proxyConfiguration = ProxyConfiguration.builder().build();
         private InetAddress localAddress;
         private Boolean expectContinueEnabled;

@@ -13,18 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http.apache;
+package software.amazon.awssdk.http.apache.internal;
 
 import java.net.InetAddress;
 import java.time.Duration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.apache.ProxyConfiguration;
 
 /**
  * Configuration needed when building an Apache request. Note that at this time, we only support client level configuration so
  * all of these settings are supplied when creating the client.
  */
 @SdkInternalApi
-// TODO move to internal
 public class ApacheHttpRequestConfig {
 
     private final Duration socketTimeout;

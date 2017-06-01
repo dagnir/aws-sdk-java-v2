@@ -30,6 +30,7 @@ import software.amazon.awssdk.utils.Validate;
  *
  * <p>All implementations of this interface must be immutable and thread safe.</p>
  */
+@ReviewBeforeRelease("Review which options are required and which are optional.")
 public final class ProxyConfiguration {
 
     private final String proxyHost;
@@ -133,6 +134,7 @@ public final class ProxyConfiguration {
      *
      * @see Builder#nonProxyHosts(Set)
      */
+    @ReviewBeforeRelease("Revisit the presentation of this option and support http.nonProxyHosts property")
     public Set<String> nonProxyHosts() {
         return nonProxyHosts;
     }

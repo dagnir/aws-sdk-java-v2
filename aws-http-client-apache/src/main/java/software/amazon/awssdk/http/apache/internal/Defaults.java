@@ -29,7 +29,7 @@ public final class Defaults {
     /**
      * A value of -1 means infinite TTL in Apache.
      */
-    public static final long CONNECTION_POOL_TTL = -1L;
+    public static final Duration CONNECTION_POOL_TTL = Duration.ofMillis(-1);
 
     public static final Duration SOCKET_TIMEOUT = Duration.ofSeconds(50);
 

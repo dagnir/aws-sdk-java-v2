@@ -23,7 +23,9 @@ import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 @SdkInternalApi
 class SwfHttpConfigurationOptions {
 
-    static final SdkHttpConfigurationOptions OPTIONS = SdkHttpConfigurationOptions.createEmpty()
+    static final SdkHttpConfigurationOptions OPTIONS = SdkHttpConfigurationOptions
+            .builder()
             .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Duration.ofMillis(90_000))
-            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, 1000);
+            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, 1000)
+            .build();
 }
