@@ -25,6 +25,7 @@ import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
+import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 
 @Generated("software.amazon.awssdk:codegen")
@@ -60,5 +61,10 @@ public abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuild
                     builder::addRequestListener);
             }
         };
+    }
+
+    @Override
+    protected final SdkHttpConfigurationOptions serviceSpecificHttpConfig() {
+        return MyServiceHttpConfig.CONFIG;
     }
 }
