@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.utils;
 
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+
 /**
  * The system properties usually provided by the Java runtime.
  */
@@ -29,7 +31,10 @@ public enum JavaSystemSetting implements SystemSetting {
 
     USER_HOME("user.home"),
     USER_LANGUAGE("user.language"),
-    USER_REGION("user.region");
+    USER_REGION("user.region"),
+
+    @ReviewBeforeRelease("Find right home and agree on name")
+    HTTP_SERVICE_IMPL("software.amazon.awssdk.http.service.impl");
 
     private final String systemProperty;
 

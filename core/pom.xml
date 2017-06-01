@@ -110,6 +110,7 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>aws-http-client-apache</artifactId>
             <version>${awsjavasdk.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>

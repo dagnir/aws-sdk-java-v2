@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.http.conn.ConnectTimeoutException;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.LegacyClientConfigurationFactory;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.NoOpSigner;
@@ -32,7 +33,8 @@ import software.amazon.awssdk.auth.SignerAsRequestSigner;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
+import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientLoader;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
 import software.amazon.awssdk.opensdk.config.ProxyConfiguration;
@@ -276,8 +278,9 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
         }
 
         @Override
+        @ReviewBeforeRelease("Revisit when we integrate APIG back")
         public SdkHttpClient sdkHttpClient() {
-            return ApacheSdkHttpClientFactory.builder().build().createHttpClient();
+            return DefaultSdkHttpClientLoader.createDefaultHttpClient(SdkHttpConfigurationOptions.empty());
         }
     }
 

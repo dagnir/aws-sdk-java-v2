@@ -43,7 +43,7 @@ import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
-import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientLoader;
 import software.amazon.awssdk.regions.AwsRegionProvider;
 import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.regions.RegionUtils;
@@ -166,9 +166,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     }
 
     private SdkHttpClient createDefaultHttpClient() {
-        // TODO resolve
-        return ApacheSdkHttpClientFactory.builder().build()
-                                         .createHttpClientWithDefaults(serviceSpecificHttpConfig());
+        return DefaultSdkHttpClientLoader.createDefaultHttpClient(serviceSpecificHttpConfig());
     }
 
     /**
