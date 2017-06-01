@@ -18,11 +18,13 @@ package software.amazon.awssdk.http.apache;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static software.amazon.awssdk.utils.Validate.notNull;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -32,6 +34,8 @@ import org.apache.http.pool.ConnPoolControl;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
+import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
@@ -40,7 +44,6 @@ import software.amazon.awssdk.http.apache.internal.impl.ApacheHttpRequestFactory
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
-import software.amazon.awssdk.utils.Validate;
 
 @SdkInternalApi
 class ApacheHttpClient implements SdkHttpClient {
@@ -48,10 +51,14 @@ class ApacheHttpClient implements SdkHttpClient {
     private final ApacheHttpRequestFactory apacheHttpRequestFactory = new ApacheHttpRequestFactory();
     private final ConnectionManagerAwareHttpClient httpClient;
     private final ApacheHttpRequestConfig requestConfig;
+    private final SdkHttpConfigurationOptions resolvedOptions;
 
-    ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient, ApacheHttpRequestConfig requestConfig) {
-        this.httpClient = Validate.notNull(httpClient, "httpClient must not be null.");
-        this.requestConfig = Validate.notNull(requestConfig, "requestConfig must not be null.");
+    ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient,
+                     ApacheHttpRequestConfig requestConfig,
+                     SdkHttpConfigurationOptions resolvedOptions) {
+        this.httpClient = notNull(httpClient, "httpClient must not be null.");
+        this.requestConfig = notNull(requestConfig, "requestConfig must not be null.");
+        this.resolvedOptions = notNull(resolvedOptions, "resolvedOptions must not be null");
     }
 
     @Override
@@ -68,6 +75,16 @@ class ApacheHttpClient implements SdkHttpClient {
                 apacheRequest.abort();
             }
         };
+    }
+
+    @Override
+    public <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key) {
+        return Optional.ofNullable(resolvedOptions.option(key));
+    }
+
+    @Override
+    public void close() {
+        httpClient.getHttpClientConnectionManager().shutdown();
     }
 
     private SdkHttpFullResponse execute(SdkRequestContext context, HttpRequestBase apacheRequest) throws IOException {
@@ -103,11 +120,6 @@ class ApacheHttpClient implements SdkHttpClient {
 
     private HttpRequestBase toApacheRequest(SdkHttpFullRequest request) {
         return apacheHttpRequestFactory.create(request, requestConfig);
-    }
-
-    @Override
-    public void close() {
-        httpClient.getHttpClientConnectionManager().shutdown();
     }
 
     /**

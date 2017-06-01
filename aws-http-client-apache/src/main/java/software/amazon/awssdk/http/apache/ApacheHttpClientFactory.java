@@ -43,9 +43,9 @@ class ApacheHttpClientFactory {
     private final ApacheConnectionManagerFactory cmFactory = new ApacheConnectionManagerFactory();
 
     public SdkHttpClient create(ApacheSdkHttpClientFactory configuration,
-                                SdkHttpConfigurationOptions standardOptions,
+                                SdkHttpConfigurationOptions resolvedOptions,
                                 ApacheHttpRequestConfig requestConfig) {
-        return new ApacheHttpClient(createClient(configuration, standardOptions), requestConfig);
+        return new ApacheHttpClient(createClient(configuration, resolvedOptions), requestConfig, resolvedOptions);
     }
 
     private ConnectionManagerAwareHttpClient createClient(ApacheSdkHttpClientFactory configuration,

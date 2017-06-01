@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http;
 
+import java.util.Optional;
+
 /**
  * Generic interface to take a representation of an HTTP request, make the HTTP call, and return a representation of an
  * HTTP response.
@@ -31,5 +33,15 @@ public interface SdkHttpClient extends AutoCloseable {
      * @return Task that can execute an HTTP request and can be aborted.
      */
     AbortableCallable<SdkHttpFullResponse> prepareRequest(SdkHttpFullRequest request, SdkRequestContext requestContext);
+
+    /**
+     * Retrieve the current value of the configuration option, if present.
+     *
+     * @param key Key of configuration value to retrieve.
+     * @param <T> Type of configuration value.
+     * @return Empty {@link java.util.Optional} if configuration option is not supported, otherwise a fulfilled {@link
+     * java.util.Optional} containing the current value.
+     */
+    <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key);
 
 }

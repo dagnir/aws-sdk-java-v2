@@ -47,6 +47,14 @@ public final class SdkHttpConfigurationOption<T> {
     public static final SdkHttpConfigurationOption<Integer> MAX_CONNECTIONS =
             new SdkHttpConfigurationOption<>("MaxConnections");
 
+    /**
+     * Whether or not to use strict hostname verification when establishing the SSL connection. For almost all services this
+     * should be true. S3 however uses wildcard certificates for virtual bucket address (bucketname.s3.amazonaws.com) and
+     * needs to disable strict hostname verification to allow for wildcard certs.
+     */
+    public static final SdkHttpConfigurationOption<Integer> USE_STRICT_HOSTNAME_VERIFICATION =
+            new SdkHttpConfigurationOption<>("UseStrictHostnameVerification");
+
     private final String name;
 
     private SdkHttpConfigurationOption(String name) {

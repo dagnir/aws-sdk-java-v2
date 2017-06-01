@@ -38,6 +38,7 @@ import software.amazon.awssdk.config.defaults.GlobalClientConfigurationDefaults;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
@@ -160,7 +161,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     private SdkHttpClient resolveSdkHttpClient() {
         return httpConfiguration.toEither()
                                 .map(e -> e.map(NonManagedSdkHttpClient::new,
-                                    factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
+                                                factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
                                 .orElse(createDefaultHttpClient());
     }
 
@@ -506,6 +507,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * an already built client in which case they are responsible for the lifecycle of it.
      */
     static class NonManagedSdkHttpClient implements SdkHttpClient {
+
         private final SdkHttpClient delegate;
 
         private NonManagedSdkHttpClient(SdkHttpClient delegate) {
@@ -516,6 +518,11 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         public AbortableCallable<SdkHttpFullResponse> prepareRequest(SdkHttpFullRequest request,
                                                                      SdkRequestContext requestContext) {
             return delegate.prepareRequest(request, requestContext);
+        }
+
+        @Override
+        public <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key) {
+            return delegate.getConfigurationValue(key);
         }
 
         @Override
