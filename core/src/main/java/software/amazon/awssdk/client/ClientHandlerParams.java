@@ -28,12 +28,6 @@ public class ClientHandlerParams {
     private AwsSyncClientParams clientParams;
 
     /**
-     * By default we use strict hostname verification for SSL. S3 disables this due to wildcard
-     * certificates.
-     */
-    private boolean disableStrictHostnameVerification = false;
-
-    /**
      * By default, the CRC 32 checksum is calculated based on the uncompressed data.
      */
     private boolean crc32FromCompressedDataEnabled = false;
@@ -44,15 +38,6 @@ public class ClientHandlerParams {
 
     public ClientHandlerParams withClientParams(AwsSyncClientParams clientParams) {
         this.clientParams = clientParams;
-        return this;
-    }
-
-    public boolean isDisableStrictHostnameVerification() {
-        return disableStrictHostnameVerification;
-    }
-
-    public ClientHandlerParams withDisableStrictHostnameVerification(boolean disableStrictHostnameVerification) {
-        this.disableStrictHostnameVerification = disableStrictHostnameVerification;
         return this;
     }
 

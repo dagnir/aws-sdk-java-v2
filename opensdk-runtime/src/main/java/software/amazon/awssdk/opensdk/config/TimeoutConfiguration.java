@@ -16,8 +16,6 @@
 package software.amazon.awssdk.opensdk.config;
 
 import java.util.Optional;
-import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.opensdk.internal.config.ApiGatewayLegacyClientConfigurationFactory;
 
 /**
  * Configuration options to customize the various timeouts used by the client.
@@ -32,9 +30,6 @@ public class TimeoutConfiguration {
      * Returns the amount of time to wait (in milliseconds) for data to be transferred over an
      * established, open connection before the connection times out and is closed. A value of 0
      * means infinity, and isn't recommended.
-     * <p>
-     * Default value is {@value ApiGatewayLegacyClientConfigurationFactory#DEFAULT_SOCKET_TIMEOUT}.
-     * </p>
      *
      * @return The amount of time to wait (in milliseconds) for data to be transferred over an
      *         established, open connection before the connection times out and is closed.
@@ -46,9 +41,6 @@ public class TimeoutConfiguration {
     /**
      * Sets the amount of time to wait (in milliseconds) for data to be transferred over an
      * established, open connection before the connection times out and is closed.
-     * <p>
-     *  Default value is {@value ApiGatewayLegacyClientConfigurationFactory#DEFAULT_SOCKET_TIMEOUT}.
-     * </p>
      *
      * @param socketTimeout The amount of time to wait (in milliseconds) for data to be transferred over an
      *                      established, open connection before the connection is times out and is closed.
@@ -60,9 +52,6 @@ public class TimeoutConfiguration {
     /**
      * Sets the amount of time to wait (in milliseconds) for data to be transferred over an
      * established, open connection before the connection times out and is closed.
-     * <p>
-     *  Default value is {@value ApiGatewayLegacyClientConfigurationFactory#DEFAULT_SOCKET_TIMEOUT}.
-     * </p>
      *
      * @param socketTimeout The amount of time to wait (in milliseconds) for data to be transferred over an
      *                      established, open connection before the connection is times out and is closed.
@@ -76,9 +65,6 @@ public class TimeoutConfiguration {
     /**
      * Returns the amount of time to wait (in milliseconds) when initially establishing a connection
      * before giving up and timing out. A value of 0 means infinity, and is not recommended.
-     * <p>
-     * Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_TIMEOUT}.
-     * </p>
      *
      * @return The amount of time to wait (in milliseconds) when initially establishing a connection
      *         before giving up and timing out.
@@ -90,9 +76,6 @@ public class TimeoutConfiguration {
     /**
      * Sets the amount of time to wait (in milliseconds) when initially establishing a connection
      * before giving up and timing out.
-     * <p>
-     * Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_TIMEOUT}.
-     * </p>
      *
      * @param connectionTimeout The amount of time to wait (in milliseconds) when initially establishing a
      *                          connection before giving up and timing out.
@@ -104,9 +87,6 @@ public class TimeoutConfiguration {
     /**
      * Sets the amount of time to wait (in milliseconds) when initially establishing a connection
      * before giving up and timing out.
-     * <p>
-     * Default value is {@value LegacyClientConfiguration#DEFAULT_CONNECTION_TIMEOUT}.
-     * </p>
      *
      * @param connectionTimeout The amount of time to wait (in milliseconds) when initially establishing a
      *                          connection before giving up and timing out.

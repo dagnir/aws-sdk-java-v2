@@ -18,7 +18,6 @@ package software.amazon.awssdk.http;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -30,11 +29,9 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 import software.amazon.awssdk.util.StringInputStream;
 
@@ -42,9 +39,6 @@ import software.amazon.awssdk.util.StringInputStream;
 public class SdkHttpFullResponseAdapterTest {
 
     private final Request<Void> request = new DefaultRequest<>("foo");
-
-    @Mock
-    private HttpClientSettings httpSettings;
 
     @Test
     public void adapt_SingleHeaderValue_AdaptedCorrectly() throws Exception {
@@ -117,8 +111,7 @@ public class SdkHttpFullResponseAdapterTest {
                                                                           .content(content)
                                                                           .build();
 
-        when(httpSettings.calculateCrc32FromCompressedData()).thenReturn(true);
-        HttpResponse adapted = adapt(httpResponse);
+        HttpResponse adapted = SdkHttpResponseAdapter.adapt(true, request, httpResponse);
 
         assertThat(adapted.getContent(), instanceOf(GZIPInputStream.class));
     }
@@ -137,7 +130,7 @@ public class SdkHttpFullResponseAdapterTest {
     }
 
     private HttpResponse adapt(SimpleSdkHttpFullResponse httpResponse) {
-        return SdkHttpResponseAdapter.adapt(httpSettings, request, httpResponse);
+        return SdkHttpResponseAdapter.adapt(false, request, httpResponse);
     }
 
     public static class SimpleSdkHttpFullResponse implements SdkHttpFullResponse {

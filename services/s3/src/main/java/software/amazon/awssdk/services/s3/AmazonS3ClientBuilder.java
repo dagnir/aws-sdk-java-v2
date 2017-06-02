@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
@@ -36,9 +35,8 @@ public final class AmazonS3ClientBuilder extends AmazonS3Builder<AmazonS3ClientB
 
     @SdkTestInternalApi
     AmazonS3ClientBuilder(SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> clientFactory,
-                          LegacyClientConfigurationFactory clientConfigFactory,
                           AwsRegionProvider regionProvider) {
-        super(clientFactory, clientConfigFactory, regionProvider);
+        super(clientFactory, regionProvider);
     }
 
     /**

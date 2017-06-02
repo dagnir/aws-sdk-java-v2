@@ -15,13 +15,10 @@
 
 package software.amazon.awssdk;
 
-import java.net.InetAddress;
-import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.config.ClientConfiguration;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
@@ -31,18 +28,11 @@ import software.amazon.awssdk.util.VersionInfoUtils;
 /**
  * Client configuration options such as proxy settings, user agent string, max retry attempts, etc.
  *
- * @see PredefinedLegacyClientConfigurations
  * @deprecated Replaced with {@link ClientConfiguration}.
  */
 @NotThreadSafe
 @Deprecated
 public class LegacyClientConfiguration {
-
-    /** The default timeout for creating new connections. */
-    public static final int DEFAULT_CONNECTION_TIMEOUT = 10 * 1000;
-
-    /** The default timeout for reading from a connected socket. */
-    public static final int DEFAULT_SOCKET_TIMEOUT = 50 * 1000;
 
     /**
      * The default timeout for a request. This is disabled by default.
@@ -51,12 +41,6 @@ public class LegacyClientConfiguration {
 
     /** The default max connection pool size. */
     public static final int DEFAULT_MAX_CONNECTIONS = 50;
-
-    /**
-     * The default on whether to utilize the USE_EXPECT_CONTINUE handshake for operations. Currently
-     * only honored for PUT operations.
-     */
-    public static final boolean DEFAULT_USE_EXPECT_CONTINUE = true;
 
     /** The default HTTP user agent header for AWS Java SDK clients. */
     public static final String DEFAULT_USER_AGENT = VersionInfoUtils.getUserAgent();
@@ -71,56 +55,16 @@ public class LegacyClientConfiguration {
     public static final RetryPolicy DEFAULT_RETRY_POLICY = PredefinedRetryPolicies.DEFAULT;
 
     /**
-     * The default on whether to use the {@link IdleConnectionReaper} to manage stale connections
-     *
-     * @see IdleConnectionReaper
-     */
-    public static final boolean DEFAULT_USE_REAPER = true;
-
-    /**
      * The default on whether to use gzip compression.
      */
     public static final boolean DEFAULT_USE_GZIP = false;
-
-    /**
-     * The default expiration time (in milliseconds) for a connection in the connection pool.
-     */
-    public static final long DEFAULT_CONNECTION_TTL = -1;
-
-    /**
-     * The default maximum idle time (in milliseconds) for a connection in the connection pool.
-     */
-    public static final long DEFAULT_CONNECTION_MAX_IDLE_MILLIS = 60 * 1000;
-
-    /**
-     * The default time a connection can be idle in the connection pool before it must be validated that it's still open.
-     */
-    public static final int DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS = 5 * 1000;
-
-    /**
-     * The default on whether to use TCP KeepAlive.
-     */
-    public static final boolean DEFAULT_TCP_KEEP_ALIVE = false;
 
     /**
      * The default on whether to throttle retries.
      */
     public static final boolean DEFAULT_THROTTLE_RETRIES = true;
 
-    /**
-     * The default on whether to cache response metadata.
-     */
-    public static final boolean DEFAULT_CACHE_RESPONSE_METADATA = true;
-
-    /**
-     * The default response metadata cache size.
-     */
-    public static final int DEFAULT_RESPONSE_METADATA_CACHE_SIZE = 50;
-
     public static final int DEFAULT_MAX_CONSECUTIVE_RETRIES_BEFORE_THROTTLING = 100;
-
-    @ReviewBeforeRelease("Hacky hack for now. Should be pushed down to HTTP layer")
-    private static final SecureRandom DEFAULT_SECURE_RANDOM = new SecureRandom();
 
     /** A prefix to the HTTP user agent header passed with all HTTP requests.  */
     private String userAgentPrefix = DEFAULT_USER_AGENT;
@@ -135,65 +79,16 @@ public class LegacyClientConfiguration {
     /** The retry policy upon failed requests. **/
     private RetryPolicy retryPolicy = DEFAULT_RETRY_POLICY;
 
-    /** Optionally specifies the local address to bind to */
-    private InetAddress localAddress;
     /**
      * The protocol to use when connecting to Amazon Web Services.
      * <p>
      * The default configuration is to use HTTPS for all requests for increased security.
      */
     private Protocol protocol = Protocol.HTTPS;
-    /** Optionally specifies the proxy host to connect through. */
-    private String proxyHost = null;
-    /** Optionally specifies the port on the proxy host to connect through. */
-    private int proxyPort = -1;
-    /** Optionally specifies the user name to use when connecting through a proxy. */
-    private String proxyUsername = null;
-    /** Optionally specifies the password to use when connecting through a proxy. */
-    private String proxyPassword = null;
-    /** Optional Windows domain name for configuring NTLM proxy support. */
-    private String proxyDomain = null;
-    /** Optional Windows workstation name for configuring NTLM proxy support. */
-    private String proxyWorkstation = null;
-    /** Optional specifies the hosts that should be accessed without going through the proxy. */
-    private String nonProxyHosts = null;
-    /**
-     * Whether to pre-emptively authenticate against a proxy server using basic authentication
-     */
-    private boolean preemptiveBasicProxyAuth;
     /** The maximum number of open HTTP connections. */
     private int maxConnections = DEFAULT_MAX_CONNECTIONS;
-    /**
-     * The amount of time to wait (in milliseconds) for data to be transfered over an established,
-     * open connection before the connection is timed out. A value of 0 means infinity, and is not
-     * recommended.
-     */
-    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-    /**
-     * The amount of time to wait (in milliseconds) when initially establishing a connection before
-     * giving up and timing out. A value of 0 means infinity, and is not recommended.
-     */
-    private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int clientExecutionTimeout = DEFAULT_CLIENT_EXECUTION_TIMEOUT;
     private boolean throttleRetries = DEFAULT_THROTTLE_RETRIES;
-    /**
-     * Optional size hint (in bytes) for the low level TCP send buffer. This is an advanced option
-     * for advanced users who want to tune low level TCP parameters to try and squeeze out more
-     * performance.
-     */
-    private int socketSendBufferSizeHint = 0;
-    /**
-     * Optional size hint (in bytes) for the low level TCP receive buffer. This is an advanced
-     * option for advanced users who want to tune low level TCP parameters to try and squeeze out
-     * more performance.
-     */
-    private int socketReceiveBufferSizeHint = 0;
-    /**
-     * Optional whether to use the {@link IdleConnectionReaper} to manage stale connections. A
-     * reason for not running the {@link IdleConnectionReaper} can be if running in an environment
-     * where the modifyThread and modifyThreadGroup permissions are not allowed.
-     */
-    private boolean useReaper = DEFAULT_USE_REAPER;
     /**
      * Optional whether to use gzip compression when making HTTP requests.
      */
@@ -205,66 +100,9 @@ public class LegacyClientConfiguration {
      */
     private String signerOverride;
     /**
-     * Optional expiration time for a connection in the connection pool. When a connection is
-     * retrieved from the connection pool, this parameter is checked to see if the connection can be
-     * reused.
-     */
-    private long connectionTtl = DEFAULT_CONNECTION_TTL;
-    /**
-     * The maximum idle time for a connection in the connection pool.
-     */
-    private long connectionMaxIdleMillis = DEFAULT_CONNECTION_MAX_IDLE_MILLIS;
-
-    private int validateAfterInactivityMillis = DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS;
-
-    /**
-     * Optional override to enable support for TCP KeepAlive (not to be confused with HTTP
-     * KeepAlive). TCP KeepAlive can be used to detect misbehaving routers or down servers through
-     * the use of special, empty-data keep alive packets.
-     * <p>
-     * Actual TCP KeepAlive values (timeout, number of packets, etc) are configured via the
-     * operating system (sysctl on Linux, and Registry values on Windows).
-     */
-    private boolean tcpKeepAlive = DEFAULT_TCP_KEEP_ALIVE;
-    /**
-     * Whether or not to cache response metadata.
-     * <p>
-     * Response metadata is typically used for troubleshooting issues with AWS support staff when
-     * services aren't acting as expected.
-     * </p>
-     * <p>
-     * While this feature is useful for debugging it adds overhead and disabling it may
-     * be desired in high throughput applications.
-     * </p>
-     */
-    private boolean cacheResponseMetadata = DEFAULT_CACHE_RESPONSE_METADATA;
-    /**
-     * Size of the response metadata cache, if it is enabled.
-     * <p>
-     * Response metadata is typically used for troubleshooting issues with AWS support staff when
-     * services aren't acting as expected.
-     */
-    private int responseMetadataCacheSize = DEFAULT_RESPONSE_METADATA_CACHE_SIZE;
-    /**
-     * An instance of {@link SecureRandom} configured by the user; or the JDK default will be used
-     * if it is set to null or not explicitly configured.
-     */
-    private SecureRandom secureRandom;
-    /**
      * Headers to be added to all requests
      */
-    private Map<String, String> headers = new HashMap<String, String>();
-    /**
-     * Optional override to enable/disable support for HTTP/1.1 handshake utilizing EXPECT:
-     * 100-Continue. The default value is true.
-     * <p>
-     * The detail of HTTP Expect Continue is defined at
-     * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec8.html#sec8.2.3"> Use of the 100
-     * (Continue) Status</a>. Setting this as false will reduce latency when you want to send small
-     * size of payload. It is highly recommended to use the default value if you want to transfer a
-     * large amount of data to the server, such as uploading a big file to S3 bucket.
-     */
-    private boolean useExpectContinue = DEFAULT_USE_EXPECT_CONTINUE;
+    private Map<String, String> headers = new HashMap<>();
 
     /**
      * The maximum number of throttled retries if the initial request
@@ -282,38 +120,16 @@ public class LegacyClientConfiguration {
      * Create a copy of another legacy client configuration object.
      */
     public LegacyClientConfiguration(LegacyClientConfiguration other) {
-        this.connectionTimeout = other.connectionTimeout;
         this.maxConnections = other.maxConnections;
         this.maxErrorRetry = other.maxErrorRetry;
         this.retryPolicy = other.retryPolicy;
         this.throttleRetries = other.throttleRetries;
-        this.localAddress = other.localAddress;
         this.protocol = other.protocol;
-        this.proxyDomain = other.proxyDomain;
-        this.proxyHost = other.proxyHost;
-        this.proxyPassword = other.proxyPassword;
-        this.proxyPort = other.proxyPort;
-        this.proxyUsername = other.proxyUsername;
-        this.proxyWorkstation = other.proxyWorkstation;
-        this.nonProxyHosts = other.nonProxyHosts;
-        this.preemptiveBasicProxyAuth = other.preemptiveBasicProxyAuth;
-        this.socketTimeout = other.socketTimeout;
         this.clientExecutionTimeout = other.clientExecutionTimeout;
         this.userAgentPrefix = other.userAgentPrefix;
         this.userAgentSuffix = other.userAgentSuffix;
-        this.useReaper = other.useReaper;
         this.useGzip = other.useGzip;
-        this.socketReceiveBufferSizeHint = other.socketReceiveBufferSizeHint;
-        this.socketSendBufferSizeHint = other.socketSendBufferSizeHint;
         this.signerOverride = other.signerOverride;
-        this.responseMetadataCacheSize = other.responseMetadataCacheSize;
-        this.useExpectContinue = other.useExpectContinue;
-        this.cacheResponseMetadata = other.cacheResponseMetadata;
-        this.connectionTtl = other.connectionTtl;
-        this.connectionMaxIdleMillis = other.connectionMaxIdleMillis;
-        this.validateAfterInactivityMillis = other.validateAfterInactivityMillis;
-        this.tcpKeepAlive = other.tcpKeepAlive;
-        this.secureRandom = other.secureRandom;
         this.headers.clear();
         this.headers.putAll(other.headers);
         this.maxConsecutiveRetriesBeforeThrottling = other.maxConsecutiveRetriesBeforeThrottling;
@@ -364,38 +180,6 @@ public class LegacyClientConfiguration {
      */
     public LegacyClientConfiguration withProtocol(Protocol protocol) {
         setProtocol(protocol);
-        return this;
-    }
-
-    /**
-     * Returns the maximum number of allowed open HTTP connections.
-     *
-     * @return The maximum number of allowed open HTTP connections.
-     */
-    public int getMaxConnections() {
-        return maxConnections;
-    }
-
-    /**
-     * Sets the maximum number of allowed open HTTP connections.
-     *
-     * @param maxConnections
-     *            The maximum number of allowed open HTTP connections.
-     */
-    public void setMaxConnections(int maxConnections) {
-        this.maxConnections = maxConnections;
-    }
-
-    /**
-     * Sets the maximum number of allowed open HTTP connections and returns the updated
-     * ClientConfiguration object.
-     *
-     * @param maxConnections
-     *            The maximum number of allowed open HTTP connections.
-     * @return The updated ClientConfiguration object with the new max HTTP connections setting.
-     */
-    public LegacyClientConfiguration withMaxConnections(int maxConnections) {
-        setMaxConnections(maxConnections);
         return this;
     }
 
@@ -494,295 +278,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the optional local address the client will bind to.
-     *
-     * @return The local address the client will bind to.
-     */
-    public InetAddress getLocalAddress() {
-        return localAddress;
-    }
-
-    /**
-     * Sets the optional local address the client will bind to.
-     *
-     * @param localAddress
-     *            The local address the client will bind to.
-     */
-    public void setLocalAddress(InetAddress localAddress) {
-        this.localAddress = localAddress;
-    }
-
-    /**
-     * Sets the optional local address the client will bind to and returns the updated
-     * ClientConfiguration object.
-     *
-     * @param localAddress
-     *            The local address the client will bind to.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withLocalAddress(InetAddress localAddress) {
-        setLocalAddress(localAddress);
-        return this;
-    }
-
-    /**
-     * Returns the optional proxy host the client will connect
-     * through.  Returns either the proxyHost set on this object, or
-     * if not provided, checks the value of the Java system property
-     * for proxy host according to {@link #getProtocol()}: i.e. if
-     * protocol is https, returns the value of the system property
-     * https.proxyHost, otherwise returns value of http.proxyHost.
-     *
-     * @return The proxy host the client will connect through.
-     */
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * Sets the optional proxy host the client will connect through.
-     *
-     * @param proxyHost
-     *            The proxy host the client will connect through.
-     */
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    /**
-     * Sets the optional proxy host the client will connect through and returns the updated
-     * ClientConfiguration object.
-     *
-     * @param proxyHost
-     *            The proxy host the client will connect through.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withProxyHost(String proxyHost) {
-        setProxyHost(proxyHost);
-        return this;
-    }
-
-    /**
-     * Returns the optional proxy port the client will connect
-     * through.  Returns either the proxyPort set on this object, or
-     * if not provided, checks the value of the Java system property
-     * for proxy port according to {@link #getProtocol()}: i.e. if
-     * protocol is https, returns the value of the system property
-     * https.proxyPort, otherwise returns value of http.proxyPort.
-     *
-     * @return The proxy port the client will connect through.
-     */
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * Sets the optional proxy port the client will connect through.
-     *
-     * @param proxyPort
-     *            The proxy port the client will connect through.
-     */
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    /**
-     * Sets the optional proxy port the client will connect through and returns the updated
-     * ClientConfiguration object.
-     *
-     * @param proxyPort
-     *            The proxy port the client will connect through.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withProxyPort(int proxyPort) {
-        setProxyPort(proxyPort);
-        return this;
-    }
-
-    /**
-     * Returns the optional proxy user name to use if connecting
-     * through a proxy.  Returns either the proxyUsername set on this
-     * object, or if not provided, checks the value of the Java system
-     * property for proxy user name according to {@link #getProtocol()}:
-     * i.e. if protocol is https, returns the value of the system
-     * property https.proxyUsername, otherwise returns value of
-     * http.proxyUsername.
-     *
-     * @return The optional proxy user name the configured client will use if connecting through a
-     *         proxy.
-     */
-    public String getProxyUsername() {
-        return proxyUsername;
-    }
-
-    /**
-     * Sets the optional proxy user name to use if connecting through a proxy.
-     *
-     * @param proxyUsername
-     *            The proxy user name to use if connecting through a proxy.
-     */
-    public void setProxyUsername(String proxyUsername) {
-        this.proxyUsername = proxyUsername;
-    }
-
-    /**
-     * Sets the optional proxy user name and returns the updated ClientConfiguration object.
-     *
-     * @param proxyUsername
-     *            The proxy user name to use if connecting through a proxy.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withProxyUsername(String proxyUsername) {
-        setProxyUsername(proxyUsername);
-        return this;
-    }
-
-    /**
-     * Returns the optional proxy password to use if connecting
-     * through a proxy.  Returns either the proxyPassword set on this
-     * object, or if not provided, checks the value of the Java system
-     * property for proxy password according to {@link #getProtocol()}:
-     * i.e. if protocol is https, returns the value of the system
-     * property https.proxyPassword, otherwise returns value of
-     * http.proxyPassword.
-     *
-     * @return The password to use when connecting through a proxy.
-     */
-    public String getProxyPassword() {
-        return proxyPassword;
-    }
-
-    /**
-     * Sets the optional proxy password to use when connecting through a proxy.
-     *
-     * @param proxyPassword
-     *            The password to use when connecting through a proxy.
-     */
-    public void setProxyPassword(String proxyPassword) {
-        this.proxyPassword = proxyPassword;
-    }
-
-    /**
-     * Sets the optional proxy password to use when connecting through a proxy, and returns the
-     * updated ClientConfiguration object.
-     *
-     * @param proxyPassword
-     *            The password to use when connecting through a proxy.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withProxyPassword(String proxyPassword) {
-        setProxyPassword(proxyPassword);
-        return this;
-    }
-
-    /**
-     * Returns the optional Windows domain name for configuring an NTLM proxy. If you aren't using a
-     * Windows NTLM proxy, you do not need to set this field.
-     *
-     * @return The optional Windows domain name for configuring an NTLM proxy.
-     */
-    public String getProxyDomain() {
-        return proxyDomain;
-    }
-
-    /**
-     * Sets the optional Windows domain name for configuration an NTLM proxy. If you aren't using a
-     * Windows NTLM proxy, you do not need to set this field.
-     *
-     * @param proxyDomain
-     *            The optional Windows domain name for configuring an NTLM proxy.
-     */
-    public void setProxyDomain(String proxyDomain) {
-        this.proxyDomain = proxyDomain;
-    }
-
-    /**
-     * Sets the optional Windows domain name for configuration an NTLM proxy and returns a reference
-     * to this updated ClientConfiguration object so that additional method calls can be chained
-     * together. If you aren't using a Windows NTLM proxy, you do not need to set this field.
-     *
-     * @param proxyDomain
-     *            The optional Windows domain name for configuring an NTLM proxy.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withProxyDomain(String proxyDomain) {
-        setProxyDomain(proxyDomain);
-        return this;
-    }
-
-    /**
-     * Returns the optional Windows workstation name for configuring NTLM proxy support. If you
-     * aren't using a Windows NTLM proxy, you do not need to set this field.
-     *
-     * @return The optional Windows workstation name for configuring NTLM proxy support.
-     */
-    public String getProxyWorkstation() {
-        return proxyWorkstation;
-    }
-
-    /**
-     * Sets the optional Windows workstation name for configuring NTLM proxy support. If you aren't
-     * using a Windows NTLM proxy, you do not need to set this field.
-     *
-     * @param proxyWorkstation
-     *            The optional Windows workstation name for configuring NTLM proxy support.
-     */
-    public void setProxyWorkstation(String proxyWorkstation) {
-        this.proxyWorkstation = proxyWorkstation;
-    }
-
-    /**
-     * Sets the optional Windows workstation name for configuring NTLM proxy support, and returns
-     * the updated ClientConfiguration object so that additional method calls can be chained
-     * together. If you aren't using a Windows NTLM proxy, you do not need to set this field.
-     *
-     * @param proxyWorkstation
-     *            The optional Windows workstation name for configuring NTLM proxy support.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withProxyWorkstation(String proxyWorkstation) {
-        setProxyWorkstation(proxyWorkstation);
-        return this;
-    }
-
-    /**
-     * Returns the optional hosts the client will access without going
-     * through the proxy. Returns either the nonProxyHosts set on this
-     * object, or if not provided, checks the value of the Java system property
-     * for nonProxyHosts according to {@link #getProtocol()}: i.e. if
-     * protocol is https, returns null, otherwise returns value of http.nonProxyHosts.
-     *
-     * @return The hosts the client will connect through bypassing the proxy.
-     */
-    public String getNonProxyHosts() {
-        return nonProxyHosts;
-    }
-
-    /**
-     * Set the optional hosts the client will access without going
-     * through the proxy.
-     *
-     * @param nonProxyHosts
-     *            The hosts the client will access without going through the proxy.
-     */
-    public void setNonProxyHosts(String nonProxyHosts) {
-        this.nonProxyHosts = nonProxyHosts;
-    }
-
-    /**
-     * Set the optional hosts the client will access without going
-     * through the proxy.
-     *
-     * @param nonProxyHosts
-     *            The hosts the client will access without going through the proxy.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withNonProxyHosts(String nonProxyHosts) {
-        setNonProxyHosts(nonProxyHosts);
-        return this;
-    }
-
-    /**
      * Returns the retry policy upon failed requests.
      *
      * @return The retry policy upon failed requests.
@@ -854,84 +349,6 @@ public class LegacyClientConfiguration {
      */
     public LegacyClientConfiguration withMaxErrorRetry(int maxErrorRetry) {
         setMaxErrorRetry(maxErrorRetry);
-        return this;
-    }
-
-    /**
-     * Returns the amount of time to wait (in milliseconds) for data to be transfered over an
-     * established, open connection before the connection times out and is closed. A value of 0
-     * means infinity, and isn't recommended.
-     *
-     * @return The amount of time to wait (in milliseconds) for data to be transfered over an
-     *         established, open connection before the connection times out and is closed.
-     */
-    public int getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for data to be transfered over an
-     * established, open connection before the connection times out and is closed. A value of 0
-     * means infinity, and isn't recommended.
-     *
-     * @param socketTimeout
-     *            The amount of time to wait (in milliseconds) for data to be transfered over an
-     *            established, open connection before the connection is times out and is closed.
-     */
-    public void setSocketTimeout(int socketTimeout) {
-        this.socketTimeout = socketTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) for data to be transfered over an
-     * established, open connection before the connection times out and is closed, and returns the
-     * updated ClientConfiguration object so that additional method calls may be chained together.
-     *
-     * @param socketTimeout
-     *            The amount of time to wait (in milliseconds) for data to be transfered over an
-     *            established, open connection before the connection is times out and is closed.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withSocketTimeout(int socketTimeout) {
-        setSocketTimeout(socketTimeout);
-        return this;
-    }
-
-    /**
-     * Returns the amount of time to wait (in milliseconds) when initially establishing a connection
-     * before giving up and timing out. A value of 0 means infinity, and is not recommended.
-     *
-     * @return The amount of time to wait (in milliseconds) when initially establishing a connection
-     *         before giving up and timing out.
-     */
-    public int getConnectionTimeout() {
-        return connectionTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) when initially establishing a connection
-     * before giving up and timing out. A value of 0 means infinity, and is not recommended.
-     *
-     * @param connectionTimeout
-     *            The amount of time to wait (in milliseconds) when initially establishing a
-     *            connection before giving up and timing out.
-     */
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    /**
-     * Sets the amount of time to wait (in milliseconds) when initially establishing a connection
-     * before giving up and timing out, and returns the updated ClientConfiguration object so that
-     * additional method calls may be chained together.
-     *
-     * @param connectionTimeout
-     *            the amount of time to wait (in milliseconds) when initially establishing a
-     *            connection before giving up and timing out.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withConnectionTimeout(int connectionTimeout) {
-        setConnectionTimeout(connectionTimeout);
         return this;
     }
 
@@ -1008,38 +425,6 @@ public class LegacyClientConfiguration {
      */
     public LegacyClientConfiguration withClientExecutionTimeout(int clientExecutionTimeout) {
         setClientExecutionTimeout(clientExecutionTimeout);
-        return this;
-    }
-
-    /**
-     * Checks if the {@link IdleConnectionReaper} is to be started
-     *
-     * @return if the {@link IdleConnectionReaper} is to be started
-     */
-    public boolean useReaper() {
-        return useReaper;
-    }
-
-    /**
-     * Sets whether the {@link IdleConnectionReaper} is to be started as a daemon thread
-     *
-     * @param use
-     *            whether the {@link IdleConnectionReaper} is to be started as a daemon thread
-     * @see IdleConnectionReaper
-     */
-    public void setUseReaper(boolean use) {
-        this.useReaper = use;
-    }
-
-    /**
-     * Sets whether the {@link IdleConnectionReaper} is to be started as a daemon thread
-     *
-     * @param use
-     *            the {@link IdleConnectionReaper} is to be started as a daemon thread
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withReaper(boolean use) {
-        setUseReaper(use);
         return this;
     }
 
@@ -1195,119 +580,6 @@ public class LegacyClientConfiguration {
     }
 
     /**
-     * Returns the optional size hints (in bytes) for the low level TCP send and receive buffers.
-     * This is an advanced option for advanced users who want to tune low level TCP parameters to
-     * try and squeeze out more performance.
-     * <p>
-     * The optimal TCP buffer sizes for a particular application are highly dependent on network
-     * configuration and operating system configuration and capabilities. For example, most modern
-     * operating systems provide auto-tuning functionality for TCP buffer sizes, which can have a
-     * big impact on performance for TCP connections that are held open long enough for the
-     * auto-tuning to optimize buffer sizes.
-     * <p>
-     * Large buffer sizes (ex: 2MB) will allow the operating system to buffer more data in memory
-     * without requiring the remote server to acknowledge receipt of that information, so can be
-     * particularly useful when the network has high latency.
-     * <p>
-     * This is only a <b>hint</b>, and the operating system may choose not to honor it. When using
-     * this option, users should <b>always</b> check the operating system's configured limits and
-     * defaults. Most OS's have a maximum TCP buffer size limit configured, and won't let you go
-     * beyond that limit unless you explicitly raise the max TCP buffer size limit.
-     * <p>
-     * There are many resources available online to help with configuring TCP buffer sizes and
-     * operating system specific TCP settings, including:
-     * <ul>
-     * <li>http://onlamp.com/pub/a/onlamp/2005/11/17/tcp_tuning.html</li>
-     * <li>http://fasterdata.es.net/TCP-tuning/</li>
-     * </ul>
-     *
-     * @return A two element array containing first the TCP send buffer size hint and then the TCP
-     *         receive buffer size hint.
-     */
-    public int[] getSocketBufferSizeHints() {
-        return new int[] {socketSendBufferSizeHint, socketReceiveBufferSizeHint};
-    }
-
-    /**
-     * Sets the optional size hints (in bytes) for the low level TCP send and receive buffers. This
-     * is an advanced option for advanced users who want to tune low level TCP parameters to try and
-     * squeeze out more performance.
-     * <p>
-     * The optimal TCP buffer sizes for a particular application are highly dependent on network
-     * configuration and operating system configuration and capabilities. For example, most modern
-     * operating systems provide auto-tuning functionality for TCP buffer sizes, which can have a
-     * big impact on performance for TCP connections that are held open long enough for the
-     * auto-tuning to optimize buffer sizes.
-     * <p>
-     * Large buffer sizes (ex: 2MB) will allow the operating system to buffer more data in memory
-     * without requiring the remote server to acknowledge receipt of that information, so can be
-     * particularly useful when the network has high latency.
-     * <p>
-     * This is only a <b>hint</b>, and the operating system may choose not to honor it. When using
-     * this option, users should <b>always</b> check the operating system's configured limits and
-     * defaults. Most OS's have a maximum TCP buffer size limit configured, and won't let you go
-     * beyond that limit unless you explicitly raise the max TCP buffer size limit.
-     * <p>
-     * There are many resources available online to help with configuring TCP buffer sizes and
-     * operating system specific TCP settings, including:
-     * <ul>
-     * <li>http://onlamp.com/pub/a/onlamp/2005/11/17/tcp_tuning.html</li>
-     * <li>http://fasterdata.es.net/TCP-tuning/</li>
-     * </ul>
-     *
-     * @param socketSendBufferSizeHint
-     *            The size hint (in bytes) for the low level TCP send buffer.
-     * @param socketReceiveBufferSizeHint
-     *            The size hint (in bytes) for the low level TCP receive buffer.
-     */
-    public void setSocketBufferSizeHints(int socketSendBufferSizeHint, int socketReceiveBufferSizeHint) {
-        this.socketSendBufferSizeHint = socketSendBufferSizeHint;
-        this.socketReceiveBufferSizeHint = socketReceiveBufferSizeHint;
-    }
-
-    /**
-     * Sets the optional size hints (in bytes) for the low level TCP send and receive buffers, and
-     * returns the updated ClientConfiguration object so that additional method calls may be chained
-     * together.
-     * <p>
-     * This is an advanced option for advanced users who want to tune low level TCP parameters to
-     * try and squeeze out more performance.
-     * <p>
-     * The optimal TCP buffer sizes for a particular application are highly dependent on network
-     * configuration and operating system configuration and capabilities. For example, most modern
-     * operating systems provide auto-tuning functionality for TCP buffer sizes, which can have a
-     * big impact on performance for TCP connections that are held open long enough for the
-     * auto-tuning to optimize buffer sizes.
-     * <p>
-     * Large buffer sizes (ex: 2MB) will allow the operating system to buffer more data in memory
-     * without requiring the remote server to acknowledge receipt of that information, so can be
-     * particularly useful when the network has high latency.
-     * <p>
-     * This is only a <b>hint</b>, and the operating system may choose not to honor it. When using
-     * this option, users should <b>always</b> check the operating system's configured limits and
-     * defaults. Most OS's have a maximum TCP buffer size limit configured, and won't let you go
-     * beyond that limit unless you explicitly raise the max TCP buffer size limit.
-     * <p>
-     * There are many resources available online to help with configuring TCP buffer sizes and
-     * operating system specific TCP settings, including:
-     * <ul>
-     * <li>http://onlamp.com/pub/a/onlamp/2005/11/17/tcp_tuning.html</li>
-     * <li>http://fasterdata.es.net/TCP-tuning/</li>
-     * </ul>
-     *
-     * @param socketSendBufferSizeHint
-     *            The size hint (in bytes) for the low level TCP send buffer.
-     * @param socketReceiveBufferSizeHint
-     *            The size hint (in bytes) for the low level TCP receive buffer.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withSocketBufferSizeHints(int socketSendBufferSizeHint,
-                                                               int socketReceiveBufferSizeHint) {
-        setSocketBufferSizeHints(socketSendBufferSizeHint, socketReceiveBufferSizeHint);
-        return this;
-    }
-
-    /**
      * Returns the name of the signature algorithm to use for signing requests made by this client.
      * If not set or explicitly set to null, the client will choose a signature algorithm to use
      * based on a configuration file of supported signature algorithms for the service and region.
@@ -1380,383 +652,6 @@ public class LegacyClientConfiguration {
      */
     public LegacyClientConfiguration withSignerOverride(final String value) {
         setSignerOverride(value);
-        return this;
-    }
-
-    /**
-     * Returns whether to attempt to authenticate preemptively against proxy servers using basic
-     * authentication
-     *
-     * @return Whether to authenticate preemptively against proxy server.
-     */
-    public boolean isPreemptiveBasicProxyAuth() {
-        return preemptiveBasicProxyAuth;
-    }
-
-    /**
-     * Sets whether to attempt to authenticate preemptively against proxy servers using basic
-     * authentication
-     *
-     * @param preemptiveBasicProxyAuth
-     *            Whether to authenticate preemptively against proxy server.
-     */
-    public void setPreemptiveBasicProxyAuth(Boolean preemptiveBasicProxyAuth) {
-        this.preemptiveBasicProxyAuth = preemptiveBasicProxyAuth;
-    }
-
-    /**
-     * Sets whether to attempt to authenticate preemptively against proxy servers using basic
-     * authentication, and returns the updated ClientConfiguration object so that additional method
-     * calls may be chained together.
-     *
-     * @param preemptiveBasicProxyAuth
-     *            Whether to authenticate preemptively against proxy server.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withPreemptiveBasicProxyAuth(boolean preemptiveBasicProxyAuth) {
-        setPreemptiveBasicProxyAuth(preemptiveBasicProxyAuth);
-        return this;
-    }
-
-    /**
-     * Returns the expiration time (in milliseconds) for a connection in the connection pool. When
-     * retrieving a connection from the pool to make a request, the total time that the connection
-     * has been open is compared against this value. Connections which have been open for longer are
-     * discarded, and if needed a new connection is created.
-     * <p>
-     * Tuning this setting down (together with an appropriately-low setting for Java's DNS cache
-     * TTL) ensures that your application will quickly rotate over to new IP addresses when the
-     * service begins announcing them through DNS, at the cost of having to re-establish new
-     * connections more frequently.
-     *
-     * @return the connection TTL, in milliseconds
-     */
-    public long getConnectionTtl() {
-        return connectionTtl;
-    }
-
-    /**
-     * Sets the expiration time (in milliseconds) for a connection in the connection pool. When
-     * retrieving a connection from the pool to make a request, the total time that the connection
-     * has been open is compared against this value. Connections which have been open for longer are
-     * discarded, and if needed a new connection is created.
-     * <p>
-     * Tuning this setting down (together with an appropriately-low setting for Java's DNS cache
-     * TTL) ensures that your application will quickly rotate over to new IP addresses when the
-     * service begins announcing them through DNS, at the cost of having to re-establish new
-     * connections more frequently.
-     * <p>
-     * By default, it is set to {@code -1}, i.e. connections do not expire.
-     *
-     * @param connectionTtl the connection TTL, in milliseconds
-     */
-    public void setConnectionTtl(long connectionTtl) {
-        this.connectionTtl = connectionTtl;
-    }
-
-    /**
-     * Sets the expiration time (in milliseconds) for a connection in the connection pool. When
-     * retrieving a connection from the pool to make a request, the total time that the connection
-     * has been open is compared against this value. Connections which have been open for longer are
-     * discarded, and if needed a new connection is created.
-     * <p>
-     * Tuning this setting down (together with an appropriately-low setting for Java's DNS cache
-     * TTL) ensures that your application will quickly rotate over to new IP addresses when the
-     * service begins announcing them through DNS, at the cost of having to re-establish new
-     * connections more frequently.
-     * <p>
-     * By default, it is set to {@code -1}, i.e. connections do not expire.
-     *
-     * @param connectionTtl
-     *            the connection TTL, in milliseconds
-     * @return the updated ClientConfiguration object
-     */
-    public LegacyClientConfiguration withConnectionTtl(long connectionTtl) {
-        setConnectionTtl(connectionTtl);
-        return this;
-    }
-
-    /**
-     * Returns the maximum amount of time that an idle connection may sit in the connection pool and
-     * still be eligible for reuse. When retrieving a connection from the pool to make a request,
-     * the amount of time the connection has been idle is compared against this value. Connections
-     * which have been idle for longer are discarded, and if needed a new connection is created.
-     * <p>
-     * Tuning this setting down reduces the likelihood of a race condition (wherein you begin
-     * sending a request down a connection which appears to be healthy, but before it arrives the
-     * service decides the connection has been idle for too long and closes it) at the cost of
-     * having to re-establish new connections more frequently.
-     *
-     * @return the connection maximum idle time, in milliseconds
-     */
-    public long getConnectionMaxIdleMillis() {
-        return connectionMaxIdleMillis;
-    }
-
-    /**
-     * Sets the maximum amount of time that an idle connection may sit in the connection pool and
-     * still be eligible for reuse. When retrieving a connection from the pool to make a request,
-     * the amount of time the connection has been idle is compared against this value. Connections
-     * which have been idle for longer are discarded, and if needed a new connection is created.
-     * <p>
-     * Tuning this setting down reduces the likelihood of a race condition (wherein you begin
-     * sending a request down a connection which appears to be healthy, but before it arrives the
-     * service decides the connection has been idle for too long and closes it) at the cost of
-     * having to re-establish new connections more frequently.
-     * <p>
-     * By default, it is set to one minute (60000ms).
-     *
-     * @param connectionMaxIdleMillis
-     *            the connection maximum idle time, in milliseconds
-     */
-    public void setConnectionMaxIdleMillis(long connectionMaxIdleMillis) {
-        this.connectionMaxIdleMillis = connectionMaxIdleMillis;
-    }
-
-    /**
-     * Sets the maximum amount of time that an idle connection may sit in the connection pool and
-     * still be eligible for reuse. When retrieving a connection from the pool to make a request,
-     * the amount of time the connection has been idle is compared against this value. Connections
-     * which have been idle for longer are discarded, and if needed a new connection is created.
-     * <p>
-     * Tuning this setting down reduces the likelihood of a race condition (wherein you begin
-     * sending a request down a connection which appears to be healthy, but before it arrives the
-     * service decides the connection has been idle for too long and closes it) at the cost of
-     * having to re-establish new connections more frequently.
-     * <p>
-     * By default, it is set to one minute (60000ms).
-     *
-     * @param connectionMaxIdleMillis
-     *            the connection maximum idle time, in milliseconds
-     * @return the updated ClientConfiguration object
-     */
-    public LegacyClientConfiguration withConnectionMaxIdleMillis(long connectionMaxIdleMillis) {
-
-        setConnectionMaxIdleMillis(connectionMaxIdleMillis);
-        return this;
-    }
-
-    /**
-     * Returns the amount of time (in milliseconds) that a connection can be idle in the connection pool before it must be
-     * validated to ensure it's still open. This "stale connection check" adds a small bit of overhead to validate the
-     * connection. Setting this value to larger values may increase the likelihood that the connection is not usable, potentially
-     * resulting in a {@link org.apache.http.NoHttpResponseException}. Lowering this setting increases the overhead when leasing
-     * connections from the connection pool. It is recommended to tune this setting based on how long a service allows a
-     * connection to be idle before closing.
-     *
-     * <p>A non positive value disables validation of connections.</p>
-     *
-     * <p>The default value is {@value #DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS} milliseconds.</p>
-     */
-    public int getValidateAfterInactivityMillis() {
-        return validateAfterInactivityMillis;
-    }
-
-    /**
-     * Sets the amount of time (in milliseconds) that a connection can be idle in the connection pool before it must be validated
-     * to ensure it's still open. This "stale connection check" adds a small bit of overhead to validate the connection. Setting
-     * this value to larger values may increase the likelihood that the connection is not usable, potentially resulting in a
-     * {@link org.apache.http.NoHttpResponseException}. Lowering this setting increases the overhead when leasing connections
-     * from the connection pool. It is recommended to tune this setting based on how long a service allows a connection to be
-     * idle before closing.
-     *
-     * <p>A non positive value disables validation of connections.</p>
-     *
-     * <p>The default value is {@value #DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS} milliseconds.</p>
-     *
-     * @param validateAfterInactivityMillis The allowed time, in milliseconds, a connection can be idle before it must be
-     *                                      re-validated.
-     */
-    public void setValidateAfterInactivityMillis(int validateAfterInactivityMillis) {
-        this.validateAfterInactivityMillis = validateAfterInactivityMillis;
-    }
-
-    /**
-     * Sets the amount of time (in milliseconds) that a connection can be idle in the connection pool before it must be validated
-     * to ensure it's still open. This "stale connection check" adds a small bit of overhead to validate the connection. Setting
-     * this value to larger values may increase the likelihood that the connection is not usable, potentially resulting in a
-     * {@link org.apache.http.NoHttpResponseException}. Lowering this setting increases the overhead when leasing connections
-     * from the connection pool. It is recommended to tune this setting based on how long a service allows a connection to be
-     * idle before closing.
-     *
-     * <p>A non positive value disables validation of connections.</p>
-     *
-     * <p>The default value is {@value #DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS} milliseconds.</p>
-     *
-     * @param validateAfterInactivityMillis The allowed time, in milliseconds, a connection can be idle before it must be
-     *                                      re-validated.
-     * @return The updated {@link LegacyClientConfiguration} object.
-     */
-    public LegacyClientConfiguration withValidateAfterInactivityMillis(int validateAfterInactivityMillis) {
-        setValidateAfterInactivityMillis(validateAfterInactivityMillis);
-        return this;
-    }
-
-    /**
-     * Returns whether or not TCP KeepAlive support is enabled.
-     */
-    public boolean useTcpKeepAlive() {
-        return tcpKeepAlive;
-    }
-
-    /**
-     * Sets whether or not to enable TCP KeepAlive support at the socket level.
-     */
-    public void setUseTcpKeepAlive(final boolean use) {
-        this.tcpKeepAlive = use;
-    }
-
-    /**
-     * Sets whether or not to enable TCP KeepAlive support at the socket level.
-     *
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withTcpKeepAlive(final boolean use) {
-        setUseTcpKeepAlive(use);
-        return this;
-    }
-
-    /**
-     * Returns whether or not to cache response metadata.
-     * <p>
-     * Response metadata is typically used for troubleshooting issues with AWS support staff when
-     * services aren't acting as expected.
-     * </p>
-     * <p>
-     * While this feature is useful for debugging it adds overhead and disabling it may
-     * be desired in high throughput applications.
-     * </p>
-     *
-     * @return true if response metadata will be cached
-     */
-    public boolean getCacheResponseMetadata() {
-        return cacheResponseMetadata;
-    }
-
-    /**
-     * Sets whether or not to cache response metadata.
-     * <p>
-     * Response metadata is typically used for troubleshooting issues with AWS support staff when
-     * services aren't acting as expected.
-     * </p>
-     * <p>
-     * While this feature is useful for debugging it adds overhead and disabling it may
-     * be desired in high throughput applications.
-     * </p>
-     *
-     * @param shouldCache true if response metadata should be cached
-     */
-    public void setCacheResponseMetadata(boolean shouldCache) {
-        this.cacheResponseMetadata = shouldCache;
-    }
-
-    /**
-     * Sets whether or not to cache response metadata.
-     * <p>
-     * Response metadata is typically used for troubleshooting issues with AWS support staff when
-     * services aren't acting as expected.
-     * </p>
-     * <p>
-     * While this feature is useful for debugging it adds overhead and disabling it may
-     * be desired in high throughput applications.
-     * </p>
-     *
-     * @param shouldCache true if response metadata should be cached
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withCacheResponseMetadata(final boolean shouldCache) {
-        setCacheResponseMetadata(shouldCache);
-        return this;
-    }
-
-    /**
-     * Returns the response metadata cache size.
-     */
-    public int getResponseMetadataCacheSize() {
-        return responseMetadataCacheSize;
-    }
-
-    /**
-     * Sets the response metadata cache size. By default, it is set to
-     * {@value #DEFAULT_RESPONSE_METADATA_CACHE_SIZE}.
-     *
-     * @param responseMetadataCacheSize
-     *            maximum cache size.
-     */
-    public void setResponseMetadataCacheSize(int responseMetadataCacheSize) {
-        this.responseMetadataCacheSize = responseMetadataCacheSize;
-    }
-
-    /**
-     * Sets the response metadata cache size. By default, it is set to
-     * {@value #DEFAULT_RESPONSE_METADATA_CACHE_SIZE}.
-     *
-     * @param responseMetadataCacheSize
-     *            maximum cache size.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withResponseMetadataCacheSize(int responseMetadataCacheSize) {
-        setResponseMetadataCacheSize(responseMetadataCacheSize);
-        return this;
-    }
-
-    /**
-     * Returns the instance of {@link SecureRandom} configured by the user; or the JDK default if it
-     * is null.
-     *
-     * @return a non-null instance of SecureRandom.
-     */
-    public SecureRandom getSecureRandom() {
-        if (secureRandom == null) {
-            return DEFAULT_SECURE_RANDOM;
-        }
-        return secureRandom;
-    }
-
-    /**
-     * Sets an instance of {@link SecureRandom} to be used by the SDK.
-     */
-    public void setSecureRandom(SecureRandom secureRandom) {
-        this.secureRandom = secureRandom;
-    }
-
-    /**
-     * Fluent API for {@link #setSecureRandom(SecureRandom)}.
-     */
-    public LegacyClientConfiguration withSecureRandom(SecureRandom secureRandom) {
-        setSecureRandom(secureRandom);
-        return this;
-    }
-
-    /**
-     * Returns the use expect continue flag
-     */
-    public boolean isUseExpectContinue() {
-        return useExpectContinue;
-    }
-
-    /**
-     * Sets if use expect continue should be enabled. By default, it is set to
-     * {@value #DEFAULT_USE_EXPECT_CONTINUE}.
-     *
-     * @param useExpectContinue
-     *            use expect continue HTTP/1.1 header.
-     */
-    public void setUseExpectContinue(boolean useExpectContinue) {
-        this.useExpectContinue = useExpectContinue;
-    }
-
-    /**
-     * Sets if use expect continue should be enabled. By default, it is set to
-     * {@value #DEFAULT_USE_EXPECT_CONTINUE}.
-     *
-     * @param useExpectContinue
-     *            use expect continue HTTP/1.1 header.
-     * @return The updated ClientConfiguration object.
-     */
-    public LegacyClientConfiguration withUseExpectContinue(boolean useExpectContinue) {
-        setUseExpectContinue(useExpectContinue);
-
         return this;
     }
 

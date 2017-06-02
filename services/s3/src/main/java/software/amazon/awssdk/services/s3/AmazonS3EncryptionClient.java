@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.kms.KMSClient;
@@ -272,7 +273,7 @@ public class AmazonS3EncryptionClient extends AmazonS3Client implements
         ExecutorService es = req.getExecutorService();
         final boolean defaultExecutorService = es == null;
         if (es == null) {
-            es = Executors.newFixedThreadPool(clientConfiguration.getMaxConnections());
+            es = Executors.newFixedThreadPool(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS);
         }
         UploadObjectObserver observer = req.getUploadObjectObserver();
         if (observer == null) {

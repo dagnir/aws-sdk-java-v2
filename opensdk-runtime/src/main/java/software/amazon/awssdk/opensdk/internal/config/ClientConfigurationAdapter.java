@@ -47,31 +47,12 @@ public class ClientConfigurationAdapter {
         customConfiguration.getProxyConfiguration().ifPresent(
             proxyConfiguration -> {
                 bind(proxyConfiguration::getProtocol, adaptedConfiguration::setProtocol);
-                bind(proxyConfiguration::getProxyHost, adaptedConfiguration::setProxyHost);
-                bind(proxyConfiguration::getProxyPort, adaptedConfiguration::setProxyPort);
-                bind(proxyConfiguration::getProxyUsername, adaptedConfiguration::setProxyUsername);
-                bind(proxyConfiguration::getProxyPassword, adaptedConfiguration::setProxyPassword);
-                bind(proxyConfiguration::getProxyDomain, adaptedConfiguration::setProxyDomain);
-                bind(proxyConfiguration::getProxyWorkstation, adaptedConfiguration::setProxyWorkstation);
-                bind(proxyConfiguration::getNonProxyHosts, adaptedConfiguration::setNonProxyHosts);
-                bind(proxyConfiguration::isPreemptiveBasicProxyAuth, adaptedConfiguration::setPreemptiveBasicProxyAuth);
             }
         );
 
         customConfiguration.getTimeoutConfiguration().ifPresent(
             timeoutConfiguration -> {
-                bind(timeoutConfiguration::getSocketTimeout, adaptedConfiguration::setSocketTimeout);
-                bind(timeoutConfiguration::getConnectionTimeout, adaptedConfiguration::setConnectionTimeout);
                 bind(timeoutConfiguration::getTotalExecutionTimeout, adaptedConfiguration::setClientExecutionTimeout);
-            }
-        );
-
-        customConfiguration.getConnectionConfiguration().ifPresent(
-            connectionConfiguration -> {
-                bind(connectionConfiguration::getMaxConnections, adaptedConfiguration::setMaxConnections);
-                bind(connectionConfiguration::getConnectionTtl, adaptedConfiguration::setConnectionTtl);
-                bind(connectionConfiguration::getConnectionMaxIdleMillis, adaptedConfiguration::setConnectionMaxIdleMillis);
-                bind(connectionConfiguration::isUseReaper, adaptedConfiguration::setUseReaper);
             }
         );
 

@@ -333,8 +333,6 @@ import software.amazon.awssdk.utils.OptionalUtils;
 public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
     public static final String S3_SERVICE_NAME = "s3";
-    protected static final AmazonS3LegacyClientConfigurationFactory CONFIG_FACTORY =
-            new AmazonS3LegacyClientConfigurationFactory();
     private static final String S3_SIGNER = "S3SignerType";
     private static final String S3_V4_SIGNER = "AWSS3V4SignerType";
     /** Shared factory for converting configuration objects to XML. */
@@ -444,7 +442,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client(AwsCredentials awsCredentials) {
-        this(awsCredentials, CONFIG_FACTORY.getConfig());
+        this(awsCredentials, new LegacyClientConfiguration());
     }
 
     /**
@@ -479,7 +477,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client(AwsCredentialsProvider credentialsProvider) {
-        this(credentialsProvider, CONFIG_FACTORY.getConfig());
+        this(credentialsProvider, new LegacyClientConfiguration());
     }
 
     /**
@@ -4501,7 +4499,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         ExecutorService es = req.getExecutorService();
         final boolean defaultExecutorService = es == null;
         if (es == null) {
-            es = Executors.newFixedThreadPool(clientConfiguration.getMaxConnections());
+            es = Executors.newFixedThreadPool(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS);
         }
         UploadObjectObserver observer = req.getUploadObjectObserver();
         if (observer == null) {
