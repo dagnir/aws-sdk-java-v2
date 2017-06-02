@@ -46,7 +46,7 @@ public class ApacheConnectionManagerFactory {
 
     public HttpClientConnectionManager create(ApacheSdkHttpClientFactory configuration,
                                               SdkHttpConfigurationOptions standardOptions) {
-        ConnectionSocketFactory sslsf = getPreferredSocketFactory();
+        ConnectionSocketFactory sslsf = getPreferredSocketFactory(standardOptions);
 
         final PoolingHttpClientConnectionManager cm = new
                 PoolingHttpClientConnectionManager(
@@ -64,10 +64,10 @@ public class ApacheConnectionManagerFactory {
         return cm;
     }
 
-    private ConnectionSocketFactory getPreferredSocketFactory() {
+    private ConnectionSocketFactory getPreferredSocketFactory(SdkHttpConfigurationOptions standardOptions) {
         // TODO v2 custom socket factory
         return new SdkTlsSocketFactory(getPreferredSslContext(),
-                                       getHostNameVerifier());
+                                       getHostNameVerifier(standardOptions));
     }
 
     private static SSLContext getPreferredSslContext() {
@@ -94,13 +94,11 @@ public class ApacheConnectionManagerFactory {
     @ReviewBeforeRelease("Need to have a way to communicate with HTTP impl supports disabling of strict" +
                          "hostname verification. If it doesn't we either need to fail in S3 or switch to path style" +
                          "addressing.")
-    private HostnameVerifier getHostNameVerifier() {
-        // TODO fix this
-        return SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER;
+    private HostnameVerifier getHostNameVerifier(SdkHttpConfigurationOptions standardOptions) {
         // TODO Need to find a better way to handle these deprecations.
-        //        return options.useBrowserCompatibleHostNameVerifier()
-        //                ? SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER
-        //                : SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER;
+        return standardOptions.option(SdkHttpConfigurationOption.USE_STRICT_HOSTNAME_VERIFICATION)
+                ? SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER
+                : SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER;
     }
 
     private Registry<ConnectionSocketFactory> createSocketFactoryRegistry(ConnectionSocketFactory sslSocketFactory) {
