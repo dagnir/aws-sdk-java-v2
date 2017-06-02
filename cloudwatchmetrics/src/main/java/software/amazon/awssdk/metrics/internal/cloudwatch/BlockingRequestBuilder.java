@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;
@@ -33,7 +34,6 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.services.cloudwatch.model.StatisticSet;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.util.json.Jackson;
 
 /**
  * An internal builder used to retrieve the next batch of requests to be sent to
@@ -112,7 +112,7 @@ class BlockingRequestBuilder {
         List<Dimension> dims = datum.dimensions();
         Collections.sort(dims, DimensionComparator.INSTANCE);
         String metricName = datum.metricName();
-        String key = metricName + Jackson.toJsonString(dims);
+        String key = metricName + dims.toString();
         MetricDatum statDatum = uniqueMetrics.get(key);
         if (statDatum == null) {
             statDatum = MetricDatum.builder()
