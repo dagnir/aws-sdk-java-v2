@@ -146,7 +146,7 @@ public class IntegrationTestBase extends AwsTestBase {
         if (accountId == null) {
             IAMClient iamClient = IAMClient.builder()
                     .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                    .region(Region.US_EAST_1)
+                    .region(Region.AWS_GLOBAL)
                     .build();
             accountId = parseAccountIdFromArn(iamClient.getUser(GetUserRequest.builder().build()).user().arn());
         }

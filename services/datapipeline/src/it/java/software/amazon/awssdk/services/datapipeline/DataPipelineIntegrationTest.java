@@ -143,7 +143,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(OBJECT_NAME, pipelineDefinitionResult.pipelineObjects().get(0).name());
         assertEquals(1, pipelineDefinitionResult.pipelineObjects().get(0).fields().size());
         assertTrue(pipelineDefinitionResult.pipelineObjects().get(0).fields()
-                                              .contains(Field.builder().key(VALID_KEY).stringValue(FIELD_VALUE)));
+                                              .contains(Field.builder().key(VALID_KEY).stringValue(FIELD_VALUE).build()));
 
         // Activate a pipeline.
         ActivatePipelineResult activatePipelineResult =
@@ -165,9 +165,9 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(OBJECT_ID, describeObjectsResult.pipelineObjects().get(0).id());
         assertEquals(OBJECT_NAME, describeObjectsResult.pipelineObjects().get(0).name());
         assertTrue(describeObjectsResult.pipelineObjects().get(0).fields()
-                                        .contains(Field.builder().key(VALID_KEY).stringValue(FIELD_VALUE)));
+                                        .contains(Field.builder().key(VALID_KEY).stringValue(FIELD_VALUE).build()));
         assertTrue(describeObjectsResult.pipelineObjects().get(0).fields()
-                                        .contains(Field.builder().key("@pipelineId").stringValue(pipelineId)));
+                                        .contains(Field.builder().key("@pipelineId").stringValue(pipelineId).build()));
 
         // Describe a pipeline.
         DescribePipelinesResult describepipelinesResult =
@@ -178,11 +178,11 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(PIPELINE_DESCRIPTION, describepipelinesResult.pipelineDescriptionList().get(0).description());
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields().size() > 0);
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder().key("name").stringValue(PIPELINE_NAME)));
+                                          .contains(Field.builder().key("name").stringValue(PIPELINE_NAME).build()));
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder().key("@id").stringValue(pipelineId)));
+                                          .contains(Field.builder().key("@id").stringValue(pipelineId).build()));
         assertTrue(describepipelinesResult.pipelineDescriptionList().get(0).fields()
-                                          .contains(Field.builder().key("uniqueId").stringValue(PIPELINE_ID)));
+                                          .contains(Field.builder().key("uniqueId").stringValue(PIPELINE_ID).build()));
 
         // Delete a pipeline.
         dataPipeline.deletePipeline(DeletePipelineRequest.builder().pipelineId(pipelineId).build());

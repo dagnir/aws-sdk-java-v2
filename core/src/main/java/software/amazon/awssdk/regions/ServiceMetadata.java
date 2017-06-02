@@ -22,6 +22,8 @@ public interface ServiceMetadata {
 
     URI endpointFor(Region region);
 
+    Region signingRegion(Region region);
+
     List<Region> regions();
 
     static ServiceMetadata of(String serviceEndpointPrefix) {
