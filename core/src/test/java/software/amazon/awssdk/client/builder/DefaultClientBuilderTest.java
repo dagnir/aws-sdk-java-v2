@@ -17,16 +17,27 @@ package software.amazon.awssdk.client.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.StaticSignerProvider;
@@ -35,14 +46,32 @@ import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpClientFactory;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
+import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 
 /**
  * Validate the functionality of the {@link DefaultClientBuilder}.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultClientBuilderTest {
+
+    private static final SdkHttpConfigurationOptions MOCK_DEFAULTS = SdkHttpConfigurationOptions
+            .builder()
+            .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Duration.ofSeconds(10))
+            .build();
+
     private static final String ENDPOINT_PREFIX = "prefix";
     private static final StaticSignerProvider SIGNER_PROVIDER = new StaticSignerProvider(new Aws4Signer());
     private static final URI ENDPOINT = URI.create("https://example.com");
+
+    @Mock
+    private SdkHttpClientFactory defaultHttpClientFactory;
+
+    @Before
+    public void setup() {
+        when(defaultHttpClientFactory.createHttpClientWithDefaults(any())).thenReturn(mock(SdkHttpClient.class));
+    }
 
     @Test
     public void buildIncludesServiceDefaults() {
@@ -81,6 +110,7 @@ public class DefaultClientBuilderTest {
         TestClient client = testClientBuilder().region("us-west-1").build();
         assertThat(client.syncClientConfiguration.httpClient())
                 .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
+        verify(defaultHttpClientFactory, times(1)).createHttpClientWithDefaults(eq(MOCK_DEFAULTS));
     }
 
     @Test
@@ -88,11 +118,15 @@ public class DefaultClientBuilderTest {
         TestClient client = testClientBuilder()
                 .region("us-west-1")
                 .httpConfiguration(ClientHttpConfiguration.builder()
-                                                          .httpClientFactory(serviceDefaults -> mock(SdkHttpClient.class))
+                                                          .httpClientFactory(serviceDefaults -> {
+                                                              assertThat(serviceDefaults).isEqualTo(MOCK_DEFAULTS);
+                                                              return mock(SdkHttpClient.class);
+                                                          })
                                                           .build())
                 .build();
         assertThat(client.syncClientConfiguration.httpClient())
                 .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
+        verify(defaultHttpClientFactory, never()).createHttpClientWithDefaults(any());
     }
 
     @Test
@@ -105,6 +139,7 @@ public class DefaultClientBuilderTest {
                 .build();
         assertThat(client.syncClientConfiguration.httpClient())
                 .isInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
+        verify(defaultHttpClientFactory, never()).createHttpClientWithDefaults(any());
     }
 
     @Test
@@ -149,8 +184,12 @@ public class DefaultClientBuilderTest {
         }
     }
 
-    private static class TestClientBuilder extends DefaultClientBuilder<TestClientBuilder, TestClient>
+    private class TestClientBuilder extends DefaultClientBuilder<TestClientBuilder, TestClient>
             implements ClientBuilder<TestClientBuilder, TestClient> {
+
+        public TestClientBuilder() {
+            super(defaultHttpClientFactory);
+        }
 
         @Override
         protected TestClient buildClient() {
@@ -172,6 +211,11 @@ public class DefaultClientBuilderTest {
                     builder.signerProvider(SIGNER_PROVIDER);
                 }
             };
+        }
+
+        @Override
+        protected SdkHttpConfigurationOptions serviceSpecificHttpConfig() {
+            return MOCK_DEFAULTS;
         }
     }
 }

@@ -32,7 +32,7 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
-import software.amazon.awssdk.http.loader.DefaultSdkHttpClientLoader;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.http.pipeline.stages.AfterCallbackStage;
 import software.amazon.awssdk.http.pipeline.stages.ApplyTransactionIdStage;
@@ -366,7 +366,7 @@ public class AmazonHttpClient implements AutoCloseable {
                              "is duplicated in DefaultClientBuilder but many tests use AmazonHttpClient directly.")
         private SdkHttpClient resolveSdkHttpClient() {
             return sdkHttpClient != null ? sdkHttpClient :
-                    DefaultSdkHttpClientLoader.createDefaultHttpClient(SdkHttpConfigurationOptions.empty());
+                    new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty());
         }
 
         private CapacityManager createCapacityManager() {

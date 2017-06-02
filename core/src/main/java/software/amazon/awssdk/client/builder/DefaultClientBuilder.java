@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.config.ClientListenerConfiguration;
@@ -38,12 +39,13 @@ import software.amazon.awssdk.config.defaults.GlobalClientConfigurationDefaults;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
-import software.amazon.awssdk.http.loader.DefaultSdkHttpClientLoader;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.regions.AwsRegionProvider;
 import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.regions.RegionUtils;
@@ -73,6 +75,9 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         implements ClientBuilder<B, C> {
     private static final String DEFAULT_ENDPOINT_PROTOCOL = "https";
     private static final AwsRegionProvider DEFAULT_REGION_PROVIDER = new DefaultAwsRegionProviderChain();
+    private static final SdkHttpClientFactory DEFAULT_HTTP_CLIENT_FACTORY = new DefaultSdkHttpClientFactory();
+
+    private final SdkHttpClientFactory defaultHttpClientFactory;
 
     private MutableClientConfiguration mutableClientConfiguration = new MutableClientConfiguration();
 
@@ -80,6 +85,15 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     private Boolean defaultRegionDetectionEnabled;
     private ExecutorProvider asyncExecutorProvider;
     private ClientHttpConfiguration httpConfiguration = ClientHttpConfiguration.builder().build();
+
+    protected DefaultClientBuilder() {
+        this(DEFAULT_HTTP_CLIENT_FACTORY);
+    }
+
+    @SdkTestInternalApi
+    protected DefaultClientBuilder(SdkHttpClientFactory defaultHttpClientFactory) {
+        this.defaultHttpClientFactory = defaultHttpClientFactory;
+    }
 
     /**
      * Build a client using the current state of this builder. This is marked final in order to allow this class to add standard
@@ -159,14 +173,11 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     }
 
     private SdkHttpClient resolveSdkHttpClient() {
-        return httpConfiguration.toEither()
-                                .map(e -> e.map(NonManagedSdkHttpClient::new,
-                                    factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
-                                .orElse(createDefaultHttpClient());
-    }
-
-    private SdkHttpClient createDefaultHttpClient() {
-        return DefaultSdkHttpClientLoader.createDefaultHttpClient(serviceSpecificHttpConfig());
+        return httpConfiguration
+                .toEither()
+                .map(e -> e.map(NonManagedSdkHttpClient::new,
+                    factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
+                .orElseGet(() -> defaultHttpClientFactory.createHttpClientWithDefaults(serviceSpecificHttpConfig()));
     }
 
     /**

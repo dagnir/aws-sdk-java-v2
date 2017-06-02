@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http.loader;
 
+import static software.amazon.awssdk.utils.Validate.notEmpty;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +30,7 @@ class SdkHttpServiceProviderChain implements SdkHttpServiceProvider {
     private final List<SdkHttpServiceProvider> httpProviders;
 
     SdkHttpServiceProviderChain(SdkHttpServiceProvider... httpProviders) {
-        this.httpProviders = Arrays.asList(httpProviders);
+        this.httpProviders = Arrays.asList(notEmpty(httpProviders, "httpProviders cannot be null or empty"));
     }
 
     @Override

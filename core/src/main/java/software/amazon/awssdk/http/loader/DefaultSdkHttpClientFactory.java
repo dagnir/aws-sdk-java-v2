@@ -17,25 +17,20 @@ package software.amazon.awssdk.http.loader;
 
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpService;
 
 /**
  * Utility to load the default HTTP client factory and create an instance of {@link SdkHttpClient}.
  */
-public class DefaultSdkHttpClientLoader {
+public class DefaultSdkHttpClientFactory implements SdkHttpClientFactory {
 
     private static final SdkHttpServiceProvider DEFAULT_CHAIN = new CachingSdkHttpServiceProvider(
-            new SdkHttpServiceProviderChain(
-                    new SystemPropertyHttpServiceProvider(), new ClasspathSdkHttpServiceProvider()));
+            new SdkHttpServiceProviderChain(new SystemPropertyHttpServiceProvider(), new ClasspathSdkHttpServiceProvider()));
 
-    /**
-     * Create a default HTTP client with service defaults applied.
-     *
-     * @param serviceDefaults Service specific configuration
-     * @return SdkHttpClient instance.
-     */
-    public static SdkHttpClient createDefaultHttpClient(SdkHttpConfigurationOptions serviceDefaults) {
+    @Override
+    public SdkHttpClient createHttpClientWithDefaults(SdkHttpConfigurationOptions serviceDefaults) {
         // TODO move caching to factory level?
         return DEFAULT_CHAIN
                 .loadService()
@@ -44,4 +39,5 @@ public class DefaultSdkHttpClientLoader {
                 .orElseThrow(
                     () -> new SdkClientException("Unable to load an HTTP implementation from any provider in the chain"));
     }
+
 }

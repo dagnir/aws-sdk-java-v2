@@ -29,10 +29,20 @@ import software.amazon.awssdk.utils.JavaSystemSetting;
  */
 class ClasspathSdkHttpServiceProvider implements SdkHttpServiceProvider {
 
+    private final SdkServiceLoader serviceLoader;
+
+    ClasspathSdkHttpServiceProvider() {
+        this(new SdkServiceLoader());
+    }
+
+    ClasspathSdkHttpServiceProvider(SdkServiceLoader serviceLoader) {
+        this.serviceLoader = serviceLoader;
+    }
+
     @Override
     @ReviewBeforeRelease("Add some links to doc topics on configuring HTTP impl")
     public Optional<SdkHttpService> loadService() {
-        final Iterator<SdkHttpService> httpServices = ServiceLoader.load(SdkHttpService.class).iterator();
+        final Iterator<SdkHttpService> httpServices = serviceLoader.loadServices(SdkHttpService.class);
         if (!httpServices.hasNext()) {
             return Optional.empty();
         }
