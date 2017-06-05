@@ -48,7 +48,7 @@ public class FlattenedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
         final KeyAndAuditRecord object = new KeyAndAuditRecord();
         final AuditRecord auditRecord = assertBeforeAndAfterChange(true, object);
         assertNotNull(auditRecord.getCreatedDate());
-        assertNotNull(auditRecord.lastModifiedDate());
+        assertNotNull(auditRecord.getLastModifiedDate());
         assertEquals(Long.valueOf(1L), auditRecord.getVersionNumber());
     }
 

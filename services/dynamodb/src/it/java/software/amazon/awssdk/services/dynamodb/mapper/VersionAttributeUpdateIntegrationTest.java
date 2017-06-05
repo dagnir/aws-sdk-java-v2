@@ -135,9 +135,9 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         // Saving new objects with a null version field should populate it
         DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (IntegerVersionField obj : objs) {
-            assertNull(obj.notCalledVersion());
+            assertNull(obj.getNotCalledVersion());
             util.save(obj);
-            assertNotNull(obj.notCalledVersion());
+            assertNotNull(obj.getNotCalledVersion());
 
             assertEquals(obj, util.load(IntegerVersionField.class, obj.getKey()));
         }
@@ -145,11 +145,11 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         for (IntegerVersionField obj : objs) {
             IntegerVersionField replacement = getUniqueObject(new IntegerVersionField());
             replacement.setKey(obj.getKey());
-            replacement.setNotCalledVersion(obj.notCalledVersion());
+            replacement.setNotCalledVersion(obj.getNotCalledVersion());
 
             util.save(replacement);
             // The version field should have changed in memory
-            assertFalse(obj.notCalledVersion().equals(replacement.notCalledVersion()));
+            assertFalse(obj.getNotCalledVersion().equals(replacement.getNotCalledVersion()));
 
             IntegerVersionField loadedObject = util.load(IntegerVersionField.class, obj.getKey());
             assertEquals(replacement, loadedObject);
@@ -209,7 +209,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
     public void testVersionedAttributeWithUserProvidedExpectedConditions() {
         DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         IntegerVersionField versionedObject = getUniqueObject(new IntegerVersionField());
-        assertNull(versionedObject.notCalledVersion());
+        assertNull(versionedObject.getNotCalledVersion());
 
         // Add additional expected conditions via DynamoDBSaveExpression.
         // Expected conditions joined by AND are compatible with the conditions
@@ -221,7 +221,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         // The save should succeed since the user provided conditions are joined by AND.
         mapper.save(versionedObject, saveExpression);
         // The version field should be populated
-        assertNotNull(versionedObject.notCalledVersion());
+        assertNotNull(versionedObject.getNotCalledVersion());
         IntegerVersionField other = mapper.load(IntegerVersionField.class, versionedObject.getKey());
         assertEquals(other, versionedObject);
 
@@ -388,7 +388,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
         }
 
         @DynamoDbAttribute
-        public String normalStringAttribute() {
+        public String getNormalStringAttribute() {
             return normalStringAttribute;
         }
 
@@ -535,7 +535,7 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
 
         // Making sure that we can substitute attribute names as necessary
         @DynamoDbVersionAttribute(attributeName = "version")
-        public Integer notCalledVersion() {
+        public Integer getNotCalledVersion() {
             return notCalledVersion;
         }
 

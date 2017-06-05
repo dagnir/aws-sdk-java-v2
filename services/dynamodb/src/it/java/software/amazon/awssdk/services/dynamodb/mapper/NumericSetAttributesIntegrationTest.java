@@ -93,13 +93,13 @@ public class NumericSetAttributesIntegrationTest extends DynamoDBMapperIntegrati
             assertEquals(x.getKey(), attr.get(KEY_NAME).s());
 
             // Convert all numbers to the most inclusive type for easy comparison
-            assertNumericSetsEquals(x.bigDecimalAttribute(), attr.get(BIG_DECIMAL_ATTRIBUTE).ns());
-            assertNumericSetsEquals(x.bigIntegerAttribute(), attr.get(BIG_INTEGER_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.getBigDecimalAttribute(), attr.get(BIG_DECIMAL_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.getBigIntegerAttribute(), attr.get(BIG_INTEGER_ATTRIBUTE).ns());
             assertNumericSetsEquals(x.getFloatObjectAttribute(), attr.get(FLOAT_OBJECT_ATTRIBUTE).ns());
             assertNumericSetsEquals(x.getDoubleObjectAttribute(), attr.get(DOUBLE_OBJECT_ATTRIBUTE).ns());
             assertNumericSetsEquals(x.getIntegerAttribute(), attr.get(INTEGER_ATTRIBUTE).ns());
-            assertNumericSetsEquals(x.longObjectAttribute(), attr.get(LONG_OBJECT_ATTRIBUTE).ns());
-            assertNumericSetsEquals(x.byteObjectAttribute(), attr.get(BYTE_OBJECT_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.getLongObjectAttribute(), attr.get(LONG_OBJECT_ATTRIBUTE).ns());
+            assertNumericSetsEquals(x.getByteObjectAttribute(), attr.get(BYTE_OBJECT_ATTRIBUTE).ns());
             assertSetsEqual(toSet("0", "1"), attr.get(BOOLEAN_ATTRIBUTE).ns());
         }
     }

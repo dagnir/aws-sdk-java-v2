@@ -15,11 +15,19 @@
 
 package software.amazon.awssdk.jmespath;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class ObjectMapperSingleton {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    // FIXME: Service model objects don't have bean style getters and setters so rely on field names...
+    static {
+        OBJECT_MAPPER.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        OBJECT_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    }
 
     private ObjectMapperSingleton() {
     }

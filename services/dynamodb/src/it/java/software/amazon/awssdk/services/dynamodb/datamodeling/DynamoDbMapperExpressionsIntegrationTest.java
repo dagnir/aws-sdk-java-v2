@@ -185,7 +185,8 @@ public class DynamoDbMapperExpressionsIntegrationTest extends AwsTestBase {
                         .withHashKeyValues(customer)
                         .withRangeKeyCondition(RANGE_KEY, Condition.builder()
                                 .comparisonOperator(ComparisonOperator.EQ)
-                                .attributeValueList(AttributeValue.builder().s(ADDRESS_TYPE_HOME).build()).build());
+                                .attributeValueList(AttributeValue.builder().s(ADDRESS_TYPE_HOME).build())
+                                .build());
         PaginatedQueryList<Customer> results = mapper.query(Customer.class,
                                                             queryExpression);
         assertTrue(results.size() == 1);

@@ -113,7 +113,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
 
         PaginatedQueryList<User> query = mapper.query(User.class, expr);
         assertEquals(1, query.size());
-        assertEquals(status, query.get(0).status());
+        assertEquals(status, query.get(0).getStatus());
     }
 
     @DynamoDbTable(tableName = HASH_KEY_ONLY_TABLE_NAME)
@@ -132,7 +132,7 @@ public class HashKeyOnlyTableWithGSIIntegrationTest extends DynamoDBMapperIntegr
         }
 
         @DynamoDbIndexHashKey(globalSecondaryIndexName = "statusAndCreation")
-        public String status() {
+        public String getStatus() {
             return status;
         }
 

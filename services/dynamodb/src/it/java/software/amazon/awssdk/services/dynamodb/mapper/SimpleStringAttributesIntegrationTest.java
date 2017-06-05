@@ -75,7 +75,7 @@ public class SimpleStringAttributesIntegrationTest extends DynamoDBMapperIntegra
         for (Map<String, AttributeValue> attr : attrs) {
             StringAttributeClass x = util.load(StringAttributeClass.class, attr.get(KEY_NAME).s());
             assertEquals(x.getKey(), attr.get(KEY_NAME).s());
-            assertEquals(x.stringAttribute(), attr.get(STRING_ATTRIBUTE).s());
+            assertEquals(x.getStringAttribute(), attr.get(STRING_ATTRIBUTE).s());
             assertEquals(x.getRenamedAttribute(), attr.get(ORIGINAL_NAME_ATTRIBUTE).s());
         }
 

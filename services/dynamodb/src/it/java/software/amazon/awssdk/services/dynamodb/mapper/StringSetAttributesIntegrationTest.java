@@ -72,8 +72,8 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
         for (Map<String, AttributeValue> attr : attrs) {
             StringSetAttributeClass x = util.load(StringSetAttributeClass.class, attr.get(KEY_NAME).s());
             assertEquals(x.getKey(), attr.get(KEY_NAME).s());
-            assertSetsEqual(x.stringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).ss()));
-            assertSetsEqual(x.stringSetAttributeRenamed(), toSet(attr.get(ORIGINAL_NAME_ATTRIBUTE).ss()));
+            assertSetsEqual(x.getStringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).ss()));
+            assertSetsEqual(x.getStringSetAttributeRenamed(), toSet(attr.get(ORIGINAL_NAME_ATTRIBUTE).ss()));
         }
     }
 

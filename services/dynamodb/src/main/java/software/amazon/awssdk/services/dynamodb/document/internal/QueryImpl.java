@@ -101,7 +101,11 @@ public class QueryImpl extends AbstractImpl implements QueryApi {
         String tableName = getTable().getTableName();
         QueryRequest.Builder requestBuilder = spec.getRequest().toBuilder().tableName(tableName);
 
-        Map<String, Condition> conditions = new LinkedHashMap<>(spec.getRequest().keyConditions());
+        Map<String, Condition> conditions = new LinkedHashMap<>();
+
+        if (spec.getRequest().keyConditions() != null) {
+            conditions.putAll(spec.getRequest().keyConditions());
+        }
 
         // hash key
         final KeyAttribute hashKey = spec.getHashKey();

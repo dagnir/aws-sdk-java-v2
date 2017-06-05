@@ -150,7 +150,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             }
             assertEquals(new BigDecimal(x.getVersion()), new BigDecimal(attr.get(VERSION_ATTRIBUTE).n()));
             assertEquals(x.getFooAttribute(), attr.get(FOO_ATTRIBUTE).s());
-            assertEquals(x.barAttribute(), attr.get(BAR_ATTRIBUTE).s());
+            assertEquals(x.getBarAttribute(), attr.get(BAR_ATTRIBUTE).s());
 
         }
     }
@@ -248,7 +248,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             // check that all attributes are retrieved
             for (IndexRangeKeyClass itemInFooIndex : result) {
                 assertNotNull(itemInFooIndex.getFooAttribute());
-                assertNotNull(itemInFooIndex.barAttribute());
+                assertNotNull(itemInFooIndex.getBarAttribute());
             }
 
             /**
@@ -266,7 +266,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             // check that only the projected attributes are retrieved
             for (IndexRangeKeyClass itemInFooIndex : result) {
                 assertNotNull(itemInFooIndex.getFooAttribute());
-                assertNull(itemInFooIndex.barAttribute());
+                assertNull(itemInFooIndex.getBarAttribute());
             }
 
             /**
@@ -284,7 +284,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             // check that only the projected attributes are retrieved
             for (IndexRangeKeyClass itemInBarIndex : result) {
                 assertNull(itemInBarIndex.getFooAttribute());
-                assertNotNull(itemInBarIndex.barAttribute());
+                assertNotNull(itemInBarIndex.getBarAttribute());
             }
         }
     }
@@ -365,7 +365,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             // check that only the projected attributes are retrieved
             for (IndexRangeKeyClass itemInFooIndex : result) {
                 assertNotNull(itemInFooIndex.getFooAttribute());
-                assertNull(itemInFooIndex.barAttribute());
+                assertNull(itemInFooIndex.getBarAttribute());
             }
             result = mapper.query(IndexRangeKeyClass.class,
                                   new DynamoDbQueryExpression<IndexRangeKeyClass>()
@@ -380,7 +380,7 @@ public class IndexRangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegr
             // check that only the projected attributes are retrieved
             for (IndexRangeKeyClass itemInFooIndex : result) {
                 assertNull(itemInFooIndex.getFooAttribute());
-                assertNotNull(itemInFooIndex.barAttribute());
+                assertNotNull(itemInFooIndex.getBarAttribute());
             }
 
             /**

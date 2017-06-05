@@ -20,11 +20,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 
+@Ignore
+// FIXME: Depends on S3 properly parsing region information from the endpoint (see AmazonS3#getRegionName())
 public class S3ClientCacheIntegrationTest {
     private AwsCredentials credentials;
 
