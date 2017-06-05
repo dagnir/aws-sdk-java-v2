@@ -15,23 +15,25 @@
 
 package software.amazon.awssdk.services.cloudtrail;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.test.AwsTestBase;
+import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class IntegrationTestBase extends AwsTestBase {
+public class IntegrationTestBase extends AwsIntegrationTestBase {
 
     protected static CloudTrailClient cloudTrail;
-    protected static AmazonS3Client s3;
+    protected static AmazonS3 s3;
 
     @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
+    public static void setUp() throws IOException {
         setUpCredentials();
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
-        cloudTrail = CloudTrailClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
-        s3 = new AmazonS3Client(credentials);
+        cloudTrail = CloudTrailClient.builder().credentialsProvider(new StaticCredentialsProvider(getCredentials())).build();
+        s3 = AmazonS3Client.builder()
+                           .withCredentials(new StaticCredentialsProvider(getCredentials()))
+                           .build();
     }
 }

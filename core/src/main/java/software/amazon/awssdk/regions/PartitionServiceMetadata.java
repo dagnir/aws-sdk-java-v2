@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-
+import software.amazon.awssdk.internal.region.model.CredentialScope;
 import software.amazon.awssdk.internal.region.model.Endpoint;
 import software.amazon.awssdk.internal.region.model.Partition;
 import software.amazon.awssdk.internal.region.model.Service;
@@ -43,43 +43,45 @@ public class PartitionServiceMetadata implements ServiceMetadata {
     @Override
     public URI endpointFor(Region region) {
         RegionMetadata regionMetadata = RegionMetadata.of(region);
+        Endpoint endpoint = computeEndpoint(service, region);
+        return URI.create(endpoint.getHostname()
+                                  .replace(SERVICE, service)
+                                  .replace(REGION, region.value())
+                                  .replace(DNS_SUFFIX, regionMetadata.getDomain()));
+    }
+
+    @Override
+    public Region signingRegion(Region region) {
+        CredentialScope credentialScope = computeEndpoint(service, region).getCredentialScope();
+        return Region.of(credentialScope != null && credentialScope.getRegion() != null ?
+                                 credentialScope.getRegion() : region.value());
+    }
+
+    private Endpoint computeEndpoint(String serviceName, Region region) {
+        RegionMetadata regionMetadata = RegionMetadata.of(region);
         Partition partitionData = servicePartitionData.get(regionMetadata.getPartition());
-        Service serviceData = partitionData.getServices().get(service);
+        Service service = partitionData.getServices().get(serviceName);
 
-        // Return endpoint from partition heuristics if endpoint data is unavailable
-        if (serviceData == null || serviceData.getEndpoints().get(region.value()) == null) {
-            return endpointFromPartitionRegex(partitionData, partitionData.getDefaults().getHostname(), regionMetadata);
-        }
-
-        // Check if there is a hostname for this service in the given region
-        Endpoint endpointData = serviceData.getEndpoints().get(region.value());
-        if (endpointData.getHostname() != null) {
-            return URI.create(endpointData.getHostname());
-        }
-
-        // Check if there is a default hostname for this service in this partition
-        if (serviceData.getDefaults() != null && serviceData.getDefaults().getHostname() != null) {
-            endpointData = serviceData.getDefaults();
-            return endpointFromPartitionRegex(partitionData, endpointData.getHostname(), regionMetadata);
-        }
-
-        return endpointFromPartitionRegex(partitionData, partitionData.getDefaults().getHostname(), regionMetadata);
+        return partitionData.getDefaults()
+                            .merge(service != null ? service.getDefaults() : null)
+                            .merge(service != null && service.getEndpoints() != null ?
+                                           service.getEndpoints().get(region.value()) : null);
     }
 
     @Override
     public List<Region> regions() {
         return servicePartitionData.values().stream()
-                .filter(s -> s.getServices().containsKey(service))
-                .flatMap(s -> s.getRegions().keySet()
-                                            .stream()
-                                            .map(Region::of))
-                .collect(toList());
+                                   .filter(s -> s.getServices().containsKey(service))
+                                   .flatMap(s -> s.getRegions().keySet()
+                                                  .stream()
+                                                  .map(Region::of))
+                                   .collect(toList());
     }
 
     private URI endpointFromPartitionRegex(Partition partitionData, String hostName, RegionMetadata region) {
         return URI.create(hostName
-                .replace(SERVICE, service)
-                .replace(REGION, region.getName())
-                .replace(DNS_SUFFIX, partitionData.getDnsSuffix()));
+                                  .replace(SERVICE, service)
+                                  .replace(REGION, region.getName())
+                                  .replace(DNS_SUFFIX, partitionData.getDnsSuffix()));
     }
 }

@@ -22,7 +22,7 @@ import software.amazon.awssdk.Protocol;
 /**
  * Endpoint configuration.
  */
-public class Endpoint {
+public class Endpoint implements Cloneable {
 
     /**
      * endpoint string.
@@ -52,40 +52,34 @@ public class Endpoint {
     /**
      * Merges the given endpoints and returns the merged one.
      */
-    public static Endpoint merge(Endpoint defaults, Endpoint override) {
-
-        if (defaults == null) {
-            defaults = new Endpoint();
+    public Endpoint merge(Endpoint higher) {
+        if (higher == null) {
+            higher = new Endpoint();
         }
 
-        if (override == null) {
-            override = new Endpoint();
-        }
+        final Endpoint merged = this.clone();
 
-        final Endpoint merged = new Endpoint();
+        merged.setCredentialScope(higher.getCredentialScope() != null
+                                          ? higher.getCredentialScope()
+                                          : merged.getCredentialScope());
 
-        merged.setCredentialScope(override.getCredentialScope() != null
-                                  ? override.getCredentialScope()
-                                  : defaults.getCredentialScope());
+        merged.setHostname(higher.getHostname() != null
+                                   ? higher.getHostname()
+                                   : merged.getHostname());
 
-        merged.setHostname(override.getHostname() != null
-                           ? override.getHostname()
-                           : defaults.getHostname());
+        merged.setSslCommonName(higher.getSslCommonName() != null
+                                        ? higher.getSslCommonName()
+                                        : merged.getSslCommonName());
 
-        merged.setSslCommonName(override.getSslCommonName() != null
-                                ? override.getSslCommonName()
-                                : defaults.getSslCommonName());
+        merged.setProtocols(higher.getProtocols() != null
+                                    ? higher.getProtocols()
+                                    : merged.getProtocols());
 
-        merged.setProtocols(override.getProtocols() != null
-                            ? override.getProtocols()
-                            : defaults.getProtocols());
-
-        merged.setSignatureVersions(override.getSignatureVersions() != null
-                                    ? override.getSignatureVersions()
-                                    : defaults.getSignatureVersions());
+        merged.setSignatureVersions(higher.getSignatureVersions() != null
+                                            ? higher.getSignatureVersions()
+                                            : merged.getSignatureVersions());
 
         return merged;
-
     }
 
     /**
@@ -183,4 +177,13 @@ public class Endpoint {
         return protocols != null && protocols.contains(protocol.toString());
     }
 
+    @Override
+    protected Endpoint clone() {
+        try {
+            return (Endpoint) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(
+                    "Got a CloneNotSupportedException from Object.clone() even though we're Cloneable!", e);
+        }
+    }
 }
