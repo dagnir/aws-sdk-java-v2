@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.auth.profile;
+package software.amazon.awssdk.auth;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -25,6 +25,8 @@ import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.profile.ProfileResourceLoader;
+import software.amazon.awssdk.auth.profile.ProfilesConfigFile;
 
 public class ProfileCredentialsProviderTest {
     private static File profileLocation = null;
@@ -49,6 +51,13 @@ public class ProfileCredentialsProviderTest {
         // ProfilesContainingOtherConfigurations.tst
         Assert.assertEquals("defaultSecretAccessKey", credentials.accessKeyId());
         Assert.assertEquals("defaultAccessKey", credentials.secretAccessKey());
+    }
+
+    @Test
+    public void testNoProfileFile() {
+        ProfileCredentialsProvider nullProvider =
+                ProfileCredentialsProvider.builder().defaultProfilesConfigFileLocator(() -> null).build();
+        Assert.assertNull(nullProvider.loadCredentials());
     }
 
     @Test
