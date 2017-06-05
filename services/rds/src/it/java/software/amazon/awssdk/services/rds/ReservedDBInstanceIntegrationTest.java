@@ -35,47 +35,48 @@ public class ReservedDBInstanceIntegrationTest extends IntegrationTestBase {
     @Test
     public void testDescribeReservedInstanceOfferings() throws Exception {
         DescribeReservedDBInstancesOfferingsResult result =
-                rds.describeReservedDBInstancesOfferings(new DescribeReservedDBInstancesOfferingsRequest());
+                rds.describeReservedDBInstancesOfferings(DescribeReservedDBInstancesOfferingsRequest.builder().build());
         assertNotNull(result);
-        assertNotNull(result.getReservedDBInstancesOfferings());
-        assertTrue(result.getReservedDBInstancesOfferings().size() > 0);
+        assertNotNull(result.reservedDBInstancesOfferings());
+        assertTrue(result.reservedDBInstancesOfferings().size() > 0);
 
-        for (ReservedDBInstancesOffering offering : result.getReservedDBInstancesOfferings()) {
+        for (ReservedDBInstancesOffering offering : result.reservedDBInstancesOfferings()) {
             assertNotNull(offering);
-            assertNotEmpty(offering.getCurrencyCode());
-            assertNotEmpty(offering.getDBInstanceClass());
-            assertNotEmpty(offering.getProductDescription());
-            assertNotEmpty(offering.getReservedDBInstancesOfferingId());
-            assertNotNull(offering.getDuration());
-            assertNotNull(offering.getFixedPrice());
-            assertNotNull(offering.getMultiAZ());
-            assertNotNull(offering.getUsagePrice());
+            assertNotEmpty(offering.currencyCode());
+            assertNotEmpty(offering.dbInstanceClass());
+            assertNotEmpty(offering.productDescription());
+            assertNotEmpty(offering.reservedDBInstancesOfferingId());
+            assertNotNull(offering.duration());
+            assertNotNull(offering.fixedPrice());
+            assertNotNull(offering.multiAZ());
+            assertNotNull(offering.usagePrice());
         }
     }
 
     @Test
     public void testDescribeReservedInstances() throws Exception {
-        DescribeReservedDBInstancesResult result = rds.describeReservedDBInstances(new DescribeReservedDBInstancesRequest());
+        DescribeReservedDBInstancesResult result =
+                rds.describeReservedDBInstances(DescribeReservedDBInstancesRequest.builder().build());
         assertNotNull(result);
-        assertNotNull(result.getReservedDBInstances());
+        assertNotNull(result.reservedDBInstances());
 
         // TODO: this code never runs because we don't have any reserved
         // instances. We need to be able to purchase a reserved instance without
         // actually buying it, like we do with EC2.
-        for (ReservedDBInstance instance : result.getReservedDBInstances()) {
+        for (ReservedDBInstance instance : result.reservedDBInstances()) {
             assertNotNull(instance);
-            assertNotEmpty(instance.getCurrencyCode());
-            assertNotEmpty(instance.getDBInstanceClass());
-            assertNotEmpty(instance.getProductDescription());
-            assertNotEmpty(instance.getReservedDBInstanceId());
-            assertNotEmpty(instance.getReservedDBInstancesOfferingId());
-            assertNotEmpty(instance.getState());
-            assertNotNull(instance.getDBInstanceCount());
-            assertNotNull(instance.getDuration());
-            assertNotNull(instance.getFixedPrice());
-            assertNotNull(instance.getMultiAZ());
-            assertNotNull(instance.getStartTime());
-            assertNotNull(instance.getUsagePrice());
+            assertNotEmpty(instance.currencyCode());
+            assertNotEmpty(instance.dbInstanceClass());
+            assertNotEmpty(instance.productDescription());
+            assertNotEmpty(instance.reservedDBInstanceId());
+            assertNotEmpty(instance.reservedDBInstancesOfferingId());
+            assertNotEmpty(instance.state());
+            assertNotNull(instance.dbInstanceCount());
+            assertNotNull(instance.duration());
+            assertNotNull(instance.fixedPrice());
+            assertNotNull(instance.multiAZ());
+            assertNotNull(instance.startTime());
+            assertNotNull(instance.usagePrice());
         }
     }
 }

@@ -19,26 +19,25 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.acm.model.GetCertificateRequest;
 import software.amazon.awssdk.services.acm.model.ListCertificatesRequest;
 import software.amazon.awssdk.services.acm.model.ListCertificatesResult;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
-public class AwsCertficateManagerIntegrationTest extends
-                                                 AwsIntegrationTestBase {
+public class AwsCertficateManagerIntegrationTest extends AwsIntegrationTestBase {
 
     private static ACMClient client;
 
     @BeforeClass
     public static void setUp() {
-        client = ACMClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(getCredentials())).build();
+        client = ACMClient.builder().credentialsProvider(new StaticCredentialsProvider(getCredentials())).build();
     }
 
     @Test
     public void list_certificates() {
-        ListCertificatesResult result = client.listCertificates(new ListCertificatesRequest());
-        Assert.assertTrue(result.getCertificateSummaryList().size() >= 0);
+        ListCertificatesResult result = client.listCertificates(ListCertificatesRequest.builder().build());
+        Assert.assertTrue(result.certificateSummaryList().size() >= 0);
     }
 
     /**
@@ -49,7 +48,7 @@ public class AwsCertficateManagerIntegrationTest extends
      */
     @Test(expected = AmazonServiceException.class)
     public void get_certificate_fake_arn_throws_exception() {
-        client.getCertificate(new GetCertificateRequest().withCertificateArn("arn:aws:acm:us-east-1:123456789:fakecert"));
+        client.getCertificate(GetCertificateRequest.builder().certificateArn("arn:aws:acm:us-east-1:123456789:fakecert").build());
     }
 
 

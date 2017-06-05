@@ -43,6 +43,8 @@ import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusResult;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesResult;
+import software.amazon.awssdk.services.ec2.model.DescribeKeyPairsRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeSecurityGroupsRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotInstanceRequestsRequest;
 import software.amazon.awssdk.services.ec2.model.Filter;
 import software.amazon.awssdk.services.ec2.model.GetConsoleOutputRequest;
@@ -72,9 +74,9 @@ import software.amazon.awssdk.services.ec2.model.SecurityGroup;
 import software.amazon.awssdk.services.ec2.model.SpotInstanceRequest;
 import software.amazon.awssdk.services.ec2.model.SpotInstanceType;
 import software.amazon.awssdk.services.ec2.model.UnmonitorInstancesRequest;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagement;
-import software.amazon.awssdk.services.identitymanagement.AmazonIdentityManagementClient;
-import software.amazon.awssdk.services.identitymanagement.model.InstanceProfile;
+import software.amazon.awssdk.services.iam.IAMClient;
+import software.amazon.awssdk.services.iam.model.InstanceProfile;
+import software.amazon.awssdk.services.iam.model.ListInstanceProfilesRequest;
 
 /**
  * Integration tests for all E2 Instance operations.
@@ -113,7 +115,7 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         if (testInstance != null) {
-            terminateInstance(testInstance.getInstanceId());
+            terminateInstance(testInstance.instanceId());
         }
     }
 
@@ -125,51 +127,54 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
 
         String idempotencyToken = UUID.randomUUID().toString();
 
-        RunInstancesRequest request = new RunInstancesRequest()
-                .withMinCount(1)
-                .withMaxCount(1)
-                .withImageId(AMI_ID)
-                .withKernelId(KERNEL_ID)
-                .withRamdiskId(RAMDISK_ID)
-                .withInstanceType(INSTANCE_TYPE)
-                .withBlockDeviceMappings(new BlockDeviceMapping()
-                                                 .withDeviceName("/dev/sdb1")
-                                                 .withVirtualName("ephemeral2"))
-                .withPlacement(new Placement()
-                                       .withAvailabilityZone(US_EAST_1_A))
-                .withMonitoring(true)
-                .withUserData(USER_DATA)
-                .withKeyName(existingKeyPairName)
-                .withSecurityGroups(existingGroupName)
-                .withIamInstanceProfile(new IamInstanceProfileSpecification()
-                                                .withArn(existingInstanceProfileArn))
-                .withClientToken(idempotencyToken);
+        RunInstancesRequest request =
+                RunInstancesRequest.builder()
+                                   .minCount(1)
+                                   .maxCount(1)
+                                   .imageId(AMI_ID)
+                                   .kernelId(KERNEL_ID)
+                                   .ramdiskId(RAMDISK_ID)
+                                   .instanceType(INSTANCE_TYPE)
+                                   .blockDeviceMappings(BlockDeviceMapping.builder()
+                                                                          .deviceName("/dev/sdb1")
+                                                                          .virtualName("ephemeral2")
+                                                                          .build())
+                                   .placement(Placement.builder()
+                                                       .availabilityZone(US_EAST_1_A).build())
+                                   .monitoring(true)
+                                   .userData(USER_DATA)
+                                   .keyName(existingKeyPairName)
+                                   .securityGroups(existingGroupName)
+                                   .iamInstanceProfile(IamInstanceProfileSpecification.builder()
+                                                                                      .arn(existingInstanceProfileArn)
+                                                                                      .build())
+                                   .clientToken(idempotencyToken).build();
 
         RunInstancesResult result = ec2.runInstances(request);
 
         // Capture the reservation ID
-        expectedReservationId = result.getReservation().getReservationId();
+        expectedReservationId = result.reservation().reservationId();
 
-        List<Instance> instances = result.getReservation().getInstances();
+        List<Instance> instances = result.reservation().instances();
         assertEquals(1, instances.size());
         testInstance = instances.get(0);
 
         // Wait for the instance to start up, so that we can test additional properties
         testInstance = waitForInstanceToTransitionToState(
-                testInstance.getInstanceId(), InstanceStateName.Running);
+                testInstance.instanceId(), InstanceStateName.Running);
         assertValidInstance(testInstance, AMI_ID, INSTANCE_TYPE, KERNEL_ID,
                             RAMDISK_ID, existingKeyPairName, existingInstanceProfileArn,
                             US_EAST_1_A, existingGroupName, InstanceStateName.Running);
-        assertEquals(idempotencyToken, testInstance.getClientToken());
+        assertEquals(idempotencyToken, testInstance.clientToken());
 
         // Tag it
-        tagResource(testInstance.getInstanceId(), TAGS);
+        tagResource(testInstance.instanceId(), TAGS);
 
         // Test Report Instance Status
-        ec2.reportInstanceStatus(new ReportInstanceStatusRequest()
-                                         .withInstances(testInstance.getInstanceId())
-                                         .withReasonCodes("other")
-                                         .withStatus("ok"));
+        ec2.reportInstanceStatus(ReportInstanceStatusRequest.builder()
+                                                            .instances(testInstance.instanceId())
+                                                            .reasonCodes("other")
+                                                            .status("ok").build());
     }
 
     /**
@@ -178,13 +183,13 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
      * existing security group and key pair for these tests to use.
      */
     private static void initializeTestData() {
-        List<SecurityGroup> groups = ec2.describeSecurityGroups().getSecurityGroups();
+        List<SecurityGroup> groups = ec2.describeSecurityGroups(DescribeSecurityGroupsRequest.builder().build()).securityGroups();
         assertThat("No existing security groups to test with", groups, not(empty()));
-        existingGroupName = groups.get(0).getGroupName();
+        existingGroupName = groups.get(0).groupName();
 
-        List<KeyPairInfo> keyPairs = ec2.describeKeyPairs().getKeyPairs();
+        List<KeyPairInfo> keyPairs = ec2.describeKeyPairs(DescribeKeyPairsRequest.builder().build()).keyPairs();
         assertThat("No existing key pairs to test with", groups, not(empty()));
-        existingKeyPairName = keyPairs.get(0).getKeyName();
+        existingKeyPairName = keyPairs.get(0).keyName();
 
         existingInstanceProfileArn = findValidInstanceProfile();
     }
@@ -193,11 +198,12 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
      * Find a valid instance profile which has at least one role associated with it.
      */
     private static String findValidInstanceProfile() {
-        AmazonIdentityManagement iam = new AmazonIdentityManagementClient();
-        List<InstanceProfile> profiles = iam.listInstanceProfiles().getInstanceProfiles();
+        IAMClient iam = IAMClient.builder().build();
+        List<InstanceProfile> profiles = iam.listInstanceProfiles(ListInstanceProfilesRequest.builder().build())
+                                            .instanceProfiles();
         for (InstanceProfile profile : profiles) {
-            if (profile.getRoles() != null && profile.getRoles().size() > 0) {
-                return profile.getArn();
+            if (profile.roles() != null && profile.roles().size() > 0) {
+                return profile.arn();
             }
         }
         Assert.fail("No valid instance profile to test with");
@@ -213,9 +219,9 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
      */
     private static Map<String, Reservation> convertReservationListToMap(
             List<Reservation> reservations) {
-        Map<String, Reservation> reservationsById = new HashMap<String, Reservation>();
+        Map<String, Reservation> reservationsById = new HashMap<>();
         for (Reservation reservation : reservations) {
-            reservationsById.put(reservation.getReservationId(), reservation);
+            reservationsById.put(reservation.reservationId(), reservation);
         }
 
         return reservationsById;
@@ -235,11 +241,11 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     private static void assertValidReservation(Reservation reservation, String expectedSecurityGroup) {
         assertNotNull(reservation);
 
-        //        List<String> groupNames = reservation.getGroupNames();
+        //        List<String> groupNames = reservation.groupNames();
         //        assertEquals(1, groupNames.size());
         //        assertEquals(expectedSecurityGroup, groupNames.get(0));
-        assertTrue(reservation.getOwnerId().length() > 2);
-        assertTrue(reservation.getReservationId().length() > 2);
+        assertTrue(reservation.ownerId().length() > 2);
+        assertTrue(reservation.reservationId().length() > 2);
     }
 
     /**
@@ -259,35 +265,35 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
             String expectedSecurityGroup,
             InstanceStateName expectedState) {
 
-        assertEquals(expectedAmiId, instance.getImageId());
-        assertEquals(expectedInstanceType, instance.getInstanceType());
-        assertEquals(expectedKernelId, instance.getKernelId());
-        assertEquals(expectedRamdiskId, instance.getRamdiskId());
-        assertEquals(expectedKeyName, instance.getKeyName());
-        assertEquals(expectedInstanceProfileArn, instance.getIamInstanceProfile().getArn());
-        assertEquals(expectedAvZone, instance.getPlacement().getAvailabilityZone());
-        assertEquals(expectedState.toString(), instance.getState().getName());
+        assertEquals(expectedAmiId, instance.imageId());
+        assertEquals(expectedInstanceType, instance.instanceType());
+        assertEquals(expectedKernelId, instance.kernelId());
+        assertEquals(expectedRamdiskId, instance.ramdiskId());
+        assertEquals(expectedKeyName, instance.keyName());
+        assertEquals(expectedInstanceProfileArn, instance.iamInstanceProfile().arn());
+        assertEquals(expectedAvZone, instance.placement().availabilityZone());
+        assertEquals(expectedState.toString(), instance.state().name());
 
-        List<GroupIdentifier> securityGroups = instance.getSecurityGroups();
+        List<GroupIdentifier> securityGroups = instance.securityGroups();
         assertEquals(1, securityGroups.size());
-        assertEquals(expectedSecurityGroup, securityGroups.get(0).getGroupName());
+        assertEquals(expectedSecurityGroup, securityGroups.get(0).groupName());
 
-        assertStringNotEmpty(instance.getMonitoring().getState());
-        assertRecent(instance.getLaunchTime());
-        assertStringNotEmpty(instance.getInstanceId());
-        assertNotNull(instance.getState().getCode());
-        assertStringNotEmpty(instance.getState().getName());
-        assertStringNotEmpty(instance.getIamInstanceProfile().getId());
+        assertStringNotEmpty(instance.monitoring().state());
+        assertRecent(instance.launchTime());
+        assertStringNotEmpty(instance.instanceId());
+        assertNotNull(instance.state().code());
+        assertStringNotEmpty(instance.state().name());
+        assertStringNotEmpty(instance.iamInstanceProfile().id());
 
         /*
          * If the instance is running, we expect it to have an IP address,
          * public DNS name and private DNS name.
          */
-        if (InstanceStateName.Running.equals(instance.getState().getName())) {
-            assertStringNotEmpty(instance.getPublicIpAddress());
-            assertStringNotEmpty(instance.getPrivateIpAddress());
-            assertStringNotEmpty(instance.getPublicDnsName());
-            assertStringNotEmpty(instance.getPrivateDnsName());
+        if (InstanceStateName.Running.equals(instance.state().name())) {
+            assertStringNotEmpty(instance.publicIpAddress());
+            assertStringNotEmpty(instance.privateIpAddress());
+            assertStringNotEmpty(instance.publicDnsName());
+            assertStringNotEmpty(instance.privateDnsName());
         }
     }
 
@@ -300,19 +306,19 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     public void testDescribeInstanceAttribute() {
 
         InstanceAttribute instanceAttribute = ec2.describeInstanceAttribute(
-                new DescribeInstanceAttributeRequest()
-                        .withAttribute(InstanceAttributeName.GroupSet)
-                        .withInstanceId(testInstance.getInstanceId())
-                                                                           ).getInstanceAttribute();
+                DescribeInstanceAttributeRequest.builder()
+                                                .attribute(InstanceAttributeName.GroupSet)
+                                                .instanceId(testInstance.instanceId()).build()
+                                                                           ).instanceAttribute();
 
         assertNotNull(instanceAttribute);
-        assertNotNull(instanceAttribute.getGroups());
-        List<GroupIdentifier> groups = instanceAttribute.getGroups();
+        assertNotNull(instanceAttribute.groups());
+        List<GroupIdentifier> groups = instanceAttribute.groups();
         assertTrue(groups.size() > 0);
 
         for (GroupIdentifier group : groups) {
-            boolean groupIdOrNameExists = group.getGroupId() != null
-                                          || group.getGroupName() != null;
+            boolean groupIdOrNameExists = group.groupId() != null
+                                          || group.groupName() != null;
             assertTrue(groupIdOrNameExists);
         }
     }
@@ -324,23 +330,23 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     public void testDescribeInstanceStatus() {
 
         DescribeInstanceStatusResult describeInstanceStatusResult =
-                ec2.describeInstanceStatus();
-        assertNotNull(describeInstanceStatusResult.getInstanceStatuses());
-        assertFalse(describeInstanceStatusResult.getInstanceStatuses().isEmpty());
+                ec2.describeInstanceStatus(DescribeInstanceStatusRequest.builder().build());
+        assertNotNull(describeInstanceStatusResult.instanceStatuses());
+        assertFalse(describeInstanceStatusResult.instanceStatuses().isEmpty());
 
         InstanceStatus instanceStatus = describeInstanceStatusResult
-                .getInstanceStatuses().get(0);
-        assertNotNull(instanceStatus.getAvailabilityZone());
-        assertNotNull(instanceStatus.getInstanceId());
-        assertNotNull(instanceStatus.getInstanceState().getCode());
-        assertNotNull(instanceStatus.getInstanceState().getName());
+                .instanceStatuses().get(0);
+        assertNotNull(instanceStatus.availabilityZone());
+        assertNotNull(instanceStatus.instanceId());
+        assertNotNull(instanceStatus.instanceState().code());
+        assertNotNull(instanceStatus.instanceState().name());
 
         // Test filtering
         describeInstanceStatusResult = ec2.describeInstanceStatus(
-                new DescribeInstanceStatusRequest()
-                        .withInstanceIds(testInstance.getInstanceId())
+                DescribeInstanceStatusRequest.builder()
+                                             .instanceIds(testInstance.instanceId()).build()
                                                                  );
-        assertEquals(1, describeInstanceStatusResult.getInstanceStatuses().size());
+        assertEquals(1, describeInstanceStatusResult.instanceStatuses().size());
     }
 
     /**
@@ -357,10 +363,10 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
         GetConsoleOutputResult result = null;
 
         for (int tries = 0; tries < 30; tries++) {
-            result = ec2.getConsoleOutput(new GetConsoleOutputRequest()
-                                                  .withInstanceId(testInstance.getInstanceId()));
+            result = ec2.getConsoleOutput(GetConsoleOutputRequest.builder()
+                                                                 .instanceId(testInstance.instanceId()).build());
 
-            if (result.getOutput() != null && result.getOutput().length() > 0) {
+            if (result.output() != null && result.output().length() > 0) {
                 break;
             }
 
@@ -372,11 +378,9 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
             }
         }
 
-        assertEquals(testInstance.getInstanceId(), result.getInstanceId());
-        assertRecent(result.getTimestamp());
-        Assert.assertThat(result.getOutput(), Matchers.not(Matchers.isEmptyOrNullString()));
-        Assert.assertThat(result.getDecodedOutput(), Matchers.not(Matchers
-                                                                          .isEmptyOrNullString()));
+        assertEquals(testInstance.instanceId(), result.instanceId());
+        assertRecent(result.timestamp());
+        Assert.assertThat(result.output(), Matchers.not(Matchers.isEmptyOrNullString()));
     }
 
     /**
@@ -385,13 +389,13 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
      */
     @Test
     public void testDescribeInstances() {
-        DescribeInstancesResult result = ec2.describeInstances();
+        DescribeInstancesResult result = ec2.describeInstances(DescribeInstancesRequest.builder().build());
 
-        Map<String, Reservation> reservationsById = convertReservationListToMap(result.getReservations());
+        Map<String, Reservation> reservationsById = convertReservationListToMap(result.reservations());
         Reservation reservation = reservationsById.get(expectedReservationId);
         assertValidReservation(reservation, existingGroupName);
 
-        List<Instance> instances = reservation.getInstances();
+        List<Instance> instances = reservation.instances();
         assertEquals(1, instances.size());
         assertValidInstance(instances.get(0), AMI_ID, INSTANCE_TYPE, KERNEL_ID,
                             RAMDISK_ID, existingKeyPairName, existingInstanceProfileArn,
@@ -406,21 +410,20 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     public void testDescribeInstancesById() {
 
         List<Reservation> reservations = ec2.describeInstances(
-                new DescribeInstancesRequest()
-                        .withInstanceIds(testInstance.getInstanceId())
-                                                              ).getReservations();
+                DescribeInstancesRequest.builder()
+                                        .instanceIds(testInstance.instanceId()).build()).reservations();
 
         assertEquals(1, reservations.size());
         Reservation reservation = reservations.get(0);
         assertValidReservation(reservation, existingGroupName);
 
-        List<Instance> instances = reservation.getInstances();
+        List<Instance> instances = reservation.instances();
         assertEquals(1, instances.size());
         assertValidInstance(instances.get(0), AMI_ID, INSTANCE_TYPE, KERNEL_ID,
                             RAMDISK_ID, existingKeyPairName, existingInstanceProfileArn,
                             US_EAST_1_A, existingGroupName, InstanceStateName.Running);
 
-        assertEqualUnorderedTagLists(TAGS, instances.get(0).getTags());
+        assertEqualUnorderedTagLists(TAGS, instances.get(0).tags());
     }
 
 
@@ -433,23 +436,23 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     public void testDescribeInstancesWithFilter() {
 
         List<Reservation> reservations = ec2.describeInstances(
-                new DescribeInstancesRequest()
-                        .withFilters(new Filter()
-                                             .withName("instance-id")
-                                             .withValues(testInstance.getInstanceId()))
-                                                              ).getReservations();
+                DescribeInstancesRequest.builder()
+                                        .filters(Filter.builder()
+                                                       .name("instance-id")
+                                                       .values(testInstance.instanceId()).build()).build()
+                                                              ).reservations();
 
         assertEquals(1, reservations.size());
         Reservation reservation = reservations.get(0);
         assertValidReservation(reservation, existingGroupName);
 
-        List<Instance> instances = reservation.getInstances();
+        List<Instance> instances = reservation.instances();
         assertEquals(1, instances.size());
         assertValidInstance(instances.get(0), AMI_ID, INSTANCE_TYPE, KERNEL_ID,
                             RAMDISK_ID, existingKeyPairName, existingInstanceProfileArn,
                             US_EAST_1_A, existingGroupName, InstanceStateName.Running);
 
-        assertEqualUnorderedTagLists(TAGS, instances.get(0).getTags());
+        assertEqualUnorderedTagLists(TAGS, instances.get(0).tags());
     }
 
     /**
@@ -459,8 +462,8 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testRebootInstances() {
 
-        ec2.rebootInstances(new RebootInstancesRequest()
-                                    .withInstanceIds(testInstance.getInstanceId()));
+        ec2.rebootInstances(RebootInstancesRequest.builder()
+                                                  .instanceIds(testInstance.instanceId()).build());
         /*
          * There's not an easy way to check that an instance is rebooting, so we
          * assume that if we send the message without getting an exception (ex:
@@ -477,14 +480,14 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     public void testMonitorInstances() {
 
         List<InstanceMonitoring> monitorings = ec2.monitorInstances(
-                new MonitorInstancesRequest()
-                        .withInstanceIds(testInstance.getInstanceId())
-                                                                   ).getInstanceMonitorings();
+                MonitorInstancesRequest.builder()
+                                       .instanceIds(testInstance.instanceId()).build()
+                                                                   ).instanceMonitorings();
 
         assertEquals(1, monitorings.size());
-        assertEquals(testInstance.getInstanceId(), monitorings.get(0).getInstanceId());
+        assertEquals(testInstance.instanceId(), monitorings.get(0).instanceId());
 
-        String monitoringState = monitorings.get(0).getMonitoring().getState();
+        String monitoringState = monitorings.get(0).monitoring().state();
         assertTrue(MonitoringState.Pending.toString().equals(monitoringState)
                    || MonitoringState.Enabled.toString().equals(monitoringState));
     }
@@ -497,14 +500,14 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
     public void testUnmonitorInstances() {
 
         List<InstanceMonitoring> monitorings = ec2.unmonitorInstances(
-                new UnmonitorInstancesRequest()
-                        .withInstanceIds(testInstance.getInstanceId())
-                                                                     ).getInstanceMonitorings();
+                UnmonitorInstancesRequest.builder()
+                                         .instanceIds(testInstance.instanceId()).build()
+                                                                     ).instanceMonitorings();
 
         assertEquals(1, monitorings.size());
-        assertEquals(testInstance.getInstanceId(), monitorings.get(0).getInstanceId());
+        assertEquals(testInstance.instanceId(), monitorings.get(0).instanceId());
 
-        String monitoringState = monitorings.get(0).getMonitoring().getState();
+        String monitoringState = monitorings.get(0).monitoring().state();
         assertTrue(MonitoringState.Disabled.toString().equals(monitoringState)
                    // apparently "disabling" is not yet included in MonitoringState enum
                    || "disabling".equals(monitoringState));
@@ -524,68 +527,69 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
 
         try {
             // Create a new VPC
-            vpcId = ec2.createVpc(new CreateVpcRequest()
-                                          .withCidrBlock("192.0.0.0/16")
-                                 ).getVpc().getVpcId();
+            vpcId = ec2.createVpc(CreateVpcRequest.builder()
+                                                  .cidrBlock("192.0.0.0/16").build()
+                                 ).vpc().vpcId();
 
             // Create a new Subnet inside the VPC
-            subnetId = ec2.createSubnet(new CreateSubnetRequest()
-                                                .withCidrBlock("192.0.2.0/24")
-                                                .withVpcId(vpcId)
-                                                .withAvailabilityZone(US_EAST_1_A)
-                                       ).getSubnet().getSubnetId();
+            subnetId = ec2.createSubnet(CreateSubnetRequest.builder()
+                                                           .cidrBlock("192.0.2.0/24")
+                                                           .vpcId(vpcId)
+                                                           .availabilityZone(US_EAST_1_A).build()
+                                       ).subnet().subnetId();
 
             // Create a new instance inside the subnet
             List<Instance> instances = ec2.runInstances(
-                    new RunInstancesRequest()
-                            .withImageId(imageId)
-                            .withMinCount(1)
-                            .withMaxCount(1)
-                            .withInstanceType(InstanceType.T1Micro)
-                            .withMonitoring(false)
-                            .withNetworkInterfaces(new InstanceNetworkInterfaceSpecification()
-                                                           .withDeviceIndex(0)
-                                                           .withAssociatePublicIpAddress(true)
-                                                           .withSubnetId(subnetId)
-                                                  )
-                                                       ).getReservation().getInstances();
+                    RunInstancesRequest.builder()
+                                       .imageId(imageId)
+                                       .minCount(1)
+                                       .maxCount(1)
+                                       .instanceType(InstanceType.T1Micro)
+                                       .monitoring(false)
+                                       .networkInterfaces(InstanceNetworkInterfaceSpecification.builder()
+                                                                                               .deviceIndex(0)
+                                                                                               .associatePublicIpAddress(true)
+                                                                                               .subnetId(subnetId).build()
+                                                         ).build()
+                                                       ).reservation().instances();
 
             assertEquals(1, instances.size());
-            instanceId = instances.get(0).getInstanceId();
+            instanceId = instances.get(0).instanceId();
 
             // Wait for the instance to start up, so that we can check its public IP
             Instance instance = waitForInstanceToTransitionToState(
                     instanceId, InstanceStateName.Running);
 
-            String publicIp = instance.getPublicIpAddress();
+            String publicIp = instance.publicIpAddress();
             assertTrue(publicIp != null &&
                        publicIp.trim().length() != 0);
 
             // Test spot instances with Public IP
             spotInstanceRequestId = ec2.requestSpotInstances(
-                    new RequestSpotInstancesRequest()
-                            .withSpotPrice("0.05")
-                            .withType(SpotInstanceType.OneTime)
-                            .withLaunchSpecification(new LaunchSpecification()
-                                                             .withImageId(imageId)
-                                                             .withInstanceType(InstanceType.T1Micro)
-                                                             .withNetworkInterfaces(new InstanceNetworkInterfaceSpecification()
-                                                                                            .withDeviceIndex(0)
-                                                                                            .withAssociatePublicIpAddress(true)
-                                                                                            .withSubnetId(subnetId)
-                                                                                   )
-                                                    )
-                                                            ).getSpotInstanceRequests().get(0).getSpotInstanceRequestId();
+                    RequestSpotInstancesRequest.builder()
+                                               .spotPrice("0.05")
+                                               .type(SpotInstanceType.OneTime)
+                                               .launchSpecification(LaunchSpecification.builder()
+                                                                                       .imageId(imageId)
+                                                                                       .instanceType(InstanceType.T1Micro)
+                                                                                       .networkInterfaces(
+                                                                                               InstanceNetworkInterfaceSpecification
+                                                                                                       .builder()
+                                                                                                       .deviceIndex(0)
+                                                                                                       .associatePublicIpAddress(true)
+                                                                                                       .subnetId(subnetId).build()
+                                                                                                         ).build()
+                                                                   ).build()
+                                                            ).spotInstanceRequests().get(0).spotInstanceRequestId();
 
             List<SpotInstanceRequest> spotRequests = ec2.describeSpotInstanceRequests(
-                    new DescribeSpotInstanceRequestsRequest()
-                            .withSpotInstanceRequestIds(spotInstanceRequestId)
-                                                                                     ).getSpotInstanceRequests();
+                    DescribeSpotInstanceRequestsRequest.builder()
+                                                       .spotInstanceRequestIds(spotInstanceRequestId).build()).spotInstanceRequests();
             assertEquals(1, spotRequests.size());
         } finally {
             if (spotInstanceRequestId != null) {
-                ec2.cancelSpotInstanceRequests(new CancelSpotInstanceRequestsRequest()
-                                                       .withSpotInstanceRequestIds(spotInstanceRequestId));
+                ec2.cancelSpotInstanceRequests(CancelSpotInstanceRequestsRequest.builder()
+                                                                                .spotInstanceRequestIds(spotInstanceRequestId).build());
             }
             if (instanceId != null) {
                 terminateInstance(instanceId);
@@ -593,12 +597,12 @@ public class EC2InstancesIntegrationTest extends EC2IntegrationTestBase {
                         instanceId, InstanceStateName.Terminated);
             }
             if (subnetId != null) {
-                ec2.deleteSubnet(new DeleteSubnetRequest(subnetId));
+                ec2.deleteSubnet(DeleteSubnetRequest.builder().subnetId(subnetId).build());
                 System.out.println("Wait 10 seconds for subnet " + subnetId + " to be fully deleted...");
                 Thread.sleep(10 * 1000);
             }
             if (vpcId != null) {
-                ec2.deleteVpc(new DeleteVpcRequest(vpcId));
+                ec2.deleteVpc(DeleteVpcRequest.builder().vpcId(vpcId).build());
             }
         }
     }

@@ -8,7 +8,7 @@
  *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * on an "AS IS" BASIS, oUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
@@ -59,7 +59,7 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void teardown() {
         try {
-            support.resolveCase(new ResolveCaseRequest().withCaseId(caseId));
+            support.resolveCase(ResolveCaseRequest.builder().caseId(caseId).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
@@ -69,104 +69,111 @@ public class SupportAPIServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void testServiceOperations() {
         // Create case
-        CreateCaseResult createCaseResult = support.createCase(new CreateCaseRequest()
-                                                                       .withSubject(SUBJECT)
-                                                                       .withCategoryCode(CATEGORY_CODE)
-                                                                       .withServiceCode(SERVICE_CODE)
-                                                                       .withLanguage(LANGUAGE)
-                                                                       .withSeverityCode(SEVERIRY_CODE)
-                                                                       .withCommunicationBody(COMMUNICATOR_BODY));
+        CreateCaseResult createCaseResult = support.createCase(CreateCaseRequest.builder()
+                                                                                .subject(SUBJECT)
+                                                                                .categoryCode(CATEGORY_CODE)
+                                                                                .serviceCode(SERVICE_CODE)
+                                                                                .language(LANGUAGE)
+                                                                                .severityCode(SEVERIRY_CODE)
+                                                                                .communicationBody(COMMUNICATOR_BODY)
+                                                                                .build());
 
 
-        caseId = createCaseResult.getCaseId();
+        caseId = createCaseResult.caseId();
         assertNotNull(caseId);
 
         // Describe cases
-        DescribeCasesResult describeCasesResult = support.describeCases(new DescribeCasesRequest());
-        assertTrue(describeCasesResult.getCases().size() > 0);
+        DescribeCasesResult describeCasesResult = support.describeCases(DescribeCasesRequest.builder().build());
+        assertTrue(describeCasesResult.cases().size() > 0);
 
         // Describe case with case Id
-        describeCasesResult = support.describeCases(new DescribeCasesRequest().withCaseIdList(caseId));
-        assertEquals(1, describeCasesResult.getCases().size());
-        assertEquals(caseId, describeCasesResult.getCases().get(0).getCaseId());
-        assertEquals(CATEGORY_CODE, describeCasesResult.getCases().get(0).getCategoryCode());
-        assertEquals(LANGUAGE, describeCasesResult.getCases().get(0).getLanguage());
-        assertEquals(SERVICE_CODE, describeCasesResult.getCases().get(0).getServiceCode());
-        assertEquals(SEVERIRY_CODE, describeCasesResult.getCases().get(0).getSeverityCode());
-        assertTrue(describeCasesResult.getCases().get(0).getRecentCommunications().getCommunications().size() > 0);
+        describeCasesResult = support.describeCases(DescribeCasesRequest.builder().caseIdList(caseId).build());
+        assertEquals(1, describeCasesResult.cases().size());
+        assertEquals(caseId, describeCasesResult.cases().get(0).caseId());
+        assertEquals(CATEGORY_CODE, describeCasesResult.cases().get(0).categoryCode());
+        assertEquals(LANGUAGE, describeCasesResult.cases().get(0).language());
+        assertEquals(SERVICE_CODE, describeCasesResult.cases().get(0).serviceCode());
+        assertEquals(SEVERIRY_CODE, describeCasesResult.cases().get(0).severityCode());
+        assertTrue(describeCasesResult.cases().get(0).recentCommunications().communications().size() > 0);
 
         // Describe services
-        DescribeServicesResult describeServicesResult = support.describeServices(new DescribeServicesRequest());
-        assertTrue(describeServicesResult.getServices().size() > 0);
-        assertNotNull(describeServicesResult.getServices().get(0).getCode());
-        assertNotNull(describeServicesResult.getServices().get(0).getName());
-        assertTrue(describeServicesResult.getServices().get(0).getCategories().size() > 0);
-        assertNotNull(describeServicesResult.getServices().get(0).getCategories().get(0).getCode());
-        assertNotNull(describeServicesResult.getServices().get(0).getCategories().get(0).getName());
+        DescribeServicesResult describeServicesResult = support.describeServices(DescribeServicesRequest.builder().build());
+        assertTrue(describeServicesResult.services().size() > 0);
+        assertNotNull(describeServicesResult.services().get(0).code());
+        assertNotNull(describeServicesResult.services().get(0).name());
+        assertTrue(describeServicesResult.services().get(0).categories().size() > 0);
+        assertNotNull(describeServicesResult.services().get(0).categories().get(0).code());
+        assertNotNull(describeServicesResult.services().get(0).categories().get(0).name());
 
         // Describe service with service code
-        describeServicesResult = support.describeServices(new DescribeServicesRequest().withServiceCodeList(SERVICE_CODE).withLanguage(LANGUAGE));
-        assertEquals(1, describeServicesResult.getServices().size());
-        assertNotNull(describeServicesResult.getServices().get(0).getName());
-        assertEquals(SERVICE_CODE, describeServicesResult.getServices().get(0).getCode());
+        describeServicesResult = support.describeServices(DescribeServicesRequest.builder().serviceCodeList(SERVICE_CODE).language(LANGUAGE).build());
+        assertEquals(1, describeServicesResult.services().size());
+        assertNotNull(describeServicesResult.services().get(0).name());
+        assertEquals(SERVICE_CODE, describeServicesResult.services().get(0).code());
 
         // Add communication
-        AddCommunicationToCaseResult addCommunicationToCaseResult = support.addCommunicationToCase(new AddCommunicationToCaseRequest().withCaseId(caseId).withCommunicationBody(COMMUNICATOR_BODY));
-        assertTrue(addCommunicationToCaseResult.getResult());
+        AddCommunicationToCaseResult addCommunicationToCaseResult =
+                support.addCommunicationToCase(AddCommunicationToCaseRequest.builder().caseId(caseId).communicationBody(COMMUNICATOR_BODY).build());
+        assertTrue(addCommunicationToCaseResult.result());
 
         // Describe communication
-        DescribeCommunicationsResult describeCommunicationsResult = support.describeCommunications(new DescribeCommunicationsRequest().withCaseId(caseId));
-        assertTrue(describeCommunicationsResult.getCommunications().size() > 0);
-        assertEquals(caseId, describeCommunicationsResult.getCommunications().get(0).getCaseId());
-        assertEquals(COMMUNICATOR_BODY.trim(), describeCommunicationsResult.getCommunications().get(0).getBody().trim());
-        assertNotNull(describeCommunicationsResult.getCommunications().get(0).getSubmittedBy());
-        assertNotNull(describeCommunicationsResult.getCommunications().get(0).getTimeCreated());
+        DescribeCommunicationsResult describeCommunicationsResult =
+                support.describeCommunications(DescribeCommunicationsRequest.builder().caseId(caseId).build());
+        assertTrue(describeCommunicationsResult.communications().size() > 0);
+        assertEquals(caseId, describeCommunicationsResult.communications().get(0).caseId());
+        assertEquals(COMMUNICATOR_BODY.trim(), describeCommunicationsResult.communications().get(0).body().trim());
+        assertNotNull(describeCommunicationsResult.communications().get(0).submittedBy());
+        assertNotNull(describeCommunicationsResult.communications().get(0).timeCreated());
 
         // Describe severity levels
-        DescribeSeverityLevelsResult describeSeverityLevelResult = support.describeSeverityLevels(new DescribeSeverityLevelsRequest());
-        assertTrue(describeSeverityLevelResult.getSeverityLevels().size() > 0);
-        assertNotNull(describeSeverityLevelResult.getSeverityLevels().get(0).getName());
-        assertNotNull(describeSeverityLevelResult.getSeverityLevels().get(0).getCode());
+        DescribeSeverityLevelsResult describeSeverityLevelResult =
+                support.describeSeverityLevels(DescribeSeverityLevelsRequest.builder().build());
+        assertTrue(describeSeverityLevelResult.severityLevels().size() > 0);
+        assertNotNull(describeSeverityLevelResult.severityLevels().get(0).name());
+        assertNotNull(describeSeverityLevelResult.severityLevels().get(0).code());
 
         //  Describe trusted advisor checks
-        DescribeTrustedAdvisorChecksResult describeTrustedAdvisorChecksResult = support.describeTrustedAdvisorChecks(new DescribeTrustedAdvisorChecksRequest().withLanguage(LANGUAGE));
-        assertNotNull(describeTrustedAdvisorChecksResult.getChecks().size() > 0);
-        checkId = describeTrustedAdvisorChecksResult.getChecks().get(0).getId();
+        DescribeTrustedAdvisorChecksResult describeTrustedAdvisorChecksResult =
+                support.describeTrustedAdvisorChecks(DescribeTrustedAdvisorChecksRequest.builder().language(LANGUAGE).build());
+        assertNotNull(describeTrustedAdvisorChecksResult.checks().size() > 0);
+        checkId = describeTrustedAdvisorChecksResult.checks().get(0).id();
         assertNotNull(checkId);
-        assertNotNull(describeTrustedAdvisorChecksResult.getChecks().get(0).getName());
-        assertNotNull(describeTrustedAdvisorChecksResult.getChecks().get(0).getCategory());
-        assertNotNull(describeTrustedAdvisorChecksResult.getChecks().get(0).getDescription());
-        assertTrue(describeTrustedAdvisorChecksResult.getChecks().get(0).getMetadata().size() > 0);
-        assertNotNull(describeTrustedAdvisorChecksResult.getChecks().get(0).getMetadata().get(0));
+        assertNotNull(describeTrustedAdvisorChecksResult.checks().get(0).name());
+        assertNotNull(describeTrustedAdvisorChecksResult.checks().get(0).category());
+        assertNotNull(describeTrustedAdvisorChecksResult.checks().get(0).description());
+        assertTrue(describeTrustedAdvisorChecksResult.checks().get(0).metadata().size() > 0);
+        assertNotNull(describeTrustedAdvisorChecksResult.checks().get(0).metadata().get(0));
 
         // Describe advisor check refresh status
         DescribeTrustedAdvisorCheckRefreshStatusesResult describeTrustedAdvisorCheckRefreshStatusesResult =
-                support.describeTrustedAdvisorCheckRefreshStatuses(new DescribeTrustedAdvisorCheckRefreshStatusesRequest()
-                                                                           .withCheckIds(checkId));
-        assertNotNull(describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses());
-        assertEquals(1, describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses().size());
-        assertEquals(checkId, describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses().get(0).getCheckId());
-        assertNotNull(describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses().get(0).getStatus());
-        assertNotNull(describeTrustedAdvisorCheckRefreshStatusesResult.getStatuses().get(0).getMillisUntilNextRefreshable());
+                support.describeTrustedAdvisorCheckRefreshStatuses(DescribeTrustedAdvisorCheckRefreshStatusesRequest.builder().checkIds(checkId).build());
+        assertNotNull(describeTrustedAdvisorCheckRefreshStatusesResult.statuses());
+        assertEquals(1, describeTrustedAdvisorCheckRefreshStatusesResult.statuses().size());
+        assertEquals(checkId, describeTrustedAdvisorCheckRefreshStatusesResult.statuses().get(0).checkId());
+        assertNotNull(describeTrustedAdvisorCheckRefreshStatusesResult.statuses().get(0).status());
+        assertNotNull(describeTrustedAdvisorCheckRefreshStatusesResult.statuses().get(0).millisUntilNextRefreshable());
 
         // Refresh trusted advisor check
-        RefreshTrustedAdvisorCheckResult refreshTrustedAdvisorCheckResult = support.refreshTrustedAdvisorCheck(new RefreshTrustedAdvisorCheckRequest().withCheckId(checkId));
-        assertNotNull(refreshTrustedAdvisorCheckResult.getStatus());
+        RefreshTrustedAdvisorCheckResult refreshTrustedAdvisorCheckResult =
+                support.refreshTrustedAdvisorCheck(RefreshTrustedAdvisorCheckRequest.builder().checkId(checkId).build());
+        assertNotNull(refreshTrustedAdvisorCheckResult.status());
 
         // Describe trusted advisor check summaries
-        DescribeTrustedAdvisorCheckSummariesResult describeTrustedAdvisorCheckSummariesResult = support.describeTrustedAdvisorCheckSummaries(new DescribeTrustedAdvisorCheckSummariesRequest().withCheckIds(checkId));
-        assertEquals(1, describeTrustedAdvisorCheckSummariesResult.getSummaries().size());
-        assertEquals(checkId, describeTrustedAdvisorCheckSummariesResult.getSummaries().get(0).getCheckId());
-        assertNotNull(describeTrustedAdvisorCheckSummariesResult.getSummaries().get(0).getStatus());
-        assertNotNull(describeTrustedAdvisorCheckSummariesResult.getSummaries().get(0).getTimestamp());
-        assertNotNull(describeTrustedAdvisorCheckSummariesResult.getSummaries().get(0).getResourcesSummary());
-        assertNotNull(describeTrustedAdvisorCheckSummariesResult.getSummaries().get(0).getCategorySpecificSummary());
+        DescribeTrustedAdvisorCheckSummariesResult describeTrustedAdvisorCheckSummariesResult =
+                support.describeTrustedAdvisorCheckSummaries(DescribeTrustedAdvisorCheckSummariesRequest.builder().checkIds(checkId).build());
+        assertEquals(1, describeTrustedAdvisorCheckSummariesResult.summaries().size());
+        assertEquals(checkId, describeTrustedAdvisorCheckSummariesResult.summaries().get(0).checkId());
+        assertNotNull(describeTrustedAdvisorCheckSummariesResult.summaries().get(0).status());
+        assertNotNull(describeTrustedAdvisorCheckSummariesResult.summaries().get(0).timestamp());
+        assertNotNull(describeTrustedAdvisorCheckSummariesResult.summaries().get(0).resourcesSummary());
+        assertNotNull(describeTrustedAdvisorCheckSummariesResult.summaries().get(0).categorySpecificSummary());
 
         // Describe trusted advisor check result
-        DescribeTrustedAdvisorCheckResultResult describeTrustedAdvisorCheckResultResult = support.describeTrustedAdvisorCheckResult(new DescribeTrustedAdvisorCheckResultRequest().withCheckId(checkId));
-        assertNotNull(describeTrustedAdvisorCheckResultResult.getResult().getTimestamp());
-        assertNotNull(describeTrustedAdvisorCheckResultResult.getResult().getStatus());
-        assertNotNull(describeTrustedAdvisorCheckResultResult.getResult().getResourcesSummary());
+        DescribeTrustedAdvisorCheckResultResult describeTrustedAdvisorCheckResultResult =
+                support.describeTrustedAdvisorCheckResult(DescribeTrustedAdvisorCheckResultRequest.builder().checkId(checkId).build());
+        assertNotNull(describeTrustedAdvisorCheckResultResult.result().timestamp());
+        assertNotNull(describeTrustedAdvisorCheckResultResult.result().status());
+        assertNotNull(describeTrustedAdvisorCheckResultResult.result().resourcesSummary());
 
     }
 

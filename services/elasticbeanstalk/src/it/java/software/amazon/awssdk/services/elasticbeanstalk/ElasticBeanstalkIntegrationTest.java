@@ -94,7 +94,7 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     @After
     public void tearDown() throws Exception {
         try {
-            elasticbeanstalk.terminateEnvironment(new TerminateEnvironmentRequest().withEnvironmentName(environmentName));
+            elasticbeanstalk.terminateEnvironment(TerminateEnvironmentRequest.builder().environmentName(environmentName).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
@@ -106,19 +106,23 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         }
 
         try {
-            elasticbeanstalk.deleteConfigurationTemplate(new DeleteConfigurationTemplateRequest(APPLICATION_NAME, templateName));
+            elasticbeanstalk.deleteConfigurationTemplate(DeleteConfigurationTemplateRequest.builder()
+                                                                                           .applicationName(APPLICATION_NAME)
+                                                                                           .templateName(templateName).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
 
         try {
-            elasticbeanstalk.deleteApplicationVersion(new DeleteApplicationVersionRequest(APPLICATION_NAME, versionLabel));
+            elasticbeanstalk.deleteApplicationVersion(DeleteApplicationVersionRequest.builder()
+                                                                                     .applicationName(APPLICATION_NAME)
+                                                                                     .versionLabel(versionLabel).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
 
         try {
-            elasticbeanstalk.deleteApplication(new DeleteApplicationRequest(APPLICATION_NAME));
+            elasticbeanstalk.deleteApplication(DeleteApplicationRequest.builder().applicationName(APPLICATION_NAME).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
@@ -135,8 +139,9 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     /** Tests that we can describe the available solution stacks. */
     @Test
     public void testListAvailableSolutionStacks() throws Exception {
-        List<String> solutionStacks = elasticbeanstalk.listAvailableSolutionStacks(new ListAvailableSolutionStacksRequest())
-                .getSolutionStacks();
+        List<String> solutionStacks =
+                elasticbeanstalk.listAvailableSolutionStacks(ListAvailableSolutionStacksRequest.builder().build())
+                                .solutionStacks();
         assertNotNull(solutionStacks);
         assertTrue(solutionStacks.size() > 1);
         for (String stack : solutionStacks) {
@@ -156,24 +161,25 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
         testDnsOperations();
 
         TerminateEnvironmentResult terminateEnvironmentResult = elasticbeanstalk.terminateEnvironment(
-                new TerminateEnvironmentRequest().withEnvironmentName(environmentName));
-        assertEquals(environmentName, terminateEnvironmentResult.getEnvironmentName());
-        assertEquals(APPLICATION_NAME, terminateEnvironmentResult.getApplicationName());
-        assertNotEmpty(terminateEnvironmentResult.getCNAME());
-        assertRecent(terminateEnvironmentResult.getDateCreated());
-        assertRecent(terminateEnvironmentResult.getDateUpdated());
-        assertNotEmpty(terminateEnvironmentResult.getDescription());
-        assertNotEmpty(terminateEnvironmentResult.getEndpointURL());
-        assertNotEmpty(terminateEnvironmentResult.getEnvironmentId());
-        assertNotEmpty(terminateEnvironmentResult.getHealth());
-        assertNotEmpty(terminateEnvironmentResult.getSolutionStackName());
-        assertNotEmpty(terminateEnvironmentResult.getStatus());
+                TerminateEnvironmentRequest.builder().environmentName(environmentName).build());
+        assertEquals(environmentName, terminateEnvironmentResult.environmentName());
+        assertEquals(APPLICATION_NAME, terminateEnvironmentResult.applicationName());
+        assertNotEmpty(terminateEnvironmentResult.cname());
+        assertRecent(terminateEnvironmentResult.dateCreated());
+        assertRecent(terminateEnvironmentResult.dateUpdated());
+        assertNotEmpty(terminateEnvironmentResult.description());
+        assertNotEmpty(terminateEnvironmentResult.endpointURL());
+        assertNotEmpty(terminateEnvironmentResult.environmentId());
+        assertNotEmpty(terminateEnvironmentResult.health());
+        assertNotEmpty(terminateEnvironmentResult.solutionStackName());
+        assertNotEmpty(terminateEnvironmentResult.status());
 
 
         // Clean up all resources... (env, versions, s3, etc)
         waitForEnvironmentToTransitionToStateAndHealth(environmentName, EnvironmentStatus.Terminated, null);
-        elasticbeanstalk.deleteApplicationVersion(new DeleteApplicationVersionRequest(APPLICATION_NAME, versionLabel));
-        elasticbeanstalk.deleteApplication(new DeleteApplicationRequest(APPLICATION_NAME));
+        elasticbeanstalk.deleteApplicationVersion(DeleteApplicationVersionRequest.builder().applicationName(APPLICATION_NAME)
+                                                                                 .versionLabel(versionLabel).build());
+        elasticbeanstalk.deleteApplication(DeleteApplicationRequest.builder().applicationName(APPLICATION_NAME).build());
         s3.deleteObject(bucketName, versionLabel);
         s3.deleteBucket(bucketName);
     }
@@ -186,10 +192,12 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     /** Tests that we can request and retrieve logs for an environment. */
     private void testEnvironmentInfoOperations() {
         // Create a storage location
-        assertNotEmpty(elasticbeanstalk.createStorageLocation(new CreateStorageLocationRequest()).getS3Bucket());
+        assertNotEmpty(elasticbeanstalk.createStorageLocation(CreateStorageLocationRequest.builder().build()).s3Bucket());
 
         // Request the log tails for our environment
-        elasticbeanstalk.requestEnvironmentInfo(new RequestEnvironmentInfoRequest("tail").withEnvironmentName(environmentName));
+        elasticbeanstalk.requestEnvironmentInfo(RequestEnvironmentInfoRequest.builder()
+                                                                             .environmentId("tail")
+                                                                             .environmentName(environmentName).build());
 
         // Wait a few seconds for ElasticBeanstalk to collect the logs
         try {
@@ -200,14 +208,14 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
 
         // Pull the log tails
         List<EnvironmentInfoDescription> environmentInfoList = elasticbeanstalk.retrieveEnvironmentInfo(
-                new RetrieveEnvironmentInfoRequest("tail")
-                        .withEnvironmentName(environmentName)).getEnvironmentInfo();
+                RetrieveEnvironmentInfoRequest.builder().environmentId("tail").environmentName(environmentName).build())
+                                                                               .environmentInfo();
         assertTrue(environmentInfoList.size() > 0);
         for (EnvironmentInfoDescription environmentInfo : environmentInfoList) {
-            assertNotEmpty(environmentInfo.getEc2InstanceId());
-            assertNotEmpty(environmentInfo.getInfoType());
-            assertNotEmpty(environmentInfo.getMessage());
-            assertRecent(environmentInfo.getSampleTimestamp());
+            assertNotEmpty(environmentInfo.ec2InstanceId());
+            assertNotEmpty(environmentInfo.infoType());
+            assertNotEmpty(environmentInfo.message());
+            assertRecent(environmentInfo.sampleTimestamp());
         }
     }
 
@@ -215,26 +223,26 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     private void testApplicationOperations() {
         // Create an application
         ApplicationDescription createdApplication = elasticbeanstalk.createApplication(
-                new CreateApplicationRequest(APPLICATION_NAME)
-                        .withDescription(APPLICATION_DESCRIPTION)).getApplication();
-        assertEquals(APPLICATION_NAME, createdApplication.getApplicationName());
-        assertEquals(APPLICATION_DESCRIPTION, createdApplication.getDescription());
-        assertRecent(createdApplication.getDateCreated());
+                CreateApplicationRequest.builder().applicationName(APPLICATION_NAME)
+                                        .description(APPLICATION_DESCRIPTION).build()).application();
+        assertEquals(APPLICATION_NAME, createdApplication.applicationName());
+        assertEquals(APPLICATION_DESCRIPTION, createdApplication.description());
+        assertRecent(createdApplication.dateCreated());
 
         // Update it
         createdApplication = elasticbeanstalk.updateApplication(
-                new UpdateApplicationRequest(APPLICATION_NAME)
-                        .withDescription("New " + APPLICATION_DESCRIPTION)).getApplication();
-        assertEquals(APPLICATION_NAME, createdApplication.getApplicationName());
-        assertEquals("New " + APPLICATION_DESCRIPTION, createdApplication.getDescription());
-        assertRecent(createdApplication.getDateUpdated());
+                UpdateApplicationRequest.builder().applicationName(APPLICATION_NAME)
+                                        .description("New " + APPLICATION_DESCRIPTION).build()).application();
+        assertEquals(APPLICATION_NAME, createdApplication.applicationName());
+        assertEquals("New " + APPLICATION_DESCRIPTION, createdApplication.description());
+        assertRecent(createdApplication.dateUpdated());
 
         // Describe it
         List<ApplicationDescription> describedApplications = elasticbeanstalk.describeApplications(
-                new DescribeApplicationsRequest()
-                        .withApplicationNames(APPLICATION_NAME)).getApplications();
+                DescribeApplicationsRequest.builder()
+                                           .applicationNames(APPLICATION_NAME).build()).applications();
         assertEquals(1, describedApplications.size());
-        assertEquals(APPLICATION_NAME, describedApplications.get(0).getApplicationName());
+        assertEquals(APPLICATION_NAME, describedApplications.get(0).applicationName());
     }
 
     /** Tests that we can create, update and describe application versions. */
@@ -244,30 +252,37 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
 
         // Create an application version
         ApplicationVersionDescription createdApplicationVersion = elasticbeanstalk.createApplicationVersion(
-                new CreateApplicationVersionRequest(APPLICATION_NAME, versionLabel)
-                        .withDescription(APPLICATION_VERSION_DESCRIPTION)
-                        .withAutoCreateApplication(true)
-                        .withSourceBundle(new S3Location(bucketName, versionLabel))).getApplicationVersion();
-        assertEquals(APPLICATION_NAME, createdApplicationVersion.getApplicationName());
-        assertEquals(APPLICATION_VERSION_DESCRIPTION, createdApplicationVersion.getDescription());
-        assertRecent(createdApplicationVersion.getDateCreated());
-        assertEquals(versionLabel, createdApplicationVersion.getVersionLabel());
-        assertNotEmpty(createdApplicationVersion.getSourceBundle().getS3Bucket());
-        assertNotEmpty(createdApplicationVersion.getSourceBundle().getS3Key());
+                CreateApplicationVersionRequest.builder().applicationName(APPLICATION_NAME)
+                                               .versionLabel(versionLabel)
+                                               .description(APPLICATION_VERSION_DESCRIPTION)
+                                               .autoCreateApplication(true)
+                                               .sourceBundle(
+                                                       S3Location.builder().s3Bucket(bucketName).s3Key(versionLabel).build())
+                                               .build())
+                                                                                  .applicationVersion();
+        assertEquals(APPLICATION_NAME, createdApplicationVersion.applicationName());
+        assertEquals(APPLICATION_VERSION_DESCRIPTION, createdApplicationVersion.description());
+        assertRecent(createdApplicationVersion.dateCreated());
+        assertEquals(versionLabel, createdApplicationVersion.versionLabel());
+        assertNotEmpty(createdApplicationVersion.sourceBundle().s3Bucket());
+        assertNotEmpty(createdApplicationVersion.sourceBundle().s3Key());
 
         // Update it
         ApplicationVersionDescription applicationVersion = elasticbeanstalk.updateApplicationVersion(
-                new UpdateApplicationVersionRequest(APPLICATION_NAME, versionLabel)
-                        .withDescription("New Application Version Description")).getApplicationVersion();
-        assertRecent(applicationVersion.getDateUpdated());
+                UpdateApplicationVersionRequest.builder()
+                                               .applicationName(APPLICATION_NAME)
+                                               .versionLabel(versionLabel)
+                                               .description("New Application Version Description").build()
+                                                                                                    ).applicationVersion();
+        assertRecent(applicationVersion.dateUpdated());
 
         // Describe it
         List<ApplicationVersionDescription> describedApplicationVersions = elasticbeanstalk.describeApplicationVersions(
-                new DescribeApplicationVersionsRequest()
-                        .withApplicationName(APPLICATION_NAME)
-                        .withVersionLabels(versionLabel)).getApplicationVersions();
+                DescribeApplicationVersionsRequest.builder()
+                                                  .applicationName(APPLICATION_NAME)
+                                                  .versionLabels(versionLabel).build()).applicationVersions();
         assertEquals(1, describedApplicationVersions.size());
-        assertEquals(APPLICATION_NAME, describedApplicationVersions.get(0).getApplicationName());
+        assertEquals(APPLICATION_NAME, describedApplicationVersions.get(0).applicationName());
     }
 
     /**
@@ -277,33 +292,35 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
     private void testEnvironmentOpeartions() throws Exception {
         // Create a new environment
         CreateEnvironmentResult createEnvironmentResult = elasticbeanstalk.createEnvironment(
-                new CreateEnvironmentRequest(APPLICATION_NAME, environmentName)
-                        .withCNAMEPrefix(environmentName)
-                        .withDescription("Environment Description")
-                        .withVersionLabel(versionLabel)
-                        .withSolutionStackName(SOLUTION_STACK_NAME)
-                        .withTags(new Tag().withKey(tagKey).withValue(tagValue)));
-        assertEquals(APPLICATION_NAME, createEnvironmentResult.getApplicationName());
-        assertNotEmpty(createEnvironmentResult.getCNAME());
-        assertRecent(createEnvironmentResult.getDateCreated());
-        assertNotEmpty(createEnvironmentResult.getDescription());
-        assertEquals(versionLabel, createEnvironmentResult.getVersionLabel());
-        assertNotEmpty(createEnvironmentResult.getEnvironmentId());
-        assertNotEmpty(createEnvironmentResult.getEnvironmentName());
-        assertNotEmpty(createEnvironmentResult.getHealth());
-        assertNotEmpty(createEnvironmentResult.getSolutionStackName());
-        assertNotEmpty(createEnvironmentResult.getStatus());
+                CreateEnvironmentRequest.builder()
+                                        .applicationName(APPLICATION_NAME)
+                                        .environmentName(environmentName)
+                                        .cnamePrefix(environmentName)
+                                        .description("Environment Description")
+                                        .versionLabel(versionLabel)
+                                        .solutionStackName(SOLUTION_STACK_NAME)
+                                        .tags(Tag.builder().key(tagKey).value(tagValue).build()).build());
+        assertEquals(APPLICATION_NAME, createEnvironmentResult.applicationName());
+        assertNotEmpty(createEnvironmentResult.cname());
+        assertRecent(createEnvironmentResult.dateCreated());
+        assertNotEmpty(createEnvironmentResult.description());
+        assertEquals(versionLabel, createEnvironmentResult.versionLabel());
+        assertNotEmpty(createEnvironmentResult.environmentId());
+        assertNotEmpty(createEnvironmentResult.environmentName());
+        assertNotEmpty(createEnvironmentResult.health());
+        assertNotEmpty(createEnvironmentResult.solutionStackName());
+        assertNotEmpty(createEnvironmentResult.status());
 
 
         // Describe it
         List<EnvironmentDescription> describedEnvironments = elasticbeanstalk.describeEnvironments(
-                new DescribeEnvironmentsRequest()
-                        .withApplicationName(APPLICATION_NAME)
-                        .withEnvironmentNames(environmentName)
-                        .withIncludeDeleted(false)
-                        .withVersionLabel(versionLabel)).getEnvironments();
+                DescribeEnvironmentsRequest.builder()
+                                           .applicationName(APPLICATION_NAME)
+                                           .environmentNames(environmentName)
+                                           .includeDeleted(false)
+                                           .versionLabel(versionLabel).build()).environments();
         assertEquals(1, describedEnvironments.size());
-        assertEquals(APPLICATION_NAME, describedEnvironments.get(0).getApplicationName());
+        assertEquals(APPLICATION_NAME, describedEnvironments.get(0).applicationName());
 
 
         waitForEnvironmentToTransitionToStateAndHealth(environmentName, EnvironmentStatus.Ready, EnvironmentHealth.Green);
@@ -311,98 +328,107 @@ public class ElasticBeanstalkIntegrationTest extends ElasticBeanstalkIntegration
 
         // Update the environment once it's started
         UpdateEnvironmentResult updateEnvironmentResult = elasticbeanstalk.updateEnvironment(
-                new UpdateEnvironmentRequest()
-                        .withEnvironmentName(environmentName)
-                        .withDescription("New Environment Description"));
-        assertNotEmpty(updateEnvironmentResult.getDescription());
-        assertRecent(updateEnvironmentResult.getDateUpdated());
+                UpdateEnvironmentRequest.builder()
+                                        .environmentName(environmentName)
+                                        .description("New Environment Description").build());
+        assertNotEmpty(updateEnvironmentResult.description());
+        assertRecent(updateEnvironmentResult.dateUpdated());
 
 
         // Describe the resources that make up the environment
         EnvironmentResourceDescription environmentResources = elasticbeanstalk.describeEnvironmentResources(
-                new DescribeEnvironmentResourcesRequest()
-                        .withEnvironmentName(environmentName)).getEnvironmentResources();
-        assertEquals(1, environmentResources.getAutoScalingGroups().size());
-        assertEquals(environmentName, environmentResources.getEnvironmentName());
-        assertTrue(environmentResources.getInstances().size() > 0);
-        assertTrue(environmentResources.getLaunchConfigurations().size() > 0);
-        assertTrue(environmentResources.getLoadBalancers().size() > 0);
+                DescribeEnvironmentResourcesRequest.builder()
+                                                   .environmentName(environmentName).build()).environmentResources();
+        assertEquals(1, environmentResources.autoScalingGroups().size());
+        assertEquals(environmentName, environmentResources.environmentName());
+        assertTrue(environmentResources.instances().size() > 0);
+        assertTrue(environmentResources.launchConfigurations().size() > 0);
+        assertTrue(environmentResources.loadBalancers().size() > 0);
     }
 
     /** Tests that we can describe an environment's events. */
     private void testEventOperations() {
         List<EventDescription> describedEvents = elasticbeanstalk.describeEvents(
-                new DescribeEventsRequest()
-                        .withApplicationName(APPLICATION_NAME)
-                        .withEnvironmentName(environmentName)).getEvents();
+                DescribeEventsRequest.builder()
+                                     .applicationName(APPLICATION_NAME)
+                                     .environmentName(environmentName).build()).events();
         assertTrue(describedEvents.size() > 0);
         for (EventDescription event : describedEvents) {
-            assertEquals(APPLICATION_NAME, event.getApplicationName());
-            assertEquals(environmentName, event.getEnvironmentName());
-            assertRecent(event.getEventDate());
-            assertNotEmpty(event.getMessage());
-            assertNotEmpty(event.getSeverity());
+            assertEquals(APPLICATION_NAME, event.applicationName());
+            assertEquals(environmentName, event.environmentName());
+            assertRecent(event.eventDate());
+            assertNotEmpty(event.message());
+            assertNotEmpty(event.severity());
         }
     }
 
     /** Tests that we can call the DNS operations. */
     private void testDnsOperations() {
         CheckDNSAvailabilityResult checkDNSAvailabilityResult = elasticbeanstalk.checkDNSAvailability(
-                new CheckDNSAvailabilityRequest(environmentName));
-        assertFalse(checkDNSAvailabilityResult.getAvailable());
+                CheckDNSAvailabilityRequest.builder().cnamePrefix(environmentName).build());
+        assertFalse(checkDNSAvailabilityResult.available());
     }
 
     /** Tests that we can create/describe/delete/update configuration templates/settings/options. */
     private void testEnvironmentConfigurationOperations() {
         // Describe the available configuration options
         DescribeConfigurationOptionsResult describeConfigurationOptionsResult = elasticbeanstalk.describeConfigurationOptions(
-                new DescribeConfigurationOptionsRequest().withEnvironmentName(environmentName));
-        assertTrue(describeConfigurationOptionsResult.getOptions().size() > 0);
-        for (ConfigurationOptionDescription optionDescription : describeConfigurationOptionsResult.getOptions()) {
-            assertNotEmpty(optionDescription.getChangeSeverity());
-            assertNotEmpty(optionDescription.getName());
-            assertNotEmpty(optionDescription.getNamespace());
-            assertNotEmpty(optionDescription.getValueType());
+                DescribeConfigurationOptionsRequest.builder().environmentName(environmentName).build());
+        assertTrue(describeConfigurationOptionsResult.options().size() > 0);
+        for (ConfigurationOptionDescription optionDescription : describeConfigurationOptionsResult.options()) {
+            assertNotEmpty(optionDescription.changeSeverity());
+            assertNotEmpty(optionDescription.name());
+            assertNotEmpty(optionDescription.namespace());
+            assertNotEmpty(optionDescription.valueType());
         }
 
         // Describe current configuration settings for our environment
         List<ConfigurationSettingsDescription> configurationSettings = elasticbeanstalk.describeConfigurationSettings(
-                new DescribeConfigurationSettingsRequest()
-                        .withApplicationName(APPLICATION_NAME)
-                        .withEnvironmentName(environmentName)).getConfigurationSettings();
+                DescribeConfigurationSettingsRequest.builder()
+                                                    .applicationName(APPLICATION_NAME)
+                                                    .environmentName(environmentName).build()).configurationSettings();
         assertTrue(configurationSettings.size() > 0);
         for (ConfigurationSettingsDescription configurationSetting : configurationSettings) {
-            assertEquals(APPLICATION_NAME, configurationSetting.getApplicationName());
-            assertRecent(configurationSetting.getDateCreated());
-            assertEquals(environmentName, configurationSetting.getEnvironmentName());
-            for (ConfigurationOptionSetting optionSetting : configurationSetting.getOptionSettings()) {
-                assertNotEmpty(optionSetting.getNamespace());
-                assertNotEmpty(optionSetting.getOptionName());
+            assertEquals(APPLICATION_NAME, configurationSetting.applicationName());
+            assertRecent(configurationSetting.dateCreated());
+            assertEquals(environmentName, configurationSetting.environmentName());
+            for (ConfigurationOptionSetting optionSetting : configurationSetting.optionSettings()) {
+                assertNotEmpty(optionSetting.namespace());
+                assertNotEmpty(optionSetting.optionName());
             }
         }
 
         // Validate a configuration change
         ArrayList<ConfigurationOptionSetting> optionSettings = new ArrayList<ConfigurationOptionSetting>();
-        optionSettings.add(new ConfigurationOptionSetting("aws:elasticbeanstalk:application:environment", "PARAM3", "newValue"));
-        elasticbeanstalk.validateConfigurationSettings(new ValidateConfigurationSettingsRequest(APPLICATION_NAME, optionSettings)
-                                                               .withEnvironmentName(environmentName));
+        optionSettings.add(ConfigurationOptionSetting.builder().namespace("aws:elasticbeanstalk:application:environment")
+                                                     .optionName("PARAM3").value("newValue").build());
+        elasticbeanstalk.validateConfigurationSettings(ValidateConfigurationSettingsRequest.builder()
+                                                                                           .applicationName(APPLICATION_NAME)
+                                                                                           .optionSettings(optionSettings)
+                                                                                           .environmentName(environmentName)
+                                                                                           .build());
 
         // Create a new template
         CreateConfigurationTemplateResult createConfigurationTemplateResult = elasticbeanstalk.createConfigurationTemplate(
-                new CreateConfigurationTemplateRequest()
-                        .withTemplateName(templateName)
-                        .withSolutionStackName(SOLUTION_STACK_NAME)
-                        .withApplicationName(APPLICATION_NAME));
-        assertEquals(APPLICATION_NAME, createConfigurationTemplateResult.getApplicationName());
-        assertRecent(createConfigurationTemplateResult.getDateCreated());
+                CreateConfigurationTemplateRequest.builder()
+                                                  .templateName(templateName)
+                                                  .solutionStackName(SOLUTION_STACK_NAME)
+                                                  .applicationName(APPLICATION_NAME).build());
+        assertEquals(APPLICATION_NAME, createConfigurationTemplateResult.applicationName());
+        assertRecent(createConfigurationTemplateResult.dateCreated());
 
         // Update the template
-        elasticbeanstalk.updateConfigurationTemplate(new UpdateConfigurationTemplateRequest(
-                APPLICATION_NAME, templateName).withDescription("New Template Description"));
+        elasticbeanstalk.updateConfigurationTemplate(UpdateConfigurationTemplateRequest.builder()
+                                                                                       .applicationName(APPLICATION_NAME)
+                                                                                       .templateName(templateName)
+                                                                                       .description("New Template Description")
+                                                                                       .build());
 
         // Delete the template
-        elasticbeanstalk.deleteConfigurationTemplate(new DeleteConfigurationTemplateRequest(
-                APPLICATION_NAME, templateName));
+        elasticbeanstalk.deleteConfigurationTemplate(DeleteConfigurationTemplateRequest.builder()
+                                                                                       .applicationName(APPLICATION_NAME)
+                                                                                       .templateName(templateName)
+                                                                                       .build());
     }
 
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.ec2.model.Address;
+import software.amazon.awssdk.services.ec2.model.AllocateAddressRequest;
 import software.amazon.awssdk.services.ec2.model.AllocateAddressResult;
 import software.amazon.awssdk.services.ec2.model.DescribeAddressesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeAddressesResult;
@@ -50,8 +51,9 @@ public class EC2ElasticIPIntegrationTest extends EC2IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         if (allocationId != null) {
-            ec2.releaseAddress(new ReleaseAddressRequest().withAllocationId(allocationId));
-            assertFalse(doAddressesContainIp(ec2.describeAddresses().getAddresses(), elasticIp));
+            ec2.releaseAddress(ReleaseAddressRequest.builder().allocationId(allocationId).build());
+            assertFalse(doAddressesContainIp(ec2.describeAddresses(DescribeAddressesRequest.builder().build()).addresses(),
+                                             elasticIp));
         }
     }
 
@@ -72,7 +74,7 @@ public class EC2ElasticIPIntegrationTest extends EC2IntegrationTestBase {
         assertNotNull(addresses);
 
         for (Address address : addresses) {
-            String ip = address.getPublicIp();
+            String ip = address.publicIp();
 
             // Bail out early if we see the IP we're expecting.
             if (ip.equals(expectedIp)) {
@@ -96,26 +98,26 @@ public class EC2ElasticIPIntegrationTest extends EC2IntegrationTestBase {
     public void testElasticIpOperations() {
 
         // Allocate an address
-        AllocateAddressResult allocateAddressResult = ec2.allocateAddress();
+        AllocateAddressResult allocateAddressResult = ec2.allocateAddress(AllocateAddressRequest.builder().build());
 
-        elasticIp = allocateAddressResult.getPublicIp();
-        allocationId = allocateAddressResult.getAllocationId();
+        elasticIp = allocateAddressResult.publicIp();
+        allocationId = allocateAddressResult.allocationId();
 
         assertNotNull(elasticIp);
         assertThat(elasticIp.length(), greaterThan(5));
 
         // Describe addresses
-        DescribeAddressesResult describeAddressesResult = ec2.describeAddresses();
+        DescribeAddressesResult describeAddressesResult = ec2.describeAddresses(DescribeAddressesRequest.builder().build());
         assertNotNull(describeAddressesResult);
-        List<Address> addresses = describeAddressesResult.getAddresses();
+        List<Address> addresses = describeAddressesResult.addresses();
         assertTrue(doAddressesContainIp(addresses, elasticIp));
 
         // Describe with a filter
-        addresses = ec2.describeAddresses(new DescribeAddressesRequest()
-                                                  .withFilters(new Filter()
-                                                                       .withName("public-ip")
-                                                                       .withValues(elasticIp))
-                                         ).getAddresses();
+        addresses = ec2.describeAddresses(DescribeAddressesRequest.builder()
+                                                                  .filters(Filter.builder()
+                                                                                 .name("public-ip")
+                                                                                 .values(elasticIp).build()).build()
+                                         ).addresses();
         assertEquals(1, addresses.size());
         assertTrue(doAddressesContainIp(addresses, elasticIp));
     }

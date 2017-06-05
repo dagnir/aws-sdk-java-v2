@@ -24,7 +24,12 @@ import software.amazon.awssdk.services.ec2.model.DeleteSecurityGroupRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteSubnetRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteVpcPeeringConnectionRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteVpcRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeNetworkAclsRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeRouteTablesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSecurityGroupsRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeSubnetsRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeVpcPeeringConnectionsRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeVpcsRequest;
 import software.amazon.awssdk.services.ec2.model.DisassociateRouteTableRequest;
 import software.amazon.awssdk.services.ec2.model.NetworkAcl;
 import software.amazon.awssdk.services.ec2.model.Route;
@@ -51,7 +56,7 @@ public abstract class EC2VPCIntegrationTestBase extends EC2IntegrationTestBase {
      * forgot.
      */
     protected static void deleteAllVpcs() {
-        for (Vpc vpc : ec2.describeVpcs().getVpcs()) {
+        for (Vpc vpc : ec2.describeVpcs(DescribeVpcsRequest.builder().build()).vpcs()) {
             log.warn("Found vpc: " + vpc);
 
             deleteAllSubnets();
@@ -61,7 +66,7 @@ public abstract class EC2VPCIntegrationTestBase extends EC2IntegrationTestBase {
             deleteAllPeeringConnections();
 
             try {
-                ec2.deleteVpc(new DeleteVpcRequest().withVpcId(vpc.getVpcId()));
+                ec2.deleteVpc(DeleteVpcRequest.builder().vpcId(vpc.vpcId()).build());
             } catch (Exception e) {
                 log.warn("Couldn't delete vpc", e);
             }
@@ -69,28 +74,28 @@ public abstract class EC2VPCIntegrationTestBase extends EC2IntegrationTestBase {
     }
 
     protected static void deleteAllRouteTables() {
-        for (RouteTable table : ec2.describeRouteTables().getRouteTables()) {
+        for (RouteTable table : ec2.describeRouteTables(DescribeRouteTablesRequest.builder().build()).routeTables()) {
             log.warn("Deleting route table " + table);
-            for (RouteTableAssociation ass : table.getAssociations()) {
+            for (RouteTableAssociation ass : table.associations()) {
                 try {
-                    ec2.disassociateRouteTable(new DisassociateRouteTableRequest().withAssociationId(ass
-                                                                                                             .getRouteTableAssociationId()));
+                    ec2.disassociateRouteTable(
+                            DisassociateRouteTableRequest.builder().associationId(ass.routeTableAssociationId()).build());
                 } catch (Exception e) {
                     log.warn("Couldn't disassociate route table ", e);
                 }
             }
 
-            for (Route rout : table.getRoutes()) {
+            for (Route rout : table.routes()) {
                 try {
-                    ec2.deleteRoute(new DeleteRouteRequest().withRouteTableId(table.getRouteTableId())
-                                                            .withDestinationCidrBlock(rout.getDestinationCidrBlock()));
+                    ec2.deleteRoute(DeleteRouteRequest.builder().routeTableId(table.routeTableId())
+                                                      .destinationCidrBlock(rout.destinationCidrBlock()).build());
                 } catch (Exception e) {
                     log.warn("Couldn't delete route ", e);
                 }
             }
 
             try {
-                ec2.deleteRouteTable(new DeleteRouteTableRequest().withRouteTableId(table.getRouteTableId()));
+                ec2.deleteRouteTable(DeleteRouteTableRequest.builder().routeTableId(table.routeTableId()).build());
             } catch (Exception e) {
                 log.warn("Couldn't delete route table ", e);
             }
@@ -98,12 +103,12 @@ public abstract class EC2VPCIntegrationTestBase extends EC2IntegrationTestBase {
     }
 
     protected static void deleteAllSecurityGroups(Vpc vpc) {
-        for (SecurityGroup group : ec2.describeSecurityGroups(new DescribeSecurityGroupsRequest())
-                                      .getSecurityGroups()) {
-            if (vpc.getVpcId().equals(group.getVpcId())) {
+        for (SecurityGroup group : ec2.describeSecurityGroups(DescribeSecurityGroupsRequest.builder().build())
+                                      .securityGroups()) {
+            if (vpc.vpcId().equals(group.vpcId())) {
                 try {
                     log.warn("Deleting group " + group);
-                    ec2.deleteSecurityGroup(new DeleteSecurityGroupRequest().withGroupId(group.getGroupId()));
+                    ec2.deleteSecurityGroup(DeleteSecurityGroupRequest.builder().groupId(group.groupId()).build());
                 } catch (Exception e) {
                     log.warn("Couldn't delete group", e);
                 }
@@ -112,19 +117,19 @@ public abstract class EC2VPCIntegrationTestBase extends EC2IntegrationTestBase {
     }
 
     protected static void deleteAllNetworkAcls() {
-        for (NetworkAcl acl : ec2.describeNetworkAcls().getNetworkAcls()) {
-            if (!acl.getIsDefault()) {
+        for (NetworkAcl acl : ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder().build()).networkAcls()) {
+            if (!acl.isDefault()) {
                 log.warn("Deleting network ACL " + acl);
-                ec2.deleteNetworkAcl(new DeleteNetworkAclRequest().withNetworkAclId(acl.getNetworkAclId()));
+                ec2.deleteNetworkAcl(DeleteNetworkAclRequest.builder().networkAclId(acl.networkAclId()).build());
             }
         }
     }
 
     protected static void deleteAllSubnets() {
-        for (Subnet subnet : ec2.describeSubnets().getSubnets()) {
+        for (Subnet subnet : ec2.describeSubnets(DescribeSubnetsRequest.builder().build()).subnets()) {
             log.warn("Deleting subnet " + subnet);
             try {
-                ec2.deleteSubnet(new DeleteSubnetRequest().withSubnetId(subnet.getSubnetId()));
+                ec2.deleteSubnet(DeleteSubnetRequest.builder().subnetId(subnet.subnetId()).build());
             } catch (Exception e) {
                 log.warn("Couldn't delete subnet", e);
             }
@@ -132,12 +137,14 @@ public abstract class EC2VPCIntegrationTestBase extends EC2IntegrationTestBase {
     }
 
     protected static void deleteAllPeeringConnections() {
-        for (VpcPeeringConnection connection : ec2.describeVpcPeeringConnections().getVpcPeeringConnections()) {
+        for (VpcPeeringConnection connection : ec2
+                .describeVpcPeeringConnections(DescribeVpcPeeringConnectionsRequest.builder().build())
+                .vpcPeeringConnections()) {
             try {
                 log.warn("Deleting peering connection " + connection);
                 ec2.deleteVpcPeeringConnection(
-                        new DeleteVpcPeeringConnectionRequest()
-                                .withVpcPeeringConnectionId(connection.getVpcPeeringConnectionId()));
+                        DeleteVpcPeeringConnectionRequest.builder()
+                                                         .vpcPeeringConnectionId(connection.vpcPeeringConnectionId()).build());
             } catch (Exception e) {
                 log.warn("Couldn't delete peering connection", e);
             }

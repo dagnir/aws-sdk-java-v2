@@ -16,7 +16,11 @@
 package software.amazon.awssdk.services.ec2;
 
 import org.junit.Test;
-import software.amazon.awssdk.services.sts.auth.StsSessionCredentialsProvider;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.services.ec2.model.DescribeAvailabilityZonesRequest;
+import software.amazon.awssdk.services.sts.STSClient;
+import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsProvider;
 
 /** Tests of session-based auth. */
 public class EC2SessionBasedAuthenticationIntegrationTest extends EC2IntegrationTestBase {
@@ -24,7 +28,9 @@ public class EC2SessionBasedAuthenticationIntegrationTest extends EC2Integration
     @Test
     public void smokeTest() throws Exception {
         setUpCredentials();
-        AmazonEC2 ec2 = new AmazonEC2Client(new StsSessionCredentialsProvider(getCredentials()));
-        ec2.describeAvailabilityZones();
+        STSClient stsClient = STSClient.builder().credentialsProvider(new StaticCredentialsProvider(getCredentials())).build();
+        AwsCredentialsProvider stsCredentialsProvider = StsGetSessionTokenCredentialsProvider.builder().stsClient(stsClient).build();
+        EC2Client ec2 = EC2Client.builder().credentialsProvider(stsCredentialsProvider).build();
+        ec2.describeAvailabilityZones(DescribeAvailabilityZonesRequest.builder().build());
     }
 }

@@ -34,7 +34,7 @@ public class EC2VpnGatewaysIntegrationTest extends EC2IntegrationTestBase {
     @After
     public void tearDown() {
         if (vpnGateway != null) {
-            EC2TestHelper.deleteVpnGateway(vpnGateway.getVpnGatewayId());
+            EC2TestHelper.deleteVpnGateway(vpnGateway.vpnGatewayId());
         }
     }
 
@@ -47,8 +47,8 @@ public class EC2VpnGatewaysIntegrationTest extends EC2IntegrationTestBase {
         try {
             CreateVpnGatewayResult createResult =
                     EC2TestHelper.createVpnGateway("ipsec.1");
-            vpnGateway = createResult.getVpnGateway();
-            tagResource(vpnGateway.getVpnGatewayId(), TAGS);
+            vpnGateway = createResult.vpnGateway();
+            tagResource(vpnGateway.vpnGatewayId(), TAGS);
         } catch (AmazonServiceException ase) {
             if (!ase.getErrorCode().equals("VpnGatewayLimitExceeded")) {
                 throw ase;
@@ -60,19 +60,19 @@ public class EC2VpnGatewaysIntegrationTest extends EC2IntegrationTestBase {
         }
 
         assertNotNull(vpnGateway);
-        assertTrue(vpnGateway.getType().equals("ipsec.1"));
+        assertTrue(vpnGateway.type().equals("ipsec.1"));
 
         // Describe VpnGateway
         DescribeVpnGatewaysResult describeResult =
-                EC2TestHelper.describeVpnGateway(vpnGateway.getVpnGatewayId());
+                EC2TestHelper.describeVpnGateway(vpnGateway.vpnGatewayId());
 
-        assertEquals(1, describeResult.getVpnGateways().size());
-        assertEquals(vpnGateway.getVpnGatewayId(),
-                     describeResult.getVpnGateways().get(0).getVpnGatewayId());
-        assertEqualUnorderedTagLists(TAGS, describeResult.getVpnGateways().get(0).getTags());
+        assertEquals(1, describeResult.vpnGateways().size());
+        assertEquals(vpnGateway.vpnGatewayId(),
+                     describeResult.vpnGateways().get(0).vpnGatewayId());
+        assertEqualUnorderedTagLists(TAGS, describeResult.vpnGateways().get(0).tags());
 
         // Delete VpnGateway
-        EC2TestHelper.deleteVpnGateway(vpnGateway.getVpnGatewayId());
+        EC2TestHelper.deleteVpnGateway(vpnGateway.vpnGatewayId());
         vpnGateway = null;
     }
 

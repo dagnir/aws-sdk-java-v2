@@ -49,7 +49,7 @@ public class EMRIntegrationTest extends IntegrationTestBase {
     public void tearDown() throws Exception {
         try {
             if (jobFlowId != null) {
-                emr.terminateJobFlows(new TerminateJobFlowsRequest().jobFlowIds(jobFlowId));
+                emr.terminateJobFlows(TerminateJobFlowsRequest.builder().jobFlowIds(jobFlowId).build());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,35 +59,33 @@ public class EMRIntegrationTest extends IntegrationTestBase {
     // See https://forums.aws.amazon.com/thread.jspa?threadID=158756
     @Test
     public void testListCluster() {
-        emr.listClusters(
-                new ListClustersRequest()
-                        .withCreatedAfter(
-                                new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000)));
+        emr.listClusters(ListClustersRequest.builder()
+                                            .createdAfter(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000))
+                                            .build());
     }
 
     @Test
     public void testServiceOperation() throws Exception {
         jobFlowId = runTestJobFlow();
 
-        emr.addTags(new AddTagsRequest(jobFlowId).withTags(new Tag("foo", "bar")));
+        emr.addTags(AddTagsRequest.builder().resourceId(jobFlowId).tags(Tag.builder().key("foo").value("bar").build()).build());
         assertTrue(doesTagExist(jobFlowId, "foo", "bar"));
 
-        emr.removeTags(new RemoveTagsRequest(jobFlowId).withTagKeys("foo"));
+        emr.removeTags(RemoveTagsRequest.builder().resourceId(jobFlowId).tagKeys("foo").build());
         assertFalse(doesTagExist(jobFlowId, "foo", "bar"));
 
-        for (ClusterSummary cluster : emr.listClusters(new ListClustersRequest()).getClusters()) {
-            assertNotNull(cluster.getId());
+        for (ClusterSummary cluster : emr.listClusters(ListClustersRequest.builder().build()).clusters()) {
+            assertNotNull(cluster.id());
             assertNotNull(cluster.name());
             assertNotNull(cluster.status());
         }
     }
 
     private boolean doesTagExist(String jobFlowId, String tagKey, String tagValue) {
-        Cluster cluster = emr.describeCluster(new DescribeClusterRequest().withClusterId(jobFlowId)).getCluster();
+        Cluster cluster = emr.describeCluster(DescribeClusterRequest.builder().clusterId(jobFlowId).build()).cluster();
 
-        for (Tag tag : cluster.getTags()) {
-            if (tag.getKey().equals(tagKey) &&
-                tag.getValue().equals(tagValue)) {
+        for (Tag tag : cluster.tags()) {
+            if (tag.key().equals(tagKey) && tag.value().equals(tagValue)) {
                 return true;
             }
         }
@@ -98,28 +96,29 @@ public class EMRIntegrationTest extends IntegrationTestBase {
     private String runTestJobFlow() {
         StepFactory stepFactory = new StepFactory();
 
-        StepConfig enabledebugging = new StepConfig()
-                .name("Enable debugging")
-                .actionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
-                .withHadoopJarStep(stepFactory.newEnableDebuggingStep());
+        StepConfig enabledebugging = StepConfig.builder()
+                                               .name("Enable debugging")
+                                               .actionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
+                                               .hadoopJarStep(stepFactory.newEnableDebuggingStep()).build();
 
-        StepConfig installHive = new StepConfig()
-                .name("Install Hive")
-                .actionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
-                .withHadoopJarStep(stepFactory.newInstallHiveStep());
+        StepConfig installHive = StepConfig.builder()
+                                           .name("Install Hive")
+                                           .actionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
+                                           .hadoopJarStep(stepFactory.newInstallHiveStep()).build();
 
-        RunJobFlowRequest request = new RunJobFlowRequest()
-                .name("Hive Interactive")
-                .amiVersion("3.8.0")
-                .steps(enabledebugging, installHive)
-                .serviceRole("EMR_DefaultRole")
-                .jobFlowRole("EMR_EC2_DefaultRole")
-                .withInstances(new JobFlowInstancesConfig()
-                                       .withHadoopVersion("2.4.0")
-                                       .withInstanceCount(2)
-                                       .withKeepJobFlowAliveWhenNoSteps(false)
-                                       .withMasterInstanceType("m1.medium")
-                                       .slaveInstanceType("m1.medium"));
+        RunJobFlowRequest request = RunJobFlowRequest.builder()
+                                                     .name("Hive Interactive")
+                                                     .amiVersion("3.8.0")
+                                                     .steps(enabledebugging, installHive)
+                                                     .serviceRole("EMR_DefaultRole")
+                                                     .jobFlowRole("EMR_EC2_DefaultRole")
+                                                     .instances(JobFlowInstancesConfig.builder()
+                                                                                      .hadoopVersion("2.4.0")
+                                                                                      .instanceCount(2)
+                                                                                      .keepJobFlowAliveWhenNoSteps(false)
+                                                                                      .masterInstanceType("m1.medium")
+                                                                                      .slaveInstanceType("m1.medium").build())
+                                                     .build();
 
         return emr.runJobFlow(request).jobFlowId();
     }

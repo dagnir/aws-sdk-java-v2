@@ -99,7 +99,8 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
     public void tearDown() throws Exception {
         if (parameterGroupName != null) {
             try {
-                rds.deleteDBParameterGroup(new DeleteDBParameterGroupRequest().withDBParameterGroupName(parameterGroupName));
+                rds.deleteDBParameterGroup(
+                        DeleteDBParameterGroupRequest.builder().dbParameterGroupName(parameterGroupName).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
@@ -107,8 +108,8 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
         if (securityGroupName != null) {
             try {
-                rds.deleteDBSecurityGroup(new DeleteDBSecurityGroupRequest()
-                                                  .withDBSecurityGroupName(securityGroupName));
+                rds.deleteDBSecurityGroup(DeleteDBSecurityGroupRequest.builder()
+                                                                      .dbSecurityGroupName(securityGroupName).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
@@ -117,9 +118,9 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         for (String databaseInstanceName : databaseInstancesToRelease) {
             try {
                 waitForDbInstanceToTransitionToState(databaseInstanceName, "available");
-                rds.deleteDBInstance(new DeleteDBInstanceRequest()
-                                             .withDBInstanceIdentifier(databaseInstanceName)
-                                             .withSkipFinalSnapshot(true));
+                rds.deleteDBInstance(DeleteDBInstanceRequest.builder()
+                                                            .dbInstanceIdentifier(databaseInstanceName)
+                                                            .skipFinalSnapshot(true).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
@@ -128,8 +129,8 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         if (snapshotIdentifier != null) {
             try {
                 waitForSnapshotToTransitionToState(snapshotIdentifier, "available");
-                rds.deleteDBSnapshot(new DeleteDBSnapshotRequest()
-                                             .withDBSnapshotIdentifier(snapshotIdentifier));
+                rds.deleteDBSnapshot(DeleteDBSnapshotRequest.builder()
+                                                            .dbSnapshotIdentifier(snapshotIdentifier).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
@@ -158,9 +159,8 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
         while (System.currentTimeMillis() < timeout) {
             String status = rds.describeDBInstances(
-                    new DescribeDBInstancesRequest()
-                            .withDBInstanceIdentifier(dbInstanceName)
-                                                   ).getDBInstances().get(0).getDBInstanceStatus();
+                    DescribeDBInstancesRequest.builder().dbInstanceIdentifier(dbInstanceName).build()).dbInstances().get(0)
+                               .dbInstanceStatus();
 
             System.out.println("Current status: " + status);
             if (status.equals(state)) {
@@ -189,9 +189,8 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
 
         while (System.currentTimeMillis() < timeout) {
             String status = rds.describeDBSnapshots(
-                    new DescribeDBSnapshotsRequest()
-                            .withDBSnapshotIdentifier(snapshotName)
-                                                   ).getDBSnapshots().get(0).getStatus();
+                    DescribeDBSnapshotsRequest.builder().dbInstanceIdentifier(snapshotName).build()).dbSnapshots().get(0)
+                               .status();
 
             System.out.println("Current satus: " + status);
 
@@ -224,13 +223,15 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         for (int retries = 0; retries < 40; retries++) {
             Thread.sleep(30 * 1000);
 
-            List<IPRange> ipRanges = rds.describeDBSecurityGroups(new DescribeDBSecurityGroupsRequest()
-                                                                          .withDBSecurityGroupName(securityGroupName)).getDBSecurityGroups().get(0).getIPRanges();
+            List<IPRange> ipRanges = rds.describeDBSecurityGroups(DescribeDBSecurityGroupsRequest.builder()
+                                                                                                 .dbSecurityGroupName(
+                                                                                                         securityGroupName).build())
+                                        .dbSecurityGroups().get(0).ipRanges();
 
             IPRange ipRange = findIpRange(ipRanges, cidrIpRange);
             assertNotNull(ipRange);
 
-            String status = ipRange.getStatus();
+            String status = ipRange.status();
             System.out.println("Current satus: " + status);
             if (status.equals(state)) {
                 return;
@@ -254,7 +255,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     private IPRange findIpRange(List<IPRange> ipRanges, String cidrIpRange) {
         for (IPRange ipRange : ipRanges) {
-            if (ipRange.getCIDRIP().equals(cidrIpRange)) {
+            if (ipRange.cidrip().equals(cidrIpRange)) {
                 return ipRange;
             }
         }

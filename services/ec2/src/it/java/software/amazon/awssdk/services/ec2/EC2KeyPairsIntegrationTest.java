@@ -63,7 +63,7 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
      *            The name of the key pair to delete.
      */
     private static void deleteKeyPair(String name) {
-        ec2.deleteKeyPair(new DeleteKeyPairRequest(name));
+        ec2.deleteKeyPair(DeleteKeyPairRequest.builder().keyName(name).build());
     }
 
     /*
@@ -89,13 +89,13 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
     private void testCreateKeyPair() {
         assertFalse(doesKeyPairExist(testKeyPairName));
 
-        KeyPair keyPair = ec2.createKeyPair(new CreateKeyPairRequest()
-                                                    .withKeyName(testKeyPairName)
-                                           ).getKeyPair();
+        KeyPair keyPair = ec2.createKeyPair(CreateKeyPairRequest.builder()
+                                                                .keyName(testKeyPairName).build()
+                                           ).keyPair();
 
-        assertEquals(testKeyPairName, keyPair.getKeyName());
-        assertTrue(keyPair.getKeyFingerprint().length() > 10);
-        assertTrue(keyPair.getKeyMaterial().length() > 20);
+        assertEquals(testKeyPairName, keyPair.keyName());
+        assertTrue(keyPair.keyFingerprint().length() > 10);
+        assertTrue(keyPair.keyMaterial().length() > 20);
 
         assertTrue(doesKeyPairExist(testKeyPairName));
     }
@@ -108,11 +108,11 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         String keyMaterial = loadResource("software/amazon/awssdk/services/ec2/public-key.txt");
 
         ImportKeyPairResult result = ec2.importKeyPair(
-                new ImportKeyPairRequest(keyName, keyMaterial));
-        assertEquals(keyName, result.getKeyName());
-        assertNotNull(result.getKeyFingerprint());
+                ImportKeyPairRequest.builder().keyName(keyName).publicKeyMaterial(keyMaterial).build());
+        assertEquals(keyName, result.keyName());
+        assertNotNull(result.keyFingerprint());
 
-        ec2.deleteKeyPair(new DeleteKeyPairRequest(keyName));
+        ec2.deleteKeyPair(DeleteKeyPairRequest.builder().keyName(keyName).build());
     }
 
     /**
@@ -121,22 +121,20 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
     private void testDescribeKeyPairs() {
 
         // List all
-        DescribeKeyPairsResult result = ec2.describeKeyPairs();
-        Map<String, KeyPairInfo> keyPairMap = convertKeyPairListToMap(result.getKeyPairs());
+        DescribeKeyPairsResult result = ec2.describeKeyPairs(DescribeKeyPairsRequest.builder().build());
+        Map<String, KeyPairInfo> keyPairMap = convertKeyPairListToMap(result.keyPairs());
         KeyPairInfo key = keyPairMap.get(testKeyPairName);
         assertNotNull(key);
-        assertTrue(key.getKeyFingerprint().length() > 10);
+        assertTrue(key.keyFingerprint().length() > 10);
 
         // List by filter
         List<KeyPairInfo> keyPairs = ec2.describeKeyPairs(
-                new DescribeKeyPairsRequest()
-                        .withFilters(new Filter()
-                                             .withName("key-name")
-                                             .withValues(testKeyPairName)
-                                    )
-                                                         ).getKeyPairs();
+                DescribeKeyPairsRequest.builder()
+                                       .filters(Filter.builder()
+                                                      .name("key-name")
+                                                      .values(testKeyPairName).build()).build()).keyPairs();
         assertEquals(1, keyPairs.size());
-        assertEquals(testKeyPairName, keyPairs.get(0).getKeyName());
+        assertEquals(testKeyPairName, keyPairs.get(0).keyName());
     }
 
 
@@ -168,9 +166,9 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
     private boolean doesKeyPairExist(String name) {
         try {
             DescribeKeyPairsResult result =
-                    ec2.describeKeyPairs(new DescribeKeyPairsRequest()
-                                                 .withKeyNames(name));
-            return result.getKeyPairs().size() > 0;
+                    ec2.describeKeyPairs(DescribeKeyPairsRequest.builder()
+                                                                .keyNames(name).build());
+            return result.keyPairs().size() > 0;
 
         } catch (AmazonServiceException ase) {
             if ("InvalidKeyPair.NotFound".equals(ase.getErrorCode())) {
@@ -193,7 +191,7 @@ public class EC2KeyPairsIntegrationTest extends EC2IntegrationTestBase {
         Map<String, KeyPairInfo> keyPairsByName = new HashMap<String, KeyPairInfo>();
 
         for (KeyPairInfo key : keys) {
-            keyPairsByName.put(key.getKeyName(), key);
+            keyPairsByName.put(key.keyName(), key);
         }
 
         return keyPairsByName;

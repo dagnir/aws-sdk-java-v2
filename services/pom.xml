@@ -161,5 +161,41 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <!-- Build steps executed for every service -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
+
+    <profiles>
+        <!-- Build steps executed for services with models -->
+        <profile>
+            <id>generated-service</id>
+            <activation>
+                <file>
+                    <exists>src/main/resources/codegen-resources</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>software.amazon.awssdk</groupId>
+                        <artifactId>codegen-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

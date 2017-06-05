@@ -82,13 +82,13 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         IntegrationTestBase.setUp();
 
 
-        ListPipelinesResult listPipelineResult = ets.listPipelines(new ListPipelinesRequest());
-        for (Pipeline pipeline : listPipelineResult.getPipelines()) {
-            if (pipeline.getName().startsWith("java-sdk-pipeline")) {
+        ListPipelinesResult listPipelineResult = ets.listPipelines(ListPipelinesRequest.builder().build());
+        for (Pipeline pipeline : listPipelineResult.pipelines()) {
+            if (pipeline.name().startsWith("java-sdk-pipeline")) {
                 try {
-                    Thread.sleep(1000 * 1);
-                    System.out.println(pipeline.getName());
-                    ets.deletePipeline(new DeletePipelineRequest().withId(pipeline.getId()));
+                    Thread.sleep(1000);
+                    System.out.println(pipeline.name());
+                    ets.deletePipeline(DeletePipelineRequest.builder().id(pipeline.id()).build());
 
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -98,29 +98,29 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         s3.createBucket(INPUT_BUCKET_NAME);
         s3.createBucket(OUTPUT_BUCKET_NAME);
         String topicName = "java-sns-policy-integ-test-" + System.currentTimeMillis();
-        topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
+        topicArn = sns.createTopic(CreateTopicRequest.builder().name(topicName).build()).topicArn();
     }
 
     @AfterClass
     public static void teardown() {
 
         try {
-            ets.cancelJob(new CancelJobRequest().withId(jobId));
+            ets.cancelJob(CancelJobRequest.builder().id(jobId).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
 
         try {
-            ets.deletePreset(new DeletePresetRequest().withId(presetId));
+            ets.deletePreset(DeletePresetRequest.builder().id(presetId).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
 
-        ListPipelinesResult listPipelineResult = ets.listPipelines(new ListPipelinesRequest());
-        for (Pipeline pipeline : listPipelineResult.getPipelines()) {
-            if (pipeline.getName().startsWith("java-sdk-pipeline")) {
+        ListPipelinesResult listPipelineResult = ets.listPipelines(ListPipelinesRequest.builder().build());
+        for (Pipeline pipeline : listPipelineResult.pipelines()) {
+            if (pipeline.name().startsWith("java-sdk-pipeline")) {
                 try {
-                    ets.deletePipeline(new DeletePipelineRequest().withId(pipeline.getId()));
+                    ets.deletePipeline(DeletePipelineRequest.builder().id(pipeline.id()).build());
                 } catch (Exception e) {
                     // Ignored or expected.
                 }
@@ -140,7 +140,7 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
         }
 
         try {
-            sns.deleteTopic(new DeleteTopicRequest().withTopicArn(topicArn));
+            sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
         } catch (Exception e) {
             // Do nothing
         }
@@ -149,38 +149,38 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
     @Test
     public void testAudioOnlyOperation() throws InterruptedException {
         // Create Pipeline
-        Notifications notifications = new Notifications();
-        notifications.setCompleted("");
-        notifications.setError("");
-        notifications.setProgressing("");
-        notifications.setWarning("");
+        Notifications.Builder notifications = Notifications.builder();
+        notifications.completed("");
+        notifications.error("");
+        notifications.progressing("");
+        notifications.warning("");
 
-        Permission permission = new Permission()
-                .withGrantee("AllUsers")
-                .withGranteeType("Group")
-                .withAccess("Read");
+        Permission permission = Permission.builder()
+                                          .grantee("AllUsers")
+                                          .granteeType("Group")
+                                          .access("Read").build();
 
-        contentConfig = new PipelineOutputConfig()
-                .withBucket(OUTPUT_BUCKET_NAME)
-                .withStorageClass(STORAGE_CLASS)
-                .withPermissions(permission);
+        contentConfig = PipelineOutputConfig.builder()
+                                            .bucket(OUTPUT_BUCKET_NAME)
+                                            .storageClass(STORAGE_CLASS)
+                                            .permissions(permission).build();
 
-        thumbnailConfig = new PipelineOutputConfig()
-                .withBucket(OUTPUT_BUCKET_NAME)
-                .withStorageClass(STORAGE_CLASS)
-                .withPermissions(permission);
+        thumbnailConfig = PipelineOutputConfig.builder()
+                                              .bucket(OUTPUT_BUCKET_NAME)
+                                              .storageClass(STORAGE_CLASS)
+                                              .permissions(permission).build();
 
         CreatePipelineResult createPipelienResult = ets.createPipeline(
-                new CreatePipelineRequest()
-                        .withName(PIPE_NAME)
-                        .withInputBucket(INPUT_BUCKET_NAME)
-                        .withNotifications(notifications)
-                        .withRole(ROLE)
-                        .withThumbnailConfig(thumbnailConfig)
-                        .withContentConfig(contentConfig));
+                CreatePipelineRequest.builder()
+                                     .name(PIPE_NAME)
+                                     .inputBucket(INPUT_BUCKET_NAME)
+                                     .notifications(notifications.build())
+                                     .role(ROLE)
+                                     .thumbnailConfig(thumbnailConfig)
+                                     .contentConfig(contentConfig).build());
 
-        Pipeline pipeline = createPipelienResult.getPipeline();
-        pipelineId = pipeline.getId();
+        Pipeline pipeline = createPipelienResult.pipeline();
+        pipelineId = pipeline.id();
 
         Thread.sleep(1000 * 5);
 
@@ -189,92 +189,91 @@ public class ETSAudioOnlyIntegrationTest extends IntegrationTestBase {
 
 
         // Create preset
-        CreatePresetResult createPresetResult = ets.createPreset(new CreatePresetRequest()
-                                                                         .withContainer("mp3")
-                                                                         .withDescription(presetDescription)
-                                                                         .withName(presetName)
-                                                                         .withAudio(audio)
-                                                                );
+        CreatePresetResult createPresetResult = ets.createPreset(CreatePresetRequest.builder()
+                                                                                    .container("mp3")
+                                                                                    .description(presetDescription)
+                                                                                    .name(presetName)
+                                                                                    .audio(audio).build());
 
-        presetId = createPresetResult.getPreset().getId();
+        presetId = createPresetResult.preset().id();
 
-        Artwork artwork = new Artwork();
-        artwork.setAlbumArtFormat("jpg");
-        artwork.setMaxHeight("auto");
-        artwork.setMaxWidth("auto");
-        artwork.setPaddingPolicy("Pad");
-        artwork.setSizingPolicy("Fit");
-        artwork.setInputKey("test.jpg");
+        Artwork.Builder artwork = Artwork.builder();
+        artwork.albumArtFormat("jpg");
+        artwork.maxHeight("auto");
+        artwork.maxWidth("auto");
+        artwork.paddingPolicy("Pad");
+        artwork.sizingPolicy("Fit");
+        artwork.inputKey("test.jpg");
 
-        JobAlbumArt albumArt = new JobAlbumArt();
-        albumArt.setMergePolicy("Append");
+        JobAlbumArt.Builder albumArt = JobAlbumArt.builder();
+        albumArt.mergePolicy("Append");
         List<Artwork> artworks = new LinkedList<Artwork>();
-        artworks.add(artwork);
-        albumArt.setArtwork(artworks);
+        artworks.add(artwork.build());
+        albumArt.artwork(artworks);
 
         final String startTime = "123.000";
         final String duration = "12345.000";
-        TimeSpan timeSpan = new TimeSpan();
-        timeSpan.setStartTime(startTime);
-        timeSpan.setDuration(duration);
-        Clip clip = new Clip();
-        clip.setTimeSpan(timeSpan);
+        TimeSpan.Builder timeSpan = TimeSpan.builder();
+        timeSpan.startTime(startTime);
+        timeSpan.duration(duration);
+        Clip.Builder clip = Clip.builder();
+        clip.timeSpan(timeSpan.build());
 
-        CreateJobOutput output = new CreateJobOutput()
-                .withKey(OUTPUT_KEY)
-                .withAlbumArt(albumArt)
-                .withThumbnailPattern("")
-                .withPresetId(presetId)
-                .withRotate(ROTATION)
-                .withComposition(clip);
+        CreateJobOutput output = CreateJobOutput.builder()
+                                                .key(OUTPUT_KEY)
+                                                .albumArt(albumArt.build())
+                                                .thumbnailPattern("")
+                                                .presetId(presetId)
+                                                .rotate(ROTATION)
+                                                .composition(clip.build()).build();
 
         List<CreateJobOutput> outputs = new LinkedList<CreateJobOutput>();
         outputs.add(output);
 
 
         // Create job
-        JobInput input = new JobInput()
-                .withKey(INPUT_KEY)
-                .withAspectRatio(RATIO)
-                .withContainer(CONTAINER)
-                .withFrameRate(RATE)
-                .withResolution(RESOLUTION)
-                .withInterlaced(INTERLACED);
+        JobInput input = JobInput.builder()
+                                 .key(INPUT_KEY)
+                                 .aspectRatio(RATIO)
+                                 .container(CONTAINER)
+                                 .frameRate(RATE)
+                                 .resolution(RESOLUTION)
+                                 .interlaced(INTERLACED).build();
 
-        CreateJobResult createJobResult = ets.createJob(new CreateJobRequest()
-                                                                .withPipelineId(pipelineId)
-                                                                .withInput(input)
-                                                                .withOutputs(outputs));
+        CreateJobResult createJobResult = ets.createJob(CreateJobRequest.builder()
+                                                                        .pipelineId(pipelineId)
+                                                                        .input(input)
+                                                                        .outputs(outputs).build());
 
-        jobId = createJobResult.getJob().getId();
+        jobId = createJobResult.job().id();
         assertNotNull(jobId);
-        assertEquals(pipelineId, createJobResult.getJob().getPipelineId());
-        assertEquals(1, createJobResult.getJob().getOutputs().get(0).getComposition().size());
-        assertEquals(startTime, createJobResult.getJob().getOutputs().get(0).getComposition().get(0).getTimeSpan().getStartTime());
-        assertEquals(duration, createJobResult.getJob().getOutputs().get(0).getComposition().get(0).getTimeSpan().getDuration());
+        assertEquals(pipelineId, createJobResult.job().pipelineId());
+        assertEquals(1, createJobResult.job().outputs().get(0).composition().size());
+        assertEquals(startTime, createJobResult.job().outputs().get(0).composition().get(0).timeSpan().startTime());
+        assertEquals(duration, createJobResult.job().outputs().get(0).composition().get(0).timeSpan().duration());
 
-        ets.cancelJob(new CancelJobRequest().withId(jobId));
+        ets.cancelJob(CancelJobRequest.builder().id(jobId).build());
 
         // Read the job
-        ReadJobResult readJobResult = ets.readJob(new ReadJobRequest().withId(jobId));
+        ReadJobResult readJobResult = ets.readJob(ReadJobRequest.builder().id(jobId).build());
 
-        assertEquals(jobId, readJobResult.getJob().getId());
-        assertEquals(input, readJobResult.getJob().getInput());
-        assertEquals(pipelineId, readJobResult.getJob().getPipelineId());
-        assertEquals(albumArt, readJobResult.getJob().getOutputs().get(0).getAlbumArt());
-        assertEquals(presetId, readJobResult.getJob().getOutputs().get(0).getPresetId());
-        assertEquals(ROTATION, readJobResult.getJob().getOutputs().get(0).getRotate());
+        assertEquals(jobId, readJobResult.job().id());
+        assertEquals(input, readJobResult.job().input());
+        assertEquals(pipelineId, readJobResult.job().pipelineId());
+        assertEquals(albumArt, readJobResult.job().outputs().get(0).albumArt());
+        assertEquals(presetId, readJobResult.job().outputs().get(0).presetId());
+        assertEquals(ROTATION, readJobResult.job().outputs().get(0).rotate());
     }
 
     private void initializePresetParameters() {
         presetName = "my-preset";
         presetDescription = "my-preset";
 
-        audio = new AudioParameters()
-                .withCodec("mp3")
-                .withSampleRate("auto")
-                .withBitRate("70")
-                .withChannels("auto");
+        audio = AudioParameters.builder()
+                               .codec("mp3")
+                               .sampleRate("auto")
+                               .bitRate("70")
+                               .channels("auto").build();
     }
 }
 

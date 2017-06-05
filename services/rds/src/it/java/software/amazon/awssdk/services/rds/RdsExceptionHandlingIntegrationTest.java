@@ -38,7 +38,8 @@ public class RdsExceptionHandlingIntegrationTest extends IntegrationTestBase {
     @Test
     public void testExceptionHandling() throws Exception {
         try {
-            rds.describeDBInstances(new DescribeDBInstancesRequest().withDBInstanceIdentifier("non-existant-db-identifier"));
+            rds.describeDBInstances(
+                    DescribeDBInstancesRequest.builder().dbInstanceIdentifier("non-existant-db-identifier").build());
             fail("Expected exception not thrown");
         } catch (DBInstanceNotFoundException nfe) {
             assertNotEmpty(nfe.getErrorCode());

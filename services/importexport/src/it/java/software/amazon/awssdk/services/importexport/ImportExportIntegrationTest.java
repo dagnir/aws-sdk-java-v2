@@ -81,7 +81,7 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     public void tearDown() throws Exception {
         if (createdJobId != null) {
             try {
-                ie.cancelJob(new CancelJobRequest().withJobId(createdJobId));
+                ie.cancelJob(CancelJobRequest.builder().jobId(createdJobId).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
@@ -95,10 +95,10 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     @Test
     public void testExceptionHandling() throws Exception {
         try {
-            ie.createJob(new CreateJobRequest()
-                                 .withJobType("InvalidJobType")
-                                 .withManifest(getSampleManifestText(IMPORT_MANIFEST_PATH))
-                                 .withValidateOnly(true));
+            ie.createJob(CreateJobRequest.builder()
+                                 .jobType("InvalidJobType")
+                                 .manifest(sampleManifestText(IMPORT_MANIFEST_PATH))
+                                 .validateOnly(true).build());
             fail("Expected an InvalidParameterException");
         } catch (InvalidParameterException e) {
             assertEquals("InvalidParameterException", e.getErrorCode());
@@ -117,59 +117,59 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     @Test
     public void testImportExport() throws Exception {
         // CreateJob
-        CreateJobRequest createJobRequest = new CreateJobRequest()
-                .withJobType(JobType.Import.toString())
-                .withManifest(getSampleManifestText(IMPORT_MANIFEST_PATH));
+        CreateJobRequest createJobRequest = CreateJobRequest.builder()
+                .jobType(JobType.Import.toString())
+                .manifest(sampleManifestText(IMPORT_MANIFEST_PATH)).build();
         CreateJobResult createJobResult = ie.createJob(createJobRequest);
-        createdJobId = createJobResult.getJobId();
+        createdJobId = createJobResult.jobId();
         assertNotNull(createdJobId);
-        assertEquals(JobType.Import.toString(), createJobResult.getJobType());
-        assertNotNull(createJobResult.getSignature());
-        assertNotNull(createJobResult.getSignatureFileContents());
-        assertNotNull(createJobResult.getWarningMessage());
+        assertEquals(JobType.Import.toString(), createJobResult.jobType());
+        assertNotNull(createJobResult.signature());
+        assertNotNull(createJobResult.signatureFileContents());
+        assertNotNull(createJobResult.warningMessage());
 
 
         // UpdateJob
-        UpdateJobRequest updateJobRequest = new UpdateJobRequest()
-                .withJobId(createdJobId)
-                .withJobType(JobType.Export.toString())
-                .withManifest(getSampleManifestText(EXPORT_MANIFEST_PATH));
+        UpdateJobRequest updateJobRequest = UpdateJobRequest.builder()
+                .jobId(createdJobId)
+                .jobType(JobType.Export.toString())
+                .manifest(sampleManifestText(EXPORT_MANIFEST_PATH)).build();
         ie.updateJob(updateJobRequest);
 
 
         // ListJobs
-        ListJobsResult listJobsResult = ie.listJobs(new ListJobsRequest().withMaxJobs(100));
-        assertNotNull(listJobsResult.getIsTruncated());
-        Job job = findJob(createdJobId, listJobsResult.getJobs());
+        ListJobsResult listJobsResult = ie.listJobs(ListJobsRequest.builder().maxJobs(100).build());
+        assertNotNull(listJobsResult.isTruncated());
+        Job job = findJob(createdJobId, listJobsResult.jobs());
         assertNotNull(job);
-        assertNotNull(job.getCreationDate());
-        assertFalse(job.getIsCanceled());
-        assertEquals(createdJobId, job.getJobId());
-        assertEquals(JobType.Export.toString(), job.getJobType());
+        assertNotNull(job.creationDate());
+        assertFalse(job.isCanceled());
+        assertEquals(createdJobId, job.jobId());
+        assertEquals(JobType.Export.toString(), job.jobType());
         assertFalse(job.isCanceled());
 
 
         // GetStatus
-        GetStatusResult getStatusResult = ie.getStatus(new GetStatusRequest().withJobId(createdJobId));
-        assertNotNull(getStatusResult.getCreationDate());
-        assertNotNull(getStatusResult.getCurrentManifest());
-        assertEquals(createdJobId, getStatusResult.getJobId());
-        assertEquals(JobType.Export.toString(), getStatusResult.getJobType());
-        assertNotNull(getStatusResult.getProgressMessage());
-        assertNotNull(getStatusResult.getLocationMessage());
-        assertNotNull(getStatusResult.getLocationCode());
-        assertNotNull(getStatusResult.getSignature());
-        assertEquals(0, getStatusResult.getErrorCount().intValue());
-        assertNotNull(getStatusResult.getProgressCode());
-        assertNotNull(getStatusResult.getSignatureFileContents());
-        assertNull(getStatusResult.getCarrier());
-        assertNull(getStatusResult.getTrackingNumber());
-        assertNull(getStatusResult.getLogBucket());
-        assertNull(getStatusResult.getLogKey());
+        GetStatusResult statusResult = ie.getStatus(GetStatusRequest.builder().jobId(createdJobId).build());
+        assertNotNull(statusResult.creationDate());
+        assertNotNull(statusResult.currentManifest());
+        assertEquals(createdJobId, statusResult.jobId());
+        assertEquals(JobType.Export.toString(), statusResult.jobType());
+        assertNotNull(statusResult.progressMessage());
+        assertNotNull(statusResult.locationMessage());
+        assertNotNull(statusResult.locationCode());
+        assertNotNull(statusResult.signature());
+        assertEquals(0, statusResult.errorCount().intValue());
+        assertNotNull(statusResult.progressCode());
+        assertNotNull(statusResult.signatureFileContents());
+        assertNull(statusResult.carrier());
+        assertNull(statusResult.trackingNumber());
+        assertNull(statusResult.logBucket());
+        assertNull(statusResult.logKey());
 
 
         // Cancel our test job
-        ie.cancelJob(new CancelJobRequest().withJobId(createdJobId));
+        ie.cancelJob(CancelJobRequest.builder().jobId(createdJobId).build());
         assertJobIsCancelled(createdJobId);
         createdJobId = null;
     }
@@ -180,7 +180,7 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
 
     private Job findJob(String jobId, List<Job> jobs) {
         for (Job job : jobs) {
-            if (job.getJobId().equals(jobId)) {
+            if (job.jobId().equals(jobId)) {
                 return job;
             }
         }
@@ -189,18 +189,18 @@ public class ImportExportIntegrationTest extends IntegrationTestBase {
     }
 
     private void assertJobIsCancelled(String jobId) {
-        Job job = findJob(jobId, ie.listJobs(new ListJobsRequest()).getJobs());
+        Job job = findJob(jobId, ie.listJobs(ListJobsRequest.builder().build()).jobs());
         assertTrue(job.isCanceled());
     }
 
-    private String getSampleManifestText(String manifestPath) throws Exception {
+    private String sampleManifestText(String manifestPath) throws Exception {
         String manifest = IOUtils.toString(getClass().getResourceAsStream(manifestPath));
 
         String existingBucketName = findAppropriateBucket();
         ensureBucketHasAtLeastOneFileBecauseOfSomeWeirdImportExportRequirement(existingBucketName);
 
         manifest = manifest.replaceAll("@BUCKET@", existingBucketName);
-        manifest = manifest.replaceAll("@ACCESS_KEY_ID@", credentials.getAwsAccessKeyId());
+        manifest = manifest.replaceAll("@ACCESS_KEY_ID@", credentials.accessKeyId());
 
         return manifest;
     }

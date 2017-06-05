@@ -37,7 +37,7 @@ public class EC2VpcIntegrationTest extends EC2IntegrationTestBase {
     @After
     public void tearDown() {
         if (vpc != null) {
-            EC2TestHelper.deleteVpc(vpc.getVpcId());
+            EC2TestHelper.deleteVpc(vpc.vpcId());
         }
     }
 
@@ -49,10 +49,10 @@ public class EC2VpcIntegrationTest extends EC2IntegrationTestBase {
         // Create VPC
         try {
             CreateVpcResult createVpcResult = EC2TestHelper.createVpc(CIDR_BLOCK);
-            vpc = createVpcResult.getVpc();
+            vpc = createVpcResult.vpc();
             assertNotNull(vpc);
-            assertTrue(vpc.getVpcId().startsWith("vpc-"));
-            tagResource(vpc.getVpcId(), TAGS);
+            assertTrue(vpc.vpcId().startsWith("vpc-"));
+            tagResource(vpc.vpcId(), TAGS);
         } catch (AmazonServiceException ase) {
             if (!ase.getErrorCode().equals("VpcLimitExceeded")) {
                 throw ase;
@@ -64,27 +64,27 @@ public class EC2VpcIntegrationTest extends EC2IntegrationTestBase {
 
         // Describe
         DescribeVpcsResult describeResult =
-                EC2TestHelper.describeVpc(vpc.getVpcId());
+                EC2TestHelper.describeVpc(vpc.vpcId());
 
-        assertNotNull(describeResult.getVpcs());
-        assertTrue(describeResult.getVpcs().size() == 1);
-        assertTrue(describeResult.getVpcs().get(0).getVpcId().equals(vpc.getVpcId()));
-        assertEqualUnorderedTagLists(TAGS, describeResult.getVpcs().get(0).getTags());
+        assertNotNull(describeResult.vpcs());
+        assertTrue(describeResult.vpcs().size() == 1);
+        assertTrue(describeResult.vpcs().get(0).vpcId().equals(vpc.vpcId()));
+        assertEqualUnorderedTagLists(TAGS, describeResult.vpcs().get(0).tags());
 
         // Describe attributes
-        DescribeVpcAttributeResult describeVpcAttributesResult = EC2TestHelper.describeVpcAttribute(vpc.getVpcId(), true, false);
-        assertEquals(describeVpcAttributesResult.getVpcId(), vpc.getVpcId());
-        assertNotNull(describeVpcAttributesResult.getEnableDnsHostnames());
-        assertNull(describeVpcAttributesResult.getEnableDnsSupport());
+        DescribeVpcAttributeResult describeVpcAttributesResult = EC2TestHelper.describeVpcAttribute(vpc.vpcId(), true, false);
+        assertEquals(describeVpcAttributesResult.vpcId(), vpc.vpcId());
+        assertNotNull(describeVpcAttributesResult.enableDnsHostnames());
+        assertNull(describeVpcAttributesResult.enableDnsSupport());
 
         // Modify the attributes
-        EC2TestHelper.modifyVpcAttribute(vpc.getVpcId());
-        describeVpcAttributesResult = EC2TestHelper.describeVpcAttribute(vpc.getVpcId(), false, true);
-        assertEquals(describeVpcAttributesResult.getVpcId(), vpc.getVpcId());
-        assertEquals(true, describeVpcAttributesResult.getEnableDnsSupport());
+        EC2TestHelper.modifyVpcAttribute(vpc.vpcId());
+        describeVpcAttributesResult = EC2TestHelper.describeVpcAttribute(vpc.vpcId(), false, true);
+        assertEquals(describeVpcAttributesResult.vpcId(), vpc.vpcId());
+        assertEquals(true, describeVpcAttributesResult.enableDnsSupport());
 
         // Delete
-        EC2TestHelper.deleteVpc(vpc.getVpcId());
+        EC2TestHelper.deleteVpc(vpc.vpcId());
         vpc = null;
     }
 

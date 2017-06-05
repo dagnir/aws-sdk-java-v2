@@ -29,8 +29,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.SDKGlobalConfiguration;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.SdkGlobalTime;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
 import software.amazon.awssdk.services.cloudwatch.model.DeleteAlarmsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmHistoryRequest;
@@ -72,7 +72,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setUp() throws IOException {
-        cloudwatch = CloudWatchClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(getCredentials())).build();
+        cloudwatch = CloudWatchClient.builder().credentialsProvider(new StaticCredentialsProvider(getCredentials())).build();
     }
 
     /**
@@ -351,16 +351,16 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
      */
     @Test
     public void testClockSkew() {
-        SDKGlobalConfiguration.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
 
         CloudWatchClient cloudwatch = CloudWatchClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
+                .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
                 .build();
         cloudwatch.listMetrics(ListMetricsRequest.builder().build());
-        assertTrue(SDKGlobalConfiguration.getGlobalTimeOffset() < 3600);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 3600);
         // subsequent changes to the global time offset won't affect existing client
-        SDKGlobalConfiguration.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         cloudwatch.listMetrics(ListMetricsRequest.builder().build());
-        assertTrue(SDKGlobalConfiguration.getGlobalTimeOffset() == 3600);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() == 3600);
     }
 }

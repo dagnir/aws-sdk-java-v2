@@ -36,7 +36,7 @@ public class SnsPolicyIntegrationTest extends IntegrationTestBase {
      */
     @After
     public void tearDown() throws Exception {
-        sns.deleteTopic(new DeleteTopicRequest(topicArn));
+        sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
     }
 
     /**
@@ -45,7 +45,7 @@ public class SnsPolicyIntegrationTest extends IntegrationTestBase {
     @Test
     public void testPolicies() throws Exception {
         String topicName = "java-sns-policy-integ-test-" + System.currentTimeMillis();
-        topicArn = sns.createTopic(new CreateTopicRequest(topicName)).getTopicArn();
+        topicArn = sns.createTopic(CreateTopicRequest.builder().name(topicName).build()).topicArn();
 
         Policy policy = new Policy()
                 .withStatements(new Statement(Effect.Allow)
@@ -55,6 +55,10 @@ public class SnsPolicyIntegrationTest extends IntegrationTestBase {
                                         .withConditions(
                                                 SnsConditionFactory.newEndpointCondition("*@amazon.com"),
                                                 SnsConditionFactory.newProtocolCondition("email")));
-        sns.setTopicAttributes(new SetTopicAttributesRequest(topicArn, "Policy", policy.toJson()));
+        sns.setTopicAttributes(SetTopicAttributesRequest.builder()
+                                                        .topicArn(topicArn)
+                                                        .attributeName("Policy")
+                                                        .attributeValue(policy.toJson())
+                                                        .build());
     }
 }

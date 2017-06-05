@@ -44,24 +44,24 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeAvailabilityZones() {
         // no-required-args method form
-        DescribeAvailabilityZonesResult result = ec2.describeAvailabilityZones();
-        List<AvailabilityZone> zones = result.getAvailabilityZones();
+        DescribeAvailabilityZonesResult result = ec2.describeAvailabilityZones(DescribeAvailabilityZonesRequest.builder().build());
+        List<AvailabilityZone> zones = result.availabilityZones();
         assertTrue(zones.size() > 1);
         assertZonesNotEmpty(zones);
 
         // explicit zones
-        DescribeAvailabilityZonesRequest request = new DescribeAvailabilityZonesRequest();
-        request.withZoneNames(zones.get(0).getZoneName());
-        result = ec2.describeAvailabilityZones(request);
-        zones = result.getAvailabilityZones();
+        DescribeAvailabilityZonesRequest.Builder request = DescribeAvailabilityZonesRequest.builder();
+        request.zoneNames(zones.get(0).zoneName());
+        result = ec2.describeAvailabilityZones(request.build());
+        zones = result.availabilityZones();
         assertTrue(zones.size() == 1);
         assertZonesNotEmpty(zones);
 
         // filters
-        request = new DescribeAvailabilityZonesRequest();
-        request.withFilters(new Filter("zone-name", null).withValues(zones.get(0).getZoneName()));
-        result = ec2.describeAvailabilityZones(request);
-        zones = result.getAvailabilityZones();
+        request = DescribeAvailabilityZonesRequest.builder();
+        request.filters(Filter.builder().name("zone-name").values(zones.get(0).zoneName()).build());
+        result = ec2.describeAvailabilityZones(request.build());
+        zones = result.availabilityZones();
         assertTrue(zones.size() == 1);
         assertZonesNotEmpty(zones);
     }
@@ -73,24 +73,24 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeRegions() {
         // no-requred-args method form
-        DescribeRegionsResult result = ec2.describeRegions();
-        List<Region> regions = result.getRegions();
+        DescribeRegionsResult result = ec2.describeRegions(DescribeRegionsRequest.builder().build());
+        List<Region> regions = result.regions();
         assertTrue(regions.size() > 1);
         assertRegionsNotEmpty(regions);
 
         // explicit region names
-        DescribeRegionsRequest request = new DescribeRegionsRequest();
-        request.withRegionNames(regions.get(0).getRegionName());
-        result = ec2.describeRegions(request);
-        regions = result.getRegions();
+        DescribeRegionsRequest.Builder request = DescribeRegionsRequest.builder();
+        request.regionNames(regions.get(0).regionName());
+        result = ec2.describeRegions(request.build());
+        regions = result.regions();
         assertTrue(regions.size() == 1);
         assertRegionsNotEmpty(regions);
 
         // filters
-        request = new DescribeRegionsRequest();
-        request.withFilters(new Filter("region-name", null).withValues(regions.get(0).getRegionName()));
-        result = ec2.describeRegions(request);
-        regions = result.getRegions();
+        request = DescribeRegionsRequest.builder();
+        request.filters(Filter.builder().name("region-name").values(regions.get(0).regionName()).build());
+        result = ec2.describeRegions(request.build());
+        regions = result.regions();
         assertTrue(regions.size() == 1);
         assertRegionsNotEmpty(regions);
     }
@@ -109,9 +109,9 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
      */
     private void assertZonesNotEmpty(List<AvailabilityZone> zones) {
         for (AvailabilityZone zone : zones) {
-            assertThat(zone.getRegionName(), Matchers.not(Matchers.isEmptyOrNullString()));
-            assertThat(zone.getZoneName(), Matchers.not(Matchers.isEmptyOrNullString()));
-            assertThat(zone.getState(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(zone.regionName(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(zone.zoneName(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(zone.state(), Matchers.not(Matchers.isEmptyOrNullString()));
         }
     }
 
@@ -123,8 +123,8 @@ public class EC2ZonesAndRegionsIntegrationTest extends EC2IntegrationTestBase {
      */
     private void assertRegionsNotEmpty(List<Region> regions) {
         for (Region region : regions) {
-            assertThat(region.getEndpoint(), Matchers.not(Matchers.isEmptyOrNullString()));
-            assertThat(region.getRegionName(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(region.endpoint(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(region.regionName(), Matchers.not(Matchers.isEmptyOrNullString()));
         }
     }
 

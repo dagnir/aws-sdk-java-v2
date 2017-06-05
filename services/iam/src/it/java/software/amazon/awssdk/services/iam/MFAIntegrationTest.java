@@ -32,7 +32,7 @@ public class MFAIntegrationTest extends IntegrationTestBase {
 
     // TODO: Remove after IAM launches the MFA device feature publicly (~ Oct 2011)
     static {
-        System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
+        System.getProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
     }
 
     private final String deviceName = "java-sdk-mfa-" + System.currentTimeMillis();
@@ -43,7 +43,7 @@ public class MFAIntegrationTest extends IntegrationTestBase {
     @After
     public void tearDown() throws Exception {
         try {
-            iam.deleteVirtualMFADevice(new DeleteVirtualMFADeviceRequest().withSerialNumber(serialNumber));
+            iam.deleteVirtualMFADevice(DeleteVirtualMFADeviceRequest.builder().serialNumber(serialNumber).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
@@ -52,30 +52,31 @@ public class MFAIntegrationTest extends IntegrationTestBase {
     @Test
     public void testMFADeviceOperations() throws Exception {
         // Create Virtual MFA Device
-        VirtualMFADevice mfaDevice = iam.createVirtualMFADevice(new CreateVirtualMFADeviceRequest()
-                                                                        .withVirtualMFADeviceName(deviceName)).getVirtualMFADevice();
-        serialNumber = mfaDevice.getSerialNumber();
+        VirtualMFADevice mfaDevice = iam.createVirtualMFADevice(CreateVirtualMFADeviceRequest.builder()
+                                                                                             .virtualMFADeviceName(deviceName)
+                                                                                             .build()).virtualMFADevice();
+        serialNumber = mfaDevice.serialNumber();
         assertNotNull(serialNumber);
-        assertNotNull(mfaDevice.getBase32StringSeed());
-        assertNotNull(mfaDevice.getQRCodePNG());
-        assertNotNull(mfaDevice.getSerialNumber());
+        assertNotNull(mfaDevice.base32StringSeed());
+        assertNotNull(mfaDevice.qrCodePNG());
+        assertNotNull(mfaDevice.serialNumber());
 
         Thread.sleep(1000 * 10);
 
         // List MFA Devices
-        List<MFADevice> mfaDevices = iam.listMFADevices(new ListMFADevicesRequest().withMaxItems(100)).getMFADevices();
+        List<MFADevice> mfaDevices = iam.listMFADevices(ListMFADevicesRequest.builder().maxItems(100).build()).mfaDevices();
         assertTrue(mfaDevices.size() > 0);
-        assertNotNull(mfaDevices.get(0).getSerialNumber());
+        assertNotNull(mfaDevices.get(0).serialNumber());
 
         // Enable and Resync require codes from a physical MFA device
-        //iam.enableMFADevice(new EnableMFADeviceRequest(userName, serialNumber, "", ""));
-        //iam.resyncMFADevice(new ResyncMFADeviceRequest(userName, serialNumber, "", ""));
+        //iam.enableMFADevice(EnableMFADeviceRequest.builder(userName, serialNumber, "", ""));
+        //iam.resyncMFADevice(ResyncMFADeviceRequest.builder(userName, serialNumber, "", ""));
 
         // Deactivate requires that we previously activated an MFA device
-        //iam.deactivateMFADevice(new DeactivateMFADeviceRequest(userName, serialNumber);
+        //iam.deactivateMFADevice(DeactivateMFADeviceRequest.builder(userName, serialNumber);
 
         // Delete the virtual MFA device
-        iam.deleteVirtualMFADevice(new DeleteVirtualMFADeviceRequest().withSerialNumber(mfaDevice.getSerialNumber()));
+        iam.deleteVirtualMFADevice(DeleteVirtualMFADeviceRequest.builder().serialNumber(mfaDevice.serialNumber()).build());
     }
 
 }

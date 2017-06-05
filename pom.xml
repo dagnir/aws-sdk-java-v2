@@ -339,6 +339,18 @@
                                 </resources>
                             </configuration>
                         </execution>
+                        <execution>
+                            <id>add-generated-sources</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>${basedir}/target/generated-sources/sdk</source>
+                                </sources>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
                 <plugin>

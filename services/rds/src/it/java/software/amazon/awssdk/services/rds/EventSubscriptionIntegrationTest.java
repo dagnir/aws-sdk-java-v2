@@ -53,13 +53,13 @@ public class EventSubscriptionIntegrationTest extends IntegrationTestBase {
         IntegrationTestBase.setUp();
         sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         String topicName = "java-sns-policy-integ-test-" + System.currentTimeMillis();
-        topicArn = sns.createTopic(new CreateTopicRequest().withName(topicName)).getTopicArn();
+        topicArn = sns.createTopic(CreateTopicRequest.builder().name(topicName).build()).topicArn();
     }
 
     @AfterClass
     public static void cleanUp() {
         try {
-            sns.deleteTopic(new DeleteTopicRequest().withTopicArn(topicArn));
+            sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
@@ -75,80 +75,83 @@ public class EventSubscriptionIntegrationTest extends IntegrationTestBase {
         createDB(databaseInstanceName2);
 
         // Create event subscription
-        EventSubscription eventSubscription = rds.createEventSubscription(new CreateEventSubscriptionRequest()
-                                                                                  .withEnabled(true).withSourceIds(databaseInstanceName1)
-                                                                                  .withSnsTopicArn(topicArn)
-                                                                                  .withSubscriptionName(SUBSCRIPTION_NAME)
-                                                                                  .withSourceType(SOURCE_TYPE));
+        EventSubscription eventSubscription = rds.createEventSubscription(CreateEventSubscriptionRequest.builder()
+                                                                                                        .enabled(true).sourceIds(
+                        databaseInstanceName1)
+                                                                                                        .snsTopicArn(topicArn)
+                                                                                                        .subscriptionName(
+                                                                                                                SUBSCRIPTION_NAME)
+                                                                                                        .sourceType(SOURCE_TYPE)
+                                                                                                        .build());
         assertValidEventSubscription(eventSubscription, 1);
 
         // Describe the event subscription
         DescribeEventSubscriptionsResult describeEventSubscriptionsResult =
-                rds.describeEventSubscriptions(new DescribeEventSubscriptionsRequest());
-        assertTrue(describeEventSubscriptionsResult.getEventSubscriptionsList().size() > 0);
+                rds.describeEventSubscriptions(DescribeEventSubscriptionsRequest.builder().build());
+        assertTrue(describeEventSubscriptionsResult.eventSubscriptionsList().size() > 0);
 
         describeEventSubscriptionsResult = rds.describeEventSubscriptions(
-                new DescribeEventSubscriptionsRequest().withSubscriptionName(SUBSCRIPTION_NAME));
-        assertEquals(1, describeEventSubscriptionsResult.getEventSubscriptionsList().size());
-        assertValidEventSubscription(describeEventSubscriptionsResult.getEventSubscriptionsList().get(0), 1);
+                DescribeEventSubscriptionsRequest.builder().subscriptionName(SUBSCRIPTION_NAME).build());
+        assertEquals(1, describeEventSubscriptionsResult.eventSubscriptionsList().size());
+        assertValidEventSubscription(describeEventSubscriptionsResult.eventSubscriptionsList().get(0), 1);
 
         // Add the resource Id
         eventSubscription = rds.addSourceIdentifierToSubscription(
-                new AddSourceIdentifierToSubscriptionRequest()
-                        .withSourceIdentifier(databaseInstanceName2)
-                        .withSubscriptionName(SUBSCRIPTION_NAME));
+                AddSourceIdentifierToSubscriptionRequest.builder()
+                                                        .sourceIdentifier(databaseInstanceName2)
+                                                        .subscriptionName(SUBSCRIPTION_NAME).build());
 
         describeEventSubscriptionsResult = rds.describeEventSubscriptions(
-                new DescribeEventSubscriptionsRequest()
-                        .withSubscriptionName(SUBSCRIPTION_NAME));
-        assertEquals(1, describeEventSubscriptionsResult.getEventSubscriptionsList().size());
-        assertValidEventSubscription(describeEventSubscriptionsResult.getEventSubscriptionsList().get(0), 2);
+                DescribeEventSubscriptionsRequest.builder()
+                                                 .subscriptionName(SUBSCRIPTION_NAME).build());
+        assertEquals(1, describeEventSubscriptionsResult.eventSubscriptionsList().size());
+        assertValidEventSubscription(describeEventSubscriptionsResult.eventSubscriptionsList().get(0), 2);
 
         // Remove the resource Id
         eventSubscription = rds.removeSourceIdentifierFromSubscription(
-                new RemoveSourceIdentifierFromSubscriptionRequest()
-                        .withSourceIdentifier(databaseInstanceName2)
-                        .withSubscriptionName(SUBSCRIPTION_NAME));
+                RemoveSourceIdentifierFromSubscriptionRequest.builder()
+                                                             .sourceIdentifier(databaseInstanceName2)
+                                                             .subscriptionName(SUBSCRIPTION_NAME).build());
         assertValidEventSubscription(eventSubscription, 1);
 
         describeEventSubscriptionsResult = rds.describeEventSubscriptions(
-                new DescribeEventSubscriptionsRequest()
-                        .withSubscriptionName(SUBSCRIPTION_NAME));
-        assertEquals(1, describeEventSubscriptionsResult.getEventSubscriptionsList().size());
-        assertValidEventSubscription(describeEventSubscriptionsResult.getEventSubscriptionsList().get(0), 1);
+                DescribeEventSubscriptionsRequest.builder()
+                                                 .subscriptionName(SUBSCRIPTION_NAME).build());
+        assertEquals(1, describeEventSubscriptionsResult.eventSubscriptionsList().size());
+        assertValidEventSubscription(describeEventSubscriptionsResult.eventSubscriptionsList().get(0), 1);
 
         // Delete event subscription
-        rds.deleteEventSubscription(new DeleteEventSubscriptionRequest().withSubscriptionName(SUBSCRIPTION_NAME));
+        rds.deleteEventSubscription(DeleteEventSubscriptionRequest.builder().subscriptionName(SUBSCRIPTION_NAME).build());
         waitForEventSubscriptionsToBeDeleted(SUBSCRIPTION_NAME);
 
     }
 
     private void assertValidEventSubscription(EventSubscription eventSubscription, int numOfResouces) {
-        assertEquals(topicArn, eventSubscription.getSnsTopicArn());
-        assertEquals(true, eventSubscription.getEnabled());
-        assertNotNull(eventSubscription.getSubscriptionCreationTime());
-        assertEquals(numOfResouces, eventSubscription.getSourceIdsList().size());
-        assertTrue(eventSubscription.getSourceIdsList().contains(databaseInstanceName1));
+        assertEquals(topicArn, eventSubscription.snsTopicArn());
+        assertEquals(true, eventSubscription.enabled());
+        assertNotNull(eventSubscription.subscriptionCreationTime());
+        assertEquals(numOfResouces, eventSubscription.sourceIdsList().size());
+        assertTrue(eventSubscription.sourceIdsList().contains(databaseInstanceName1));
         if (numOfResouces == 2) {
-            assertTrue(eventSubscription.getSourceIdsList().contains(databaseInstanceName2));
+            assertTrue(eventSubscription.sourceIdsList().contains(databaseInstanceName2));
         }
-        assertNotNull(eventSubscription.getCustomerAwsId());
+        assertNotNull(eventSubscription.customerAwsId());
     }
 
     private void waitForEventSubscriptionsToBeDeleted(String subscriptionName) throws InterruptedException {
         DescribeEventSubscriptionsResult describeEventSubscriptionsResult = rds.describeEventSubscriptions(
-                new DescribeEventSubscriptionsRequest()
-                        .withSubscriptionName(SUBSCRIPTION_NAME));
+                DescribeEventSubscriptionsRequest.builder()
+                                                 .subscriptionName(SUBSCRIPTION_NAME).build());
         long timeout = 120;
         int count = 0;
-        String status = describeEventSubscriptionsResult.getEventSubscriptionsList().get(0).getStatus();
+        String status = describeEventSubscriptionsResult.eventSubscriptionsList().get(0).status();
         while (status.equals("deleting")) {
             System.out.println("Status: " + status);
             Thread.sleep(1000 * 5);
             try {
                 describeEventSubscriptionsResult = rds.describeEventSubscriptions(
-                        new DescribeEventSubscriptionsRequest()
-                                .withSubscriptionName(SUBSCRIPTION_NAME));
+                        DescribeEventSubscriptionsRequest.builder()
+                                                         .subscriptionName(SUBSCRIPTION_NAME).build());
             } catch (AmazonServiceException e) {
                 assertNotNull(e.getMessage());
                 assertNotNull(e.getErrorType());
@@ -156,7 +159,7 @@ public class EventSubscriptionIntegrationTest extends IntegrationTestBase {
                 assertNotNull(e.getRequestId());
                 return;
             }
-            status = describeEventSubscriptionsResult.getEventSubscriptionsList().get(0).getStatus();
+            status = describeEventSubscriptionsResult.eventSubscriptionsList().get(0).status();
             if (count++ >= timeout) {
                 fail("event subscription never be deleted");
             }
@@ -164,16 +167,16 @@ public class EventSubscriptionIntegrationTest extends IntegrationTestBase {
     }
 
     private void createDB(String instanceIdentifier) {
-        rds.createDBInstance(new CreateDBInstanceRequest()
-                                     .withAllocatedStorage(5)
-                                     .withDBInstanceClass(DB_INSTANCE_CLASS)
-                                     .withDBInstanceIdentifier(instanceIdentifier)
-                                     .withEngine(ENGINE)
-                                     .withDBName("integtestdb")
-                                     .withMasterUsername("admin")
-                                     .withMasterUserPassword("passwordmustbelongerthan8char")
-                                     .withMultiAZ(true).withPort(PORT)
-                                     .withLicenseModel("general-public-license"));
+        rds.createDBInstance(CreateDBInstanceRequest.builder()
+                                                    .allocatedStorage(5)
+                                                    .dbInstanceClass(DB_INSTANCE_CLASS)
+                                                    .dbInstanceIdentifier(instanceIdentifier)
+                                                    .engine(ENGINE)
+                                                    .dbName("integtestdb")
+                                                    .masterUsername("admin")
+                                                    .masterUserPassword("passwordmustbelongerthan8char")
+                                                    .multiAZ(true).port(PORT)
+                                                    .licenseModel("general-public-license").build());
     }
 
 }

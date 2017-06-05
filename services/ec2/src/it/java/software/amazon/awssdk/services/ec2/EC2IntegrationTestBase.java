@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.ec2.model.CreateTagsRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesResult;
@@ -56,7 +56,8 @@ import software.amazon.awssdk.test.AwsIntegrationTestBase;
 public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
     protected static final Log log = LogFactory.getLog(EC2IntegrationTestBase.class);
     /** The default tags to test with. */
-    protected static final List<Tag> TAGS = Arrays.asList(new Tag("foo", "bar"), new Tag("baz", ""));
+    protected static final List<Tag> TAGS = Arrays.asList(Tag.builder().key("foo").value("bar").build(),
+                                                          Tag.builder().key("baz").value("").build());
     protected static final String AMI_ID = "ami-7f418316";
     protected static final String KERNEL_ID = "aki-a71cf9ce";
     protected static final String RAMDISK_ID = "ari-a51cf9cc";
@@ -70,7 +71,7 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setupClients() throws IOException {
-        ec2 = EC2Client.builder().credentialsProvider(new AwsStaticCredentialsProvider(getCredentials())).build();
+        ec2 = EC2Client.builder().credentialsProvider(new StaticCredentialsProvider(getCredentials())).build();
     }
 
     /**
@@ -115,10 +116,8 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
 
             Instance instance = null;
             try {
-                instance = ec2.describeInstances(
-                        new DescribeInstancesRequest()
-                                .withInstanceIds(instanceId)
-                                                ).getReservations().get(0).getInstances().get(0);
+                instance = ec2.describeInstances(DescribeInstancesRequest.builder().instanceIds(instanceId).build())
+                              .reservations().get(0).instances().get(0);
 
             } catch (AmazonServiceException ase) {
                 if ("InvalidInstanceID.NotFound".equalsIgnoreCase(ase.getErrorCode())) {
@@ -132,10 +131,9 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
                 }
             }
 
-            if (state.toString().equalsIgnoreCase(
-                    instance.getState().getName())) {
+            if (state.toString().equalsIgnoreCase(instance.state().name())) {
                 return instance;
-            } else if (InstanceStateName.Terminated.toString().equals(instance.getState().getName())) {
+            } else if (InstanceStateName.Terminated.toString().equals(instance.state().name())) {
                 // There are cases where the instance directly goes from
                 // pending to terminated state. In such cases, this while
                 // loop waits for a longer time before it could throw the
@@ -158,16 +156,16 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
      * @return An instance object for the specified instance ID.
      */
     protected static Instance describeInstance(String instanceId) {
-        DescribeInstancesRequest request = new DescribeInstancesRequest();
-        DescribeInstancesResult result = ec2.describeInstances(request.withInstanceIds(instanceId));
+        DescribeInstancesResult result =
+                ec2.describeInstances(DescribeInstancesRequest.builder().instanceIds(instanceId).build());
 
-        List<Reservation> reservations = result.getReservations();
+        List<Reservation> reservations = result.reservations();
         if (reservations.isEmpty()) {
             return null;
         }
         assertEquals(1, reservations.size());
 
-        List<Instance> instances = reservations.get(0).getInstances();
+        List<Instance> instances = reservations.get(0).instances();
         if (instances.isEmpty()) {
             return null;
         }
@@ -183,11 +181,11 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
      *            The ID of the EC2 instance to terminate.
      */
     protected static void terminateInstance(String instanceId) {
-        ec2.terminateInstances(new TerminateInstancesRequest().withInstanceIds(instanceId));
+        ec2.terminateInstances(TerminateInstancesRequest.builder().instanceIds(instanceId).build());
     }
 
     protected static void tagResource(String resourceId, List<Tag> tags) {
-        ec2.createTags(new CreateTagsRequest().withResources(resourceId).withTags(tags));
+        ec2.createTags(CreateTagsRequest.builder().resources(resourceId).tags(tags).build());
 
         int attempts = 0;
         DescribeTagsResult tagsResult = null;
@@ -197,18 +195,21 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
             } catch (Exception e) {
                 // Ignored or expected.
             }
-            tagsResult = ec2.describeTags(new DescribeTagsRequest().withFilters(new Filter().withName("resource-id")
-                                                                                            .withValues(resourceId)));
+            tagsResult = ec2.describeTags(DescribeTagsRequest.builder().filters(Filter.builder()
+                                                                                      .name("resource-id")
+                                                                                      .values(resourceId)
+                                                                                      .build())
+                                                             .build());
         } while (!allTagsPresent(tagsResult, tags) && attempts++ < 45);
     }
 
     private static boolean allTagsPresent(DescribeTagsResult result, List<Tag> expected) {
         Map<String, String> expectedTags = convertTagListToMap(expected);
 
-        for (TagDescription tag : result.getTags()) {
-            if (expectedTags.containsKey(tag.getKey())) {
-                if (expectedTags.get(tag.getKey()).equals(tag.getValue())) {
-                    expectedTags.remove(tag.getKey());
+        for (TagDescription tag : result.tags()) {
+            if (expectedTags.containsKey(tag.key())) {
+                if (expectedTags.get(tag.key()).equals(tag.value())) {
+                    expectedTags.remove(tag.key());
                 } else {
                     return false;
                 }
@@ -225,7 +226,7 @@ public abstract class EC2IntegrationTestBase extends AwsIntegrationTestBase {
     private static Map<String, String> convertTagListToMap(List<Tag> tags) {
         HashMap<String, String> map = new HashMap<String, String>();
         for (Tag tag : tags) {
-            map.put(tag.getKey(), tag.getValue());
+            map.put(tag.key(), tag.value());
         }
         return map;
     }

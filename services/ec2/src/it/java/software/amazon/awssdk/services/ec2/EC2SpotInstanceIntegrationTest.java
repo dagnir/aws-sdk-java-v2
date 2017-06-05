@@ -25,12 +25,17 @@ import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.ec2.model.AvailabilityZone;
 import software.amazon.awssdk.services.ec2.model.BlockDeviceMapping;
 import software.amazon.awssdk.services.ec2.model.CancelSpotInstanceRequestsRequest;
 import software.amazon.awssdk.services.ec2.model.CancelledSpotInstanceRequest;
 import software.amazon.awssdk.services.ec2.model.CreateKeyPairRequest;
 import software.amazon.awssdk.services.ec2.model.CreateSpotDatafeedSubscriptionRequest;
+import software.amazon.awssdk.services.ec2.model.DeleteSpotDatafeedSubscriptionRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeAvailabilityZonesRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeKeyPairsRequest;
+import software.amazon.awssdk.services.ec2.model.DescribeSpotDatafeedSubscriptionRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotInstanceRequestsRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotPriceHistoryRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotPriceHistoryResult;
@@ -46,6 +51,7 @@ import software.amazon.awssdk.services.ec2.model.SpotInstanceRequest;
 import software.amazon.awssdk.services.ec2.model.SpotInstanceType;
 import software.amazon.awssdk.services.ec2.model.SpotPlacement;
 import software.amazon.awssdk.services.ec2.model.SpotPrice;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 
 /**
@@ -69,20 +75,21 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeSpotPriceHistory() throws Exception {
         DescribeSpotPriceHistoryResult priceHistoryResult =
-                ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
-                                                     .withProductDescriptions("Linux/UNIX", "Windows"));
+                ec2.describeSpotPriceHistory(DescribeSpotPriceHistoryRequest.builder()
+                                                                            .productDescriptions("Linux/UNIX", "Windows")
+                                                                            .build());
 
-        List<SpotPrice> spotPrices = priceHistoryResult.getSpotPriceHistory();
+        List<SpotPrice> spotPrices = priceHistoryResult.spotPriceHistory();
         assertTrue(spotPrices.size() > 2);
 
-        assertNotNull(priceHistoryResult.getNextToken());
+        assertNotNull(priceHistoryResult.nextToken());
 
         for (SpotPrice spotPrice : spotPrices) {
-            assertNotNull(spotPrice.getInstanceType());
-            Assert.assertThat(spotPrice.getProductDescription(), Matchers.not(Matchers.isEmptyOrNullString()));
-            Assert.assertThat(spotPrice.getSpotPrice(), Matchers.not(Matchers.isEmptyOrNullString()));
-            assertNotNull(spotPrice.getAvailabilityZone());
-            assertNotNull(spotPrice.getTimestamp());
+            assertNotNull(spotPrice.instanceType());
+            Assert.assertThat(spotPrice.productDescription(), Matchers.not(Matchers.isEmptyOrNullString()));
+            Assert.assertThat(spotPrice.spotPrice(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertNotNull(spotPrice.availabilityZone());
+            assertNotNull(spotPrice.timestamp());
         }
     }
 
@@ -90,20 +97,20 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeSpotPriceHistory_withPagination() throws Exception {
         DescribeSpotPriceHistoryResult priceHistoryResult =
-                ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
-                                                     .withProductDescriptions("Linux/UNIX", "Windows")
-                                                     .withMaxResults(10));
+                ec2.describeSpotPriceHistory(DescribeSpotPriceHistoryRequest.builder()
+                                                                            .productDescriptions("Linux/UNIX", "Windows")
+                                                                            .maxResults(10).build());
 
-        String nextToken = priceHistoryResult.getNextToken();
-        String availabilityZone = priceHistoryResult.getSpotPriceHistory().get(0).getAvailabilityZone();
+        String nextToken = priceHistoryResult.nextToken();
+        String availabilityZone = priceHistoryResult.spotPriceHistory().get(0).availabilityZone();
 
         assertNotNull(nextToken);
         assertNotNull(availabilityZone);
-        Assert.assertFalse(priceHistoryResult.getSpotPriceHistory().size() > 10);
-        ec2.describeSpotPriceHistory(new DescribeSpotPriceHistoryRequest()
-                                             .withProductDescriptions("Linux/UNIX", "Windows")
-                                             .withNextToken(nextToken)
-                                             .withAvailabilityZone(availabilityZone));
+        Assert.assertFalse(priceHistoryResult.spotPriceHistory().size() > 10);
+        ec2.describeSpotPriceHistory(DescribeSpotPriceHistoryRequest.builder()
+                                                                    .productDescriptions("Linux/UNIX", "Windows")
+                                                                    .nextToken(nextToken)
+                                                                    .availabilityZone(availabilityZone).build());
     }
 
     /**
@@ -112,74 +119,84 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testSpotInstanceRequests() {
         // Pick any valid, existing key pair to test with
-        List<KeyPairInfo> keyPairs = ec2.describeKeyPairs().getKeyPairs();
+        List<KeyPairInfo> keyPairs = ec2.describeKeyPairs(DescribeKeyPairsRequest.builder().build()).keyPairs();
         String keyName = null;
         if (keyPairs.isEmpty() == false) {
-            keyName = keyPairs.get(0).getKeyName();
+            keyName = keyPairs.get(0).keyName();
         } else {
-            keyName = ec2.createKeyPair(new CreateKeyPairRequest(
-                    "java-integ-" + System.currentTimeMillis())).getKeyPair().getKeyName();
+            keyName = ec2.createKeyPair(CreateKeyPairRequest.builder()
+                                                            .keyName("java-integ-" + System.currentTimeMillis())
+                                                            .build()).keyPair().keyName();
         }
 
-        BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping()
-                .withDeviceName("/dev/d2")
-                .withEbs(new EbsBlockDevice()
-                                 .withDeleteOnTermination(true)
-                                 .withVolumeSize(1));
+        BlockDeviceMapping blockDeviceMapping = BlockDeviceMapping.builder()
+                                                                  .deviceName("/dev/d2")
+                                                                  .ebs(EbsBlockDevice.builder().deleteOnTermination(true)
+                                                                                     .volumeSize(1).build()).build();
 
         zone = getAvailableZone();
         assertNotNull(zone);
 
-        LaunchSpecification launchSpecification = new LaunchSpecification()
-                .withMonitoringEnabled(true)
-                .withSecurityGroups("default")
-                .withBlockDeviceMappings(blockDeviceMapping)
-                .withInstanceType(InstanceType.M1Small.toString())
-                .withImageId(TEST_AMI_ID)
-                .withPlacement(new SpotPlacement(zone.getZoneName()))
-                .withUserData("foobaruserdata")
-                .withKeyName(keyName);
+        LaunchSpecification launchSpecification = LaunchSpecification.builder()
+                                                                     .monitoringEnabled(true)
+                                                                     .securityGroups("default")
+                                                                     .blockDeviceMappings(blockDeviceMapping)
+                                                                     .instanceType(InstanceType.M1Small.toString())
+                                                                     .imageId(TEST_AMI_ID)
+                                                                     .placement(SpotPlacement.builder()
+                                                                                             .availabilityZone(zone.zoneName())
+                                                                                             .build())
+                                                                     .userData("foobaruserdata")
+                                                                     .keyName(keyName).build();
 
-        RequestSpotInstancesResult result = ec2.requestSpotInstances(new RequestSpotInstancesRequest()
-                                                                             .withAvailabilityZoneGroup("zone-group")
-                                                                             .withInstanceCount(1)
-                                                                             .withLaunchGroup("launch-group")
-                                                                             .withLaunchSpecification(launchSpecification)
-                                                                             .withSpotPrice("0.01")
-                                                                             .withType(SpotInstanceType.OneTime.toString())
-                                                                             .withValidFrom(new Date(new Date().getTime() + 1000 * 60 * 60))
-                                                                             .withValidUntil(new Date(new Date().getTime() + 1000 * 60 * 60 * 24)));
+        RequestSpotInstancesResult result = ec2.requestSpotInstances(
+                RequestSpotInstancesRequest.builder()
+                                           .availabilityZoneGroup("zone-group")
+                                           .instanceCount(1)
+                                           .launchGroup("launch-group")
+                                           .launchSpecification(launchSpecification)
+                                           .spotPrice("0.01")
+                                           .type(SpotInstanceType.OneTime.toString())
+                                           .validFrom(new Date(new Date().getTime() + 1000 * 60 * 60))
+                                           .validUntil(new Date(new Date().getTime() + 1000 * 60 * 60 * 24)).build());
 
         // RequestSpotInstances
-        List<SpotInstanceRequest> spotInstanceRequests = result.getSpotInstanceRequests();
+        List<SpotInstanceRequest> spotInstanceRequests = result.spotInstanceRequests();
         assertEquals(1, spotInstanceRequests.size());
         SpotInstanceRequest spotInstanceRequest = spotInstanceRequests.get(0);
-        String spotInstanceRequestId = spotInstanceRequest.getSpotInstanceRequestId();
+        String spotInstanceRequestId = spotInstanceRequest.spotInstanceRequestId();
         assertValidSpotInstanceRequest(spotInstanceRequest);
         tagResource(spotInstanceRequestId, TAGS);
 
         // DescribeSpotInstanceRequests
         List<SpotInstanceRequest> describedSpotInstanceRequests =
-                ec2.describeSpotInstanceRequests(new DescribeSpotInstanceRequestsRequest()
-                                                         .withSpotInstanceRequestIds(spotInstanceRequestId)).getSpotInstanceRequests();
+                ec2.describeSpotInstanceRequests(DescribeSpotInstanceRequestsRequest.builder()
+                                                                                    .spotInstanceRequestIds(spotInstanceRequestId)
+                                                                                    .build())
+                   .spotInstanceRequests();
         assertEquals(1, describedSpotInstanceRequests.size());
         assertValidSpotInstanceRequest(describedSpotInstanceRequests.get(0));
-        assertEqualUnorderedTagLists(TAGS, describedSpotInstanceRequests.get(0).getTags());
+        assertEqualUnorderedTagLists(TAGS, describedSpotInstanceRequests.get(0).tags());
 
         // DescribeSpotInstanceRequests with filters
-        describedSpotInstanceRequests = ec2.describeSpotInstanceRequests(new DescribeSpotInstanceRequestsRequest()
-                                                                                 .withFilters(new Filter("spot-instance-request-id", null).withValues(spotInstanceRequestId))).getSpotInstanceRequests();
+        describedSpotInstanceRequests = ec2.describeSpotInstanceRequests(
+                DescribeSpotInstanceRequestsRequest.builder()
+                                                   .filters(Filter.builder().name("spot-instance-request-id")
+                                                                  .values(spotInstanceRequestId).build()).build())
+                                           .spotInstanceRequests();
         assertEquals(1, describedSpotInstanceRequests.size());
         assertValidSpotInstanceRequest(describedSpotInstanceRequests.get(0));
 
         // CancelSpotInstanceRequests
         List<CancelledSpotInstanceRequest> canceledSpotInstanceRequests =
-                ec2.cancelSpotInstanceRequests(new CancelSpotInstanceRequestsRequest()
-                                                       .withSpotInstanceRequestIds(spotInstanceRequestId)).getCancelledSpotInstanceRequests();
+                ec2.cancelSpotInstanceRequests(CancelSpotInstanceRequestsRequest.builder()
+                                                                                .spotInstanceRequestIds(spotInstanceRequestId)
+                                                                                .build())
+                   .cancelledSpotInstanceRequests();
         assertEquals(1, canceledSpotInstanceRequests.size());
         Assert.assertThat(canceledSpotInstanceRequests.get(0)
-                                                      .getState(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertEquals(spotInstanceRequestId, canceledSpotInstanceRequests.get(0).getSpotInstanceRequestId());
+                                                      .state(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(spotInstanceRequestId, canceledSpotInstanceRequests.get(0).spotInstanceRequestId());
     }
 
 
@@ -190,16 +207,16 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testSpotDatafeedSubscriptions() throws Exception {
         // Grab the name of a random bucket in our test account to use
-        AmazonS3Client s3 = new AmazonS3Client(getCredentials());
+        AmazonS3 s3 = AmazonS3Client.builder().withCredentials(new StaticCredentialsProvider(getCredentials())).build();
         String bucketName = s3.listBuckets().get(0).getName();
         String prefix = "my-test-prefix";
 
         // Create a datafeed subscription
         SpotDatafeedSubscription datafeedSubscription =
                 ec2.createSpotDatafeedSubscription(
-                        new CreateSpotDatafeedSubscriptionRequest()
-                                .withBucket(bucketName)
-                                .withPrefix(prefix)).getSpotDatafeedSubscription();
+                        CreateSpotDatafeedSubscriptionRequest.builder()
+                                                             .bucket(bucketName)
+                                                             .prefix(prefix).build()).spotDatafeedSubscription();
         assertValidSpotDatafeedSubscription(datafeedSubscription, bucketName, prefix);
 
         // Wait a few seconds for eventual consistency
@@ -207,11 +224,12 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
 
         // Describe Spot Datafeed Subscriptions
         assertValidSpotDatafeedSubscription(
-                ec2.describeSpotDatafeedSubscription().getSpotDatafeedSubscription(),
+                ec2.describeSpotDatafeedSubscription(DescribeSpotDatafeedSubscriptionRequest.builder().build())
+                   .spotDatafeedSubscription(),
                 bucketName, prefix);
 
         // Delete a Spot Datafeed Subscription
-        ec2.deleteSpotDatafeedSubscription();
+        ec2.deleteSpotDatafeedSubscription(DeleteSpotDatafeedSubscriptionRequest.builder().build());
     }
 
 
@@ -232,11 +250,11 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
      */
     private void assertValidSpotDatafeedSubscription(SpotDatafeedSubscription datafeedSubscription, String bucketName,
                                                      String prefix) {
-        assertEquals(bucketName, datafeedSubscription.getBucket());
-        assertNull(datafeedSubscription.getFault());
-        Assert.assertThat(datafeedSubscription.getOwnerId(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertEquals(prefix, datafeedSubscription.getPrefix());
-        Assert.assertThat(datafeedSubscription.getState(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(bucketName, datafeedSubscription.bucket());
+        assertNull(datafeedSubscription.fault());
+        Assert.assertThat(datafeedSubscription.ownerId(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(prefix, datafeedSubscription.prefix());
+        Assert.assertThat(datafeedSubscription.state(), Matchers.not(Matchers.isEmptyOrNullString()));
     }
 
     /**
@@ -247,49 +265,50 @@ public class EC2SpotInstanceIntegrationTest extends EC2IntegrationTestBase {
      *            The spot instance request to test.
      */
     private void assertValidSpotInstanceRequest(SpotInstanceRequest spotInstanceRequest) {
-        assertEquals("zone-group", spotInstanceRequest.getAvailabilityZoneGroup());
-        assertRecent(spotInstanceRequest.getCreateTime());
-        assertNull(spotInstanceRequest.getFault());
-        assertNull(spotInstanceRequest.getInstanceId());
+        assertEquals("zone-group", spotInstanceRequest.availabilityZoneGroup());
+        assertRecent(spotInstanceRequest.createTime());
+        assertNull(spotInstanceRequest.fault());
+        assertNull(spotInstanceRequest.instanceId());
 
-        assertEquals("launch-group", spotInstanceRequest.getLaunchGroup());
-        Assert.assertThat(spotInstanceRequest.getProductDescription(), Matchers.not(Matchers.isEmptyOrNullString()));
-        Assert.assertThat(spotInstanceRequest.getSpotInstanceRequestId(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertEquals(Double.parseDouble("0.01"), Double.parseDouble(spotInstanceRequest.getSpotPrice()), .001);
-        Assert.assertThat(spotInstanceRequest.getState(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertEquals(SpotInstanceType.OneTime.toString(), spotInstanceRequest.getType());
-        assertRecent(spotInstanceRequest.getValidFrom());
-        assertRecent(spotInstanceRequest.getValidUntil());
-        assertNotNull(spotInstanceRequest.getStatus());
-        assertNotNull(spotInstanceRequest.getStatus().getCode());
-        assertNotNull(spotInstanceRequest.getStatus().getMessage());
-        assertNotNull(spotInstanceRequest.getStatus().getUpdateTime());
+        assertEquals("launch-group", spotInstanceRequest.launchGroup());
+        Assert.assertThat(spotInstanceRequest.productDescription(), Matchers.not(Matchers.isEmptyOrNullString()));
+        Assert.assertThat(spotInstanceRequest.spotInstanceRequestId(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(Double.parseDouble("0.01"), Double.parseDouble(spotInstanceRequest.spotPrice()), .001);
+        Assert.assertThat(spotInstanceRequest.state(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(SpotInstanceType.OneTime.toString(), spotInstanceRequest.type());
+        assertRecent(spotInstanceRequest.validFrom());
+        assertRecent(spotInstanceRequest.validUntil());
+        assertNotNull(spotInstanceRequest.status());
+        assertNotNull(spotInstanceRequest.status().code());
+        assertNotNull(spotInstanceRequest.status().message());
+        assertNotNull(spotInstanceRequest.status().updateTime());
 
-        LaunchSpecification launchSpecification = spotInstanceRequest.getLaunchSpecification();
-        assertNull(launchSpecification.getAddressingType());
-        assertEquals(1, launchSpecification.getSecurityGroups().size());
+        LaunchSpecification launchSpecification = spotInstanceRequest.launchSpecification();
+        assertNull(launchSpecification.addressingType());
+        assertEquals(1, launchSpecification.securityGroups().size());
         // TODO: this needs to change when we sort out the security group question
-        assertEquals(DEFAULT_GROUP_NAME, launchSpecification.getSecurityGroups().get(0));
-        assertEquals(TEST_AMI_ID, launchSpecification.getImageId());
-        assertEquals(InstanceType.M1Small.toString(), launchSpecification.getInstanceType());
-        Assert.assertThat(launchSpecification.getKeyName(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertNull(launchSpecification.getKernelId());
-        assertEquals(zone.getZoneName(), launchSpecification.getPlacement().getAvailabilityZone());
-        assertNull(launchSpecification.getRamdiskId());
-        assertTrue(launchSpecification.getMonitoringEnabled());
+        assertEquals(DEFAULT_GROUP_NAME, launchSpecification.securityGroups().get(0));
+        assertEquals(TEST_AMI_ID, launchSpecification.imageId());
+        assertEquals(InstanceType.M1Small.toString(), launchSpecification.instanceType());
+        Assert.assertThat(launchSpecification.keyName(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertNull(launchSpecification.kernelId());
+        assertEquals(zone.zoneName(), launchSpecification.placement().availabilityZone());
+        assertNull(launchSpecification.ramdiskId());
+        assertTrue(launchSpecification.monitoringEnabled());
 
-        List<BlockDeviceMapping> blockDeviceMappings = launchSpecification.getBlockDeviceMappings();
+        List<BlockDeviceMapping> blockDeviceMappings = launchSpecification.blockDeviceMappings();
         assertEquals(1, blockDeviceMappings.size());
         BlockDeviceMapping blockDeviceMapping = blockDeviceMappings.get(0);
-        assertEquals("/dev/d2", blockDeviceMapping.getDeviceName());
-        assertTrue(blockDeviceMapping.getEbs().getDeleteOnTermination());
-        assertNull(blockDeviceMapping.getEbs().getSnapshotId());
-        assertEquals(1, blockDeviceMapping.getEbs().getVolumeSize(), 0.0);
+        assertEquals("/dev/d2", blockDeviceMapping.deviceName());
+        assertTrue(blockDeviceMapping.ebs().deleteOnTermination());
+        assertNull(blockDeviceMapping.ebs().snapshotId());
+        assertEquals(1, blockDeviceMapping.ebs().volumeSize(), 0.0);
     }
 
     private AvailabilityZone getAvailableZone() {
-        for (AvailabilityZone zone : ec2.describeAvailabilityZones().getAvailabilityZones()) {
-            if (!zone.getZoneName().equals(UNAVAILABLE_ZONE)) {
+        for (AvailabilityZone zone : ec2.describeAvailabilityZones(DescribeAvailabilityZonesRequest.builder().build())
+                                        .availabilityZones()) {
+            if (!zone.zoneName().equals(UNAVAILABLE_ZONE)) {
                 return zone;
             }
         }

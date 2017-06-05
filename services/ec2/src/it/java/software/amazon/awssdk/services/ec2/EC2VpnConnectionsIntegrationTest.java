@@ -47,41 +47,43 @@ public class EC2VpnConnectionsIntegrationTest extends EC2IntegrationTestBase {
         final int bgpAsn = 65534;
 
         CreateCustomerGatewayResult result = ec2.createCustomerGateway(
-                new CreateCustomerGatewayRequest()
-                        .withPublicIp(publicIp)
-                        .withBgpAsn(bgpAsn)
-                        .withType(GatewayType.Ipsec1));
+                CreateCustomerGatewayRequest.builder()
+                                            .publicIp(publicIp)
+                                            .bgpAsn(bgpAsn)
+                                            .type(GatewayType.Ipsec1).build());
 
-        customerGateway = result.getCustomerGateway();
+        customerGateway = result.customerGateway();
 
         Assert.assertNotNull(customerGateway);
-        Assert.assertNotNull(customerGateway.getCustomerGatewayId());
-        Assert.assertEquals(publicIp, customerGateway.getIpAddress());
-        Assert.assertEquals(String.valueOf(bgpAsn), customerGateway.getBgpAsn());
-        Assert.assertEquals(GatewayType.Ipsec1.toString(), customerGateway.getType());
+        Assert.assertNotNull(customerGateway.customerGatewayId());
+        Assert.assertEquals(publicIp, customerGateway.ipAddress());
+        Assert.assertEquals(String.valueOf(bgpAsn), customerGateway.bgpAsn());
+        Assert.assertEquals(GatewayType.Ipsec1.toString(), customerGateway.type());
 
-        CreateVpnGatewayResult createVpnGatewayResult = ec2.createVpnGateway(new CreateVpnGatewayRequest().withType(GatewayType.Ipsec1));
+        CreateVpnGatewayResult createVpnGatewayResult =
+                ec2.createVpnGateway(CreateVpnGatewayRequest.builder().type(GatewayType.Ipsec1).build());
 
-        vpnGateway = createVpnGatewayResult.getVpnGateway();
+        vpnGateway = createVpnGatewayResult.vpnGateway();
 
         Assert.assertNotNull(vpnGateway);
-        Assert.assertNotNull(vpnGateway.getVpnGatewayId());
+        Assert.assertNotNull(vpnGateway.vpnGatewayId());
     }
 
     @AfterClass
     public static void tearDown() {
 
         if (vpnConnection != null) {
-            ec2.deleteVpnConnection(new DeleteVpnConnectionRequest()
-                                            .withVpnConnectionId(vpnConnection.getVpnConnectionId()));
+            ec2.deleteVpnConnection(DeleteVpnConnectionRequest.builder()
+                                                              .vpnConnectionId(vpnConnection.vpnConnectionId()).build());
         }
         if (vpnGateway != null) {
-            ec2.deleteVpnGateway(new DeleteVpnGatewayRequest()
-                                         .withVpnGatewayId(vpnGateway.getVpnGatewayId()));
+            ec2.deleteVpnGateway(DeleteVpnGatewayRequest.builder()
+                                                        .vpnGatewayId(vpnGateway.vpnGatewayId()).build());
         }
         if (customerGateway != null) {
-            ec2.deleteCustomerGateway(new DeleteCustomerGatewayRequest()
-                                              .withCustomerGatewayId(customerGateway.getCustomerGatewayId()));
+            ec2.deleteCustomerGateway(DeleteCustomerGatewayRequest.builder()
+                                                                  .customerGatewayId(customerGateway.customerGatewayId())
+                                                                  .build());
         }
     }
 
@@ -89,16 +91,16 @@ public class EC2VpnConnectionsIntegrationTest extends EC2IntegrationTestBase {
     public void testCreateVpcConnection() {
 
         CreateVpnConnectionResult createVpnConnectionResult = ec2
-                .createVpnConnection(new CreateVpnConnectionRequest()
-                                             .withVpnGatewayId(vpnGateway.getVpnGatewayId())
-                                             .withCustomerGatewayId(customerGateway.getCustomerGatewayId())
-                                             .withType(GatewayType.Ipsec1.toString()));
-        vpnConnection = createVpnConnectionResult.getVpnConnection();
+                .createVpnConnection(CreateVpnConnectionRequest.builder()
+                                                               .vpnGatewayId(vpnGateway.vpnGatewayId())
+                                                               .customerGatewayId(customerGateway.customerGatewayId())
+                                                               .type(GatewayType.Ipsec1.toString()).build());
+        vpnConnection = createVpnConnectionResult.vpnConnection();
 
         Assert.assertNotNull(vpnConnection);
-        Assert.assertNotNull(vpnConnection.getVpnConnectionId());
-        Assert.assertEquals(customerGateway.getCustomerGatewayId(),
-                            vpnConnection.getCustomerGatewayId());
-        Assert.assertEquals(vpnGateway.getVpnGatewayId(), vpnConnection.getVpnGatewayId());
+        Assert.assertNotNull(vpnConnection.vpnConnectionId());
+        Assert.assertEquals(customerGateway.customerGatewayId(),
+                            vpnConnection.customerGatewayId());
+        Assert.assertEquals(vpnGateway.vpnGatewayId(), vpnConnection.vpnGatewayId());
     }
 }

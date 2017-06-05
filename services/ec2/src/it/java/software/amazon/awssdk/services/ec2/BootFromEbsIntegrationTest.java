@@ -71,15 +71,15 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
     public static void startInstance() throws InterruptedException {
 
         Instance instance = ec2.runInstances(
-                new RunInstancesRequest()
-                        .withImageId(EBS_AMI_ID)
-                        .withMaxCount(1)
-                        .withMinCount(1)
-                        .withUserData("foobarbazbar")
-                        .withDisableApiTermination(false)
-                        .withInstanceInitiatedShutdownBehavior("terminate")
-                                            ).getReservation().getInstances().get(0);
-        instanceId = instance.getInstanceId();
+                RunInstancesRequest.builder()
+                                   .imageId(EBS_AMI_ID)
+                                   .maxCount(1)
+                                   .minCount(1)
+                                   .userData("foobarbazbar")
+                                   .disableApiTermination(false)
+                                   .instanceInitiatedShutdownBehavior("terminate").build()
+                                            ).reservation().instances().get(0);
+        instanceId = instance.instanceId();
 
         waitForInstanceToTransitionToState(
                 instanceId, InstanceStateName.Running);
@@ -102,20 +102,19 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
     public void testDescribeInstances() throws Exception {
 
         List<Instance> instances = ec2.describeInstances(
-                new DescribeInstancesRequest()
-                        .withInstanceIds(instanceId)
-                                                        ).getReservations().get(0).getInstances();
+                DescribeInstancesRequest.builder()
+                                        .instanceIds(instanceId).build()).reservations().get(0).instances();
 
         assertEquals(1, instances.size());
-        assertThat(instances.get(0).getRootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertThat(instances.get(0).getRootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertThat(instances.get(0).getRootDeviceType(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(instances.get(0).rootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(instances.get(0).rootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(instances.get(0).rootDeviceType(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         List<InstanceBlockDeviceMapping> deviceMappings =
-                instances.get(0).getBlockDeviceMappings();
+                instances.get(0).blockDeviceMappings();
         for (InstanceBlockDeviceMapping deviceMapping : deviceMappings) {
-            assertThat(deviceMapping.getDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
-            assertThat(deviceMapping.getEbs().getVolumeId(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(deviceMapping.deviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(deviceMapping.ebs().volumeId(), Matchers.not(Matchers.isEmptyOrNullString()));
         }
     }
 
@@ -127,48 +126,48 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
 
         // kernel
         InstanceAttribute attribute = getInstanceAttribute(instanceId, InstanceAttributeName.Kernel);
-        assertEquals(instanceId, attribute.getInstanceId());
-        assertThat(attribute.getKernelId(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(instanceId, attribute.instanceId());
+        assertThat(attribute.kernelId(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         // instanceType
         attribute = getInstanceAttribute(instanceId, InstanceAttributeName.InstanceType);
-        assertEquals(instanceId, attribute.getInstanceId());
-        assertThat(attribute.getInstanceType(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(instanceId, attribute.instanceId());
+        assertThat(attribute.instanceType(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         // ramdisk
         attribute = getInstanceAttribute(instanceId, InstanceAttributeName.Ramdisk);
-        assertEquals(instanceId, attribute.getInstanceId());
-        assertThat(attribute.getRamdiskId(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(instanceId, attribute.instanceId());
+        assertThat(attribute.ramdiskId(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         // userData
         attribute = getInstanceAttribute(instanceId, InstanceAttributeName.UserData);
-        assertEquals(instanceId, attribute.getInstanceId());
-        assertThat(attribute.getUserData(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(instanceId, attribute.instanceId());
+        assertThat(attribute.userData(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         // disableApiTermination
         attribute = getInstanceAttribute(instanceId, InstanceAttributeName.DisableApiTermination);
-        assertEquals(instanceId, attribute.getInstanceId());
-        assertFalse(attribute.isDisableApiTermination());
+        assertEquals(instanceId, attribute.instanceId());
+        assertFalse(attribute.disableApiTermination());
 
         // instanceInitiatedShutdownBehavior
         attribute = getInstanceAttribute(instanceId, InstanceAttributeName.InstanceInitiatedShutdownBehavior);
-        assertEquals(instanceId, attribute.getInstanceId());
-        assertThat(attribute.getInstanceInitiatedShutdownBehavior(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(instanceId, attribute.instanceId());
+        assertThat(attribute.instanceInitiatedShutdownBehavior(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         // rootDeviceName
         attribute = getInstanceAttribute(instanceId, InstanceAttributeName.RootDeviceName);
-        assertEquals(instanceId, attribute.getInstanceId());
-        assertThat(attribute.getRootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(instanceId, attribute.instanceId());
+        assertThat(attribute.rootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         // blockDeviceMapping
         attribute = getInstanceAttribute(instanceId, InstanceAttributeName.BlockDeviceMapping);
-        assertEquals(instanceId, attribute.getInstanceId());
-        InstanceBlockDeviceMapping ibdm = attribute.getBlockDeviceMappings().get(0);
+        assertEquals(instanceId, attribute.instanceId());
+        InstanceBlockDeviceMapping ibdm = attribute.blockDeviceMappings().get(0);
 
-        assertThat(ibdm.getDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertNotNull(ibdm.getEbs().getAttachTime());
-        assertThat(ibdm.getEbs().getStatus(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertThat(ibdm.getEbs().getVolumeId(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(ibdm.deviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertNotNull(ibdm.ebs().attachTime());
+        assertThat(ibdm.ebs().status(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(ibdm.ebs().volumeId(), Matchers.not(Matchers.isEmptyOrNullString()));
     }
 
     /**
@@ -178,19 +177,18 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDescribeImageWithEbsBlockDeviceMapping() throws Exception {
         Image image = ec2.describeImages(
-                new DescribeImagesRequest()
-                        .withImageIds(EBS_AMI_ID)
-                                        ).getImages().get(0);
+                DescribeImagesRequest.builder()
+                                     .imageIds(EBS_AMI_ID).build()).images().get(0);
 
-        assertThat(image.getName(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertThat(image.getRootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertThat(image.getRootDeviceType(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(image.name(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(image.rootDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(image.rootDeviceType(), Matchers.not(Matchers.isEmptyOrNullString()));
 
-        for (BlockDeviceMapping deviceMapping : image.getBlockDeviceMappings()) {
-            assertThat(deviceMapping.getDeviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
-            assertThat(deviceMapping.getEbs().getSnapshotId(), Matchers.not(Matchers.isEmptyOrNullString()));
-            assertTrue(deviceMapping.getEbs().getVolumeSize() > 0);
-            assertNotNull(deviceMapping.getEbs().isDeleteOnTermination());
+        for (BlockDeviceMapping deviceMapping : image.blockDeviceMappings()) {
+            assertThat(deviceMapping.deviceName(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertThat(deviceMapping.ebs().snapshotId(), Matchers.not(Matchers.isEmptyOrNullString()));
+            assertTrue(deviceMapping.ebs().volumeSize() > 0);
+            assertNotNull(deviceMapping.ebs().deleteOnTermination());
         }
     }
 
@@ -202,19 +200,18 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
     public void testCreateImage() throws Exception {
 
         String imageId = ec2.createImage(
-                new CreateImageRequest()
-                        .withDescription("foo description")
-                        .withInstanceId(instanceId)
-                        .withName("foo AMI name " + new Date().getTime())
-                        .withNoReboot(false)
-                                        ).getImageId();
+                CreateImageRequest.builder()
+                                  .description("foo description")
+                                  .instanceId(instanceId)
+                                  .name("foo AMI name " + new Date().getTime())
+                                  .noReboot(false).build()).imageId();
         assertThat(imageId, Matchers.not(Matchers.isEmptyOrNullString()));
 
         // Wait a few seconds to make sure we can correctly deregister the new
         // image.
         Thread.sleep(1000 * 10);
-        ec2.deregisterImage(new DeregisterImageRequest()
-                                    .withImageId(imageId));
+        ec2.deregisterImage(DeregisterImageRequest.builder()
+                                                  .imageId(imageId).build());
     }
 
     /**
@@ -225,18 +222,18 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
     public void testModifyAndResetInstanceAttributes() throws Exception {
 
         ec2.modifyInstanceAttribute(
-                new ModifyInstanceAttributeRequest()
-                        .withInstanceId(instanceId)
-                        .withAttribute(InstanceAttributeName.DisableApiTermination)
-                        .withValue("false"));
+                ModifyInstanceAttributeRequest.builder()
+                                              .instanceId(instanceId)
+                                              .attribute(InstanceAttributeName.DisableApiTermination)
+                                              .value("false").build());
 
         // The instance needs to be in "stopped" state before its "kernal"
         // attribute is reset.
         stopInstance(instanceId);
 
-        ec2.resetInstanceAttribute(new ResetInstanceAttributeRequest()
-                                           .withInstanceId(instanceId)
-                                           .withAttribute(InstanceAttributeName.Kernel));
+        ec2.resetInstanceAttribute(ResetInstanceAttributeRequest.builder()
+                                                                .instanceId(instanceId)
+                                                                .attribute(InstanceAttributeName.Kernel).build());
     }
 
     /*
@@ -249,14 +246,13 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
     private void stopInstance(String instanceId) throws Exception {
 
         List<InstanceStateChange> stoppingInstances =
-                ec2.stopInstances(new StopInstancesRequest()
-                                          .withInstanceIds(instanceId)
-                                 ).getStoppingInstances();
+                ec2.stopInstances(StopInstancesRequest.builder()
+                                                      .instanceIds(instanceId).build()).stoppingInstances();
 
         assertEquals(1, stoppingInstances.size());
-        assertEquals(instanceId, stoppingInstances.get(0).getInstanceId());
-        assertThat(stoppingInstances.get(0).getCurrentState().getName(), Matchers.not(Matchers.isEmptyOrNullString()));
-        assertThat(stoppingInstances.get(0).getPreviousState().getName(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertEquals(instanceId, stoppingInstances.get(0).instanceId());
+        assertThat(stoppingInstances.get(0).currentState().name(), Matchers.not(Matchers.isEmptyOrNullString()));
+        assertThat(stoppingInstances.get(0).previousState().name(), Matchers.not(Matchers.isEmptyOrNullString()));
 
         waitForInstanceToTransitionToState(
                 instanceId, InstanceStateName.Stopped);
@@ -283,10 +279,9 @@ public class BootFromEbsIntegrationTest extends EC2IntegrationTestBase {
     private InstanceAttribute getInstanceAttribute(
             String instanceId, String attribute) throws Exception {
         return ec2.describeInstanceAttribute(
-                new DescribeInstanceAttributeRequest()
-                        .withInstanceId(instanceId)
-                        .withAttribute(attribute)
-                                            ).getInstanceAttribute();
+                DescribeInstanceAttributeRequest.builder()
+                                                .instanceId(instanceId)
+                                                .attribute(attribute).build()).instanceAttribute();
     }
 
 }

@@ -27,7 +27,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.profile.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.ProfileCredentialsProvider;
 import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest;
 import software.amazon.awssdk.services.firehose.model.ListDeliveryStreamsRequest;
 import software.amazon.awssdk.services.firehose.model.ListDeliveryStreamsResult;
@@ -56,8 +56,7 @@ public class ServiceIntegrationTest extends AwsTestBase {
 
         // TODO: firehose can't whitelist our shared account at this point, so
         // for now we are using the test account provided by the firehose team
-        ProfileCredentialsProvider firehostTestCreds = new ProfileCredentialsProvider(
-                "firehose-test");
+        ProfileCredentialsProvider firehostTestCreds = ProfileCredentialsProvider.builder().profileName("firehose-test").build();
         firehose = FirehoseClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
@@ -72,37 +71,40 @@ public class ServiceIntegrationTest extends AwsTestBase {
     public void testOperations() {
 
         // create delivery stream
-        firehose.createDeliveryStream(new CreateDeliveryStreamRequest()
-                                              .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
-                                              .withS3DestinationConfiguration(
-                                                      new S3DestinationConfiguration()
-                                                              .withBucketARN(FAKE_S3_BUCKET_ARN)
-                                                              .withRoleARN(FAKE_IAM_ROLE_ARN)));
+        CreateDeliveryStreamRequest request =
+                CreateDeliveryStreamRequest.builder()
+                                           .deliveryStreamName(DEVLIVERY_STREAM_NAME)
+                                           .s3DestinationConfiguration(S3DestinationConfiguration.builder()
+                                                                                                 .bucketARN(FAKE_S3_BUCKET_ARN)
+                                                                                                 .roleARN(FAKE_IAM_ROLE_ARN)
+                                                                                                 .build())
+                                           .build();
+        firehose.createDeliveryStream(request);
 
         // put record
-        String recordId = firehose.putRecord(new PutRecordRequest()
-                                                     .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
-                                                     .withRecord(new Record()
-                                                                         .withData(ByteBuffer.wrap(new byte[] {0, 1, 2}))
-                                                                )
-                                            ).getRecordId();
+        String recordId = firehose.putRecord(PutRecordRequest.builder()
+                                                             .deliveryStreamName(DEVLIVERY_STREAM_NAME)
+                                                             .record(Record.builder()
+                                                                           .data(ByteBuffer.wrap(new byte[] {0, 1, 2}))
+                                                                           .build())
+                                                             .build()
+                                            ).recordId();
         assertNotEmpty(recordId);
 
         // put record batch
         List<PutRecordBatchResponseEntry> entries = firehose.putRecordBatch(
-                new PutRecordBatchRequest()
-                        .withDeliveryStreamName(DEVLIVERY_STREAM_NAME)
-                        .withRecords(
-                                new Record().withData(ByteBuffer.wrap(new byte[] {0})),
-                                new Record().withData(ByteBuffer.wrap(new byte[] {1}))
-                                    )
-                                                                           ).getRequestResponses();
+                PutRecordBatchRequest.builder()
+                                     .deliveryStreamName(DEVLIVERY_STREAM_NAME)
+                                     .records(Record.builder().data(ByteBuffer.wrap(new byte[] {0})).build(),
+                                              Record.builder().data(ByteBuffer.wrap(new byte[] {1})).build())
+                                     .build()
+                                                                           ).requestResponses();
         assertEquals(2, entries.size());
         for (PutRecordBatchResponseEntry entry : entries) {
-            if (entry.getErrorCode() == null) {
-                assertNotEmpty(entry.getRecordId());
+            if (entry.errorCode() == null) {
+                assertNotEmpty(entry.recordId());
             } else {
-                assertNotEmpty(entry.getErrorMessage());
+                assertNotEmpty(entry.errorMessage());
             }
         }
     }
@@ -110,15 +112,15 @@ public class ServiceIntegrationTest extends AwsTestBase {
     @Test
     public void testListDeliveryStreams() {
         ListDeliveryStreamsResult result = firehose
-                .listDeliveryStreams(new ListDeliveryStreamsRequest());
-        assertNotNull(result.getDeliveryStreamNames());
-        assertNotNull(result.getHasMoreDeliveryStreams());
+                .listDeliveryStreams(ListDeliveryStreamsRequest.builder().build());
+        assertNotNull(result.deliveryStreamNames());
+        assertNotNull(result.hasMoreDeliveryStreams());
     }
 
     @Test
     public void testCreateDeliveryStream_InvalidParameter() {
         try {
-            firehose.createDeliveryStream(new CreateDeliveryStreamRequest());
+            firehose.createDeliveryStream(CreateDeliveryStreamRequest.builder().build());
             fail("ValidationException is expected.");
         } catch (AmazonServiceException ase) {
             assertEquals("ValidationException", ase.getErrorCode());

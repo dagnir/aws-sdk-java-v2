@@ -51,12 +51,12 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDownOptionsTest() throws Exception {
 
-        List<OptionGroup> groups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
+        List<OptionGroup> groups = rds.describeOptionGroups(DescribeOptionGroupsRequest.builder().build()).optionGroupsList();
 
         for (OptionGroup optionGroup : groups) {
-            if (optionGroup.getOptionGroupName().contains("TestOptionGroupName")) {
-                rds.deleteOptionGroup(new DeleteOptionGroupRequest()
-                                              .withOptionGroupName(optionGroup.getOptionGroupName()));
+            if (optionGroup.optionGroupName().contains("TestOptionGroupName")) {
+                rds.deleteOptionGroup(DeleteOptionGroupRequest.builder()
+                                                              .optionGroupName(optionGroup.optionGroupName()).build());
             }
 
         }
@@ -70,7 +70,8 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
     @Test
     public void optionsTest() {
 
-        List<OptionGroup> optionGroups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
+        List<OptionGroup> optionGroups =
+                rds.describeOptionGroups(DescribeOptionGroupsRequest.builder().build()).optionGroupsList();
         for (OptionGroup optionGroup : optionGroups) {
             log(optionGroup);
         }
@@ -82,78 +83,79 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
 
         // create group
         OptionGroup optionGroup = rds.createOptionGroup(
-                new CreateOptionGroupRequest()
-                        .withEngineName(ENGINE_NAME)
-                        .withMajorEngineVersion(MAJOR_ENGINE_VERSION)
-                        .withOptionGroupName(optionGroupName)
-                        .withOptionGroupDescription(optionGroupDescription));
+                CreateOptionGroupRequest.builder()
+                                        .engineName(ENGINE_NAME)
+                                        .majorEngineVersion(MAJOR_ENGINE_VERSION)
+                                        .optionGroupName(optionGroupName)
+                                        .optionGroupDescription(optionGroupDescription).build());
 
         // verify option group
         assertNotNull(optionGroup);
-        assertEquals(optionGroupName.toLowerCase(), optionGroup.getOptionGroupName());
-        assertEquals(ENGINE_NAME, optionGroup.getEngineName());
-        assertEquals(MAJOR_ENGINE_VERSION, optionGroup.getMajorEngineVersion());
-        assertNotNull(optionGroup.getOptions());
-        assertEquals(0, optionGroup.getOptions().size());
+        assertEquals(optionGroupName.toLowerCase(), optionGroup.optionGroupName());
+        assertEquals(ENGINE_NAME, optionGroup.engineName());
+        assertEquals(MAJOR_ENGINE_VERSION, optionGroup.majorEngineVersion());
+        assertNotNull(optionGroup.options());
+        assertEquals(0, optionGroup.options().size());
 
         // verify there's a new group
-        optionGroups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
+        optionGroups = rds.describeOptionGroups(DescribeOptionGroupsRequest.builder().build()).optionGroupsList();
         assertEquals(optionGroupsCount + 1, optionGroups.size());
 
         // modify group by adding options
         List<OptionGroupOption> optionGroupOptions = rds.describeOptionGroupOptions(
-                new DescribeOptionGroupOptionsRequest()
-                        .withEngineName(ENGINE_NAME)
-                        .withMajorEngineVersion(MAJOR_ENGINE_VERSION)).getOptionGroupOptions();
+                DescribeOptionGroupOptionsRequest.builder()
+                                                 .engineName(ENGINE_NAME)
+                                                 .majorEngineVersion(MAJOR_ENGINE_VERSION).build()).optionGroupOptions();
 
         List<String> securityGroupName = new ArrayList<String>();
-        for (DBSecurityGroup securityGroup : rds.describeDBSecurityGroups(new DescribeDBSecurityGroupsRequest()).getDBSecurityGroups()) {
-            securityGroupName.add(securityGroup.getDBSecurityGroupName());
+        for (DBSecurityGroup securityGroup : rds.describeDBSecurityGroups(DescribeDBSecurityGroupsRequest.builder().build())
+                                                .dbSecurityGroups()) {
+            securityGroupName.add(securityGroup.dbSecurityGroupName());
         }
 
         rds.modifyOptionGroup(
-                new ModifyOptionGroupRequest()
-                        .withOptionGroupName(optionGroupName)
-                        .withApplyImmediately(true)
-                        .withOptionsToInclude(
-                                new OptionConfiguration()
-                                        .withOptionName("OEM")
-                                        .withDBSecurityGroupMemberships(securityGroupName)
-                                        .withPort(1984)));
+                ModifyOptionGroupRequest.builder()
+                                        .optionGroupName(optionGroupName)
+                                        .applyImmediately(true)
+                                        .optionsToInclude(
+                                                OptionConfiguration.builder()
+                                                                   .optionName("OEM")
+                                                                   .dbSecurityGroupMemberships(securityGroupName)
+                                                                   .port(1984).build()).build());
 
         // verify update
         optionGroup = rds.describeOptionGroups(
-                new DescribeOptionGroupsRequest()
-                        .withOptionGroupName(optionGroupName)).getOptionGroupsList().get(0);
+                DescribeOptionGroupsRequest.builder()
+                                           .optionGroupName(optionGroupName).build()).optionGroupsList().get(0);
         log(optionGroup);
-        assertEquals(1, optionGroup.getOptions().size());
+        assertEquals(1, optionGroup.options().size());
 
         // Add a permanent option ( Oracle TDE )
         optionGroup = rds.modifyOptionGroup(
-                new ModifyOptionGroupRequest()
-                        .withOptionGroupName(optionGroupName)
-                        .withApplyImmediately(true)
-                        .withOptionsToInclude(
-                                new OptionConfiguration()
-                                        .withOptionName("TDE")));
+                ModifyOptionGroupRequest.builder()
+                                        .optionGroupName(optionGroupName)
+                                        .applyImmediately(true)
+                                        .optionsToInclude(
+                                                OptionConfiguration.builder()
+                                                                   .optionName("TDE").build()).build());
 
         // verify update
         optionGroup = rds.describeOptionGroups(
-                new DescribeOptionGroupsRequest()
-                        .withOptionGroupName(optionGroupName)).getOptionGroupsList().get(0);
+                DescribeOptionGroupsRequest.builder()
+                                           .optionGroupName(optionGroupName).build()).optionGroupsList().get(0);
         log(optionGroup);
-        assertEquals(2, optionGroup.getOptions().size());
+        assertEquals(2, optionGroup.options().size());
 
         Option tdeOption = null;
-        for (Option option : optionGroup.getOptions()) {
-            if (option.getOptionName().equalsIgnoreCase("TDE")) {
+        for (Option option : optionGroup.options()) {
+            if (option.optionName().equalsIgnoreCase("TDE")) {
                 tdeOption = option;
                 break;
             }
         }
         assertNotNull(tdeOption);
-        assertTrue(tdeOption.getPermanent());
-        assertTrue(tdeOption.getPersistent());
+        assertTrue(tdeOption.permanent());
+        assertTrue(tdeOption.persistent());
 
         List<String> optionsToRemove = new ArrayList<String>();
         optionsToRemove.add("OEM");
@@ -161,25 +163,25 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
 
         // modify group by removing options
         rds.modifyOptionGroup(
-                new ModifyOptionGroupRequest()
-                        .withOptionGroupName(optionGroupName)
-                        .withApplyImmediately(true)
-                        .withOptionsToRemove(optionsToRemove));
+                ModifyOptionGroupRequest.builder()
+                                        .optionGroupName(optionGroupName)
+                                        .applyImmediately(true)
+                                        .optionsToRemove(optionsToRemove).build());
 
         // verify update
         optionGroup = rds.describeOptionGroups(
-                new DescribeOptionGroupsRequest()
-                        .withOptionGroupName(optionGroupName)).getOptionGroupsList().get(0);
+                DescribeOptionGroupsRequest.builder()
+                                           .optionGroupName(optionGroupName).build()).optionGroupsList().get(0);
         log(optionGroup);
-        assertEquals(0, optionGroup.getOptions().size());
+        assertEquals(0, optionGroup.options().size());
 
         // delete the group
         rds.deleteOptionGroup(
-                new DeleteOptionGroupRequest()
-                        .withOptionGroupName(optionGroupName));
+                DeleteOptionGroupRequest.builder()
+                                        .optionGroupName(optionGroupName).build());
 
         // verify delete
-        optionGroups = rds.describeOptionGroups(new DescribeOptionGroupsRequest()).getOptionGroupsList();
+        optionGroups = rds.describeOptionGroups(DescribeOptionGroupsRequest.builder().build()).optionGroupsList();
 
         assertEquals(optionGroupsCount, optionGroups.size());
 
@@ -187,14 +189,14 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
 
     private void log(OptionGroup optionGroup) {
         System.out.println("Option Group");
-        System.out.println(String.format("Engine Name: %s", optionGroup.getEngineName()));
-        System.out.println(String.format("Major Engine Version: %s", optionGroup.getMajorEngineVersion()));
-        System.out.println(String.format("Option Group Description: %s", optionGroup.getOptionGroupDescription()));
-        System.out.println(String.format("Option Group Name: %s", optionGroup.getOptionGroupName()));
-        System.out.println(String.format("Options: %s", optionGroup.getOptions().size()));
+        System.out.println(String.format("Engine Name: %s", optionGroup.engineName()));
+        System.out.println(String.format("Major Engine Version: %s", optionGroup.majorEngineVersion()));
+        System.out.println(String.format("Option Group Description: %s", optionGroup.optionGroupDescription()));
+        System.out.println(String.format("Option Group Name: %s", optionGroup.optionGroupName()));
+        System.out.println(String.format("Options: %s", optionGroup.options().size()));
 
-        for (int i = 0; i < optionGroup.getOptions().size(); i++) {
-            Option option = optionGroup.getOptions().get(i);
+        for (int i = 0; i < optionGroup.options().size(); i++) {
+            Option option = optionGroup.options().get(i);
             System.out.println(i);
             Log(option);
             System.out.println();
@@ -203,12 +205,12 @@ public class RdsOptionsIntegrationTest extends IntegrationTestBase {
 
     private void Log(Option option) {
         System.out.println("Option");
-        System.out.println(String.format("Option Name: %s", option.getOptionName()));
-        System.out.println(String.format("Option Description: %s", option.getOptionDescription()));
-        System.out.println(String.format("Permanent: %s", option.getPermanent()));
-        System.out.println(String.format("Persistent: %s", option.getPersistent()));
-        System.out.println(String.format("Port: %s", option.getPort()));
-        System.out.println(String.format("DBSecurityGroupMemberships: %s", option.getDBSecurityGroupMemberships().size()));
+        System.out.println(String.format("Option Name: %s", option.optionName()));
+        System.out.println(String.format("Option Description: %s", option.optionDescription()));
+        System.out.println(String.format("Permanent: %s", option.permanent()));
+        System.out.println(String.format("Persistent: %s", option.persistent()));
+        System.out.println(String.format("Port: %s", option.port()));
+        System.out.println(String.format("DBSecurityGroupMemberships: %s", option.dbSecurityGroupMemberships().size()));
 
     }
 }

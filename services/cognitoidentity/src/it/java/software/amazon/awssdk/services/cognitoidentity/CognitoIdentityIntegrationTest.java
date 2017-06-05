@@ -29,7 +29,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolRequest;
 import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolResult;
 import software.amazon.awssdk.services.cognitoidentity.model.DeleteIdentityPoolRequest;
@@ -91,7 +91,7 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        identity = CognitoIdentityClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        identity = CognitoIdentityClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
     }
 
     /**
@@ -100,8 +100,8 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
     @AfterClass
     public static void tearDown() {
         if (identityPoolId != null) {
-            identity.deleteIdentityPool(new DeleteIdentityPoolRequest()
-                                                .withIdentityPoolId(identityPoolId));
+            identity.deleteIdentityPool(DeleteIdentityPoolRequest.builder()
+                                                                 .identityPoolId(identityPoolId).build());
         }
     }
 
@@ -128,13 +128,13 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
      */
     public void testCreateIdentityPool() {
         CreateIdentityPoolResult result = identity
-                .createIdentityPool(new CreateIdentityPoolRequest()
-                                            .withIdentityPoolName(IDENTITY_POOL_NAME)
-                                            .withAllowUnauthenticatedIdentities(true));
-        assertEquals(result.getIdentityPoolName(), IDENTITY_POOL_NAME);
-        assertNotNull(result.getIdentityPoolId());
-        assertTrue(result.getAllowUnauthenticatedIdentities());
-        identityPoolId = result.getIdentityPoolId();
+                .createIdentityPool(CreateIdentityPoolRequest.builder()
+                                                             .identityPoolName(IDENTITY_POOL_NAME)
+                                                             .allowUnauthenticatedIdentities(true).build());
+        assertEquals(result.identityPoolName(), IDENTITY_POOL_NAME);
+        assertNotNull(result.identityPoolId());
+        assertTrue(result.allowUnauthenticatedIdentities());
+        identityPoolId = result.identityPoolId();
     }
 
     /**
@@ -144,10 +144,10 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
     public void testGetId() {
 
         GetIdResult result = identity
-                .getId(new GetIdRequest().withIdentityPoolId(identityPoolId)
-                                         .withAccountId(AWS_ACCOUNT_ID));
-        assertNotNull(result.getIdentityId());
-        identityId = result.getIdentityId();
+                .getId(GetIdRequest.builder().identityPoolId(identityPoolId)
+                                   .accountId(AWS_ACCOUNT_ID).build());
+        assertNotNull(result.identityId());
+        identityId = result.identityId();
     }
 
     /**
@@ -156,9 +156,9 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
      */
     public void testListIdentities() {
         ListIdentitiesResult result = identity
-                .listIdentities(new ListIdentitiesRequest().withIdentityPoolId(
-                        identityPoolId).withMaxResults(60));
-        assertTrue(result.getIdentities().size() == 1);
+                .listIdentities(ListIdentitiesRequest.builder().identityPoolId(
+                        identityPoolId).maxResults(60).build());
+        assertTrue(result.identities().size() == 1);
     }
 
     /**
@@ -167,10 +167,10 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
      */
     public void testGetOpenId() {
         GetOpenIdTokenResult result = identity
-                .getOpenIdToken(new GetOpenIdTokenRequest()
-                                        .withIdentityId(identityId));
-        assertNotNull(result.getIdentityId());
-        assertNotNull(result.getToken());
+                .getOpenIdToken(GetOpenIdTokenRequest.builder()
+                                                     .identityId(identityId).build());
+        assertNotNull(result.identityId());
+        assertNotNull(result.token());
     }
 
     /**
@@ -179,13 +179,13 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
      */
     public void testDescribeIdentityPool() {
         DescribeIdentityPoolResult result = identity
-                .describeIdentityPool(new DescribeIdentityPoolRequest()
-                                              .withIdentityPoolId(identityPoolId));
+                .describeIdentityPool(DescribeIdentityPoolRequest.builder()
+                                                                 .identityPoolId(identityPoolId).build());
 
-        assertEquals(result.getIdentityPoolName(), IDENTITY_POOL_NAME);
-        assertTrue(result.getAllowUnauthenticatedIdentities());
+        assertEquals(result.identityPoolName(), IDENTITY_POOL_NAME);
+        assertTrue(result.allowUnauthenticatedIdentities());
         Map<String, String> supportedLoginProviders = result
-                .getSupportedLoginProviders();
+                .supportedLoginProviders();
         assertTrue(supportedLoginProviders.containsKey(PROVIDER));
         assertTrue(supportedLoginProviders.containsValue(APP_ID));
     }
@@ -195,13 +195,13 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
      * exception as there are no logins associated with the identity.
      */
     public void testUnlinkIdentity() {
-        Map<String, String> associatedLogins = new HashMap<String, String>();
+        Map<String, String> associatedLogins = new HashMap<>();
         associatedLogins.put(PROVIDER, ACCESS_TOKEN);
 
         try {
-            identity.unlinkIdentity(new UnlinkIdentityRequest()
-                                            .withIdentityId(identityId).withLoginsToRemove("foo")
-                                            .withLogins(associatedLogins));
+            identity.unlinkIdentity(UnlinkIdentityRequest.builder()
+                                                         .identityId(identityId).loginsToRemove("foo")
+                                                         .logins(associatedLogins).build());
             fail("Should fail as the provider and the identity doesn't have a login associated with it.");
         } catch (AmazonServiceException ase) {
             assertEquals(ase.getStatusCode(), 400);
@@ -215,19 +215,19 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
      */
     public void testUpdateIdentityPool() {
 
-        Map<String, String> supportedLoginProviders = new HashMap<String, String>();
+        Map<String, String> supportedLoginProviders = new HashMap<>();
         supportedLoginProviders.put(PROVIDER, APP_ID);
 
         UpdateIdentityPoolResult result = identity
-                .updateIdentityPool(new UpdateIdentityPoolRequest()
-                                            .withIdentityPoolId(identityPoolId)
-                                            .withIdentityPoolName(IDENTITY_POOL_NAME)
-                                            .withAllowUnauthenticatedIdentities(true)
-                                            .withSupportedLoginProviders(supportedLoginProviders));
+                .updateIdentityPool(UpdateIdentityPoolRequest.builder()
+                                                             .identityPoolId(identityPoolId)
+                                                             .identityPoolName(IDENTITY_POOL_NAME)
+                                                             .allowUnauthenticatedIdentities(true)
+                                                             .supportedLoginProviders(supportedLoginProviders).build());
 
-        assertTrue(result.getAllowUnauthenticatedIdentities());
+        assertTrue(result.allowUnauthenticatedIdentities());
         Map<String, String> returnedLoginProviders = result
-                .getSupportedLoginProviders();
+                .supportedLoginProviders();
         assertEquals(returnedLoginProviders.size(), 1);
         assertEquals(returnedLoginProviders.get(PROVIDER), APP_ID);
 
@@ -239,11 +239,11 @@ public class CognitoIdentityIntegrationTest extends AwsTestBase {
      */
     public void testListIdentityPool() {
         ListIdentityPoolsResult result = identity
-                .listIdentityPools(new ListIdentityPoolsRequest()
-                                           .withMaxResults(60));
+                .listIdentityPools(ListIdentityPoolsRequest.builder()
+                                                           .maxResults(60).build());
 
         List<IdentityPoolShortDescription> identityPools = result
-                .getIdentityPools();
+                .identityPools();
         assertTrue(identityPools.size() >= 1);
     }
 }

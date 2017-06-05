@@ -39,7 +39,7 @@ public class EC2CustomerGatewaysIntegrationTest extends EC2IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         if (customerGatewayId != null) {
-            ec2.deleteCustomerGateway(new DeleteCustomerGatewayRequest().withCustomerGatewayId(customerGatewayId));
+            ec2.deleteCustomerGateway(DeleteCustomerGatewayRequest.builder().customerGatewayId(customerGatewayId).build());
         }
     }
 
@@ -51,36 +51,33 @@ public class EC2CustomerGatewaysIntegrationTest extends EC2IntegrationTestBase {
 
         // Create CustomerGateway
         CustomerGateway customerGateway = ec2.createCustomerGateway(
-                new CreateCustomerGatewayRequest()
-                        .withPublicIp(IP_ADDRESS)
-                        .withBgpAsn(BGP_ASN)
-                        .withType(GatewayType.Ipsec1)
-                                                                   ).getCustomerGateway();
+                CreateCustomerGatewayRequest.builder()
+                                            .publicIp(IP_ADDRESS)
+                                            .bgpAsn(BGP_ASN)
+                                            .type(GatewayType.Ipsec1).build()).customerGateway();
 
-        customerGatewayId = customerGateway.getCustomerGatewayId();
+        customerGatewayId = customerGateway.customerGatewayId();
 
-        assertEquals(IP_ADDRESS, customerGateway.getIpAddress());
-        assertEquals(GatewayType.Ipsec1.toString(), customerGateway.getType());
-        assertEquals(Integer.toString(BGP_ASN), customerGateway.getBgpAsn());
+        assertEquals(IP_ADDRESS, customerGateway.ipAddress());
+        assertEquals(GatewayType.Ipsec1.toString(), customerGateway.type());
+        assertEquals(Integer.toString(BGP_ASN), customerGateway.bgpAsn());
 
         // Describe CustomerGateway
         List<CustomerGateway> gateways = ec2.describeCustomerGateways(
-                new DescribeCustomerGatewaysRequest()
-                        .withCustomerGatewayIds(customerGatewayId)
-                                                                     ).getCustomerGateways();
+                DescribeCustomerGatewaysRequest.builder()
+                                               .customerGatewayIds(customerGatewayId).build()).customerGateways();
         assertEquals(1, gateways.size());
-        assertEquals(customerGatewayId, gateways.get(0).getCustomerGatewayId());
+        assertEquals(customerGatewayId, gateways.get(0).customerGatewayId());
 
         // Delete CustomerGateway
-        ec2.deleteCustomerGateway(new DeleteCustomerGatewayRequest(customerGatewayId));
+        ec2.deleteCustomerGateway(DeleteCustomerGatewayRequest.builder().customerGatewayId(customerGatewayId).build());
 
         // Check the "deleted" state
         gateways = ec2.describeCustomerGateways(
-                new DescribeCustomerGatewaysRequest()
-                        .withCustomerGatewayIds(customerGatewayId)
-                                               ).getCustomerGateways();
+                DescribeCustomerGatewaysRequest.builder()
+                                               .customerGatewayIds(customerGatewayId).build()).customerGateways();
         assertEquals(1, gateways.size());
-        assertEquals("deleted", gateways.get(0).getState());
+        assertEquals("deleted", gateways.get(0).state());
 
         customerGatewayId = null;
     }

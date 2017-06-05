@@ -36,15 +36,14 @@ public class ServiceIntegrationTest extends AwsTestBase {
     private static final String DOMAIN_NAME = "java-es-test-" + System.currentTimeMillis();
 
     @BeforeClass
-    public static void setup() throws FileNotFoundException, IOException {
+    public static void setup() throws IOException {
         setUpCredentials();
         es = ElasticsearchClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
     @AfterClass
     public static void tearDown() {
-        es.deleteElasticsearchDomain(new DeleteElasticsearchDomainRequest()
-                .withDomainName(DOMAIN_NAME));
+        es.deleteElasticsearchDomain(DeleteElasticsearchDomainRequest.builder().domainName(DOMAIN_NAME).build());
     }
 
     @Test
@@ -63,43 +62,43 @@ public class ServiceIntegrationTest extends AwsTestBase {
     }
 
     private String testCreateDomain() {
-        ElasticsearchDomainStatus status = es.createElasticsearchDomain(new CreateElasticsearchDomainRequest()
-                .withDomainName(DOMAIN_NAME)).getDomainStatus();
+        ElasticsearchDomainStatus status = es.createElasticsearchDomain(CreateElasticsearchDomainRequest.builder()
+                .domainName(DOMAIN_NAME).build()).domainStatus();
 
-        assertEquals(DOMAIN_NAME, status.getDomainName());
+        assertEquals(DOMAIN_NAME, status.domainName());
         assertValidDomainStatus(status);
 
-        return status.getARN();
+        return status.arn();
     }
 
     private void testDescribeDomain() {
         ElasticsearchDomainStatus status = es.describeElasticsearchDomain(
-                new DescribeElasticsearchDomainRequest()
-                        .withDomainName(DOMAIN_NAME)).getDomainStatus();
-        assertEquals(DOMAIN_NAME, status.getDomainName());
+                DescribeElasticsearchDomainRequest.builder()
+                        .domainName(DOMAIN_NAME).build()).domainStatus();
+        assertEquals(DOMAIN_NAME, status.domainName());
         assertValidDomainStatus(status);
     }
 
     private void testDescribeDomains() {
         ElasticsearchDomainStatus status = es
                 .describeElasticsearchDomains(
-                        new DescribeElasticsearchDomainsRequest()
-                                .withDomainNames(DOMAIN_NAME))
-                .getDomainStatusList().get(0);
-        assertEquals(DOMAIN_NAME, status.getDomainName());
+                        DescribeElasticsearchDomainsRequest.builder()
+                                .domainNames(DOMAIN_NAME).build())
+                .domainStatusList().get(0);
+        assertEquals(DOMAIN_NAME, status.domainName());
         assertValidDomainStatus(status);
     }
 
     private void testListDomainNames() {
         List<String> domainNames = toDomainNameList(es.listDomainNames(
-                new ListDomainNamesRequest()).getDomainNames());
+                ListDomainNamesRequest.builder().build()).domainNames());
         assertThat(domainNames, hasItem(DOMAIN_NAME));
     }
 
     private List<String> toDomainNameList(Collection<DomainInfo> domainInfos) {
         List<String> names = new LinkedList<String>();
         for (DomainInfo info : domainInfos) {
-            names.add(info.getDomainName());
+            names.add(info.domainName());
         }
         return names;
     }
@@ -107,37 +106,37 @@ public class ServiceIntegrationTest extends AwsTestBase {
     private void testDescribeDomainConfig() {
         ElasticsearchDomainConfig config = es
                 .describeElasticsearchDomainConfig(
-                        new DescribeElasticsearchDomainConfigRequest()
-                                .withDomainName(DOMAIN_NAME)).getDomainConfig();
+                        DescribeElasticsearchDomainConfigRequest.builder()
+                                .domainName(DOMAIN_NAME).build()).domainConfig();
         assertValidDomainConfig(config);
     }
 
     private void testAddAndListTags(String arn) {
-        Tag tag = new Tag().withKey("name").withValue("foo");
+        Tag tag = Tag.builder().key("name").value("foo").build();
 
-        es.addTags(new AddTagsRequest().withARN(arn).withTagList(tag));
+        es.addTags(AddTagsRequest.builder().arn(arn).tagList(tag).build());
 
-        List<Tag> tags = es.listTags(new ListTagsRequest().withARN(arn)).getTagList();
+        List<Tag> tags = es.listTags(ListTagsRequest.builder().arn(arn).build()).tagList();
         assertThat(tags, hasItem(tag));
     }
 
     private void assertValidDomainStatus(ElasticsearchDomainStatus status) {
-        assertTrue(status.getCreated());
-        assertNotNull(status.getARN());
-        assertNotNull(status.getAccessPolicies());
-        assertNotNull(status.getAdvancedOptions());
-        assertNotNull(status.getDomainId());
-        assertNotNull(status.getEBSOptions());
-        assertNotNull(status.getElasticsearchClusterConfig());
-        assertNotNull(status.getSnapshotOptions());
+        assertTrue(status.created());
+        assertNotNull(status.arn());
+        assertNotNull(status.accessPolicies());
+        assertNotNull(status.advancedOptions());
+        assertNotNull(status.domainId());
+        assertNotNull(status.ebsOptions());
+        assertNotNull(status.elasticsearchClusterConfig());
+        assertNotNull(status.snapshotOptions());
     }
 
     private void assertValidDomainConfig(ElasticsearchDomainConfig config) {
-        assertNotNull(config.getAccessPolicies());
-        assertNotNull(config.getAdvancedOptions());
-        assertNotNull(config.getEBSOptions());
-        assertNotNull(config.getElasticsearchClusterConfig());
-        assertNotNull(config.getSnapshotOptions());
+        assertNotNull(config.accessPolicies());
+        assertNotNull(config.advancedOptions());
+        assertNotNull(config.ebsOptions());
+        assertNotNull(config.elasticsearchClusterConfig());
+        assertNotNull(config.snapshotOptions());
     }
 
 }

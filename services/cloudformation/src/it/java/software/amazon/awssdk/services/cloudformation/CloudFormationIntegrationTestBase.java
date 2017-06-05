@@ -15,18 +15,16 @@
 
 package software.amazon.awssdk.services.cloudformation;
 
+import java.io.File;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Action;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
 import software.amazon.awssdk.test.AwsTestBase;
-
-import java.io.File;
-import java.util.Iterator;
 
 /**
  * Base class for CloudFormation integration tests. Loads AWS credentials from a properties file and
@@ -53,8 +51,8 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
     public static void setUp() throws Exception {
         setUpCredentials();
         cf = CloudFormationClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(credentials))
-                .withRegion(Regions.AP_NORTHEAST_1)
+                .credentialsProvider(new StaticCredentialsProvider(credentials))
+                .region(Region.AP_NORTHEAST_1)
                 .build();
         s3 = new AmazonS3Client(credentials);
         s3.createBucket(bucketName);
@@ -79,8 +77,7 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
         ObjectListing objectListing = s3.listObjects(bucketName);
 
         while (true) {
-            for (Iterator<S3ObjectSummary> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
-                S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
+            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
                 s3.deleteObject(bucketName, objectSummary.getKey());
             }
 

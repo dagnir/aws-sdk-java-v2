@@ -21,8 +21,8 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.config.model.ConfigurationRecorder;
 import software.amazon.awssdk.services.config.model.DescribeConfigurationRecordersRequest;
 import software.amazon.awssdk.services.config.model.DescribeConfigurationRecordersResult;
@@ -59,9 +59,11 @@ public class ConfigIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        configServiceClient = ConfigClient.builder().withRegion(Regions.US_EAST_1).credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        configServiceClient =
+                ConfigClient.builder().region(Region.US_EAST_1).credentialsProvider(new StaticCredentialsProvider(credentials))
+                            .build();
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
-        iam = IAMClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        iam = IAMClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
 
     }
 
@@ -70,23 +72,25 @@ public class ConfigIntegrationTest extends AwsTestBase {
      */
     private void testPutConfigurationRecorderIfNotExists() {
         DescribeConfigurationRecordersResult describeConfigRecorderResult = configServiceClient
-                .describeConfigurationRecorders(new DescribeConfigurationRecordersRequest());
+                .describeConfigurationRecorders(DescribeConfigurationRecordersRequest.builder().build());
 
         List<ConfigurationRecorder> configurationRecorders = describeConfigRecorderResult
-                .getConfigurationRecorders();
+                .configurationRecorders();
 
         if (configurationRecorders == null || configurationRecorders.isEmpty()) {
             createRoleForConfigurationRecorder();
-            configServiceClient
-                    .putConfigurationRecorder(new PutConfigurationRecorderRequest()
-                                                      .withConfigurationRecorder(new ConfigurationRecorder()
-                                                                                         .withRoleARN(configRecorderRoleArn)));
+            configServiceClient.putConfigurationRecorder(
+                    PutConfigurationRecorderRequest.builder()
+                                                   .configurationRecorder(ConfigurationRecorder.builder()
+                                                                                               .roleARN(configRecorderRoleArn)
+                                                                                               .build())
+                                                   .build());
             describeConfigRecorderResult = configServiceClient
-                    .describeConfigurationRecorders(new DescribeConfigurationRecordersRequest());
+                    .describeConfigurationRecorders(DescribeConfigurationRecordersRequest.builder().build());
             configurationRecorders = describeConfigRecorderResult
-                    .getConfigurationRecorders();
+                    .configurationRecorders();
         }
-        recorderName = configurationRecorders.get(0).getName();
+        recorderName = configurationRecorders.get(0).name();
     }
 
     /**
@@ -94,10 +98,10 @@ public class ConfigIntegrationTest extends AwsTestBase {
      */
     private void createRoleForConfigurationRecorder() {
         CreateRoleResult createRoleResult = iam
-                .createRole(new CreateRoleRequest().withRoleName(
-                        DESCRIBE_ROLE_NAME).withAssumeRolePolicyDocument(
-                        POLICY_DESCRIBE_RESOURCES));
-        configRecorderRoleArn = createRoleResult.getRole().getArn();
+                .createRole(CreateRoleRequest.builder().roleName(
+                        DESCRIBE_ROLE_NAME).assumeRolePolicyDocument(
+                        POLICY_DESCRIBE_RESOURCES).build());
+        configRecorderRoleArn = createRoleResult.role().arn();
     }
 
     /**
@@ -111,8 +115,9 @@ public class ConfigIntegrationTest extends AwsTestBase {
         testPutConfigurationRecorderIfNotExists();
         try {
             configServiceClient
-                    .startConfigurationRecorder(new StartConfigurationRecorderRequest()
-                                                        .withConfigurationRecorderName(recorderName));
+                    .startConfigurationRecorder(StartConfigurationRecorderRequest.builder()
+                                                                                 .configurationRecorderName(recorderName)
+                                                                                 .build());
         } catch (AmazonServiceException e) {
             // Expected.
             // Delivery channel is not associated with the configuration

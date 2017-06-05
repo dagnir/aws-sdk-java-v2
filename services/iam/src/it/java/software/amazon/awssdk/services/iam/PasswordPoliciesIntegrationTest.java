@@ -33,38 +33,39 @@ public class PasswordPoliciesIntegrationTest extends IntegrationTestBase {
     @Test
     public void testAccountAliases() throws Exception {
         int minimumPasswordLength = 8;
-        iam.updateAccountPasswordPolicy(new UpdateAccountPasswordPolicyRequest()
-                                                .withMinimumPasswordLength(minimumPasswordLength)
-                                                .withRequireLowercaseCharacters(true)
-                                                .withRequireNumbers(true)
-                                                .withRequireSymbols(true)
-                                                .withRequireUppercaseCharacters(true));
+        iam.updateAccountPasswordPolicy(UpdateAccountPasswordPolicyRequest.builder()
+                                                                          .minimumPasswordLength(minimumPasswordLength)
+                                                                          .requireLowercaseCharacters(true)
+                                                                          .requireNumbers(true)
+                                                                          .requireSymbols(true)
+                                                                          .requireUppercaseCharacters(true).build());
 
-        GetAccountPasswordPolicyResult accountPasswordPolicy = iam.getAccountPasswordPolicy(new GetAccountPasswordPolicyRequest());
-        assertEquals(minimumPasswordLength, accountPasswordPolicy.getPasswordPolicy().getMinimumPasswordLength().intValue());
-        assertTrue(accountPasswordPolicy.getPasswordPolicy().getRequireLowercaseCharacters());
-        assertTrue(accountPasswordPolicy.getPasswordPolicy().getRequireNumbers());
-        assertTrue(accountPasswordPolicy.getPasswordPolicy().getRequireSymbols());
-        assertTrue(accountPasswordPolicy.getPasswordPolicy().getRequireUppercaseCharacters());
+        GetAccountPasswordPolicyResult accountPasswordPolicy =
+                iam.getAccountPasswordPolicy(GetAccountPasswordPolicyRequest.builder().build());
+        assertEquals(minimumPasswordLength, accountPasswordPolicy.passwordPolicy().minimumPasswordLength().intValue());
+        assertTrue(accountPasswordPolicy.passwordPolicy().requireLowercaseCharacters());
+        assertTrue(accountPasswordPolicy.passwordPolicy().requireNumbers());
+        assertTrue(accountPasswordPolicy.passwordPolicy().requireSymbols());
+        assertTrue(accountPasswordPolicy.passwordPolicy().requireUppercaseCharacters());
 
         minimumPasswordLength = 6;
-        iam.updateAccountPasswordPolicy(new UpdateAccountPasswordPolicyRequest()
-                                                .withMinimumPasswordLength(minimumPasswordLength)
-                                                .withRequireLowercaseCharacters(false)
-                                                .withRequireNumbers(false)
-                                                .withRequireSymbols(false)
-                                                .withRequireUppercaseCharacters(false));
+        iam.updateAccountPasswordPolicy(UpdateAccountPasswordPolicyRequest.builder()
+                                                                          .minimumPasswordLength(minimumPasswordLength)
+                                                                          .requireLowercaseCharacters(false)
+                                                                          .requireNumbers(false)
+                                                                          .requireSymbols(false)
+                                                                          .requireUppercaseCharacters(false).build());
 
-        accountPasswordPolicy = iam.getAccountPasswordPolicy(new GetAccountPasswordPolicyRequest());
-        assertEquals(minimumPasswordLength, accountPasswordPolicy.getPasswordPolicy().getMinimumPasswordLength().intValue());
-        assertFalse(accountPasswordPolicy.getPasswordPolicy().getRequireLowercaseCharacters());
-        assertFalse(accountPasswordPolicy.getPasswordPolicy().getRequireNumbers());
-        assertFalse(accountPasswordPolicy.getPasswordPolicy().getRequireSymbols());
-        assertFalse(accountPasswordPolicy.getPasswordPolicy().getRequireUppercaseCharacters());
+        accountPasswordPolicy = iam.getAccountPasswordPolicy(GetAccountPasswordPolicyRequest.builder().build());
+        assertEquals(minimumPasswordLength, accountPasswordPolicy.passwordPolicy().minimumPasswordLength().intValue());
+        assertFalse(accountPasswordPolicy.passwordPolicy().requireLowercaseCharacters());
+        assertFalse(accountPasswordPolicy.passwordPolicy().requireNumbers());
+        assertFalse(accountPasswordPolicy.passwordPolicy().requireSymbols());
+        assertFalse(accountPasswordPolicy.passwordPolicy().requireUppercaseCharacters());
 
-        iam.deleteAccountPasswordPolicy(new DeleteAccountPasswordPolicyRequest());
+        iam.deleteAccountPasswordPolicy(DeleteAccountPasswordPolicyRequest.builder().build());
         try {
-            iam.getAccountPasswordPolicy(new GetAccountPasswordPolicyRequest()).getPasswordPolicy();
+            iam.getAccountPasswordPolicy(GetAccountPasswordPolicyRequest.builder().build()).passwordPolicy();
             fail("Should have thrown an exception for a missing policy");
         } catch (NoSuchEntityException e) {
             // Ignored or expected.

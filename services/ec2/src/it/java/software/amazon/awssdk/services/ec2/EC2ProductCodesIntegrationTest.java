@@ -41,49 +41,48 @@ public class EC2ProductCodesIntegrationTest extends EC2IntegrationTestBase {
 
     private static String findPublicAmiWithProductCodeType(String type) {
 
-        List<Image> images = ec2.describeImages(new DescribeImagesRequest()
-                                                        .withFilters(
-                                                                new Filter()
-                                                                        .withName("is-public")
-                                                                        .withValues("true"),
-                                                                new Filter()
-                                                                        .withName("product-code.type")
-                                                                        .withValues(type))
-                                               ).getImages();
+        List<Image> images = ec2.describeImages(DescribeImagesRequest.builder()
+                                                                     .filters(Filter.builder()
+                                                                                    .name("is-public")
+                                                                                    .values("true").build(),
+                                                                              Filter.builder()
+                                                                                    .name("product-code.type")
+                                                                                    .values(type).build()).build()
+                                               ).images();
 
         assertThat("Cannot find a public AMI with product-code.type=" + type,
                    images, not(empty()));
 
-        return images.get(0).getImageId();
+        return images.get(0).imageId();
     }
 
     @Test
     public void testDevpayImage() {
-        List<Image> images = ec2.describeImages(new DescribeImagesRequest()
-                                                        .withImageIds(DEVPAY_AMI)
-                                               ).getImages();
+        List<Image> images = ec2.describeImages(DescribeImagesRequest.builder()
+                                                                     .imageIds(DEVPAY_AMI).build()
+                                               ).images();
         assertEquals(1, images.size());
 
-        List<ProductCode> codes = images.get(0).getProductCodes();
+        List<ProductCode> codes = images.get(0).productCodes();
         assertEquals(1, codes.size());
 
         ProductCode devpayCode = codes.get(0);
-        assertEquals("devpay", devpayCode.getProductCodeType());
-        assertStringNotEmpty(devpayCode.getProductCodeId());
+        assertEquals("devpay", devpayCode.productCodeType());
+        assertStringNotEmpty(devpayCode.productCodeId());
     }
 
     @Test
     public void testDescribeMarketplaceImage() {
-        List<Image> images = ec2.describeImages(new DescribeImagesRequest()
-                                                        .withImageIds(MARKETPLACE_AMI)
-                                               ).getImages();
+        List<Image> images = ec2.describeImages(DescribeImagesRequest.builder()
+                                                                     .imageIds(MARKETPLACE_AMI).build()
+                                               ).images();
         assertEquals(1, images.size());
 
-        List<ProductCode> codes = images.get(0).getProductCodes();
+        List<ProductCode> codes = images.get(0).productCodes();
         assertEquals(1, codes.size());
 
         ProductCode marketPlaceCode = codes.get(0);
-        assertEquals("marketplace", marketPlaceCode.getProductCodeType());
-        assertStringNotEmpty(marketPlaceCode.getProductCodeId());
+        assertEquals("marketplace", marketPlaceCode.productCodeType());
+        assertStringNotEmpty(marketPlaceCode.productCodeId());
     }
 }

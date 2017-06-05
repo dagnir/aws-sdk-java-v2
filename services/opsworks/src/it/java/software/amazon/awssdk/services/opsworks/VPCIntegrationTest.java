@@ -104,65 +104,69 @@ public class VPCIntegrationTest extends IntegrationTestBase {
         Thread.sleep(1000 * 30);
 
         try {
-            String stackId = opsWorks.createStack(new CreateStackRequest()
-                                                          .withName(stackName)
-                                                          .withRegion("us-east-1")
-                                                          .withVpcId(vpcId)
-                                                          .withDefaultSubnetId(subId)
-                                                          .withServiceRoleArn(role.getArn())
-                                                          .withDefaultInstanceProfileArn(instanceProfile.getArn())
-                                                          .withConfigurationManager(new StackConfigurationManager().withName("Chef").withVersion("0.9"))
-                                                 ).getStackId();
+            String stackId = opsWorks.createStack(CreateStackRequest.builder()
+                                                                    .name(stackName)
+                                                                    .region("us-east-1")
+                                                                    .vpcId(vpcId)
+                                                                    .defaultSubnetId(subId)
+                                                                    .serviceRoleArn(role.arn())
+                                                                    .defaultInstanceProfileArn(instanceProfile.arn())
+                                                                    .configurationManager(
+                                                                            StackConfigurationManager.builder().name("Chef")
+                                                                                                     .version("0.9").build())
+                                                                    .build()
+                                                 ).stackId();
 
 
-            Stack stack = opsWorks.describeStacks(new DescribeStacksRequest().withStackIds(stackId)).getStacks().get(0);
+            Stack stack = opsWorks.describeStacks(DescribeStacksRequest.builder().stackIds(stackId).build()).stacks().get(0);
 
-            assertEquals(vpcId, stack.getVpcId());
-            assertEquals(subId, stack.getDefaultSubnetId());
-
-
-            String layerId = opsWorks.createLayer(new CreateLayerRequest()
-                                                          .withName("foo")
-                                                          .withShortname("fo")
-                                                          .withStackId(stackId)
-                                                          .withType("custom")).getLayerId();
+            assertEquals(vpcId, stack.vpcId());
+            assertEquals(subId, stack.defaultSubnetId());
 
 
-            String instanceId = opsWorks.createInstance(new CreateInstanceRequest()
-                                                                .withStackId(stackId)
-                                                                .withLayerIds(layerId)
-                                                                .withSubnetId(subId)
-                                                                .withInstanceType("m1.small")
-                                                       ).getInstanceId();
+            String layerId = opsWorks.createLayer(CreateLayerRequest.builder()
+                                                                    .name("foo")
+                                                                    .shortname("fo")
+                                                                    .stackId(stackId)
+                                                                    .type("custom").build()).layerId();
 
 
-            Instance instance = opsWorks.describeInstances(new DescribeInstancesRequest()
-                                                                   .withInstanceIds(instanceId)).getInstances().get(0);
+            String instanceId = opsWorks.createInstance(CreateInstanceRequest.builder()
+                                                                             .stackId(stackId)
+                                                                             .layerIds(layerId)
+                                                                             .subnetId(subId)
+                                                                             .instanceType("m1.small").build()
+                                                       ).instanceId();
 
-            assertEquals(subId, instance.getSubnetId());
+
+            Instance instance = opsWorks.describeInstances(DescribeInstancesRequest.builder()
+                                                                                   .instanceIds(instanceId).build()).instances()
+                                        .get(0);
+
+            assertEquals(subId, instance.subnetId());
 
             DescribeStackSummaryResult describeStackSummaryResult =
-                    opsWorks.describeStackSummary(new DescribeStackSummaryRequest().withStackId(stackId));
+                    opsWorks.describeStackSummary(DescribeStackSummaryRequest.builder().stackId(stackId).build());
 
-            assertEquals(stackId, describeStackSummaryResult.getStackSummary().getStackId());
-            assertEquals(stackName, describeStackSummaryResult.getStackSummary().getName());
-            assertEquals(new Integer(1), describeStackSummaryResult.getStackSummary().getLayersCount());
-            assertNotNull(describeStackSummaryResult.getStackSummary().getInstancesCount());
-            assertEquals(new Integer(0), describeStackSummaryResult.getStackSummary().getAppsCount());
+            assertEquals(stackId, describeStackSummaryResult.stackSummary().stackId());
+            assertEquals(stackName, describeStackSummaryResult.stackSummary().name());
+            assertEquals(new Integer(1), describeStackSummaryResult.stackSummary().layersCount());
+            assertNotNull(describeStackSummaryResult.stackSummary().instancesCount());
+            assertEquals(new Integer(0), describeStackSummaryResult.stackSummary().appsCount());
 
-            opsWorks.deleteInstance(new DeleteInstanceRequest().withInstanceId(instanceId));
+            opsWorks.deleteInstance(DeleteInstanceRequest.builder().instanceId(instanceId).build());
 
-            opsWorks.deleteLayer(new DeleteLayerRequest().withLayerId(layerId));
-            opsWorks.deleteStack(new DeleteStackRequest().withStackId(stackId));
+            opsWorks.deleteLayer(DeleteLayerRequest.builder().layerId(layerId).build());
+            opsWorks.deleteStack(DeleteStackRequest.builder().stackId(stackId).build());
         } finally {
             try {
-                ec2.deleteSubnet(new DeleteSubnetRequest().withSubnetId(subId));
+                ec2.deleteSubnet(DeleteSubnetRequest.builder().subnetId(subId).build());
 
-                ec2.deleteVpc(new DeleteVpcRequest().withVpcId(vpcId));
+                ec2.deleteVpc(DeleteVpcRequest.builder().vpcId(vpcId).build());
 
-                iam.deleteInstanceProfile(new DeleteInstanceProfileRequest().withInstanceProfileName(profileName));
-                iam.deleteRolePolicy(new DeleteRolePolicyRequest().withRoleName(roleName).withPolicyName("TestPolicy"));
-                iam.deleteRole(new DeleteRoleRequest().withRoleName(roleName));
+                iam.deleteInstanceProfile(DeleteInstanceProfileRequest.builder().instanceProfileName(profileName).build());
+                iam.deleteRolePolicy(DeleteRolePolicyRequest.builder().roleName(roleName).policyName("TestPolicy").build());
+                iam.deleteRole(DeleteRoleRequest.builder().roleName(roleName).build());
             } catch (Exception e) {
                 // Ignored or expected.
             }
@@ -175,23 +179,25 @@ public class VPCIntegrationTest extends IntegrationTestBase {
         ec2 = EC2Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         roleName = "java-test-role" + System.currentTimeMillis();
         profileName = "java-profile" + System.currentTimeMillis();
-        role = iam.createRole(new CreateRoleRequest().withRoleName(roleName).withAssumeRolePolicyDocument(TRUST_POLICY)).getRole();
+        role = iam.createRole(CreateRoleRequest.builder().roleName(roleName).assumeRolePolicyDocument(TRUST_POLICY).build()).role();
 
-        iam.putRolePolicy(new PutRolePolicyRequest().withPolicyName("TestPolicy").withRoleName(roleName).withPolicyDocument(PERMISSIONS));
+        iam.putRolePolicy(PutRolePolicyRequest.builder().policyName("TestPolicy").roleName(roleName).policyDocument(PERMISSIONS).build());
 
-        instanceProfile = iam.createInstanceProfile(new CreateInstanceProfileRequest().withInstanceProfileName(profileName)).getInstanceProfile();
-        vpcId = ec2.createVpc(new CreateVpcRequest().withCidrBlock("10.2.0.0/16")).getVpc().getVpcId();
+        instanceProfile = iam.createInstanceProfile(CreateInstanceProfileRequest.builder().instanceProfileName(profileName).build())
+                             .instanceProfile();
+        vpcId = ec2.createVpc(CreateVpcRequest.builder().cidrBlock("10.2.0.0/16").build()).vpc().vpcId();
 
         do {
             Thread.sleep(1000 * 2);
-        } while (!ec2.describeVpcs(new DescribeVpcsRequest().withVpcIds(vpcId)).getVpcs().get(0).getState().equals("available"));
+        } while (!ec2.describeVpcs(DescribeVpcsRequest.builder().vpcIds(vpcId).build()).vpcs().get(0).state().equals("available"));
 
-        subId = ec2.createSubnet(new CreateSubnetRequest().withVpcId(vpcId).withCidrBlock("10.2.0.0/24")).getSubnet().getSubnetId();
+        subId = ec2.createSubnet(CreateSubnetRequest.builder().vpcId(vpcId).cidrBlock("10.2.0.0/24").build()).subnet().subnetId();
 
         do {
             Thread.sleep(1000 * 2);
         }
-        while (!ec2.describeSubnets(new DescribeSubnetsRequest().withSubnetIds(subId)).getSubnets().get(0).getState().equals("available"));
+        while (!ec2.describeSubnets(DescribeSubnetsRequest.builder().subnetIds(subId).build()).subnets().get(0).state()
+                   .equals("available"));
     }
 
 }

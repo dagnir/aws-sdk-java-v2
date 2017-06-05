@@ -50,33 +50,31 @@ public class RdsParametersIntegrationTest extends IntegrationTestBase {
 
         // Create a parameter group
         DBParameterGroup parameterGroup = rds.createDBParameterGroup(
-                new CreateDBParameterGroupRequest()
-                        .withDBParameterGroupName(parameterGroupName)
-                        .withDescription("description")
-                        .withDBParameterGroupFamily(ENGINE));
-        assertEquals(parameterGroupName, parameterGroup.getDBParameterGroupName());
-        assertEquals("description", parameterGroup.getDescription());
-        assertTrue(parameterGroup.getDBParameterGroupFamily().startsWith("mysql"));
+                CreateDBParameterGroupRequest.builder()
+                        .dbParameterGroupName(parameterGroupName)
+                        .description("description")
+                        .dbParameterGroupFamily(ENGINE).build());
+        assertEquals(parameterGroupName, parameterGroup.dbParameterGroupName());
+        assertEquals("description", parameterGroup.description());
+        assertTrue(parameterGroup.dbParameterGroupFamily().startsWith("mysql"));
 
 
         // Describe it
         List<DBParameterGroup> dbParameterGroups = rds.describeDBParameterGroups(
-                new DescribeDBParameterGroupsRequest()
-                        .withDBParameterGroupName(parameterGroupName)
-                        .withMaxRecords(20)
-                                                                                ).getDBParameterGroups();
+                DescribeDBParameterGroupsRequest.builder()
+                        .dbParameterGroupName(parameterGroupName)
+                        .maxRecords(20).build()).dbParameterGroups();
         assertEquals(1, dbParameterGroups.size());
-        assertEquals(parameterGroupName, dbParameterGroups.get(0).getDBParameterGroupName());
-        assertEquals("description", dbParameterGroups.get(0).getDescription());
-        assertTrue(dbParameterGroups.get(0).getDBParameterGroupFamily().startsWith("mysql"));
+        assertEquals(parameterGroupName, dbParameterGroups.get(0).dbParameterGroupName());
+        assertEquals("description", dbParameterGroups.get(0).description());
+        assertTrue(dbParameterGroups.get(0).dbParameterGroupFamily().startsWith("mysql"));
 
 
         // Describe the params in a group
         List<Parameter> parameters = rds.describeDBParameters(
-                new DescribeDBParametersRequest()
-                        .withDBParameterGroupName(parameterGroupName)
-                        .withMaxRecords(20)
-                                                             ).getParameters();
+                DescribeDBParametersRequest.builder()
+                        .dbParameterGroupName(parameterGroupName)
+                        .maxRecords(20).build()).parameters();
         System.out.println("Total parameters returned: " + parameters.size());
         // We can't request a specific parameter, so we rely on the fact that most
         // parameters will have the following fields populated.
@@ -85,40 +83,38 @@ public class RdsParametersIntegrationTest extends IntegrationTestBase {
 
         // Describe the defaults for an engine
         EngineDefaults engineDefaultParameters = rds.describeEngineDefaultParameters(
-                new DescribeEngineDefaultParametersRequest()
-                        .withDBParameterGroupFamily(ENGINE)
-                        .withMaxRecords(20));
-        assertEquals(ENGINE, engineDefaultParameters.getDBParameterGroupFamily());
-        assertFalse(engineDefaultParameters.getParameters().isEmpty());
-        assertValidParameter(engineDefaultParameters.getParameters().get(0));
+                DescribeEngineDefaultParametersRequest.builder()
+                        .dbParameterGroupFamily(ENGINE)
+                        .maxRecords(20).build());
+        assertEquals(ENGINE, engineDefaultParameters.dbParameterGroupFamily());
+        assertFalse(engineDefaultParameters.parameters().isEmpty());
+        assertValidParameter(engineDefaultParameters.parameters().get(0));
 
 
         // Reset the parameter group
         String resetParameterGroupName = rds.resetDBParameterGroup(
-                new ResetDBParameterGroupRequest()
-                        .withDBParameterGroupName(parameterGroupName)
-                        .withResetAllParameters(true)
-                                                                  ).getDBParameterGroupName();
+                ResetDBParameterGroupRequest.builder()
+                        .dbParameterGroupName(parameterGroupName)
+                        .resetAllParameters(true).build()).dbParameterGroupName();
         assertEquals(parameterGroupName, resetParameterGroupName);
 
 
         // Modify the parameter group
-        Parameter newParameter = new Parameter()
-                .withParameterName("character_set_client")
-                .withParameterValue("ascii")
-                .withApplyMethod("immediate");
+        Parameter newParameter = Parameter.builder()
+                .parameterName("character_set_client")
+                .parameterValue("ascii")
+                .applyMethod("immediate").build();
         String modifiedParameterGroupName = rds.modifyDBParameterGroup(
-                new ModifyDBParameterGroupRequest()
-                        .withDBParameterGroupName(parameterGroupName)
-                        .withParameters(newParameter)
-                                                                      ).getDBParameterGroupName();
+                ModifyDBParameterGroupRequest.builder()
+                        .dbParameterGroupName(parameterGroupName)
+                        .parameters(newParameter).build()).dbParameterGroupName();
         assertEquals(parameterGroupName, modifiedParameterGroupName);
 
 
         // Delete it
         rds.deleteDBParameterGroup(
-                new DeleteDBParameterGroupRequest()
-                        .withDBParameterGroupName(parameterGroupName));
+                DeleteDBParameterGroupRequest.builder()
+                        .dbParameterGroupName(parameterGroupName).build());
     }
 
 
@@ -134,12 +130,12 @@ public class RdsParametersIntegrationTest extends IntegrationTestBase {
      *            The parameter to check.
      */
     private void assertValidParameter(Parameter parameter) {
-        assertNotEmpty(parameter.getAllowedValues());
-        assertNotEmpty(parameter.getApplyType());
-        assertNotEmpty(parameter.getDataType());
-        assertNotEmpty(parameter.getDescription());
-        assertNotEmpty(parameter.getParameterName());
-        assertNotEmpty(parameter.getSource());
+        assertNotEmpty(parameter.allowedValues());
+        assertNotEmpty(parameter.applyType());
+        assertNotEmpty(parameter.dataType());
+        assertNotEmpty(parameter.description());
+        assertNotEmpty(parameter.parameterName());
+        assertNotEmpty(parameter.source());
     }
 
 }

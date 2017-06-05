@@ -37,7 +37,8 @@ public class CacheSecurityGroupsIntegrationTest extends ElastiCacheIntegrationTe
     public void tearDown() throws Exception {
         if (cacheSecurityGroupName != null) {
             try {
-                elasticache.deleteCacheSecurityGroup(new DeleteCacheSecurityGroupRequest(cacheSecurityGroupName));
+                elasticache.deleteCacheSecurityGroup(
+                        DeleteCacheSecurityGroupRequest.builder().cacheSecurityGroupName(cacheSecurityGroupName).build());
             } catch (Exception e) {
                 // Ignore.
             }
@@ -50,24 +51,26 @@ public class CacheSecurityGroupsIntegrationTest extends ElastiCacheIntegrationTe
         // Create Cache Security Group
         cacheSecurityGroupName = "java-sdk-integ-group-" + System.currentTimeMillis();
         CacheSecurityGroup createdCacheSecurityGroup = elasticache.createCacheSecurityGroup(
-                new CreateCacheSecurityGroupRequest(cacheSecurityGroupName, DESCRIPTION));
-        assertEquals(cacheSecurityGroupName, createdCacheSecurityGroup.getCacheSecurityGroupName());
-        assertEquals(DESCRIPTION, createdCacheSecurityGroup.getDescription());
-        assertTrue(createdCacheSecurityGroup.getEC2SecurityGroups().isEmpty());
-        assertNotEmpty(createdCacheSecurityGroup.getOwnerId());
+                CreateCacheSecurityGroupRequest.builder().cacheSecurityGroupName(cacheSecurityGroupName).description(DESCRIPTION)
+                                               .build());
+        assertEquals(cacheSecurityGroupName, createdCacheSecurityGroup.cacheSecurityGroupName());
+        assertEquals(DESCRIPTION, createdCacheSecurityGroup.description());
+        assertTrue(createdCacheSecurityGroup.ec2SecurityGroups().isEmpty());
+        assertNotEmpty(createdCacheSecurityGroup.ownerId());
 
 
         // Describe Cache Security Groups
         DescribeCacheSecurityGroupsResult describeCacheSecurityGroups = elasticache.describeCacheSecurityGroups(
-                new DescribeCacheSecurityGroupsRequest().withCacheSecurityGroupName(cacheSecurityGroupName));
-        assertEquals(1, describeCacheSecurityGroups.getCacheSecurityGroups().size());
-        CacheSecurityGroup cacheSecurityGroup = describeCacheSecurityGroups.getCacheSecurityGroups().get(0);
-        assertEquals(cacheSecurityGroupName, cacheSecurityGroup.getCacheSecurityGroupName());
-        assertEquals(DESCRIPTION, cacheSecurityGroup.getDescription());
-        assertTrue(cacheSecurityGroup.getEC2SecurityGroups().isEmpty());
-        assertNotEmpty(cacheSecurityGroup.getOwnerId());
+                DescribeCacheSecurityGroupsRequest.builder().cacheSecurityGroupName(cacheSecurityGroupName).build());
+        assertEquals(1, describeCacheSecurityGroups.cacheSecurityGroups().size());
+        CacheSecurityGroup cacheSecurityGroup = describeCacheSecurityGroups.cacheSecurityGroups().get(0);
+        assertEquals(cacheSecurityGroupName, cacheSecurityGroup.cacheSecurityGroupName());
+        assertEquals(DESCRIPTION, cacheSecurityGroup.description());
+        assertTrue(cacheSecurityGroup.ec2SecurityGroups().isEmpty());
+        assertNotEmpty(cacheSecurityGroup.ownerId());
 
         // Delete Cache Security Group
-        elasticache.deleteCacheSecurityGroup(new DeleteCacheSecurityGroupRequest(cacheSecurityGroupName));
+        elasticache.deleteCacheSecurityGroup(
+                DeleteCacheSecurityGroupRequest.builder().cacheSecurityGroupName(cacheSecurityGroupName).build());
     }
 }

@@ -17,7 +17,7 @@ package software.amazon.awssdk.services.iam;
 
 import java.util.UUID;
 
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
 import software.amazon.awssdk.services.iam.model.CreateUserRequest;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
@@ -57,8 +57,8 @@ public class IAMUtil {
         try {
             IntegrationTestBase.setUpCredentials();
             client = IAMClient.builder()
-                    .credentialsProvider(new AwsStaticCredentialsProvider(IntegrationTestBase.credentials))
-                    .build();
+                              .credentialsProvider(new StaticCredentialsProvider(IntegrationTestBase.credentials))
+                              .build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -74,62 +74,58 @@ public class IAMUtil {
     }
 
     public static void deleteUsersAndGroupsInTestNameSpace() {
-        ListGroupsResult lgRes = client.listGroups(new ListGroupsRequest()
-                                                           .withPathPrefix(TEST_PATH));
-        for (Group g : lgRes.getGroups()) {
-            GetGroupResult ggRes = client.getGroup(new GetGroupRequest()
-                                                           .withGroupName(g.getGroupName()));
-            for (User u : ggRes.getUsers()) {
-                client.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                                   .withGroupName(g.getGroupName()).withUserName(
-                                u.getUserName()));
+        ListGroupsResult lgRes = client.listGroups(ListGroupsRequest.builder().pathPrefix(TEST_PATH).build());
+        for (Group g : lgRes.groups()) {
+            GetGroupResult ggRes = client.getGroup(GetGroupRequest.builder().groupName(g.groupName()).build());
+            for (User u : ggRes.users()) {
+                client.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                                     .groupName(g.groupName()).userName(u.userName()).build());
             }
-            client.deleteGroup(new DeleteGroupRequest().withGroupName(g
-                                                                              .getGroupName()));
+            client.deleteGroup(DeleteGroupRequest.builder().groupName(g.groupName()).build());
         }
 
-        ListUsersResult luRes = client.listUsers(new ListUsersRequest()
-                                                         .withPathPrefix(TEST_PATH));
-        for (User u : luRes.getUsers()) {
-            deleteTestUsers(u.getUserName());
+        ListUsersResult luRes = client.listUsers(ListUsersRequest.builder()
+                                                                 .pathPrefix(TEST_PATH).build());
+        for (User u : luRes.users()) {
+            deleteTestUsers(u.userName());
         }
     }
 
     public static void deleteAccessKeysForUser(String username) {
         ListAccessKeysResult response = client
-                .listAccessKeys(new ListAccessKeysRequest()
-                                        .withUserName(username));
-        for (AccessKeyMetadata akm : response.getAccessKeyMetadata()) {
-            client.deleteAccessKey(new DeleteAccessKeyRequest().withUserName(
-                    username).withAccessKeyId(akm.getAccessKeyId()));
+                .listAccessKeys(ListAccessKeysRequest.builder()
+                                                     .userName(username).build());
+        for (AccessKeyMetadata akm : response.accessKeyMetadata()) {
+            client.deleteAccessKey(DeleteAccessKeyRequest.builder().userName(
+                    username).accessKeyId(akm.accessKeyId()).build());
         }
     }
 
     public static void deleteUserPoliciesForUser(String username) {
         ListUserPoliciesResult response = client
-                .listUserPolicies(new ListUserPoliciesRequest()
-                                          .withUserName(username));
-        for (String pName : response.getPolicyNames()) {
-            client.deleteUserPolicy(new DeleteUserPolicyRequest().withUserName(
-                    username).withPolicyName(pName));
+                .listUserPolicies(ListUserPoliciesRequest.builder()
+                                                         .userName(username).build());
+        for (String pName : response.policyNames()) {
+            client.deleteUserPolicy(DeleteUserPolicyRequest.builder().userName(
+                    username).policyName(pName).build());
         }
     }
 
     public static void deleteCertificatesForUser(String username) {
         ListSigningCertificatesResult response = client
-                .listSigningCertificates(new ListSigningCertificatesRequest()
-                                                 .withUserName(username));
-        for (SigningCertificate cert : response.getCertificates()) {
-            client.deleteSigningCertificate(new DeleteSigningCertificateRequest()
-                                                    .withUserName(username).withCertificateId(
-                            cert.getCertificateId()));
+                .listSigningCertificates(ListSigningCertificatesRequest.builder()
+                                                                       .userName(username).build());
+        for (SigningCertificate cert : response.certificates()) {
+            client.deleteSigningCertificate(DeleteSigningCertificateRequest.builder()
+                                                                           .userName(username).certificateId(
+                            cert.certificateId()).build());
         }
     }
 
     public static String createTestUser() {
         String username = uniqueName();
-        client.createUser(new CreateUserRequest().withUserName(username)
-                                                 .withPath(IAMUtil.TEST_PATH));
+        client.createUser(CreateUserRequest.builder().userName(username)
+                                           .path(IAMUtil.TEST_PATH).build());
         return username;
     }
 
@@ -143,12 +139,12 @@ public class IAMUtil {
             deleteUserPoliciesForUser(s);
             deleteCertificatesForUser(s);
             try {
-                client.deleteLoginProfile(new DeleteLoginProfileRequest()
-                                                  .withUserName(s));
+                client.deleteLoginProfile(DeleteLoginProfileRequest.builder()
+                                                                   .userName(s).build());
             } catch (Exception e) {
                 /* Nobody cares. */
             }
-            client.deleteUser(new DeleteUserRequest().withUserName(s));
+            client.deleteUser(DeleteUserRequest.builder().userName(s).build());
         }
     }
 }

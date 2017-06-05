@@ -45,60 +45,60 @@ public class WorkRoleIntegrationTest extends ElasticBeanstalkIntegrationTestBase
     public void testWorkRole() throws InterruptedException {
 
         createApplication();
-        CreateEnvironmentRequest request = new CreateEnvironmentRequest();
-        request.setApplicationName(applicationName);
-        request.setEnvironmentName(environmentName);
-        request.setDescription("Work Role");
-        request.setSolutionStackName(SOLUTION_STACK_NAME);
+        CreateEnvironmentRequest.Builder request = CreateEnvironmentRequest.builder();
+        request.applicationName(applicationName);
+        request.environmentName(environmentName);
+        request.description("Work Role");
+        request.solutionStackName(SOLUTION_STACK_NAME);
 
         EnvironmentTier tier = createTier();
-        request.setTier(tier);
+        request.tier(tier);
 
         ConfigurationOptionSetting optionSettings = createOptionSettings();
-        request.setOptionSettings(Arrays.asList(optionSettings));
+        request.optionSettings(Arrays.asList(optionSettings));
 
-        CreateEnvironmentResult createEnvironmentResult = elasticbeanstalk.createEnvironment(request);
+        CreateEnvironmentResult createEnvironmentResult = elasticbeanstalk.createEnvironment(request.build());
 
-        assertEquals(applicationName, createEnvironmentResult.getApplicationName());
-        assertEquals(environmentName, createEnvironmentResult.getEnvironmentName());
-        assertEquals(SOLUTION_STACK_NAME, createEnvironmentResult.getSolutionStackName());
-        assertEquals(tier, createEnvironmentResult.getTier());
+        assertEquals(applicationName, createEnvironmentResult.applicationName());
+        assertEquals(environmentName, createEnvironmentResult.environmentName());
+        assertEquals(SOLUTION_STACK_NAME, createEnvironmentResult.solutionStackName());
+        assertEquals(tier, createEnvironmentResult.tier());
 
-        assertTrue(elasticbeanstalk.describeEnvironments(new DescribeEnvironmentsRequest()).getEnvironments().size() > 0);
+        assertTrue(elasticbeanstalk.describeEnvironments(DescribeEnvironmentsRequest.builder().build()).environments().size() > 0);
 
         EnvironmentDescription environment = elasticbeanstalk
-                .describeEnvironments(new DescribeEnvironmentsRequest().withEnvironmentNames(environmentName))
-                .getEnvironments().get(0);
+                .describeEnvironments(DescribeEnvironmentsRequest.builder().environmentNames(environmentName).build())
+                .environments().get(0);
 
-        assertEquals(tier, environment.getTier());
+        assertEquals(tier, environment.tier());
 
         waitForEnvironmentToTransitionToStateAndHealth(environmentName, EnvironmentStatus.Ready, null);
         UpdateEnvironmentResult updateEnvironmentResult = elasticbeanstalk
-                .updateEnvironment(new UpdateEnvironmentRequest().withOptionSettings(optionSettings)
-                                                                 .withEnvironmentName(environmentName));
-        assertEquals(environmentName, updateEnvironmentResult.getEnvironmentName());
+                .updateEnvironment(UpdateEnvironmentRequest.builder().optionSettings(optionSettings)
+                                                                 .environmentName(environmentName).build());
+        assertEquals(environmentName, updateEnvironmentResult.environmentName());
     }
 
     private void createApplication() {
-        CreateApplicationRequest createApplicationRequest = new CreateApplicationRequest()
-                .withApplicationName(applicationName);
+        CreateApplicationRequest createApplicationRequest = CreateApplicationRequest.builder()
+                .applicationName(applicationName).build();
         elasticbeanstalk.createApplication(createApplicationRequest);
     }
 
     private EnvironmentTier createTier() {
-        EnvironmentTier tier = new EnvironmentTier();
-        tier.setName(tierName);
-        tier.setType(tierType);
-        tier.setVersion(tierVersion);
-        return tier;
+        EnvironmentTier.Builder tier = EnvironmentTier.builder();
+        tier.name(tierName);
+        tier.type(tierType);
+        tier.version(tierVersion);
+        return tier.build();
     }
 
     private ConfigurationOptionSetting createOptionSettings() {
-        ConfigurationOptionSetting optionSettings = new ConfigurationOptionSetting();
-        optionSettings.setNamespace("aws:elasticbeanstalk:sqsd");
-        optionSettings.setOptionName("WorkerQueueURL");
-        optionSettings.setValue("http://123");
-        return optionSettings;
+        ConfigurationOptionSetting.Builder optionSettings = ConfigurationOptionSetting.builder();
+        optionSettings.namespace("aws:elasticbeanstalk:sqsd");
+        optionSettings.optionName("WorkerQueueURL");
+        optionSettings.value("http://123");
+        return optionSettings.build();
     }
 
 }

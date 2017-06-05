@@ -82,90 +82,91 @@ public class ServerCertIntegrationTest extends IntegrationTestBase {
         String certName = this.getClass().getName() + System.currentTimeMillis();
         String updateCertName = null;
 
-        UploadServerCertificateRequest uploadRequest = new UploadServerCertificateRequest()
-                .withCertificateBody(PUBLIC_SERVER_KEY)
-                .withPrivateKey(PRIVATE_SERVER_KEY).withPath("/mycerts/")
-                .withServerCertificateName(certName);
+        UploadServerCertificateRequest uploadRequest = UploadServerCertificateRequest.builder()
+                                                                                     .certificateBody(PUBLIC_SERVER_KEY)
+                                                                                     .privateKey(PRIVATE_SERVER_KEY)
+                                                                                     .path("/mycerts/")
+                                                                                     .serverCertificateName(certName).build();
 
         UploadServerCertificateResult uploadResult = iam
                 .uploadServerCertificate(uploadRequest);
         try {
             assertNotNull(uploadResult);
             ServerCertificateMetadata metadata = uploadResult
-                    .getServerCertificateMetadata();
-            assertEquals(certName, metadata.getServerCertificateName());
-            assertEquals("/mycerts/", metadata.getPath());
-            assertNotNull(metadata.getServerCertificateId());
-            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.getUploadDate().getTime() / MILLISECONDS_IN_DAY);
-            assertNotNull(metadata.getArn());
+                    .serverCertificateMetadata();
+            assertEquals(certName, metadata.serverCertificateName());
+            assertEquals("/mycerts/", metadata.path());
+            assertNotNull(metadata.serverCertificateId());
+            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.uploadDate().getTime() / MILLISECONDS_IN_DAY);
+            assertNotNull(metadata.arn());
 
-            GetServerCertificateRequest getRequest = new GetServerCertificateRequest()
-                    .withServerCertificateName(certName);
-            GetServerCertificateResult getResult = iam
-                    .getServerCertificate(getRequest);
-            assertNotNull(getResult);
-            assertNotNull(getResult.getServerCertificate().getCertificateBody());
+            GetServerCertificateRequest request = GetServerCertificateRequest.builder()
+                                                                             .serverCertificateName(certName).build();
+            GetServerCertificateResult result = iam.getServerCertificate(request);
+            assertNotNull(result);
+            assertNotNull(result.serverCertificate().certificateBody());
 
-            metadata = getResult.getServerCertificate()
-                                .getServerCertificateMetadata();
-            assertEquals(certName, metadata.getServerCertificateName());
-            assertEquals("/mycerts/", metadata.getPath());
-            assertNotNull(metadata.getServerCertificateId());
-            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.getUploadDate().getTime() / MILLISECONDS_IN_DAY);
-            assertNotNull(metadata.getArn());
+            metadata = result.serverCertificate()
+                             .serverCertificateMetadata();
+            assertEquals(certName, metadata.serverCertificateName());
+            assertEquals("/mycerts/", metadata.path());
+            assertNotNull(metadata.serverCertificateId());
+            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.uploadDate().getTime() / MILLISECONDS_IN_DAY);
+            assertNotNull(metadata.arn());
 
             ListServerCertificatesResult listResult = iam
-                    .listServerCertificates(new ListServerCertificatesRequest());
+                    .listServerCertificates(ListServerCertificatesRequest.builder().build());
             assertNotNull(listResult);
-            assertTrue(listResult.getServerCertificateMetadataList().size() > 0);
+            assertTrue(listResult.serverCertificateMetadataList().size() > 0);
 
             metadata = null;
             for (ServerCertificateMetadata m : listResult
-                    .getServerCertificateMetadataList()) {
-                if (m.getServerCertificateName().equals(certName)) {
+                    .serverCertificateMetadataList()) {
+                if (m.serverCertificateName().equals(certName)) {
                     metadata = m;
                     break;
                 }
             }
 
             assertNotNull(metadata);
-            assertEquals(certName, metadata.getServerCertificateName());
-            assertEquals("/mycerts/", metadata.getPath());
-            assertNotNull(metadata.getServerCertificateId());
-            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.getUploadDate().getTime() / MILLISECONDS_IN_DAY);
-            assertNotNull(metadata.getArn());
+            assertEquals(certName, metadata.serverCertificateName());
+            assertEquals("/mycerts/", metadata.path());
+            assertNotNull(metadata.serverCertificateId());
+            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.uploadDate().getTime() / MILLISECONDS_IN_DAY);
+            assertNotNull(metadata.arn());
 
             updateCertName = certName + "-updated";
-            UpdateServerCertificateRequest updateRequest = new UpdateServerCertificateRequest()
-                    .withServerCertificateName(certName)
-                    .withNewPath("/mycerts/sub/")
-                    .withNewServerCertificateName(updateCertName);
+            UpdateServerCertificateRequest updateRequest = UpdateServerCertificateRequest.builder()
+                                                                                         .serverCertificateName(certName)
+                                                                                         .newPath("/mycerts/sub/")
+                                                                                         .newServerCertificateName(updateCertName)
+                                                                                         .build();
             iam.updateServerCertificate(updateRequest);
 
-            getRequest = new GetServerCertificateRequest()
-                    .withServerCertificateName(updateCertName);
+            request = GetServerCertificateRequest.builder()
+                                                 .serverCertificateName(updateCertName).build();
 
-            getResult = iam.getServerCertificate(getRequest);
-            assertNotNull(getResult);
-            assertNotNull(getResult.getServerCertificate().getCertificateBody());
+            result = iam.getServerCertificate(request);
+            assertNotNull(result);
+            assertNotNull(result.serverCertificate().certificateBody());
 
-            metadata = getResult.getServerCertificate()
-                                .getServerCertificateMetadata();
-            assertEquals(updateCertName, metadata.getServerCertificateName());
-            assertEquals("/mycerts/sub/", metadata.getPath());
-            assertNotNull(metadata.getServerCertificateId());
-            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.getUploadDate().getTime() / MILLISECONDS_IN_DAY);
-            assertNotNull(metadata.getArn());
+            metadata = result.serverCertificate()
+                             .serverCertificateMetadata();
+            assertEquals(updateCertName, metadata.serverCertificateName());
+            assertEquals("/mycerts/sub/", metadata.path());
+            assertNotNull(metadata.serverCertificateId());
+            assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY, metadata.uploadDate().getTime() / MILLISECONDS_IN_DAY);
+            assertNotNull(metadata.arn());
 
         } finally {
             if (updateCertName == null) {
-                iam.deleteServerCertificate(new DeleteServerCertificateRequest()
-                                                    .withServerCertificateName(certName));
+                iam.deleteServerCertificate(DeleteServerCertificateRequest.builder()
+                                                                          .serverCertificateName(certName).build());
             }
 
             if (updateCertName != null) {
-                iam.deleteServerCertificate(new DeleteServerCertificateRequest()
-                                                    .withServerCertificateName(updateCertName));
+                iam.deleteServerCertificate(DeleteServerCertificateRequest.builder()
+                                                                          .serverCertificateName(updateCertName).build());
             }
         }
     }

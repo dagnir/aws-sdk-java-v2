@@ -70,52 +70,51 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
     @AfterClass
     public static void cleanUp() {
         if (subnetId != null) {
-            ec2.deleteSubnet(new DeleteSubnetRequest(subnetId));
+            ec2.deleteSubnet(DeleteSubnetRequest.builder().subnetId(subnetId).build());
         }
         if (networkAclId != null) {
-            ec2.deleteNetworkAcl(new DeleteNetworkAclRequest()
-                                         .withNetworkAclId(networkAclId));
+            ec2.deleteNetworkAcl(DeleteNetworkAclRequest.builder()
+                                                        .networkAclId(networkAclId).build());
         }
         if (vpcId != null) {
-            ec2.deleteVpc(new DeleteVpcRequest(vpcId));
+            ec2.deleteVpc(DeleteVpcRequest.builder().vpcId(vpcId).build());
         }
     }
 
     private static String createVPC() {
-        return ec2.createVpc(new CreateVpcRequest()
-                                     .withCidrBlock(VPC_CIDR_BLOCK)
-                            ).getVpc().getVpcId();
+        return ec2.createVpc(CreateVpcRequest.builder()
+                                             .cidrBlock(VPC_CIDR_BLOCK).build()
+                            ).vpc().vpcId();
     }
 
     private static String createSubnet(String vpcId) {
-        return ec2.createSubnet(new CreateSubnetRequest()
-                                        .withVpcId(vpcId)
-                                        .withCidrBlock(SUBNET_CIDR_BLOCK)
-                               ).getSubnet().getSubnetId();
+        return ec2.createSubnet(CreateSubnetRequest.builder()
+                                                   .vpcId(vpcId)
+                                                   .cidrBlock(SUBNET_CIDR_BLOCK).build()
+                               ).subnet().subnetId();
     }
 
     private static String createNetworkAcl(String vpcId) {
 
         NetworkAcl networkAcl = ec2.createNetworkAcl(
-                new CreateNetworkAclRequest()
-                        .withVpcId(vpcId)
-                                                    ).getNetworkAcl();
-        String networkAclId = networkAcl.getNetworkAclId();
+                CreateNetworkAclRequest.builder()
+                                       .vpcId(vpcId).build()).networkAcl();
+        String networkAclId = networkAcl.networkAclId();
 
         assertStringNotEmpty(networkAclId);
-        assertEquals(vpcId, networkAcl.getVpcId());
-        assertEquals(DEFAULT_ACL_ENTRY_COUNT.intValue(), networkAcl.getEntries().size());
-        assertFalse(networkAcl.getEntries().get(0).getRuleNumber() == 0);
-        assertNotNull(networkAcl.getEntries().get(0).getProtocol());
-        assertEquals("deny", networkAcl.getEntries().get(0).getRuleAction());
-        assertEquals("0.0.0.0/0", networkAcl.getEntries().get(0).getCidrBlock());
+        assertEquals(vpcId, networkAcl.vpcId());
+        assertEquals(DEFAULT_ACL_ENTRY_COUNT.intValue(), networkAcl.entries().size());
+        assertFalse(networkAcl.entries().get(0).ruleNumber() == 0);
+        assertNotNull(networkAcl.entries().get(0).protocol());
+        assertEquals("deny", networkAcl.entries().get(0).ruleAction());
+        assertEquals("0.0.0.0/0", networkAcl.entries().get(0).cidrBlock());
 
         return networkAclId;
     }
 
     private static NetworkAclEntry findEntry(NetworkAcl acl, Integer ruleNum, boolean egress) {
-        for (NetworkAclEntry e : acl.getEntries()) {
-            if (e.getRuleNumber().equals(ruleNum) && e.getEgress() == egress) {
+        for (NetworkAclEntry e : acl.entries()) {
+            if (e.ruleNumber().equals(ruleNum) && e.egress() == egress) {
                 return e;
             }
         }
@@ -131,20 +130,20 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
         // Test limiting by ACL id + tagging
         tagResource(networkAclId, TAGS);
         DescribeNetworkAclsResult result = ec2.describeNetworkAcls(
-                new DescribeNetworkAclsRequest()
-                        .withNetworkAclIds(networkAclId));
-        assertEquals(1, result.getNetworkAcls().size());
-        NetworkAcl acl = result.getNetworkAcls().get(0);
-        assertEquals(networkAclId, acl.getNetworkAclId());
-        assertEqualUnorderedTagLists(TAGS, acl.getTags());
+                DescribeNetworkAclsRequest.builder()
+                                          .networkAclIds(networkAclId).build());
+        assertEquals(1, result.networkAcls().size());
+        NetworkAcl acl = result.networkAcls().get(0);
+        assertEquals(networkAclId, acl.networkAclId());
+        assertEqualUnorderedTagLists(TAGS, acl.tags());
 
         // Test filter by ACL id
-        result = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                                                 .withFilters(new Filter()
-                                                                      .withName("network-acl-id")
-                                                                      .withValues(networkAclId)));
-        assertEquals(1, result.getNetworkAcls().size());
-        assertEquals(networkAclId, acl.getNetworkAclId());
+        result = ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder()
+                                                                   .filters(Filter.builder()
+                                                                                  .name("network-acl-id")
+                                                                                  .values(networkAclId).build()).build());
+        assertEquals(1, result.networkAcls().size());
+        assertEquals(networkAclId, acl.networkAclId());
     }
 
     /**
@@ -157,10 +156,10 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
         // default network-acl of the VPC. Find the id of the association
         // between the two.
         String existingAssociationId = null;
-        for (NetworkAcl acl : ec2.describeNetworkAcls().getNetworkAcls()) {
-            for (NetworkAclAssociation ass : acl.getAssociations()) {
-                if (subnetId.equals(ass.getSubnetId())) {
-                    existingAssociationId = ass.getNetworkAclAssociationId();
+        for (NetworkAcl acl : ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder().build()).networkAcls()) {
+            for (NetworkAclAssociation ass : acl.associations()) {
+                if (subnetId.equals(ass.subnetId())) {
+                    existingAssociationId = ass.networkAclAssociationId();
                 }
             }
         }
@@ -168,21 +167,21 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
         // Replace the association with our custom network-acl
         ReplaceNetworkAclAssociationResult replacementResult =
                 ec2.replaceNetworkAclAssociation(
-                        new ReplaceNetworkAclAssociationRequest()
-                                .withAssociationId(existingAssociationId)
-                                .withNetworkAclId(networkAclId));
-        assertNotNull(replacementResult.getNewAssociationId());
+                        ReplaceNetworkAclAssociationRequest.builder()
+                                                           .associationId(existingAssociationId)
+                                                           .networkAclId(networkAclId).build());
+        assertNotNull(replacementResult.newAssociationId());
 
         // Check the association via DescribeNetworkAcls
         String newAssociationId = null;
-        for (NetworkAcl acl : ec2.describeNetworkAcls().getNetworkAcls()) {
-            for (NetworkAclAssociation ass : acl.getAssociations()) {
-                if (subnetId.equals(ass.getSubnetId())) {
-                    newAssociationId = ass.getNetworkAclAssociationId();
+        for (NetworkAcl acl : ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder().build()).networkAcls()) {
+            for (NetworkAclAssociation ass : acl.associations()) {
+                if (subnetId.equals(ass.subnetId())) {
+                    newAssociationId = ass.networkAclAssociationId();
                 }
             }
         }
-        assertEquals(replacementResult.getNewAssociationId(), newAssociationId);
+        assertEquals(replacementResult.newAssociationId(), newAssociationId);
     }
 
     /**
@@ -193,81 +192,81 @@ public class EC2NetworkAclIntegrationTest extends EC2IntegrationTestBase {
 
         // Test create. We need to use icmp as the protocol to be able to tests
         // the icmp fields
-        CreateNetworkAclEntryRequest createEntryRequest = new CreateNetworkAclEntryRequest()
-                .withCidrBlock("0.0.0.0/16")
-                .withEgress(true)
-                .withIcmpTypeCode(new IcmpTypeCode()
-                                          .withCode(-1)
-                                          .withType(-1))
-                .withNetworkAclId(networkAclId)
-                .withProtocol("1")
-                .withRuleAction("allow")
-                .withRuleNumber(42);
+        CreateNetworkAclEntryRequest createEntryRequest = CreateNetworkAclEntryRequest.builder()
+                                                                                      .cidrBlock("0.0.0.0/16")
+                                                                                      .egress(true)
+                                                                                      .icmpTypeCode(IcmpTypeCode.builder()
+                                                                                                                .code(-1)
+                                                                                                                .type(-1).build())
+                                                                                      .networkAclId(networkAclId)
+                                                                                      .protocol("1")
+                                                                                      .ruleAction("allow")
+                                                                                      .ruleNumber(42).build();
         ec2.createNetworkAclEntry(createEntryRequest);
 
-        NetworkAcl acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                                                         .withNetworkAclIds(networkAclId)
-                                                ).getNetworkAcls().get(0);
+        NetworkAcl acl = ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder()
+                                                                           .networkAclIds(networkAclId).build()
+                                                ).networkAcls().get(0);
 
-        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 1, acl.getEntries().size());
+        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 1, acl.entries().size());
 
         NetworkAclEntry entry = findEntry(acl,
-                                          createEntryRequest.getRuleNumber(), createEntryRequest.isEgress());
+                                          createEntryRequest.ruleNumber(), createEntryRequest.egress());
         assertNotNull(entry);
-        assertEquals(createEntryRequest.getCidrBlock(), entry.getCidrBlock());
-        assertEquals(createEntryRequest.getEgress(), entry.getEgress());
-        assertEquals(createEntryRequest.getIcmpTypeCode().getCode(), entry.getIcmpTypeCode().getCode());
-        assertEquals(createEntryRequest.getIcmpTypeCode().getType(), entry.getIcmpTypeCode().getType());
-        assertEquals(createEntryRequest.getProtocol(), entry.getProtocol());
-        assertEquals(createEntryRequest.getRuleAction(), entry.getRuleAction());
+        assertEquals(createEntryRequest.cidrBlock(), entry.cidrBlock());
+        assertEquals(createEntryRequest.egress(), entry.egress());
+        assertEquals(createEntryRequest.icmpTypeCode().code(), entry.icmpTypeCode().code());
+        assertEquals(createEntryRequest.icmpTypeCode().type(), entry.icmpTypeCode().type());
+        assertEquals(createEntryRequest.protocol(), entry.protocol());
+        assertEquals(createEntryRequest.ruleAction(), entry.ruleAction());
 
         // Test adding an ingress rule with the same number
-        createEntryRequest.setEgress(false);
+        createEntryRequest = createEntryRequest.toBuilder().egress(false).build();
         ec2.createNetworkAclEntry(createEntryRequest);
-        acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                                              .withNetworkAclIds(acl.getNetworkAclId())
-                                     ).getNetworkAcls().get(0);
+        acl = ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder()
+                                                                .networkAclIds(acl.networkAclId()).build()
+                                     ).networkAcls().get(0);
 
-        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 2, acl.getEntries().size());
-        entry = findEntry(acl, createEntryRequest.getRuleNumber(), createEntryRequest.getEgress());
-        assertEquals(createEntryRequest.getEgress(), entry.getEgress());
+        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 2, acl.entries().size());
+        entry = findEntry(acl, createEntryRequest.ruleNumber(), createEntryRequest.egress());
+        assertEquals(createEntryRequest.egress(), entry.egress());
 
         // Test replace. Not all protocols allow a port range to be specified.
-        ReplaceNetworkAclEntryRequest replaceRequest = new ReplaceNetworkAclEntryRequest()
-                .withCidrBlock("0.0.0.0/16")
-                .withEgress(true)
-                .withPortRange(new PortRange()
-                                       .withFrom(1)
-                                       .withTo(100))
-                .withNetworkAclId(networkAclId)
-                .withProtocol("17")
-                .withRuleAction("deny")
-                .withRuleNumber(42);
+        ReplaceNetworkAclEntryRequest replaceRequest = ReplaceNetworkAclEntryRequest.builder()
+                                                                                    .cidrBlock("0.0.0.0/16")
+                                                                                    .egress(true)
+                                                                                    .portRange(PortRange.builder()
+                                                                                                        .from(1)
+                                                                                                        .to(100).build())
+                                                                                    .networkAclId(networkAclId)
+                                                                                    .protocol("17")
+                                                                                    .ruleAction("deny")
+                                                                                    .ruleNumber(42).build();
         ec2.replaceNetworkAclEntry(replaceRequest);
 
-        acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                                              .withNetworkAclIds(networkAclId)
-                                     ).getNetworkAcls().get(0);
-        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 2, acl.getEntries().size());
+        acl = ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder()
+                                                                .networkAclIds(networkAclId).build()
+                                     ).networkAcls().get(0);
+        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 2, acl.entries().size());
 
-        entry = findEntry(acl, replaceRequest.getRuleNumber(), replaceRequest.getEgress());
+        entry = findEntry(acl, replaceRequest.ruleNumber(), replaceRequest.egress());
         assertNotNull(entry);
-        assertEquals(replaceRequest.getCidrBlock(), entry.getCidrBlock());
-        assertEquals(replaceRequest.getEgress(), entry.getEgress());
-        assertEquals(replaceRequest.getPortRange().getFrom(), entry.getPortRange().getFrom());
-        assertEquals(replaceRequest.getPortRange().getTo(), entry.getPortRange().getTo());
-        assertEquals(replaceRequest.getProtocol(), entry.getProtocol());
-        assertEquals(replaceRequest.getRuleAction(), entry.getRuleAction());
+        assertEquals(replaceRequest.cidrBlock(), entry.cidrBlock());
+        assertEquals(replaceRequest.egress(), entry.egress());
+        assertEquals(replaceRequest.portRange().from(), entry.portRange().from());
+        assertEquals(replaceRequest.portRange().to(), entry.portRange().to());
+        assertEquals(replaceRequest.protocol(), entry.protocol());
+        assertEquals(replaceRequest.ruleAction(), entry.ruleAction());
 
         // Test delete
-        DeleteNetworkAclEntryRequest deleteRequest = new DeleteNetworkAclEntryRequest()
-                .withNetworkAclId(networkAclId)
-                .withEgress(true)
-                .withRuleNumber(replaceRequest.getRuleNumber());
+        DeleteNetworkAclEntryRequest deleteRequest = DeleteNetworkAclEntryRequest.builder()
+                                                                                 .networkAclId(networkAclId)
+                                                                                 .egress(true)
+                                                                                 .ruleNumber(replaceRequest.ruleNumber()).build();
         ec2.deleteNetworkAclEntry(deleteRequest);
-        acl = ec2.describeNetworkAcls(new DescribeNetworkAclsRequest()
-                                              .withNetworkAclIds(acl.getNetworkAclId())
-                                     ).getNetworkAcls().get(0);
-        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 1, acl.getEntries().size());
+        acl = ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder()
+                                                                .networkAclIds(acl.networkAclId()).build()
+                                     ).networkAcls().get(0);
+        assertEquals(DEFAULT_ACL_ENTRY_COUNT + 1, acl.entries().size());
     }
 }

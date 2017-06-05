@@ -28,16 +28,15 @@ public class EC2AccountAttributesIntegrationTest extends EC2IntegrationTestBase 
     @Test
     public void testDescribeAccountAttributes() {
 
-        List<AccountAttribute> attributes = ec2.describeAccountAttributes(
-                new DescribeAccountAttributesRequest()
-                                                                         ).getAccountAttributes();
+        List<AccountAttribute> attributes =
+                ec2.describeAccountAttributes(DescribeAccountAttributesRequest.builder().build()).accountAttributes();
 
         assertNotNull(attributes);
         assertTrue(attributes.size() > 0);
 
         for (AccountAttribute attribute : attributes) {
-            assertStringNotEmpty(attribute.getAttributeName());
-            assertNotNull(attribute.getAttributeValues());
+            assertStringNotEmpty(attribute.attributeName());
+            assertNotNull(attribute.attributeValues());
         }
     }
 }

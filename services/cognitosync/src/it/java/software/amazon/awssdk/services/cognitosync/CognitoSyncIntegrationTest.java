@@ -21,11 +21,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.cognitoidentity.CognitoIdentityClient;
 import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolRequest;
 import software.amazon.awssdk.services.cognitoidentity.model.CreateIdentityPoolResult;
@@ -98,21 +99,22 @@ public class CognitoSyncIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        identity = CognitoIdentityClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
-        sync = CognitoSyncClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        identity = CognitoIdentityClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
+        sync = CognitoSyncClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
 
-        CreateIdentityPoolRequest createRequest = new CreateIdentityPoolRequest()
-                .withIdentityPoolName(IDENTITY_POOL_NAME)
-                .withAllowUnauthenticatedIdentities(true);
-        createRequest.addSupportedLoginProvidersEntry(PROVIDER, APP_ID);
+        CreateIdentityPoolRequest createRequest = CreateIdentityPoolRequest.builder()
+                                                                           .identityPoolName(IDENTITY_POOL_NAME)
+                                                                           .allowUnauthenticatedIdentities(true)
+                                                                           .supportedLoginProviders(
+                                                                                   Collections.singletonMap(PROVIDER, APP_ID))
+                                                                           .build();
         CreateIdentityPoolResult result = identity
                 .createIdentityPool(createRequest);
-        identityPoolId = result.getIdentityPoolId();
+        identityPoolId = result.identityPoolId();
 
-        GetIdResult getIdResult = identity
-                .getId(new GetIdRequest().withIdentityPoolId(identityPoolId)
-                                         .withAccountId(AWS_ACCOUNT_ID));
-        identityId = getIdResult.getIdentityId();
+        GetIdResult getIdResult =
+                identity.getId(GetIdRequest.builder().identityPoolId(identityPoolId).accountId(AWS_ACCOUNT_ID).build());
+        identityId = getIdResult.identityId();
 
     }
 
@@ -124,14 +126,14 @@ public class CognitoSyncIntegrationTest extends AwsTestBase {
     public static void tearDown() {
 
         if (DATASET_NAME != null) {
-            sync.deleteDataset(new DeleteDatasetRequest()
-                                       .withDatasetName(DATASET_NAME).withIdentityId(identityId)
-                                       .withIdentityPoolId(identityPoolId));
+            sync.deleteDataset(DeleteDatasetRequest.builder()
+                                                   .datasetName(DATASET_NAME).identityId(identityId)
+                                                   .identityPoolId(identityPoolId).build());
         }
 
         if (identityPoolId != null) {
-            identity.deleteIdentityPool(new DeleteIdentityPoolRequest()
-                                                .withIdentityPoolId(identityPoolId));
+            identity.deleteIdentityPool(DeleteIdentityPoolRequest.builder()
+                                                                 .identityPoolId(identityPoolId).build());
         }
     }
 
@@ -150,11 +152,11 @@ public class CognitoSyncIntegrationTest extends AwsTestBase {
      */
     public void testIdentityPoolUsage() {
         DescribeIdentityPoolUsageResult describeIdentityPoolUsageResult = sync
-                .describeIdentityPoolUsage(new DescribeIdentityPoolUsageRequest()
-                                                   .withIdentityPoolId(identityPoolId));
+                .describeIdentityPoolUsage(DescribeIdentityPoolUsageRequest.builder()
+                                                                           .identityPoolId(identityPoolId).build());
         IdentityPoolUsage identityPoolUsage = describeIdentityPoolUsageResult
-                .getIdentityPoolUsage();
-        assertEquals(identityPoolUsage.getIdentityPoolId(), identityPoolId);
+                .identityPoolUsage();
+        assertEquals(identityPoolUsage.identityPoolId(), identityPoolId);
     }
 
     /**
@@ -162,14 +164,16 @@ public class CognitoSyncIntegrationTest extends AwsTestBase {
      * Asserts that the number of data sets associated with the identity is 1.
      */
     public void testIdentityUsage() {
-        DescribeIdentityUsageRequest describeIdentityUsageRequest = new DescribeIdentityUsageRequest()
-                .withIdentityId(identityId).withIdentityPoolId(identityPoolId);
+        DescribeIdentityUsageRequest describeIdentityUsageRequest = DescribeIdentityUsageRequest.builder()
+                                                                                                .identityId(identityId)
+                                                                                                .identityPoolId(identityPoolId)
+                                                                                                .build();
         DescribeIdentityUsageResult describeIdentityUsageResult = sync
                 .describeIdentityUsage(describeIdentityUsageRequest);
         IdentityUsage identityUsage = describeIdentityUsageResult
-                .getIdentityUsage();
-        assertEquals(identityUsage.getDatasetCount(), Integer.valueOf(1));
-        assertTrue(identityUsage.getDataStorage() >= Long.valueOf(0));
+                .identityUsage();
+        assertEquals(identityUsage.datasetCount(), Integer.valueOf(1));
+        assertTrue(identityUsage.dataStorage() >= Long.valueOf(0));
     }
 
     /**
@@ -181,70 +185,68 @@ public class CognitoSyncIntegrationTest extends AwsTestBase {
      * removal.
      */
     public void testUpdateRecordPatches() {
-        RecordPatch record1 = new RecordPatch().withKey("foo1")
-                                               .withValue("bar1").withOp(Operation.Replace).withSyncCount(0L);
-        RecordPatch record2 = new RecordPatch().withKey("foo2")
-                                               .withValue("bar2").withOp(Operation.Replace).withSyncCount(0L);
+        RecordPatch record1 = RecordPatch.builder().key("foo1")
+                                         .value("bar1").op(Operation.Replace).syncCount(0L).build();
+        RecordPatch record2 = RecordPatch.builder().key("foo2")
+                                         .value("bar2").op(Operation.Replace).syncCount(0L).build();
 
-        ListRecordsRequest listRecordsRequest = new ListRecordsRequest()
-                .withDatasetName(DATASET_NAME)
-                .withIdentityPoolId(identityPoolId).withIdentityId(identityId);
+        ListRecordsRequest listRecordsRequest = ListRecordsRequest.builder()
+                                                                  .datasetName(DATASET_NAME)
+                                                                  .identityPoolId(identityPoolId).identityId(identityId).build();
 
         ListRecordsResult listRecordsResult = sync
                 .listRecords(listRecordsRequest);
 
-        assertEquals(listRecordsResult.getCount(), Integer.valueOf(0));
-        assertNotNull(listRecordsResult.getSyncSessionToken());
+        assertEquals(listRecordsResult.count(), Integer.valueOf(0));
+        assertNotNull(listRecordsResult.syncSessionToken());
 
-        UpdateRecordsRequest updateRequest = new UpdateRecordsRequest()
-                .withIdentityPoolId(identityPoolId).withIdentityId(identityId)
-                .withDatasetName(DATASET_NAME)
-                .withRecordPatches(record1, record2)
-                .withSyncSessionToken(listRecordsResult.getSyncSessionToken());
+        UpdateRecordsRequest updateRequest = UpdateRecordsRequest.builder()
+                                                                 .identityPoolId(identityPoolId).identityId(identityId)
+                                                                 .datasetName(DATASET_NAME)
+                                                                 .recordPatches(record1, record2)
+                                                                 .syncSessionToken(listRecordsResult.syncSessionToken()).build();
 
         UpdateRecordsResult updateResult = sync.updateRecords(updateRequest);
-        List<Record> records = updateResult.getRecords();
+        List<Record> records = updateResult.records();
         assertEquals(records.size(), 2);
-        assertEquals(records.get(0).getSyncCount(), Long.valueOf(1));
-        assertEquals(records.get(1).getSyncCount(), Long.valueOf(1));
+        assertEquals(records.get(0).syncCount(), Long.valueOf(1));
+        assertEquals(records.get(1).syncCount(), Long.valueOf(1));
 
-        record1.setValue("bar3");
-        record1.setSyncCount(1L);
+        record1 = record1.toBuilder().value("bar3").syncCount(1L).build();
 
         listRecordsResult = sync.listRecords(listRecordsRequest);
 
-        updateRequest = new UpdateRecordsRequest()
-                .withIdentityPoolId(identityPoolId).withIdentityId(identityId)
-                .withDatasetName(DATASET_NAME).withRecordPatches(record1)
-                .withSyncSessionToken(listRecordsResult.getSyncSessionToken());
+        updateRequest = UpdateRecordsRequest.builder()
+                                            .identityPoolId(identityPoolId).identityId(identityId)
+                                            .datasetName(DATASET_NAME).recordPatches(record1)
+                                            .syncSessionToken(listRecordsResult.syncSessionToken()).build();
 
         updateResult = sync.updateRecords(updateRequest);
-        records = updateResult.getRecords();
+        records = updateResult.records();
         assertEquals(records.size(), 1);
-        assertEquals(records.get(0).getSyncCount(), Long.valueOf(2));
+        assertEquals(records.get(0).syncCount(), Long.valueOf(2));
 
-        DescribeDatasetRequest describeDatasetRequest = new DescribeDatasetRequest()
-                .withDatasetName(DATASET_NAME).withIdentityId(identityId)
-                .withIdentityPoolId(identityPoolId);
+        DescribeDatasetRequest describeDatasetRequest = DescribeDatasetRequest.builder()
+                                                                              .datasetName(DATASET_NAME).identityId(identityId)
+                                                                              .identityPoolId(identityPoolId).build();
 
         DescribeDatasetResult describeDatasetResult = sync
                 .describeDataset(describeDatasetRequest);
 
-        Dataset dataset = describeDatasetResult.getDataset();
+        Dataset dataset = describeDatasetResult.dataset();
 
-        assertEquals(dataset.getDatasetName(), DATASET_NAME);
-        assertEquals(dataset.getNumRecords(), Long.valueOf(2));
+        assertEquals(dataset.datasetName(), DATASET_NAME);
+        assertEquals(dataset.numRecords(), Long.valueOf(2));
 
-        record1.setOp(Operation.Remove);
-        record1.setSyncCount(2L);
+        record1 = record1.toBuilder().op(Operation.Remove).syncCount(2L).build();
 
-        updateRequest = new UpdateRecordsRequest()
-                .withIdentityPoolId(identityPoolId).withIdentityId(identityId)
-                .withDatasetName(DATASET_NAME).withRecordPatches(record1)
-                .withSyncSessionToken(listRecordsResult.getSyncSessionToken());
+        updateRequest = UpdateRecordsRequest.builder()
+                                            .identityPoolId(identityPoolId).identityId(identityId)
+                                            .datasetName(DATASET_NAME).recordPatches(record1)
+                                            .syncSessionToken(listRecordsResult.syncSessionToken()).build();
 
         updateResult = sync.updateRecords(updateRequest);
-        records = updateResult.getRecords();
+        records = updateResult.records();
         assertEquals(records.size(), 1);
     }
 }

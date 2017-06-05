@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.elasticbeanstalk.model.DescribeEnvironmentsRequest;
 import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentDescription;
 import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentHealth;
@@ -49,7 +49,7 @@ public abstract class ElasticBeanstalkIntegrationTestBase extends AwsTestBase {
 
         elasticbeanstalk = ElasticBeanstalkClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .withRegion(Regions.US_EAST_1)
+                .region(Region.US_EAST_1)
                 .build();
         s3 = new AmazonS3Client(credentials);
 
@@ -83,18 +83,18 @@ public abstract class ElasticBeanstalkIntegrationTestBase extends AwsTestBase {
             }
 
             List<EnvironmentDescription> environments = elasticbeanstalk.describeEnvironments(
-                    new DescribeEnvironmentsRequest().withEnvironmentNames(environmentName)).getEnvironments();
+                    DescribeEnvironmentsRequest.builder().environmentNames(environmentName).build()).environments();
 
             if (environments.size() == 0) {
                 throw new RuntimeException("Unable to find an environment with name " + environmentName);
             }
 
             EnvironmentDescription environment = environments.get(0);
-            System.out.println(" - " + environment.getStatus() + "/" + environment.getHealth());
-            if (environment.getStatus().equalsIgnoreCase(state.toString()) == false) {
+            System.out.println(" - " + environment.status() + "/" + environment.health());
+            if (!environment.status().equalsIgnoreCase(state.toString())) {
                 continue;
             }
-            if (health != null && environment.getHealth().equalsIgnoreCase(health.toString()) == false) {
+            if (health != null && !environment.health().equalsIgnoreCase(health.toString())) {
                 continue;
             }
             return;

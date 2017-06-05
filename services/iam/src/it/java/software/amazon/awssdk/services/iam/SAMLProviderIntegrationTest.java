@@ -48,9 +48,8 @@ public class SAMLProviderIntegrationTest extends IntegrationTestBase {
         // an invalid metadata file, and expect the service to return 
         // InvalidInput error
         try {
-            iam.createSAMLProvider(new CreateSAMLProviderRequest().withName(
-                    "fake-idp").withSAMLMetadataDocument(
-                    fakeIdPMetadataDocumentContent));
+            iam.createSAMLProvider(CreateSAMLProviderRequest.builder().name(
+                    "fake-idp").samlMetadataDocument(fakeIdPMetadataDocumentContent).build());
             Assert.fail("Service exception is expected.");
         } catch (AmazonServiceException ase) {
             Assert.assertEquals("InvalidInput", ase.getErrorCode());
@@ -58,18 +57,18 @@ public class SAMLProviderIntegrationTest extends IntegrationTestBase {
         }
 
         // No SAML providers
-        ListSAMLProvidersResult listSAMLProvidersResult = iam.listSAMLProviders(new ListSAMLProvidersRequest());
-        Assert.assertEquals(0, listSAMLProvidersResult.getSAMLProviderList().size());
+        ListSAMLProvidersResult listSAMLProvidersResult = iam.listSAMLProviders(ListSAMLProvidersRequest.builder().build());
+        Assert.assertEquals(0, listSAMLProvidersResult.samlProviderList().size());
 
         // Get/delete the imaginary SAML provider
         try {
-            iam.getSAMLProvider(new GetSAMLProviderRequest().withSAMLProviderArn(fakeProviderARN));
+            iam.getSAMLProvider(GetSAMLProviderRequest.builder().samlProviderArn(fakeProviderARN).build());
         } catch (AmazonServiceException ase) {
             Assert.assertEquals("NoSuchEntity", ase.getErrorCode());
         }
 
         try {
-            iam.deleteSAMLProvider(new DeleteSAMLProviderRequest().withSAMLProviderArn(fakeProviderARN));
+            iam.deleteSAMLProvider(DeleteSAMLProviderRequest.builder().samlProviderArn(fakeProviderARN).build());
         } catch (AmazonServiceException ase) {
             Assert.assertEquals("NoSuchEntity", ase.getErrorCode());
         }

@@ -41,19 +41,19 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
 
         String engine = "mysql";
         DescribeOrderableDBInstanceOptionsResult result = rds
-                .describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine(engine));
+                .describeOrderableDBInstanceOptions(DescribeOrderableDBInstanceOptionsRequest.builder().engine(engine).build());
 
         assertNotNull(result);
-        assertNotNull(result.getOrderableDBInstanceOptions());
-        for (OrderableDBInstanceOption opt : result.getOrderableDBInstanceOptions()) {
-            assertNotNull(opt.getAvailabilityZones());
-            assertTrue(opt.getAvailabilityZones().size() > 0);
-            assertNotEmpty(opt.getDBInstanceClass());
-            assertEquals(engine, opt.getEngine());
-            assertNotEmpty(opt.getEngineVersion());
-            assertNotEmpty(opt.getLicenseModel());
-            assertNotNull(opt.getMultiAZCapable());
-            assertNotNull(opt.getReadReplicaCapable());
+        assertNotNull(result.orderableDBInstanceOptions());
+        for (OrderableDBInstanceOption opt : result.orderableDBInstanceOptions()) {
+            assertNotNull(opt.availabilityZones());
+            assertTrue(opt.availabilityZones().size() > 0);
+            assertNotEmpty(opt.dbInstanceClass());
+            assertEquals(engine, opt.engine());
+            assertNotEmpty(opt.engineVersion());
+            assertNotEmpty(opt.licenseModel());
+            assertNotNull(opt.multiAZCapable());
+            assertNotNull(opt.readReplicaCapable());
         }
     }
 
@@ -69,14 +69,15 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
         String engineVersion = "5.7.11";
 
         DescribeOrderableDBInstanceOptionsResult result = rds
-                .describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine(engine)
-                                                                                                   .withEngineVersion(engineVersion));
+                .describeOrderableDBInstanceOptions(DescribeOrderableDBInstanceOptionsRequest.builder().engine(engine)
+                                                                                             .engineVersion(engineVersion)
+                                                                                             .build());
 
         assertNotNull(result);
-        assertNotNull(result.getOrderableDBInstanceOptions());
-        for (OrderableDBInstanceOption opt : result.getOrderableDBInstanceOptions()) {
-            assertEquals(engine, opt.getEngine());
-            assertEquals(engineVersion, opt.getEngineVersion());
+        assertNotNull(result.orderableDBInstanceOptions());
+        for (OrderableDBInstanceOption opt : result.orderableDBInstanceOptions()) {
+            assertEquals(engine, opt.engine());
+            assertEquals(engineVersion, opt.engineVersion());
         }
 
         // rds.describeDBEngineVersions();
@@ -86,13 +87,14 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
          */
         engine = "mysql";
         String licenseModel = "general-public-license";
-        result = rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine(engine).withLicenseModel(licenseModel));
+        result = rds.describeOrderableDBInstanceOptions(
+                DescribeOrderableDBInstanceOptionsRequest.builder().engine(engine).licenseModel(licenseModel).build());
 
         assertNotNull(result);
-        assertNotNull(result.getOrderableDBInstanceOptions());
-        for (OrderableDBInstanceOption opt : result.getOrderableDBInstanceOptions()) {
-            assertEquals(engine, opt.getEngine());
-            assertEquals(licenseModel, opt.getLicenseModel());
+        assertNotNull(result.orderableDBInstanceOptions());
+        for (OrderableDBInstanceOption opt : result.orderableDBInstanceOptions()) {
+            assertEquals(engine, opt.engine());
+            assertEquals(licenseModel, opt.licenseModel());
         }
 
         /*
@@ -100,7 +102,8 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
          */
         licenseModel = "bring-your-own-license";
         try {
-            result = rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine(engine).withLicenseModel(licenseModel));
+            result = rds.describeOrderableDBInstanceOptions(
+                    DescribeOrderableDBInstanceOptionsRequest.builder().engine(engine).licenseModel(licenseModel).build());
             fail();
         } catch (Exception e) {
             // do nothing, expect an exception
@@ -114,40 +117,46 @@ public class DescribeOrderableDBInstanceOptionsIntegrationTest extends Integrati
     @Test
     public void testPagination() throws Exception {
         String engine = "mysql";
-        DescribeOrderableDBInstanceOptionsResult result = rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine(engine));
+        DescribeOrderableDBInstanceOptionsResult result = rds.describeOrderableDBInstanceOptions(
+                DescribeOrderableDBInstanceOptionsRequest.builder().engine(engine).build());
         assertNotNull(result);
-        assertNotNull(result.getOrderableDBInstanceOptions());
+        assertNotNull(result.orderableDBInstanceOptions());
 
-        int totalResults = result.getOrderableDBInstanceOptions().size();
-        while (result.getMarker() != null && result.getMarker().length() > 0) {
-            result = rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine(engine).withMarker(result.getMarker()));
+        int totalResults = result.orderableDBInstanceOptions().size();
+        while (result.marker() != null && result.marker().length() > 0) {
+            result = rds.describeOrderableDBInstanceOptions(
+                    DescribeOrderableDBInstanceOptionsRequest.builder().engine(engine).marker(result.marker()).build());
             assertNotNull(result);
-            assertNotNull(result.getOrderableDBInstanceOptions());
-            totalResults += result.getOrderableDBInstanceOptions().size();
+            assertNotNull(result.orderableDBInstanceOptions());
+            totalResults += result.orderableDBInstanceOptions().size();
         }
 
         int numResults = 0;
         int pageSize = 20;  // min page size
         do {
-            result = rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest()
-                                                                    .withEngine(engine).withMaxRecords(pageSize).withMarker(result.getMarker()));
+            result = rds.describeOrderableDBInstanceOptions(DescribeOrderableDBInstanceOptionsRequest.builder()
+                                                                                                     .engine(engine)
+                                                                                                     .maxRecords(pageSize)
+                                                                                                     .marker(result.marker())
+                                                                                                     .build());
             assertNotNull(result);
-            assertNotNull(result.getOrderableDBInstanceOptions());
-            numResults += result.getOrderableDBInstanceOptions().size();
-            assertTrue(result.getOrderableDBInstanceOptions().size() <= pageSize);
-        } while (result.getMarker() != null && result.getMarker().length() > 0);
+            assertNotNull(result.orderableDBInstanceOptions());
+            numResults += result.orderableDBInstanceOptions().size();
+            assertTrue(result.orderableDBInstanceOptions().size() <= pageSize);
+        } while (result.marker() != null && result.marker().length() > 0);
 
         assertEquals(totalResults, numResults);
     }
 
     @Test(expected = AmazonClientException.class)
     public void testInvalidParam() {
-        rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest().withEngine("mysql")
-                                                                                              .withLicenseModel("not-a-valid-license"));
+        rds.describeOrderableDBInstanceOptions(DescribeOrderableDBInstanceOptionsRequest.builder().engine("mysql")
+                                                                                        .licenseModel("not-a-valid-license")
+                                                                                        .build());
     }
 
     @Test(expected = AmazonClientException.class)
     public void testEngineMissing() {
-        rds.describeOrderableDBInstanceOptions(new DescribeOrderableDBInstanceOptionsRequest());
+        rds.describeOrderableDBInstanceOptions(DescribeOrderableDBInstanceOptionsRequest.builder().build());
     }
 }

@@ -21,29 +21,29 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
-import software.amazon.awssdk.services.ec2.AmazonEC2;
-import software.amazon.awssdk.services.ec2.AmazonEC2Client;
+import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.CreateSecurityGroupRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteSecurityGroupRequest;
 
 public class SecurityGroupUtilsIntegrationTest {
 
-    private static AmazonEC2 ec2;
+    private static EC2Client ec2;
     private static String GROUP_NAME = UUID.randomUUID().toString();
     private static String NON_EXISTENT_GROUP_NAME = UUID.randomUUID().toString();
 
     @BeforeClass
     public static void setup() {
-        ec2 = new AmazonEC2Client();
+        ec2 = EC2Client.builder().build();
 
-        ec2.createSecurityGroup(new CreateSecurityGroupRequest(
-                GROUP_NAME, "my security group"));
+        ec2.createSecurityGroup(
+                CreateSecurityGroupRequest.builder().groupName(GROUP_NAME).description("my security group").build());
     }
 
     @AfterClass
     public static void teardown() {
-        ec2.deleteSecurityGroup(new DeleteSecurityGroupRequest(GROUP_NAME));
+        ec2.deleteSecurityGroup(DeleteSecurityGroupRequest.builder().groupName(GROUP_NAME).build());
     }
 
     @Test
@@ -62,7 +62,8 @@ public class SecurityGroupUtilsIntegrationTest {
      */
     @Test(expected = AmazonServiceException.class)
     public void testServiceSideException() {
-        AmazonEC2Client clientWithWrongKeys = new AmazonEC2Client(new BasicAwsCredentials("key", "key"));
+        StaticCredentialsProvider credentialsProvider = new StaticCredentialsProvider(new AwsCredentials("key", "key"));
+        EC2Client clientWithWrongKeys = EC2Client.builder().credentialsProvider(credentialsProvider).build();
         SecurityGroupUtils.doesSecurityGroupExist(clientWithWrongKeys, GROUP_NAME);
     }
 }

@@ -19,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionRequest;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionResult;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
@@ -45,7 +45,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        cloudfront = CloudFrontClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        cloudfront = CloudFrontClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
         s3 = new AmazonS3Client(credentials);
     }
 
@@ -60,9 +60,10 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         int timeoutInMinutes = 20;
         long startTime = System.currentTimeMillis();
         while (true) {
-            GetDistributionResult getDistributionResult = cloudfront.getDistribution(new GetDistributionRequest()
-                                                                                             .withId(distributionId));
-            String status = getDistributionResult.getDistribution().getStatus();
+            GetDistributionResult getDistributionResult = cloudfront.getDistribution(GetDistributionRequest.builder()
+                                                                                                           .id(distributionId)
+                                                                                                           .build());
+            String status = getDistributionResult.distribution().status();
             System.out.println(status);
             if (status.equalsIgnoreCase("Deployed")) {
                 return;

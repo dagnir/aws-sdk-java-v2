@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenRequest;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenResult;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
@@ -33,30 +33,30 @@ public class SecurityTokenServiceIntegrationTest extends IntegrationTestBase {
     /** Tests that we can call GetSession to start a session. */
     @Test
     public void testGetSessionToken() throws Exception {
-        GetSessionTokenRequest request = new GetSessionTokenRequest().withDurationSeconds(SESSION_DURATION);
+        GetSessionTokenRequest request = GetSessionTokenRequest.builder().durationSeconds(SESSION_DURATION).build();
         GetSessionTokenResult result = sts.getSessionToken(request);
 
-        assertNotNull(result.getCredentials().getAccessKeyId());
-        assertNotNull(result.getCredentials().getExpiration());
-        assertNotNull(result.getCredentials().getSecretAccessKey());
-        assertNotNull(result.getCredentials().getSessionToken());
+        assertNotNull(result.credentials().accessKeyId());
+        assertNotNull(result.credentials().expiration());
+        assertNotNull(result.credentials().secretAccessKey());
+        assertNotNull(result.credentials().sessionToken());
     }
 
     /** Tests that we can call GetFederatedSession to start a federated session. */
     @Test
     public void testGetFederatedSessionToken() throws Exception {
-        GetFederationTokenRequest request = new GetFederationTokenRequest()
-                .withDurationSeconds(SESSION_DURATION)
-                .withName("Name");
+        GetFederationTokenRequest request = GetFederationTokenRequest.builder()
+                                                                     .durationSeconds(SESSION_DURATION)
+                                                                     .name("Name").build();
         GetFederationTokenResult result = sts.getFederationToken(request);
 
-        assertNotNull(result.getCredentials().getAccessKeyId());
-        assertNotNull(result.getCredentials().getExpiration());
-        assertNotNull(result.getCredentials().getSecretAccessKey());
-        assertNotNull(result.getCredentials().getSessionToken());
+        assertNotNull(result.credentials().accessKeyId());
+        assertNotNull(result.credentials().expiration());
+        assertNotNull(result.credentials().secretAccessKey());
+        assertNotNull(result.credentials().sessionToken());
 
-        assertNotNull(result.getFederatedUser().getArn());
-        assertNotNull(result.getFederatedUser().getFederatedUserId());
+        assertNotNull(result.federatedUser().arn());
+        assertNotNull(result.federatedUser().federatedUserId());
 
 
     }
@@ -68,14 +68,14 @@ public class SecurityTokenServiceIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testClockSkew() {
-        SDKGlobalConfiguration.setGlobalTimeOffset(3600);
-        assertTrue(SDKGlobalConfiguration.getGlobalTimeOffset() == 3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() == 3600);
         sts = STSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
-        sts.getSessionToken(new GetSessionTokenRequest());
-        assertTrue("Clockskew is fixed!", SDKGlobalConfiguration.getGlobalTimeOffset() < 3600);
+        sts.getSessionToken(GetSessionTokenRequest.builder().build());
+        assertTrue("Clockskew is fixed!", SdkGlobalTime.getGlobalTimeOffset() < 3600);
         // subsequent changes to the global time offset won't affect existing client
-        SDKGlobalConfiguration.setGlobalTimeOffset(3600);
-        sts.getSessionToken(new GetSessionTokenRequest());
-        assertTrue(SDKGlobalConfiguration.getGlobalTimeOffset() == 3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
+        sts.getSessionToken(GetSessionTokenRequest.builder().build());
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() == 3600);
     }
 }

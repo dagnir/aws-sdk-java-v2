@@ -17,9 +17,9 @@ package software.amazon.awssdk.services.swf;
 
 import java.util.UUID;
 import org.junit.Test;
-import software.amazon.awssdk.services.simpleworkflow.model.DescribeDomainRequest;
-import software.amazon.awssdk.services.simpleworkflow.model.RegisterDomainRequest;
-import software.amazon.awssdk.services.simpleworkflow.model.UnknownResourceException;
+import software.amazon.awssdk.services.swf.model.DescribeDomainRequest;
+import software.amazon.awssdk.services.swf.model.RegisterDomainRequest;
+import software.amazon.awssdk.services.swf.model.UnknownResourceException;
 
 /**
  * Integration tests for SWF
@@ -31,14 +31,19 @@ public class SWFIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testCallReturningVoid() throws Exception {
-        swf.registerDomain(new RegisterDomainRequest().withName(UUID.randomUUID().toString()).withDescription("blah")
-                                                      .withWorkflowExecutionRetentionPeriodInDays("1"));
+        swf.registerDomain(RegisterDomainRequest.builder()
+                                                .name(UUID.randomUUID().toString())
+                                                .description("blah")
+                                                .workflowExecutionRetentionPeriodInDays("1")
+                                                .build());
         System.out.println("Domain registered successfully!");
     }
 
     @Test(expected = UnknownResourceException.class)
     public void testCallThrowingFault() throws Exception {
-        swf.describeDomain(new DescribeDomainRequest().withName(UUID.randomUUID().toString()));
+        swf.describeDomain(DescribeDomainRequest.builder()
+                                                .name(UUID.randomUUID().toString())
+                                                .build());
     }
 
 }

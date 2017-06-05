@@ -59,7 +59,7 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
     @After
     public void tearDown() {
         if (volumeId != null) {
-            ec2.deleteVolume(new DeleteVolumeRequest(volumeId));
+            ec2.deleteVolume(DeleteVolumeRequest.builder().volumeId(volumeId).build());
         }
     }
 
@@ -67,14 +67,13 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
     public void testNoVolumeType() throws Exception {
 
         Volume volume = ec2.createVolume(
-                new CreateVolumeRequest(VOLUME_SIZE, US_EAST_1_B)
-                                        ).getVolume();
+                CreateVolumeRequest.builder().size(VOLUME_SIZE).availabilityZone(US_EAST_1_B).build()).volume();
 
-        volumeId = volume.getVolumeId();
+        volumeId = volume.volumeId();
 
-        assertEquals(US_EAST_1_B, volume.getAvailabilityZone());
-        assertEquals(VolumeType.Standard.toString(), volume.getVolumeType());
-        assertNull(volume.getIops());
+        assertEquals(US_EAST_1_B, volume.availabilityZone());
+        assertEquals(VolumeType.Standard.toString(), volume.volumeType());
+        assertNull(volume.iops());
     }
 
     /**
@@ -85,116 +84,115 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
         // Create a test volume
         Volume volume = ec2.createVolume(
-                new CreateVolumeRequest(VOLUME_SIZE, US_EAST_1_B)
-                        .withIops(PROVISIONED_IOPS)
-                        .withVolumeType(VolumeType.Io1)
-                                        ).getVolume();
+                CreateVolumeRequest.builder().size(VOLUME_SIZE).availabilityZone(US_EAST_1_B).iops(PROVISIONED_IOPS)
+                                   .volumeType(VolumeType.Io1).build()).volume();
 
-        volumeId = volume.getVolumeId();
+        volumeId = volume.volumeId();
 
-        assertEquals(US_EAST_1_B, volume.getAvailabilityZone());
-        assertEquals(VolumeType.Io1.toString(), volume.getVolumeType());
-        assertEquals(PROVISIONED_IOPS, volume.getIops());
+        assertEquals(US_EAST_1_B, volume.availabilityZone());
+        assertEquals(VolumeType.Io1.toString(), volume.volumeType());
+        assertEquals(PROVISIONED_IOPS, volume.iops());
 
         // Add tags to this volume
         tagResource(volumeId, TAGS);
 
         // Try describing it with a filter
-        List<Volume> volumes = ec2.describeVolumes(new DescribeVolumesRequest()
-                                                           .withFilters(new Filter()
-                                                                                .withName("volume-id")
-                                                                                .withValues(volumeId))
-                                                  ).getVolumes();
+        List<Volume> volumes = ec2.describeVolumes(DescribeVolumesRequest.builder()
+                                                                         .filters(Filter.builder()
+                                                                                        .name("volume-id")
+                                                                                        .values(volumeId).build()).build()
+                                                  ).volumes();
         assertEquals(1, volumes.size());
 
         volume = volumes.get(0);
-        assertEqualUnorderedTagLists(TAGS, volume.getTags());
-        assertEquals(VolumeType.Io1.toString(), volume.getVolumeType());
-        assertEquals(PROVISIONED_IOPS, volume.getIops());
+        assertEqualUnorderedTagLists(TAGS, volume.tags());
+        assertEquals(VolumeType.Io1.toString(), volume.volumeType());
+        assertEquals(PROVISIONED_IOPS, volume.iops());
 
         // Get all tags
-        List<TagDescription> tagDescriptions = ec2.describeTags().getTags();
+        List<TagDescription> tagDescriptions = ec2.describeTags(DescribeTagsRequest.builder().build()).tags();
         assertTrue(tagDescriptions.size() > 1);
         assertTagDescriptionsValid(tagDescriptions);
 
         // Filter tags by resource id
-        tagDescriptions = ec2.describeTags(new DescribeTagsRequest()
-                                                   .withFilters(new Filter()
-                                                                        .withName("resource-id")
-                                                                        .withValues(volumeId))
-                                          ).getTags();
+        tagDescriptions = ec2.describeTags(DescribeTagsRequest.builder()
+                                                              .filters(Filter.builder()
+                                                                             .name("resource-id")
+                                                                             .values(volumeId).build()).build()
+                                          ).tags();
         assertEquals(TAGS.size(), tagDescriptions.size());
         assertTagDescriptionsValid(tagDescriptions);
 
         // Delete Tags
-        ec2.deleteTags(new DeleteTagsRequest()
-                               .withResources(volumeId)
-                               .withTags(TAGS));
+        ec2.deleteTags(DeleteTagsRequest.builder()
+                                        .resources(volumeId)
+                                        .tags(TAGS).build());
         Thread.sleep(1000 * 30);
-        tagDescriptions = ec2.describeTags(new DescribeTagsRequest()
-                                                   .withFilters(new Filter()
-                                                                        .withName("resource-id")
-                                                                        .withValues(volumeId))
-                                          ).getTags();
+        tagDescriptions = ec2.describeTags(DescribeTagsRequest.builder()
+                                                              .filters(Filter.builder()
+                                                                             .name("resource-id")
+                                                                             .values(volumeId).build()).build()
+                                          ).tags();
         assertEquals(0, tagDescriptions.size());
 
         // Describe volume attribute
         DescribeVolumeAttributeResult describeVolumeAttribute =
-                ec2.describeVolumeAttribute(new DescribeVolumeAttributeRequest()
-                                                    .withAttribute("autoEnableIO")
-                                                    .withVolumeId(volumeId));
-        assertEquals(volumeId, describeVolumeAttribute.getVolumeId());
-        assertFalse(describeVolumeAttribute.getAutoEnableIO());
+                ec2.describeVolumeAttribute(DescribeVolumeAttributeRequest.builder()
+                                                                          .attribute("autoEnableIO")
+                                                                          .volumeId(volumeId).build());
+        assertEquals(volumeId, describeVolumeAttribute.volumeId());
+        assertFalse(describeVolumeAttribute.autoEnableIO());
 
         // Describe volume status by filter
         DescribeVolumeStatusResult describeVolumeStatus =
-                ec2.describeVolumeStatus(new DescribeVolumeStatusRequest()
-                                                 .withFilters(new Filter("volume-id").withValues(volumeId)));
-        assertEquals(1, describeVolumeStatus.getVolumeStatuses().size());
-        VolumeStatusItem volumeStatusItem = describeVolumeStatus.getVolumeStatuses().get(0);
+                ec2.describeVolumeStatus(DescribeVolumeStatusRequest.builder()
+                                                                    .filters(Filter.builder().name("volume-id").values(volumeId)
+                                                                                   .build()).build());
+        assertEquals(1, describeVolumeStatus.volumeStatuses().size());
+        VolumeStatusItem volumeStatusItem = describeVolumeStatus.volumeStatuses().get(0);
         assertNotNull(volumeStatusItem);
-        assertNotNull(volumeStatusItem.getActions());
-        assertNotNull(volumeStatusItem.getAvailabilityZone());
-        assertNotNull(volumeStatusItem.getEvents());
-        assertNotNull(volumeStatusItem.getVolumeStatus());
-        assertEquals(volumeId, volumeStatusItem.getVolumeId());
+        assertNotNull(volumeStatusItem.actions());
+        assertNotNull(volumeStatusItem.availabilityZone());
+        assertNotNull(volumeStatusItem.events());
+        assertNotNull(volumeStatusItem.volumeStatus());
+        assertEquals(volumeId, volumeStatusItem.volumeId());
 
         // Describe volume status by id
-        describeVolumeStatus = ec2.describeVolumeStatus(new DescribeVolumeStatusRequest()
-                                                                .withVolumeIds(volumeId));
-        assertEquals(1, describeVolumeStatus.getVolumeStatuses().size());
-        volumeStatusItem = describeVolumeStatus.getVolumeStatuses().get(0);
+        describeVolumeStatus = ec2.describeVolumeStatus(DescribeVolumeStatusRequest.builder()
+                                                                                   .volumeIds(volumeId).build());
+        assertEquals(1, describeVolumeStatus.volumeStatuses().size());
+        volumeStatusItem = describeVolumeStatus.volumeStatuses().get(0);
         assertNotNull(volumeStatusItem);
-        assertNotNull(volumeStatusItem.getActions());
-        assertNotNull(volumeStatusItem.getAvailabilityZone());
-        assertNotNull(volumeStatusItem.getEvents());
-        assertNotNull(volumeStatusItem.getVolumeStatus());
-        assertEquals(volumeId, volumeStatusItem.getVolumeId());
+        assertNotNull(volumeStatusItem.actions());
+        assertNotNull(volumeStatusItem.availabilityZone());
+        assertNotNull(volumeStatusItem.events());
+        assertNotNull(volumeStatusItem.volumeStatus());
+        assertEquals(volumeId, volumeStatusItem.volumeId());
 
         // Modify volume attribute
-        ec2.modifyVolumeAttribute(new ModifyVolumeAttributeRequest()
-                                          .withVolumeId(volumeId)
-                                          .withAutoEnableIO(true));
+        ec2.modifyVolumeAttribute(ModifyVolumeAttributeRequest.builder()
+                                                              .volumeId(volumeId)
+                                                              .autoEnableIO(true).build());
         describeVolumeAttribute = ec2.describeVolumeAttribute(
-                new DescribeVolumeAttributeRequest()
-                        .withAttribute("autoEnableIO")
-                        .withVolumeId(volumeId));
-        assertEquals(volumeId, describeVolumeAttribute.getVolumeId());
-        assertEquals(true, describeVolumeAttribute.getAutoEnableIO());
+                DescribeVolumeAttributeRequest.builder()
+                                              .attribute("autoEnableIO")
+                                              .volumeId(volumeId).build());
+        assertEquals(volumeId, describeVolumeAttribute.volumeId());
+        assertEquals(true, describeVolumeAttribute.autoEnableIO());
 
-        ec2.modifyVolumeAttribute(new ModifyVolumeAttributeRequest()
-                                          .withVolumeId(volumeId)
-                                          .withAutoEnableIO(false));
-        describeVolumeAttribute = ec2.describeVolumeAttribute(new DescribeVolumeAttributeRequest()
-                                                                      .withAttribute("autoEnableIO")
-                                                                      .withVolumeId(volumeId));
-        assertEquals(volumeId, describeVolumeAttribute.getVolumeId());
-        assertFalse(describeVolumeAttribute.getAutoEnableIO());
+        ec2.modifyVolumeAttribute(ModifyVolumeAttributeRequest.builder()
+                                                              .volumeId(volumeId)
+                                                              .autoEnableIO(false).build());
+        describeVolumeAttribute = ec2.describeVolumeAttribute(DescribeVolumeAttributeRequest.builder()
+                                                                                            .attribute("autoEnableIO")
+                                                                                            .volumeId(volumeId).build());
+        assertEquals(volumeId, describeVolumeAttribute.volumeId());
+        assertFalse(describeVolumeAttribute.autoEnableIO());
 
         // Enable volume io -- this should throw an exception because io is already enabled
         try {
-            ec2.enableVolumeIO(new EnableVolumeIORequest()
-                                       .withVolumeId(volumeId));
+            ec2.enableVolumeIO(EnableVolumeIORequest.builder()
+                                                    .volumeId(volumeId).build());
             fail("Expected an exception");
         } catch (AmazonClientException expected) {
             assertTrue(expected.getMessage().contains("already has IO enabled"));
@@ -203,10 +201,10 @@ public class EC2EbsIntegrationTest extends EC2IntegrationTestBase {
 
     private void assertTagDescriptionsValid(List<TagDescription> tags) {
         for (TagDescription tag : tags) {
-            assertNotNull(tag.getKey());
-            assertNotNull(tag.getValue());
-            assertNotNull(tag.getResourceId());
-            assertNotNull(tag.getResourceType());
+            assertNotNull(tag.key());
+            assertNotNull(tag.value());
+            assertNotNull(tag.resourceId());
+            assertNotNull(tag.resourceType());
         }
     }
 

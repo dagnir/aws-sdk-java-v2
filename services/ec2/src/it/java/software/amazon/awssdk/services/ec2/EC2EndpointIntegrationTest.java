@@ -17,8 +17,11 @@ package software.amazon.awssdk.services.ec2;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URI;
 import org.junit.Test;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.model.AvailabilityZone;
+import software.amazon.awssdk.services.ec2.model.DescribeAvailabilityZonesRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeAvailabilityZonesResult;
 
 /**
@@ -35,16 +38,22 @@ public class EC2EndpointIntegrationTest {
     @Test
     public void testEc2Regions() {
 
-        AmazonEC2Client ec2 = new AmazonEC2Client();
+        EC2Client ec2 = EC2Client.builder()
+                                 .region(Region.US_EAST_1)
+                                 .endpointOverride(URI.create("https://ec2.us-east-1.amazonaws.com"))
+                                 .build();
 
-        ec2.setEndpoint("https://ec2.us-east-1.amazonaws.com");
-        DescribeAvailabilityZonesResult result = ec2.describeAvailabilityZones();
-        AvailabilityZone zone = result.getAvailabilityZones().get(0);
-        assertEquals("us-east-1", zone.getRegionName());
+        DescribeAvailabilityZonesResult result =
+                ec2.describeAvailabilityZones(DescribeAvailabilityZonesRequest.builder().build());
+        AvailabilityZone zone = result.availabilityZones().get(0);
+        assertEquals("us-east-1", zone.regionName());
 
-        ec2.setEndpoint("https://ec2.us-west-1.amazonaws.com");
-        result = ec2.describeAvailabilityZones();
-        zone = result.getAvailabilityZones().get(0);
-        assertEquals("us-west-1", zone.getRegionName());
+        ec2 = EC2Client.builder()
+                       .region(Region.US_WEST_1)
+                       .endpointOverride(URI.create("https://ec2.us-west-1.amazonaws.com"))
+                       .build();
+        result = ec2.describeAvailabilityZones(DescribeAvailabilityZonesRequest.builder().build());
+        zone = result.availabilityZones().get(0);
+        assertEquals("us-west-1", zone.regionName());
     }
 }

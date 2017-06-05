@@ -19,9 +19,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Properties;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 
@@ -29,7 +30,7 @@ public class AbstractTestCase extends AwsTestBase {
     protected static KinesisClient client;
 
     @BeforeClass
-    public static void init() throws FileNotFoundException, IOException {
+    public static void init() throws IOException {
         setUpCredentials();
         KinesisClientBuilder builder = KinesisClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN);
         setEndpoint(builder);
@@ -49,8 +50,9 @@ public class AbstractTestCase extends AwsTestBase {
             String endpoint = properties.getProperty("kinesis.endpoint");
 
             if (endpoint != null) {
-                String region = AwsHostNameUtils.parseRegion(endpoint, KinesisClient.ENDPOINT_PREFIX);
-                builder.region(region).endpointOverride(URI.create(endpoint));
+                Region region = Region.of(AwsHostNameUtils.parseRegion(endpoint, KinesisClient.ENDPOINT_PREFIX));
+                builder.region(region)
+                       .endpointOverride(URI.create(endpoint));
             }
         }
     }

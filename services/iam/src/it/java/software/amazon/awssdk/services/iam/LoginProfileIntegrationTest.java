@@ -53,18 +53,18 @@ public class LoginProfileIntegrationTest extends IntegrationTestBase {
 
         try {
             CreateLoginProfileResult createRes = iam
-                    .createLoginProfile(new CreateLoginProfileRequest()
-                                                .withUserName(username).withPassword(password));
+                    .createLoginProfile(CreateLoginProfileRequest.builder()
+                                                                 .userName(username).password(password).build());
 
             Thread.sleep(3 * 3600);
 
-            assertEquals(username, createRes.getLoginProfile().getUserName());
+            assertEquals(username, createRes.loginProfile().userName());
 
-            GetLoginProfileResult getRes = iam
-                    .getLoginProfile(new GetLoginProfileRequest()
-                                             .withUserName(username));
+            GetLoginProfileResult res = iam
+                    .getLoginProfile(GetLoginProfileRequest.builder()
+                                                           .userName(username).build());
 
-            assertEquals(username, getRes.getLoginProfile().getUserName());
+            assertEquals(username, res.loginProfile().userName());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -80,11 +80,11 @@ public class LoginProfileIntegrationTest extends IntegrationTestBase {
         String password = IAMUtil.uniqueName();
 
         try {
-            iam.createLoginProfile(new CreateLoginProfileRequest()
-                                           .withUserName(username).withPassword(password));
+            iam.createLoginProfile(CreateLoginProfileRequest.builder()
+                                                            .userName(username).password(password).build());
             Thread.sleep(3 * 3600);
-            iam.createLoginProfile(new CreateLoginProfileRequest()
-                                           .withUserName(username).withPassword(password));
+            iam.createLoginProfile(CreateLoginProfileRequest.builder()
+                                                            .userName(username).password(password).build());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }
@@ -96,14 +96,14 @@ public class LoginProfileIntegrationTest extends IntegrationTestBase {
         String password = IAMUtil.uniqueName();
 
         try {
-            iam.createLoginProfile(new CreateLoginProfileRequest()
-                                           .withUserName(username).withPassword(password));
+            iam.createLoginProfile(CreateLoginProfileRequest.builder()
+                                                            .userName(username).password(password).build());
             Thread.sleep(3 * 3600);
-            iam.deleteLoginProfile(new DeleteLoginProfileRequest()
-                                           .withUserName(username));
+            iam.deleteLoginProfile(DeleteLoginProfileRequest.builder()
+                                                            .userName(username).build());
             Thread.sleep(3 * 3600);
-            iam.getLoginProfile(new GetLoginProfileRequest()
-                                        .withUserName(username));
+            iam.getLoginProfile(GetLoginProfileRequest.builder()
+                                                      .userName(username).build());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }

@@ -63,12 +63,12 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
     @After
     public void tearDown() throws Exception {
         try {
-            elasticache.deleteCacheCluster(new DeleteCacheClusterRequest(memcachedCacheClusterId));
+            elasticache.deleteCacheCluster(DeleteCacheClusterRequest.builder().cacheClusterId(memcachedCacheClusterId).build());
         } catch (Exception e) {
             // Ignore.
         }
         try {
-            elasticache.deleteCacheCluster(new DeleteCacheClusterRequest(redisCacheClusterId));
+            elasticache.deleteCacheCluster(DeleteCacheClusterRequest.builder().cacheClusterId(redisCacheClusterId).build());
         } catch (Exception e) {
             // Ignore.
         }
@@ -85,7 +85,8 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
         // Create Cache Cluster
         List<String> cacheSecurityGroupNames = new ArrayList<String>();
         CreateCacheClusterRequest request =
-                new CreateCacheClusterRequest(cacheClusterId, 1, CACHE_NODE_TYPE, engine, cacheSecurityGroupNames);
+                CreateCacheClusterRequest.builder().cacheClusterId(cacheClusterId).numCacheNodes(1).cacheNodeType(CACHE_NODE_TYPE)
+                                         .engine(engine).cacheSecurityGroupNames(cacheSecurityGroupNames).build();
         CacheCluster createCacheCluster = elasticache.createCacheCluster(request);
         assertValidCacheCluster(createCacheCluster, engine, cacheClusterId);
 
@@ -93,47 +94,49 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
         waitForClusterToTransitionToState("available", cacheClusterId);
 
         // Describe Engine Versions
-        DescribeCacheEngineVersionsResult result = elasticache.describeCacheEngineVersions();
-        assertTrue(result.getCacheEngineVersions().size() > 0);
-        for (CacheEngineVersion version : result.getCacheEngineVersions()) {
-            assertNotNull(version.getCacheEngineDescription());
-            assertNotNull(version.getEngineVersion());
-            assertNotNull(version.getEngine());
-            assertNotNull(version.getCacheParameterGroupFamily());
+        DescribeCacheEngineVersionsResult result =
+                elasticache.describeCacheEngineVersions(DescribeCacheEngineVersionsRequest.builder().build());
+        assertTrue(result.cacheEngineVersions().size() > 0);
+        for (CacheEngineVersion version : result.cacheEngineVersions()) {
+            assertNotNull(version.cacheEngineDescription());
+            assertNotNull(version.engineVersion());
+            assertNotNull(version.engine());
+            assertNotNull(version.cacheParameterGroupFamily());
         }
 
-        result = elasticache.describeCacheEngineVersions(new DescribeCacheEngineVersionsRequest().withEngine(engine));
-        assertTrue(result.getCacheEngineVersions().size() > 0);
-        for (CacheEngineVersion version : result.getCacheEngineVersions()) {
-            assertNotNull(version.getCacheEngineDescription());
-            assertNotNull(version.getEngineVersion());
-            assertNotNull(version.getEngine());
-            assertNotNull(version.getCacheParameterGroupFamily());
+        result = elasticache.describeCacheEngineVersions(DescribeCacheEngineVersionsRequest.builder().engine(engine).build());
+        assertTrue(result.cacheEngineVersions().size() > 0);
+        for (CacheEngineVersion version : result.cacheEngineVersions()) {
+            assertNotNull(version.cacheEngineDescription());
+            assertNotNull(version.engineVersion());
+            assertNotNull(version.engine());
+            assertNotNull(version.cacheParameterGroupFamily());
         }
 
 
         // Describe Events
         DescribeEventsResult describeEvents = elasticache.describeEvents(
-                new DescribeEventsRequest().withSourceIdentifier(cacheClusterId)
-                                           .withSourceType(SourceType.CacheCluster.toString()));
-        assertTrue(describeEvents.getEvents().size() > 0);
-        Event event = describeEvents.getEvents().get(0);
-        assertNotNull(event.getDate());
-        assertNotEmpty(event.getMessage());
-        assertNotEmpty(event.getSourceIdentifier());
-        assertNotEmpty(event.getSourceType());
+                DescribeEventsRequest.builder().sourceIdentifier(cacheClusterId)
+                                     .sourceType(SourceType.CacheCluster.toString()).build());
+        assertTrue(describeEvents.events().size() > 0);
+        Event event = describeEvents.events().get(0);
+        assertNotNull(event.date());
+        assertNotEmpty(event.message());
+        assertNotEmpty(event.sourceIdentifier());
+        assertNotEmpty(event.sourceType());
 
 
         // Describe Cache Clusters
         DescribeCacheClustersResult describeCacheClusters = elasticache.describeCacheClusters(
-                new DescribeCacheClustersRequest().withCacheClusterId(cacheClusterId));
-        assertEquals(1, describeCacheClusters.getCacheClusters().size());
-        assertValidCacheCluster(describeCacheClusters.getCacheClusters().get(0), engine, cacheClusterId);
+                DescribeCacheClustersRequest.builder().cacheClusterId(cacheClusterId).build());
+        assertEquals(1, describeCacheClusters.cacheClusters().size());
+        assertValidCacheCluster(describeCacheClusters.cacheClusters().get(0), engine, cacheClusterId);
 
 
         // Modify Cache Cluster
         CacheCluster modifyCacheCluster = elasticache.modifyCacheCluster(
-                new ModifyCacheClusterRequest(cacheClusterId).withApplyImmediately(true).withAutoMinorVersionUpgrade(true));
+                ModifyCacheClusterRequest.builder().cacheClusterId(cacheClusterId).applyImmediately(true)
+                                         .autoMinorVersionUpgrade(true).build());
         assertValidCacheCluster(modifyCacheCluster, engine, cacheClusterId);
 
 
@@ -142,21 +145,23 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
 
 
         // Delete Cache Cluster
-        CacheCluster deleteCacheCluster = elasticache.deleteCacheCluster(new DeleteCacheClusterRequest(cacheClusterId));
+        CacheCluster deleteCacheCluster =
+                elasticache.deleteCacheCluster(DeleteCacheClusterRequest.builder().cacheClusterId(cacheClusterId).build());
         assertValidCacheCluster(deleteCacheCluster, engine, cacheClusterId);
     }
 
     private List<String> getAllCacheNodeIds(String cacheClusterId) {
-        DescribeCacheClustersRequest req = new DescribeCacheClustersRequest().withCacheClusterId(cacheClusterId);
-        DescribeCacheClustersResult describeCacheClusters = elasticache.describeCacheClusters(req.withShowCacheNodeInfo(true));
-        if (describeCacheClusters.getCacheClusters().size() != 1) {
+        DescribeCacheClustersRequest req =
+                DescribeCacheClustersRequest.builder().cacheClusterId(cacheClusterId).showCacheNodeInfo(true).build();
+        DescribeCacheClustersResult describeCacheClusters = elasticache.describeCacheClusters(req);
+        if (describeCacheClusters.cacheClusters().size() != 1) {
             fail("Couldn't find expected Cache Cluster");
         }
 
-        CacheCluster cacheCluster = describeCacheClusters.getCacheClusters().get(0);
+        CacheCluster cacheCluster = describeCacheClusters.cacheClusters().get(0);
         List<String> cacheNodeIds = new ArrayList<String>();
-        for (CacheNode node : cacheCluster.getCacheNodes()) {
-            cacheNodeIds.add(node.getCacheNodeId());
+        for (CacheNode node : cacheCluster.cacheNodes()) {
+            cacheNodeIds.add(node.cacheNodeId());
         }
         return cacheNodeIds;
     }
@@ -166,14 +171,14 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
         long endTime = startTime + (1000 * 60 * 30);
 
         while (startTime < endTime) {
-            DescribeCacheClustersRequest request = new DescribeCacheClustersRequest().withCacheClusterId(cacheClusterId);
-            List<CacheCluster> cacheClusters = elasticache.describeCacheClusters(request).getCacheClusters();
+            DescribeCacheClustersRequest request = DescribeCacheClustersRequest.builder().cacheClusterId(cacheClusterId).build();
+            List<CacheCluster> cacheClusters = elasticache.describeCacheClusters(request).cacheClusters();
             if (cacheClusters.size() != 1) {
                 fail("Can't find expected cache cluster");
             }
             CacheCluster cacheCluster = cacheClusters.get(0);
-            System.out.println(cacheCluster.getCacheClusterStatus());
-            if (cacheCluster.getCacheClusterStatus().equalsIgnoreCase(state)) {
+            System.out.println(cacheCluster.cacheClusterStatus());
+            if (cacheCluster.cacheClusterStatus().equalsIgnoreCase(state)) {
                 return;
             }
 
@@ -193,14 +198,14 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
 
         while (startTime < endTime) {
             DescribeReplicationGroupsRequest request =
-                    new DescribeReplicationGroupsRequest().withReplicationGroupId(replicationGroupId);
-            List<ReplicationGroup> groups = elasticache.describeReplicationGroups(request).getReplicationGroups();
+                    DescribeReplicationGroupsRequest.builder().replicationGroupId(replicationGroupId).build();
+            List<ReplicationGroup> groups = elasticache.describeReplicationGroups(request).replicationGroups();
             if (groups.size() != 1) {
                 fail("Can't find expected replication group");
             }
             ReplicationGroup replicationGroup = groups.get(0);
-            System.out.println(replicationGroup.getStatus());
-            if (replicationGroup.getStatus().equalsIgnoreCase(state)) {
+            System.out.println(replicationGroup.status());
+            if (replicationGroup.status().equalsIgnoreCase(state)) {
                 return replicationGroup;
             }
 
@@ -222,8 +227,9 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
         while (startTime < endTime) {
             try {
                 List<ReplicationGroup> groups = elasticache.describeReplicationGroups(
-                        new DescribeReplicationGroupsRequest().withReplicationGroupId(replicationGroupId)).getReplicationGroups();
-                System.out.println(groups.get(0).getStatus());
+                        DescribeReplicationGroupsRequest.builder().replicationGroupId(replicationGroupId).build())
+                                                           .replicationGroups();
+                System.out.println(groups.get(0).status());
             } catch (ReplicationGroupNotFoundException e) {
                 return;
             }
@@ -239,15 +245,15 @@ public class CacheClusterIntegrationTest extends ElastiCacheIntegrationTestBase 
     }
 
     private void assertValidCacheCluster(CacheCluster cacheCluster, String expectedEngine, String expectedCacheClusterId) {
-        if (!cacheCluster.getCacheClusterStatus().equalsIgnoreCase("creating")) {
-            assertNotNull(cacheCluster.getCacheClusterCreateTime());
+        if (!cacheCluster.cacheClusterStatus().equalsIgnoreCase("creating")) {
+            assertNotNull(cacheCluster.cacheClusterCreateTime());
         }
 
-        assertEquals(expectedCacheClusterId, cacheCluster.getCacheClusterId());
-        assertNotEmpty(cacheCluster.getCacheClusterStatus());
-        assertEquals(CACHE_NODE_TYPE, cacheCluster.getCacheNodeType());
-        assertEquals(expectedEngine, cacheCluster.getEngine());
-        assertNotEmpty(cacheCluster.getEngineVersion());
-        assertEquals(1, cacheCluster.getNumCacheNodes().intValue());
+        assertEquals(expectedCacheClusterId, cacheCluster.cacheClusterId());
+        assertNotEmpty(cacheCluster.cacheClusterStatus());
+        assertEquals(CACHE_NODE_TYPE, cacheCluster.cacheNodeType());
+        assertEquals(expectedEngine, cacheCluster.engine());
+        assertNotEmpty(cacheCluster.engineVersion());
+        assertEquals(1, cacheCluster.numCacheNodes().intValue());
     }
 }

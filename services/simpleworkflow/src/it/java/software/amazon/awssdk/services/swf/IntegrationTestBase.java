@@ -15,24 +15,25 @@
 
 package software.amazon.awssdk.services.swf;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.regions.Regions;
-import software.amazon.awssdk.services.simpleworkflow.AmazonSimpleWorkflowClient;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class IntegrationTestBase extends AwsIntegrationTestBase {
 
-    protected static AmazonSimpleWorkflowClient swf;
+    protected static SWFClient swf;
 
     /**
      * Loads the AWS account info for the integration tests and creates a client for tests to use.
      */
     @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
-        swf = new AmazonSimpleWorkflowClient(getCredentials());
-        swf.configureRegion(Regions.US_EAST_1);
+    public static void setUp() throws IOException {
+        swf = SWFClient.builder()
+                       .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
+                       .region(Region.US_EAST_1)
+                       .build();
     }
 
 }

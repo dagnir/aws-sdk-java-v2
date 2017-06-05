@@ -43,11 +43,11 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
     private static CreateDhcpOptionsResult createDhcpOptions(
             String optionKey, String... optionValue) {
 
-        DhcpConfiguration configurationOne = new DhcpConfiguration()
-                .withKey(optionKey).withValues(optionValue);
+        DhcpConfiguration configurationOne = DhcpConfiguration.builder()
+                                                              .key(optionKey).values(optionValue).build();
 
-        CreateDhcpOptionsRequest request = new CreateDhcpOptionsRequest()
-                .withDhcpConfigurations(configurationOne);
+        CreateDhcpOptionsRequest request = CreateDhcpOptionsRequest.builder()
+                                                                   .dhcpConfigurations(configurationOne).build();
 
         return ec2.createDhcpOptions(request);
     }
@@ -64,9 +64,9 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
 
     private static boolean findDhcpOption(
             DhcpOptions options, String opKey, String opValue) {
-        for (DhcpConfiguration config : options.getDhcpConfigurations()) {
-            if (opKey.equals(config.getKey()) &&
-                opValue.equals(config.getValues().get(0))) {
+        for (DhcpConfiguration config : options.dhcpConfigurations()) {
+            if (opKey.equals(config.key()) &&
+                opValue.equals(config.values().get(0))) {
                 return true;
             }
         }
@@ -83,8 +83,8 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
 
         DhcpOptions dhcpOptions = createDhcpOptions(
                 DOMAIN_NAME_KEY, domainNameValue
-                                                   ).getDhcpOptions();
-        dhcpOptionsId = dhcpOptions.getDhcpOptionsId();
+                                                   ).dhcpOptions();
+        dhcpOptionsId = dhcpOptions.dhcpOptionsId();
 
         assertTrue(findDhcpOption(dhcpOptions,
                                   DOMAIN_NAME_KEY, domainNameValue));
@@ -96,7 +96,7 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
     @After
     public void tearDown() {
         if (dhcpOptionsId != null) {
-            ec2.deleteDhcpOptions(new DeleteDhcpOptionsRequest(dhcpOptionsId));
+            ec2.deleteDhcpOptions(DeleteDhcpOptionsRequest.builder().dhcpOptionsId(dhcpOptionsId).build());
         }
     }
 
@@ -109,29 +109,29 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
         // Add tags to the created DhcpOptions
         tagResource(dhcpOptionsId, TAGS);
 
-        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions(new DescribeDhcpOptionsRequest()
-                                                                            .withDhcpOptionsIds(dhcpOptionsId)
-                                                                   ).getDhcpOptions();
+        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions(DescribeDhcpOptionsRequest.builder()
+                                                                                              .dhcpOptionsIds(dhcpOptionsId)
+                                                                                              .build()
+                                                                   ).dhcpOptions();
         assertEquals(1, dhcpOptionsList.size());
         DhcpOptions dhcpOptions = dhcpOptionsList.get(0);
 
         assertTrue(findDhcpOptoin(dhcpOptionsList,
                                   DOMAIN_NAME_KEY, domainNameValue));
-        assertEqualUnorderedTagLists(TAGS, dhcpOptions.getTags());
+        assertEqualUnorderedTagLists(TAGS, dhcpOptions.tags());
 
         // Query by filtering
-        dhcpOptionsList = ec2.describeDhcpOptions(new DescribeDhcpOptionsRequest()
-                                                          .withFilters(new Filter()
-                                                                               .withName("dhcp-options-id")
-                                                                               .withValues(dhcpOptionsId)
-                                                                      )
-                                                 ).getDhcpOptions();
+        dhcpOptionsList = ec2.describeDhcpOptions(DescribeDhcpOptionsRequest.builder()
+                                                                            .filters(Filter.builder()
+                                                                                           .name("dhcp-options-id")
+                                                                                           .values(dhcpOptionsId).build())
+                                                                            .build()).dhcpOptions();
         assertEquals(1, dhcpOptionsList.size());
         dhcpOptions = dhcpOptionsList.get(0);
 
         assertTrue(findDhcpOptoin(dhcpOptionsList,
                                   DOMAIN_NAME_KEY, domainNameValue));
-        assertEqualUnorderedTagLists(TAGS, dhcpOptions.getTags());
+        assertEqualUnorderedTagLists(TAGS, dhcpOptions.tags());
     }
 
     /**
@@ -143,9 +143,9 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
 
         String vpcId = "BogusId";
         try {
-            ec2.associateDhcpOptions(new AssociateDhcpOptionsRequest()
-                                             .withDhcpOptionsId(dhcpOptionsId)
-                                             .withVpcId(vpcId));
+            ec2.associateDhcpOptions(AssociateDhcpOptionsRequest.builder()
+                                                                .dhcpOptionsId(dhcpOptionsId)
+                                                                .vpcId(vpcId).build());
 
         } catch (AmazonServiceException e) {
             assertTrue("InvalidVpcID.NotFound".equals(e.getErrorCode()));
@@ -160,10 +160,10 @@ public class EC2DhcpOptionsIntegrationTest extends EC2IntegrationTestBase {
     @Test
     public void testDeleteOptions() {
 
-        ec2.deleteDhcpOptions(new DeleteDhcpOptionsRequest(dhcpOptionsId));
+        ec2.deleteDhcpOptions(DeleteDhcpOptionsRequest.builder().dhcpOptionsId(dhcpOptionsId).build());
 
-        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions()
-                                               .getDhcpOptions();
+        List<DhcpOptions> dhcpOptionsList = ec2.describeDhcpOptions(DescribeDhcpOptionsRequest.builder().build())
+                                               .dhcpOptions();
 
         assertFalse(findDhcpOptoin(dhcpOptionsList,
                                    DOMAIN_NAME_KEY, domainNameValue));

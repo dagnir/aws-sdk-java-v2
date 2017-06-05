@@ -28,13 +28,10 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.services.ec2.model.AuthorizeSecurityGroupEgressRequest;
 import software.amazon.awssdk.services.ec2.model.AuthorizeSecurityGroupIngressRequest;
 import software.amazon.awssdk.services.ec2.model.CreateSecurityGroupRequest;
@@ -45,6 +42,7 @@ import software.amazon.awssdk.services.ec2.model.DescribeSecurityGroupsRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSecurityGroupsResult;
 import software.amazon.awssdk.services.ec2.model.Filter;
 import software.amazon.awssdk.services.ec2.model.IpPermission;
+import software.amazon.awssdk.services.ec2.model.IpRange;
 import software.amazon.awssdk.services.ec2.model.RevokeSecurityGroupEgressRequest;
 import software.amazon.awssdk.services.ec2.model.RevokeSecurityGroupIngressRequest;
 import software.amazon.awssdk.services.ec2.model.SecurityGroup;
@@ -106,24 +104,24 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
         // one that references it, so we ignore errors on the first pass and
         // throw them on the second.
         for (SecurityGroup group : ec2.describeSecurityGroups(
-                new DescribeSecurityGroupsRequest()).getSecurityGroups()) {
+                DescribeSecurityGroupsRequest.builder().build()).securityGroups()) {
             log.info("Found group " + group);
-            if (group.getGroupName().startsWith(GROUP_NAME_PREFIX)) {
+            if (group.groupName().startsWith(GROUP_NAME_PREFIX)) {
                 log.warn("Deleting group " + group);
                 try {
-                    ec2.deleteSecurityGroup(new DeleteSecurityGroupRequest()
-                                                    .withGroupId(group.getGroupId()));
+                    ec2.deleteSecurityGroup(DeleteSecurityGroupRequest.builder()
+                                                    .groupId(group.groupId()).build());
                 } catch (Exception ignored) {
                     // Ignored or expected.
                 }
             }
         }
         for (SecurityGroup group : ec2.describeSecurityGroups(
-                new DescribeSecurityGroupsRequest()).getSecurityGroups()) {
-            if (group.getGroupName().startsWith(GROUP_NAME_PREFIX)) {
+                DescribeSecurityGroupsRequest.builder().build()).securityGroups()) {
+            if (group.groupName().startsWith(GROUP_NAME_PREFIX)) {
                 log.warn("Deleting group " + group);
-                ec2.deleteSecurityGroup(new DeleteSecurityGroupRequest()
-                                                .withGroupId(group.getGroupId()));
+                ec2.deleteSecurityGroup(DeleteSecurityGroupRequest.builder()
+                                                .groupId(group.groupId()).build());
             }
         }
 
@@ -136,29 +134,29 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
 
         testGroup = createGroup(groupName, GROUP_DESCRIPTION);
 
-        assertEquals(groupName, testGroup.getGroupName());
-        assertEquals(GROUP_DESCRIPTION, testGroup.getDescription());
+        assertEquals(groupName, testGroup.groupName());
+        assertEquals(GROUP_DESCRIPTION, testGroup.description());
         assertTrue(doesSecurityGroupExist(groupName));
     }
 
     private static void createVPCSecurityGroup() {
-        CreateVpcResult result = ec2.createVpc(new CreateVpcRequest()
-                                                       .withCidrBlock(VPC_CIDR_BLOCK));
-        vpc = result.getVpc();
+        CreateVpcResult result = ec2.createVpc(CreateVpcRequest.builder()
+                                                       .cidrBlock(VPC_CIDR_BLOCK).build());
+        vpc = result.vpc();
 
         String groupName = createUniqueGroupName();
         String description = "Test group";
         String vpcGroupId = ec2.createSecurityGroup(
-                new CreateSecurityGroupRequest().withGroupName(
-                        groupName).withDescription(
-                        description).withVpcId(vpc.getVpcId())).getGroupId();
+                CreateSecurityGroupRequest.builder().groupName(
+                        groupName).description(
+                        description).vpcId(vpc.vpcId()).build()).groupId();
         vpcGroup = ec2.describeSecurityGroups(
-                new DescribeSecurityGroupsRequest().withGroupIds(vpcGroupId))
-                      .getSecurityGroups().get(0);
+                DescribeSecurityGroupsRequest.builder().groupIds(vpcGroupId).build())
+                      .securityGroups().get(0);
 
-        assertEquals(groupName, vpcGroup.getGroupName());
-        assertEquals(vpc.getVpcId(), vpcGroup.getVpcId());
-        assertEquals(description, vpcGroup.getDescription());
+        assertEquals(groupName, vpcGroup.groupName());
+        assertEquals(vpc.vpcId(), vpcGroup.vpcId());
+        assertEquals(description, vpcGroup.description());
     }
 
     /**
@@ -170,10 +168,10 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
      * @return True if the specified group exists, otherwise false.
      */
     private static boolean doesSecurityGroupExist(String groupName) {
-        DescribeSecurityGroupsRequest request = new DescribeSecurityGroupsRequest();
+        DescribeSecurityGroupsRequest request = DescribeSecurityGroupsRequest.builder().groupNames(groupName).build();
         try {
-            DescribeSecurityGroupsResult result = ec2.describeSecurityGroups(request.withGroupNames(groupName));
-            return result.getSecurityGroups().size() > 0;
+            DescribeSecurityGroupsResult result = ec2.describeSecurityGroups(request);
+            return result.securityGroups().size() > 0;
         } catch (AmazonServiceException ase) {
             if (ase.getErrorCode().equals("InvalidGroup.NotFound")) {
                 return false;
@@ -194,16 +192,14 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
      * @return The details of the new security group.
      */
     private static SecurityGroup createGroup(String name, String description) {
-        CreateSecurityGroupRequest createGroupRequest = new CreateSecurityGroupRequest();
-        createGroupRequest.setGroupName(name);
-        createGroupRequest.setDescription(description);
-        ec2.createSecurityGroup(createGroupRequest);
-        ResponseMetadata responseMetadata = ec2.getCachedResponseMetadata(createGroupRequest);
-        assertStringNotEmpty(responseMetadata.getRequestId());
+        CreateSecurityGroupRequest.Builder createGroupRequest = CreateSecurityGroupRequest.builder();
+        createGroupRequest.groupName(name);
+        createGroupRequest.description(description);
+        ec2.createSecurityGroup(createGroupRequest.build());
 
-        DescribeSecurityGroupsRequest describeGroupRequest = new DescribeSecurityGroupsRequest();
-        describeGroupRequest.withGroupNames(name);
-        return ec2.describeSecurityGroups(describeGroupRequest).getSecurityGroups().get(0);
+        DescribeSecurityGroupsRequest.Builder describeGroupRequest = DescribeSecurityGroupsRequest.builder();
+        describeGroupRequest.groupNames(name);
+        return ec2.describeSecurityGroups(describeGroupRequest.build()).securityGroups().get(0);
     }
 
     /**
@@ -221,24 +217,24 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
     @Test
     public void testDescribeSecurityGroups() {
         // no-required-args method form
-        DescribeSecurityGroupsResult result = ec2.describeSecurityGroups();
-        List<SecurityGroup> groups = result.getSecurityGroups();
+        DescribeSecurityGroupsResult result = ec2.describeSecurityGroups(DescribeSecurityGroupsRequest.builder().build());
+        List<SecurityGroup> groups = result.securityGroups();
         Map<String, SecurityGroup> securityGroupsByName = convertSecurityGroupListToMap(groups);
 
-        SecurityGroup group = securityGroupsByName.get(testGroup.getGroupName());
+        SecurityGroup group = securityGroupsByName.get(testGroup.groupName());
         assertNotNull(group);
-        assertEquals(GROUP_DESCRIPTION, group.getDescription());
+        assertEquals(GROUP_DESCRIPTION, group.description());
 
-        group = securityGroupsByName.get(vpcGroup.getGroupName());
+        group = securityGroupsByName.get(vpcGroup.groupName());
         assertNotNull(group);
-        assertEquals(vpc.getVpcId(), group.getVpcId());
+        assertEquals(vpc.vpcId(), group.vpcId());
 
         // filters
-        DescribeSecurityGroupsRequest request = new DescribeSecurityGroupsRequest();
-        request.withFilters(new Filter("group-name", null).withValues(testGroup.getGroupName()));
-        List<SecurityGroup> securityGroups = ec2.describeSecurityGroups(request).getSecurityGroups();
+        DescribeSecurityGroupsRequest.Builder request = DescribeSecurityGroupsRequest.builder();
+        request.filters(Filter.builder().name("group-name").values(testGroup.groupName()).build());
+        List<SecurityGroup> securityGroups = ec2.describeSecurityGroups(request.build()).securityGroups();
         assertEquals(1, securityGroups.size());
-        assertEquals(testGroup.getGroupName(), securityGroups.get(0).getGroupName());
+        assertEquals(testGroup.groupName(), securityGroups.get(0).groupName());
     }
 
     /**
@@ -247,30 +243,27 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
      */
     @Test
     public void testAuthorizeIPSecurityGroupIngress() {
-        assertFalse(doesIpPermissionExist(testGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertFalse(doesIpPermissionExist(testGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
 
-        AuthorizeSecurityGroupIngressRequest request = new AuthorizeSecurityGroupIngressRequest();
-        request.setGroupName(testGroup.getGroupName());
-        request.setIpProtocol(TCP_PROTOCOL);
-        request.setCidrIp(CIDR_IP_RANGE);
-        request.setFromPort(FROM_PORT);
-        request.setToPort(TO_PORT);
-        ec2.authorizeSecurityGroupIngress(request);
+        AuthorizeSecurityGroupIngressRequest.Builder request = AuthorizeSecurityGroupIngressRequest.builder();
+        request.groupName(testGroup.groupName());
+        request.ipProtocol(TCP_PROTOCOL);
+        request.cidrIp(CIDR_IP_RANGE);
+        request.fromPort(FROM_PORT);
+        request.toPort(TO_PORT);
+        ec2.authorizeSecurityGroupIngress(request.build());
 
         // Revoke our permissions to clean up
-        assertTrue(doesIpPermissionExist(testGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
-        RevokeSecurityGroupIngressRequest revokeRequest = new RevokeSecurityGroupIngressRequest();
-        revokeRequest.setGroupName(testGroup.getGroupName());
-        revokeRequest.setIpProtocol(TCP_PROTOCOL);
-        revokeRequest.setCidrIp(CIDR_IP_RANGE);
-        revokeRequest.setFromPort(FROM_PORT);
-        revokeRequest.setToPort(TO_PORT);
-        ec2.revokeSecurityGroupIngress(revokeRequest);
+        assertTrue(doesIpPermissionExist(testGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        RevokeSecurityGroupIngressRequest.Builder revokeRequest = RevokeSecurityGroupIngressRequest.builder();
+        revokeRequest.groupName(testGroup.groupName());
+        revokeRequest.ipProtocol(TCP_PROTOCOL);
+        revokeRequest.cidrIp(CIDR_IP_RANGE);
+        revokeRequest.fromPort(FROM_PORT);
+        revokeRequest.toPort(TO_PORT);
+        ec2.revokeSecurityGroupIngress(revokeRequest.build());
 
-        ResponseMetadata responseMetadata = ec2.getCachedResponseMetadata(revokeRequest);
-        Assert.assertThat(responseMetadata.getRequestId(), Matchers.not(Matchers.isEmptyOrNullString()));
-
-        assertFalse(doesIpPermissionExist(testGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertFalse(doesIpPermissionExist(testGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
     }
 
     /**
@@ -279,46 +272,46 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
      */
     @Test
     public void testAuthorizeIPSecurityGroupIngressVPC() {
-        assertFalse(doesIpPermissionExist(vpcGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertFalse(doesIpPermissionExist(vpcGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
 
-        AuthorizeSecurityGroupIngressRequest request = new AuthorizeSecurityGroupIngressRequest();
-        request.setGroupName(vpcGroup.getGroupName());
-        request.withIpPermissions(new IpPermission()
-                                          .withIpProtocol(TCP_PROTOCOL)
-                                          .withIpRanges(CIDR_IP_RANGE)
-                                          .withFromPort(FROM_PORT)
-                                          .withToPort(TO_PORT));
+        AuthorizeSecurityGroupIngressRequest.Builder request = AuthorizeSecurityGroupIngressRequest.builder();
+        request.groupName(vpcGroup.groupName());
+        request.ipPermissions(IpPermission.builder()
+                                          .ipProtocol(TCP_PROTOCOL)
+                                          .ipv4Ranges(IpRange.builder().cidrIp(CIDR_IP_RANGE).build())
+                                          .fromPort(FROM_PORT)
+                                          .toPort(TO_PORT).build());
         try {
-            ec2.authorizeSecurityGroupIngress(request);
+            ec2.authorizeSecurityGroupIngress(request.build());
             fail("Expected exception: group ID required");
         } catch (Exception expected) {
             // Ignored or expected.
         }
 
-        request.withGroupName(null).withGroupId(vpcGroup.getGroupId());
-        ec2.authorizeSecurityGroupIngress(request);
+        request.groupName(null).groupId(vpcGroup.groupId());
+        ec2.authorizeSecurityGroupIngress(request.build());
 
-        assertTrue(doesIpPermissionExist(vpcGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertTrue(doesIpPermissionExist(vpcGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
 
         // Now revoke the permission
-        RevokeSecurityGroupIngressRequest revoke = new RevokeSecurityGroupIngressRequest();
-        revoke.setGroupName(vpcGroup.getGroupName());
-        revoke.withIpPermissions(new IpPermission()
-                                         .withIpProtocol(TCP_PROTOCOL)
-                                         .withIpRanges(CIDR_IP_RANGE)
-                                         .withFromPort(FROM_PORT)
-                                         .withToPort(TO_PORT));
+        RevokeSecurityGroupIngressRequest.Builder revoke = RevokeSecurityGroupIngressRequest.builder();
+        revoke.groupName(vpcGroup.groupName());
+        revoke.ipPermissions(IpPermission.builder()
+                                         .ipProtocol(TCP_PROTOCOL)
+                                         .ipv4Ranges(IpRange.builder().cidrIp(CIDR_IP_RANGE).build())
+                                         .fromPort(FROM_PORT)
+                                         .toPort(TO_PORT).build());
         try {
-            ec2.revokeSecurityGroupIngress(revoke);
+            ec2.revokeSecurityGroupIngress(revoke.build());
             fail("Expected exception: group ID required");
         } catch (Exception expected) {
             // Ignored or expected.
         }
 
-        revoke.withGroupName(null).withGroupId(vpcGroup.getGroupId());
-        ec2.revokeSecurityGroupIngress(revoke);
+        revoke.groupName(null).groupId(vpcGroup.groupId());
+        ec2.revokeSecurityGroupIngress(revoke.build());
 
-        assertFalse(doesIpPermissionExist(vpcGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertFalse(doesIpPermissionExist(vpcGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
     }
 
     /**
@@ -328,34 +321,36 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
     @Test
     public void testAuthorizeUserGroupSecurityGroupIngress() {
         sourceGroup = createGroup(createUniqueGroupName(), GROUP_DESCRIPTION);
-        assertFalse(doesUserGroupPermissionExist(testGroup.getGroupId(), sourceGroup.getGroupId(), sourceGroup.getOwnerId()));
+        assertFalse(doesUserGroupPermissionExist(testGroup.groupId(), sourceGroup.groupId(), sourceGroup.ownerId()));
 
-        AuthorizeSecurityGroupIngressRequest request = new AuthorizeSecurityGroupIngressRequest();
-        request.setGroupName(testGroup.getGroupName());
-        request.withIpPermissions(new IpPermission()
-                                          .withIpProtocol(TCP_PROTOCOL)
-                                          .withFromPort(FROM_PORT)
-                                          .withToPort(TO_PORT)
-                                          .withUserIdGroupPairs(new UserIdGroupPair()
-                                                                        .withGroupName(sourceGroup.getGroupName())
-                                                                        .withUserId(sourceGroup.getOwnerId())));
-        ec2.authorizeSecurityGroupIngress(request);
+        AuthorizeSecurityGroupIngressRequest.Builder request = AuthorizeSecurityGroupIngressRequest.builder();
+        request.groupName(testGroup.groupName());
+        request.ipPermissions(IpPermission.builder()
+                                          .ipProtocol(TCP_PROTOCOL)
+                                          .fromPort(FROM_PORT)
+                                          .toPort(TO_PORT)
+                                          .userIdGroupPairs(UserIdGroupPair.builder()
+                                                                           .groupName(sourceGroup.groupName())
+                                                                           .userId(sourceGroup.ownerId()).build())
+                                          .build());
+        ec2.authorizeSecurityGroupIngress(request.build());
 
         // Revoke our permission to clean up
-        assertTrue(doesUserGroupPermissionExist(testGroup.getGroupId(), sourceGroup.getGroupId(), sourceGroup.getOwnerId()));
+        assertTrue(doesUserGroupPermissionExist(testGroup.groupId(), sourceGroup.groupId(), sourceGroup.ownerId()));
 
-        RevokeSecurityGroupIngressRequest revokeRequest = new RevokeSecurityGroupIngressRequest();
-        revokeRequest.setGroupName(testGroup.getGroupName());
-        revokeRequest.withIpPermissions(new IpPermission()
-                                                .withUserIdGroupPairs(new UserIdGroupPair()
-                                                                              .withGroupName(sourceGroup.getGroupName())
-                                                                              .withUserId(sourceGroup.getOwnerId()))
-                                                .withIpProtocol(TCP_PROTOCOL)
-                                                .withFromPort(FROM_PORT)
-                                                .withToPort(TO_PORT));
-        ec2.revokeSecurityGroupIngress(revokeRequest);
+        RevokeSecurityGroupIngressRequest.Builder revokeRequest = RevokeSecurityGroupIngressRequest.builder();
+        revokeRequest.groupName(testGroup.groupName());
+        revokeRequest.ipPermissions(IpPermission.builder()
+                                                .userIdGroupPairs(UserIdGroupPair.builder()
+                                                                              .groupName(sourceGroup.groupName())
+                                                                              .userId(sourceGroup.ownerId()).build())
+                                                .ipProtocol(TCP_PROTOCOL)
+                                                .fromPort(FROM_PORT)
+                                                .toPort(TO_PORT)
+                                                .build());
+        ec2.revokeSecurityGroupIngress(revokeRequest.build());
 
-        assertFalse(doesUserGroupPermissionExist(testGroup.getGroupId(), sourceGroup.getGroupId(), sourceGroup.getOwnerId()));
+        assertFalse(doesUserGroupPermissionExist(testGroup.groupId(), sourceGroup.groupId(), sourceGroup.ownerId()));
     }
 
     /**
@@ -365,16 +360,16 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
     @Test
     public void testLegacyAuthorizeUserGroupSecurityGroupIngress() {
         sourceGroup = createGroup(createUniqueGroupName(), GROUP_DESCRIPTION);
-        assertFalse(doesUserGroupPermissionExist(testGroup.getGroupId(), sourceGroup.getGroupId(), sourceGroup.getOwnerId()));
+        assertFalse(doesUserGroupPermissionExist(testGroup.groupId(), sourceGroup.groupId(), sourceGroup.ownerId()));
 
-        AuthorizeSecurityGroupIngressRequest request = new AuthorizeSecurityGroupIngressRequest();
-        request.setGroupName(testGroup.getGroupName());
-        request.setSourceSecurityGroupName(sourceGroup.getGroupName());
-        request.setSourceSecurityGroupOwnerId(sourceGroup.getOwnerId());
+        AuthorizeSecurityGroupIngressRequest.Builder request = AuthorizeSecurityGroupIngressRequest.builder();
+        request.groupName(testGroup.groupName());
+        request.sourceSecurityGroupName(sourceGroup.groupName());
+        request.sourceSecurityGroupOwnerId(sourceGroup.ownerId());
 
-        ec2.authorizeSecurityGroupIngress(request);
+        ec2.authorizeSecurityGroupIngress(request.build());
 
-        assertTrue(doesUserGroupPermissionExist(testGroup.getGroupId(), sourceGroup.getGroupId(), sourceGroup.getOwnerId()));
+        assertTrue(doesUserGroupPermissionExist(testGroup.groupId(), sourceGroup.groupId(), sourceGroup.ownerId()));
     }
 
     /**
@@ -382,30 +377,30 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
      */
     @Test
     public void testAuthorizeSecurityGroupEgress() {
-        assertFalse(doesIpEgressPermissionExist(vpcGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertFalse(doesIpEgressPermissionExist(vpcGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
 
-        AuthorizeSecurityGroupEgressRequest request = new AuthorizeSecurityGroupEgressRequest();
-        request.setGroupId(vpcGroup.getGroupId());
-        request.withIpPermissions(new IpPermission()
-                                          .withIpProtocol(TCP_PROTOCOL)
-                                          .withIpRanges(CIDR_IP_RANGE)
-                                          .withFromPort(FROM_PORT)
-                                          .withToPort(TO_PORT));
-        ec2.authorizeSecurityGroupEgress(request);
+        AuthorizeSecurityGroupEgressRequest.Builder request = AuthorizeSecurityGroupEgressRequest.builder();
+        request.groupId(vpcGroup.groupId());
+        request.ipPermissions(IpPermission.builder()
+                                          .ipProtocol(TCP_PROTOCOL)
+                                          .ipv4Ranges(IpRange.builder().cidrIp(CIDR_IP_RANGE).build())
+                                          .fromPort(FROM_PORT)
+                                          .toPort(TO_PORT).build());
+        ec2.authorizeSecurityGroupEgress(request.build());
 
-        assertTrue(doesIpEgressPermissionExist(vpcGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertTrue(doesIpEgressPermissionExist(vpcGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
 
         // Now revoke the permission
-        RevokeSecurityGroupEgressRequest revoke = new RevokeSecurityGroupEgressRequest();
-        revoke.setGroupId(vpcGroup.getGroupId());
-        revoke.withIpPermissions(new IpPermission()
-                                         .withIpProtocol(TCP_PROTOCOL)
-                                         .withIpRanges(CIDR_IP_RANGE)
-                                         .withFromPort(FROM_PORT)
-                                         .withToPort(TO_PORT));
-        ec2.revokeSecurityGroupEgress(revoke);
+        RevokeSecurityGroupEgressRequest.Builder revoke = RevokeSecurityGroupEgressRequest.builder();
+        revoke.groupId(vpcGroup.groupId());
+        revoke.ipPermissions(IpPermission.builder()
+                                         .ipProtocol(TCP_PROTOCOL)
+                                         .ipv4Ranges(IpRange.builder().cidrIp(CIDR_IP_RANGE).build())
+                                         .fromPort(FROM_PORT)
+                                         .toPort(TO_PORT).build());
+        ec2.revokeSecurityGroupEgress(revoke.build());
 
-        assertFalse(doesIpEgressPermissionExist(vpcGroup.getGroupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
+        assertFalse(doesIpEgressPermissionExist(vpcGroup.groupId(), TCP_PROTOCOL, CIDR_IP_RANGE, FROM_PORT, TO_PORT));
     }
 
     /**
@@ -421,7 +416,7 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
         Map<String, SecurityGroup> map = new HashMap<String, SecurityGroup>();
 
         for (SecurityGroup group : groups) {
-            map.put(group.getGroupName(), group);
+            map.put(group.groupName(), group);
         }
 
         return map;
@@ -450,17 +445,17 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
         acceptableProtocols.add(protocol);
 
         SecurityGroup group = getSecurityGroup(groupId);
-        if (group.getVpcId() != null && "tcp".equals(protocol)) {
+        if (group.vpcId() != null && "tcp".equals(protocol)) {
             acceptableProtocols.add("6");
         }
 
-        for (IpPermission permission : group.getIpPermissions()) {
-            if (permission.getFromPort().equals(fromPort)
-                && permission.getToPort().equals(toPort)
-                && acceptableProtocols.contains(permission.getIpProtocol())) {
+        for (IpPermission permission : group.ipPermissions()) {
+            if (permission.fromPort().equals(fromPort)
+                && permission.toPort().equals(toPort)
+                && acceptableProtocols.contains(permission.ipProtocol())) {
 
-                for (String range : permission.getIpRanges()) {
-                    if (range.equals(cidrIp)) {
+                for (IpRange range : permission.ipv4Ranges()) {
+                    if (range.cidrIp().equals(cidrIp)) {
                         return true;
                     }
                 }
@@ -481,17 +476,17 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
         acceptableProtocols.add(protocol);
 
         SecurityGroup group = getSecurityGroup(groupId);
-        if (group.getVpcId() != null && "tcp".equals(protocol)) {
+        if (group.vpcId() != null && "tcp".equals(protocol)) {
             acceptableProtocols.add("6");
         }
 
-        for (IpPermission permission : group.getIpPermissionsEgress()) {
-            if (permission.getFromPort() != null && permission.getFromPort().equals(fromPort)
-                && permission.getToPort() != null && permission.getToPort().equals(toPort)
-                && acceptableProtocols.contains(permission.getIpProtocol())) {
+        for (IpPermission permission : group.ipPermissionsEgress()) {
+            if (permission.fromPort() != null && permission.fromPort().equals(fromPort)
+                && permission.toPort() != null && permission.toPort().equals(toPort)
+                && acceptableProtocols.contains(permission.ipProtocol())) {
 
-                for (String range : permission.getIpRanges()) {
-                    if (range.equals(cidrIpRange)) {
+                for (IpRange range : permission.ipv4Ranges()) {
+                    if (range.cidrIp().equals(cidrIpRange)) {
                         return true;
                     }
                 }
@@ -522,10 +517,10 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
             // Ignored or expected.
         }
         SecurityGroup group = getSecurityGroup(groupId);
-        for (IpPermission permission : group.getIpPermissions()) {
-            for (UserIdGroupPair pair : permission.getUserIdGroupPairs()) {
-                if (pair.getGroupId().equals(sourceGroupId)
-                    && pair.getUserId().equals(sourceGroupOwnerId)) {
+        for (IpPermission permission : group.ipPermissions()) {
+            for (UserIdGroupPair pair : permission.userIdGroupPairs()) {
+                if (pair.groupId().equals(sourceGroupId)
+                    && pair.userId().equals(sourceGroupOwnerId)) {
                     return true;
                 }
             }
@@ -543,12 +538,10 @@ public class EC2SecurityGroupsIntegrationTest extends EC2VPCIntegrationTestBase 
      * @return The details on the specified security group.
      */
     private SecurityGroup getSecurityGroup(String id) {
-        DescribeSecurityGroupsRequest request = new DescribeSecurityGroupsRequest();
-        DescribeSecurityGroupsResult result = ec2.describeSecurityGroups(request.withGroupIds(id));
-        ResponseMetadata responseMetadata = ec2.getCachedResponseMetadata(request);
-        Assert.assertThat(responseMetadata.getRequestId(), Matchers.not(Matchers.isEmptyOrNullString()));
+        DescribeSecurityGroupsRequest.Builder request = DescribeSecurityGroupsRequest.builder();
+        DescribeSecurityGroupsResult result = ec2.describeSecurityGroups(request.groupIds(id).build());
 
-        List<SecurityGroup> groups = result.getSecurityGroups();
+        List<SecurityGroup> groups = result.securityGroups();
         assertEquals(1, groups.size());
 
         return groups.get(0);

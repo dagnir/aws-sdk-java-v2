@@ -96,9 +96,9 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
         deleteAllSubnets();
 
         // Delete the network ACL before the vpc
-        for (NetworkAcl acl : ec2.describeNetworkAcls().getNetworkAcls()) {
-            if (!acl.getIsDefault()) {
-                ec2.deleteNetworkAcl(new DeleteNetworkAclRequest().withNetworkAclId(acl.getNetworkAclId()));
+        for (NetworkAcl acl : ec2.describeNetworkAcls(DescribeNetworkAclsRequest.builder().build()).networkAcls()) {
+            if (!acl.isDefault()) {
+                ec2.deleteNetworkAcl(DeleteNetworkAclRequest.builder().networkAclId(acl.networkAclId()).build());
             }
         }
 
@@ -106,57 +106,57 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
         assertEquals(
                 0,
                 ec2.describeNetworkAcls(
-                        new DescribeNetworkAclsRequest().withFilters(new Filter().withName("default").withValues(
-                                "false"))).getNetworkAcls().size());
+                        DescribeNetworkAclsRequest.builder()
+                                                  .filters(Filter.builder().name("default").values("false").build())
+                                                  .build()).networkAcls().size());
 
         deleteAllVpcs();
     }
 
     private static void createVPC() {
-        CreateVpcResult result = ec2.createVpc(new CreateVpcRequest()
-                                                       .withCidrBlock(VPC_CIDR_BLOCK));
-        vpc = result.getVpc();
+        CreateVpcResult result = ec2.createVpc(CreateVpcRequest.builder()
+                                                               .cidrBlock(VPC_CIDR_BLOCK).build());
+        vpc = result.vpc();
     }
 
     private static void createRouteTable() {
-        CreateRouteTableRequest createRequest = new CreateRouteTableRequest().withVpcId(vpc.getVpcId());
+        CreateRouteTableRequest createRequest = CreateRouteTableRequest.builder().vpcId(vpc.vpcId()).build();
         CreateRouteTableResult createResult = ec2.createRouteTable(createRequest);
-        assertNotNull(createResult.getRouteTable().getRouteTableId());
-        table = createResult.getRouteTable();
+        assertNotNull(createResult.routeTable().routeTableId());
+        table = createResult.routeTable();
 
-        assertNotNull(table.getVpcId());
-        assertEquals(vpc.getVpcId(), table.getVpcId());
+        assertNotNull(table.vpcId());
+        assertEquals(vpc.vpcId(), table.vpcId());
 
-        assertEquals(1, table.getRoutes().size());
-        assertEquals(VPC_CIDR_BLOCK, table.getRoutes().get(0).getDestinationCidrBlock());
-        assertEquals("local", table.getRoutes().get(0).getGatewayId());
-        assertEquals("active", table.getRoutes().get(0).getState());
+        assertEquals(1, table.routes().size());
+        assertEquals(VPC_CIDR_BLOCK, table.routes().get(0).destinationCidrBlock());
+        assertEquals("local", table.routes().get(0).gatewayId());
+        assertEquals("active", table.routes().get(0).state());
 
-        assertNotNull(table.getTags());
-        assertEquals(0, table.getTags().size());
-        assertNotNull(table.getAssociations());
-        assertEquals(0, table.getAssociations().size());
+        assertNotNull(table.tags());
+        assertEquals(0, table.tags().size());
+        assertNotNull(table.associations());
+        assertEquals(0, table.associations().size());
     }
 
     protected static void createSubnet() {
-        subnet = ec2.createSubnet(new CreateSubnetRequest().withVpcId(vpc
-                                                                              .getVpcId()).withCidrBlock(VPC_CIDR_BLOCK)
-                                                           .withAvailabilityZone(AVAILABILITY_ZONE))
-                    .getSubnet();
+        subnet = ec2.createSubnet(CreateSubnetRequest.builder().vpcId(vpc.vpcId()).cidrBlock(VPC_CIDR_BLOCK)
+                                                     .availabilityZone(AVAILABILITY_ZONE).build())
+                    .subnet();
     }
 
     private static void createVPCSecurityGroup() {
         String groupName = "group" + System.currentTimeMillis();
         String description = "Test group";
         String vpcGroupId = ec2.createSecurityGroup(
-                new CreateSecurityGroupRequest().withGroupName(groupName).withDescription(description)
-                                                .withVpcId(vpc.getVpcId())).getGroupId();
-        vpcGroup = ec2.describeSecurityGroups(new DescribeSecurityGroupsRequest().withGroupIds(vpcGroupId))
-                      .getSecurityGroups().get(0);
+                CreateSecurityGroupRequest.builder().groupName(groupName).description(description)
+                                          .vpcId(vpc.vpcId()).build()).groupId();
+        vpcGroup = ec2.describeSecurityGroups(DescribeSecurityGroupsRequest.builder().groupIds(vpcGroupId).build())
+                      .securityGroups().get(0);
 
-        assertEquals(groupName, vpcGroup.getGroupName());
-        assertEquals(vpc.getVpcId(), vpcGroup.getVpcId());
-        assertEquals(description, vpcGroup.getDescription());
+        assertEquals(groupName, vpcGroup.groupName());
+        assertEquals(vpc.vpcId(), vpcGroup.vpcId());
+        assertEquals(description, vpcGroup.description());
     }
 
     /**
@@ -164,23 +164,23 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
      */
     @Test
     public void testDescribeRouteTables() {
-        tagResource(table.getRouteTableId(), TAGS);
+        tagResource(table.routeTableId(), TAGS);
 
-        DescribeRouteTablesRequest describeRequest = new DescribeRouteTablesRequest().withRouteTableIds(table
-                                                                                                                .getRouteTableId());
+        DescribeRouteTablesRequest describeRequest =
+                DescribeRouteTablesRequest.builder().routeTableIds(table.routeTableId()).build();
         DescribeRouteTablesResult describeResult = ec2.describeRouteTables(describeRequest);
 
-        assertEquals(1, describeResult.getRouteTables().size());
-        table = describeResult.getRouteTables().get(0);
+        assertEquals(1, describeResult.routeTables().size());
+        table = describeResult.routeTables().get(0);
 
-        assertNotNull(table.getVpcId());
-        assertEquals(vpc.getVpcId(), table.getVpcId());
-        assertEquals(1, table.getRoutes().size());
-        assertEquals(VPC_CIDR_BLOCK, table.getRoutes().get(0).getDestinationCidrBlock());
-        assertEquals("local", table.getRoutes().get(0).getGatewayId());
-        assertEquals("active", table.getRoutes().get(0).getState());
+        assertNotNull(table.vpcId());
+        assertEquals(vpc.vpcId(), table.vpcId());
+        assertEquals(1, table.routes().size());
+        assertEquals(VPC_CIDR_BLOCK, table.routes().get(0).destinationCidrBlock());
+        assertEquals("local", table.routes().get(0).gatewayId());
+        assertEquals("active", table.routes().get(0).state());
 
-        assertEqualUnorderedTagLists(TAGS, table.getTags());
+        assertEqualUnorderedTagLists(TAGS, table.tags());
     }
 
     /**
@@ -188,35 +188,38 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
      */
     @Test
     public void testAssociateAndDisassociate() {
-        AssociateRouteTableRequest associateRequest = new AssociateRouteTableRequest().withRouteTableId(
-                table.getRouteTableId()).withSubnetId(subnet.getSubnetId());
+        AssociateRouteTableRequest associateRequest = AssociateRouteTableRequest.builder().routeTableId(
+                table.routeTableId()).subnetId(subnet.subnetId()).build();
 
         AssociateRouteTableResult associateResult = ec2.associateRouteTable(associateRequest);
-        assertNotNull(associateResult.getAssociationId());
+        assertNotNull(associateResult.associationId());
 
-        String associateId = associateResult.getAssociationId();
+        String associateId = associateResult.associationId();
 
-        ReplaceRouteTableAssociationRequest replaceRequest = new ReplaceRouteTableAssociationRequest()
-                .withAssociationId(associateId).withRouteTableId(table.getRouteTableId());
+        ReplaceRouteTableAssociationRequest replaceRequest = ReplaceRouteTableAssociationRequest.builder()
+                                                                                                .associationId(associateId)
+                                                                                                .routeTableId(
+                                                                                                        table.routeTableId())
+                                                                                                .build();
         ReplaceRouteTableAssociationResult replaceResult = ec2.replaceRouteTableAssociation(replaceRequest);
-        String associationid = replaceResult.getNewAssociationId();
+        String associationid = replaceResult.newAssociationId();
 
         table = describeTable();
 
-        assertNotNull(table.getAssociations());
-        assertEquals(1, table.getAssociations().size());
-        assertEquals(associationid, table.getAssociations().get(0).getRouteTableAssociationId());
-        assertEquals(table.getRouteTableId(), table.getAssociations().get(0).getRouteTableId());
-        assertEquals(subnet.getSubnetId(), table.getAssociations().get(0).getSubnetId());
+        assertNotNull(table.associations());
+        assertEquals(1, table.associations().size());
+        assertEquals(associationid, table.associations().get(0).routeTableAssociationId());
+        assertEquals(table.routeTableId(), table.associations().get(0).routeTableId());
+        assertEquals(subnet.subnetId(), table.associations().get(0).subnetId());
 
-        DisassociateRouteTableRequest disassociateRequest = new DisassociateRouteTableRequest()
-                .withAssociationId(associationid);
+        DisassociateRouteTableRequest disassociateRequest = DisassociateRouteTableRequest.builder()
+                                                                                         .associationId(associationid).build();
         ec2.disassociateRouteTable(disassociateRequest);
 
         table = describeTable();
 
-        assertNotNull(table.getAssociations());
-        assertEquals(0, table.getAssociations().size());
+        assertNotNull(table.associations());
+        assertEquals(0, table.associations().size());
     }
 
     /**
@@ -228,27 +231,29 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
         try {
             waitForInstanceToTransitionToState(instanceId, InstanceStateName.Running);
 
-            CreateRouteRequest createRouteRequest = new CreateRouteRequest().withDestinationCidrBlock("0.0.0.0/0")
-                                                                            .withInstanceId(instanceId).withRouteTableId(table.getRouteTableId());
+            CreateRouteRequest createRouteRequest = CreateRouteRequest.builder().destinationCidrBlock("0.0.0.0/0")
+                                                                      .instanceId(instanceId).routeTableId(table.routeTableId())
+                                                                      .build();
 
             ec2.createRoute(createRouteRequest);
 
             table = describeTable();
-            assertEquals(2, table.getRoutes().size());
+            assertEquals(2, table.routes().size());
 
-            ReplaceRouteRequest replaceRouteRequest = new ReplaceRouteRequest().withDestinationCidrBlock("0.0.0.0/0")
-                                                                               .withInstanceId(instanceId).withRouteTableId(table.getRouteTableId());
+            ReplaceRouteRequest replaceRouteRequest = ReplaceRouteRequest.builder().destinationCidrBlock("0.0.0.0/0")
+                                                                         .instanceId(instanceId)
+                                                                         .routeTableId(table.routeTableId()).build();
             ec2.replaceRoute(replaceRouteRequest);
 
             table = describeTable();
-            assertEquals(2, table.getRoutes().size());
+            assertEquals(2, table.routes().size());
 
-            DeleteRouteRequest deleteRoute = new DeleteRouteRequest().withRouteTableId(table.getRouteTableId())
-                                                                     .withDestinationCidrBlock("0.0.0.0/0");
+            DeleteRouteRequest deleteRoute = DeleteRouteRequest.builder().routeTableId(table.routeTableId())
+                                                               .destinationCidrBlock("0.0.0.0/0").build();
             ec2.deleteRoute(deleteRoute);
 
             table = describeTable();
-            assertEquals(1, table.getRoutes().size());
+            assertEquals(1, table.routes().size());
 
         } finally {
             super.terminateInstance(instanceId);
@@ -258,48 +263,48 @@ public class EC2RouteTableIntegrationTest extends EC2VPCIntegrationTestBase {
     }
 
     private String createInstanceWithSecurityGroup() {
-        List<KeyPairInfo> keyPairs = ec2.describeKeyPairs(new DescribeKeyPairsRequest()).getKeyPairs();
+        List<KeyPairInfo> keyPairs = ec2.describeKeyPairs(DescribeKeyPairsRequest.builder().build()).keyPairs();
         assertTrue("No existing key pairs to test with", keyPairs.size() > 0);
-        String existingKeyPairName = keyPairs.get(0).getKeyName();
+        String existingKeyPairName = keyPairs.get(0).keyName();
 
-        RunInstancesRequest request = new RunInstancesRequest();
+        RunInstancesRequest.Builder request = RunInstancesRequest.builder();
 
-        request.withImageId(AMI_ID);
-        request.withMinCount(1);
-        request.withMaxCount(1);
-        request.withInstanceType(INSTANCE_TYPE);
-        request.withMonitoring(true);
-        request.withUserData(USER_DATA);
-        request.withKernelId(KERNEL_ID);
-        request.withRamdiskId(RAMDISK_ID);
-        request.withKeyName(existingKeyPairName);
-        request.withSecurityGroupIds(vpcGroup.getGroupId());
-        request.withClientToken("MyClientToken" + System.currentTimeMillis());
-        request.withSubnetId(subnet.getSubnetId());
+        request.imageId(AMI_ID);
+        request.minCount(1);
+        request.maxCount(1);
+        request.instanceType(INSTANCE_TYPE);
+        request.monitoring(true);
+        request.userData(USER_DATA);
+        request.kernelId(KERNEL_ID);
+        request.ramdiskId(RAMDISK_ID);
+        request.keyName(existingKeyPairName);
+        request.securityGroupIds(vpcGroup.groupId());
+        request.clientToken("MyClientToken" + System.currentTimeMillis());
+        request.subnetId(subnet.subnetId());
 
-        BlockDeviceMapping mapping = new BlockDeviceMapping();
-        mapping.withDeviceName("/dev/sdh").withVirtualName("ephemeral0");
-        request.withBlockDeviceMappings(mapping);
+        BlockDeviceMapping.Builder mapping = BlockDeviceMapping.builder();
+        mapping.deviceName("/dev/sdh").virtualName("ephemeral0");
+        request.blockDeviceMappings(mapping.build());
 
-        request.withPlacement(new Placement().withAvailabilityZone(AVAILABILITY_ZONE));
-        RunInstancesResult result = ec2.runInstances(request);
-        assertEquals(1, result.getReservation().getInstances().size());
-        assertEquals(1, result.getReservation().getInstances().get(0).getSecurityGroups().size());
-        assertEquals(vpcGroup.getGroupId(), result.getReservation().getInstances().get(0).getSecurityGroups().get(0)
-                                                  .getGroupId());
+        request.placement(Placement.builder().availabilityZone(AVAILABILITY_ZONE).build());
+        RunInstancesResult result = ec2.runInstances(request.build());
+        assertEquals(1, result.reservation().instances().size());
+        assertEquals(1, result.reservation().instances().get(0).securityGroups().size());
+        assertEquals(vpcGroup.groupId(), result.reservation().instances().get(0).securityGroups().get(0)
+                                               .groupId());
 
-        DescribeInstancesRequest describeRequest = new DescribeInstancesRequest();
-        describeRequest.withInstanceIds(result.getReservation().getInstances().get(0).getInstanceId());
-        DescribeInstancesResult desResult = ec2.describeInstances(describeRequest);
-        assertEquals(1, desResult.getReservations().get(0).getInstances().size());
-        Instance inst = desResult.getReservations().get(0).getInstances().get(0);
+        DescribeInstancesRequest.Builder describeRequest = DescribeInstancesRequest.builder();
+        describeRequest.instanceIds(result.reservation().instances().get(0).instanceId());
+        DescribeInstancesResult desResult = ec2.describeInstances(describeRequest.build());
+        assertEquals(1, desResult.reservations().get(0).instances().size());
+        Instance inst = desResult.reservations().get(0).instances().get(0);
 
-        return inst.getInstanceId();
+        return inst.instanceId();
     }
 
     private RouteTable describeTable() {
-        return ec2.describeRouteTables(new DescribeRouteTablesRequest().withRouteTableIds(table.getRouteTableId()))
-                  .getRouteTables().get(0);
+        return ec2.describeRouteTables(DescribeRouteTablesRequest.builder().routeTableIds(table.routeTableId()).build())
+                  .routeTables().get(0);
     }
 
 }

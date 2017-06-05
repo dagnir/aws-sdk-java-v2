@@ -60,8 +60,8 @@ public class EC2ClusterComputingIntegrationTest extends EC2IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         try {
-            ec2.terminateInstances(new TerminateInstancesRequest()
-                                           .withInstanceIds(createdInstanceId));
+            ec2.terminateInstances(TerminateInstancesRequest.builder()
+                                                            .instanceIds(createdInstanceId).build());
             waitForInstanceToTransitionToState(
                     createdInstanceId, InstanceStateName.Terminated);
         } catch (Exception e) {
@@ -69,27 +69,26 @@ public class EC2ClusterComputingIntegrationTest extends EC2IntegrationTestBase {
         }
 
         try {
-            ec2.deletePlacementGroup(new DeletePlacementGroupRequest()
-                                             .withGroupName(PLACEMENT_GROUP_NAME));
+            ec2.deletePlacementGroup(DeletePlacementGroupRequest.builder()
+                                                                .groupName(PLACEMENT_GROUP_NAME).build());
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
 
     private static String findPublicHvmAmiId() {
-        List<Image> hvmImages = ec2.describeImages(new DescribeImagesRequest()
-                                                           .withFilters(
-                                                                   new Filter()
-                                                                           .withName("virtualization-type")
-                                                                           .withValues("hvm"),
-                                                                   new Filter()
-                                                                           .withName("is-public")
-                                                                           .withValues("true"))
-                                                  ).getImages();
+        List<Image> hvmImages = ec2.describeImages(DescribeImagesRequest.builder()
+                                                                        .filters(Filter.builder()
+                                                                                       .name("virtualization-type")
+                                                                                       .values("hvm").build(),
+                                                                                 Filter.builder()
+                                                                                       .name("is-public")
+                                                                                       .values("true").build()).build()
+                                                  ).images();
 
         Assert.assertTrue("Cannot find a public HVM AMI.", hvmImages.size() > 0);
 
-        return hvmImages.get(0).getImageId();
+        return hvmImages.get(0).imageId();
     }
 
     /**
@@ -97,12 +96,10 @@ public class EC2ClusterComputingIntegrationTest extends EC2IntegrationTestBase {
      */
     @Test
     public void testDescribeHvmImage() {
-        List<Image> images = ec2.describeImages(new DescribeImagesRequest()
-                                                        .withImageIds(HVM_AMI_ID)
-                                               ).getImages();
+        List<Image> images = ec2.describeImages(DescribeImagesRequest.builder().imageIds(HVM_AMI_ID).build()).images();
         assertEquals(1, images.size());
         assertEquals(VirtualizationType.Hvm.toString(),
-                     images.get(0).getVirtualizationType());
+                     images.get(0).virtualizationType());
     }
 
     /**
@@ -113,50 +110,51 @@ public class EC2ClusterComputingIntegrationTest extends EC2IntegrationTestBase {
     public void testLaunchClusterInstanceFromHvmImage() throws Exception {
 
         // Create a placement group to test with
-        ec2.createPlacementGroup(new CreatePlacementGroupRequest()
-                                         .withGroupName(PLACEMENT_GROUP_NAME)
-                                         .withStrategy(PlacementStrategy.Cluster));
+        ec2.createPlacementGroup(CreatePlacementGroupRequest.builder()
+                                                            .groupName(PLACEMENT_GROUP_NAME)
+                                                            .strategy(PlacementStrategy.Cluster).build());
 
         Thread.sleep(1000 * 5);
 
         // Describe placement groups
         List<PlacementGroup> placementGroups =
-                ec2.describePlacementGroups(new DescribePlacementGroupsRequest()
-                                                    .withGroupNames(PLACEMENT_GROUP_NAME)
-                                           ).getPlacementGroups();
+                ec2.describePlacementGroups(DescribePlacementGroupsRequest.builder()
+                                                                          .groupNames(PLACEMENT_GROUP_NAME).build())
+                   .placementGroups();
         assertEquals(1, placementGroups.size());
 
         PlacementGroup pg = placementGroups.get(0);
-        assertEquals(PLACEMENT_GROUP_NAME, pg.getGroupName());
-        assertNotNull(pg.getState());
+        assertEquals(PLACEMENT_GROUP_NAME, pg.groupName());
+        assertNotNull(pg.state());
         assertEquals(PlacementStrategy.Cluster.toString(),
-                     pg.getStrategy());
+                     pg.strategy());
 
 
         // Describe placement groups with a filter
-        placementGroups = ec2.describePlacementGroups(new DescribePlacementGroupsRequest()
-                                                              .withFilters(new Filter()
-                                                                                   .withName("group-name")
-                                                                                   .withValues(PLACEMENT_GROUP_NAME)
-                                                                          )
-                                                     ).getPlacementGroups();
+        placementGroups = ec2.describePlacementGroups(DescribePlacementGroupsRequest.builder()
+                                                                                    .filters(Filter.builder()
+                                                                                                   .name("group-name")
+                                                                                                   .values(PLACEMENT_GROUP_NAME)
+                                                                                                   .build()).build()
+                                                     ).placementGroups();
         assertEquals(1, placementGroups.size());
 
         pg = placementGroups.get(0);
-        assertEquals(PLACEMENT_GROUP_NAME, pg.getGroupName());
-        assertNotNull(pg.getState());
+        assertEquals(PLACEMENT_GROUP_NAME, pg.groupName());
+        assertNotNull(pg.state());
         assertEquals(PlacementStrategy.Cluster.toString(),
-                     pg.getStrategy());
+                     pg.strategy());
 
 
         // Launch an instance into our new placement group
-        createdInstanceId = ec2.runInstances(new RunInstancesRequest()
-                                                     .withImageId(HVM_AMI_ID)
-                                                     .withMinCount(1)
-                                                     .withMaxCount(1)
-                                                     .withInstanceType(InstanceType.C42xlarge.toString())
-                                                     .withPlacement(new Placement().withGroupName(PLACEMENT_GROUP_NAME))
-                                            ).getReservation().getInstances().get(0).getInstanceId();
+        createdInstanceId = ec2.runInstances(RunInstancesRequest.builder()
+                                                                .imageId(HVM_AMI_ID)
+                                                                .minCount(1)
+                                                                .maxCount(1)
+                                                                .instanceType(InstanceType.C42xlarge.toString())
+                                                                .placement(Placement.builder().groupName(PLACEMENT_GROUP_NAME)
+                                                                                    .build()).build()
+                                            ).reservation().instances().get(0).instanceId();
 
         waitForInstanceToTransitionToState(
                 createdInstanceId, InstanceStateName.Running);
@@ -164,8 +162,8 @@ public class EC2ClusterComputingIntegrationTest extends EC2IntegrationTestBase {
         // Check its virtualizationType
         Instance instance = describeInstance(createdInstanceId);
         assertEquals(VirtualizationType.Hvm.toString(),
-                     instance.getVirtualizationType());
+                     instance.virtualizationType());
         assertEquals(PLACEMENT_GROUP_NAME,
-                     instance.getPlacement().getGroupName());
+                     instance.placement().groupName());
     }
 }

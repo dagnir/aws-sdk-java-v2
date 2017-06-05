@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.applicationdiscovery;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.applicationdiscovery.model.ConfigurationItemType;
 import software.amazon.awssdk.services.applicationdiscovery.model.ListConfigurationsRequest;
 import software.amazon.awssdk.services.applicationdiscovery.model.ListConfigurationsResult;
@@ -31,16 +31,16 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     @BeforeClass
     public static void setUp() {
         discoveryService = ApplicationDiscoveryClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
+                .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
                 .build();
     }
 
     @Test
     public void testListOperation() {
         ListConfigurationsResult listResult = discoveryService.listConfigurations(
-                new ListConfigurationsRequest().withConfigurationType(ConfigurationItemType.PROCESS));
+                ListConfigurationsRequest.builder().configurationType(ConfigurationItemType.PROCESS).build());
         Assert.assertNotNull(listResult);
-        Assert.assertNotNull(listResult.getConfigurations());
+        Assert.assertNotNull(listResult.configurations());
     }
 
 }

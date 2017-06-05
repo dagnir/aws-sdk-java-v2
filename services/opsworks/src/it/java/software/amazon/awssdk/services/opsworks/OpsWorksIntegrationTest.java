@@ -101,7 +101,8 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     private final String STACK_CONFIG_MANAGER_NAME = "Chef";
     private final String STACK_CONFIG_MANAGER_VERSION = "11.4";
     private final String IAM_ROLE = "arn:aws:iam::599169622985:role/aws-opsworks-service-role";
-    private final String DEFAULT_IAM_INSTANCE_PROFILE = "arn:aws:iam::599169622985:instance-profile/aws-opsworks-ec2-role.1381193218933";
+    private final String DEFAULT_IAM_INSTANCE_PROFILE =
+            "arn:aws:iam::599169622985:instance-profile/aws-opsworks-ec2-role.1381193218933";
     private final String SSH_PUBLIC_KEY = "public_key";
     private final String INSTANCE_TYPE = "m1.medium";
     private final String USER_NAME = "user1";
@@ -129,13 +130,13 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void teardown() throws FileNotFoundException, IOException, InterruptedException {
         try {
-            opsWorks.deleteStack(new DeleteStackRequest().withStackId(stackId));
+            opsWorks.deleteStack(DeleteStackRequest.builder().stackId(stackId).build());
         } catch (AmazonServiceException e) {
             // Ignored or expected.
         }
 
         try {
-            elb.deleteLoadBalancer(new DeleteLoadBalancerRequest().withLoadBalancerName(loadBalancerName));
+            elb.deleteLoadBalancer(DeleteLoadBalancerRequest.builder().loadBalancerName(loadBalancerName).build());
         } catch (Exception e) {
             // Ignored or expected.
         }
@@ -145,165 +146,170 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     public void testServiceOperations() throws InterruptedException {
         // Create Stack
         CreateStackResult createStackResult = opsWorks
-                .createStack(new CreateStackRequest()
-                                     .withName(STACK_NAME)
-                                     .withRegion(STACK_REGION)
-                                     .withDefaultInstanceProfileArn(
-                                             DEFAULT_IAM_INSTANCE_PROFILE)
-                                     .withServiceRoleArn(IAM_ROLE)
-                                     .withConfigurationManager(
-                                             new StackConfigurationManager().withName(
-                                                     STACK_CONFIG_MANAGER_NAME).withVersion(
-                                                     STACK_CONFIG_MANAGER_VERSION)));
-        stackId = createStackResult.getStackId();
+                .createStack(CreateStackRequest.builder()
+                                               .name(STACK_NAME)
+                                               .region(STACK_REGION)
+                                               .defaultInstanceProfileArn(
+                                                       DEFAULT_IAM_INSTANCE_PROFILE)
+                                               .serviceRoleArn(IAM_ROLE)
+                                               .configurationManager(
+                                                       StackConfigurationManager.builder().name(
+                                                               STACK_CONFIG_MANAGER_NAME).version(
+                                                               STACK_CONFIG_MANAGER_VERSION).build()).build());
+        stackId = createStackResult.stackId();
         assertNotNull(stackId);
 
-        DescribeStacksResult describeStacksResult = opsWorks.describeStacks(new DescribeStacksRequest().withStackIds(stackId));
-        assertEquals(describeStacksResult.getStacks().size(), 1);
-        assertEquals(describeStacksResult.getStacks().get(0).getName(), STACK_NAME);
-        assertEquals(describeStacksResult.getStacks().get(0).getStackId(), stackId);
-        assertEquals(describeStacksResult.getStacks().get(0).getRegion(), STACK_REGION);
-        assertEquals(describeStacksResult.getStacks().get(0).getServiceRoleArn(), IAM_ROLE);
-        assertEquals(describeStacksResult.getStacks().get(0).getConfigurationManager().getName(), STACK_CONFIG_MANAGER_NAME);
-        assertEquals(describeStacksResult.getStacks().get(0).getConfigurationManager().getVersion(), STACK_CONFIG_MANAGER_VERSION);
+        DescribeStacksResult describeStacksResult =
+                opsWorks.describeStacks(DescribeStacksRequest.builder().stackIds(stackId).build());
+        assertEquals(describeStacksResult.stacks().size(), 1);
+        assertEquals(describeStacksResult.stacks().get(0).name(), STACK_NAME);
+        assertEquals(describeStacksResult.stacks().get(0).stackId(), stackId);
+        assertEquals(describeStacksResult.stacks().get(0).region(), STACK_REGION);
+        assertEquals(describeStacksResult.stacks().get(0).serviceRoleArn(), IAM_ROLE);
+        assertEquals(describeStacksResult.stacks().get(0).configurationManager().name(), STACK_CONFIG_MANAGER_NAME);
+        assertEquals(describeStacksResult.stacks().get(0).configurationManager().version(), STACK_CONFIG_MANAGER_VERSION);
 
         // Update the stack
         Map<String, String> attributes = new HashMap<String, String>();
         attributes.put(STACK_ATTRIBUTE_KEY, STACK_ATTRIBUTE_VALUE);
-        opsWorks.updateStack(new UpdateStackRequest().withStackId(stackId).withAttributes(attributes).withServiceRoleArn(IAM_ROLE));
+        opsWorks.updateStack(
+                UpdateStackRequest.builder().stackId(stackId).attributes(attributes).serviceRoleArn(IAM_ROLE).build());
 
         // Describe the updated stack
-        describeStacksResult = opsWorks.describeStacks(new DescribeStacksRequest().withStackIds(stackId));
-        assertEquals(STACK_ATTRIBUTE_VALUE, describeStacksResult.getStacks().get(0).getAttributes().get(STACK_ATTRIBUTE_KEY));
+        describeStacksResult = opsWorks.describeStacks(DescribeStacksRequest.builder().stackIds(stackId).build());
+        assertEquals(STACK_ATTRIBUTE_VALUE, describeStacksResult.stacks().get(0).attributes().get(STACK_ATTRIBUTE_KEY));
 
         // List all the stacks
-        opsWorks.describeStacks(new DescribeStacksRequest());
-        assertTrue(describeStacksResult.getStacks().size() > 0);
+        opsWorks.describeStacks(DescribeStacksRequest.builder().build());
+        assertTrue(describeStacksResult.stacks().size() > 0);
 
 
         // Register a EBS volume with the stack
         RegisterVolumeResult registerVolumeResult = opsWorks
-                .registerVolume(new RegisterVolumeRequest()
-                                        .withStackId(stackId).withEc2VolumeId(EBS_VOLUME_ID));
-        registeredVolumeId = registerVolumeResult.getVolumeId();
+                .registerVolume(RegisterVolumeRequest.builder()
+                                                     .stackId(stackId).ec2VolumeId(EBS_VOLUME_ID).build());
+        registeredVolumeId = registerVolumeResult.volumeId();
 
         // Update the volume
-        opsWorks.updateVolume(new UpdateVolumeRequest().withVolumeId(
-                registeredVolumeId).withMountPoint("/vol/mountpoint"));
+        opsWorks.updateVolume(UpdateVolumeRequest.builder().volumeId(
+                registeredVolumeId).mountPoint("/vol/mountpoint").build());
 
 
         // Register an EIP with the stack
         RegisterElasticIpResult registerElasticIpResult = opsWorks
-                .registerElasticIp(new RegisterElasticIpRequest().withStackId(
-                        stackId).withElasticIp(ELASTIC_IP_ADDRESS));
-        assertEquals(ELASTIC_IP_ADDRESS, registerElasticIpResult.getElasticIp());
+                .registerElasticIp(RegisterElasticIpRequest.builder().stackId(
+                        stackId).elasticIp(ELASTIC_IP_ADDRESS).build());
+        assertEquals(ELASTIC_IP_ADDRESS, registerElasticIpResult.elasticIp());
 
         // Update the EIP and add a new name for it.
-        opsWorks.updateElasticIp(new UpdateElasticIpRequest().withElasticIp(
-                ELASTIC_IP_ADDRESS).withName("test-eip"));
+        opsWorks.updateElasticIp(UpdateElasticIpRequest.builder().elasticIp(
+                ELASTIC_IP_ADDRESS).name("test-eip").build());
 
 
         // Create the layer
         CreateLayerResult createLayerResult = opsWorks
-                .createLayer(new CreateLayerRequest().withStackId(stackId)
-                                                     .withType(LAYER_TYPE).withName(LAYER_NAME)
-                                                     .withInstallUpdatesOnBoot(false));
-        layerId = createLayerResult.getLayerId();
+                .createLayer(CreateLayerRequest.builder().stackId(stackId)
+                                               .type(LAYER_TYPE).name(LAYER_NAME)
+                                               .installUpdatesOnBoot(false).build());
+        layerId = createLayerResult.layerId();
         assertNotNull(layerId);
 
         // Describe the layer
-        DescribeLayersResult describeLayersResult = opsWorks.describeLayers(new DescribeLayersRequest().withLayerIds(layerId));
-        assertEquals(1, describeLayersResult.getLayers().size());
-        assertEquals(LAYER_NAME, describeLayersResult.getLayers().get(0).getName());
-        assertEquals(LAYER_TYPE, describeLayersResult.getLayers().get(0).getType());
-        assertEquals(LAYER_SHORT_NAME, describeLayersResult.getLayers().get(0).getShortname());
+        DescribeLayersResult describeLayersResult =
+                opsWorks.describeLayers(DescribeLayersRequest.builder().layerIds(layerId).build());
+        assertEquals(1, describeLayersResult.layers().size());
+        assertEquals(LAYER_NAME, describeLayersResult.layers().get(0).name());
+        assertEquals(LAYER_TYPE, describeLayersResult.layers().get(0).type());
+        assertEquals(LAYER_SHORT_NAME, describeLayersResult.layers().get(0).shortname());
 
         // Update the layer
         attributes.clear();
         attributes.put(LAYER_ATTRIBUTE_KEY, LAYER_ATTRIBUTE_VALUE);
-        opsWorks.updateLayer(new UpdateLayerRequest().withName(NEW_LAYER_NAME).withLayerId(layerId).withAttributes(attributes));
+        opsWorks.updateLayer(UpdateLayerRequest.builder().name(NEW_LAYER_NAME).layerId(layerId).attributes(attributes).build());
 
-        describeLayersResult = opsWorks.describeLayers(new DescribeLayersRequest().withLayerIds(layerId));
-        assertEquals(1, describeLayersResult.getLayers().size());
-        assertEquals(NEW_LAYER_NAME, describeLayersResult.getLayers().get(0).getName());
-        assertEquals(LAYER_ATTRIBUTE_VALUE, describeLayersResult.getLayers().get(0).getAttributes().get(LAYER_ATTRIBUTE_KEY));
+        describeLayersResult = opsWorks.describeLayers(DescribeLayersRequest.builder().layerIds(layerId).build());
+        assertEquals(1, describeLayersResult.layers().size());
+        assertEquals(NEW_LAYER_NAME, describeLayersResult.layers().get(0).name());
+        assertEquals(LAYER_ATTRIBUTE_VALUE, describeLayersResult.layers().get(0).attributes().get(LAYER_ATTRIBUTE_KEY));
 
 
         // Attach the ELB
-        opsWorks.attachElasticLoadBalancer(new AttachElasticLoadBalancerRequest()
-                                                   .withLayerId(layerId)
-                                                   .withElasticLoadBalancerName(loadBalancerName));
+        opsWorks.attachElasticLoadBalancer(AttachElasticLoadBalancerRequest.builder()
+                                                                           .layerId(layerId)
+                                                                           .elasticLoadBalancerName(loadBalancerName).build());
 
         // Describe the ELB
         DescribeElasticLoadBalancersResult describeElasticLoadBalancersResult = opsWorks
-                .describeElasticLoadBalancers(new DescribeElasticLoadBalancersRequest()
-                                                      .withLayerIds(layerId));
-        assertEquals(1, describeElasticLoadBalancersResult.getElasticLoadBalancers().size());
+                .describeElasticLoadBalancers(DescribeElasticLoadBalancersRequest.builder()
+                                                                                 .layerIds(layerId).build());
+        assertEquals(1, describeElasticLoadBalancersResult.elasticLoadBalancers().size());
 
         // Detach the ELB
-        opsWorks.detachElasticLoadBalancer(new DetachElasticLoadBalancerRequest()
-                                                   .withLayerId(layerId)
-                                                   .withElasticLoadBalancerName(loadBalancerName));
+        opsWorks.detachElasticLoadBalancer(DetachElasticLoadBalancerRequest.builder()
+                                                                           .layerId(layerId)
+                                                                           .elasticLoadBalancerName(loadBalancerName).build());
 
         // Now the stack should have zero ELB attached to it.
         describeElasticLoadBalancersResult = opsWorks.describeElasticLoadBalancers(
-                new DescribeElasticLoadBalancersRequest()
-                        .withLayerIds(layerId));
-        assertEquals(0, describeElasticLoadBalancersResult.getElasticLoadBalancers().size());
+                DescribeElasticLoadBalancersRequest.builder()
+                                                   .layerIds(layerId).build());
+        assertEquals(0, describeElasticLoadBalancersResult.elasticLoadBalancers().size());
 
 
         // Create an instance
         CreateInstanceResult createInstacneResult = opsWorks
-                .createInstance(new CreateInstanceRequest()
-                                        .withStackId(stackId).withLayerIds(layerId)
-                                        .withInstanceType(INSTANCE_TYPE).withAmiId(AMI_ID)
-                                        .withOs("Custom").withInstallUpdatesOnBoot(false));
-        instanceId = createInstacneResult.getInstanceId();
+                .createInstance(CreateInstanceRequest.builder()
+                                                     .stackId(stackId).layerIds(layerId)
+                                                     .instanceType(INSTANCE_TYPE).amiId(AMI_ID)
+                                                     .os("Custom").installUpdatesOnBoot(false).build());
+        instanceId = createInstacneResult.instanceId();
         assertNotNull(instanceId);
 
         // Describe an instance
-        DescribeInstancesResult describeInstancesResult = opsWorks.describeInstances(new DescribeInstancesRequest().withInstanceIds(instanceId));
-        assertEquals(1, describeInstancesResult.getInstances().size());
-        assertEquals(1, describeInstancesResult.getInstances().get(0).getLayerIds().size());
-        assertEquals(instanceId, describeInstancesResult.getInstances().get(0).getInstanceId());
-        assertEquals(INSTANCE_TYPE, describeInstancesResult.getInstances().get(0).getInstanceType());
-        assertEquals(AMI_ID, describeInstancesResult.getInstances().get(0).getAmiId());
-        assertFalse(describeInstancesResult.getInstances().get(0).getInstallUpdatesOnBoot());
+        DescribeInstancesResult describeInstancesResult =
+                opsWorks.describeInstances(DescribeInstancesRequest.builder().instanceIds(instanceId).build());
+        assertEquals(1, describeInstancesResult.instances().size());
+        assertEquals(1, describeInstancesResult.instances().get(0).layerIds().size());
+        assertEquals(instanceId, describeInstancesResult.instances().get(0).instanceId());
+        assertEquals(INSTANCE_TYPE, describeInstancesResult.instances().get(0).instanceType());
+        assertEquals(AMI_ID, describeInstancesResult.instances().get(0).amiId());
+        assertFalse(describeInstancesResult.instances().get(0).installUpdatesOnBoot());
 
 
         // Assign the registered volume to this instance
-        opsWorks.assignVolume(new AssignVolumeRequest().withInstanceId(
-                instanceId).withVolumeId(registeredVolumeId));
+        opsWorks.assignVolume(AssignVolumeRequest.builder().instanceId(
+                instanceId).volumeId(registeredVolumeId).build());
 
         // Unassign the volume
-        opsWorks.unassignVolume(new UnassignVolumeRequest()
-                                        .withVolumeId(registeredVolumeId));
+        opsWorks.unassignVolume(UnassignVolumeRequest.builder()
+                                                     .volumeId(registeredVolumeId).build());
 
 
         // Associate the registered EIP with this instance
-        opsWorks.associateElasticIp(new AssociateElasticIpRequest()
-                                            .withElasticIp(ELASTIC_IP_ADDRESS).withInstanceId(instanceId));
+        opsWorks.associateElasticIp(AssociateElasticIpRequest.builder()
+                                                             .elasticIp(ELASTIC_IP_ADDRESS).instanceId(instanceId).build());
 
         // Disassociate the EIP
-        opsWorks.disassociateElasticIp(new DisassociateElasticIpRequest().withElasticIp(ELASTIC_IP_ADDRESS));
+        opsWorks.disassociateElasticIp(DisassociateElasticIpRequest.builder().elasticIp(ELASTIC_IP_ADDRESS).build());
 
 
         // Update instance
-        opsWorks.updateInstance(new UpdateInstanceRequest()
-                                        .withInstanceId(instanceId).withInstanceType(NEW_INSTANCE_TYPE)
-                                        .withLayerIds(layerId));
+        opsWorks.updateInstance(UpdateInstanceRequest.builder()
+                                                     .instanceId(instanceId).instanceType(NEW_INSTANCE_TYPE)
+                                                     .layerIds(layerId).build());
 
         // Check that the instance is really updated
-        describeInstancesResult = opsWorks.describeInstances(new DescribeInstancesRequest().withInstanceIds(instanceId));
-        assertEquals(NEW_INSTANCE_TYPE, describeInstancesResult.getInstances().get(0).getInstanceType());
+        describeInstancesResult = opsWorks.describeInstances(DescribeInstancesRequest.builder().instanceIds(instanceId).build());
+        assertEquals(NEW_INSTANCE_TYPE, describeInstancesResult.instances().get(0).instanceType());
 
 
         // Delete the instance
-        opsWorks.deleteInstance(new DeleteInstanceRequest().withInstanceId(instanceId));
+        opsWorks.deleteInstance(DeleteInstanceRequest.builder().instanceId(instanceId).build());
 
         // The instance should no longer exist
         try {
-            describeInstancesResult = opsWorks.describeInstances(new DescribeInstancesRequest().withInstanceIds(instanceId));
+            describeInstancesResult =
+                    opsWorks.describeInstances(DescribeInstancesRequest.builder().instanceIds(instanceId).build());
             fail();
         } catch (AmazonServiceException e) {
             assertNotNull(e.getMessage());
@@ -312,10 +318,10 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         }
 
         // Delete Layer
-        opsWorks.deleteLayer(new DeleteLayerRequest().withLayerId(layerId));
+        opsWorks.deleteLayer(DeleteLayerRequest.builder().layerId(layerId).build());
 
         try {
-            describeLayersResult = opsWorks.describeLayers(new DescribeLayersRequest().withLayerIds(layerId));
+            describeLayersResult = opsWorks.describeLayers(DescribeLayersRequest.builder().layerIds(layerId).build());
             fail();
         } catch (AmazonServiceException e) {
             assertNotNull(e.getMessage());
@@ -324,17 +330,17 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
         }
 
         // Deregister the volume
-        opsWorks.deregisterVolume(new DeregisterVolumeRequest().withVolumeId(registeredVolumeId));
+        opsWorks.deregisterVolume(DeregisterVolumeRequest.builder().volumeId(registeredVolumeId).build());
 
         // Deregister the EIP
-        opsWorks.deregisterElasticIp(new DeregisterElasticIpRequest().withElasticIp(ELASTIC_IP_ADDRESS));
+        opsWorks.deregisterElasticIp(DeregisterElasticIpRequest.builder().elasticIp(ELASTIC_IP_ADDRESS).build());
 
         // Delete the Stack
-        opsWorks.deleteStack(new DeleteStackRequest().withStackId(stackId));
+        opsWorks.deleteStack(DeleteStackRequest.builder().stackId(stackId).build());
 
         // get an unexisting stack
         try {
-            describeStacksResult = opsWorks.describeStacks(new DescribeStacksRequest().withStackIds(stackId));
+            describeStacksResult = opsWorks.describeStacks(DescribeStacksRequest.builder().stackIds(stackId).build());
             fail();
         } catch (AmazonServiceException e) {
             assertNotNull(e.getMessage());
@@ -348,43 +354,45 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     public void testUserProfile() {
         // Clear the existing profile
         try {
-            opsWorks.deleteUserProfile(new DeleteUserProfileRequest().withIamUserArn(IAM_ROLE));
+            opsWorks.deleteUserProfile(DeleteUserProfileRequest.builder().iamUserArn(IAM_ROLE).build());
         } catch (AmazonServiceException ase) {
             // Ignored or expected.
         }
 
         // Create user profile.
         CreateUserProfileResult createUserProfileResult = opsWorks
-                .createUserProfile(new CreateUserProfileRequest()
-                                           .withIamUserArn(IAM_ROLE).withSshUsername(USER_NAME).withAllowSelfManagement(true));
-        assertEquals(IAM_ROLE, createUserProfileResult.getIamUserArn());
+                .createUserProfile(CreateUserProfileRequest.builder()
+                                                           .iamUserArn(IAM_ROLE).sshUsername(USER_NAME).allowSelfManagement(true)
+                                                           .build());
+        assertEquals(IAM_ROLE, createUserProfileResult.iamUserArn());
 
         // Describe user profile
         DescribeUserProfilesResult describeUserProfileResult = opsWorks
-                .describeUserProfiles(new DescribeUserProfilesRequest()
-                                              .withIamUserArns(IAM_ROLE));
-        assertEquals(1, describeUserProfileResult.getUserProfiles().size());
-        assertEquals(IAM_ROLE, describeUserProfileResult.getUserProfiles().get(0).getIamUserArn());
-        assertEquals(USER_NAME, describeUserProfileResult.getUserProfiles().get(0).getSshUsername());
-        assertEquals(true, describeUserProfileResult.getUserProfiles().get(0).getAllowSelfManagement());
+                .describeUserProfiles(DescribeUserProfilesRequest.builder()
+                                                                 .iamUserArns(IAM_ROLE).build());
+        assertEquals(1, describeUserProfileResult.userProfiles().size());
+        assertEquals(IAM_ROLE, describeUserProfileResult.userProfiles().get(0).iamUserArn());
+        assertEquals(USER_NAME, describeUserProfileResult.userProfiles().get(0).sshUsername());
+        assertEquals(true, describeUserProfileResult.userProfiles().get(0).allowSelfManagement());
 
         // Update user profile
-        opsWorks.updateUserProfile(new UpdateUserProfileRequest()
-                                           .withIamUserArn(IAM_ROLE).withSshPublicKey(SSH_PUBLIC_KEY));
+        opsWorks.updateUserProfile(UpdateUserProfileRequest.builder()
+                                                           .iamUserArn(IAM_ROLE).sshPublicKey(SSH_PUBLIC_KEY).build());
 
-        describeUserProfileResult = opsWorks.describeUserProfiles(new DescribeUserProfilesRequest().withIamUserArns(IAM_ROLE));
-        assertEquals(1, describeUserProfileResult.getUserProfiles().size());
-        assertEquals(IAM_ROLE, describeUserProfileResult.getUserProfiles().get(0).getIamUserArn());
-        assertEquals(SSH_PUBLIC_KEY, describeUserProfileResult.getUserProfiles().get(0).getSshPublicKey());
+        describeUserProfileResult =
+                opsWorks.describeUserProfiles(DescribeUserProfilesRequest.builder().iamUserArns(IAM_ROLE).build());
+        assertEquals(1, describeUserProfileResult.userProfiles().size());
+        assertEquals(IAM_ROLE, describeUserProfileResult.userProfiles().get(0).iamUserArn());
+        assertEquals(SSH_PUBLIC_KEY, describeUserProfileResult.userProfiles().get(0).sshPublicKey());
 
-        opsWorks.updateMyUserProfile(new UpdateMyUserProfileRequest().withSshPublicKey(SSH_PUBLIC_KEY + "new"));
+        opsWorks.updateMyUserProfile(UpdateMyUserProfileRequest.builder().sshPublicKey(SSH_PUBLIC_KEY + "new").build());
 
         // Delete user profile
-        opsWorks.deleteUserProfile(new DeleteUserProfileRequest().withIamUserArn(IAM_ROLE));
+        opsWorks.deleteUserProfile(DeleteUserProfileRequest.builder().iamUserArn(IAM_ROLE).build());
 
         // The user profile should no longer exist
         try {
-            opsWorks.describeUserProfiles(new DescribeUserProfilesRequest().withIamUserArns(IAM_ROLE));
+            opsWorks.describeUserProfiles(DescribeUserProfilesRequest.builder().iamUserArns(IAM_ROLE).build());
         } catch (AmazonServiceException e) {
             assertNotNull(e.getMessage());
             assertNotNull(e.getServiceName());
@@ -396,17 +404,17 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     public void testStackSummary() {
         // Create Stack
         CreateStackResult createStackResult = opsWorks
-                .createStack(new CreateStackRequest()
-                                     .withName(STACK_NAME)
-                                     .withRegion(STACK_REGION)
-                                     .withDefaultInstanceProfileArn(
-                                             DEFAULT_IAM_INSTANCE_PROFILE)
-                                     .withServiceRoleArn(IAM_ROLE)
-                                     .withConfigurationManager(
-                                             new StackConfigurationManager().withName(
-                                                     STACK_CONFIG_MANAGER_NAME).withVersion(
-                                                     STACK_CONFIG_MANAGER_VERSION)));
-        stackId = createStackResult.getStackId();
+                .createStack(CreateStackRequest.builder()
+                                               .name(STACK_NAME)
+                                               .region(STACK_REGION)
+                                               .defaultInstanceProfileArn(
+                                                       DEFAULT_IAM_INSTANCE_PROFILE)
+                                               .serviceRoleArn(IAM_ROLE)
+                                               .configurationManager(
+                                                       StackConfigurationManager.builder().name(
+                                                               STACK_CONFIG_MANAGER_NAME).version(
+                                                               STACK_CONFIG_MANAGER_VERSION).build()).build());
+        stackId = createStackResult.stackId();
         assertNotNull(stackId);
     }
 
@@ -418,44 +426,44 @@ public class OpsWorksIntegrationTest extends IntegrationTestBase {
     public void testAppDeployment() {
         // Create an App
         CreateAppResult createAppResult = opsWorks
-                .createApp(new CreateAppRequest().withStackId(APP_DEPLOYMENT_TEST_STACK_ID)
-                                                 .withName(APP_NAME).withType(AppType.Php)
-                                                 .withShortname(APP_SHORT_NAME));
-        appId = createAppResult.getAppId();
+                .createApp(CreateAppRequest.builder().stackId(APP_DEPLOYMENT_TEST_STACK_ID)
+                                           .name(APP_NAME).type(AppType.Php)
+                                           .shortname(APP_SHORT_NAME).build());
+        appId = createAppResult.appId();
         assertNotNull(appId);
 
-        DescribeAppsResult describeAppsResult = opsWorks.describeApps(new DescribeAppsRequest().withAppIds(appId));
-        assertEquals(1, describeAppsResult.getApps().size());
-        assertEquals(appId, describeAppsResult.getApps().get(0).getAppId());
-        assertEquals(APP_NAME, describeAppsResult.getApps().get(0).getName());
-        assertEquals(APP_SHORT_NAME, describeAppsResult.getApps().get(0).getShortname());
-        assertEquals("Php".toLowerCase(), describeAppsResult.getApps().get(0).getType().toLowerCase());
+        DescribeAppsResult describeAppsResult = opsWorks.describeApps(DescribeAppsRequest.builder().appIds(appId).build());
+        assertEquals(1, describeAppsResult.apps().size());
+        assertEquals(appId, describeAppsResult.apps().get(0).appId());
+        assertEquals(APP_NAME, describeAppsResult.apps().get(0).name());
+        assertEquals(APP_SHORT_NAME, describeAppsResult.apps().get(0).shortname());
+        assertEquals("Php".toLowerCase(), describeAppsResult.apps().get(0).type().toLowerCase());
 
         // Create a deployment
-        DeploymentCommand command = new DeploymentCommand();
-        command.setName(DeploymentCommandName.Deploy);
+        DeploymentCommand command = DeploymentCommand.builder().name(DeploymentCommandName.Deploy).build();
         CreateDeploymentResult createDeploymentResult = opsWorks
-                .createDeployment(new CreateDeploymentRequest()
-                                          .withAppId(appId).withStackId(APP_DEPLOYMENT_TEST_STACK_ID)
-                                          .withInstanceIds(APP_DEPLOYMENT_TEST_RUNNING_INSTANCE_ID).withCommand(command));
-        deploymentId = createDeploymentResult.getDeploymentId();
+                .createDeployment(CreateDeploymentRequest.builder()
+                                                         .appId(appId).stackId(APP_DEPLOYMENT_TEST_STACK_ID)
+                                                         .instanceIds(APP_DEPLOYMENT_TEST_RUNNING_INSTANCE_ID).command(command)
+                                                         .build());
+        deploymentId = createDeploymentResult.deploymentId();
         assertNotNull(deploymentId);
 
         // Describe a deployment
         DescribeDeploymentsResult describeDeploymentsResults = opsWorks
-                .describeDeployments(new DescribeDeploymentsRequest()
-                                             .withDeploymentIds(deploymentId));
-        assertEquals(1, describeDeploymentsResults.getDeployments().size());
-        assertEquals(APP_DEPLOYMENT_TEST_STACK_ID, describeDeploymentsResults.getDeployments().get(0).getStackId());
-        assertEquals(appId, describeDeploymentsResults.getDeployments().get(0).getAppId());
-        assertEquals(deploymentId, describeDeploymentsResults.getDeployments().get(0).getDeploymentId());
+                .describeDeployments(DescribeDeploymentsRequest.builder()
+                                                               .deploymentIds(deploymentId).build());
+        assertEquals(1, describeDeploymentsResults.deployments().size());
+        assertEquals(APP_DEPLOYMENT_TEST_STACK_ID, describeDeploymentsResults.deployments().get(0).stackId());
+        assertEquals(appId, describeDeploymentsResults.deployments().get(0).appId());
+        assertEquals(deploymentId, describeDeploymentsResults.deployments().get(0).deploymentId());
 
         // Delete the app
-        opsWorks.deleteApp(new DeleteAppRequest().withAppId(appId));
+        opsWorks.deleteApp(DeleteAppRequest.builder().appId(appId).build());
 
         // The app should no longer exist.
         try {
-            describeAppsResult = opsWorks.describeApps(new DescribeAppsRequest().withAppIds(appId));
+            describeAppsResult = opsWorks.describeApps(DescribeAppsRequest.builder().appIds(appId).build());
             fail();
         } catch (AmazonServiceException e) {
             assertNotNull(e.getMessage());

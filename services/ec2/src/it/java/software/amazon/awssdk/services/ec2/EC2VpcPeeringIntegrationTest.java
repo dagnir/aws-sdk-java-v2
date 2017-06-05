@@ -54,101 +54,101 @@ public class EC2VpcPeeringIntegrationTest extends EC2VPCIntegrationTestBase {
         deleteAllPeeringConnections();
 
         CreateVpcResult createRequesterVpcResult =
-                ec2.createVpc(new CreateVpcRequest().withCidrBlock(REQUESTER_CIDR_BLOCK));
-        requesterVpc = createRequesterVpcResult.getVpc();
+                ec2.createVpc(CreateVpcRequest.builder().cidrBlock(REQUESTER_CIDR_BLOCK).build());
+        requesterVpc = createRequesterVpcResult.vpc();
 
         CreateVpcResult createPeerVpcResult =
-                ec2.createVpc(new CreateVpcRequest().withCidrBlock(ACCEPTER_CIDR_BLOCK));
-        accepterVpc = createPeerVpcResult.getVpc();
+                ec2.createVpc(CreateVpcRequest.builder().cidrBlock(ACCEPTER_CIDR_BLOCK).build());
+        accepterVpc = createPeerVpcResult.vpc();
     }
 
     @AfterClass
     public static void tearDown() {
         ec2.deleteVpcPeeringConnection(
-                new DeleteVpcPeeringConnectionRequest()
-                        .withVpcPeeringConnectionId(peeringConnectionIdToBeAccepted));
+                DeleteVpcPeeringConnectionRequest.builder()
+                                                 .vpcPeeringConnectionId(peeringConnectionIdToBeAccepted).build());
 
-        ec2.deleteVpc(new DeleteVpcRequest(requesterVpc.getVpcId()));
-        ec2.deleteVpc(new DeleteVpcRequest(accepterVpc.getVpcId()));
+        ec2.deleteVpc(DeleteVpcRequest.builder().vpcId(requesterVpc.vpcId()).build());
+        ec2.deleteVpc(DeleteVpcRequest.builder().vpcId(accepterVpc.vpcId()).build());
     }
 
     @Test
     public void testVpcPeeringOperations() {
         // Filter the connections by requester vpc id
-        DescribeVpcPeeringConnectionsRequest describeConnectionsByRequesterId = new DescribeVpcPeeringConnectionsRequest()
-                .withFilters(new Filter("requester-vpc-info.vpc-id")
-                                     .withValues(requesterVpc.getVpcId()));
+        DescribeVpcPeeringConnectionsRequest.Builder describeConnectionsByRequesterId =
+                DescribeVpcPeeringConnectionsRequest.builder()
+                                                    .filters(Filter.builder().name("requester-vpc-info.vpc-id")
+                                                                   .values(requesterVpc.vpcId()).build());
         DescribeVpcPeeringConnectionsResult describeVpcPeeringResult = ec2
-                .describeVpcPeeringConnections(describeConnectionsByRequesterId);
-        assertTrue(describeVpcPeeringResult.getVpcPeeringConnections().isEmpty());
+                .describeVpcPeeringConnections(describeConnectionsByRequesterId.build());
+        assertTrue(describeVpcPeeringResult.vpcPeeringConnections().isEmpty());
 
         // Create a peering connection
         CreateVpcPeeringConnectionResult createVpcPeeringResult = ec2.createVpcPeeringConnection(
-                new CreateVpcPeeringConnectionRequest()
-                        .withVpcId(requesterVpc.getVpcId())
-                        .withPeerVpcId(accepterVpc.getVpcId()));
-        peeringConnectionIdToBeRejected = createVpcPeeringResult.getVpcPeeringConnection().getVpcPeeringConnectionId();
+                CreateVpcPeeringConnectionRequest.builder()
+                                                 .vpcId(requesterVpc.vpcId())
+                                                 .peerVpcId(accepterVpc.vpcId()).build());
+        peeringConnectionIdToBeRejected = createVpcPeeringResult.vpcPeeringConnection().vpcPeeringConnectionId();
 
         // The newly created connection should be in the "pending-acceptance" status
-        describeVpcPeeringResult = ec2.describeVpcPeeringConnections(describeConnectionsByRequesterId);
-        assertEquals(1, describeVpcPeeringResult.getVpcPeeringConnections().size());
-        VpcPeeringConnection createdConnection = describeVpcPeeringResult.getVpcPeeringConnections().get(0);
-        assertEquals("pending-acceptance", createdConnection.getStatus().getCode());
-        assertEquals(peeringConnectionIdToBeRejected, createdConnection.getVpcPeeringConnectionId());
-        assertEquals(requesterVpc.getVpcId(), createdConnection.getRequesterVpcInfo().getVpcId());
-        assertEquals(requesterVpc.getCidrBlock(), createdConnection.getRequesterVpcInfo().getCidrBlock());
-        assertEquals(accepterVpc.getVpcId(), createdConnection.getAccepterVpcInfo().getVpcId());
+        describeVpcPeeringResult = ec2.describeVpcPeeringConnections(describeConnectionsByRequesterId.build());
+        assertEquals(1, describeVpcPeeringResult.vpcPeeringConnections().size());
+        VpcPeeringConnection createdConnection = describeVpcPeeringResult.vpcPeeringConnections().get(0);
+        assertEquals("pending-acceptance", createdConnection.status().code());
+        assertEquals(peeringConnectionIdToBeRejected, createdConnection.vpcPeeringConnectionId());
+        assertEquals(requesterVpc.vpcId(), createdConnection.requesterVpcInfo().vpcId());
+        assertEquals(requesterVpc.cidrBlock(), createdConnection.requesterVpcInfo().cidrBlock());
+        assertEquals(accepterVpc.vpcId(), createdConnection.accepterVpcInfo().vpcId());
 
         // Reject this connection
         RejectVpcPeeringConnectionResult rejectConnectionResult = ec2.rejectVpcPeeringConnection(
-                new RejectVpcPeeringConnectionRequest()
-                        .withVpcPeeringConnectionId(peeringConnectionIdToBeRejected));
-        assertTrue(rejectConnectionResult.getReturn());
+                RejectVpcPeeringConnectionRequest.builder()
+                                                 .vpcPeeringConnectionId(peeringConnectionIdToBeRejected).build());
+        assertTrue(rejectConnectionResult.returnValue());
 
         // Now the connection should be in "rejected" status
-        describeVpcPeeringResult = ec2.describeVpcPeeringConnections(describeConnectionsByRequesterId);
-        assertEquals(1, describeVpcPeeringResult.getVpcPeeringConnections().size());
-        VpcPeeringConnection rejectedConnection = describeVpcPeeringResult.getVpcPeeringConnections().get(0);
-        assertEquals("rejected", rejectedConnection.getStatus().getCode());
-        assertEquals(peeringConnectionIdToBeRejected, rejectedConnection.getVpcPeeringConnectionId());
-        assertEquals(requesterVpc.getVpcId(), rejectedConnection.getRequesterVpcInfo().getVpcId());
-        assertEquals(requesterVpc.getCidrBlock(), rejectedConnection.getRequesterVpcInfo().getCidrBlock());
-        assertEquals(accepterVpc.getVpcId(), rejectedConnection.getAccepterVpcInfo().getVpcId());
+        describeVpcPeeringResult = ec2.describeVpcPeeringConnections(describeConnectionsByRequesterId.build());
+        assertEquals(1, describeVpcPeeringResult.vpcPeeringConnections().size());
+        VpcPeeringConnection rejectedConnection = describeVpcPeeringResult.vpcPeeringConnections().get(0);
+        assertEquals("rejected", rejectedConnection.status().code());
+        assertEquals(peeringConnectionIdToBeRejected, rejectedConnection.vpcPeeringConnectionId());
+        assertEquals(requesterVpc.vpcId(), rejectedConnection.requesterVpcInfo().vpcId());
+        assertEquals(requesterVpc.cidrBlock(), rejectedConnection.requesterVpcInfo().cidrBlock());
+        assertEquals(accepterVpc.vpcId(), rejectedConnection.accepterVpcInfo().vpcId());
 
         // Create another peering connection
         createVpcPeeringResult = ec2.createVpcPeeringConnection(
-                new CreateVpcPeeringConnectionRequest()
-                        .withVpcId(requesterVpc.getVpcId())
-                        .withPeerVpcId(accepterVpc.getVpcId()));
-        peeringConnectionIdToBeAccepted = createVpcPeeringResult.getVpcPeeringConnection().getVpcPeeringConnectionId();
+                CreateVpcPeeringConnectionRequest.builder()
+                                                 .vpcId(requesterVpc.vpcId())
+                                                 .peerVpcId(accepterVpc.vpcId()).build());
+        peeringConnectionIdToBeAccepted = createVpcPeeringResult.vpcPeeringConnection().vpcPeeringConnectionId();
 
         // This time, we accept this connection
         AcceptVpcPeeringConnectionResult acceptConnectionResult = ec2.acceptVpcPeeringConnection(
-                new AcceptVpcPeeringConnectionRequest()
-                        .withVpcPeeringConnectionId(peeringConnectionIdToBeAccepted));
+                AcceptVpcPeeringConnectionRequest.builder()
+                                                 .vpcPeeringConnectionId(peeringConnectionIdToBeAccepted).build());
         assertEquals(peeringConnectionIdToBeAccepted,
-                     acceptConnectionResult.getVpcPeeringConnection().getVpcPeeringConnectionId());
+                     acceptConnectionResult.vpcPeeringConnection().vpcPeeringConnectionId());
 
         // Now there should be two connections visible, one "rejected" and one "accepted"
         // Let's filter out the "accepted" connection
-        describeVpcPeeringResult = ec2
-                .describeVpcPeeringConnections(describeConnectionsByRequesterId
-                                                       .withFilters(new Filter("status-code")
-                                                                            .withValues("active")));
-        assertEquals(1, describeVpcPeeringResult.getVpcPeeringConnections().size());
-        VpcPeeringConnection acceptedConnection = describeVpcPeeringResult.getVpcPeeringConnections().get(0);
-        assertEquals("active", acceptedConnection.getStatus().getCode());
-        assertEquals(peeringConnectionIdToBeAccepted, acceptedConnection.getVpcPeeringConnectionId());
-        assertEquals(requesterVpc.getVpcId(), acceptedConnection.getRequesterVpcInfo().getVpcId());
-        assertEquals(requesterVpc.getCidrBlock(), acceptedConnection.getRequesterVpcInfo().getCidrBlock());
-        assertEquals(accepterVpc.getVpcId(), acceptedConnection.getAccepterVpcInfo().getVpcId());
+        describeVpcPeeringResult = ec2.describeVpcPeeringConnections(
+                describeConnectionsByRequesterId.filters(Filter.builder().name("status-code").values("active").build())
+                                                .build());
+        assertEquals(1, describeVpcPeeringResult.vpcPeeringConnections().size());
+        VpcPeeringConnection acceptedConnection = describeVpcPeeringResult.vpcPeeringConnections().get(0);
+        assertEquals("active", acceptedConnection.status().code());
+        assertEquals(peeringConnectionIdToBeAccepted, acceptedConnection.vpcPeeringConnectionId());
+        assertEquals(requesterVpc.vpcId(), acceptedConnection.requesterVpcInfo().vpcId());
+        assertEquals(requesterVpc.cidrBlock(), acceptedConnection.requesterVpcInfo().cidrBlock());
+        assertEquals(accepterVpc.vpcId(), acceptedConnection.accepterVpcInfo().vpcId());
         // The accepter VPC's CIDR block should be returned once the connection is accpeted
-        assertEquals(accepterVpc.getCidrBlock(), acceptedConnection.getAccepterVpcInfo().getCidrBlock());
+        assertEquals(accepterVpc.cidrBlock(), acceptedConnection.accepterVpcInfo().cidrBlock());
 
         // We should not be able to reject an already-accepted connection
         try {
             ec2.rejectVpcPeeringConnection(
-                    new RejectVpcPeeringConnectionRequest().withVpcPeeringConnectionId(peeringConnectionIdToBeAccepted));
+                    RejectVpcPeeringConnectionRequest.builder().vpcPeeringConnectionId(peeringConnectionIdToBeAccepted).build());
             fail("We shouldn't be able to reject an already-acceptec connection.");
         } catch (AmazonServiceException expected) {
             // Ignored or expected.

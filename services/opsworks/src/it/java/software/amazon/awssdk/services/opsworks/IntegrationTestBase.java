@@ -41,15 +41,15 @@ public class IntegrationTestBase extends AwsIntegrationTestBase {
         elb = ElasticLoadBalancingClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
         loadBalancerName = "integ-test-" + System.currentTimeMillis();
-        Listener expectedListener = new Listener().withInstancePort(8080)
-                                                  .withLoadBalancerPort(80)
-                                                  .withProtocol(PROTOCOL);
+        Listener expectedListener = Listener.builder().instancePort(8080)
+                                            .loadBalancerPort(80)
+                                            .protocol(PROTOCOL).build();
 
         // Create a load balancer
         elb.createLoadBalancer(
-                new CreateLoadBalancerRequest()
-                        .withLoadBalancerName(loadBalancerName)
-                        .withAvailabilityZones(AVAILABILITY_ZONE)
-                        .withListeners(expectedListener));
+                CreateLoadBalancerRequest.builder()
+                                         .loadBalancerName(loadBalancerName)
+                                         .availabilityZones(AVAILABILITY_ZONE)
+                                         .listeners(expectedListener).build());
     }
 }
