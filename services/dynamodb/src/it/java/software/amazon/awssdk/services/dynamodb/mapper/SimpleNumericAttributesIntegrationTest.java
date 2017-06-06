@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBas
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 /**
@@ -235,7 +235,7 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
         DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
         mapper.save(obj);
 
-        GetItemResult item = dynamo.getItem(GetItemRequest.builder().tableName("aws-java-sdk-util").key(
+        GetItemResponse item = dynamo.getItem(GetItemRequest.builder().tableName("aws-java-sdk-util").key(
                 mapKey(KEY_NAME, AttributeValue.builder().s(obj.getKey()).build())).build());
 
         long start = System.currentTimeMillis();

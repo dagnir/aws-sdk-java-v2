@@ -38,7 +38,7 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 import software.amazon.awssdk.util.StringInputStream;
 import software.amazon.awssdk.utils.IoUtils;
@@ -138,7 +138,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
         };
         ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .overrideConfiguration(ClientOverrideConfiguration.builder().addRequestListener(requestHandler).build()).build();
-        ListTablesResult result = ddb.listTables(ListTablesRequest.builder().build());
+        ListTablesResponse result = ddb.listTables(ListTablesRequest.builder().build());
         // Assert that the unmarshalled response contains our injected table name and not the actual
         // list of tables
         assertThat(result.tableNames().toArray(new String[0]), arrayContaining(injectedTableName));

@@ -27,15 +27,15 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.cloudtrail.model.CreateTrailRequest;
-import software.amazon.awssdk.services.cloudtrail.model.CreateTrailResult;
+import software.amazon.awssdk.services.cloudtrail.model.CreateTrailResponse;
 import software.amazon.awssdk.services.cloudtrail.model.DeleteTrailRequest;
 import software.amazon.awssdk.services.cloudtrail.model.DescribeTrailsRequest;
-import software.amazon.awssdk.services.cloudtrail.model.DescribeTrailsResult;
+import software.amazon.awssdk.services.cloudtrail.model.DescribeTrailsResponse;
 import software.amazon.awssdk.services.cloudtrail.model.StartLoggingRequest;
 import software.amazon.awssdk.services.cloudtrail.model.StopLoggingRequest;
 import software.amazon.awssdk.services.cloudtrail.model.Trail;
 import software.amazon.awssdk.services.cloudtrail.model.UpdateTrailRequest;
-import software.amazon.awssdk.services.cloudtrail.model.UpdateTrailResult;
+import software.amazon.awssdk.services.cloudtrail.model.UpdateTrailResponse;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.model.ListVersionsRequest;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
@@ -108,7 +108,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         Thread.sleep(1000 * 5);
 
         // create trail
-        CreateTrailResult createTrailResult =
+        CreateTrailResponse createTrailResult =
                 cloudTrail.createTrail(CreateTrailRequest.builder()
                         .name(TRAIL_NAME)
                         .s3BucketName(BUCKET_NAME)
@@ -121,7 +121,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         assertTrue(createTrailResult.includeGlobalServiceEvents());
 
         // describe trail
-        DescribeTrailsResult describeTrails = cloudTrail.describeTrails(DescribeTrailsRequest.builder().build());
+        DescribeTrailsResponse describeTrails = cloudTrail.describeTrails(DescribeTrailsRequest.builder().build());
         assertTrue(describeTrails.trailList().size() > 0);
 
         describeTrails = cloudTrail
@@ -135,7 +135,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         assertTrue(trail.includeGlobalServiceEvents());
 
         // update the trail
-        UpdateTrailResult updateTrailResult =
+        UpdateTrailResponse updateTrailResult =
                 cloudTrail.updateTrail(UpdateTrailRequest.builder()
                         .name(TRAIL_NAME)
                         .s3BucketName(BUCKET_NAME)
@@ -156,7 +156,7 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         cloudTrail.deleteTrail(DeleteTrailRequest.builder().name(TRAIL_NAME).build());
 
         // try to get the deleted trail
-        DescribeTrailsResult describeTrailResult = cloudTrail
+        DescribeTrailsResponse describeTrailResult = cloudTrail
                 .describeTrails(DescribeTrailsRequest.builder().trailNameList(TRAIL_NAME).build());
         assertEquals(0, describeTrailResult.trailList().size());
     }

@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.document.QueryOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 class QueryCollection extends ItemCollection<QueryOutcome> {
     private final DynamoDBClient client;
@@ -51,7 +51,7 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
                     spec.maxPageSize()))
                 .build();
         spec.setRequest(request);
-        QueryResult result = client.query(request);
+        QueryResponse result = client.query(request);
         QueryOutcome outcome = new QueryOutcome(result);
         setLastLowLevelResult(outcome);
         return new QueryPage(client, spec, request, 0, outcome);
@@ -64,7 +64,7 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
 
     protected void setLastLowLevelResult(QueryOutcome lowLevelResult) {
         super.setLastLowLevelResult(lowLevelResult);
-        QueryResult result = lowLevelResult.getQueryResult();
+        QueryResponse result = lowLevelResult.getQueryResponse();
         accumulateStats(result.consumedCapacity(), result.count(),
                         result.scannedCount());
     }

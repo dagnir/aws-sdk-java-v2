@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.sts.auth;
 import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleWithSamlCredentialsProvider.Builder;
 import software.amazon.awssdk.services.sts.model.AssumeRoleWithSAMLRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleWithSAMLResult;
+import software.amazon.awssdk.services.sts.model.AssumeRoleWithSAMLResponse;
 import software.amazon.awssdk.services.sts.model.Credentials;
 
 /**
@@ -26,15 +26,15 @@ import software.amazon.awssdk.services.sts.model.Credentials;
  * Inherits tests from {@link StsCredentialsProviderTestBase}.
  */
 public class StsAssumeRoleWithSamlCredentialsProviderTest
-        extends StsCredentialsProviderTestBase<AssumeRoleWithSAMLRequest, AssumeRoleWithSAMLResult> {
+        extends StsCredentialsProviderTestBase<AssumeRoleWithSAMLRequest, AssumeRoleWithSAMLResponse> {
     @Override
     protected AssumeRoleWithSAMLRequest getRequest() {
         return AssumeRoleWithSAMLRequest.builder().build();
     }
 
     @Override
-    protected AssumeRoleWithSAMLResult getResponse(Credentials credentials) {
-        return AssumeRoleWithSAMLResult.builder().credentials(credentials).build();
+    protected AssumeRoleWithSAMLResponse getResponse(Credentials credentials) {
+        return AssumeRoleWithSAMLResponse.builder().credentials(credentials).build();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StsAssumeRoleWithSamlCredentialsProviderTest
     }
 
     @Override
-    protected AssumeRoleWithSAMLResult callClient(STSClient client, AssumeRoleWithSAMLRequest request) {
+    protected AssumeRoleWithSAMLResponse callClient(STSClient client, AssumeRoleWithSAMLRequest request) {
         return client.assumeRoleWithSAML(request);
     }
 }

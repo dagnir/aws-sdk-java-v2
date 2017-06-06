@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 /**
  * Implementation of the List interface that represents the results from a parallel scan
@@ -56,7 +56,7 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
         this.config = config;
 
         // Marshal the first batch of results in allResults
-        allResults.addAll(marshalParallelScanResultsIntoObjects(parallelScanTask.nextBatchOfScanResults()));
+        allResults.addAll(marshalParallelScanResponsesIntoObjects(parallelScanTask.nextBatchOfScanResponses()));
 
         // If the results should be eagerly loaded at once
         if (paginationLoadingStrategy == PaginationLoadingStrategy.EAGER_LOADING) {
@@ -71,12 +71,12 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
 
     @Override
     protected List<T> fetchNextPage() {
-        return marshalParallelScanResultsIntoObjects(parallelScanTask.nextBatchOfScanResults());
+        return marshalParallelScanResponsesIntoObjects(parallelScanTask.nextBatchOfScanResponses());
     }
 
-    private List<T> marshalParallelScanResultsIntoObjects(List<ScanResult> scanResults) {
+    private List<T> marshalParallelScanResponsesIntoObjects(List<ScanResponse> scanResults) {
         List<T> allItems = new LinkedList<T>();
-        for (ScanResult scanResult : scanResults) {
+        for (ScanResponse scanResult : scanResults) {
             if (null != scanResult) {
                 allItems.addAll(mapper.marshallIntoObjects(
                         mapper.toParameters(

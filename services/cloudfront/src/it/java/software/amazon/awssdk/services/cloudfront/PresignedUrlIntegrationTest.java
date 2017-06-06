@@ -37,15 +37,15 @@ import software.amazon.awssdk.services.cloudfront.model.CacheBehaviors;
 import software.amazon.awssdk.services.cloudfront.model.CloudFrontOriginAccessIdentityConfig;
 import software.amazon.awssdk.services.cloudfront.model.CookiePreference;
 import software.amazon.awssdk.services.cloudfront.model.CreateCloudFrontOriginAccessIdentityRequest;
-import software.amazon.awssdk.services.cloudfront.model.CreateCloudFrontOriginAccessIdentityResult;
+import software.amazon.awssdk.services.cloudfront.model.CreateCloudFrontOriginAccessIdentityResponse;
 import software.amazon.awssdk.services.cloudfront.model.CreateDistributionRequest;
-import software.amazon.awssdk.services.cloudfront.model.CreateDistributionResult;
+import software.amazon.awssdk.services.cloudfront.model.CreateDistributionResponse;
 import software.amazon.awssdk.services.cloudfront.model.DefaultCacheBehavior;
 import software.amazon.awssdk.services.cloudfront.model.DeleteDistributionRequest;
 import software.amazon.awssdk.services.cloudfront.model.DistributionConfig;
 import software.amazon.awssdk.services.cloudfront.model.ForwardedValues;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionConfigRequest;
-import software.amazon.awssdk.services.cloudfront.model.GetDistributionConfigResult;
+import software.amazon.awssdk.services.cloudfront.model.GetDistributionConfigResponse;
 import software.amazon.awssdk.services.cloudfront.model.ItemSelection;
 import software.amazon.awssdk.services.cloudfront.model.LoggingConfig;
 import software.amazon.awssdk.services.cloudfront.model.Origin;
@@ -54,7 +54,7 @@ import software.amazon.awssdk.services.cloudfront.model.PriceClass;
 import software.amazon.awssdk.services.cloudfront.model.S3OriginConfig;
 import software.amazon.awssdk.services.cloudfront.model.TrustedSigners;
 import software.amazon.awssdk.services.cloudfront.model.UpdateDistributionRequest;
-import software.amazon.awssdk.services.cloudfront.model.UpdateDistributionResult;
+import software.amazon.awssdk.services.cloudfront.model.UpdateDistributionResponse;
 import software.amazon.awssdk.services.cloudfront.util.SignerUtils;
 import software.amazon.awssdk.services.cloudfront.util.SignerUtils.Protocol;
 import software.amazon.awssdk.services.s3.model.AccessControlList;
@@ -90,7 +90,7 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
     public static void initial() throws Exception {
         IntegrationTestBase.setUp();
 
-        CreateCloudFrontOriginAccessIdentityResult result =
+        CreateCloudFrontOriginAccessIdentityResponse result =
                 cloudfront.createCloudFrontOriginAccessIdentity(
                         CreateCloudFrontOriginAccessIdentityRequest.builder().cloudFrontOriginAccessIdentityConfig(
                                 CloudFrontOriginAccessIdentityConfig.builder()
@@ -181,7 +181,7 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
                                                  .build())
                                     .build())
             .build();
-        CreateDistributionResult createDistributionResult = cloudfront.createDistribution(createDistributionRequest);
+        CreateDistributionResponse createDistributionResult = cloudfront.createDistribution(createDistributionRequest);
 
         domainName = createDistributionResult.distribution().domainName();
         distributionId = createDistributionResult.distribution().id();
@@ -194,10 +194,10 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
     public static void tearDown() throws Exception {
 
         // Disable the distribution
-        GetDistributionConfigResult distributionConfigResults =
+        GetDistributionConfigResponse distributionConfigResults =
                 cloudfront.getDistributionConfig(GetDistributionConfigRequest.builder().id(distributionId).build());
         DistributionConfig distributionConfig = distributionConfigResults.distributionConfig().toBuilder().enabled(false).build();
-        UpdateDistributionResult updateDistributionResult = cloudfront
+        UpdateDistributionResponse updateDistributionResult = cloudfront
                 .updateDistribution(UpdateDistributionRequest.builder().id(distributionId)
                                                              .ifMatch(distributionETag)
                                                              .distributionConfig(distributionConfig).build());

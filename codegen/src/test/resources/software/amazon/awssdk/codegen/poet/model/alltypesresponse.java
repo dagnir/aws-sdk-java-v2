@@ -16,8 +16,8 @@ import software.amazon.awssdk.runtime.StandardMemberCopier;
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> implements
-        ToCopyableBuilder<AllTypesResult.Builder, AllTypesResult> {
+public class AllTypesResponse extends AmazonWebServiceResult<ResponseMetadata> implements
+        ToCopyableBuilder<AllTypesResponse.Builder, AllTypesResponse> {
     private final String stringMember;
 
     private final Integer integerMember;
@@ -60,7 +60,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
 
     private final SubTypeOne polymorphicTypeWithoutSubTypes;
 
-    private AllTypesResult(BeanStyleBuilder builder) {
+    private AllTypesResponse(BeanStyleBuilder builder) {
         this.stringMember = builder.stringMember;
         this.integerMember = builder.integerMember;
         this.booleanMember = builder.booleanMember;
@@ -309,10 +309,10 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof AllTypesResult)) {
+        if (!(obj instanceof AllTypesResponse)) {
             return false;
         }
-        AllTypesResult other = (AllTypesResult) obj;
+        AllTypesResponse other = (AllTypesResponse) obj;
         if (other.stringMember() == null ^ this.stringMember() == null) {
             return false;
         }
@@ -516,7 +516,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         return sb.toString();
     }
 
-    public interface Builder extends CopyableBuilder<Builder, AllTypesResult> {
+    public interface Builder extends CopyableBuilder<Builder, AllTypesResponse> {
         /**
          *
          * @param stringMember
@@ -763,7 +763,7 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         private BeanStyleBuilder() {
         }
 
-        private BeanStyleBuilder(AllTypesResult model) {
+        private BeanStyleBuilder(AllTypesResponse model) {
             setStringMember(model.stringMember);
             setIntegerMember(model.integerMember);
             setBooleanMember(model.booleanMember);
@@ -1086,8 +1086,8 @@ public class AllTypesResult extends AmazonWebServiceResult<ResponseMetadata> imp
         }
 
         @Override
-        public AllTypesResult build() {
-            return new AllTypesResult(this);
+        public AllTypesResponse build() {
+            return new AllTypesResponse(this);
         }
     }
 }

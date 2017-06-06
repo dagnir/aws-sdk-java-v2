@@ -26,7 +26,7 @@ import org.junit.Test;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
@@ -46,7 +46,7 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @ReviewBeforeRelease("Response metadata has been broken by client/interface refactoring. Fix before release")
     public void responseMetadataInBaseResultIsSameAsMetadataCache() {
         ListTablesRequest request = ListTablesRequest.builder().build();
-        ListTablesResult result = dynamoDB.listTables(request);
+        ListTablesResponse result = dynamoDB.listTables(request);
         assertNotNull(result.getSdkHttpMetadata());
     }
 
@@ -54,7 +54,7 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @Ignore
     @ReviewBeforeRelease("Response metadata has been broken by client/interface refactoring. Fix before release")
     public void httpMetadataInBaseResultIsValid() {
-        ListTablesResult result = dynamoDB.listTables(ListTablesRequest.builder().build());
+        ListTablesResponse result = dynamoDB.listTables(ListTablesRequest.builder().build());
         assertEquals(200, result.getSdkHttpMetadata().getHttpStatusCode());
         assertThat(result.getSdkHttpMetadata().getHttpHeaders(), hasKey("x-amz-crc32"));
     }

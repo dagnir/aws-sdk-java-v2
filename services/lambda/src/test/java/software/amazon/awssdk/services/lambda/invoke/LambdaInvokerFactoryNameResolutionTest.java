@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeResult;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 /**
  * Tests the default function name resolution and the ability to customize it through
@@ -63,7 +63,7 @@ public class LambdaInvokerFactoryNameResolutionTest {
      * successful response
      */
     private void stubSucessfulInvokeResponse() {
-        InvokeResult result = InvokeResult.builder()
+        InvokeResponse result = InvokeResponse.builder()
                 .payload(ByteBuffer.wrap(new byte[] {}))
                 .statusCode(200).build();
         when(lambda.invoke(any(InvokeRequest.class))).thenReturn(CompletableFuture.completedFuture(result));

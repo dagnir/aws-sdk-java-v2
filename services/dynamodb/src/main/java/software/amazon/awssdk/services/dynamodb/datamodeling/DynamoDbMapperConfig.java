@@ -1171,7 +1171,7 @@ public class DynamoDbMapperConfig {
         @Override
         public long getDelayBeforeNextRetry(final BatchLoadContext batchLoadContext) {
             Map<String, KeysAndAttributes> requestedKeys = batchLoadContext.batchGetItemRequest().requestItems();
-            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResult()
+            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResponse()
                                                                              .unprocessedKeys();
 
             long delay = 0;
@@ -1188,7 +1188,7 @@ public class DynamoDbMapperConfig {
 
         @Override
         public boolean shouldRetry(BatchLoadContext batchLoadContext) {
-            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResult().unprocessedKeys();
+            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResponse().unprocessedKeys();
             return unprocessedKeys != null && unprocessedKeys.size() > 0 && batchLoadContext.getRetriesAttempted() < MAX_RETRIES;
         }
 

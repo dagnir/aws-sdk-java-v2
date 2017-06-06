@@ -29,15 +29,15 @@ import org.junit.Test;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iotdataplane.IoTDataPlaneClient;
 import software.amazon.awssdk.services.iotdataplane.model.DeleteThingShadowRequest;
-import software.amazon.awssdk.services.iotdataplane.model.DeleteThingShadowResult;
+import software.amazon.awssdk.services.iotdataplane.model.DeleteThingShadowResponse;
 import software.amazon.awssdk.services.iotdataplane.model.GetThingShadowRequest;
-import software.amazon.awssdk.services.iotdataplane.model.GetThingShadowResult;
+import software.amazon.awssdk.services.iotdataplane.model.GetThingShadowResponse;
 import software.amazon.awssdk.services.iotdataplane.model.InternalFailureException;
 import software.amazon.awssdk.services.iotdataplane.model.InvalidRequestException;
 import software.amazon.awssdk.services.iotdataplane.model.PublishRequest;
 import software.amazon.awssdk.services.iotdataplane.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowRequest;
-import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowResult;
+import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowResponse;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class ServiceIntegrationTest extends AwsIntegrationTestBase {
@@ -111,7 +111,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test(expected = ResourceNotFoundException.class)
     public void deleteThingShadow_InvalidThing_ThrowsException() {
-        DeleteThingShadowResult result = iot
+        DeleteThingShadowResponse result = iot
                 .deleteThingShadow(DeleteThingShadowRequest.builder().thingName(INVALID_THING_NAME).build());
         assertPayloadNonEmpty(result.payload());
     }
@@ -126,7 +126,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     private void updateThingShadow_ValidRequest_ReturnsValidResponse(String thingName) throws Exception {
         ByteBuffer originalPayload = getPayloadAsByteBuffer("{ \"state\": {\"reported\":{ \"r\": {}}}}");
         UpdateThingShadowRequest request = UpdateThingShadowRequest.builder().thingName(thingName).payload(originalPayload).build();
-        UpdateThingShadowResult result = iot.updateThingShadow(request);
+        UpdateThingShadowResponse result = iot.updateThingShadow(request);
 
         // Comes back with some extra metadata so we assert it's bigger than the original
         assertThat(result.payload().capacity(), greaterThan(originalPayload.capacity()));
@@ -135,12 +135,12 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private void getThingShadow_ValidThing_ReturnsThingData(String thingName) {
         GetThingShadowRequest request = GetThingShadowRequest.builder().thingName(thingName).build();
-        GetThingShadowResult result = iot.getThingShadow(request);
+        GetThingShadowResponse result = iot.getThingShadow(request);
         assertPayloadNonEmpty(result.payload());
     }
 
     private void deleteThingShadow_ValidThing_DeletesSuccessfully(String thingName) {
-        DeleteThingShadowResult result = iot.deleteThingShadow(DeleteThingShadowRequest.builder().thingName(thingName).build());
+        DeleteThingShadowResponse result = iot.deleteThingShadow(DeleteThingShadowRequest.builder().thingName(thingName).build());
         assertPayloadNonEmpty(result.payload());
     }
 

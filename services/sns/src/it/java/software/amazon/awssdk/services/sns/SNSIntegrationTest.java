@@ -35,23 +35,23 @@ import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.sns.model.AddPermissionRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
-import software.amazon.awssdk.services.sns.model.CreateTopicResult;
+import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.services.sns.model.GetSubscriptionAttributesRequest;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesRequest;
-import software.amazon.awssdk.services.sns.model.GetTopicAttributesResult;
+import software.amazon.awssdk.services.sns.model.GetTopicAttributesResponse;
 import software.amazon.awssdk.services.sns.model.ListSubscriptionsByTopicRequest;
-import software.amazon.awssdk.services.sns.model.ListSubscriptionsByTopicResult;
+import software.amazon.awssdk.services.sns.model.ListSubscriptionsByTopicResponse;
 import software.amazon.awssdk.services.sns.model.ListSubscriptionsRequest;
-import software.amazon.awssdk.services.sns.model.ListSubscriptionsResult;
+import software.amazon.awssdk.services.sns.model.ListSubscriptionsResponse;
 import software.amazon.awssdk.services.sns.model.ListTopicsRequest;
-import software.amazon.awssdk.services.sns.model.ListTopicsResult;
+import software.amazon.awssdk.services.sns.model.ListTopicsResponse;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.RemovePermissionRequest;
 import software.amazon.awssdk.services.sns.model.SetSubscriptionAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;
-import software.amazon.awssdk.services.sns.model.SubscribeResult;
+import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.Subscription;
 import software.amazon.awssdk.services.sns.model.UnsubscribeRequest;
 import software.amazon.awssdk.services.sns.util.SignatureChecker;
@@ -176,14 +176,14 @@ public class SNSIntegrationTest extends IntegrationTestBase {
     public void testCloudcastOperations() throws Exception {
 
         // Create Topic
-        CreateTopicResult createTopicResult = sns
+        CreateTopicResponse createTopicResult = sns
                 .createTopic(CreateTopicRequest.builder().name("test-topic-" + System.currentTimeMillis()).build());
         topicArn = createTopicResult.topicArn();
         assertTrue(topicArn.length() > 1);
 
         // List Topics
         Thread.sleep(1000 * 5);
-        ListTopicsResult listTopicsResult = sns.listTopics(ListTopicsRequest.builder().build());
+        ListTopicsResponse listTopicsResult = sns.listTopics(ListTopicsRequest.builder().build());
         assertNotNull(listTopicsResult.topics());
         assertTopicIsPresent(listTopicsResult.topics(), topicArn);
 
@@ -192,20 +192,20 @@ public class SNSIntegrationTest extends IntegrationTestBase {
                                                         .attributeValue("MyTopicName").build());
 
         // Get Topic Attributes
-        GetTopicAttributesResult getTopicAttributesResult = sns
+        GetTopicAttributesResponse getTopicAttributesResult = sns
                 .getTopicAttributes(GetTopicAttributesRequest.builder().topicArn(topicArn).build());
         assertEquals("MyTopicName", getTopicAttributesResult.attributes().get("DisplayName"));
 
         // Subscribe an SQS queue for notifications
         String queueArn = initializeReceivingQueue();
-        SubscribeResult subscribeResult = sns
+        SubscribeResponse subscribeResult = sns
                 .subscribe(SubscribeRequest.builder().endpoint(queueArn).protocol("sqs").topicArn(topicArn).build());
         subscriptionArn = subscribeResult.subscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
         // List Subscriptions by Topic
         Thread.sleep(1000 * 5);
-        ListSubscriptionsByTopicResult listSubscriptionsByTopicResult = sns
+        ListSubscriptionsByTopicResponse listSubscriptionsByTopicResult = sns
                 .listSubscriptionsByTopic(ListSubscriptionsByTopicRequest.builder().topicArn(topicArn).build());
         assertSubscriptionIsPresent(listSubscriptionsByTopicResult.subscriptions(), subscriptionArn);
 
@@ -263,7 +263,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
      * @return List of all subscriptions
      */
     private List<Subscription> getAllSubscriptions(SNSClient sns) {
-        ListSubscriptionsResult result = sns.listSubscriptions(ListSubscriptionsRequest.builder().build());
+        ListSubscriptionsResponse result = sns.listSubscriptions(ListSubscriptionsRequest.builder().build());
         List<Subscription> subscriptions = new ArrayList<>(result.subscriptions());
         while (result.nextToken() != null) {
             result = sns.listSubscriptions(ListSubscriptionsRequest.builder().nextToken(result.nextToken()).build());
@@ -275,14 +275,14 @@ public class SNSIntegrationTest extends IntegrationTestBase {
     @Test
     public void testSimplifiedMethods() throws InterruptedException {
         // Create Topic
-        CreateTopicResult createTopicResult =
+        CreateTopicResponse createTopicResult =
                 sns.createTopic(CreateTopicRequest.builder().name("test-topic-" + System.currentTimeMillis()).build());
         topicArn = createTopicResult.topicArn();
         assertTrue(topicArn.length() > 1);
 
         // List Topics
         Thread.sleep(1000 * 5);
-        ListTopicsResult listTopicsResult = sns.listTopics(ListTopicsRequest.builder().build());
+        ListTopicsResponse listTopicsResult = sns.listTopics(ListTopicsRequest.builder().build());
         assertNotNull(listTopicsResult.topics());
         assertTopicIsPresent(listTopicsResult.topics(), topicArn);
 
@@ -292,7 +292,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
                                          .build());
 
         // Get Topic Attributes
-        GetTopicAttributesResult getTopicAttributesResult =
+        GetTopicAttributesResponse getTopicAttributesResult =
                 sns.getTopicAttributes(GetTopicAttributesRequest.builder().topicArn(topicArn).build());
         assertEquals("MyTopicName", getTopicAttributesResult.attributes().get("DisplayName"));
 
@@ -301,14 +301,14 @@ public class SNSIntegrationTest extends IntegrationTestBase {
                                                      .build())
                       .queueUrl();
         String queueArn = initializeReceivingQueue();
-        SubscribeResult subscribeResult =
+        SubscribeResponse subscribeResult =
                 sns.subscribe(SubscribeRequest.builder().topicArn(topicArn).protocol("sqs").endpoint(queueArn).build());
         String subscriptionArn = subscribeResult.subscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
         // List Subscriptions by Topic
         Thread.sleep(1000 * 5);
-        ListSubscriptionsByTopicResult listSubscriptionsByTopicResult =
+        ListSubscriptionsByTopicResponse listSubscriptionsByTopicResult =
                 sns.listSubscriptionsByTopic(ListSubscriptionsByTopicRequest.builder().topicArn(topicArn).build());
         assertSubscriptionIsPresent(listSubscriptionsByTopicResult.subscriptions(), subscriptionArn);
 

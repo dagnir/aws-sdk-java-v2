@@ -28,10 +28,10 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.services.cloudformation.model.EstimateTemplateCostRequest;
-import software.amazon.awssdk.services.cloudformation.model.EstimateTemplateCostResult;
+import software.amazon.awssdk.services.cloudformation.model.EstimateTemplateCostResponse;
 import software.amazon.awssdk.services.cloudformation.model.TemplateParameter;
 import software.amazon.awssdk.services.cloudformation.model.ValidateTemplateRequest;
-import software.amazon.awssdk.services.cloudformation.model.ValidateTemplateResult;
+import software.amazon.awssdk.services.cloudformation.model.ValidateTemplateResponse;
 
 /**
  * Integration tests of the template-related API of CloudFormation.
@@ -43,7 +43,7 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
 
     @Test
     public void testValidateTemplateURL() {
-        ValidateTemplateResult response = cf.validateTemplate(ValidateTemplateRequest.builder()
+        ValidateTemplateResponse response = cf.validateTemplate(ValidateTemplateRequest.builder()
                                                                                      .templateURL(
                                                                                              templateUrlForCloudFormationIntegrationTests)
                                                                                      .build());
@@ -57,7 +57,7 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
     @Test
     public void testValidateTemplateBody() throws Exception {
         String templateText = FileUtils.readFileToString(new File("tst/" + templateForCloudFormationIntegrationTests));
-        ValidateTemplateResult response = cf.validateTemplate(ValidateTemplateRequest.builder()
+        ValidateTemplateResponse response = cf.validateTemplate(ValidateTemplateRequest.builder()
                                                                                      .templateBody(templateText).build());
         assertEquals(TEMPLATE_DESCRIPTION, response.description());
         assertEquals(3, response.parameters().size());
@@ -92,7 +92,7 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
     @Test
     public void testEstimateCost() throws Exception {
         String templateText = FileUtils.readFileToString(new File("tst/" + templateForCloudFormationIntegrationTests));
-        EstimateTemplateCostResult estimateTemplateCost = cf.estimateTemplateCost(EstimateTemplateCostRequest.builder()
+        EstimateTemplateCostResponse estimateTemplateCost = cf.estimateTemplateCost(EstimateTemplateCostRequest.builder()
                                                                                                              .templateBody(
                                                                                                                      templateText)
                                                                                                              .build());

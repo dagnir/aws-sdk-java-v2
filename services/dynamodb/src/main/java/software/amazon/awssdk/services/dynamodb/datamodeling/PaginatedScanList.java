@@ -19,7 +19,7 @@ import java.util.List;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 /**
  * Implementation of the List interface that represents the results from a scan
@@ -44,14 +44,14 @@ public class PaginatedScanList<T> extends PaginatedList<T> {
     private final DynamoDbMapperConfig config;
 
     /** The current results for the last executed scan operation. */
-    private ScanResult scanResult;
+    private ScanResponse scanResult;
 
     public PaginatedScanList(
             DynamoDbMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             ScanRequest scanRequest,
-            ScanResult scanResult,
+            ScanResponse scanResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
             DynamoDbMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);

@@ -40,7 +40,7 @@ import org.mockito.ArgumentCaptor;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeResult;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import software.amazon.awssdk.services.lambda.model.LogType;
 
 public class LambdaInvokerFactoryTest {
@@ -74,7 +74,7 @@ public class LambdaInvokerFactoryTest {
         InvokeRequest request = InvokeRequest.builder().functionName("doIt").invocationType("RequestResponse")
                                                    .logType("None").build();
 
-        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder()
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResponse.builder()
                 .statusCode(204)
                 .build()));
 
@@ -86,7 +86,7 @@ public class LambdaInvokerFactoryTest {
         InvokeRequest request = InvokeRequest.builder().functionName("doIt").invocationType("Event")
                                                    .logType("None").build();
 
-        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder().statusCode(202).build()));
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResponse.builder().statusCode(202).build()));
 
         invoker.doItAsynchronously();
     }
@@ -100,7 +100,7 @@ public class LambdaInvokerFactoryTest {
                 .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder()
+                CompletableFuture.completedFuture(InvokeResponse.builder()
                         .statusCode(204)
                         .logResult("TG9nZ2l0eSBsb2dnaW5n")
                         .build()));
@@ -142,7 +142,7 @@ public class LambdaInvokerFactoryTest {
                 .payload(ByteBuffer.wrap("\"Hello World\"".getBytes(StandardCharsets.UTF_8)))
                 .build();
 
-        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResult.builder().statusCode(204).build()));
+        when(mock.invoke(request)).thenReturn(CompletableFuture.completedFuture(InvokeResponse.builder().statusCode(204).build()));
 
         invoker.setString("Hello World");
     }
@@ -158,7 +158,7 @@ public class LambdaInvokerFactoryTest {
 
         when(mock.invoke(request)).thenReturn(
                 CompletableFuture.completedFuture(
-                        InvokeResult.builder().statusCode(200).payload(ByteBuffer.wrap("[\"a\",\"c\"]".getBytes())).build()));
+                        InvokeResponse.builder().statusCode(200).payload(ByteBuffer.wrap("[\"a\",\"c\"]".getBytes())).build()));
 
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("a", "b");
@@ -183,7 +183,7 @@ public class LambdaInvokerFactoryTest {
                 .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder().statusCode(200).payload(
+                CompletableFuture.completedFuture(InvokeResponse.builder().statusCode(200).payload(
                         ByteBuffer.wrap("{\"string\":\"Hello Test\",\"integer\":67890}".getBytes())).build()));
 
         Pojo pojo = new Pojo();
@@ -205,7 +205,7 @@ public class LambdaInvokerFactoryTest {
                 .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder()
+                CompletableFuture.completedFuture(InvokeResponse.builder()
                         .statusCode(200)
                         .functionError("Unhandled")
                         .payload(
@@ -231,7 +231,7 @@ public class LambdaInvokerFactoryTest {
                 .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder()
+                CompletableFuture.completedFuture(InvokeResponse.builder()
                         .statusCode(200)
                         .functionError("Unhandled")
                         .payload(
@@ -259,7 +259,7 @@ public class LambdaInvokerFactoryTest {
                 .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder()
+                CompletableFuture.completedFuture(InvokeResponse.builder()
                         .statusCode(200)
                         .functionError("Unhandled")
                         .payload(ByteBuffer.wrap(exceptionJson.getBytes())).build()));
@@ -287,7 +287,7 @@ public class LambdaInvokerFactoryTest {
                                                    .logType("None").build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder()
+                CompletableFuture.completedFuture(InvokeResponse.builder()
                         .statusCode(200)
                         .functionError("Handled")
                         .payload(
@@ -330,7 +330,7 @@ public class LambdaInvokerFactoryTest {
                 .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder()
+                CompletableFuture.completedFuture(InvokeResponse.builder()
                         .statusCode(200)
                         .functionError("Handled")
                         .payload(ByteBuffer.wrap((String.format(
@@ -370,7 +370,7 @@ public class LambdaInvokerFactoryTest {
                 .build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder()
+                CompletableFuture.completedFuture(InvokeResponse.builder()
                         .statusCode(200)
                         .functionError("Handled")
                         .payload(
@@ -405,7 +405,7 @@ public class LambdaInvokerFactoryTest {
 
         when(mock.invoke(request)).thenReturn(
                 CompletableFuture.completedFuture(
-                        InvokeResult.builder().statusCode(200).payload(ByteBuffer.wrap("I'm not even JSON!".getBytes())).build()));
+                        InvokeResponse.builder().statusCode(200).payload(ByteBuffer.wrap("I'm not even JSON!".getBytes())).build()));
 
         try {
             invoker.broken();
@@ -421,7 +421,7 @@ public class LambdaInvokerFactoryTest {
                                                    .logType("Tail").build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder().statusCode(200).logResult("I'm not valid Base-64")
+                CompletableFuture.completedFuture(InvokeResponse.builder().statusCode(200).logResult("I'm not valid Base-64")
                                   .payload(ByteBuffer.wrap("I should be ignored".getBytes())).build()));
 
         // Should not fail just because the logged data is invalid.
@@ -434,7 +434,7 @@ public class LambdaInvokerFactoryTest {
                                                    .logType("None").build();
 
         when(mock.invoke(request)).thenReturn(
-                CompletableFuture.completedFuture(InvokeResult.builder().statusCode(200).functionError("Handled")
+                CompletableFuture.completedFuture(InvokeResponse.builder().statusCode(200).functionError("Handled")
                                   .payload(ByteBuffer.wrap("Bogus".getBytes())).build()));
 
         try {
@@ -488,8 +488,8 @@ public class LambdaInvokerFactoryTest {
         assertEquals(functionVersion, invokeArgCaptor.getValue().qualifier());
     }
 
-    private InvokeResult getStringSuccessResult() {
-        return InvokeResult.builder()
+    private InvokeResponse getStringSuccessResult() {
+        return InvokeResponse.builder()
                 .statusCode(200)
                 .payload(ByteBuffer.wrap("\"OK\"".getBytes())).build();
     }

@@ -26,7 +26,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.storagegateway.model.DeleteGatewayRequest;
 import software.amazon.awssdk.services.storagegateway.model.InvalidGatewayRequestException;
 import software.amazon.awssdk.services.storagegateway.model.ListGatewaysRequest;
-import software.amazon.awssdk.services.storagegateway.model.ListGatewaysResult;
+import software.amazon.awssdk.services.storagegateway.model.ListGatewaysResponse;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -45,7 +45,7 @@ public class ServiceIntegrationTest extends AwsTestBase {
 
     @Test
     public void testListGateways() {
-        ListGatewaysResult listGateways = sg.listGateways(ListGatewaysRequest.builder().build());
+        ListGatewaysResponse listGateways = sg.listGateways(ListGatewaysRequest.builder().build());
         assertNotNull(listGateways);
         assertThat(listGateways.gateways().size(), greaterThanOrEqualTo(0));
     }

@@ -37,10 +37,10 @@ import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocolrestjson.model.AllTypesResult;
+import software.amazon.awssdk.services.protocolrestjson.model.AllTypesResponse;
 import software.amazon.awssdk.services.protocolrestjsoncustomized.ProtocolRestJsonCustomizedClient;
 import software.amazon.awssdk.services.protocolrestjsoncustomized.model.SimpleRequest;
-import software.amazon.awssdk.services.protocolrestjsoncustomized.model.SimpleResult;
+import software.amazon.awssdk.services.protocolrestjsoncustomized.model.SimpleResponse;
 
 public class RestJsonCrc32ChecksumTests {
 
@@ -76,7 +76,7 @@ public class RestJsonCrc32ChecksumTests {
                 .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        SimpleResult result = client.simple(SimpleRequest.builder().build());
+        SimpleResponse result = client.simple(SimpleRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -111,7 +111,7 @@ public class RestJsonCrc32ChecksumTests {
                 .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        AllTypesResult result =
+        AllTypesResponse result =
                 client.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
@@ -146,7 +146,7 @@ public class RestJsonCrc32ChecksumTests {
                 .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        AllTypesResult result =
+        AllTypesResponse result =
                 client.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }

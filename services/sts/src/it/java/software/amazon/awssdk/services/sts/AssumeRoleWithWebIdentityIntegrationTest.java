@@ -27,7 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityResult;
+import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityResponse;
 import software.amazon.awssdk.services.sts.model.InvalidIdentityTokenException;
 
 @ReviewBeforeRelease("This could be useful to cleanup and present as a customer sample")
@@ -60,7 +60,7 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
                                                 .roleSessionName(SESSION_NAME).build();
 
         try {
-            AssumeRoleWithWebIdentityResult result = sts.assumeRoleWithWebIdentity(request);
+            AssumeRoleWithWebIdentityResponse result = sts.assumeRoleWithWebIdentity(request);
             fail("Expected Expired token error");
         } catch (InvalidIdentityTokenException e) {
             // expected error
@@ -90,7 +90,7 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
                                                                                        .roleArn(ROLE_ARN)
                                                                                        .roleSessionName(SESSION_NAME).build();
 
-            AssumeRoleWithWebIdentityResult result = sts.assumeRoleWithWebIdentity(request);
+            AssumeRoleWithWebIdentityResponse result = sts.assumeRoleWithWebIdentity(request);
 
             System.out.println(result.credentials().accessKeyId());
             System.out.println(result.credentials().secretAccessKey());

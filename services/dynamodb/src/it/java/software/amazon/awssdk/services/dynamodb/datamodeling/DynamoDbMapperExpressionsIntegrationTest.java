@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedExce
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResult;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
@@ -146,7 +146,7 @@ public class DynamoDbMapperExpressionsIntegrationTest extends AwsTestBase {
 
     public static void waitForTableCreation() throws InterruptedException {
         while (true) {
-            DescribeTableResult describeResult = client
+            DescribeTableResponse describeResult = client
                     .describeTable(DescribeTableRequest.builder().tableName(TABLENAME).build());
             if (TABLE_STATUS_ACTIVE.equals(describeResult.table()
                                                          .tableStatus())) {

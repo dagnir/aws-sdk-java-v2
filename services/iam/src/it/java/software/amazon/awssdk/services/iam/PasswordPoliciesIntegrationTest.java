@@ -23,7 +23,7 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import software.amazon.awssdk.services.iam.model.DeleteAccountPasswordPolicyRequest;
 import software.amazon.awssdk.services.iam.model.GetAccountPasswordPolicyRequest;
-import software.amazon.awssdk.services.iam.model.GetAccountPasswordPolicyResult;
+import software.amazon.awssdk.services.iam.model.GetAccountPasswordPolicyResponse;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 import software.amazon.awssdk.services.iam.model.UpdateAccountPasswordPolicyRequest;
 
@@ -40,7 +40,7 @@ public class PasswordPoliciesIntegrationTest extends IntegrationTestBase {
                                                                           .requireSymbols(true)
                                                                           .requireUppercaseCharacters(true).build());
 
-        GetAccountPasswordPolicyResult accountPasswordPolicy =
+        GetAccountPasswordPolicyResponse accountPasswordPolicy =
                 iam.getAccountPasswordPolicy(GetAccountPasswordPolicyRequest.builder().build());
         assertEquals(minimumPasswordLength, accountPasswordPolicy.passwordPolicy().minimumPasswordLength().intValue());
         assertTrue(accountPasswordPolicy.passwordPolicy().requireLowercaseCharacters());

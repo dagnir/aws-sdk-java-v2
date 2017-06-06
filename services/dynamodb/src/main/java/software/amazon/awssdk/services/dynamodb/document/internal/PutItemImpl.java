@@ -26,7 +26,7 @@ import software.amazon.awssdk.services.dynamodb.document.spec.PutItemSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 
 /**
  * The implementation for <code>PutItemApi</code>.
@@ -82,7 +82,7 @@ public class PutItemImpl extends AbstractImpl implements PutItemApi {
                .expressionAttributeNames(spec.nameMap())
                .expressionAttributeValues(attrValMap)
         ;
-        PutItemResult result = getClient().putItem(requestBuilder.build());
+        PutItemResponse result = getClient().putItem(requestBuilder.build());
         return new PutItemOutcome(result);
     }
 }

@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.document.QueryOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 class QueryPage extends Page<Item, QueryOutcome> {
     private final DynamoDBClient client;
@@ -44,7 +44,7 @@ class QueryPage extends Page<Item, QueryOutcome> {
             int index,
             QueryOutcome outcome) {
         super(Collections.unmodifiableList(
-                toItemList(outcome.getQueryResult().items())),
+                toItemList(outcome.getQueryResponse().items())),
               outcome);
         this.client = client;
         this.spec = spec;
@@ -52,7 +52,7 @@ class QueryPage extends Page<Item, QueryOutcome> {
         this.index = index;
 
         final Integer max = spec.maxResultSize();
-        final QueryResult result = outcome.getQueryResult();
+        final QueryResponse result = outcome.getQueryResponse();
         final List<?> ilist = result.items();
         final int size = ilist == null ? 0 : ilist.size();
         if (max != null && (index + size) > max) {
@@ -95,7 +95,7 @@ class QueryPage extends Page<Item, QueryOutcome> {
             request = request.toBuilder().limit(nextLimit).build();
         }
         request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build();
-        QueryResult result = client.query(request);
+        QueryResponse result = client.query(request);
         final int nextIndex = index + this.size();
         return new QueryPage(client, spec, request, nextIndex,
                              new QueryOutcome(result));

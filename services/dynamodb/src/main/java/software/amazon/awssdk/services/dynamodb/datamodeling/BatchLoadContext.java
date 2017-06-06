@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.dynamodb.datamodeling;
 
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.util.ValidationUtils;
 
 
@@ -31,9 +31,9 @@ public class BatchLoadContext {
      */
     private BatchGetItemRequest batchGetItemRequest;
     /**
-     * The BatchGetItemResult returned by the DynamoDB client.
+     * The BatchGetItemResponse returned by the DynamoDB client.
      */
-    private BatchGetItemResult batchGetItemResult;
+    private BatchGetItemResponse batchGetItemResponse;
     /**
      * The number of times the request has been retried.
      */
@@ -45,7 +45,7 @@ public class BatchLoadContext {
      * */
     public BatchLoadContext(BatchGetItemRequest batchGetItemRequest) {
         this.batchGetItemRequest = ValidationUtils.assertNotNull(batchGetItemRequest, "batchGetItemRequest");
-        this.batchGetItemResult = null;
+        this.batchGetItemResponse = null;
         this.retriesAttempted = 0;
     }
 
@@ -58,17 +58,17 @@ public class BatchLoadContext {
     }
 
     /**
-     * @return the BatchGetItemResult
+     * @return the BatchGetItemResponse
      */
-    public BatchGetItemResult batchGetItemResult() {
-        return batchGetItemResult;
+    public BatchGetItemResponse batchGetItemResponse() {
+        return batchGetItemResponse;
     }
 
     /**
-     * @return the BatchGetItemResult
+     * @return the BatchGetItemResponse
      */
-    public void setBatchGetItemResult(BatchGetItemResult batchGetItemResult) {
-        this.batchGetItemResult = batchGetItemResult;
+    public void setBatchGetItemResponse(BatchGetItemResponse batchGetItemResponse) {
+        this.batchGetItemResponse = batchGetItemResponse;
     }
 
 

@@ -47,7 +47,7 @@ import software.amazon.awssdk.services.elasticloadbalancing.model.DeleteLoadBala
 import software.amazon.awssdk.services.elasticloadbalancing.model.DeregisterInstancesFromLoadBalancerRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeInstanceHealthRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerAttributesRequest;
-import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerAttributesResult;
+import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerAttributesResponse;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerPoliciesRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancerPolicyTypesRequest;
 import software.amazon.awssdk.services.elasticloadbalancing.model.DescribeLoadBalancersRequest;
@@ -358,7 +358,7 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
                                                                                                      .enabled(true).build()).build()).build());
 
         // Describe LB Attributes
-        DescribeLoadBalancerAttributesResult describeLoadBalancerAttributesResult = elb
+        DescribeLoadBalancerAttributesResponse describeLoadBalancerAttributesResult = elb
                 .describeLoadBalancerAttributes(DescribeLoadBalancerAttributesRequest.builder()
                                                         .loadBalancerName(loadBalancerName).build());
         CrossZoneLoadBalancing returnedCrossZoneLoadBalancing = describeLoadBalancerAttributesResult
@@ -430,7 +430,7 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
         DescribeLoadBalancerAttributesRequest describeLoadBalancerRequest = DescribeLoadBalancerAttributesRequest.builder()
                 .loadBalancerName(loadBalancerName).build();
 
-        DescribeLoadBalancerAttributesResult result = elb
+        DescribeLoadBalancerAttributesResponse result = elb
                 .describeLoadBalancerAttributes(describeLoadBalancerRequest);
 
         // Connection draining must be FALSE by default.

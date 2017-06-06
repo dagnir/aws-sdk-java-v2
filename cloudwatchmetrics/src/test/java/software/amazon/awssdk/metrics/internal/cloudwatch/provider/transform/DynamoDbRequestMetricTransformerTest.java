@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.dynamodb.metrics.DynamoDbRequestMetric;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 
 public class DynamoDbRequestMetricTransformerTest {
     @Test
@@ -27,8 +27,8 @@ public class DynamoDbRequestMetricTransformerTest {
         DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
         PutItemRequest pi_req = PutItemRequest.builder().build();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
-        PutItemResult pi_res = PutItemResult.builder().build();
-        Response<PutItemResult> res = new Response<PutItemResult>(pi_res, null);
+        PutItemResponse pi_res = PutItemResponse.builder().build();
+        Response<PutItemResponse> res = new Response<PutItemResponse>(pi_res, null);
         List<MetricDatum> list = t.toMetricData(DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, res);
         assertTrue(list.size() == 0);
     }
@@ -38,13 +38,13 @@ public class DynamoDbRequestMetricTransformerTest {
         DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
         PutItemRequest pi_req = PutItemRequest.builder().build();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
-        PutItemResult pi_res = PutItemResult.builder()
+        PutItemResponse pi_res = PutItemResponse.builder()
                 .consumedCapacity(ConsumedCapacity.builder()
                         .capacityUnits(1.0)
                         .tableName("testTable")
                         .build())
                 .build();
-        Response<PutItemResult> res = new Response<PutItemResult>(pi_res, null);
+        Response<PutItemResponse> res = new Response<PutItemResponse>(pi_res, null);
         List<MetricDatum> list = t.toMetricData(
                 DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, res);
         assertTrue(list.size() == 1);

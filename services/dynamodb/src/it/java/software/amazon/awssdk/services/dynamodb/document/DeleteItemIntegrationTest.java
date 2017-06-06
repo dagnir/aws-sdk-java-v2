@@ -141,7 +141,7 @@ public class DeleteItemIntegrationTest extends IntegrationTestBase {
                                                              .withReturnValues(ReturnValue.ALL_OLD));
 
         Assert.assertNotNull(outcome);
-        Assert.assertNotNull(outcome.getDeleteItemResult());
+        Assert.assertNotNull(outcome.getDeleteItemResponse());
         Assert.assertNotNull(outcome.getItem());
 
         Item deletedItem = outcome.getItem();

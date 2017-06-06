@@ -17,18 +17,18 @@ package software.amazon.awssdk.services.dynamodb.document;
 
 import java.util.Map;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 
 /**
  * The outcome of getting an item from DynamoDB table.
  */
 public class GetItemOutcome {
-    private final GetItemResult result;
+    private final GetItemResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public GetItemOutcome(GetItemResult result) {
+    public GetItemOutcome(GetItemResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -49,7 +49,7 @@ public class GetItemOutcome {
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public GetItemResult getGetItemResult() {
+    public GetItemResponse getGetItemResponse() {
         return result;
     }
 

@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import utils.resources.RequiredResources;
 import utils.resources.RequiredResources.RequiredResource;
 import utils.resources.RequiredResources.ResourceCreationPolicy;
@@ -101,7 +101,7 @@ public class ParallelScanIntegrationTest extends DynamoDBTestBase {
                                 .comparisonOperator(
                                         ComparisonOperator.LT.toString()).build()))
                 .totalSegments(1).segment(0).build();
-        ScanResult scanResult = dynamo.scan(scanRequest);
+        ScanResponse scanResult = dynamo.scan(scanRequest);
         assertEquals((Object) itemNumber, (Object) scanResult.scannedCount());
         int filteredItems = scanResult.count();
 

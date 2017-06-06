@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DeleteLogStreamReque
 import software.amazon.awssdk.services.cloudwatchlogs.model.DeleteMetricFilterRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DeleteRetentionPolicyRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InputLogEvent;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InvalidSequenceTokenException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
@@ -41,12 +41,12 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.MetricFilterMatchRec
 import software.amazon.awssdk.services.cloudwatchlogs.model.MetricTransformation;
 import software.amazon.awssdk.services.cloudwatchlogs.model.OutputLogEvent;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutMetricFilterRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutRetentionPolicyRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.ResourceAlreadyExistsException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.TestMetricFilterRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.TestMetricFilterResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.TestMetricFilterResponse;
 
 /**
  * Integration tests for the CloudWatch Logs service.
@@ -168,7 +168,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void testEventsLogging() {
         // No log event is expected in the newly created log stream
-        GetLogEventsResult getResult = awsLogs.getLogEvents(GetLogEventsRequest.builder().logGroupName(logGroupName).logStreamName(logStreamName).build());
+        GetLogEventsResponse getResult = awsLogs.getLogEvents(GetLogEventsRequest.builder().logGroupName(logGroupName).logStreamName(logStreamName).build());
         Assert.assertTrue(getResult.events().isEmpty());
 
         // Insert a new log event
@@ -180,7 +180,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
                                                                                  .timestamp(LOG_MESSAGE_TIMESTAMP)
                                                                                  .build())
                                                          .build();
-        PutLogEventsResult putResult = awsLogs.putLogEvents(request);
+        PutLogEventsResponse putResult = awsLogs.putLogEvents(request);
 
         Assert.assertNotNull(putResult.nextSequenceToken());
 
@@ -222,7 +222,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
                                        .logEventMessages(LOG_MESSAGE,
                                                          "Another message with some content that does not match the filter pattern...")
                                        .build();
-        TestMetricFilterResult testResult = awsLogs.testMetricFilter(request);
+        TestMetricFilterResponse testResult = awsLogs.testMetricFilter(request);
 
         Assert.assertEquals(1, testResult.matches().size());
 

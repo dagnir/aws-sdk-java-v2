@@ -17,18 +17,18 @@ package software.amazon.awssdk.services.dynamodb.document;
 
 import java.util.Map;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
-import software.amazon.awssdk.services.dynamodb.model.UpdateItemResult;
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse;
 
 /**
  * The outcome of updating an item in a DynamoDB table.
  */
 public class UpdateItemOutcome {
-    private final UpdateItemResult result;
+    private final UpdateItemResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public UpdateItemOutcome(UpdateItemResult result) {
+    public UpdateItemOutcome(UpdateItemResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -48,7 +48,7 @@ public class UpdateItemOutcome {
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public UpdateItemResult getUpdateItemResult() {
+    public UpdateItemResponse getUpdateItemResponse() {
         return result;
     }
 

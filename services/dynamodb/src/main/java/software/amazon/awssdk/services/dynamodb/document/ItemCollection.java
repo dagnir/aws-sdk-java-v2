@@ -218,7 +218,7 @@ public abstract class ItemCollection<R> extends PageBasedCollection<Item, R> {
      * one call to DynamoDB to retrieve a single page of results.
      * <p>
      * <code>
-     * ItemCollection&lt;QueryResult&gt; collection = ...;
+     * ItemCollection&lt;QueryResponse&gt; collection = ...;
      * for (Page&lt;Item&gt; page : collection.pages()) {
      *     processItems(page);
      *

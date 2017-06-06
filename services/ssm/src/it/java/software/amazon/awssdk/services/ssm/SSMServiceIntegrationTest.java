@@ -24,15 +24,15 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.ssm.model.CreateDocumentRequest;
-import software.amazon.awssdk.services.ssm.model.CreateDocumentResult;
+import software.amazon.awssdk.services.ssm.model.CreateDocumentResponse;
 import software.amazon.awssdk.services.ssm.model.DeleteDocumentRequest;
 import software.amazon.awssdk.services.ssm.model.DescribeDocumentRequest;
-import software.amazon.awssdk.services.ssm.model.DescribeDocumentResult;
+import software.amazon.awssdk.services.ssm.model.DescribeDocumentResponse;
 import software.amazon.awssdk.services.ssm.model.DocumentDescription;
 import software.amazon.awssdk.services.ssm.model.GetDocumentRequest;
-import software.amazon.awssdk.services.ssm.model.GetDocumentResult;
+import software.amazon.awssdk.services.ssm.model.GetDocumentResponse;
 import software.amazon.awssdk.services.ssm.model.ListDocumentsRequest;
-import software.amazon.awssdk.services.ssm.model.ListDocumentsResult;
+import software.amazon.awssdk.services.ssm.model.ListDocumentsResponse;
 import software.amazon.awssdk.utils.IoUtils;
 
 public class SSMServiceIntegrationTest extends IntegrationTestBase {
@@ -59,13 +59,13 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
     }
 
     private void testDescribeDocument() {
-        DescribeDocumentResult result = ssm.describeDocument(DescribeDocumentRequest.builder().name(DOCUMENT_NAME).build());
+        DescribeDocumentResponse result = ssm.describeDocument(DescribeDocumentRequest.builder().name(DOCUMENT_NAME).build());
         assertNotNull(result.document());
     }
 
     private void testCreateDocument(String docName, String docContent) {
 
-        CreateDocumentResult createResult = ssm
+        CreateDocumentResponse createResult = ssm
                 .createDocument(CreateDocumentRequest.builder().name(docName).content(docContent).build());
 
         DocumentDescription description = createResult.documentDescription();
@@ -74,12 +74,12 @@ public class SSMServiceIntegrationTest extends IntegrationTestBase {
         assertNotNull(description.status());
         assertNotNull(description.createdDate());
 
-        GetDocumentResult getResult = ssm.getDocument(GetDocumentRequest.builder().name(docName).build());
+        GetDocumentResponse getResult = ssm.getDocument(GetDocumentRequest.builder().name(docName).build());
 
         assertEquals(DOCUMENT_NAME, getResult.name());
         assertEquals(docContent, getResult.content());
 
-        ListDocumentsResult listResult = ssm.listDocuments(ListDocumentsRequest.builder().build());
+        ListDocumentsResponse listResult = ssm.listDocuments(ListDocumentsRequest.builder().build());
 
         assertFalse("ListDocuments should at least returns one element", listResult.documentIdentifiers().isEmpty());
 

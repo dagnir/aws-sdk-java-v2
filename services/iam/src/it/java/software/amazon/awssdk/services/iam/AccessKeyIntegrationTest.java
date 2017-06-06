@@ -24,11 +24,11 @@ import org.junit.Test;
 import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyRequest;
-import software.amazon.awssdk.services.iam.model.CreateAccessKeyResult;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.LimitExceededException;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 
 /**
@@ -55,7 +55,7 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
         String keyId = null;
         try {
-            CreateAccessKeyResult response = iam
+            CreateAccessKeyResponse response = iam
                     .createAccessKey(CreateAccessKeyRequest.builder()
                                                            .userName(username).build());
             keyId = response.accessKey().accessKeyId();
@@ -87,14 +87,14 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
         String[] keyIds = new String[2];
         try {
             for (int i = 0; i < 2; i++) {
-                CreateAccessKeyResult response = iam
+                CreateAccessKeyResponse response = iam
                         .createAccessKey(CreateAccessKeyRequest.builder()
                                                                .userName(username).build());
 
                 keyIds[i] = response.accessKey().accessKeyId();
             }
 
-            ListAccessKeysResult listRes = iam
+            ListAccessKeysResponse listRes = iam
                     .listAccessKeys(ListAccessKeysRequest.builder()
                                                          .userName(username).build());
 
@@ -138,14 +138,14 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
         String[] keyIds = new String[2];
         try {
             for (int i = 0; i < 2; i++) {
-                CreateAccessKeyResult response = iam
+                CreateAccessKeyResponse response = iam
                         .createAccessKey(CreateAccessKeyRequest.builder()
                                                                .userName(username).build());
 
                 keyIds[i] = response.accessKey().accessKeyId();
             }
 
-            ListAccessKeysResult lakRes = iam
+            ListAccessKeysResponse lakRes = iam
                     .listAccessKeys(ListAccessKeysRequest.builder()
                                                          .userName(username).build());
 
@@ -172,7 +172,7 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     public void testDeleteNonExistentAccessKeyException() {
         String username = IAMUtil.createTestUser();
         try {
-            CreateAccessKeyResult response = iam
+            CreateAccessKeyResponse response = iam
                     .createAccessKey(CreateAccessKeyRequest.builder()
                                                            .userName(username).build());
 

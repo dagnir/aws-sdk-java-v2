@@ -21,7 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.cloudwatchevents.model.DeleteRuleRequest;
 import software.amazon.awssdk.services.cloudwatchevents.model.DescribeRuleRequest;
-import software.amazon.awssdk.services.cloudwatchevents.model.DescribeRuleResult;
+import software.amazon.awssdk.services.cloudwatchevents.model.DescribeRuleResponse;
 import software.amazon.awssdk.services.cloudwatchevents.model.DisableRuleRequest;
 import software.amazon.awssdk.services.cloudwatchevents.model.EnableRuleRequest;
 import software.amazon.awssdk.services.cloudwatchevents.model.PutRuleRequest;
@@ -64,7 +64,7 @@ public class CloudWatchEventsIntegrationTest extends AwsIntegrationTestBase {
 
         events.enableRule(EnableRuleRequest.builder().name(RULE_NAME).build());
 
-        DescribeRuleResult describeRuleResult = events.describeRule(DescribeRuleRequest.builder()
+        DescribeRuleResponse describeRuleResult = events.describeRule(DescribeRuleRequest.builder()
                                                                             .name(RULE_NAME).build());
 
         Assert.assertEquals(RULE_NAME, describeRuleResult.name());

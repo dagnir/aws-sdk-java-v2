@@ -27,21 +27,21 @@ import software.amazon.awssdk.services.iot.model.AttributePayload;
 import software.amazon.awssdk.services.iot.model.CertificateStatus;
 import software.amazon.awssdk.services.iot.model.CreateCertificateFromCsrRequest;
 import software.amazon.awssdk.services.iot.model.CreateKeysAndCertificateRequest;
-import software.amazon.awssdk.services.iot.model.CreateKeysAndCertificateResult;
+import software.amazon.awssdk.services.iot.model.CreateKeysAndCertificateResponse;
 import software.amazon.awssdk.services.iot.model.CreatePolicyRequest;
-import software.amazon.awssdk.services.iot.model.CreatePolicyResult;
+import software.amazon.awssdk.services.iot.model.CreatePolicyResponse;
 import software.amazon.awssdk.services.iot.model.CreateThingRequest;
-import software.amazon.awssdk.services.iot.model.CreateThingResult;
+import software.amazon.awssdk.services.iot.model.CreateThingResponse;
 import software.amazon.awssdk.services.iot.model.DeleteCertificateRequest;
 import software.amazon.awssdk.services.iot.model.DeletePolicyRequest;
 import software.amazon.awssdk.services.iot.model.DeleteThingRequest;
 import software.amazon.awssdk.services.iot.model.DescribeThingRequest;
-import software.amazon.awssdk.services.iot.model.DescribeThingResult;
+import software.amazon.awssdk.services.iot.model.DescribeThingResponse;
 import software.amazon.awssdk.services.iot.model.GetPolicyVersionRequest;
-import software.amazon.awssdk.services.iot.model.GetPolicyVersionResult;
+import software.amazon.awssdk.services.iot.model.GetPolicyVersionResponse;
 import software.amazon.awssdk.services.iot.model.InvalidRequestException;
 import software.amazon.awssdk.services.iot.model.ListThingsRequest;
-import software.amazon.awssdk.services.iot.model.ListThingsResult;
+import software.amazon.awssdk.services.iot.model.ListThingsResponse;
 import software.amazon.awssdk.services.iot.model.UpdateCertificateRequest;
 import software.amazon.awssdk.test.AwsTestBase;
 
@@ -94,19 +94,19 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
                                                                .thingName(THING_NAME)
                                                                .attributePayload(AttributePayload.builder().attributes(THING_ATTRIBUTES).build())
                                                                .build();
-        CreateThingResult result = client.createThing(createReq);
+        CreateThingResponse result = client.createThing(createReq);
         Assert.assertNotNull(result.thingArn());
         Assert.assertEquals(THING_NAME, result.thingName());
 
         final DescribeThingRequest descRequest = DescribeThingRequest.builder().thingName(THING_NAME).build();
 
-        DescribeThingResult descResult = client.describeThing(descRequest);
+        DescribeThingResponse descResult = client.describeThing(descRequest);
         Map<String, String> actualAttributes = descResult.attributes();
         Assert.assertEquals(THING_ATTRIBUTES.size(), actualAttributes.size());
         Assert.assertTrue(actualAttributes.containsKey(ATTRIBUTE_NAME));
         Assert.assertEquals(THING_ATTRIBUTES.get(ATTRIBUTE_NAME), actualAttributes.get(ATTRIBUTE_NAME));
 
-        ListThingsResult listResult = client.listThings(ListThingsRequest.builder().build());
+        ListThingsResponse listResult = client.listThings(ListThingsRequest.builder().build());
         Assert.assertFalse(listResult.things().isEmpty());
     }
 
@@ -115,7 +115,7 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
 
         final CreatePolicyRequest createReq = CreatePolicyRequest.builder().policyName(POLICY_NAME).policyDocument(POLICY_DOC).build();
 
-        CreatePolicyResult createResult = client.createPolicy(createReq);
+        CreatePolicyResponse createResult = client.createPolicy(createReq);
         Assert.assertNotNull(createResult.policyArn());
         Assert.assertNotNull(createResult.policyVersionId());
 
@@ -125,7 +125,7 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
                                                                        .policyVersionId(createResult.policyVersionId())
                                                                        .build();
 
-        GetPolicyVersionResult result = client.getPolicyVersion(request);
+        GetPolicyVersionResponse result = client.getPolicyVersion(request);
         Assert.assertEquals(createResult.policyArn(), result.policyArn());
         Assert.assertEquals(createResult.policyVersionId(), result.policyVersionId());
     }
@@ -133,7 +133,7 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
     @Test
     public void createCertificate_Returns_success() {
         final CreateKeysAndCertificateRequest createReq = CreateKeysAndCertificateRequest.builder().setAsActive(true).build();
-        CreateKeysAndCertificateResult createResult = client.createKeysAndCertificate(createReq);
+        CreateKeysAndCertificateResponse createResult = client.createKeysAndCertificate(createReq);
         Assert.assertNotNull(createResult.certificateArn());
         Assert.assertNotNull(createResult.certificateId());
         Assert.assertNotNull(createResult.certificatePem());

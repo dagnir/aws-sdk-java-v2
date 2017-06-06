@@ -21,7 +21,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.services.simpledb.model.DomainMetadataResult;
+import software.amazon.awssdk.services.simpledb.model.DomainMetadataResponse;
 
 public class DomainMetadataResultUnmarshallerTest {
 
@@ -34,7 +34,7 @@ public class DomainMetadataResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("DomainMetadataResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        DomainMetadataResult result = new DomainMetadataResultUnmarshaller()
+        DomainMetadataResponse result = new DomainMetadataResponseUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
         assertTrue(result.itemCount() == 25);

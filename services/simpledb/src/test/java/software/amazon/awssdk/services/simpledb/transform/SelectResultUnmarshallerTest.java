@@ -22,12 +22,12 @@ import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.services.simpledb.model.Item;
-import software.amazon.awssdk.services.simpledb.model.SelectResult;
+import software.amazon.awssdk.services.simpledb.model.SelectResponse;
 
 public class SelectResultUnmarshallerTest {
 
     /**
-     * Test method for SelectResultUnmarshaller
+     * Test method for SelectResponseUnmarshaller
      */
     @Test
     public final void testUnmarshall() throws Exception {
@@ -35,7 +35,7 @@ public class SelectResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("SelectResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        SelectResult result = new SelectResultUnmarshaller().unmarshall(unmarshallerContext);
+        SelectResponse result = new SelectResponseUnmarshaller().unmarshall(unmarshallerContext);
 
         assertTrue(!result.items().isEmpty());
         assertTrue(result.items().size() == 2);

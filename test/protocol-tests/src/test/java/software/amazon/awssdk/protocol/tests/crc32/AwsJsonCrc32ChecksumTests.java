@@ -36,10 +36,10 @@ import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
-import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesResult;
+import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesResponse;
 import software.amazon.awssdk.services.protocoljsonrpccustomized.ProtocolJsonRpcCustomizedClient;
 import software.amazon.awssdk.services.protocoljsonrpccustomized.model.SimpleRequest;
-import software.amazon.awssdk.services.protocoljsonrpccustomized.model.SimpleResult;
+import software.amazon.awssdk.services.protocoljsonrpccustomized.model.SimpleResponse;
 
 public class AwsJsonCrc32ChecksumTests {
     @Rule
@@ -78,7 +78,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        SimpleResult result = jsonRpc.simple(SimpleRequest.builder().build());
+        SimpleResponse result = jsonRpc.simple(SimpleRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -103,7 +103,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        SimpleResult result = jsonRpc.simple(SimpleRequest.builder().build());
+        SimpleResponse result = jsonRpc.simple(SimpleRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
 
@@ -140,7 +140,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        AllTypesResult result =
+        AllTypesResponse result =
                 jsonRpc.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }
@@ -177,7 +177,7 @@ public class AwsJsonCrc32ChecksumTests {
                 .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
-        AllTypesResult result =
+        AllTypesResponse result =
                 jsonRpc.allTypes(AllTypesRequest.builder().build());
         Assert.assertEquals("foo", result.stringMember());
     }

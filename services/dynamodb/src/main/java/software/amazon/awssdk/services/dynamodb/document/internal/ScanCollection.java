@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.document.ScanOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.ScanSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 class ScanCollection extends ItemCollection<ScanOutcome> {
 
@@ -53,7 +53,7 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
 
         spec.setRequest(request);
 
-        ScanResult result = client.scan(request);
+        ScanResponse result = client.scan(request);
         ScanOutcome outcome = new ScanOutcome(result);
         setLastLowLevelResult(outcome);
         return new ScanPage(client, spec, request, 0, outcome);
@@ -66,7 +66,7 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
 
     protected void setLastLowLevelResult(ScanOutcome lowLevelResult) {
         super.setLastLowLevelResult(lowLevelResult);
-        ScanResult result = lowLevelResult.scanResult();
+        ScanResponse result = lowLevelResult.scanResult();
         accumulateStats(result.consumedCapacity(), result.count(),
                         result.scannedCount());
     }

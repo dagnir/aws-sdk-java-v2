@@ -21,7 +21,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.CreateAliasRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
-import software.amazon.awssdk.services.kms.model.CreateKeyResult;
+import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DescribeKeyRequest;
 import software.amazon.awssdk.services.kms.model.NotFoundException;
 
@@ -60,7 +60,7 @@ public class KmsClientTestExtensions {
     public String getNonDefaultKeyId() {
         String keyId = findKeyIdByAlias(NON_DEFAULT_KEY_ALIAS);
         if (keyId == null) {
-            CreateKeyResult result = client.createKey(CreateKeyRequest.builder()
+            CreateKeyResponse result = client.createKey(CreateKeyRequest.builder()
                     .description("KMS key used for S3 Integration tests")
                     .build());
             client.createAlias(CreateAliasRequest.builder()

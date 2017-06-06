@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfi
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper.BatchGetItemException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
@@ -45,7 +45,7 @@ public class BatchLoadRetryStrategyTest {
     private static final String TABLE_NAME3 = "tableName3";
     private static final String HASH_ATTR = "hash";
 
-    // private static BatchGetItemResult batchGetItemResult;
+    // private static BatchGetItemResponse batchGetItemResponse;
     private static List<Object> itemsToGet;
 
     static {
@@ -61,19 +61,19 @@ public class BatchLoadRetryStrategyTest {
     private DynamoDBClient ddbMock;
     private DynamoDbMapper mapper;
     private BatchGetItemRequest mockItemRequest;
-    private BatchGetItemResult mockItemResult;
+    private BatchGetItemResponse mockItemResult;
 
     @Before
     public void setup() {
         ddbMock = createMock(DynamoDBClient.class);
         mockItemRequest = createMock(BatchGetItemRequest.class);
-        mockItemResult = createMock(BatchGetItemResult.class);
+        mockItemResult = createMock(BatchGetItemResponse.class);
     }
 
     @Test
     public void testBatchReadCallFailure_NoRetry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build())
+                .andReturn(buildDefaultGetItemResponse().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build())
                 .times(1);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.NoRetryBatchLoadRetryStrategy());
@@ -88,7 +88,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build())
+                .andReturn(buildDefaultGetItemResponse().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(1)).build())
                 .times(4);
         mapper = new DynamoDbMapper(ddbMock, getConfigWithCustomBatchLoadRetryStrategy(new BatchLoadRetryStrategyWithNoDelay(3)));
 
@@ -101,7 +101,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallSuccess_Retry() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject())).andReturn(
-                buildDefaultGetItemResult().toBuilder().unprocessedKeys(new HashMap<>(1)).build()).times(1);
+                buildDefaultGetItemResponse().toBuilder().unprocessedKeys(new HashMap<>(1)).build()).times(1);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy());
         mapper = new DynamoDbMapper(ddbMock, config);
@@ -114,7 +114,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_Retry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build())
+                .andReturn(buildDefaultGetItemResponse().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build())
                 .times(6);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.DefaultBatchLoadRetryStrategy());
@@ -129,7 +129,7 @@ public class BatchLoadRetryStrategyTest {
     @Test
     public void testBatchReadCallFailure_NoRetry_RetryOnCompleteFailure() {
         expect(ddbMock.batchGetItem((BatchGetItemRequest) anyObject()))
-                .andReturn(buildDefaultGetItemResult().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build())
+                .andReturn(buildDefaultGetItemResponse().toBuilder().unprocessedKeys(buildUnprocessedKeysMap(3)).build())
                 .times(1);
         DynamoDbMapperConfig config =
                 getConfigWithCustomBatchLoadRetryStrategy(new DynamoDbMapperConfig.NoRetryBatchLoadRetryStrategy());
@@ -149,7 +149,7 @@ public class BatchLoadRetryStrategyTest {
         replay(mockItemRequest);
         replay(mockItemResult);
         BatchLoadContext context = new BatchLoadContext(mockItemRequest);
-        context.setBatchGetItemResult(mockItemResult);
+        context.setBatchGetItemResponse(mockItemResult);
         context.setRetriesAttempted(2);
         assertEquals(0, defaultRetryStrategy.getDelayBeforeNextRetry(context));
     }
@@ -162,7 +162,7 @@ public class BatchLoadRetryStrategyTest {
         replay(mockItemRequest);
         replay(mockItemResult);
         BatchLoadContext context = new BatchLoadContext(mockItemRequest);
-        context.setBatchGetItemResult(mockItemResult);
+        context.setBatchGetItemResponse(mockItemResult);
         context.setRetriesAttempted(2);
         assertTrue(defaultRetryStrategy.getDelayBeforeNextRetry(context) > 0);
     }
@@ -180,10 +180,10 @@ public class BatchLoadRetryStrategyTest {
         return unproccessedKeys;
     }
 
-    private BatchGetItemResult buildDefaultGetItemResult() {
+    private BatchGetItemResponse buildDefaultGetItemResponse() {
 
         final Map<String, List<Map<String, AttributeValue>>> map = new HashMap<String, List<Map<String, AttributeValue>>>();
-        return BatchGetItemResult.builder().responses(map).build();
+        return BatchGetItemResponse.builder().responses(map).build();
 
     }
 

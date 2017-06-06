@@ -38,7 +38,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputExceededException;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaginatedScanTaskTest {
@@ -88,7 +88,7 @@ public class PaginatedScanTaskTest {
         stubsuccessfulScan(4);
 
         try {
-            parallelScanTask.nextBatchOfScanResults();
+            parallelScanTask.nextBatchOfScanResponses();
             fail("Expected ProvisionedThroughputExceededException");
         } catch (ProvisionedThroughputExceededException expected) {
             // Ignored or expected.
@@ -105,7 +105,7 @@ public class PaginatedScanTaskTest {
      */
     private void stubsuccessfulScan(int segmentNumber) {
         when(dynamoDB.scan(isSegmentNumber(segmentNumber)))
-                .thenReturn(ScanResult.builder().items(generateItems()).build());
+                .thenReturn(ScanResponse.builder().items(generateItems()).build());
     }
 
     private Map<String, AttributeValue> generateItems() {

@@ -23,14 +23,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.ecs.model.ContainerDefinition;
 import software.amazon.awssdk.services.ecs.model.CreateClusterRequest;
-import software.amazon.awssdk.services.ecs.model.CreateClusterResult;
+import software.amazon.awssdk.services.ecs.model.CreateClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DeleteClusterRequest;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersRequest;
 import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
 import software.amazon.awssdk.services.ecs.model.ListTaskDefinitionsRequest;
 import software.amazon.awssdk.services.ecs.model.PortMapping;
 import software.amazon.awssdk.services.ecs.model.RegisterTaskDefinitionRequest;
-import software.amazon.awssdk.services.ecs.model.RegisterTaskDefinitionResult;
+import software.amazon.awssdk.services.ecs.model.RegisterTaskDefinitionResponse;
 import software.amazon.awssdk.test.AwsTestBase;
 
 public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
@@ -49,7 +49,7 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
 
         client = ECSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        CreateClusterResult result = client.createCluster(CreateClusterRequest.builder()
+        CreateClusterResponse result = client.createCluster(CreateClusterRequest.builder()
                 .clusterName(CLUSTER_NAME)
                 .build());
 
@@ -83,7 +83,7 @@ public class EC2ContainerServiceIntegrationTest extends AwsTestBase {
         Assert.assertNotNull(arns);
         Assert.assertTrue(arns.contains(clusterArn));
 
-        RegisterTaskDefinitionResult result =
+        RegisterTaskDefinitionResponse result =
                 client.registerTaskDefinition(RegisterTaskDefinitionRequest.builder()
                                 .family("test")
                                 .containerDefinitions(ContainerDefinition.builder()

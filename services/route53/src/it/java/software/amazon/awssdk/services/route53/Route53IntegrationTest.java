@@ -33,18 +33,18 @@ import software.amazon.awssdk.services.route53.model.ChangeBatch;
 import software.amazon.awssdk.services.route53.model.ChangeInfo;
 import software.amazon.awssdk.services.route53.model.ChangeResourceRecordSetsRequest;
 import software.amazon.awssdk.services.route53.model.CreateHealthCheckRequest;
-import software.amazon.awssdk.services.route53.model.CreateHealthCheckResult;
+import software.amazon.awssdk.services.route53.model.CreateHealthCheckResponse;
 import software.amazon.awssdk.services.route53.model.CreateHostedZoneRequest;
-import software.amazon.awssdk.services.route53.model.CreateHostedZoneResult;
+import software.amazon.awssdk.services.route53.model.CreateHostedZoneResponse;
 import software.amazon.awssdk.services.route53.model.DelegationSet;
 import software.amazon.awssdk.services.route53.model.DeleteHealthCheckRequest;
 import software.amazon.awssdk.services.route53.model.DeleteHostedZoneRequest;
-import software.amazon.awssdk.services.route53.model.DeleteHostedZoneResult;
+import software.amazon.awssdk.services.route53.model.DeleteHostedZoneResponse;
 import software.amazon.awssdk.services.route53.model.GetChangeRequest;
 import software.amazon.awssdk.services.route53.model.GetHealthCheckRequest;
-import software.amazon.awssdk.services.route53.model.GetHealthCheckResult;
+import software.amazon.awssdk.services.route53.model.GetHealthCheckResponse;
 import software.amazon.awssdk.services.route53.model.GetHostedZoneRequest;
-import software.amazon.awssdk.services.route53.model.GetHostedZoneResult;
+import software.amazon.awssdk.services.route53.model.GetHostedZoneResponse;
 import software.amazon.awssdk.services.route53.model.HealthCheck;
 import software.amazon.awssdk.services.route53.model.HealthCheckConfig;
 import software.amazon.awssdk.services.route53.model.HostedZone;
@@ -103,7 +103,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     @Test
     public void testRoute53() throws Exception {
         // Create Hosted Zone
-        CreateHostedZoneResult result = route53.createHostedZone(CreateHostedZoneRequest.builder()
+        CreateHostedZoneResponse result = route53.createHostedZone(CreateHostedZoneRequest.builder()
                                                                          .name(ZONE_NAME)
                                                                          .callerReference(CALLER_REFERENCE)
                                                                          .hostedZoneConfig(HostedZoneConfig.builder()
@@ -121,20 +121,20 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
         // Get Hosted Zone
         GetHostedZoneRequest hostedZoneRequest = GetHostedZoneRequest.builder().id(createdZoneId).build();
-        GetHostedZoneResult hostedZoneResult = route53.getHostedZone(hostedZoneRequest);
+        GetHostedZoneResponse hostedZoneResult = route53.getHostedZone(hostedZoneRequest);
         assertValidDelegationSet(hostedZoneResult.delegationSet());
         assertValidCreatedHostedZone(hostedZoneResult.hostedZone());
 
         // Create a health check
         HealthCheckConfig config = HealthCheckConfig.builder().type("TCP").port(PORT_NUM).ipAddress(IP_ADDRESS).build();
-        CreateHealthCheckResult createHealthCheckResult = route53.createHealthCheck(
+        CreateHealthCheckResponse createHealthCheckResult = route53.createHealthCheck(
                 CreateHealthCheckRequest.builder().healthCheckConfig(config).callerReference(CALLER_REFERENCE).build());
         healthCheckId = createHealthCheckResult.healthCheck().id();
         assertNotNull(createHealthCheckResult.location());
         assertValidHealthCheck(createHealthCheckResult.healthCheck());
 
         // Get the health check back
-        GetHealthCheckResult gealthCheckResult = route53
+        GetHealthCheckResponse gealthCheckResult = route53
                 .getHealthCheck(GetHealthCheckRequest.builder().healthCheckId(healthCheckId).build());
         assertValidHealthCheck(gealthCheckResult.healthCheck());
 
@@ -234,7 +234,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
         ).changeInfo();
 
         // Delete Hosted Zone
-        DeleteHostedZoneResult deleteHostedZoneResult = route53.deleteHostedZone(DeleteHostedZoneRequest.builder().id(createdZoneId).build());
+        DeleteHostedZoneResponse deleteHostedZoneResult = route53.deleteHostedZone(DeleteHostedZoneRequest.builder().id(createdZoneId).build());
         assertValidChangeInfo(deleteHostedZoneResult.changeInfo());
     }
 

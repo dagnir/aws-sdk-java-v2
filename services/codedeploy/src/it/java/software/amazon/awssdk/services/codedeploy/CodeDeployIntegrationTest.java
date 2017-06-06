@@ -29,13 +29,13 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.codedeploy.model.ApplicationInfo;
 import software.amazon.awssdk.services.codedeploy.model.CreateApplicationRequest;
-import software.amazon.awssdk.services.codedeploy.model.CreateApplicationResult;
+import software.amazon.awssdk.services.codedeploy.model.CreateApplicationResponse;
 import software.amazon.awssdk.services.codedeploy.model.CreateDeploymentGroupRequest;
 import software.amazon.awssdk.services.codedeploy.model.DeleteApplicationRequest;
 import software.amazon.awssdk.services.codedeploy.model.GetApplicationRequest;
-import software.amazon.awssdk.services.codedeploy.model.GetApplicationResult;
+import software.amazon.awssdk.services.codedeploy.model.GetApplicationResponse;
 import software.amazon.awssdk.services.codedeploy.model.ListApplicationsRequest;
-import software.amazon.awssdk.services.codedeploy.model.ListApplicationsResult;
+import software.amazon.awssdk.services.codedeploy.model.ListApplicationsResponse;
 
 /**
  * Performs basic integration tests for AWS Code Deploy service.
@@ -67,7 +67,7 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
         CreateApplicationRequest createRequest = CreateApplicationRequest.builder()
                 .applicationName(APP_NAME)
                 .build();
-        CreateApplicationResult createResult = codeDeploy
+        CreateApplicationResponse createResult = codeDeploy
                 .createApplication(createRequest);
         applicationId = createResult.applicationId();
         assertNotNull(applicationId);
@@ -91,7 +91,7 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testListApplication() {
-        ListApplicationsResult listResult = codeDeploy.listApplications(ListApplicationsRequest.builder().build());
+        ListApplicationsResponse listResult = codeDeploy.listApplications(ListApplicationsRequest.builder().build());
         List<String> applicationList = listResult.applications();
         assertTrue(applicationList.size() >= 1);
         assertTrue(applicationList.contains(APP_NAME));
@@ -103,7 +103,7 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testGetApplication() {
-        GetApplicationResult getResult = codeDeploy
+        GetApplicationResponse getResult = codeDeploy
                 .getApplication(GetApplicationRequest.builder()
                         .applicationName(APP_NAME)
                         .build());

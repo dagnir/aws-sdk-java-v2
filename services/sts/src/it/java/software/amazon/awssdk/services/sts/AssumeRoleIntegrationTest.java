@@ -30,19 +30,19 @@ import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SecurityTokenServiceActions;
 import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyRequest;
-import software.amazon.awssdk.services.iam.model.CreateAccessKeyResult;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.CreateUserRequest;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteLoginProfileRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResponse;
 import software.amazon.awssdk.services.iam.model.PutUserPolicyRequest;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleResult;
+import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 
 @ReviewBeforeRelease("This could be useful to cleanup and present as a customer sample")
 @Ignore
@@ -58,14 +58,14 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
     }
 
     private static void deleteAccessKeysForUser(String userName) {
-        ListAccessKeysResult response = iam.listAccessKeys(ListAccessKeysRequest.builder().userName(userName).build());
+        ListAccessKeysResponse response = iam.listAccessKeys(ListAccessKeysRequest.builder().userName(userName).build());
         for (AccessKeyMetadata akm : response.accessKeyMetadata()) {
             iam.deleteAccessKey(DeleteAccessKeyRequest.builder().userName(userName).accessKeyId(akm.accessKeyId()).build());
         }
     }
 
     private static void deleteUserPoliciesForUser(String userName) {
-        ListUserPoliciesResult response = iam.listUserPolicies(ListUserPoliciesRequest.builder().userName(userName).build());
+        ListUserPoliciesResponse response = iam.listUserPolicies(ListUserPoliciesRequest.builder().userName(userName).build());
         for (String pName : response.policyNames()) {
             iam.deleteUserPolicy(DeleteUserPolicyRequest.builder().userName(userName).policyName(pName).build());
         }
@@ -109,7 +109,7 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
 
         STSClient sts = stsClient();
         Thread.sleep(1000 * 60);
-        AssumeRoleResult assumeRoleResult = sts.assumeRole(assumeRoleRequest);
+        AssumeRoleResponse assumeRoleResult = sts.assumeRole(assumeRoleRequest);
         assertNotNull(assumeRoleResult.assumedRoleUser());
         assertNotNull(assumeRoleResult.assumedRoleUser().arn());
         assertNotNull(assumeRoleResult.assumedRoleUser().assumedRoleId());
@@ -128,7 +128,7 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
 
         iam.putUserPolicy(PutUserPolicyRequest.builder().policyDocument(policyDoc)
                                               .userName(USER_NAME).policyName("assume-role").build());
-        CreateAccessKeyResult createAccessKeyResult =
+        CreateAccessKeyResponse createAccessKeyResult =
                 iam.createAccessKey(CreateAccessKeyRequest.builder().userName(USER_NAME).build());
         AwsCredentials credentials = new AwsCredentials(createAccessKeyResult.accessKey().accessKeyId(),
                                                         createAccessKeyResult.accessKey().secretAccessKey());
