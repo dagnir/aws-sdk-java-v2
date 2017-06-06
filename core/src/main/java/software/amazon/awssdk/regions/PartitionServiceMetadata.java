@@ -77,11 +77,4 @@ public class PartitionServiceMetadata implements ServiceMetadata {
                                                   .map(Region::of))
                                    .collect(toList());
     }
-
-    private URI endpointFromPartitionRegex(Partition partitionData, String hostName, RegionMetadata region) {
-        return URI.create(hostName
-                                  .replace(SERVICE, service)
-                                  .replace(REGION, region.getName())
-                                  .replace(DNS_SUFFIX, partitionData.getDnsSuffix()));
-    }
 }

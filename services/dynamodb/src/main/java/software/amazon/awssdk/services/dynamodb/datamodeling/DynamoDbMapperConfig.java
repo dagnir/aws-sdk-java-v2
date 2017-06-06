@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.services.dynamodb.datamodeling;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -1176,7 +1177,7 @@ public class DynamoDbMapperConfig {
             long delay = 0;
             //Exponential backoff only when all keys are unprocessed
             if (unprocessedKeys != null && requestedKeys != null && unprocessedKeys.size() == requestedKeys.size()) {
-                Random random = new Random();
+                Random random = new SecureRandom();
                 long scaleFactor = 500 + random.nextInt(100);
                 int retriesAttempted = batchLoadContext.getRetriesAttempted();
                 delay = (long) (Math.pow(2, retriesAttempted) * scaleFactor);
@@ -1236,7 +1237,7 @@ public class DynamoDbMapperConfig {
                 return 0;
             }
 
-            Random random = new Random();
+            Random random = new SecureRandom();
             long scaleFactor = 1000 + random.nextInt(200);
             long delay = (long) (Math.pow(2, retriesAttempted) * scaleFactor);
             return Math.min(delay, MAX_BACKOFF_IN_MILLISECONDS);
