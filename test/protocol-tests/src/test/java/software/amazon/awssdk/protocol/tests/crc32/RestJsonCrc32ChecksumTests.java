@@ -30,10 +30,10 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
+import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.config.ClientMarshallerConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
@@ -73,7 +73,7 @@ public class RestJsonCrc32ChecksumTests {
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
                 .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
-                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         SimpleResult result = client.simple(SimpleRequest.builder().build());
@@ -91,7 +91,7 @@ public class RestJsonCrc32ChecksumTests {
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
                 .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
-                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         client.simple(SimpleRequest.builder().build());
@@ -108,7 +108,7 @@ public class RestJsonCrc32ChecksumTests {
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
                 .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
-                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         AllTypesResult result =
@@ -127,7 +127,7 @@ public class RestJsonCrc32ChecksumTests {
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
                 .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
-                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         client.allTypes(AllTypesRequest.builder().build());
@@ -143,7 +143,7 @@ public class RestJsonCrc32ChecksumTests {
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
                 .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
-                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         AllTypesResult result =
@@ -162,7 +162,7 @@ public class RestJsonCrc32ChecksumTests {
                 .credentialsProvider(FAKE_CREDENTIALS_PROVIDER)
                 .region(Region.US_EAST_1)
                 .endpointOverride(URI.create("http://localhost:" + mockServer.port()))
-                .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                 .build();
 
         client.allTypes(AllTypesRequest.builder().build());

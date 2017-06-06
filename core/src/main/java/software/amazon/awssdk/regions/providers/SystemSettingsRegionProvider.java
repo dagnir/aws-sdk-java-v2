@@ -15,26 +15,17 @@
 
 package software.amazon.awssdk.regions.providers;
 
-import java.util.Optional;
-
 import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 
 /**
- * Loads region information from the 'aws.defaultRegion' system property or the 'AWS_DEFAULT_REGION' environment variable. If both
- * are specified, the system property will be used.
+ * Loads region information from the 'aws.region' system property or the 'AWS_REGION' environment variable. If both are specified,
+ * the system property will be used.
  */
 public class SystemSettingsRegionProvider extends AwsRegionProvider {
     @Override
     public Region getRegion() throws SdkClientException {
-
-        Optional<String> regionString = AwsSystemSetting.AWS_DEFAULT_REGION.getStringValue();
-
-        if (regionString.isPresent()) {
-            return Region.of(regionString.get());
-        }
-
-        return null;
+        return AwsSystemSetting.AWS_REGION.getStringValue().map(Region::of).orElse(null);
     }
 }

@@ -33,42 +33,16 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
                      + "make it easier to find the required configuration, like endpoint? This would also make it clear why "
                      + "the credential configuration is separated from the other security configuration.")
 public interface ClientConfiguration {
-
     /**
-     * Override configuration specifying request and response timeouts within the SDK. This will never return null.
+     * Override default client configuration options, such as request timeouts, retry behavior and compression. This will never
+     * return null.
      */
-    ClientTimeoutConfiguration timeoutConfiguration();
-
-    /**
-     * Override configuration related to converting request objects to data that should be transmitted. This will never return
-     * null.
-     */
-    ClientMarshallerConfiguration marshallerConfiguration();
-
-    /**
-     * Override configuration related to metrics gathered by the SDK. This will never return null.
-     */
-    ClientMetricsConfiguration metricsConfiguration();
-
-    /**
-     * Override configuration related to the security of the integration with AWS. This will never return null.
-     */
-    ClientSecurityConfiguration securityConfiguration();
-
-    /**
-     * Override configuration related to the automatic request retry behavior of the SDK. This will never return null.
-     */
-    ClientRetryConfiguration retryConfiguration();
-
-    /**
-     * Override configuration related to behavioral hooks provided within the SDK. This will never return null.
-     */
-    ClientListenerConfiguration listenerConfiguration();
+    ClientOverrideConfiguration overrideConfiguration();
 
     /**
      * The credentials that should be used to authenticate the service with AWS.
      */
-    @ReviewBeforeRelease("This is AWS-specific, so it should probably be broken out.")
+    @ReviewBeforeRelease("This is AWS-specific, so it should be broken out.")
     AwsCredentialsProvider credentialsProvider();
 
     /**

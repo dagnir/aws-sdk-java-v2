@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.config.ClientRetryConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener.ExceptionReporter;
 import software.amazon.awssdk.event.ProgressTracker;
@@ -122,7 +122,7 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
 
         DynamoDBClient ddb_NoRetry = DynamoDBClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .retryConfiguration(ClientRetryConfiguration.builder().retryPolicy(retryPolicy).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().retryPolicy(retryPolicy).build())
                 .build();
 
         try {
@@ -149,7 +149,7 @@ public class RequestProgressIntegrationTest extends DynamoDBTestBase {
 
         DynamoDBClient ddb_OneRetry = DynamoDBClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .retryConfiguration(ClientRetryConfiguration.builder().retryPolicy(retryPolicy).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().retryPolicy(retryPolicy).build())
                 .build();
 
         ExceptionReporter listener = ExceptionReporter.wrap(new ProgressListenerWithEventCodeVerification(

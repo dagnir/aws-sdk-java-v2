@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.client.builder;
 
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
@@ -30,11 +29,6 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
  */
 public interface AsyncClientBuilder<B extends AsyncClientBuilder<B, C>, C>
         extends ClientBuilder<B, C> {
-    /**
-     * Retrieve the value configured with {@link #asyncExecutorProvider(ExecutorProvider)}.
-     */
-    Optional<ExecutorProvider> asyncExecutorProvider();
-
     /**
      * Configure the executor service provider that generates {@link ExecutorService} instances for calling AWS asynchronously.
      * A new {@link ExecutorService} will be created from this provider each time {@link ClientBuilder#build()} is invoked.

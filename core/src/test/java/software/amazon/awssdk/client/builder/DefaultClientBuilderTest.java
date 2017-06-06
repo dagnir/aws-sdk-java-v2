@@ -17,6 +17,7 @@ package software.amazon.awssdk.client.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static software.amazon.awssdk.config.AdvancedClientOption.SIGNER_PROVIDER;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -29,7 +30,7 @@ import org.junit.Test;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.StaticSignerProvider;
-import software.amazon.awssdk.config.ClientSecurityConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
@@ -40,14 +41,16 @@ import software.amazon.awssdk.regions.Region;
  */
 public class DefaultClientBuilderTest {
     private static final String ENDPOINT_PREFIX = "prefix";
-    private static final StaticSignerProvider SIGNER_PROVIDER = new StaticSignerProvider(new Aws4Signer());
+    private static final StaticSignerProvider TEST_SIGNER_PROVIDER = new StaticSignerProvider(new Aws4Signer());
     private static final URI ENDPOINT = URI.create("https://example.com");
 
     @Test
     public void buildIncludesServiceDefaults() {
         TestClient client = testClientBuilder().region(Region.US_WEST_1).build();
-        assertThat(client.syncClientConfiguration.securityConfiguration().signerProvider()).hasValue(SIGNER_PROVIDER);
-        assertThat(client.asyncClientConfiguration.securityConfiguration().signerProvider()).hasValue(SIGNER_PROVIDER);
+        assertThat(client.syncClientConfiguration.overrideConfiguration().advancedOption(SIGNER_PROVIDER))
+                .isEqualTo(TEST_SIGNER_PROVIDER);
+        assertThat(client.asyncClientConfiguration.overrideConfiguration().advancedOption(SIGNER_PROVIDER))
+                .isEqualTo(TEST_SIGNER_PROVIDER);
         assertThat(client.signingRegion).isNotNull();
     }
 
@@ -91,7 +94,7 @@ public class DefaultClientBuilderTest {
                           .findFirst();
 
             assertThat(propertyForMethod).as(propertyName + " property").hasValueSatisfying(property -> {
-                assertThat(property.getReadMethod()).as(propertyName + " getter").isNotNull();
+                assertThat(property.getReadMethod()).as(propertyName + " getter").isNull();
                 assertThat(property.getWriteMethod()).as(propertyName + " setter").isNotNull();
             });
         });
@@ -99,8 +102,13 @@ public class DefaultClientBuilderTest {
     }
 
     private ClientBuilder<TestClientBuilder, TestClient> testClientBuilder() {
+        ClientOverrideConfiguration overrideConfig =
+                ClientOverrideConfiguration.builder()
+                                           .advancedOption(SIGNER_PROVIDER, TEST_SIGNER_PROVIDER)
+                                           .build();
+
         return new TestClientBuilder().credentialsProvider(new AnonymousCredentialsProvider())
-                                      .defaultRegionDetectionEnabled(false);
+                                      .overrideConfiguration(overrideConfig);
     }
 
     private static class TestClient {
@@ -136,8 +144,9 @@ public class DefaultClientBuilderTest {
         protected ClientConfigurationDefaults serviceDefaults() {
             return new ClientConfigurationDefaults() {
                 @Override
-                protected void applySecurityDefaults(ClientSecurityConfiguration.Builder builder) {
-                    builder.signerProvider(SIGNER_PROVIDER);
+                protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
+                    ClientOverrideConfiguration config = builder.build();
+                    builder.advancedOption(SIGNER_PROVIDER, applyDefault(config.advancedOption(SIGNER_PROVIDER), () -> null));
                 }
             };
         }

@@ -26,12 +26,7 @@ import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.config.ClientConfiguration;
-import software.amazon.awssdk.config.ClientListenerConfiguration;
-import software.amazon.awssdk.config.ClientMarshallerConfiguration;
-import software.amazon.awssdk.config.ClientMetricsConfiguration;
-import software.amazon.awssdk.config.ClientRetryConfiguration;
-import software.amazon.awssdk.config.ClientSecurityConfiguration;
-import software.amazon.awssdk.config.ClientTimeoutConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.config.MutableClientConfiguration;
 
 /**
@@ -73,12 +68,7 @@ public abstract class ClientConfigurationDefaults {
      * are absent from the provided configuration, but should never override something that is already present.
      */
     private void applyDefaultValues(MutableClientConfiguration config) {
-        config.timeoutConfiguration(applyDefaultValues(config.timeoutConfiguration(), this::applyTimeoutDefaults));
-        config.marshallerConfiguration(applyDefaultValues(config.marshallerConfiguration(), this::applyMarshallerDefaults));
-        config.metricsConfiguration(applyDefaultValues(config.metricsConfiguration(), this::applyMetricsDefaults));
-        config.securityConfiguration(applyDefaultValues(config.securityConfiguration(), this::applySecurityDefaults));
-        config.retryConfiguration(applyDefaultValues(config.retryConfiguration(), this::applyRetryDefaults));
-        config.listenerConfiguration(applyDefaultValues(config.listenerConfiguration(), this::applyListenerDefaults));
+        config.overrideConfiguration(applyDefaultValues(config.overrideConfiguration(), this::applyOverrideDefaults));
         config.credentialsProvider(applyDefault(config.credentialsProvider(), this::getCredentialsDefault));
         config.endpoint(applyDefault(config.endpoint(), this::getEndpointDefault));
     }
@@ -87,47 +77,7 @@ public abstract class ClientConfigurationDefaults {
      * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
      * are not already set. Implementations of this method shouldn't override values already set in the builder.
      */
-    protected void applyTimeoutDefaults(ClientTimeoutConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyMarshallerDefaults(ClientMarshallerConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyMetricsDefaults(ClientMetricsConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applySecurityDefaults(ClientSecurityConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyRetryDefaults(ClientRetryConfiguration.Builder builder) {
-
-    }
-
-    /**
-     * Optionally overridden by the child class to add additional configuration defaults to the builder, assuming those fields
-     * are not already set. Implementations of this method shouldn't override values already set in the builder.
-     */
-    protected void applyListenerDefaults(ClientListenerConfiguration.Builder builder) {
+    protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
 
     }
 

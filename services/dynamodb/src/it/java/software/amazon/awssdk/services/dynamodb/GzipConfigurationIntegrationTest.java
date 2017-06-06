@@ -17,13 +17,11 @@ package software.amazon.awssdk.services.dynamodb;
 
 import java.util.HashMap;
 import java.util.UUID;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.config.ClientMarshallerConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
@@ -51,7 +49,7 @@ public class GzipConfigurationIntegrationTest extends AwsIntegrationTestBase {
             InterruptedException {
         dynamo = DynamoDBClient.builder()
                                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                               .marshallerConfiguration(ClientMarshallerConfiguration.builder().gzipEnabled(true).build())
+                               .overrideConfiguration(ClientOverrideConfiguration.builder().gzipEnabled(true).build())
                                .build();
         createTable();
         // For this integration test, if the payload is not big enough, the service will not compress the data.

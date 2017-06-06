@@ -33,7 +33,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.config.ClientListenerConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
@@ -55,7 +55,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
         });
         ddb = DynamoDBClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .listenerConfiguration(ClientListenerConfiguration.builder().addRequestListener(mockRequestHandler).build())
+                .overrideConfiguration(ClientOverrideConfiguration.builder().addRequestListener(mockRequestHandler).build())
                 .build();
     }
 
@@ -137,7 +137,7 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
             }
         };
         ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .listenerConfiguration(ClientListenerConfiguration.builder().addRequestListener(requestHandler).build()).build();
+                .overrideConfiguration(ClientOverrideConfiguration.builder().addRequestListener(requestHandler).build()).build();
         ListTablesResult result = ddb.listTables(ListTablesRequest.builder().build());
         // Assert that the unmarshalled response contains our injected table name and not the actual
         // list of tables

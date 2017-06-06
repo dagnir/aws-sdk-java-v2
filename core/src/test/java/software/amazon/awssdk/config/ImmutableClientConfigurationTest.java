@@ -177,47 +177,17 @@ public class ImmutableClientConfigurationTest {
     private static class InitializedConfiguration implements ClientConfiguration {
 
         @Override
-        public ClientTimeoutConfiguration timeoutConfiguration() {
-            return ClientTimeoutConfiguration.builder()
-                                             .httpRequestTimeout(Duration.ofSeconds(2))
-                                             .totalExecutionTimeout(Duration.ofSeconds(4))
-                                             .build();
-        }
-
-        @Override
-        public ClientMarshallerConfiguration marshallerConfiguration() {
-            return ClientMarshallerConfiguration.builder()
-                                                .gzipEnabled(true)
-                                                .addAdditionalHeader("header", "value")
-                                                .build();
-        }
-
-        @Override
-        public ClientMetricsConfiguration metricsConfiguration() {
-            return ClientMetricsConfiguration.builder()
-                                             .requestMetricCollector(RequestMetricCollector.NONE)
-                                             .userAgentPrefix("userAgentPrefix")
-                                             .userAgentSuffix("userAgentSuffix")
-                                             .build();
-        }
-
-        @Override
-        public ClientSecurityConfiguration securityConfiguration() {
-            return ClientSecurityConfiguration.builder()
-                                              .signerProvider(SIGNER_PROVIDER)
-                                              .build();
-        }
-
-        @Override
-        public ClientRetryConfiguration retryConfiguration() {
-            return ClientRetryConfiguration.builder()
-                                           .retryPolicy(RETRY_POLICY)
-                                           .build();
-        }
-
-        @Override
-        public ClientListenerConfiguration listenerConfiguration() {
-            return ClientListenerConfiguration.builder()
+        public ClientOverrideConfiguration overrideConfiguration() {
+            return ClientOverrideConfiguration.builder()
+                                              .httpRequestTimeout(Duration.ofSeconds(2))
+                                              .totalExecutionTimeout(Duration.ofSeconds(4))
+                                              .gzipEnabled(true)
+                                              .addAdditionalHttpHeader("header", "value")
+                                              .requestMetricCollector(RequestMetricCollector.NONE)
+                                              .advancedOption(AdvancedClientOption.USER_AGENT_PREFIX, "userAgentPrefix")
+                                              .advancedOption(AdvancedClientOption.USER_AGENT_SUFFIX, "userAgentSuffix")
+                                              .advancedOption(AdvancedClientOption.SIGNER_PROVIDER, SIGNER_PROVIDER)
+                                              .retryPolicy(RETRY_POLICY)
                                               .addRequestListener(REQUEST_HANDLER)
                                               .build();
         }
