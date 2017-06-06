@@ -191,15 +191,15 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
      * The max back off time for batch get. The configuration for batch write
      * has been moved to DynamoDBMapperConfig
      */
-    static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3;
+    protected static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3;
     /** The max number of items allowed in a BatchWrite request. */
-    static final int MAX_ITEMS_PER_BATCH = 25;
+    protected static final int MAX_ITEMS_PER_BATCH = 25;
     /**
      * This retry count is applicable only when every batch get item request
      * results in no data retrieved from server and the un processed keys is
      * same as request items
      */
-    static final int BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS = 5;
+    protected static final int BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS = 5;
     /**
      * User agent for requests made using the {@link DynamoDbMapper}.
      */
@@ -1118,7 +1118,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
             // Look at every getter and construct a value object for it
             final DynamoDbMapperTableModel<Object> model = getTableModel(clazz, config);
             for (final DynamoDbMapperFieldModel<Object, Object> field : model.fields()) {
-                AttributeValue currentValue = null;
+                AttributeValue currentValue;
                 if (canGenerate(model, toWrite, config.saveBehavior(), field) && !field.versioned()) {
                     currentValue = field.convert(field.generate(field.get(toWrite)));
                     inMemoryUpdates.add(new ValueUpdate(field, currentValue, toWrite));
@@ -1236,7 +1236,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
             Map<String, List<WriteRequest>> batch,
             BatchWriteRetryStrategy batchWriteRetryStrategy) {
 
-        BatchWriteItemResult result = null;
+        BatchWriteItemResult result;
         int retries = 0;
         int maxRetries = batchWriteRetryStrategy
                 .maxRetryOnUnprocessedItems(Collections
@@ -1499,7 +1499,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         // Count scans can also be truncated for large datasets
         int count = 0;
-        ScanResult scanResult = null;
+        ScanResult scanResult;
         do {
             scanResult = db.scan(applyUserAgent(scanRequest));
             count += scanResult.count();
@@ -1518,7 +1518,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         // Count queries can also be truncated for large datasets
         int count = 0;
-        QueryResult queryResult = null;
+        QueryResult queryResult;
         do {
             queryResult = db.query(applyUserAgent(queryRequest));
             count += queryResult.count();

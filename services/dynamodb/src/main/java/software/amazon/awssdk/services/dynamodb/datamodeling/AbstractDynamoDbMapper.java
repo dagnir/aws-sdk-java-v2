@@ -44,7 +44,7 @@ public class AbstractDynamoDbMapper implements IDynamoDbMapper {
     }
 
     protected final String getTableName(Class<?> clazz, Object object, DynamoDbMapperConfig config) {
-        if (config.getObjectTableNameResolver() != null && object != null) {
+        if (object != null && config.getObjectTableNameResolver() != null) {
             return config.getObjectTableNameResolver().getTableName(object, config);
         }
         return getTableName(clazz, config);
