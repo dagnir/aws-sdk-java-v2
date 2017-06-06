@@ -18,7 +18,9 @@ package software.amazon.awssdk.jmespath;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
+@ReviewBeforeRelease("Need to come up with a permanent solution to allow waiters to serialize model objects to JSON (or to avoid doing it)")
 public final class ObjectMapperSingleton {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
