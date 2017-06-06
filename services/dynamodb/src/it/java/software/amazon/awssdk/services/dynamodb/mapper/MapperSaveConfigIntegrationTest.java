@@ -119,7 +119,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
     }
 
     /*********************************************
@@ -146,7 +146,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -166,7 +166,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(hashKeyValue, returnedObject.getHashKey());
         assertEquals(rangeKeyValue, returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
 
         /* Put an updated object with the same key and an additional non-key attribute. */
         testItem.setHashKey(hashKeyValue);
@@ -179,7 +179,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -200,7 +200,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -226,7 +226,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals("foo", returnedObject.nonKeyAttribute());
+        assertEquals("foo", returnedObject.getNonKeyAttribute());
     }
 
     /*********************************************
@@ -250,7 +250,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -270,7 +270,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(hashKeyValue, returnedObject.getHashKey());
         assertEquals(rangeKeyValue, returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
 
         /* Put an updated object with the same key and an additional non-key attribute. */
         String nonKeyAttributeValue = "update";
@@ -284,7 +284,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
 
         /* At last, save the object again, but with non-key attribute set as null.
          * This should not change the existing item.
@@ -296,7 +296,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(nonKeyAttributeValue, returnedObject.nonKeyAttribute());
+        assertEquals(nonKeyAttributeValue, returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -317,7 +317,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -343,8 +343,8 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals("foo", returnedObject.nonKeyAttribute());
-        assertTrue(assertSetEquals(randomSet, returnedObject.stringSetAttribute()));
+        assertEquals("foo", returnedObject.getNonKeyAttribute());
+        assertTrue(assertSetEquals(randomSet, returnedObject.getStringSetAttribute()));
     }
 
     /*********************************************
@@ -368,8 +368,8 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
-        assertNull(returnedObject.stringSetAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
+        assertNull(returnedObject.getStringSetAttribute());
     }
 
     /**
@@ -389,8 +389,8 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(hashKeyValue, returnedObject.getHashKey());
         assertEquals(rangeKeyValue, returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
-        assertNull(returnedObject.stringSetAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
+        assertNull(returnedObject.getStringSetAttribute());
 
         /* Put an updated object with the same key and an additional non-key attribute. */
         String nonKeyAttributeValue = "update";
@@ -406,8 +406,8 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
-        assertTrue(assertSetEquals(testItem.stringSetAttribute(), returnedObject.stringSetAttribute()));
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
+        assertTrue(assertSetEquals(testItem.getStringSetAttribute(), returnedObject.getStringSetAttribute()));
 
         /* Override nonKeyAttribute and append stringSetAttribute. */
         testItem.setNonKeyAttribute("blabla");
@@ -419,10 +419,10 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals("blabla", returnedObject.nonKeyAttribute());
+        assertEquals("blabla", returnedObject.getNonKeyAttribute());
         // expected set after the append
         stringSetAttributeValue.addAll(appendSetAttribute);
-        assertTrue(assertSetEquals(stringSetAttributeValue, returnedObject.stringSetAttribute()));
+        assertTrue(assertSetEquals(stringSetAttributeValue, returnedObject.getStringSetAttribute()));
 
         /* Append on an existing scalar attribute would result in an exception. */
         TestAppendToScalarItem testAppendToScalarItem = new TestAppendToScalarItem();
@@ -457,8 +457,8 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
-        assertEquals(testItem.stringSetAttribute(), returnedObject.stringSetAttribute());
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
+        assertEquals(testItem.getStringSetAttribute(), returnedObject.getStringSetAttribute());
 
     }
 
@@ -480,7 +480,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -500,7 +500,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertNull(returnedObject.nonKeyAttribute());
+        assertNull(returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -521,7 +521,7 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
     }
 
     /**
@@ -542,6 +542,6 @@ public class MapperSaveConfigIntegrationTest extends MapperSaveConfigTestBase {
         assertNotNull(returnedObject);
         assertEquals(testItem.getHashKey(), returnedObject.getHashKey());
         assertEquals(testItem.getRangeKey(), returnedObject.getRangeKey());
-        assertEquals(testItem.nonKeyAttribute(), returnedObject.nonKeyAttribute());
+        assertEquals(testItem.getNonKeyAttribute(), returnedObject.getNonKeyAttribute());
     }
 } 

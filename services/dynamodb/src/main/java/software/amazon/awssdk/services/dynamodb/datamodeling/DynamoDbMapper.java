@@ -1597,7 +1597,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         request = processKeyConditions(request, xpress, model);
 
-        request.toBuilder()
+        request = request.toBuilder()
                 .scanIndexForward(xpress.isScanIndexForward())
                .limit(xpress.limit())
                .exclusiveStartKey(xpress.getExclusiveStartKey())
@@ -1697,7 +1697,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         final CreateTableRequest.Builder requestBuilder = CreateTableRequest.builder()
                 .tableName(getTableName(clazz, config))
                 .keySchema(KeySchemaElement.builder()
-                        .attributeName(model.rangeKey().name())
+                        .attributeName(model.hashKey().name())
                         .keyType(HASH)
                         .build());
         //.keySchema(new KeySchemaElement(model.hashKey().name(), HASH));

@@ -41,7 +41,7 @@ public class BinaryAttributeByteBufferClass {
     }
 
     @DynamoDbAttribute(attributeName = "binaryAttribute")
-    public ByteBuffer binaryAttribute() {
+    public ByteBuffer getBinaryAttribute() {
         return binaryAttribute;
     }
 
@@ -50,7 +50,7 @@ public class BinaryAttributeByteBufferClass {
     }
 
     @DynamoDbAttribute(attributeName = "binarySetAttribute")
-    public Set<ByteBuffer> binarySetAttribute() {
+    public Set<ByteBuffer> getBinarySetAttribute() {
         return binarySetAttribute;
     }
 

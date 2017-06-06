@@ -154,7 +154,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
         }
 
         @DynamoDbAttribute(attributeName = nonKeyAttributeName)
-        public String nonKeyAttribute() {
+        public String getNonKeyAttribute() {
             return nonKeyAttribute;
         }
 
@@ -163,7 +163,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
         }
 
         @DynamoDbAttribute(attributeName = stringSetAttributeName)
-        public Set<String> stringSetAttribute() {
+        public Set<String> getStringSetAttribute() {
             return stringSetAttribute;
         }
 

@@ -64,7 +64,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
     @AfterClass
     public static void tearDown() {
         for (String tableName : testedTableName) {
-            dynamo.deleteTable(DeleteTableRequest.builder().tableName(tableName).build()  );
+            dynamo.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
         }
     }
 
@@ -156,6 +156,7 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
         CreateTableRequest request = mapper.generateCreateTableRequest(MapperQueryExpressionTest.HashRangeClass.class);
         String createdTableName = appendCurrentTimeToTableName(request);
         testedTableName.add(createdTableName);
+        setProvisionedThroughput(request, DEFAULT_CAPACITY);
 
         TableDescription createdTableDescription = dynamo.createTable(request).tableDescription();
 

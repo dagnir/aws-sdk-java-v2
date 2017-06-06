@@ -89,10 +89,10 @@ public class RangeKeyAttributesIntegrationTest extends DynamoDBMapperIntegration
             assertEquals(new BigDecimal(x.getKey()), new BigDecimal(attr.get(KEY_NAME).n()));
             assertEquals(new BigDecimal(x.getRangeKey()), new BigDecimal(attr.get(RANGE_KEY).n()));
             assertEquals(new BigDecimal(x.getVersion()), new BigDecimal(attr.get(VERSION_ATTRIBUTE).n()));
-            assertEquals(x.bigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).n()));
+            assertEquals(x.getBigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).n()));
             assertNumericSetsEquals(x.getIntegerAttribute(), attr.get(INTEGER_ATTRIBUTE).ns());
-            assertEquals(x.stringAttribute(), attr.get(STRING_ATTRIBUTE).s());
-            assertSetsEqual(x.stringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).ss()));
+            assertEquals(x.getStringAttribute(), attr.get(STRING_ATTRIBUTE).s());
+            assertSetsEqual(x.getStringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).ss()));
         }
     }
 

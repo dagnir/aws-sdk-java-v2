@@ -21,6 +21,7 @@ import static software.amazon.awssdk.services.dynamodb.model.KeyType.RANGE;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -87,7 +88,8 @@ final class StandardAnnotationMaps {
         try {
             if (annotation != null) {
                 try {
-                    return clazz.getConstructor(Class.class, annotation.annotationType()).newInstance(targetType, annotation);
+                    Constructor<T> c = clazz.getConstructor(Class.class, annotation.annotationType());
+                    return c.newInstance(targetType, annotation);
                 } catch (final NoSuchMethodException no) {
                     // Ignored or expected.
                 }

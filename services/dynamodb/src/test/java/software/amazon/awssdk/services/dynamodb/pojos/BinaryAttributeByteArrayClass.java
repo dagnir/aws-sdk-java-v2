@@ -40,7 +40,7 @@ public class BinaryAttributeByteArrayClass {
     }
 
     @DynamoDbAttribute(attributeName = "binaryAttribute")
-    public byte[] binaryAttribute() {
+    public byte[] getBinaryAttribute() {
         return binaryAttribute;
     }
 
@@ -49,7 +49,7 @@ public class BinaryAttributeByteArrayClass {
     }
 
     @DynamoDbAttribute(attributeName = "binarySetAttribute")
-    public Set<byte[]> binarySetAttribute() {
+    public Set<byte[]> getBinarySetAttribute() {
         return binarySetAttribute;
     }
 

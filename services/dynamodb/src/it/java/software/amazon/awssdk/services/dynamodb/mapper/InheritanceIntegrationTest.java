@@ -119,7 +119,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
         }
 
         @DynamoDbAttribute
-        public String normalStringAttribute() {
+        public String getNormalStringAttribute() {
             return normalStringAttribute;
         }
 
@@ -170,7 +170,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         private String subField;
 
-        public String subField() {
+        public String getSubField() {
             return subField;
         }
 
@@ -224,7 +224,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         private String subsubField;
 
-        public String subsubField() {
+        public String getSubsubField() {
             return subsubField;
         }
 
