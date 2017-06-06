@@ -187,15 +187,4 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
         }
     }
 
-    /**
-     * In the following test, we purposely setting the time offset to trigger a clock skew error.
-     * The time offset must be fixed and then we validate the global value for time offset has been
-     * update.
-     */
-    @Test
-    public void testClockSkew() {
-        SdkGlobalTime.setGlobalTimeOffset(3600);
-        iam.listAccessKeys(ListAccessKeysRequest.builder().build());
-        assertTrue("Clockskew is fixed!", SdkGlobalTime.getGlobalTimeOffset() < 60);
-    }
 }

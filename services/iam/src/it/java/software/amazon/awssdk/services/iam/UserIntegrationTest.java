@@ -47,17 +47,6 @@ public class UserIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    public void TestGetUserImplicit() {
-        GetUserRequest request = GetUserRequest.builder().build();
-
-        GetUserResult Result = iam.getUser(request);
-
-        assertEquals("arn:aws:iam::599169622985:root", Result.user()
-                                                             .arn());
-        assertEquals("599169622985", Result.user().userId());
-    }
-
-    @Test
     public void TestCreateGetUser() {
         String username = IAMUtil.uniqueName();
 
