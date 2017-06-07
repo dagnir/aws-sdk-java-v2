@@ -17,22 +17,22 @@ package software.amazon.awssdk.services.sts.auth;
 
 import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleResult;
+import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import software.amazon.awssdk.services.sts.model.Credentials;
 
 /**
  * Validate the functionality of {@link StsAssumeRoleCredentialsProvider}.
  * Inherits tests from {@link StsCredentialsProviderTestBase}.
  */
-public class StsAssumeRoleCredentialsProviderTest extends StsCredentialsProviderTestBase<AssumeRoleRequest, AssumeRoleResult> {
+public class StsAssumeRoleCredentialsProviderTest extends StsCredentialsProviderTestBase<AssumeRoleRequest, AssumeRoleResponse> {
     @Override
     protected AssumeRoleRequest getRequest() {
         return AssumeRoleRequest.builder().build();
     }
 
     @Override
-    protected AssumeRoleResult getResponse(Credentials credentials) {
-        return AssumeRoleResult.builder().credentials(credentials).build();
+    protected AssumeRoleResponse getResponse(Credentials credentials) {
+        return AssumeRoleResponse.builder().credentials(credentials).build();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class StsAssumeRoleCredentialsProviderTest extends StsCredentialsProvider
     }
 
     @Override
-    protected AssumeRoleResult callClient(STSClient client, AssumeRoleRequest request) {
+    protected AssumeRoleResponse callClient(STSClient client, AssumeRoleRequest request) {
         return client.assumeRole(request);
     }
 }

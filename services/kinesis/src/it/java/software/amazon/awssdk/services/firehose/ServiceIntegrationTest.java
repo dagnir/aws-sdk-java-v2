@@ -30,7 +30,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.ProfileCredentialsProvider;
 import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest;
 import software.amazon.awssdk.services.firehose.model.ListDeliveryStreamsRequest;
-import software.amazon.awssdk.services.firehose.model.ListDeliveryStreamsResult;
+import software.amazon.awssdk.services.firehose.model.ListDeliveryStreamsResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchRequest;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchResponseEntry;
 import software.amazon.awssdk.services.firehose.model.PutRecordRequest;
@@ -111,7 +111,7 @@ public class ServiceIntegrationTest extends AwsTestBase {
 
     @Test
     public void testListDeliveryStreams() {
-        ListDeliveryStreamsResult result = firehose
+        ListDeliveryStreamsResponse result = firehose
                 .listDeliveryStreams(ListDeliveryStreamsRequest.builder().build());
         assertNotNull(result.deliveryStreamNames());
         assertNotNull(result.hasMoreDeliveryStreams());

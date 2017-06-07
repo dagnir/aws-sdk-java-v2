@@ -20,7 +20,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
-import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
+import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.util.StringUtils;
@@ -128,7 +128,7 @@ public class IntegrationTestBase extends AwsTestBase {
      * @return The queue url for the created queue
      */
     protected String createQueue(SQSAsyncClient sqsClient) {
-        CreateQueueResult res = sqsClient.createQueue(CreateQueueRequest.builder().queueName(getUniqueQueueName()).build()).join();
+        CreateQueueResponse res = sqsClient.createQueue(CreateQueueRequest.builder().queueName(getUniqueQueueName()).build()).join();
         return res.queueUrl();
     }
 

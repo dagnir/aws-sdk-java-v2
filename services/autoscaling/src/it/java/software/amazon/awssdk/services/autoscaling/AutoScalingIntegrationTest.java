@@ -47,23 +47,23 @@ import software.amazon.awssdk.services.autoscaling.model.DeletePolicyRequest;
 import software.amazon.awssdk.services.autoscaling.model.DeleteScheduledActionRequest;
 import software.amazon.awssdk.services.autoscaling.model.DeleteTagsRequest;
 import software.amazon.awssdk.services.autoscaling.model.DescribeAutoScalingGroupsRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribeAutoScalingGroupsResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribeAutoScalingGroupsResponse;
 import software.amazon.awssdk.services.autoscaling.model.DescribeAutoScalingInstancesRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribeAutoScalingInstancesResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribeAutoScalingInstancesResponse;
 import software.amazon.awssdk.services.autoscaling.model.DescribeAutoScalingNotificationTypesRequest;
 import software.amazon.awssdk.services.autoscaling.model.DescribeLaunchConfigurationsRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribeLaunchConfigurationsResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribeLaunchConfigurationsResponse;
 import software.amazon.awssdk.services.autoscaling.model.DescribeNotificationConfigurationsRequest;
 import software.amazon.awssdk.services.autoscaling.model.DescribePoliciesRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribePoliciesResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribePoliciesResponse;
 import software.amazon.awssdk.services.autoscaling.model.DescribeScalingActivitiesRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribeScalingActivitiesResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribeScalingActivitiesResponse;
 import software.amazon.awssdk.services.autoscaling.model.DescribeScheduledActionsRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribeScheduledActionsResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribeScheduledActionsResponse;
 import software.amazon.awssdk.services.autoscaling.model.DescribeTagsRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribeTagsResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribeTagsResponse;
 import software.amazon.awssdk.services.autoscaling.model.DescribeTerminationPolicyTypesRequest;
-import software.amazon.awssdk.services.autoscaling.model.DescribeTerminationPolicyTypesResult;
+import software.amazon.awssdk.services.autoscaling.model.DescribeTerminationPolicyTypesResponse;
 import software.amazon.awssdk.services.autoscaling.model.Ebs;
 import software.amazon.awssdk.services.autoscaling.model.ExecutePolicyRequest;
 import software.amazon.awssdk.services.autoscaling.model.Filter;
@@ -71,7 +71,7 @@ import software.amazon.awssdk.services.autoscaling.model.LaunchConfiguration;
 import software.amazon.awssdk.services.autoscaling.model.NotificationConfiguration;
 import software.amazon.awssdk.services.autoscaling.model.PutNotificationConfigurationRequest;
 import software.amazon.awssdk.services.autoscaling.model.PutScalingPolicyRequest;
-import software.amazon.awssdk.services.autoscaling.model.PutScalingPolicyResult;
+import software.amazon.awssdk.services.autoscaling.model.PutScalingPolicyResponse;
 import software.amazon.awssdk.services.autoscaling.model.PutScheduledUpdateGroupActionRequest;
 import software.amazon.awssdk.services.autoscaling.model.ResumeProcessesRequest;
 import software.amazon.awssdk.services.autoscaling.model.ScalingPolicy;
@@ -235,7 +235,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         DescribeLaunchConfigurationsRequest describeRequest = DescribeLaunchConfigurationsRequest.builder()
                 .launchConfigurationNames(launchConfigurationName).build();
         
-        DescribeLaunchConfigurationsResult result = autoscaling.describeLaunchConfigurations(describeRequest);
+        DescribeLaunchConfigurationsResponse result = autoscaling.describeLaunchConfigurations(describeRequest);
         List<LaunchConfiguration> launchConfigurations = result.launchConfigurations();
         assertEquals(1, launchConfigurations.size());
         LaunchConfiguration launchConfiguration = launchConfigurations.get(0);
@@ -276,7 +276,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
                                                                       .desiredCapacity(1).build());
 
         // Describe
-        DescribeAutoScalingGroupsResult result = autoscaling
+        DescribeAutoScalingGroupsResponse result = autoscaling
                 .describeAutoScalingGroups(DescribeAutoScalingGroupsRequest.builder()
                                                    .autoScalingGroupNames(autoScalingGroupName).build());
         List<AutoScalingGroup> autoScalingGroups = result.autoScalingGroups();
@@ -318,7 +318,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         // Describe the scaling activity of our group
         DescribeScalingActivitiesRequest describeActivityRequest = DescribeScalingActivitiesRequest.builder()
                 .autoScalingGroupName(autoScalingGroupName).maxRecords(20).build();
-        DescribeScalingActivitiesResult describeScalingActivitiesResult = autoscaling
+        DescribeScalingActivitiesResponse describeScalingActivitiesResult = autoscaling
                 .describeScalingActivities(describeActivityRequest);
         describeScalingActivitiesResult.activities();
     }
@@ -349,7 +349,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
             .cooldown(TEST_COOLDOWN)
             .build();
 
-        PutScalingPolicyResult putScalingPolicyResult = autoscaling.putScalingPolicy(putScalingPolicyRequest);
+        PutScalingPolicyResponse putScalingPolicyResult = autoscaling.putScalingPolicy(putScalingPolicyRequest);
         assertNotNull(putScalingPolicyResult);
         assertNotNull(putScalingPolicyResult.policyARN());
 
@@ -358,7 +358,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
             .autoScalingGroupName(autoScalingGroupName)
             .build();
 
-        DescribePoliciesResult describePoliciesResult = autoscaling.describePolicies(describePoliciesRequest);
+        DescribePoliciesResponse describePoliciesResult = autoscaling.describePolicies(describePoliciesRequest);
         assertNotNull(describePoliciesResult);
         assertEquals(1, describePoliciesResult.scalingPolicies().size());
 
@@ -431,7 +431,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
             .autoScalingGroupName(autoScalingGroupName)
             .build();
 
-        DescribeScheduledActionsResult describeScheduledActionsResult = autoscaling
+        DescribeScheduledActionsResponse describeScheduledActionsResult = autoscaling
                 .describeScheduledActions(describeScheduledActionsRequest);
         assertNotNull(describeScheduledActionsResult);
         assertEquals(1, describeScheduledActionsResult.scheduledUpdateGroupActions().size());
@@ -481,7 +481,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
         autoscaling.createAutoScalingGroup(createRequest);
 
         // Describe Instances
-        DescribeAutoScalingInstancesResult describeAutoScalingInstancesResult = autoscaling
+        DescribeAutoScalingInstancesResponse describeAutoScalingInstancesResult = autoscaling
                 .describeAutoScalingInstances(DescribeAutoScalingInstancesRequest.builder().build());
         assertNotNull(describeAutoScalingInstancesResult);
 
@@ -580,7 +580,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
 
         Filter filter = Filter.builder().name("auto-scaling-group").values(autoScalingGroupName).build();
 
-        DescribeTagsResult describeTags = autoscaling.describeTags(DescribeTagsRequest.builder().filters(filter).build());
+        DescribeTagsResponse describeTags = autoscaling.describeTags(DescribeTagsRequest.builder().filters(filter).build());
         assertEquals(3, describeTags.tags().size());
         for (TagDescription tag : describeTags.tags()) {
             assertEquals(autoScalingGroupName, tag.resourceId());
@@ -597,7 +597,7 @@ public class AutoScalingIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testDescribeTerminationPolicyTypes() {
-        DescribeTerminationPolicyTypesResult describeAdjustmentTypesResult = autoscaling
+        DescribeTerminationPolicyTypesResponse describeAdjustmentTypesResult = autoscaling
                 .describeTerminationPolicyTypes(DescribeTerminationPolicyTypesRequest.builder().build());
         assertEquals(TERMINATION_POLICIES.toArray(), describeAdjustmentTypesResult.terminationPolicyTypes()
                                                                                   .toArray());

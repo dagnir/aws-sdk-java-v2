@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.dynamodb.document.api;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.services.dynamodb.document.TableCollection;
 import software.amazon.awssdk.services.dynamodb.document.spec.ListTablesSpec;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
 /**
  * DynamoDB ListTables API.
@@ -31,7 +31,7 @@ public interface ListTablesApi {
      * underlying collection is paginated with a page size of 100. A network
      * call is made whenever the collection is iterated across a page boundary.
      */
-    public TableCollection<ListTablesResult> listTables();
+    public TableCollection<ListTablesResponse> listTables();
 
     /**
      * Returns a collection of tables (initialized with the respective table
@@ -47,7 +47,7 @@ public interface ListTablesApi {
      *            returned for <i>LastEvaluatedTableName</i> in a previous
      *            operation, so that you can obtain the next page of results.
      */
-    public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName);
+    public TableCollection<ListTablesResponse> listTables(String exclusiveStartTableName);
 
     /**
      * Returns a collection of tables (initialized with the respective table
@@ -66,7 +66,7 @@ public interface ListTablesApi {
      * @param maxResultSize
      *            A maximum number of table names to return.
      */
-    public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName, int maxResultSize);
+    public TableCollection<ListTablesResponse> listTables(String exclusiveStartTableName, int maxResultSize);
 
     /**
      * Returns a collection of tables (initialized with the respective table
@@ -78,7 +78,7 @@ public interface ListTablesApi {
      * @param maxResultSize
      *            A maximum number of table names to return.
      */
-    public TableCollection<ListTablesResult> listTables(int maxResultSize);
+    public TableCollection<ListTablesResponse> listTables(int maxResultSize);
 
     /**
      * List tables by specifying all the details. The underlying collection is
@@ -93,5 +93,5 @@ public interface ListTablesApi {
      * @return a collection of tables associated with the current account and
      *         endpoint.
      */
-    public TableCollection<ListTablesResult> listTables(ListTablesSpec spec);
+    public TableCollection<ListTablesResponse> listTables(ListTablesSpec spec);
 }

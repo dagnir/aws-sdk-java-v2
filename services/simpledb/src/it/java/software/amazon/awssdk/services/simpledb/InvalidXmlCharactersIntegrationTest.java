@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.simpledb.model.Item;
 import software.amazon.awssdk.services.simpledb.model.PutAttributesRequest;
 import software.amazon.awssdk.services.simpledb.model.ReplaceableAttribute;
 import software.amazon.awssdk.services.simpledb.model.SelectRequest;
-import software.amazon.awssdk.services.simpledb.model.SelectResult;
+import software.amazon.awssdk.services.simpledb.model.SelectResponse;
 
 /**
  * Tests that we can handle SimpleDBs base64 encoding attributes when users upload data that isn't
@@ -56,7 +56,7 @@ public class InvalidXmlCharactersIntegrationTest extends IntegrationTestBase {
     public void testInvalidXmlCharacters() throws Exception {
         createTestData();
 
-        SelectResult selectResult = sdb.select(SelectRequest.builder().selectExpression("SELECT * FROM `" + domainName
+        SelectResponse selectResult = sdb.select(SelectRequest.builder().selectExpression("SELECT * FROM `" + domainName
                                                                                         + "`").build());
 
         List<Item> items = selectResult.items();

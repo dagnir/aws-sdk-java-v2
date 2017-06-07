@@ -38,7 +38,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import software.amazon.awssdk.services.dynamodb.model.Select;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import utils.resources.RequiredResources;
@@ -171,7 +171,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
                                .comparisonOperator(ComparisonOperator.EQ).build());
 
         // All the items with the GSI keys should be returned
-        assertQueryResultCount(totalDuplicateGSIKeys, QueryRequest.builder()
+        assertQueryResponseCount(totalDuplicateGSIKeys, QueryRequest.builder()
                 .tableName(tableName)
                 .indexName(GSI_NAME)
                 .keyConditions(keyConditions).build());
@@ -208,7 +208,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         /**
          *  1) Query-with-GSI (only by GSI hash key)
          */
-        QueryResult result = dynamo.query(QueryRequest.builder()
+        QueryResponse result = dynamo.query(QueryRequest.builder()
                                                   .tableName(tableName)
                                                   .indexName(GSI_NAME)
                                                   .keyConditions(
@@ -368,7 +368,7 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         /**
          *  1) Query-with-LSI (only by hash key)
          */
-        QueryResult result = dynamo.query(QueryRequest.builder()
+        QueryResponse result = dynamo.query(QueryRequest.builder()
                                                   .tableName(tableName)
                                                   .indexName(LSI_NAME)
                                                   .keyConditions(
@@ -486,11 +486,11 @@ public class SecondaryIndexesIntegrationTest extends DynamoDBTestBase {
         assertEquals(1, result.items().get(0).size());
     }
 
-    private void assertQueryResultCount(Integer expected, QueryRequest request)
+    private void assertQueryResponseCount(Integer expected, QueryRequest request)
             throws InterruptedException {
 
         int retries = 0;
-        QueryResult result = null;
+        QueryResponse result = null;
         do {
             result = dynamo.query(request);
 

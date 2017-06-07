@@ -28,22 +28,22 @@ import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResult;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResponse;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResult;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchResult;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
-import software.amazon.awssdk.services.sqs.model.DeleteMessageResult;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 /**
  * This class is responsible for buffering outgoing SQS requests, i.e. requests to send a message,
@@ -134,16 +134,17 @@ public class SendQueueBuffer {
     /**
      * @return never null
      */
-    public QueueBufferFuture<SendMessageRequest, SendMessageResult>
-            sendMessage(SendMessageRequest request, QueueBufferCallback<SendMessageRequest, SendMessageResult> callback) {
+    public QueueBufferFuture<SendMessageRequest, SendMessageResponse>
+            sendMessage(SendMessageRequest request, QueueBufferCallback<SendMessageRequest, SendMessageResponse> callback) {
         return submitOutboundRequest(sendMessageLock, openSendMessageBatchTask, request, inflightSendMessageBatches, callback);
     }
 
     /**
      * @return never null
      */
-    public QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult>
-            deleteMessage(DeleteMessageRequest request, QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback) {
+    public QueueBufferFuture<DeleteMessageRequest, DeleteMessageResponse>
+            deleteMessage(DeleteMessageRequest request,
+                          QueueBufferCallback<DeleteMessageRequest, DeleteMessageResponse> callback) {
         return submitOutboundRequest(deleteMessageLock, openDeleteMessageBatchTask, request,
                                      inflightDeleteMessageBatches, callback);
     }
@@ -151,9 +152,9 @@ public class SendQueueBuffer {
     /**
      * @return never null
      */
-    public QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> changeMessageVisibility(
+    public QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> changeMessageVisibility(
             ChangeMessageVisibilityRequest request,
-            QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> callback) {
+            QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> callback) {
         return submitOutboundRequest(changeMessageVisibilityLock, openChangeMessageVisibilityBatchTask, request,
                                      inflightChangeMessageVisibilityBatches, callback);
     }
@@ -459,7 +460,7 @@ public class SendQueueBuffer {
         }
     }
 
-    private class SendMessageBatchTask extends OutboundBatchTask<SendMessageRequest, SendMessageResult> {
+    private class SendMessageBatchTask extends OutboundBatchTask<SendMessageRequest, SendMessageResponse> {
 
         int batchSizeBytes = 0;
 
@@ -481,7 +482,7 @@ public class SendQueueBuffer {
 
         @Override
         protected void process(List<SendMessageRequest> requests,
-                               List<QueueBufferFuture<SendMessageRequest, SendMessageResult>> futures) {
+                               List<QueueBufferFuture<SendMessageRequest, SendMessageResponse>> futures) {
 
             if (requests.isEmpty()) {
                 return;
@@ -500,7 +501,7 @@ public class SendQueueBuffer {
 
             ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
-            SendMessageBatchResult batchResult;
+            SendMessageBatchResponse batchResult;
 
             batchResult = sqsClient.sendMessageBatch(batchRequest).join();
 
@@ -528,11 +529,11 @@ public class SendQueueBuffer {
 
     }
 
-    private class DeleteMessageBatchTask extends OutboundBatchTask<DeleteMessageRequest, DeleteMessageResult> {
+    private class DeleteMessageBatchTask extends OutboundBatchTask<DeleteMessageRequest, DeleteMessageResponse> {
 
         @Override
         protected void process(List<DeleteMessageRequest> requests,
-                               List<QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult>> futures) {
+                               List<QueueBufferFuture<DeleteMessageRequest, DeleteMessageResponse>> futures) {
 
             if (requests.isEmpty()) {
                 return;
@@ -550,7 +551,7 @@ public class SendQueueBuffer {
 
             ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
-            DeleteMessageBatchResult batchResult = sqsClient.deleteMessageBatch(batchRequest).join();
+            DeleteMessageBatchResponse batchResult = sqsClient.deleteMessageBatch(batchRequest).join();
 
             for (DeleteMessageBatchResultEntry entry : batchResult.successful()) {
                 int index = Integer.parseInt(entry.id());
@@ -575,11 +576,11 @@ public class SendQueueBuffer {
     }
 
     private class ChangeMessageVisibilityBatchTask
-            extends OutboundBatchTask<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> {
+            extends OutboundBatchTask<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> {
 
         @Override
         protected void process(List<ChangeMessageVisibilityRequest> requests,
-                               List<QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult>> futures) {
+                               List<QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse>> futures) {
 
             if (requests.isEmpty()) {
                 return;
@@ -601,7 +602,7 @@ public class SendQueueBuffer {
 
             ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
-            ChangeMessageVisibilityBatchResult batchResult = sqsClient.changeMessageVisibilityBatch(batchRequest).join();
+            ChangeMessageVisibilityBatchResponse batchResult = sqsClient.changeMessageVisibilityBatch(batchRequest).join();
 
             for (ChangeMessageVisibilityBatchResultEntry entry : batchResult.successful()) {
                 int index = Integer.parseInt(entry.id());

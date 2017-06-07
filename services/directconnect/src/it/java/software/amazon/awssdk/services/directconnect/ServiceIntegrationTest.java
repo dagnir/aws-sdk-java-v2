@@ -27,12 +27,12 @@ import org.junit.Test;
 import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionRequest;
-import software.amazon.awssdk.services.directconnect.model.CreateConnectionResult;
+import software.amazon.awssdk.services.directconnect.model.CreateConnectionResponse;
 import software.amazon.awssdk.services.directconnect.model.DeleteConnectionRequest;
 import software.amazon.awssdk.services.directconnect.model.DescribeConnectionsRequest;
-import software.amazon.awssdk.services.directconnect.model.DescribeConnectionsResult;
+import software.amazon.awssdk.services.directconnect.model.DescribeConnectionsResponse;
 import software.amazon.awssdk.services.directconnect.model.DescribeLocationsRequest;
-import software.amazon.awssdk.services.directconnect.model.DescribeLocationsResult;
+import software.amazon.awssdk.services.directconnect.model.DescribeLocationsResponse;
 import software.amazon.awssdk.services.directconnect.model.Location;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
@@ -44,7 +44,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @BeforeClass
     public static void setup() {
-        CreateConnectionResult result = dc.createConnection(CreateConnectionRequest.builder()
+        CreateConnectionResponse result = dc.createConnection(CreateConnectionRequest.builder()
                 .connectionName(CONNECTION_NAME)
                 .bandwidth("1Gbps")
                 .location("EqSV5")
@@ -59,7 +59,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeLocations_ReturnsNonEmptyList() {
-        DescribeLocationsResult describeLocations = dc.describeLocations(DescribeLocationsRequest.builder().build());
+        DescribeLocationsResponse describeLocations = dc.describeLocations(DescribeLocationsRequest.builder().build());
         assertTrue(describeLocations.locations().size() > 0);
         for (Location location : describeLocations.locations()) {
             assertNotNull(location.locationCode());
@@ -69,7 +69,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeConnections_ReturnsNonEmptyList() {
-        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder().build());
+        DescribeConnectionsResponse describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder().build());
         assertTrue(describeConnectionsResult.connections().size() > 0);
         assertNotNull(describeConnectionsResult.connections().get(0).connectionId());
         assertNotNull(describeConnectionsResult.connections().get(0).connectionName());
@@ -80,7 +80,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeConnections_FilteredByCollectionId_ReturnsOnlyOneConnection() {
-        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder()
+        DescribeConnectionsResponse describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder()
                 .connectionId(connectionId)
                 .build());
         assertThat(describeConnectionsResult.connections(), hasSize(1));

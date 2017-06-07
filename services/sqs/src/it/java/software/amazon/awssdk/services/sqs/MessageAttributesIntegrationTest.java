@@ -33,12 +33,12 @@ import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 /**
@@ -62,7 +62,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void sendMessage_WithMessageAttributes_ResultHasMd5OfMessageAttributes() {
-        SendMessageResult sendMessageResult = sendTestMessage();
+        SendMessageResponse sendMessageResult = sendTestMessage();
         assertNotEmpty(sendMessageResult.md5OfMessageBody());
         assertNotEmpty(sendMessageResult.md5OfMessageAttributes());
     }
@@ -98,7 +98,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
         ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(queueUrl).waitTimeSeconds(5)
                 .visibilityTimeout(0).messageAttributeNames("All").build();
-        ReceiveMessageResult receiveMessageResult = sqsAsync.receiveMessage(receiveMessageRequest).join();
+        ReceiveMessageResponse receiveMessageResult = sqsAsync.receiveMessage(receiveMessageRequest).join();
 
         assertFalse(receiveMessageResult.messages().isEmpty());
         Message message = receiveMessageResult.messages().get(0);
@@ -116,7 +116,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
         ReceiveMessageRequest receiveMessageRequest = ReceiveMessageRequest.builder().queueUrl(queueUrl).waitTimeSeconds(5)
                 .visibilityTimeout(0).build();
-        ReceiveMessageResult receiveMessageResult = sqsAsync.receiveMessage(receiveMessageRequest).join();
+        ReceiveMessageResponse receiveMessageResult = sqsAsync.receiveMessage(receiveMessageRequest).join();
 
         assertFalse(receiveMessageResult.messages().isEmpty());
         Message message = receiveMessageResult.messages().get(0);
@@ -127,7 +127,7 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void sendMessageBatch_WithMessageAttributes_ResultHasMd5OfMessageAttributes() {
-        SendMessageBatchResult sendMessageBatchResult = sqsAsync.sendMessageBatch(SendMessageBatchRequest.builder()
+        SendMessageBatchResponse sendMessageBatchResult = sqsAsync.sendMessageBatch(SendMessageBatchRequest.builder()
                 .queueUrl(queueUrl)
                 .entries(
                         SendMessageBatchRequestEntry.builder().id("1").messageBody(MESSAGE_BODY)
@@ -149,8 +149,8 @@ public class MessageAttributesIntegrationTest extends IntegrationTestBase {
         assertNotEmpty(sendMessageBatchResult.successful().get(0).md5OfMessageAttributes());
     }
 
-    private SendMessageResult sendTestMessage() {
-        SendMessageResult sendMessageResult = sqsAsync.sendMessage(SendMessageRequest.builder().queueUrl(queueUrl).messageBody(MESSAGE_BODY)
+    private SendMessageResponse sendTestMessage() {
+        SendMessageResponse sendMessageResult = sqsAsync.sendMessage(SendMessageRequest.builder().queueUrl(queueUrl).messageBody(MESSAGE_BODY)
                 .messageAttributes(createRandomAttributeValues(10)).build()).join();
         return sendMessageResult;
     }

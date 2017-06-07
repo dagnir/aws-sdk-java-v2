@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.dynamodb.document.TableWriteItems;
 import software.amazon.awssdk.services.dynamodb.document.api.BatchWriteItemApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.BatchWriteItemSpec;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.DeleteRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
@@ -112,7 +112,7 @@ public class BatchWriteItemImpl implements BatchWriteItemApi {
         }
         BatchWriteItemRequest req = spec.getRequest().toBuilder()
                                         .requestItems(requestItems).build();
-        BatchWriteItemResult result = client.batchWriteItem(req);
+        BatchWriteItemResponse result = client.batchWriteItem(req);
         return new BatchWriteItemOutcome(result);
     }
 }

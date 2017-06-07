@@ -24,18 +24,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromS3Request;
-import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromS3Result;
+import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromS3Response;
 import software.amazon.awssdk.services.machinelearning.model.CreateMLModelRequest;
-import software.amazon.awssdk.services.machinelearning.model.CreateMLModelResult;
+import software.amazon.awssdk.services.machinelearning.model.CreateMLModelResponse;
 import software.amazon.awssdk.services.machinelearning.model.CreateRealtimeEndpointRequest;
 import software.amazon.awssdk.services.machinelearning.model.DeleteDataSourceRequest;
 import software.amazon.awssdk.services.machinelearning.model.DeleteMLModelRequest;
 import software.amazon.awssdk.services.machinelearning.model.DeleteRealtimeEndpointRequest;
 import software.amazon.awssdk.services.machinelearning.model.EntityStatus;
 import software.amazon.awssdk.services.machinelearning.model.GetDataSourceRequest;
-import software.amazon.awssdk.services.machinelearning.model.GetDataSourceResult;
+import software.amazon.awssdk.services.machinelearning.model.GetDataSourceResponse;
 import software.amazon.awssdk.services.machinelearning.model.GetMLModelRequest;
-import software.amazon.awssdk.services.machinelearning.model.GetMLModelResult;
+import software.amazon.awssdk.services.machinelearning.model.GetMLModelResponse;
 import software.amazon.awssdk.services.machinelearning.model.MLModelType;
 import software.amazon.awssdk.services.machinelearning.model.PredictRequest;
 import software.amazon.awssdk.services.machinelearning.model.Prediction;
@@ -167,7 +167,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
     @Test
     public void testBinary() throws Exception {
-        CreateDataSourceFromS3Result result =
+        CreateDataSourceFromS3Response result =
                 client.createDataSourceFromS3(CreateDataSourceFromS3Request.builder()
                         .dataSpec(S3DataSpec.builder()
                                 .dataLocationS3(DATA_LOCATION_S3)
@@ -180,7 +180,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
         Assert.assertEquals("COMPLETED", waitForDataSource());
 
-        CreateMLModelResult result2 =
+        CreateMLModelResponse result2 =
                 client.createMLModel(CreateMLModelRequest.builder()
                         .trainingDataSourceId(dataSourceId)
                         .mlModelType(MLModelType.BINARY)
@@ -223,7 +223,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
     private String waitForDataSource() throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
-            GetDataSourceResult result =
+            GetDataSourceResponse result =
                     client.getDataSource(GetDataSourceRequest.builder()
                             .dataSourceId(dataSourceId)
                             .build());
@@ -254,7 +254,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
     private String waitForMlModel() throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
-            GetMLModelResult result =
+            GetMLModelResponse result =
                     client.getMLModel(GetMLModelRequest.builder()
                             .mlModelId(mlModelId)
                             .build());
@@ -285,7 +285,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
     private String waitUntilMounted() throws InterruptedException {
         for (int i = 0; i < 100; ++i) {
-            GetMLModelResult result =
+            GetMLModelResponse result =
                     client.getMLModel(GetMLModelRequest.builder()
                             .mlModelId(mlModelId)
                             .build());

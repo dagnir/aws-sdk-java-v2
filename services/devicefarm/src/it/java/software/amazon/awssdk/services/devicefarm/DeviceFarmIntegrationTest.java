@@ -22,7 +22,7 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.devicefarm.model.CreateProjectRequest;
-import software.amazon.awssdk.services.devicefarm.model.CreateProjectResult;
+import software.amazon.awssdk.services.devicefarm.model.CreateProjectResponse;
 import software.amazon.awssdk.services.devicefarm.model.ListDevicePoolsRequest;
 import software.amazon.awssdk.services.devicefarm.model.Project;
 import software.amazon.awssdk.test.AwsTestBase;
@@ -44,7 +44,7 @@ public class DeviceFarmIntegrationTest extends AwsTestBase {
 
     @Test
     public void testCreateProject() {
-        CreateProjectResult result = client
+        CreateProjectResponse result = client
                 .createProject(CreateProjectRequest.builder()
                         .name(PROJECT_NAME)
                         .build());

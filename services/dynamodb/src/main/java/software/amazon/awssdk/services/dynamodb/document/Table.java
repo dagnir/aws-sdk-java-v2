@@ -44,9 +44,9 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateGlobalSecondaryIndexAction;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableResult;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResult;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexDescription;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexUpdate;
 import software.amazon.awssdk.services.dynamodb.model.IndexStatus;
@@ -55,7 +55,7 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.UpdateTableResult;
+import software.amazon.awssdk.services.dynamodb.model.UpdateTableResponse;
 import software.amazon.awssdk.waiters.FixedDelayStrategy;
 import software.amazon.awssdk.waiters.MaxAttemptsRetryStrategy;
 import software.amazon.awssdk.waiters.PollingStrategy;
@@ -127,7 +127,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * @throws ResourceNotFoundException if the table doesn't exist
      */
     public TableDescription describe() {
-        DescribeTableResult result = client.describeTable(
+        DescribeTableResponse result = client.describeTable(
                 InternalUtils.applyUserAgent(DescribeTableRequest.builder().tableName(tableName).build()));
         TableDescription description = result.table();
         tableDescription = description;
@@ -346,7 +346,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         UpdateTableRequest.Builder reqBuilder = spec.getRequest().toBuilder();
         reqBuilder.tableName(getTableName());
         UpdateTableRequest updated = reqBuilder.build();
-        UpdateTableResult result = client.updateTable(updated);
+        UpdateTableResponse result = client.updateTable(updated);
         TableDescription description = result.tableDescription();
         this.tableDescription = description;
 
@@ -569,7 +569,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     /**
      * Deletes the table from DynamoDB. Involves network calls.
      */
-    public DeleteTableResult delete() {
+    public DeleteTableResponse delete() {
         return client.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
     }
 

@@ -22,7 +22,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.acm.model.GetCertificateRequest;
 import software.amazon.awssdk.services.acm.model.ListCertificatesRequest;
-import software.amazon.awssdk.services.acm.model.ListCertificatesResult;
+import software.amazon.awssdk.services.acm.model.ListCertificatesResponse;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class AwsCertficateManagerIntegrationTest extends AwsIntegrationTestBase {
@@ -36,7 +36,7 @@ public class AwsCertficateManagerIntegrationTest extends AwsIntegrationTestBase 
 
     @Test
     public void list_certificates() {
-        ListCertificatesResult result = client.listCertificates(ListCertificatesRequest.builder().build());
+        ListCertificatesResponse result = client.listCertificates(ListCertificatesRequest.builder().build());
         Assert.assertTrue(result.certificateSummaryList().size() >= 0);
     }
 

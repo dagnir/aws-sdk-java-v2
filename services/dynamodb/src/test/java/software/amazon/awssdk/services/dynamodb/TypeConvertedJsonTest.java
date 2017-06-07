@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTypeConvert
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,7 +45,7 @@ public class TypeConvertedJsonTest {
     public void responseWithUnmappedField_IgnoresUnknownFieldAndUnmarshallsCorrectly() {
         final DynamoDbMapper mapper = new DynamoDbMapper(ddb);
         when(ddb.getItem(any(GetItemRequest.class)))
-                .thenReturn(GetItemResult.builder().item(
+                .thenReturn(GetItemResponse.builder().item(
                         ImmutableMapParameter.of("hashKey", AttributeValue.builder().s(HASH_KEY).build(),
                                                  "jsonMappedPojo", AttributeValue.builder().s(
                                         "{\"knownField\": \"knownValue\", \"unknownField\": \"unknownValue\"}").build()

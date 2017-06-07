@@ -37,20 +37,20 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
-import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResult;
+import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
-import software.amazon.awssdk.services.sqs.model.GetQueueUrlResult;
+import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
-import software.amazon.awssdk.services.sqs.model.ListQueuesResult;
+import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.RemovePermissionRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 
 /**
@@ -85,7 +85,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 //        runAddPermissionTest();
 //        runRemovePermissionTest();
 //        runSendMessageTest();
-//        ReceiveMessageResult receiveMessageResult = runReceiveMessageTest();
+//        ReceiveMessageResponse receiveMessageResult = runReceiveMessageTest();
 //        runSendMessageBatchTest();
 //        String receiptHandle = runChangeMessageVisibilityTest(receiveMessageResult);
 //        runDeleteMessageTest(receiptHandle);
@@ -97,12 +97,12 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 //    }
 //
 //    private void runGetQueueTest() {
-//        GetQueueUrlResult getQueueUrlResult = sqs.getQueueUrl(new GetQueueUrlRequest(queueName)).join();
+//        GetQueueUrlResponse getQueueUrlResult = sqs.getQueueUrl(new GetQueueUrlRequest(queueName)).join();
 //        assertEquals(queueUrl, getQueueUrlResult.getQueueUrl());
 //    }
 //
 //    private void runListQueuesTest() {
-//        ListQueuesResult listQueuesResult = sqs.listQueues(new ListQueuesRequest(queueName)).join();
+//        ListQueuesResponse listQueuesResult = sqs.listQueues(new ListQueuesRequest(queueName)).join();
 //        assertEquals(1, listQueuesResult.getQueueUrls().size());
 //        assertEquals(queueUrl, listQueuesResult.getQueueUrls().get(0));
 //    }
@@ -113,7 +113,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 //        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes)).join();
 //
 //        Thread.sleep(1000 * 10);
-//        GetQueueAttributesResult queueAttributesResult = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl,
+//        GetQueueAttributesResponse queueAttributesResult = sqs.getQueueAttributes(new GetQueueAttributesRequest(queueUrl,
 //                Arrays.asList(ATTRIBUTE_NAME))).join();
 //        assertEquals(1, queueAttributesResult.getAttributes().size());
 //        Map<String, String> attributes2 = queueAttributesResult.getAttributes();
@@ -133,14 +133,14 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 //
 //    private void runSendMessageTest() {
 //        for (int i = 0; i < 10; i++) {
-//            SendMessageResult sendMessageResult = sqs.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)).join();
+//            SendMessageResponse sendMessageResult = sqs.sendMessage(new SendMessageRequest(queueUrl, MESSAGE_BODY)).join();
 //            assertNotEmpty(sendMessageResult.getMessageId());
 //            assertNotEmpty(sendMessageResult.md5OfMessageBody());
 //        }
 //    }
 //
-//    private ReceiveMessageResult runReceiveMessageTest() {
-//        ReceiveMessageResult receiveMessageResult = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join();
+//    private ReceiveMessageResponse runReceiveMessageTest() {
+//        ReceiveMessageResponse receiveMessageResult = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).join();
 //        assertThat(receiveMessageResult.messages(), not(empty()));
 //        Message message = receiveMessageResult.messages().get(0);
 //        assertEquals(MESSAGE_BODY, message.body());
@@ -158,7 +158,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 //    }
 //
 //    private void runSendMessageBatchTest() {
-//        SendMessageBatchResult sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest(queueUrl, Arrays.asList(
+//        SendMessageBatchResponse sendMessageBatchResult = sqs.sendMessageBatch(new SendMessageBatchRequest(queueUrl, Arrays.asList(
 //                new SendMessageBatchRequestEntry().id("1").messageBody("1"), new SendMessageBatchRequestEntry()
 //                        .id("2").messageBody("2"), new SendMessageBatchRequestEntry().id("3")
 //                        .messageBody("3"), new SendMessageBatchRequestEntry().id("4").messageBody("4"),
@@ -171,7 +171,7 @@ public class SimplifiedMethodIntegrationTest extends IntegrationTestBase {
 //        assertNotNull(sendMessageBatchResult.getSuccessful().get(0).getMessageId());
 //    }
 //
-//    private String runChangeMessageVisibilityTest(ReceiveMessageResult receiveMessageResult) {
+//    private String runChangeMessageVisibilityTest(ReceiveMessageResponse receiveMessageResult) {
 //        String receiptHandle = (receiveMessageResult.messages().get(0)).getReceiptHandle();
 //        sqs.changeMessageVisibility(new ChangeMessageVisibilityRequest(queueUrl, receiptHandle, 123));
 //        return receiptHandle;

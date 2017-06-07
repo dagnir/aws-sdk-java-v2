@@ -23,12 +23,12 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.iam.model.LimitExceededException;
 import software.amazon.awssdk.services.iam.model.ListSigningCertificatesRequest;
-import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResult;
+import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResponse;
 import software.amazon.awssdk.services.iam.model.MalformedCertificateException;
 import software.amazon.awssdk.services.iam.model.SigningCertificate;
 import software.amazon.awssdk.services.iam.model.UpdateSigningCertificateRequest;
 import software.amazon.awssdk.services.iam.model.UploadSigningCertificateRequest;
-import software.amazon.awssdk.services.iam.model.UploadSigningCertificateResult;
+import software.amazon.awssdk.services.iam.model.UploadSigningCertificateResponse;
 
 /**
  * Certs integ tests for IAM.
@@ -117,7 +117,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
 
         try {
-            UploadSigningCertificateResult response = iam
+            UploadSigningCertificateResponse response = iam
                     .uploadSigningCertificate(UploadSigningCertificateRequest.builder()
                                                                              .userName(username).certificateBody(
                                     SAMPLE_CERT).build());
@@ -153,7 +153,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
 
         try {
             for (int i = 0; i < 2; i++) {
-                UploadSigningCertificateResult response = iam
+                UploadSigningCertificateResponse response = iam
                         .uploadSigningCertificate(UploadSigningCertificateRequest.builder()
                                                                                  .userName(username).certificateBody(
                                         certs[i]).build());
@@ -161,7 +161,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
                 certId[i] = response.certificate().certificateId();
             }
 
-            ListSigningCertificatesResult listRes = iam
+            ListSigningCertificatesResponse listRes = iam
                     .listSigningCertificates(ListSigningCertificatesRequest.builder()
                                                                            .userName(username).build());
 
@@ -208,7 +208,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
 
         try {
-            UploadSigningCertificateResult response = iam
+            UploadSigningCertificateResponse response = iam
                     .uploadSigningCertificate(UploadSigningCertificateRequest.builder()
                                                                              .userName(username).certificateBody(
                                     SAMPLE_CERT).build());
@@ -220,7 +220,7 @@ public class CertsIntegrationTest extends IntegrationTestBase {
                                                                         .userName(username).certificateId(certId)
                                                                         .status("Inactive").build());
 
-            ListSigningCertificatesResult listRes = iam
+            ListSigningCertificatesResponse listRes = iam
                     .listSigningCertificates(ListSigningCertificatesRequest.builder()
                                                                            .userName(username).build());
 

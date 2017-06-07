@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.document.ScanOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.ScanSpec;
 import software.amazon.awssdk.services.dynamodb.model.Capacity;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 public class ScanCollectionTest {
     private static final Random rand = new Random();
@@ -36,7 +36,7 @@ public class ScanCollectionTest {
     @Test
     public void testEmptyResult() {
         ScanCollection col = new ScanCollection(null, new ScanSpec());
-        col.setLastLowLevelResult(new ScanOutcome(ScanResult.builder().build()));
+        col.setLastLowLevelResult(new ScanOutcome(ScanResponse.builder().build()));
         assertTrue(0 == col.getTotalCount());
         assertTrue(0 == col.getTotalScannedCount());
         assertNull(col.getTotalConsumedCapacity());
@@ -45,7 +45,7 @@ public class ScanCollectionTest {
     @Test
     public void setLastLowLevelResult() {
         ScanCollection col = new ScanCollection(null, new ScanSpec());
-        ScanResult result = ScanResult.builder()
+        ScanResponse result = ScanResponse.builder()
                 .count(rand.nextInt())
                 .scannedCount(rand.nextInt()).build();
 
@@ -98,7 +98,7 @@ public class ScanCollectionTest {
         assertTrue(lsi.get("lsi2").capacityUnits() * 2 == lsiTotal.get("lsi2").capacityUnits());
 
         // A different one
-        ScanResult result3 = ScanResult.builder()
+        ScanResponse result3 = ScanResponse.builder()
                 .count(rand.nextInt())
                 .scannedCount(rand.nextInt())
                 .build();
@@ -141,7 +141,7 @@ public class ScanCollectionTest {
         assertTrue(lsi3.get("lsi3").capacityUnits() == lsiTotal.get("lsi3").capacityUnits());
 
         // An empty one
-        ScanResult result4 = ScanResult.builder().build();
+        ScanResponse result4 = ScanResponse.builder().build();
         ConsumedCapacity consumedCapacity4 = ConsumedCapacity.builder().build();
         result4 = result4.toBuilder().consumedCapacity(consumedCapacity4).build();
         col.setLastLowLevelResult(new ScanOutcome(result4));

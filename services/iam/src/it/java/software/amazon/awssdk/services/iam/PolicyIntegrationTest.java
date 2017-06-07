@@ -28,13 +28,13 @@ import software.amazon.awssdk.services.iam.model.DeleteGroupPolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.GetGroupPolicyRequest;
-import software.amazon.awssdk.services.iam.model.GetGroupPolicyResult;
+import software.amazon.awssdk.services.iam.model.GetGroupPolicyResponse;
 import software.amazon.awssdk.services.iam.model.GetUserPolicyRequest;
-import software.amazon.awssdk.services.iam.model.GetUserPolicyResult;
+import software.amazon.awssdk.services.iam.model.GetUserPolicyResponse;
 import software.amazon.awssdk.services.iam.model.ListGroupPoliciesRequest;
-import software.amazon.awssdk.services.iam.model.ListGroupPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListGroupPoliciesResponse;
 import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResponse;
 import software.amazon.awssdk.services.iam.model.MalformedPolicyDocumentException;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 import software.amazon.awssdk.services.iam.model.PutGroupPolicyRequest;
@@ -67,7 +67,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                   .policyName(policyName)
                                                   .policyDocument(TEST_ALLOW_POLICY).build());
 
-            GetUserPolicyResult response = iam
+            GetUserPolicyResponse response = iam
                     .getUserPolicy(GetUserPolicyRequest.builder().userName(
                             username).policyName(policyName).build());
 
@@ -93,7 +93,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                     .groupName(groupname).policyName(policyName)
                                                     .policyDocument(TEST_ALLOW_POLICY).build());
 
-            GetGroupPolicyResult response = iam
+            GetGroupPolicyResponse response = iam
                     .getGroupPolicy(GetGroupPolicyRequest.builder().groupName(
                             groupname).policyName(policyName).build());
 
@@ -134,7 +134,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                       .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListUserPoliciesResult response = iam
+            ListUserPoliciesResponse response = iam
                     .listUserPolicies(ListUserPoliciesRequest.builder()
                                                              .userName(username).build());
 
@@ -171,7 +171,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                         .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListGroupPoliciesResult response = iam
+            ListGroupPoliciesResponse response = iam
                     .listGroupPolicies(ListGroupPoliciesRequest.builder()
                                                                .groupName(grpname).build());
 
@@ -211,7 +211,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                       .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListUserPoliciesResult response = iam
+            ListUserPoliciesResponse response = iam
                     .listUserPolicies(ListUserPoliciesRequest.builder()
                                                              .userName(username).maxItems(2).build());
 
@@ -266,7 +266,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                         .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListGroupPoliciesResult response = iam
+            ListGroupPoliciesResponse response = iam
                     .listGroupPolicies(ListGroupPoliciesRequest.builder()
                                                                .groupName(grpname).maxItems(2).build());
 
@@ -320,7 +320,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                   .policyName(pName)
                                                   .policyDocument(TEST_ALLOW_POLICY).build());
 
-            ListUserPoliciesResult response = iam
+            ListUserPoliciesResponse response = iam
                     .listUserPolicies(ListUserPoliciesRequest.builder()
                                                              .userName(username).build());
 
@@ -351,7 +351,7 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                                                     .groupName(groupname).policyName(pName)
                                                     .policyDocument(TEST_ALLOW_POLICY).build());
 
-            ListGroupPoliciesResult response = iam
+            ListGroupPoliciesResponse response = iam
                     .listGroupPolicies(ListGroupPoliciesRequest.builder()
                                                                .groupName(groupname).build());
 

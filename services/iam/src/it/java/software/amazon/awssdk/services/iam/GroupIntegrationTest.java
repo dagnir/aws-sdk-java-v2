@@ -31,10 +31,10 @@ import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.EntityAlreadyExistsException;
 import software.amazon.awssdk.services.iam.model.GetGroupRequest;
-import software.amazon.awssdk.services.iam.model.GetGroupResult;
+import software.amazon.awssdk.services.iam.model.GetGroupResponse;
 import software.amazon.awssdk.services.iam.model.Group;
 import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
-import software.amazon.awssdk.services.iam.model.ListGroupsResult;
+import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
 import software.amazon.awssdk.services.iam.model.User;
@@ -61,7 +61,7 @@ public class GroupIntegrationTest extends IntegrationTestBase {
 
         try {
             iam.createGroup(CreateGroupRequest.builder().groupName(groupname).build());
-            GetGroupResult response = iam.getGroup(GetGroupRequest.builder()
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
                                                                   .groupName(groupname).build());
             assertEquals(0, response.users().size());
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
                     groupname).userName(username3).build());
 
-            GetGroupResult response = iam.getGroup(GetGroupRequest.builder()
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
                                                                   .groupName(groupname).build());
 
             assertEquals(3, response.users().size());
@@ -158,7 +158,7 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
                     groupname).userName(username3).build());
 
-            GetGroupResult response = iam.getGroup(GetGroupRequest.builder()
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
                                                                   .groupName(groupname).build());
 
             assertEquals(3, response.users().size());
@@ -230,7 +230,7 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
                     groupname).userName(username4).build());
 
-            GetGroupResult response = iam.getGroup(GetGroupRequest.builder()
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
                                                                   .groupName(groupname).maxItems(2).build());
 
             assertEquals(2, response.users().size());
@@ -315,7 +315,7 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             iam.createGroup(CreateGroupRequest.builder().groupName(groupname4)
                                               .path(pathB).build());
 
-            ListGroupsResult response = iam.listGroups(ListGroupsRequest.builder()
+            ListGroupsResponse response = iam.listGroups(ListGroupsRequest.builder()
                                                                         .pathPrefix(pathA).build());
 
             assertEquals(2, response.groups().size());
@@ -386,7 +386,7 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             iam.createGroup(CreateGroupRequest.builder().groupName(groupname4)
                                               .path(IAMUtil.TEST_PATH).build());
 
-            ListGroupsResult response = iam.listGroups(ListGroupsRequest.builder()
+            ListGroupsResponse response = iam.listGroups(ListGroupsRequest.builder()
                                                                         .maxItems(2).pathPrefix(IAMUtil.TEST_PATH).build());
 
             assertEquals(2, response.groups().size());

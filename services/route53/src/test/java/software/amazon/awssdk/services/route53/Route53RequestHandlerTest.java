@@ -24,12 +24,12 @@ import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.services.route53.internal.Route53IdRequestHandler;
-import software.amazon.awssdk.services.route53.model.CreateHostedZoneResult;
-import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResult;
+import software.amazon.awssdk.services.route53.model.CreateHostedZoneResponse;
+import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResponse;
 import software.amazon.awssdk.services.route53.model.DelegationSet;
-import software.amazon.awssdk.services.route53.model.GetHostedZoneResult;
-import software.amazon.awssdk.services.route53.model.GetReusableDelegationSetResult;
-import software.amazon.awssdk.services.route53.model.ListReusableDelegationSetsResult;
+import software.amazon.awssdk.services.route53.model.GetHostedZoneResponse;
+import software.amazon.awssdk.services.route53.model.GetReusableDelegationSetResponse;
+import software.amazon.awssdk.services.route53.model.ListReusableDelegationSetsResponse;
 
 /**
  * Unit test for request handler customization of delegation set id's
@@ -55,7 +55,7 @@ public class Route53RequestHandlerTest {
 
         DelegationSet delegationSet = DelegationSet.builder().id(delegationSetId).build();
 
-        CreateHostedZoneResult createResult = CreateHostedZoneResult.builder()
+        CreateHostedZoneResponse createResult = CreateHostedZoneResponse.builder()
                 .delegationSet(delegationSet)
                 .build();
 
@@ -63,7 +63,7 @@ public class Route53RequestHandlerTest {
 
         assertEquals(createResult.delegationSet().id(), id);
 
-        CreateReusableDelegationSetResult createResuableResult = CreateReusableDelegationSetResult.builder()
+        CreateReusableDelegationSetResponse createResuableResult = CreateReusableDelegationSetResponse.builder()
                 .delegationSet(delegationSet)
                 .build();
 
@@ -71,7 +71,7 @@ public class Route53RequestHandlerTest {
 
         assertEquals(createResuableResult.delegationSet().id(), id);
 
-        GetHostedZoneResult getZoneResult = GetHostedZoneResult.builder()
+        GetHostedZoneResponse getZoneResult = GetHostedZoneResponse.builder()
                 .delegationSet(delegationSet)
                 .build();
 
@@ -80,7 +80,7 @@ public class Route53RequestHandlerTest {
         // This assert works, but only because of the other operations the are sequenced before this, that modify the id.
         assertEquals(getZoneResult.delegationSet().id(), id);
 
-        GetReusableDelegationSetResult getResuableResult = GetReusableDelegationSetResult.builder()
+        GetReusableDelegationSetResponse getResuableResult = GetReusableDelegationSetResponse.builder()
                 .delegationSet(delegationSet)
                 .build();
 
@@ -88,7 +88,7 @@ public class Route53RequestHandlerTest {
 
         assertEquals(getResuableResult.delegationSet().id(), id);
 
-        ListReusableDelegationSetsResult listResult = ListReusableDelegationSetsResult.builder()
+        ListReusableDelegationSetsResponse listResult = ListReusableDelegationSetsResponse.builder()
                 .delegationSets(delegationSet)
                 .build();
 
@@ -98,7 +98,7 @@ public class Route53RequestHandlerTest {
 
         delegationSet = delegationSet.toBuilder().id(id).build();
 
-        createResult = CreateHostedZoneResult.builder()
+        createResult = CreateHostedZoneResponse.builder()
                 .delegationSet(delegationSet)
                 .build();
 

@@ -22,19 +22,19 @@ import software.amazon.awssdk.services.dynamodb.document.api.BatchGetItemApi;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
 import software.amazon.awssdk.services.dynamodb.document.spec.BatchGetItemSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 
 /**
  * The outcome of a batch get-item operation from DynamoDB.
  */
 public class BatchGetItemOutcome {
-    private final BatchGetItemResult result;
+    private final BatchGetItemResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public BatchGetItemOutcome(BatchGetItemResult result) {
+    public BatchGetItemOutcome(BatchGetItemResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -72,7 +72,7 @@ public class BatchGetItemOutcome {
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public BatchGetItemResult batchGetItemResult() {
+    public BatchGetItemResponse batchGetItemResponse() {
         return result;
     }
 

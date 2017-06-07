@@ -20,7 +20,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.ecr.model.CreateRepositoryRequest;
-import software.amazon.awssdk.services.ecr.model.CreateRepositoryResult;
+import software.amazon.awssdk.services.ecr.model.CreateRepositoryResponse;
 import software.amazon.awssdk.services.ecr.model.DeleteRepositoryRequest;
 import software.amazon.awssdk.services.ecr.model.DescribeRepositoriesRequest;
 import software.amazon.awssdk.services.ecr.model.Repository;
@@ -48,7 +48,7 @@ public class ECRIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void basicTest() {
-        CreateRepositoryResult result = ecr.createRepository(
+        CreateRepositoryResponse result = ecr.createRepository(
                 CreateRepositoryRequest.builder()
                         .repositoryName(REPO_NAME)
                         .build());

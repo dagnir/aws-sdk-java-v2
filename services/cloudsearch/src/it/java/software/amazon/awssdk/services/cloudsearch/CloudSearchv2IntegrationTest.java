@@ -18,27 +18,27 @@ import software.amazon.awssdk.services.cloudsearch.model.AnalysisSchemeLanguage;
 import software.amazon.awssdk.services.cloudsearch.model.AnalysisSchemeStatus;
 import software.amazon.awssdk.services.cloudsearch.model.BuildSuggestersRequest;
 import software.amazon.awssdk.services.cloudsearch.model.CreateDomainRequest;
-import software.amazon.awssdk.services.cloudsearch.model.CreateDomainResult;
+import software.amazon.awssdk.services.cloudsearch.model.CreateDomainResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DefineAnalysisSchemeRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DefineExpressionRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DefineIndexFieldRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DefineSuggesterRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DefineSuggesterResult;
+import software.amazon.awssdk.services.cloudsearch.model.DefineSuggesterResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DeleteDomainRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeAnalysisSchemesRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeAnalysisSchemesResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeAnalysisSchemesResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeDomainsRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeDomainsResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeDomainsResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeExpressionsRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeExpressionsResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeExpressionsResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeIndexFieldsRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeIndexFieldsResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeIndexFieldsResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeScalingParametersRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeScalingParametersResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeScalingParametersResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeServiceAccessPoliciesRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeServiceAccessPoliciesResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeServiceAccessPoliciesResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeSuggestersRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeSuggestersResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeSuggestersResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DocumentSuggesterOptions;
 import software.amazon.awssdk.services.cloudsearch.model.DomainStatus;
 import software.amazon.awssdk.services.cloudsearch.model.Expression;
@@ -48,7 +48,7 @@ import software.amazon.awssdk.services.cloudsearch.model.IndexField;
 import software.amazon.awssdk.services.cloudsearch.model.IndexFieldStatus;
 import software.amazon.awssdk.services.cloudsearch.model.IndexFieldType;
 import software.amazon.awssdk.services.cloudsearch.model.ListDomainNamesRequest;
-import software.amazon.awssdk.services.cloudsearch.model.ListDomainNamesResult;
+import software.amazon.awssdk.services.cloudsearch.model.ListDomainNamesResponse;
 import software.amazon.awssdk.services.cloudsearch.model.PartitionInstanceType;
 import software.amazon.awssdk.services.cloudsearch.model.ScalingParameters;
 import software.amazon.awssdk.services.cloudsearch.model.Suggester;
@@ -131,12 +131,12 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void testCreateDomains() {
 
-        CreateDomainResult createDomainResult = null;
+        CreateDomainResponse createDomainResult = null;
         String domainName = "test-" + System.currentTimeMillis();
         try {
-            DescribeDomainsResult describeDomainResult = cloudSearch
+            DescribeDomainsResponse describeDomainResult = cloudSearch
                     .describeDomains(DescribeDomainsRequest.builder().build());
-            ListDomainNamesResult listDomainNamesResult = cloudSearch
+            ListDomainNamesResponse listDomainNamesResult = cloudSearch
                     .listDomainNames(ListDomainNamesRequest.builder().build());
 
             assertTrue(describeDomainResult.domainStatusList().size() >= 0);
@@ -181,7 +181,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
 
         cloudSearch.defineIndexField(DefineIndexFieldRequest.builder()
                                                             .domainName(testDomainName).indexField(indexField).build());
-        DescribeDomainsResult describeDomainResult = cloudSearch
+        DescribeDomainsResponse describeDomainResult = cloudSearch
                 .describeDomains(DescribeDomainsRequest.builder()
                                                        .domainNames(testDomainName).build());
         DomainStatus status = describeDomainResult.domainStatusList().get(0);
@@ -206,7 +206,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DAY_OF_MONTH, -1);
 
-        DescribeDomainsResult describeDomainResult = cloudSearch
+        DescribeDomainsResponse describeDomainResult = cloudSearch
                 .describeDomains(DescribeDomainsRequest.builder()
                                                        .domainNames(testDomainName).build());
 
@@ -216,7 +216,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
                 .updateServiceAccessPolicies(UpdateServiceAccessPoliciesRequest.builder()
                                                                                .domainName(testDomainName).accessPolicies(
                                 POLICY).build());
-        DescribeServiceAccessPoliciesResult accessPolicyResult = cloudSearch
+        DescribeServiceAccessPoliciesResponse accessPolicyResult = cloudSearch
                 .describeServiceAccessPolicies(DescribeServiceAccessPoliciesRequest.builder()
                                                                                    .domainName(testDomainName).build());
         accessPoliciesStatus = accessPolicyResult.accessPolicies();
@@ -246,7 +246,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
         DescribeIndexFieldsRequest describeIndexFieldRequest = DescribeIndexFieldsRequest.builder()
                                                                                          .domainName(testDomainName).build();
 
-        DescribeIndexFieldsResult result = cloudSearch.describeIndexFields(describeIndexFieldRequest);
+        DescribeIndexFieldsResponse result = cloudSearch.describeIndexFields(describeIndexFieldRequest);
 
         assertTrue(result.indexFields().size() == 0);
 
@@ -277,7 +277,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
         DescribeExpressionsRequest describeExpressionRequest = DescribeExpressionsRequest.builder()
                                                                                          .domainName(testDomainName).build();
 
-        DescribeExpressionsResult describeExpressionResult = cloudSearch
+        DescribeExpressionsResponse describeExpressionResult = cloudSearch
                 .describeExpressions(describeExpressionRequest);
 
         assertTrue(describeExpressionResult.expressions().size() == 0);
@@ -311,7 +311,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
     public void testSuggestors() {
         DescribeSuggestersRequest describeSuggesterRequest = DescribeSuggestersRequest.builder()
                                                                                       .domainName(testDomainName).build();
-        DescribeSuggestersResult describeSuggesterResult = cloudSearch
+        DescribeSuggestersResponse describeSuggesterResult = cloudSearch
                 .describeSuggesters(describeSuggesterRequest);
 
         assertTrue(describeSuggesterResult.suggesters().size() == 0);
@@ -340,7 +340,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
         DefineSuggesterRequest defineSuggesterRequest = DefineSuggesterRequest.builder()
                                                                               .domainName(testDomainName).suggester(suggester)
                                                                               .build();
-        DefineSuggesterResult defineSuggesterResult = cloudSearch
+        DefineSuggesterResponse defineSuggesterResult = cloudSearch
                 .defineSuggester(defineSuggesterRequest);
         SuggesterStatus status = defineSuggesterResult.suggester();
         assertNotNull(status);
@@ -353,7 +353,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
 
         cloudSearch.buildSuggesters(BuildSuggestersRequest.builder()
                                                           .domainName(testDomainName).build());
-        DescribeDomainsResult describeDomainsResult = cloudSearch
+        DescribeDomainsResponse describeDomainsResult = cloudSearch
                 .describeDomains(DescribeDomainsRequest.builder()
                                                        .domainNames(testDomainName).build());
         DomainStatus domainStatus = describeDomainsResult.domainStatusList()
@@ -375,7 +375,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
         DescribeAnalysisSchemesRequest describeAnalysisSchemesRequest = DescribeAnalysisSchemesRequest.builder()
                                                                                                       .domainName(testDomainName)
                                                                                                       .build();
-        DescribeAnalysisSchemesResult describeAnalysisSchemesResult = cloudSearch
+        DescribeAnalysisSchemesResponse describeAnalysisSchemesResult = cloudSearch
                 .describeAnalysisSchemes(describeAnalysisSchemesRequest);
         assertTrue(describeAnalysisSchemesResult.analysisSchemes().size() == 0);
 
@@ -409,7 +409,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
         assertEquals(schemeStatus.options().analysisSchemeLanguage(),
                      AnalysisSchemeLanguage.Ar.toString());
 
-        DescribeIndexFieldsResult describeIndexFieldsResult = cloudSearch
+        DescribeIndexFieldsResponse describeIndexFieldsResult = cloudSearch
                 .describeIndexFields(DescribeIndexFieldsRequest.builder()
                                                                .domainName(testDomainName).fieldNames(
                                 testIndexName).build());
@@ -434,7 +434,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
                                                                           .domainName(testDomainName)
                                                                           .scalingParameters(scalingParameters).build());
 
-        DescribeScalingParametersResult describeScalingParametersResult = cloudSearch
+        DescribeScalingParametersResponse describeScalingParametersResult = cloudSearch
                 .describeScalingParameters(DescribeScalingParametersRequest.builder()
                                                                            .domainName(testDomainName).build());
         ScalingParameters retrievedScalingParameters = describeScalingParametersResult

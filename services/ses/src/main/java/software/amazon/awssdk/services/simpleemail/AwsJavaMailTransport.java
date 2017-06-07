@@ -41,7 +41,7 @@ import software.amazon.awssdk.services.ses.SESClient;
 import software.amazon.awssdk.services.ses.SESClientBuilder;
 import software.amazon.awssdk.services.ses.model.RawMessage;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
-import software.amazon.awssdk.services.ses.model.SendRawEmailResult;
+import software.amazon.awssdk.services.ses.model.SendRawEmailResponse;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.VersionInfoUtils;
 
@@ -272,7 +272,7 @@ public class AwsJavaMailTransport extends Transport {
 
         try {
             appendUserAgent(req, USER_AGENT);
-            SendRawEmailResult resp = this.emailService.sendRawEmail(req);
+            SendRawEmailResponse resp = this.emailService.sendRawEmail(req);
             lastMessageId = resp.messageId();
             sent = m.getAllRecipients();
             unsent = new Address[0];

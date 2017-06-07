@@ -21,9 +21,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenRequest;
-import software.amazon.awssdk.services.sts.model.GetFederationTokenResult;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
-import software.amazon.awssdk.services.sts.model.GetSessionTokenResult;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 
 public class SecurityTokenServiceIntegrationTest extends IntegrationTestBase {
@@ -34,7 +34,7 @@ public class SecurityTokenServiceIntegrationTest extends IntegrationTestBase {
     @Test
     public void testGetSessionToken() throws Exception {
         GetSessionTokenRequest request = GetSessionTokenRequest.builder().durationSeconds(SESSION_DURATION).build();
-        GetSessionTokenResult result = sts.getSessionToken(request);
+        GetSessionTokenResponse result = sts.getSessionToken(request);
 
         assertNotNull(result.credentials().accessKeyId());
         assertNotNull(result.credentials().expiration());
@@ -48,7 +48,7 @@ public class SecurityTokenServiceIntegrationTest extends IntegrationTestBase {
         GetFederationTokenRequest request = GetFederationTokenRequest.builder()
                                                                      .durationSeconds(SESSION_DURATION)
                                                                      .name("Name").build();
-        GetFederationTokenResult result = sts.getFederationToken(request);
+        GetFederationTokenResponse result = sts.getFederationToken(request);
 
         assertNotNull(result.credentials().accessKeyId());
         assertNotNull(result.credentials().expiration());

@@ -27,7 +27,7 @@ import software.amazon.awssdk.services.dynamodb.document.api.DeleteItemApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.DeleteItemSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 
 /**
@@ -93,7 +93,7 @@ public class DeleteItemImpl extends AbstractImpl implements DeleteItemApi {
         requestBuilder.expected(expectedMap)
                .expressionAttributeNames(spec.nameMap())
                .expressionAttributeValues(attrValMap);
-        DeleteItemResult result = getClient().deleteItem(requestBuilder.build());
+        DeleteItemResponse result = getClient().deleteItem(requestBuilder.build());
         return new DeleteItemOutcome(result);
     }
 

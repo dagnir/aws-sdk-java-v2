@@ -61,7 +61,7 @@ public class Constants {
 
     public static final String REQUEST_CLASS_SUFFIX = "Request";
 
-    public static final String RESPONSE_CLASS_SUFFIX = "Result";
+    public static final String RESPONSE_CLASS_SUFFIX = "Response";
 
     public static final String EXCEPTION_CLASS_SUFFIX = "Exception";
 

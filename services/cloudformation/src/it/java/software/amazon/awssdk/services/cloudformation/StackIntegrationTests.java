@@ -37,23 +37,23 @@ import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.services.cloudformation.model.AlreadyExistsException;
 import software.amazon.awssdk.services.cloudformation.model.CancelUpdateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
-import software.amazon.awssdk.services.cloudformation.model.CreateStackResult;
+import software.amazon.awssdk.services.cloudformation.model.CreateStackResponse;
 import software.amazon.awssdk.services.cloudformation.model.DeleteStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsRequest;
-import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsResult;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStackEventsResponse;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourceRequest;
-import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourceResult;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourceResponse;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourcesRequest;
-import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourcesResult;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStackResourcesResponse;
 import software.amazon.awssdk.services.cloudformation.model.DescribeStacksRequest;
-import software.amazon.awssdk.services.cloudformation.model.DescribeStacksResult;
+import software.amazon.awssdk.services.cloudformation.model.DescribeStacksResponse;
 import software.amazon.awssdk.services.cloudformation.model.GetStackPolicyRequest;
-import software.amazon.awssdk.services.cloudformation.model.GetStackPolicyResult;
+import software.amazon.awssdk.services.cloudformation.model.GetStackPolicyResponse;
 import software.amazon.awssdk.services.cloudformation.model.GetTemplateRequest;
-import software.amazon.awssdk.services.cloudformation.model.GetTemplateResult;
+import software.amazon.awssdk.services.cloudformation.model.GetTemplateResponse;
 import software.amazon.awssdk.services.cloudformation.model.ListStackResourcesRequest;
 import software.amazon.awssdk.services.cloudformation.model.ListStacksRequest;
-import software.amazon.awssdk.services.cloudformation.model.ListStacksResult;
+import software.amazon.awssdk.services.cloudformation.model.ListStacksResponse;
 import software.amazon.awssdk.services.cloudformation.model.SetStackPolicyRequest;
 import software.amazon.awssdk.services.cloudformation.model.Stack;
 import software.amazon.awssdk.services.cloudformation.model.StackEvent;
@@ -63,7 +63,7 @@ import software.amazon.awssdk.services.cloudformation.model.StackResourceSummary
 import software.amazon.awssdk.services.cloudformation.model.StackStatus;
 import software.amazon.awssdk.services.cloudformation.model.StackSummary;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
-import software.amazon.awssdk.services.cloudformation.model.UpdateStackResult;
+import software.amazon.awssdk.services.cloudformation.model.UpdateStackResponse;
 
 /**
  * Tests of the Stack APIs : CloudFormation
@@ -90,7 +90,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     @BeforeClass
     public static void createTestStacks() throws Exception {
         testStackName = uniqueName();
-        CreateStackResult response = cf.createStack(CreateStackRequest.builder()
+        CreateStackResponse response = cf.createStack(CreateStackRequest.builder()
                                                                       .templateURL(templateUrlForStackIntegrationTests)
                                                                       .stackName(testStackName)
                                                                       .stackPolicyBody(INIT_STACK_POLICY.toJson()).build());
@@ -141,7 +141,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     @Test
     public void testDescribeStacks() throws Exception {
-        DescribeStacksResult response = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build());
+        DescribeStacksResponse response = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build());
 
         assertEquals(1, response.stacks().size());
         assertEquals(testStackId, response.stacks().get(0).stackId());
@@ -153,7 +153,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     @Test
     public void testDescribeStackResources() throws Exception {
 
-        DescribeStackResourcesResult response = null;
+        DescribeStackResourcesResponse response = null;
 
         int attempt = 0;
         while (attempt++ < 60 && (response == null || response.stackResources().size() == 0)) {
@@ -174,7 +174,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     @Test
     public void testDescribeStackResource() throws Exception {
-        DescribeStackResourcesResult response = null;
+        DescribeStackResourcesResponse response = null;
 
         int attempt = 0;
         while (attempt++ < 60 && (response == null || response.stackResources().size() == 0)) {
@@ -187,7 +187,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
             assertEquals(testStackId, sr.stackId());
             assertEquals(testStackName, sr.stackName());
 
-            DescribeStackResourceResult describeStackResource = cf
+            DescribeStackResourceResponse describeStackResource = cf
                     .describeStackResource(DescribeStackResourceRequest.builder()
                                                                        .stackName(testStackName)
                                                                        .logicalResourceId(sr.logicalResourceId())
@@ -219,7 +219,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     @Test
     public void testGetStackPolicy() {
-        GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(GetStackPolicyRequest.builder()
+        GetStackPolicyResponse getStackPolicyResult = cf.getStackPolicy(GetStackPolicyRequest.builder()
                                                                                            .stackName(testStackName).build());
         Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.stackPolicyBody());
         assertPolicyEquals(INIT_STACK_POLICY, returnedPolicy);
@@ -235,7 +235,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
                 DENY_ALL_POLICY.toJson()).build());
 
         // Compares the policy from GetStackPolicy operation
-        GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(GetStackPolicyRequest.builder()
+        GetStackPolicyResponse getStackPolicyResult = cf.getStackPolicy(GetStackPolicyRequest.builder()
                                                                                            .stackName(testStackName).build());
         Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.stackPolicyBody());
         assertPolicyEquals(DENY_ALL_POLICY, returnedPolicy);
@@ -244,7 +244,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     @Test
     public void testDescribeStackEvents() throws Exception {
 
-        DescribeStackEventsResult response = null;
+        DescribeStackEventsResponse response = null;
         int attempt = 0;
         while (attempt++ < 60 && (response == null || response.stackEvents().size() == 0)) {
             Thread.sleep(1000);
@@ -269,7 +269,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     @Test
     public void testListStacks() throws Exception {
-        ListStacksResult listStacksResult = cf.listStacks(ListStacksRequest.builder().build());
+        ListStacksResponse listStacksResult = cf.listStacks(ListStacksRequest.builder().build());
         assertNotNull(listStacksResult);
         assertNotNull(listStacksResult.stackSummaries());
         // There should be some deleted stacks, since we deleted at the start of this test
@@ -308,7 +308,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     @Test
     public void testListStacksFilter() throws Exception {
-        ListStacksResult listStacksResult = cf.listStacks(ListStacksRequest.builder().stackStatusFilters(
+        ListStacksResponse listStacksResult = cf.listStacks(ListStacksRequest.builder().stackStatusFilters(
                 "CREATE_COMPLETE", "DELETE_COMPLETE").build());
         assertNotNull(listStacksResult);
         assertNotNull(listStacksResult.stackSummaries());
@@ -332,7 +332,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     @Test
     public void testGetTemplate() {
-        GetTemplateResult response = cf.getTemplate(GetTemplateRequest.builder().stackName(testStackName).build());
+        GetTemplateResponse response = cf.getTemplate(GetTemplateRequest.builder().stackName(testStackName).build());
 
         assertNotNull(response.templateBody());
         assertTrue(response.templateBody().length() > 0);
@@ -345,7 +345,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         List<Stack> stacks = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build()).stacks();
         assertEquals(1, stacks.size());
 
-        UpdateStackResult updateStack = cf.updateStack(UpdateStackRequest.builder().stackName(testStackName)
+        UpdateStackResponse updateStack = cf.updateStack(UpdateStackRequest.builder().stackName(testStackName)
                                                                          .templateURL(
                                                                                  templateUrlForCloudFormationIntegrationTests)
                                                                          .build());
@@ -360,7 +360,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         List<Stack> stacks = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build()).stacks();
         assertEquals(1, stacks.size());
 
-        UpdateStackResult updateStack = cf.updateStack(UpdateStackRequest.builder().stackName(testStackName)
+        UpdateStackResponse updateStack = cf.updateStack(UpdateStackRequest.builder().stackName(testStackName)
                                                                          .templateURL(
                                                                                  templateUrlForCloudFormationIntegrationTests)
                                                                          .stackPolicyBody(INIT_STACK_POLICY.toJson()).build());

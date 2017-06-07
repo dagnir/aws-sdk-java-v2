@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
@@ -91,7 +91,7 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
                 .build());
 
         // Make sure we can read the max-depth item
-        GetItemResult itemResult = ddb.getItem(GetItemRequest.builder()
+        GetItemResponse itemResult = ddb.getItem(GetItemRequest.builder()
                 .tableName(TABLE)
                 .key(Collections.singletonMap(HASH,
                         AttributeValue.builder().s("foo").build()))

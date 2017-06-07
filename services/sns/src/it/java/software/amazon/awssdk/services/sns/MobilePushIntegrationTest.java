@@ -25,26 +25,26 @@ import java.util.Map;
 import java.util.Random;
 import org.junit.Test;
 import software.amazon.awssdk.services.sns.model.CreatePlatformApplicationRequest;
-import software.amazon.awssdk.services.sns.model.CreatePlatformApplicationResult;
+import software.amazon.awssdk.services.sns.model.CreatePlatformApplicationResponse;
 import software.amazon.awssdk.services.sns.model.CreatePlatformEndpointRequest;
-import software.amazon.awssdk.services.sns.model.CreatePlatformEndpointResult;
+import software.amazon.awssdk.services.sns.model.CreatePlatformEndpointResponse;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
-import software.amazon.awssdk.services.sns.model.CreateTopicResult;
+import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 import software.amazon.awssdk.services.sns.model.DeleteEndpointRequest;
 import software.amazon.awssdk.services.sns.model.DeletePlatformApplicationRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.services.sns.model.Endpoint;
 import software.amazon.awssdk.services.sns.model.GetEndpointAttributesRequest;
-import software.amazon.awssdk.services.sns.model.GetEndpointAttributesResult;
+import software.amazon.awssdk.services.sns.model.GetEndpointAttributesResponse;
 import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttributesRequest;
-import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttributesResult;
+import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttributesResponse;
 import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationRequest;
-import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationResult;
+import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationResponse;
 import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsRequest;
-import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsResult;
+import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsResponse;
 import software.amazon.awssdk.services.sns.model.PlatformApplication;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
-import software.amazon.awssdk.services.sns.model.PublishResult;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
 import software.amazon.awssdk.services.sns.model.SetEndpointAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SetPlatformApplicationAttributesRequest;
 
@@ -67,11 +67,11 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
         String topicArn = null;
 
         try {
-            CreateTopicResult createTopicResult = sns.createTopic(CreateTopicRequest.builder().name("TestTopic").build());
+            CreateTopicResponse createTopicResult = sns.createTopic(CreateTopicRequest.builder().name("TestTopic").build());
             topicArn = createTopicResult.topicArn();
 
             // List platform applications
-            ListPlatformApplicationsResult listPlatformAppsResult =
+            ListPlatformApplicationsResponse listPlatformAppsResult =
                     sns.listPlatformApplications(ListPlatformApplicationsRequest.builder().build());
             int platformAppsCount = listPlatformAppsResult.platformApplications().size();
             for (PlatformApplication platformApp : listPlatformAppsResult.platformApplications()) {
@@ -88,7 +88,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             attributes.put("EventEndpointUpdated", topicArn);
             attributes.put("EventDeliveryAttemptFailure", topicArn);
             attributes.put("EventDeliveryFailure", "");
-            CreatePlatformApplicationResult createPlatformAppResult = sns
+            CreatePlatformApplicationResponse createPlatformAppResult = sns
                     .createPlatformApplication(CreatePlatformApplicationRequest.builder().name(platformAppName)
                                                                                .platform("GCM").attributes(attributes).build());
             assertNotNull(createPlatformAppResult.platformApplicationArn());
@@ -99,7 +99,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             assertEquals(platformAppsCount + 1, listPlatformAppsResult.platformApplications().size());
 
             // Get attributes
-            GetPlatformApplicationAttributesResult platformAttributesResult = sns.getPlatformApplicationAttributes(
+            GetPlatformApplicationAttributesResponse platformAttributesResult = sns.getPlatformApplicationAttributes(
                     GetPlatformApplicationAttributesRequest.builder().platformApplicationArn(platformApplicationArn).build());
             validateAttributes(platformAttributesResult.attributes());
 
@@ -119,7 +119,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             validateAttribute(platformAttributesResult.attributes(), "EventDeliveryFailure", topicArn);
 
             // Create platform endpoint
-            CreatePlatformEndpointResult createPlatformEndpointResult = sns.createPlatformEndpoint(
+            CreatePlatformEndpointResponse createPlatformEndpointResult = sns.createPlatformEndpoint(
                     CreatePlatformEndpointRequest.builder().platformApplicationArn(platformApplicationArn)
                                                  .customUserData("Custom Data").token(token).build());
             assertNotNull(createPlatformEndpointResult.endpointArn());
@@ -127,7 +127,7 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
 
             // List platform endpoints
             Thread.sleep(5 * 1000);
-            ListEndpointsByPlatformApplicationResult listEndpointsResult = sns.listEndpointsByPlatformApplication(
+            ListEndpointsByPlatformApplicationResponse listEndpointsResult = sns.listEndpointsByPlatformApplication(
                     ListEndpointsByPlatformApplicationRequest.builder().platformApplicationArn(platformApplicationArn).build());
             assertTrue(listEndpointsResult.endpoints().size() == 1);
             for (Endpoint endpoint : listEndpointsResult.endpoints()) {
@@ -136,13 +136,13 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             }
 
             // Publish to the endpoint
-            PublishResult publishResult = sns.publish(PublishRequest.builder().message("Mobile push test message")
+            PublishResponse publishResult = sns.publish(PublishRequest.builder().message("Mobile push test message")
                                                                     .subject("Mobile Push test subject").targetArn(endpointArn)
                                                                     .build());
             assertNotNull(publishResult.messageId());
 
             // Get endpoint attributes
-            GetEndpointAttributesResult endpointAttributesResult = sns
+            GetEndpointAttributesResponse endpointAttributesResult = sns
                     .getEndpointAttributes(GetEndpointAttributesRequest.builder().endpointArn(endpointArn).build());
             validateAttributes(endpointAttributesResult.attributes());
 

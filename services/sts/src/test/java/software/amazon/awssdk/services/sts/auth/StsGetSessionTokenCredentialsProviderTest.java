@@ -19,22 +19,22 @@ import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.auth.StsGetSessionTokenCredentialsProvider.Builder;
 import software.amazon.awssdk.services.sts.model.Credentials;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
-import software.amazon.awssdk.services.sts.model.GetSessionTokenResult;
+import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 /**
  * Validate the functionality of {@link StsGetSessionTokenCredentialsProvider}.
  * Inherits tests from {@link StsCredentialsProviderTestBase}.
  */
 public class StsGetSessionTokenCredentialsProviderTest
-        extends StsCredentialsProviderTestBase<GetSessionTokenRequest, GetSessionTokenResult> {
+        extends StsCredentialsProviderTestBase<GetSessionTokenRequest, GetSessionTokenResponse> {
     @Override
     protected GetSessionTokenRequest getRequest() {
         return GetSessionTokenRequest.builder().build();
     }
 
     @Override
-    protected GetSessionTokenResult getResponse(Credentials credentials) {
-        return GetSessionTokenResult.builder().credentials(credentials).build();
+    protected GetSessionTokenResponse getResponse(Credentials credentials) {
+        return GetSessionTokenResponse.builder().credentials(credentials).build();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StsGetSessionTokenCredentialsProviderTest
     }
 
     @Override
-    protected GetSessionTokenResult callClient(STSClient client, GetSessionTokenRequest request) {
+    protected GetSessionTokenResponse callClient(STSClient client, GetSessionTokenRequest request) {
         return client.getSessionToken(request);
     }
 }

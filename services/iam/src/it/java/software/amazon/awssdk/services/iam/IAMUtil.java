@@ -28,18 +28,18 @@ import software.amazon.awssdk.services.iam.model.DeleteSigningCertificateRequest
 import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.GetGroupRequest;
-import software.amazon.awssdk.services.iam.model.GetGroupResult;
+import software.amazon.awssdk.services.iam.model.GetGroupResponse;
 import software.amazon.awssdk.services.iam.model.Group;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
-import software.amazon.awssdk.services.iam.model.ListGroupsResult;
+import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
 import software.amazon.awssdk.services.iam.model.ListSigningCertificatesRequest;
-import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResult;
+import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResponse;
 import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResponse;
 import software.amazon.awssdk.services.iam.model.ListUsersRequest;
-import software.amazon.awssdk.services.iam.model.ListUsersResult;
+import software.amazon.awssdk.services.iam.model.ListUsersResponse;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
 import software.amazon.awssdk.services.iam.model.SigningCertificate;
 import software.amazon.awssdk.services.iam.model.User;
@@ -76,9 +76,9 @@ public class IAMUtil {
     }
 
     public static void deleteUsersAndGroupsInTestNameSpace() {
-        ListGroupsResult lgRes = client.listGroups(ListGroupsRequest.builder().pathPrefix(TEST_PATH).build());
+        ListGroupsResponse lgRes = client.listGroups(ListGroupsRequest.builder().pathPrefix(TEST_PATH).build());
         for (Group g : lgRes.groups()) {
-            GetGroupResult ggRes = client.getGroup(GetGroupRequest.builder().groupName(g.groupName()).build());
+            GetGroupResponse ggRes = client.getGroup(GetGroupRequest.builder().groupName(g.groupName()).build());
             for (User u : ggRes.users()) {
                 client.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
                                                                      .groupName(g.groupName()).userName(u.userName()).build());
@@ -86,7 +86,7 @@ public class IAMUtil {
             client.deleteGroup(DeleteGroupRequest.builder().groupName(g.groupName()).build());
         }
 
-        ListUsersResult luRes = client.listUsers(ListUsersRequest.builder()
+        ListUsersResponse luRes = client.listUsers(ListUsersRequest.builder()
                                                                  .pathPrefix(TEST_PATH).build());
         for (User u : luRes.users()) {
             deleteTestUsers(u.userName());
@@ -94,7 +94,7 @@ public class IAMUtil {
     }
 
     public static void deleteAccessKeysForUser(String username) {
-        ListAccessKeysResult response = client
+        ListAccessKeysResponse response = client
                 .listAccessKeys(ListAccessKeysRequest.builder()
                                                      .userName(username).build());
         for (AccessKeyMetadata akm : response.accessKeyMetadata()) {
@@ -104,7 +104,7 @@ public class IAMUtil {
     }
 
     public static void deleteUserPoliciesForUser(String username) {
-        ListUserPoliciesResult response = client
+        ListUserPoliciesResponse response = client
                 .listUserPolicies(ListUserPoliciesRequest.builder()
                                                          .userName(username).build());
         for (String pName : response.policyNames()) {
@@ -114,7 +114,7 @@ public class IAMUtil {
     }
 
     public static void deleteCertificatesForUser(String username) {
-        ListSigningCertificatesResult response = client
+        ListSigningCertificatesResponse response = client
                 .listSigningCertificates(ListSigningCertificatesRequest.builder()
                                                                        .userName(username).build());
         for (SigningCertificate cert : response.certificates()) {

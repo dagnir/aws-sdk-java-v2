@@ -19,7 +19,7 @@ import java.util.List;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 /**
  * Implementation of the List interface that represents the results from a query
@@ -44,14 +44,14 @@ public class PaginatedQueryList<T> extends PaginatedList<T> {
     private final DynamoDbMapperConfig config;
 
     /** The current results for the last executed query operation. */
-    private QueryResult queryResult;
+    private QueryResponse queryResult;
 
     public PaginatedQueryList(
             DynamoDbMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             QueryRequest queryRequest,
-            QueryResult queryResult,
+            QueryResponse queryResult,
             PaginationLoadingStrategy paginationLoadingStrategy,
             DynamoDbMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);

@@ -36,13 +36,13 @@ import software.amazon.awssdk.services.simpledb.model.DeletableItem;
 import software.amazon.awssdk.services.simpledb.model.DeleteDomainRequest;
 import software.amazon.awssdk.services.simpledb.model.DomainMetadataRequest;
 import software.amazon.awssdk.services.simpledb.model.GetAttributesRequest;
-import software.amazon.awssdk.services.simpledb.model.GetAttributesResult;
+import software.amazon.awssdk.services.simpledb.model.GetAttributesResponse;
 import software.amazon.awssdk.services.simpledb.model.Item;
 import software.amazon.awssdk.services.simpledb.model.NoSuchDomainException;
 import software.amazon.awssdk.services.simpledb.model.ReplaceableAttribute;
 import software.amazon.awssdk.services.simpledb.model.ReplaceableItem;
 import software.amazon.awssdk.services.simpledb.model.SelectRequest;
-import software.amazon.awssdk.services.simpledb.model.SelectResult;
+import software.amazon.awssdk.services.simpledb.model.SelectResponse;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -222,7 +222,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
                 .selectExpression("select * from `" + domainName + "`")
                 .consistentRead(Boolean.TRUE)
                 .build();
-        SelectResult selectResult = sdb.select(request);
+        SelectResponse selectResult = sdb.select(request);
 
         assertItemsPresent(expectedItems, selectResult.items());
     }
@@ -305,7 +305,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
                 .consistentRead(Boolean.TRUE)
                 .build();
 
-        GetAttributesResult result = sdb.getAttributes(request);
+        GetAttributesResponse result = sdb.getAttributes(request);
         Map<String, String> attributeValuesByName = convertAttributesToMap(result.attributes());
 
         for (Iterator iterator = attributeNames.iterator(); iterator.hasNext(); ) {

@@ -18,7 +18,7 @@ package software.amazon.awssdk.services.sts.auth;
 import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleWithWebIdentityCredentialsProvider.Builder;
 import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityResult;
+import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityResponse;
 import software.amazon.awssdk.services.sts.model.Credentials;
 
 /**
@@ -26,15 +26,15 @@ import software.amazon.awssdk.services.sts.model.Credentials;
  * Inherits tests from {@link StsCredentialsProviderTestBase}.
  */
 public class StsAssumeRoleWithWebIdentityCredentialsProviderTest
-        extends StsCredentialsProviderTestBase<AssumeRoleWithWebIdentityRequest, AssumeRoleWithWebIdentityResult> {
+        extends StsCredentialsProviderTestBase<AssumeRoleWithWebIdentityRequest, AssumeRoleWithWebIdentityResponse> {
     @Override
     protected AssumeRoleWithWebIdentityRequest getRequest() {
         return AssumeRoleWithWebIdentityRequest.builder().build();
     }
 
     @Override
-    protected AssumeRoleWithWebIdentityResult getResponse(Credentials credentials) {
-        return AssumeRoleWithWebIdentityResult.builder().credentials(credentials).build();
+    protected AssumeRoleWithWebIdentityResponse getResponse(Credentials credentials) {
+        return AssumeRoleWithWebIdentityResponse.builder().credentials(credentials).build();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StsAssumeRoleWithWebIdentityCredentialsProviderTest
     }
 
     @Override
-    protected AssumeRoleWithWebIdentityResult callClient(STSClient client, AssumeRoleWithWebIdentityRequest request) {
+    protected AssumeRoleWithWebIdentityResponse callClient(STSClient client, AssumeRoleWithWebIdentityRequest request) {
         return client.assumeRoleWithWebIdentity(request);
     }
 }

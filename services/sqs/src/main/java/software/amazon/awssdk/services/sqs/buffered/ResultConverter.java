@@ -20,13 +20,13 @@ import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 /** this class converts sqs batch entry results to individual results. */
 class ResultConverter {
 
-    static SendMessageResult convert(SendMessageBatchResultEntry br) {
-        SendMessageResult.Builder toReturnBuilder = SendMessageResult.builder()
+    static SendMessageResponse convert(SendMessageBatchResultEntry br) {
+        SendMessageResponse.Builder toReturnBuilder = SendMessageResponse.builder()
             .md5OfMessageBody(br.md5OfMessageBody())
             .messageId(br.messageId())
             .md5OfMessageAttributes(br.md5OfMessageAttributes());

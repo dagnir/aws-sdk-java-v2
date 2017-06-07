@@ -21,17 +21,17 @@ import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.ec2.model.AssociateDhcpOptionsRequest;
 import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayRequest;
-import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayResult;
+import software.amazon.awssdk.services.ec2.model.CreateCustomerGatewayResponse;
 import software.amazon.awssdk.services.ec2.model.CreateDhcpOptionsRequest;
-import software.amazon.awssdk.services.ec2.model.CreateDhcpOptionsResult;
+import software.amazon.awssdk.services.ec2.model.CreateDhcpOptionsResponse;
 import software.amazon.awssdk.services.ec2.model.CreateSubnetRequest;
-import software.amazon.awssdk.services.ec2.model.CreateSubnetResult;
+import software.amazon.awssdk.services.ec2.model.CreateSubnetResponse;
 import software.amazon.awssdk.services.ec2.model.CreateVpcRequest;
-import software.amazon.awssdk.services.ec2.model.CreateVpcResult;
+import software.amazon.awssdk.services.ec2.model.CreateVpcResponse;
 import software.amazon.awssdk.services.ec2.model.CreateVpnConnectionRequest;
-import software.amazon.awssdk.services.ec2.model.CreateVpnConnectionResult;
+import software.amazon.awssdk.services.ec2.model.CreateVpnConnectionResponse;
 import software.amazon.awssdk.services.ec2.model.CreateVpnGatewayRequest;
-import software.amazon.awssdk.services.ec2.model.CreateVpnGatewayResult;
+import software.amazon.awssdk.services.ec2.model.CreateVpnGatewayResponse;
 import software.amazon.awssdk.services.ec2.model.CustomerGateway;
 import software.amazon.awssdk.services.ec2.model.DeleteCustomerGatewayRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteDhcpOptionsRequest;
@@ -40,23 +40,23 @@ import software.amazon.awssdk.services.ec2.model.DeleteVpcRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteVpnConnectionRequest;
 import software.amazon.awssdk.services.ec2.model.DeleteVpnGatewayRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeCustomerGatewaysRequest;
-import software.amazon.awssdk.services.ec2.model.DescribeCustomerGatewaysResult;
+import software.amazon.awssdk.services.ec2.model.DescribeCustomerGatewaysResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeDhcpOptionsRequest;
-import software.amazon.awssdk.services.ec2.model.DescribeDhcpOptionsResult;
+import software.amazon.awssdk.services.ec2.model.DescribeDhcpOptionsResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeSubnetsRequest;
-import software.amazon.awssdk.services.ec2.model.DescribeSubnetsResult;
+import software.amazon.awssdk.services.ec2.model.DescribeSubnetsResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeVpcAttributeRequest;
-import software.amazon.awssdk.services.ec2.model.DescribeVpcAttributeResult;
+import software.amazon.awssdk.services.ec2.model.DescribeVpcAttributeResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeVpcsRequest;
-import software.amazon.awssdk.services.ec2.model.DescribeVpcsResult;
+import software.amazon.awssdk.services.ec2.model.DescribeVpcsResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeVpnConnectionsRequest;
-import software.amazon.awssdk.services.ec2.model.DescribeVpnConnectionsResult;
+import software.amazon.awssdk.services.ec2.model.DescribeVpnConnectionsResponse;
 import software.amazon.awssdk.services.ec2.model.DescribeVpnGatewaysRequest;
-import software.amazon.awssdk.services.ec2.model.DescribeVpnGatewaysResult;
+import software.amazon.awssdk.services.ec2.model.DescribeVpnGatewaysResponse;
 import software.amazon.awssdk.services.ec2.model.DhcpConfiguration;
 import software.amazon.awssdk.services.ec2.model.ModifyVpcAttributeRequest;
 import software.amazon.awssdk.services.ec2.model.PurchaseReservedInstancesOfferingRequest;
-import software.amazon.awssdk.services.ec2.model.PurchaseReservedInstancesOfferingResult;
+import software.amazon.awssdk.services.ec2.model.PurchaseReservedInstancesOfferingResponse;
 import software.amazon.awssdk.services.ec2.model.Vpc;
 import software.amazon.awssdk.services.ec2.model.VpnConnection;
 import software.amazon.awssdk.services.ec2.model.VpnGateway;
@@ -91,7 +91,7 @@ public class EC2TestHelper {
      */
     public static void deleteAllCustomerGateways() {
         DescribeCustomerGatewaysRequest request = DescribeCustomerGatewaysRequest.builder().build();
-        DescribeCustomerGatewaysResult result = EC2.describeCustomerGateways(request);
+        DescribeCustomerGatewaysResponse result = EC2.describeCustomerGateways(request);
 
         for (CustomerGateway gateway : result.customerGateways()) {
             deleteCustomerGateway(gateway.customerGatewayId());
@@ -104,7 +104,7 @@ public class EC2TestHelper {
      */
     public static void deleteAllVpnConnections() {
         DescribeVpnConnectionsRequest request = DescribeVpnConnectionsRequest.builder().build();
-        DescribeVpnConnectionsResult result = EC2.describeVpnConnections(request);
+        DescribeVpnConnectionsResponse result = EC2.describeVpnConnections(request);
 
         for (VpnConnection connection : result.vpnConnections()) {
             DeleteVpnConnectionRequest r = DeleteVpnConnectionRequest.builder()
@@ -139,9 +139,9 @@ public class EC2TestHelper {
      *            Autonomous System Number (ASN).
      * @param type
      *            The type of VPN connection this customer gateway supports.
-     * @return CreateCustomerGatewayResult
+     * @return CreateCustomerGatewayResponse
      */
-    public static CreateCustomerGatewayResult createCustomerGateway(
+    public static CreateCustomerGatewayResponse createCustomerGateway(
             String ipAddress, Integer bgpAsn, String type) {
 
         CreateCustomerGatewayRequest request = CreateCustomerGatewayRequest.builder()
@@ -158,9 +158,9 @@ public class EC2TestHelper {
      *
      * @param customerGatewayIds
      *            variable list of customer gateway ids
-     * @return DescribeCustomerGatewaysResult
+     * @return DescribeCustomerGatewaysResponse
      */
-    public static DescribeCustomerGatewaysResult describeCustomerGateway(
+    public static DescribeCustomerGatewaysResponse describeCustomerGateway(
             List<String> customerGatewayIds) {
 
         DescribeCustomerGatewaysRequest request = DescribeCustomerGatewaysRequest.builder()
@@ -176,9 +176,9 @@ public class EC2TestHelper {
      *
      * @param customerGatewayId
      *            customer gateway id
-     * @return DescribeCustomerGatewaysResult
+     * @return DescribeCustomerGatewaysResponse
      */
-    public static DescribeCustomerGatewaysResult describeCustomerGateway(
+    public static DescribeCustomerGatewaysResponse describeCustomerGateway(
             String customerGatewayId) {
 
         List<String> ids = new ArrayList<String>();
@@ -189,7 +189,7 @@ public class EC2TestHelper {
 
     }
 
-    public static CreateDhcpOptionsResult createDhcpOptions(String optionKey,
+    public static CreateDhcpOptionsResponse createDhcpOptions(String optionKey,
                                                             String... optionValue) {
 
         DhcpConfiguration configurationOne = DhcpConfiguration.builder()
@@ -207,9 +207,9 @@ public class EC2TestHelper {
      *
      * @param dhcpOptionsIds
      *            list of option ids
-     * @return DescribeDhcpOptionsResult
+     * @return DescribeDhcpOptionsResponse
      */
-    public static DescribeDhcpOptionsResult describeDhcpOptions(
+    public static DescribeDhcpOptionsResponse describeDhcpOptions(
             List<String> dhcpOptionsIds) {
 
         DescribeDhcpOptionsRequest request = DescribeDhcpOptionsRequest.builder()
@@ -224,7 +224,7 @@ public class EC2TestHelper {
      * @param dhcpOptionsId
      *            A DHCP options set ID.
      */
-    public static DescribeDhcpOptionsResult describeDhcpOptions(String dhcpOptionsId) {
+    public static DescribeDhcpOptionsResponse describeDhcpOptions(String dhcpOptionsId) {
         List<String> ids = new ArrayList<String>();
         ids.add(dhcpOptionsId);
 
@@ -269,9 +269,9 @@ public class EC2TestHelper {
      *            The type of VPN connection this VPN gateway supports.
      * @param availabilityZone
      *            The Availability Zone where you want the VPN gateway.
-     * @return CreateVpnGatewayResult
+     * @return CreateVpnGatewayResponse
      */
-    public static CreateVpnGatewayResult createVpnGateway(String type,
+    public static CreateVpnGatewayResponse createVpnGateway(String type,
                                                           String availabilityZone) {
         CreateVpnGatewayRequest request = CreateVpnGatewayRequest.builder()
                 .type(type)
@@ -286,9 +286,9 @@ public class EC2TestHelper {
      *
      * @param type
      *            The type of VPN connection this VPN gateway supports.
-     * @return CreateVpnGatewayResult
+     * @return CreateVpnGatewayResponse
      */
-    public static CreateVpnGatewayResult createVpnGateway(String type) {
+    public static CreateVpnGatewayResponse createVpnGateway(String type) {
         return createVpnGateway(type, null);
     }
 
@@ -310,9 +310,9 @@ public class EC2TestHelper {
      *
      * @param vpnGatewayIds
      *            list of vpn gateway ids
-     * @return DescribeVpnGatewaysResult
+     * @return DescribeVpnGatewaysResponse
      */
-    public static DescribeVpnGatewaysResult describeVpnGateways(List<String> vpnGatewayIds) {
+    public static DescribeVpnGatewaysResponse describeVpnGateways(List<String> vpnGatewayIds) {
         DescribeVpnGatewaysRequest request = DescribeVpnGatewaysRequest.builder()
             .vpnGatewayIds(vpnGatewayIds)
             .build();
@@ -325,9 +325,9 @@ public class EC2TestHelper {
      *
      * @param vpnGatewayId
      *            gateway id
-     * @return DescribeVpnGatewaysResult
+     * @return DescribeVpnGatewaysResponse
      */
-    public static DescribeVpnGatewaysResult describeVpnGateway(String vpnGatewayId) {
+    public static DescribeVpnGatewaysResponse describeVpnGateway(String vpnGatewayId) {
         List<String> ids = new ArrayList<String>();
         ids.add(vpnGatewayId);
 
@@ -365,7 +365,7 @@ public class EC2TestHelper {
      *
      */
     public static void deleteAllVpnGateways() {
-        DescribeVpnGatewaysResult describeResult = describeVpnGateways(null);
+        DescribeVpnGatewaysResponse describeResult = describeVpnGateways(null);
 
         for (VpnGateway vpnGateway : describeResult.vpnGateways()) {
             deletVpnGateway(vpnGateway.vpnGatewayId());
@@ -382,7 +382,7 @@ public class EC2TestHelper {
      * @param vpnGatewayId
      *            The ID of the customer gateway.
      */
-    public static CreateVpnConnectionResult createVpnConnection(String type,
+    public static CreateVpnConnectionResponse createVpnConnection(String type,
                                                                 String customerGatewayId, String vpnGatewayId) {
 
         CreateVpnConnectionRequest request = CreateVpnConnectionRequest.builder()
@@ -412,9 +412,9 @@ public class EC2TestHelper {
      *
      * @param cidrBlock
      *            A valid CIDR block.
-     * @return CreateVpcResult
+     * @return CreateVpcResponse
      */
-    public static CreateVpcResult createVpc(String cidrBlock) {
+    public static CreateVpcResponse createVpc(String cidrBlock) {
         CreateVpcRequest request = CreateVpcRequest.builder()
                 .cidrBlock(cidrBlock)
                 .build();
@@ -426,9 +426,9 @@ public class EC2TestHelper {
      *
      * @param vpcId
      *            VPC Id
-     * @return DescribeVpcsResult
+     * @return DescribeVpcsResponse
      */
-    public static DescribeVpcsResult describeVpc(String vpcId) {
+    public static DescribeVpcsResponse describeVpc(String vpcId) {
         List<String> ids = new ArrayList<String>();
         ids.add(vpcId);
 
@@ -440,9 +440,9 @@ public class EC2TestHelper {
      *
      * @param ids
      *            list of VPC ids
-     * @return DescribeVpcsResult
+     * @return DescribeVpcsResponse
      */
-    public static DescribeVpcsResult describeVpcs(List<String> ids) {
+    public static DescribeVpcsResponse describeVpcs(List<String> ids) {
         DescribeVpcsRequest request = DescribeVpcsRequest.builder()
             .vpcIds(ids)
             .build();
@@ -450,7 +450,7 @@ public class EC2TestHelper {
         return EC2.describeVpcs(request);
     }
 
-    public static DescribeVpcAttributeResult describeVpcAttribute(String vpcId, boolean enableDnsHostnames,
+    public static DescribeVpcAttributeResponse describeVpcAttribute(String vpcId, boolean enableDnsHostnames,
                                                                   boolean enableDnsSupport) {
         DescribeVpcAttributeRequest.Builder describeVpcAttributeRequestBuilder = DescribeVpcAttributeRequest.builder().vpcId(vpcId);
         if (enableDnsHostnames == true) {
@@ -470,7 +470,7 @@ public class EC2TestHelper {
      * Deletes ALL Vpc
      */
     public static void deleteAllVpcs() {
-        DescribeVpcsResult describeResult = describeVpcs(null);
+        DescribeVpcsResponse describeResult = describeVpcs(null);
         for (Vpc vpc : describeResult.vpcs()) {
             deleteVpc(vpc.vpcId());
         }
@@ -496,9 +496,9 @@ public class EC2TestHelper {
      *            The ID of the VPC where you want to create the subnet.
      * @param cidrBlock
      *            The CIDR block you want the subnet to cover.
-     * @return CreateSubnetResult
+     * @return CreateSubnetResponse
      */
-    public static CreateSubnetResult createSubnet(String vpcId, String cidrBlock) {
+    public static CreateSubnetResponse createSubnet(String vpcId, String cidrBlock) {
         CreateSubnetRequest request = CreateSubnetRequest.builder()
                 .vpcId(vpcId)
                 .cidrBlock(cidrBlock)
@@ -511,9 +511,9 @@ public class EC2TestHelper {
      *
      * @param subnetId
      *            subnet id
-     * @return DescribeSubnetsResult
+     * @return DescribeSubnetsResponse
      */
-    public static DescribeSubnetsResult describeSubnet(String subnetId) {
+    public static DescribeSubnetsResponse describeSubnet(String subnetId) {
         List<String> ids = new ArrayList<String>();
         ids.add(subnetId);
 
@@ -525,9 +525,9 @@ public class EC2TestHelper {
      *
      * @param subnetIds
      *            subnet ids
-     * @return DescribeSubnetsResult
+     * @return DescribeSubnetsResponse
      */
-    public static DescribeSubnetsResult describeSubnets(List<String> subnetIds) {
+    public static DescribeSubnetsResponse describeSubnets(List<String> subnetIds) {
         DescribeSubnetsRequest request = DescribeSubnetsRequest.builder()
             .subnetIds(subnetIds)
             .build();
@@ -542,7 +542,7 @@ public class EC2TestHelper {
      * @param offeringId offering id
      * @param instanceCount how many instances to reserve
      */
-    public static PurchaseReservedInstancesOfferingResult purchaseReservedInstancesOffering(
+    public static PurchaseReservedInstancesOfferingResponse purchaseReservedInstancesOffering(
             String offeringId, int instanceCount) {
         PurchaseReservedInstancesOfferingRequest request = PurchaseReservedInstancesOfferingRequest.builder()
                 .instanceCount(instanceCount)

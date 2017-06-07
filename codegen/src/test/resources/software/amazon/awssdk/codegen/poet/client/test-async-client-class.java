@@ -20,9 +20,9 @@ import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.services.json.model.APostOperationRequest;
-import software.amazon.awssdk.services.json.model.APostOperationResult;
+import software.amazon.awssdk.services.json.model.APostOperationResponse;
 import software.amazon.awssdk.services.json.model.APostOperationWithOutputRequest;
-import software.amazon.awssdk.services.json.model.APostOperationWithOutputResult;
+import software.amazon.awssdk.services.json.model.APostOperationWithOutputResponse;
 
 @Generated("software.amazon.awssdk:codegen")
 public class DefaultJsonAsyncClient implements JsonAsyncClient {
@@ -47,7 +47,7 @@ public class DefaultJsonAsyncClient implements JsonAsyncClient {
      *      API Documentation</a>
      */
     @Override
-    public CompletableFuture<APostOperationResult> aPostOperation(APostOperationRequest aPostOperationRequest) {
+    public CompletableFuture<APostOperationResponse> aPostOperation(APostOperationRequest aPostOperationRequest) {
         return CompletableFuture.supplyAsync(() -> syncClient.aPostOperation(aPostOperationRequest), executor);
     }
 
@@ -63,7 +63,7 @@ public class DefaultJsonAsyncClient implements JsonAsyncClient {
      *      target="_top">AWS API Documentation</a>
      */
     @Override
-    public CompletableFuture<APostOperationWithOutputResult> aPostOperationWithOutput(
+    public CompletableFuture<APostOperationWithOutputResponse> aPostOperationWithOutput(
         APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
         return CompletableFuture
             .supplyAsync(() -> syncClient.aPostOperationWithOutput(aPostOperationWithOutputRequest), executor);

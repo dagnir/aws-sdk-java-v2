@@ -110,7 +110,7 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
  *     .withHashKeyValues(1234L)
  *     .withConsistentReads(true);
  *
- * QueryResultPage&lt;TestClass&gt; results = new QueryResultPage&lt;TestClass&gt;();
+ * QueryResponsePage&lt;TestClass&gt; results = new QueryResponsePage&lt;TestClass&gt;();
  *
  * do {
  *     if (results.lastEvaluatedKey() != null) {

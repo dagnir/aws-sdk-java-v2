@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.document.api.BatchGetItemApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.BatchGetItemSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 
@@ -98,7 +98,7 @@ public class BatchGetItemImpl implements BatchGetItemApi {
                 .requestItems(requestItems)
                 .build();
         spec.setRequest(req);
-        BatchGetItemResult result = client.batchGetItem(req);
+        BatchGetItemResponse result = client.batchGetItem(req);
         return new BatchGetItemOutcome(result);
     }
 
