@@ -112,7 +112,7 @@ class BlockingRequestBuilder {
         List<Dimension> dims = datum.dimensions();
         Collections.sort(dims, DimensionComparator.INSTANCE);
         String metricName = datum.metricName();
-        String key = metricName + dims.toString();
+        String key = metricName + dims;
         MetricDatum statDatum = uniqueMetrics.get(key);
         if (statDatum == null) {
             statDatum = MetricDatum.builder()
