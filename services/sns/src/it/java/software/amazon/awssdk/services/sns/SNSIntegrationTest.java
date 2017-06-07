@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.sns.model.AddPermissionRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResult;
@@ -170,6 +171,8 @@ public class SNSIntegrationTest extends IntegrationTestBase {
      * Tests that we can invoke operations on Cloudcast and correctly interpret the responses.
      */
     @Test
+    @ReviewBeforeRelease("This test uses a hardcoded certifacte. We should really download the cert from the SigningCertURL " +
+                         "in case SNS rotates their cert in the future.")
     public void testCloudcastOperations() throws Exception {
 
         // Create Topic
@@ -196,7 +199,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         // Subscribe an SQS queue for notifications
         String queueArn = initializeReceivingQueue();
         SubscribeResult subscribeResult = sns
-                .subscribe(SubscribeRequest.builder().endpoint(queueArn).protocol("sqsAsync").topicArn(topicArn).build());
+                .subscribe(SubscribeRequest.builder().endpoint(queueArn).protocol("sqs").topicArn(topicArn).build());
         subscriptionArn = subscribeResult.subscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
@@ -299,7 +302,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
                       .queueUrl();
         String queueArn = initializeReceivingQueue();
         SubscribeResult subscribeResult =
-                sns.subscribe(SubscribeRequest.builder().topicArn(topicArn).protocol("sqsAsync").endpoint(queueArn).build());
+                sns.subscribe(SubscribeRequest.builder().topicArn(topicArn).protocol("sqs").endpoint(queueArn).build());
         String subscriptionArn = subscribeResult.subscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
@@ -396,7 +399,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         HashMap<String, String> attributes = new HashMap<>();
         attributes.put("Policy", generateSqsPolicyForTopic(queueArn, topicArn));
         sqs.setQueueAttributes(SetQueueAttributesRequest.builder().queueUrl(queueUrl).attributes(attributes).build());
-        int policyPropagationDelayInSeconds = 120;
+        int policyPropagationDelayInSeconds = 60;
         System.out.println("Sleeping " + policyPropagationDelayInSeconds + " seconds to let SQS policy propagate");
         Thread.sleep(1000 * policyPropagationDelayInSeconds);
         return queueArn;

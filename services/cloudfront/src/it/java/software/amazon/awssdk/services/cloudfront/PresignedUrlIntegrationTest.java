@@ -27,7 +27,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.cloudfront.CloudFrontCookieSigner.CookiesForCannedPolicy;
 import software.amazon.awssdk.services.cloudfront.model.Aliases;
 import software.amazon.awssdk.services.cloudfront.model.CacheBehavior;
@@ -65,6 +67,9 @@ import software.amazon.awssdk.util.StringUtils;
 /**
  * Tests pre-signed URLs
  */
+@ReviewBeforeRelease("Tests a handwritten utility, would be good to integ test but right now they are broken" +
+                     "and creating distributions is extremely slow")
+@Ignore
 public class PresignedUrlIntegrationTest extends IntegrationTestBase {
 
     private static final String PRIVATE_KEY_FILE = "pk-APKAJM22QV32R3I2XVIQ.pem";
@@ -73,7 +78,7 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
     private static final String DEFAULT_ROOT_OBJECT = "key.html";
     private static final String DISTRIBUTION_COMMENT = "comment";
     private static String callerReference = yyMMddhhmmss();
-    private static final String bucketName = StringUtils.lowerCase(CloudFrontIntegrationTest.class.getSimpleName())
+    private static final String bucketName = StringUtils.lowerCase(PresignedUrlIntegrationTest.class.getSimpleName())
                                              + "." + callerReference;
     private static String dnsName;
     private static String domainName;
