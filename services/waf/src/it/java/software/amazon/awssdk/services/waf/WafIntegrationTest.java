@@ -52,7 +52,7 @@ public class WafIntegrationTest extends AwsTestBase {
         setUpCredentials();
         client = WAFClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Region.US_EAST_1)
+                .region(Region.AWS_GLOBAL)
                 .build();
 
     }

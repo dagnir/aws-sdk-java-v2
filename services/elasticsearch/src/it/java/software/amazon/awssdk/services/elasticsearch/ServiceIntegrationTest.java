@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -21,11 +20,13 @@ import software.amazon.awssdk.services.elasticsearch.model.DescribeElasticsearch
 import software.amazon.awssdk.services.elasticsearch.model.DescribeElasticsearchDomainRequest;
 import software.amazon.awssdk.services.elasticsearch.model.DescribeElasticsearchDomainsRequest;
 import software.amazon.awssdk.services.elasticsearch.model.DomainInfo;
+import software.amazon.awssdk.services.elasticsearch.model.EBSOptions;
 import software.amazon.awssdk.services.elasticsearch.model.ElasticsearchDomainConfig;
 import software.amazon.awssdk.services.elasticsearch.model.ElasticsearchDomainStatus;
 import software.amazon.awssdk.services.elasticsearch.model.ListDomainNamesRequest;
 import software.amazon.awssdk.services.elasticsearch.model.ListTagsRequest;
 import software.amazon.awssdk.services.elasticsearch.model.Tag;
+import software.amazon.awssdk.services.elasticsearch.model.VolumeType;
 import software.amazon.awssdk.test.AwsTestBase;
 
 
@@ -62,8 +63,16 @@ public class ServiceIntegrationTest extends AwsTestBase {
     }
 
     private String testCreateDomain() {
-        ElasticsearchDomainStatus status = es.createElasticsearchDomain(CreateElasticsearchDomainRequest.builder()
-                .domainName(DOMAIN_NAME).build()).domainStatus();
+        ElasticsearchDomainStatus status = es.createElasticsearchDomain(
+                CreateElasticsearchDomainRequest
+                        .builder()
+                        .ebsOptions(EBSOptions.builder()
+                                              .ebsEnabled(true)
+                                              .volumeSize(10)
+                                              .volumeType(VolumeType.Standard)
+                                              .build())
+                        .domainName(DOMAIN_NAME)
+                        .build()).domainStatus();
 
         assertEquals(DOMAIN_NAME, status.domainName());
         assertValidDomainStatus(status);

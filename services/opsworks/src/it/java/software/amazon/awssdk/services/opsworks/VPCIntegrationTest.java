@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.CreateSubnetRequest;
 import software.amazon.awssdk.services.ec2.model.CreateVpcRequest;
@@ -115,7 +116,7 @@ public class VPCIntegrationTest extends IntegrationTestBase {
                                                                             StackConfigurationManager.builder().name("Chef")
                                                                                                      .version("0.9").build())
                                                                     .build()
-                                                 ).stackId();
+            ).stackId();
 
 
             Stack stack = opsWorks.describeStacks(DescribeStacksRequest.builder().stackIds(stackId).build()).stacks().get(0);
@@ -136,7 +137,7 @@ public class VPCIntegrationTest extends IntegrationTestBase {
                                                                              .layerIds(layerId)
                                                                              .subnetId(subId)
                                                                              .instanceType("m1.small").build()
-                                                       ).instanceId();
+            ).instanceId();
 
 
             Instance instance = opsWorks.describeInstances(DescribeInstancesRequest.builder()
@@ -175,21 +176,31 @@ public class VPCIntegrationTest extends IntegrationTestBase {
     }
 
     private void initialize() throws InterruptedException {
-        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
-        ec2 = EC2Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        iam = IAMClient.builder()
+                       .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                       .region(Region.AWS_GLOBAL)
+                       .build();
+        ec2 = EC2Client.builder()
+                       .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                       .region(Region.US_EAST_1)
+                       .build();
         roleName = "java-test-role" + System.currentTimeMillis();
         profileName = "java-profile" + System.currentTimeMillis();
-        role = iam.createRole(CreateRoleRequest.builder().roleName(roleName).assumeRolePolicyDocument(TRUST_POLICY).build()).role();
+        role = iam.createRole(CreateRoleRequest.builder().roleName(roleName).assumeRolePolicyDocument(TRUST_POLICY).build())
+                  .role();
 
-        iam.putRolePolicy(PutRolePolicyRequest.builder().policyName("TestPolicy").roleName(roleName).policyDocument(PERMISSIONS).build());
+        iam.putRolePolicy(
+                PutRolePolicyRequest.builder().policyName("TestPolicy").roleName(roleName).policyDocument(PERMISSIONS).build());
 
-        instanceProfile = iam.createInstanceProfile(CreateInstanceProfileRequest.builder().instanceProfileName(profileName).build())
-                             .instanceProfile();
+        instanceProfile = iam
+                .createInstanceProfile(CreateInstanceProfileRequest.builder().instanceProfileName(profileName).build())
+                .instanceProfile();
         vpcId = ec2.createVpc(CreateVpcRequest.builder().cidrBlock("10.2.0.0/16").build()).vpc().vpcId();
 
         do {
             Thread.sleep(1000 * 2);
-        } while (!ec2.describeVpcs(DescribeVpcsRequest.builder().vpcIds(vpcId).build()).vpcs().get(0).state().equals("available"));
+        } while (!ec2.describeVpcs(DescribeVpcsRequest.builder().vpcIds(vpcId).build()).vpcs().get(0).state()
+                     .equals("available"));
 
         subId = ec2.createSubnet(CreateSubnetRequest.builder().vpcId(vpcId).cidrBlock("10.2.0.0/24").build()).subnet().subnetId();
 

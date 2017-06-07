@@ -42,6 +42,7 @@ import software.amazon.awssdk.services.machinelearning.model.Prediction;
 import software.amazon.awssdk.services.machinelearning.model.RealtimeEndpointInfo;
 import software.amazon.awssdk.services.machinelearning.model.RealtimeEndpointStatus;
 import software.amazon.awssdk.services.machinelearning.model.S3DataSpec;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.ObjectMetadata;
@@ -85,7 +86,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
                                               + "]"
                                               + "}";
 
-    private static AmazonS3Client s3;
+    private static AmazonS3 s3;
     private static MachineLearningClient client;
 
     private static String dataSourceId;
@@ -99,14 +100,15 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
         System.setProperty("software.amazon.awssdk.sdk.disableCertChecking", "true");
 
         client = MachineLearningClient.builder()
-                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Region.US_EAST_1)
-                .build();
+                                      .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                                      .region(Region.US_EAST_1)
+                                      .build();
     }
 
     private static void setUpS3() {
-        s3 = new AmazonS3Client(credentials);
-        s3.setRegion(Region.US_WEST_2);
+        s3 = AmazonS3Client.builder()
+                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                .build();
 
         s3.createBucket(BUCKET_NAME);
 
@@ -160,7 +162,6 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
                 e.printStackTrace();
             }
 
-            s3.shutdown();
         }
     }
 

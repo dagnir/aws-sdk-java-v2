@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.route53;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.Before;
 import software.amazon.awssdk.regions.Region;
@@ -39,7 +38,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         setUpCredentials();
         route53 = Route53Client.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Region.US_EAST_1)
+                .region(Region.AWS_GLOBAL)
                 .build();
     }
 
