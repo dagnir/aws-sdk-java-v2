@@ -17,6 +17,7 @@ package software.amazon.awssdk.client.builder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static software.amazon.awssdk.config.AdvancedClientOption.ENABLE_DEFAULT_REGION_DETECTION;
 import static software.amazon.awssdk.config.AdvancedClientOption.SIGNER_PROVIDER;
 
 import java.beans.BeanInfo;
@@ -105,6 +106,7 @@ public class DefaultClientBuilderTest {
         ClientOverrideConfiguration overrideConfig =
                 ClientOverrideConfiguration.builder()
                                            .advancedOption(SIGNER_PROVIDER, TEST_SIGNER_PROVIDER)
+                                           .advancedOption(ENABLE_DEFAULT_REGION_DETECTION, false)
                                            .build();
 
         return new TestClientBuilder().credentialsProvider(new AnonymousCredentialsProvider())
