@@ -91,18 +91,6 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         iot.publish(PublishRequest.builder().topic(THING_NAME).payload(null).build());
     }
 
-    @Test(expected = InternalFailureException.class)
-    public void publish_WithNullTopic_ThrowsException() {
-        iot.publish(PublishRequest.builder().topic(null).payload(null).build());
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void updateThingShadow_NullThingName_ThrowsServiceException() throws Exception {
-        UpdateThingShadowRequest request = UpdateThingShadowRequest.builder().thingName(null).payload(null).build();
-        iot.updateThingShadow(request);
-
-    }
-
     @Test(expected = InvalidRequestException.class)
     public void updateThingShadow_NullPayload_ThrowsServiceException() throws Exception {
         UpdateThingShadowRequest request = UpdateThingShadowRequest.builder().thingName(THING_NAME).payload(null).build();

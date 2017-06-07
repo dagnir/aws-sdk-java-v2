@@ -163,7 +163,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
 
         // List Resource Record Sets
         List<ResourceRecordSet> resourceRecordSets = route53.listResourceRecordSets(
-                ListResourceRecordSetsRequest.builder().startRecordIdentifier(createdZoneId).build()).resourceRecordSets();
+                ListResourceRecordSetsRequest.builder().hostedZoneId(createdZoneId).build()).resourceRecordSets();
         assertTrue(resourceRecordSets.size() > 0);
         ResourceRecordSet existingResourceRecordSet = resourceRecordSets.get(0);
         for (ResourceRecordSet rrset : resourceRecordSets) {
@@ -292,7 +292,7 @@ public class Route53IntegrationTest extends IntegrationTestBase {
     public void testClockSkew() throws AmazonServiceException {
         SdkGlobalTime.setGlobalTimeOffset(3600);
         Route53Client clockSkewClient = Route53Client.builder()
-                .region(Region.US_EAST_1)
+                .region(Region.AWS_GLOBAL)
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
         clockSkewClient.listHostedZones(ListHostedZonesRequest.builder().build());

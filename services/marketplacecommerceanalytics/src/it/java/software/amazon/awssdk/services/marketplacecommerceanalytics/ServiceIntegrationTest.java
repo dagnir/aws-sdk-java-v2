@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
 import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.DataSetType;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.GenerateDataSetRequest;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
@@ -52,7 +53,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     private static final String BUCKET_NAME = "java-sdk-integ-mp-commerce-" + System.currentTimeMillis();
 
     private MarketplaceCommerceAnalyticsClient client;
-    private AmazonS3Client s3;
+    private AmazonS3 s3;
     private SNSClient sns;
     private IAMClient iam;
 
@@ -67,17 +68,18 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     }
 
     private void setupClients() {
-        s3 = new AmazonS3Client(getCredentials());
-        s3.setRegion(Region.US_EAST_1);
+        s3 = AmazonS3Client.builder()
+                           .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                           .build();
 
         client = MarketplaceCommerceAnalyticsClient.builder()
-                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Region.US_EAST_1)
-                .build();
+                                                   .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                                                   .region(Region.US_EAST_1)
+                                                   .build();
 
         sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_EAST_1).build();
 
-        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_EAST_1).build();
+        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.AWS_GLOBAL).build();
     }
 
     private void setupResources() throws IOException, Exception {
@@ -90,13 +92,13 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private String createPolicy() throws IOException {
         CreatePolicyRequest createPolicyRequest = CreatePolicyRequest.builder().policyName(POLICY_NAME)
-                                                                           .policyDocument(getPolicyDocument()).build();
+                                                                     .policyDocument(getPolicyDocument()).build();
         return iam.createPolicy(createPolicyRequest).policy().arn();
     }
 
     private String createRole() throws Exception {
         CreateRoleRequest createRoleRequest = CreateRoleRequest.builder().roleName(ROLE_NAME)
-                                                                     .assumeRolePolicyDocument(getAssumeRolePolicy()).build();
+                                                               .assumeRolePolicyDocument(getAssumeRolePolicy()).build();
         return iam.createRole(createRoleRequest).role().arn();
     }
 
@@ -128,12 +130,13 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     @Test(expected = AmazonServiceException.class)
     public void test() {
         client.generateDataSet(GenerateDataSetRequest.builder()
-                .dataSetPublicationDate(new Date())
-                .roleNameArn(roleArn).destinationS3BucketName(BUCKET_NAME).snsTopicArn(topicArn)
-                .destinationS3BucketName(BUCKET_NAME).destinationS3Prefix("some-prefix")
-                .dataSetPublicationDate(new Date())
-                .dataSetType(DataSetType.Customer_subscriber_hourly_monthly_subscriptions)
-                .build());
+                                                     .dataSetPublicationDate(new Date())
+                                                     .roleNameArn(roleArn).destinationS3BucketName(BUCKET_NAME)
+                                                     .snsTopicArn(topicArn)
+                                                     .destinationS3BucketName(BUCKET_NAME).destinationS3Prefix("some-prefix")
+                                                     .dataSetPublicationDate(new Date())
+                                                     .dataSetType(DataSetType.Customer_subscriber_hourly_monthly_subscriptions)
+                                                     .build());
     }
 
     private String getAssumeRolePolicy() throws Exception {

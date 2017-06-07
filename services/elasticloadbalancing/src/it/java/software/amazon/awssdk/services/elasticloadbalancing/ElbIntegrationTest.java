@@ -132,7 +132,7 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
                 .build();
         iam = IAMClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(REGION)
+                .region(Region.AWS_GLOBAL)
                 .build();
 
         List<ServerCertificateMetadata> serverCertificates = iam.listServerCertificates(

@@ -15,20 +15,8 @@
 
 package software.amazon.awssdk.services.elasticbeanstalk;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.elasticbeanstalk.model.DescribeEnvironmentsRequest;
-import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentDescription;
-import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentHealth;
-import software.amazon.awssdk.services.elasticbeanstalk.model.EnvironmentStatus;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -38,66 +26,17 @@ import software.amazon.awssdk.test.AwsTestBase;
 public abstract class ElasticBeanstalkIntegrationTestBase extends AwsTestBase {
 
     protected static ElasticBeanstalkClient elasticbeanstalk;
-    protected static AmazonS3Client s3;
 
     /**
      * Loads the AWS account info for the integration tests and creates an clients for tests to use.
      */
     @BeforeClass
-    public static void setUp() throws FileNotFoundException, IOException {
+    public static void setUp() throws IOException {
         setUpCredentials();
 
         elasticbeanstalk = ElasticBeanstalkClient.builder()
-                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Region.US_EAST_1)
-                .build();
-        s3 = new AmazonS3Client(credentials);
-
+                                                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                                                 .build();
     }
 
-    /**
-     * Asserts that the specified date is not null, and is recent (within 24 hours of the current
-     * date).
-     *
-     * @param date
-     *            The date to test.
-     */
-    protected void assertRecent(Date date) {
-        assertNotNull(date);
-
-        long dateOffset = new Date().getTime() - date.getTime();
-        assertTrue(dateOffset < 1000 * 60 * 60 * 24);
-    }
-
-    protected void waitForEnvironmentToTransitionToStateAndHealth(String environmentName,
-                                                                  EnvironmentStatus state,
-                                                                  EnvironmentHealth health) throws InterruptedException {
-        System.out.println("Waiting for instance " + environmentName + " to transition to " + state + "/" + health);
-
-        int count = 0;
-        while (true) {
-            Thread.sleep(1000 * 30);
-            if (count++ > 100) {
-                throw new RuntimeException("Environment " + environmentName + " never transitioned to " + state + "/"
-                                           + health);
-            }
-
-            List<EnvironmentDescription> environments = elasticbeanstalk.describeEnvironments(
-                    DescribeEnvironmentsRequest.builder().environmentNames(environmentName).build()).environments();
-
-            if (environments.size() == 0) {
-                throw new RuntimeException("Unable to find an environment with name " + environmentName);
-            }
-
-            EnvironmentDescription environment = environments.get(0);
-            System.out.println(" - " + environment.status() + "/" + environment.health());
-            if (!environment.status().equalsIgnoreCase(state.toString())) {
-                continue;
-            }
-            if (health != null && !environment.health().equalsIgnoreCase(health.toString())) {
-                continue;
-            }
-            return;
-        }
-    }
 }
