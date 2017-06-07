@@ -219,9 +219,9 @@ public class ParallelScanTask {
         ScanRequest segmentScanRequest = parallelScanRequests.get(currentSegment);
         if (checkLastEvaluatedKey) {
             ScanResult lastScanResult = segmentScanResults.get(currentSegment);
-            segmentScanRequest.toBuilder().exclusiveStartKey(lastScanResult.lastEvaluatedKey());
+            segmentScanRequest = segmentScanRequest.toBuilder().exclusiveStartKey(lastScanResult.lastEvaluatedKey()).build();
         } else {
-            segmentScanRequest.toBuilder().exclusiveStartKey(null);
+            segmentScanRequest = segmentScanRequest.toBuilder().exclusiveStartKey(null).build();
         }
         ScanResult scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(segmentScanRequest));
 
