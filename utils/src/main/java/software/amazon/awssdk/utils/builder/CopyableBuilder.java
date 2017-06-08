@@ -13,26 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http.apache.internal;
-
-import java.time.Duration;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+package software.amazon.awssdk.utils.builder;
 
 /**
- * Default configuration values.
+ * A special type of {@link SdkBuilder} that can be used when the built type implements {@link ToCopyableBuilder}.
  */
-@ReviewBeforeRelease("These values")
-public final class Defaults {
-
-    public static final Duration MAX_IDLE_CONNECTION_TIME = Duration.ofSeconds(60);
-
+public interface CopyableBuilder<B extends CopyableBuilder<B, T>, T extends ToCopyableBuilder<B, T>> extends SdkBuilder<B, T> {
     /**
-     * A value of -1 means infinite TTL in Apache.
+     * A shallow copy of this object created by building an immutable T and then transforming it back to a builder.
+     *
+     * @return a copy of this object
      */
-    public static final Duration CONNECTION_POOL_TTL = Duration.ofMillis(-1);
-
-    public static final Boolean EXPECT_CONTINUE_ENABLED = Boolean.TRUE;
-
-    private Defaults() {
+    default B copy() {
+        return build().toBuilder();
     }
 }

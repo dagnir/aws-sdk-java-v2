@@ -27,7 +27,6 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
  */
 @Immutable
 @SdkProtectedApi
-// TODO write tests if we stick with this approach
 public final class SdkHttpConfigurationOptions {
 
     private static final SdkHttpConfigurationOptions EMPTY = builder().build();
@@ -41,7 +40,7 @@ public final class SdkHttpConfigurationOptions {
     private static final Boolean USE_STRICT_HOSTNAME_VERIFICATION = Boolean.TRUE;
 
     @ReviewBeforeRelease("Confirm defaults")
-    private static final SdkHttpConfigurationOptions GLOBAL_DEFAULTS = SdkHttpConfigurationOptions
+    static final SdkHttpConfigurationOptions GLOBAL_DEFAULTS = SdkHttpConfigurationOptions
             .builder()
             .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, SOCKET_TIMEOUT)
             .option(SdkHttpConfigurationOption.CONNECTION_TIMEOUT, CONNECTION_TIMEOUT)

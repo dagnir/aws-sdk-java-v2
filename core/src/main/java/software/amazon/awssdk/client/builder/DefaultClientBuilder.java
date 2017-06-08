@@ -188,6 +188,8 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         builderDefaults().applyAsyncDefaults(configuration);
         serviceDefaults().applyAsyncDefaults(configuration);
         new GlobalClientConfigurationDefaults().applyAsyncDefaults(configuration);
+        // TODO resolve async client
+        applySdkHttpClient(configuration);
         return new ImmutableAsyncClientConfiguration(configuration);
     }
 
@@ -344,6 +346,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * Wrapper around {@link SdkHttpClient} to prevent it from being closed. Used when the customer provides
      * an already built client in which case they are responsible for the lifecycle of it.
      */
+    @SdkTestInternalApi
     static class NonManagedSdkHttpClient implements SdkHttpClient {
 
         private final SdkHttpClient delegate;

@@ -3,17 +3,17 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 import java.util.Date;
 import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.runtime.StandardMemberCopier;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.StructWithTimestampMarshaller;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class StructWithTimestamp implements ToCopyableBuilder<StructWithTimestamp.Builder, StructWithTimestamp>, StructuredPojo {
+public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<StructWithTimestamp.Builder, StructWithTimestamp> {
     private final Date nestedTimestamp;
 
     private StructWithTimestamp(BeanStyleBuilder builder) {

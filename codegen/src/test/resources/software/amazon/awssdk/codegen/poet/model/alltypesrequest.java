@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.runtime.StandardMemberCopier;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  */

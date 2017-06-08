@@ -25,7 +25,7 @@ import software.amazon.awssdk.http.apache.ProxyConfiguration;
  * all of these settings are supplied when creating the client.
  */
 @SdkInternalApi
-public class ApacheHttpRequestConfig {
+public final class ApacheHttpRequestConfig {
 
     private final Duration socketTimeout;
     private final Duration connectionTimeout;
@@ -33,7 +33,7 @@ public class ApacheHttpRequestConfig {
     private final boolean expectContinueEnabled;
     private final ProxyConfiguration proxyConfiguration;
 
-    public ApacheHttpRequestConfig(Builder builder) {
+    private ApacheHttpRequestConfig(Builder builder) {
         this.socketTimeout = builder.socketTimeout;
         this.connectionTimeout = builder.connectionTimeout;
         this.localAddress = builder.localAddress;

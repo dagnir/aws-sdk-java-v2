@@ -13,18 +13,17 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.builder;
+package utils;
 
-/**
- * A special type of {@link SdkBuilder} that can be used when the built type implements {@link ToCopyableBuilder}.
- */
-public interface CopyableBuilder<B extends CopyableBuilder<B, T>, T extends ToCopyableBuilder<B, T>> extends SdkBuilder<B, T> {
-    /**
-     * A shallow copy of this object created by building an immutable T and then transforming it back to a builder.
-     *
-     * @return a copy of this object
-     */
-    default B copy() {
-        return build().toBuilder();
+import software.amazon.awssdk.http.AmazonHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
+
+public class HttpTestUtils {
+
+    public static AmazonHttpClient.Builder builderWithDefaultClient() {
+        return AmazonHttpClient.builder()
+                               .sdkHttpClient(new DefaultSdkHttpClientFactory()
+                                                      .createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty()));
     }
 }

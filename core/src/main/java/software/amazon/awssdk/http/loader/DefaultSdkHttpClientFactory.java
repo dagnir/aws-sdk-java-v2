@@ -31,13 +31,15 @@ public class DefaultSdkHttpClientFactory implements SdkHttpClientFactory {
 
     @Override
     public SdkHttpClient createHttpClientWithDefaults(SdkHttpConfigurationOptions serviceDefaults) {
-        // TODO move caching to factory level?
+        // TODO We create and SdkHttpClientFactory every time. Do we want to cache it instead of the service binding?
         return DEFAULT_CHAIN
                 .loadService()
                 .map(SdkHttpService::createHttpClientFactory)
                 .map(f -> f.createHttpClientWithDefaults(serviceDefaults))
                 .orElseThrow(
-                    () -> new SdkClientException("Unable to load an HTTP implementation from any provider in the chain"));
+                    () -> new SdkClientException("Unable to load an HTTP implementation from any provider in the chain. " +
+                                                 "You must declare a dependency on an appropriate HTTP implementation or " +
+                                                 " pass in an SdkHttpClient explicitly to the client builder."));
     }
 
 }

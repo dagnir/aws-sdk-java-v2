@@ -18,12 +18,12 @@ package software.amazon.awssdk.client.builder;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.SdkBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.utils.Either;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.SdkBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  * Allows configuration of the underlying HTTP client. Either a HTTP client factory may be provided, or an already
@@ -92,11 +92,6 @@ public final class ClientHttpConfiguration
      */
     public interface Builder extends CopyableBuilder<Builder, ClientHttpConfiguration> {
 
-        /**
-         * @return The currently configured {@link SdkHttpClient} or an empty {@link Optional} if not present.
-         */
-        Optional<SdkHttpClient> httpClient();
-
         // TODO revisit link to apache builder
 
         /**
@@ -117,11 +112,6 @@ public final class ClientHttpConfiguration
          */
         // This intentionally returns SdkBuilder so that only httpClient or httpClientFactory may be supplied.
         SdkBuilder<?, ClientHttpConfiguration> httpClient(SdkHttpClient sdkHttpClient);
-
-        /**
-         * @return The currently configured {@link SdkHttpClientFactory} or an empty {@link Optional} if not present.
-         */
-        Optional<SdkHttpClientFactory> httpClientFactory();
 
         /**
          * Sets a custom HTTP client factory that will be used to obtain a configured instance of {@link SdkHttpClient}. Any
@@ -151,18 +141,9 @@ public final class ClientHttpConfiguration
         }
 
         @Override
-        public Optional<SdkHttpClient> httpClient() {
-            return Optional.ofNullable(httpClient);
-        }
-
-        @Override
         public DefaultHttpConfigurationBuilder httpClient(SdkHttpClient sdkHttpClient) {
             this.httpClient = sdkHttpClient;
             return this;
-        }
-
-        public SdkHttpClient getHttpClient() {
-            return this.httpClient;
         }
 
         public void setHttpClient(SdkHttpClient httpClient) {
@@ -170,18 +151,9 @@ public final class ClientHttpConfiguration
         }
 
         @Override
-        public Optional<SdkHttpClientFactory> httpClientFactory() {
-            return Optional.ofNullable(httpClientFactory);
-        }
-
-        @Override
         public DefaultHttpConfigurationBuilder httpClientFactory(SdkHttpClientFactory sdkClientFactory) {
             this.httpClientFactory = sdkClientFactory;
             return this;
-        }
-
-        public SdkHttpClientFactory getHttpClientFactory() {
-            return this.httpClientFactory;
         }
 
         public void setHttpClientFactory(SdkHttpClientFactory httpClientFactory) {

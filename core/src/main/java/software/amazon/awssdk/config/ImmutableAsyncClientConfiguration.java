@@ -90,7 +90,7 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
 
             @Override
             public SdkHttpClient sdkHttpClient() {
-                return ImmutableAsyncClientConfiguration.this.httpClient();
+                return httpClient();
             }
 
             @Override

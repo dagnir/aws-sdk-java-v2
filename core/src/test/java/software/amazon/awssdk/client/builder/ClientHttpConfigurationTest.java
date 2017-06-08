@@ -53,22 +53,24 @@ public class ClientHttpConfigurationTest {
 
     @Test
     public void sdkHttpClientSet_IsPreservedInToBuilder() {
-        final ClientHttpConfiguration.Builder builder = ClientHttpConfiguration.builder()
+        final ClientHttpConfiguration config = ClientHttpConfiguration.builder()
                 .httpClient(sdkHttpClient)
                 .build()
-                .toBuilder();
-        assertThat(builder.httpClient()).hasValue(sdkHttpClient);
-        assertThat(builder.httpClientFactory()).isEmpty();
+                .toBuilder()
+                .build();
+        assertThat(config.httpClient()).hasValue(sdkHttpClient);
+        assertThat(config.httpClientFactory()).isEmpty();
     }
 
     @Test
     public void sdkClientFactorySet_IsPreservedInToBuilder() {
-        final ClientHttpConfiguration.Builder builder = ClientHttpConfiguration.builder()
+        final ClientHttpConfiguration config = ClientHttpConfiguration.builder()
                 .httpClientFactory(sdkClientFactory)
                 .build()
-                .toBuilder();
-        assertThat(builder.httpClientFactory()).hasValue(sdkClientFactory);
-        assertThat(builder.httpClient()).isEmpty();
+                .toBuilder()
+                .build();
+        assertThat(config.httpClientFactory()).hasValue(sdkClientFactory);
+        assertThat(config.httpClient()).isEmpty();
     }
 
     // TODO code review, is this the correct behavior?

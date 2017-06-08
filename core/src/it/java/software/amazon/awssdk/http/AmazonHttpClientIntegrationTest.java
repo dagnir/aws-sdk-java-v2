@@ -23,6 +23,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.optionsRequestedFo
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static utils.HttpTestUtils.builderWithDefaultClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class AmazonHttpClientIntegrationTest extends WireMockTestBase {
         Request<?> request = newRequest(OPERATION);
         request.setHttpMethod(HttpMethodName.OPTIONS);
 
-        AmazonHttpClient sut = AmazonHttpClient.builder()
+        AmazonHttpClient sut = builderWithDefaultClient()
                 .clientConfiguration(new LegacyClientConfiguration())
                 .build();
         sut.requestExecutionBuilder().request(request).execute();
@@ -78,7 +79,7 @@ public class AmazonHttpClientIntegrationTest extends WireMockTestBase {
 
     private AmazonHttpClient createClient(String headerName, String headerValue) {
         LegacyClientConfiguration clientConfiguration = new LegacyClientConfiguration().withHeader(headerName, headerValue);
-        return AmazonHttpClient.builder()
+        return builderWithDefaultClient()
                 .clientConfiguration(clientConfiguration)
                 .build();
     }

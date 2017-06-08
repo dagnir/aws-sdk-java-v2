@@ -24,13 +24,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.junit.Test;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Validate the functionality of the Client*Configuration classes

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.builder;
+package software.amazon.awssdk.utils.builder;
 
 /**
  * Implementors of this interface provide a way to get from an instance of T to a {@link CopyableBuilder}. This allows

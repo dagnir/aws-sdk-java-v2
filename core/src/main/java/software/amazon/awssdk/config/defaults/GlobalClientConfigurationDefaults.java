@@ -30,8 +30,7 @@ import software.amazon.awssdk.util.VersionInfoUtils;
 /**
  * A decorator for {@link ClientConfiguration} that adds global default values. This is the lowest-priority configuration
  * decorator that attempts to fill in any required values that higher-priority configurations (eg. service-specific
- * configurations
- * or customer-provided configurations) haven't already overridden.
+ * configurations or customer-provided configurations) haven't already overridden.
  */
 @SdkInternalApi
 public final class GlobalClientConfigurationDefaults extends ClientConfigurationDefaults {

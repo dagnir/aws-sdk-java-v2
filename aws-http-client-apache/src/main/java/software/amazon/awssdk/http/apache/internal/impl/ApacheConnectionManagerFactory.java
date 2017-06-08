@@ -54,7 +54,7 @@ public class ApacheConnectionManagerFactory {
                 null,
                 DefaultSchemePortResolver.INSTANCE,
                 null,
-                configuration.connectionPoolTtl().orElse(Defaults.CONNECTION_POOL_TTL).toMillis(),
+                configuration.connectionTimeToLive().orElse(Defaults.CONNECTION_POOL_TTL).toMillis(),
                 TimeUnit.MILLISECONDS);
 
         cm.setDefaultMaxPerRoute(standardOptions.option(SdkHttpConfigurationOption.MAX_CONNECTIONS));

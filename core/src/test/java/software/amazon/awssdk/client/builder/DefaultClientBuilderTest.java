@@ -44,7 +44,6 @@ import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.config.ClientOverrideConfiguration;
-import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.http.SdkHttpClient;
@@ -80,8 +79,6 @@ public class DefaultClientBuilderTest {
     public void buildIncludesServiceDefaults() {
         TestClient client = testClientBuilder().region(Region.US_WEST_1).build();
         assertThat(client.syncClientConfiguration.overrideConfiguration().advancedOption(SIGNER_PROVIDER))
-                .isEqualTo(TEST_SIGNER_PROVIDER);
-        assertThat(client.asyncClientConfiguration.overrideConfiguration().advancedOption(SIGNER_PROVIDER))
                 .isEqualTo(TEST_SIGNER_PROVIDER);
         assertThat(client.signingRegion).isNotNull();
     }
@@ -181,14 +178,11 @@ public class DefaultClientBuilderTest {
 
     private static class TestClient {
         private final ImmutableSyncClientConfiguration syncClientConfiguration;
-        private final ImmutableAsyncClientConfiguration asyncClientConfiguration;
         private final Region signingRegion;
 
         private TestClient(ImmutableSyncClientConfiguration syncClientConfiguration,
-                           ImmutableAsyncClientConfiguration asyncClientConfiguration,
                            Region signingRegion) {
             this.syncClientConfiguration = syncClientConfiguration;
-            this.asyncClientConfiguration = asyncClientConfiguration;
             this.signingRegion = signingRegion;
         }
     }
@@ -203,7 +197,6 @@ public class DefaultClientBuilderTest {
         @Override
         protected TestClient buildClient() {
             return new TestClient(super.syncClientConfiguration(),
-                                  super.asyncClientConfiguration(),
                                   super.signingRegion());
         }
 

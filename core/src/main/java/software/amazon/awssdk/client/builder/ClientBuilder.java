@@ -18,9 +18,9 @@ package software.amazon.awssdk.client.builder;
 import java.net.URI;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.builder.SdkBuilder;
 import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.utils.builder.SdkBuilder;
 
 /**
  * This includes required and optional override configuration required by every client builder. An instance can be acquired by

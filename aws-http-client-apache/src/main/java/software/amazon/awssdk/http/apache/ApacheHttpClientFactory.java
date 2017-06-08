@@ -78,12 +78,11 @@ class ApacheHttpClientFactory {
                                 ProxyConfiguration proxyConfiguration) {
         if (isProxyEnabled(proxyConfiguration)) {
 
-            LOG.info("Configuring Proxy. Proxy Host: " + proxyConfiguration.proxyHost() + " " +
-                     "Proxy Port: " + proxyConfiguration.proxyPort());
+            LOG.info("Configuring Proxy. Proxy Host: " + proxyConfiguration.endpoint());
 
-            builder.setRoutePlanner(new SdkProxyRoutePlanner(
-                    proxyConfiguration.proxyHost(), proxyConfiguration.proxyPort(),
-                    proxyConfiguration.nonProxyHosts()));
+            builder.setRoutePlanner(new SdkProxyRoutePlanner(proxyConfiguration.endpoint().getHost(),
+                                                             proxyConfiguration.endpoint().getPort(),
+                                                             proxyConfiguration.nonProxyHosts()));
 
             if (isAuthenticatedProxy(proxyConfiguration)) {
                 builder.setDefaultCredentialsProvider(ApacheUtils.newProxyCredentialsProvider(proxyConfiguration));
@@ -92,7 +91,7 @@ class ApacheHttpClientFactory {
     }
 
     private ConnectionKeepAliveStrategy buildKeepAliveStrategy(ApacheSdkHttpClientFactory configuration) {
-        final long maxIdle = configuration.maxIdleConnectionTime().orElse(Defaults.MAX_IDLE_CONNECTION_TIME).toMillis();
+        final long maxIdle = configuration.connectionMaxIdleTime().orElse(Defaults.MAX_IDLE_CONNECTION_TIME).toMillis();
         return maxIdle > 0 ? new SdkConnectionKeepAliveStrategy(maxIdle) : null;
     }
 
@@ -101,7 +100,9 @@ class ApacheHttpClientFactory {
     }
 
     private boolean isProxyEnabled(ProxyConfiguration proxyConfiguration) {
-        return proxyConfiguration.proxyHost() != null && proxyConfiguration.proxyPort() > 0;
+        return proxyConfiguration.endpoint() != null
+               && proxyConfiguration.endpoint().getHost() != null
+               && proxyConfiguration.endpoint().getPort() > 0;
     }
 }
 

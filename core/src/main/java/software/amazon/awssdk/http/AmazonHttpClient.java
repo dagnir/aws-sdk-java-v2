@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.utils.Validate.notNull;
+import static software.amazon.awssdk.utils.Validate.paramNotNull;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
@@ -26,13 +29,11 @@ import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
-import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.http.pipeline.stages.AfterCallbackStage;
 import software.amazon.awssdk.http.pipeline.stages.ApplyTransactionIdStage;
@@ -100,12 +101,6 @@ public class AmazonHttpClient implements AutoCloseable {
     private static final int THROTTLED_RETRIES = 100;
 
     /**
-     * Timer to enforce timeouts on the whole execution of the request (request handlers, retries,
-     * backoff strategy, unmarshalling, etc).
-     */
-    private final ClientExecutionTimer clientExecutionTimer;
-
-    /**
      * A request metric collector used specifically for this httpClientSettings client; or null if
      * there is none. This collector, if specified, always takes precedence over the one specified
      * at the AWS SDK level.
@@ -114,17 +109,10 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     private final RequestMetricCollector requestMetricCollector;
 
-    /**
-     * Internal client for sending HTTP requests.
-     */
-    private final SdkHttpClient sdkHttpClient;
-
     private final HttpClientDependencies httpClientDependencies;
 
     private AmazonHttpClient(HttpClientDependencies httpClientDependencies, RequestMetricCollector requestMetricCollector) {
-        this.httpClientDependencies = httpClientDependencies;
-        this.clientExecutionTimer = httpClientDependencies.clientExecutionTimer();
-        this.sdkHttpClient = httpClientDependencies.sdkHttpClient();
+        this.httpClientDependencies = paramNotNull(httpClientDependencies, "HttpClientDependencies");
         this.requestMetricCollector = requestMetricCollector;
     }
 
@@ -151,8 +139,7 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     @Override
     public void close() throws Exception {
-        clientExecutionTimer.shutdown();
-        sdkHttpClient.close();
+        httpClientDependencies.close();;
     }
 
     /**
@@ -160,7 +147,7 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     @SdkTestInternalApi
     public ClientExecutionTimer getClientExecutionTimer() {
-        return this.clientExecutionTimer;
+        return this.httpClientDependencies.clientExecutionTimer();
     }
 
     /**
@@ -357,16 +344,9 @@ public class AmazonHttpClient implements AutoCloseable {
                                                               .retryCapacity(createCapacityManager())
                                                               .httpClientSettings(httpClientSettings)
                                                               .retryPolicy(resolveRetryPolicy())
-                                                              .sdkHttpClient(resolveSdkHttpClient())
+                                                              .sdkHttpClient(sdkHttpClient)
                                                               .build(),
                                         requestMetricCollector);
-        }
-
-        @ReviewBeforeRelease("Should AmazonHttpClient create a HTTP client if none is provided? This responsibility" +
-                             "is duplicated in DefaultClientBuilder but many tests use AmazonHttpClient directly.")
-        private SdkHttpClient resolveSdkHttpClient() {
-            return sdkHttpClient != null ? sdkHttpClient :
-                    new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty());
         }
 
         private CapacityManager createCapacityManager() {
