@@ -191,7 +191,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
      * The max back off time for batch get. The configuration for batch write
      * has been moved to DynamoDBMapperConfig
      */
-    protected static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3;
+    protected static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3L;
     /** The max number of items allowed in a BatchWrite request. */
     protected static final int MAX_ITEMS_PER_BATCH = 25;
     /**
