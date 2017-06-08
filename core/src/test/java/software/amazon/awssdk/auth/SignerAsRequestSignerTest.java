@@ -40,7 +40,7 @@ public class SignerAsRequestSignerTest {
 
     @Test
     public void callsDownToUnderlyingSignerWithCredentialsFromCredentialProvider() {
-        when(credentialsProvider.getCredentialsOrThrow()).thenReturn(credentials);
+        when(credentialsProvider.getCredentials()).thenReturn(credentials);
         sut.sign(request);
         verify(signer).sign(request, credentials);
     }

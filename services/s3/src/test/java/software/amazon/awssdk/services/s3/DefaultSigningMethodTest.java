@@ -103,7 +103,7 @@ public class DefaultSigningMethodTest {
     private static void testSignAnonymously(AmazonS3Client s3) {
         Request<?> fakeGetObjectRequest = createFakeGetObjectRequest(s3);
         Signer signer = s3.createSigner(fakeGetObjectRequest, FAKE_BUCKET, FAKE_KEY);
-        signer.sign(fakeGetObjectRequest, new AnonymousCredentialsProvider().getCredentialsOrThrow());
+        signer.sign(fakeGetObjectRequest, new AnonymousCredentialsProvider().getCredentials());
     }
 
     /**

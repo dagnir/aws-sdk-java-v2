@@ -62,7 +62,7 @@ public class EC2CredentialsProviderTest {
         stubForSuccessResponseWithCustomBody(successResponse);
 
         EC2CredentialsProvider credentialsProvider = testCredentialsProvider();
-        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
         assertThat(credentials.accessKeyId()).isEqualTo("ACCESS_KEY_ID");
         assertThat(credentials.secretAccessKey()).isEqualTo("SECRET_ACCESS_KEY");
@@ -112,13 +112,13 @@ public class EC2CredentialsProviderTest {
 
         // Successful load
         stubForSuccessResonseWithCustomExpirationDate(Date.from(Instant.now().plus(Duration.ofDays(10))));
-        assertThat(credentialsProvider.getCredentialsOrThrow()).isNotNull();
+        assertThat(credentialsProvider.getCredentials()).isNotNull();
 
         // Break the server
         stubForErrorResponse();
 
         // Still successful load
-        assertThat(credentialsProvider.getCredentialsOrThrow()).isNotNull();
+        assertThat(credentialsProvider.getCredentials()).isNotNull();
     }
 
     private void stubForSuccessResponseWithCustomBody(String body) {

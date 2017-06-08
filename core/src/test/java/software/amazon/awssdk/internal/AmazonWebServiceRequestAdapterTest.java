@@ -147,7 +147,7 @@ public class AmazonWebServiceRequestAdapterTest {
         request.setRequestCredentials(credentials);
         AmazonWebServiceRequestAdapter adapter = new AmazonWebServiceRequestAdapter(request);
 
-        AwsCredentials adaptedCredentials = adapter.getCredentialsProvider().getCredentialsOrThrow();
+        AwsCredentials adaptedCredentials = adapter.getCredentialsProvider().getCredentials();
         assertEquals("akid", adaptedCredentials.accessKeyId());
         assertEquals("skid", adaptedCredentials.secretAccessKey());
     }

@@ -74,7 +74,7 @@ public class EC2TestHelper {
         try {
             if (CREDENTIALS == null) {
                 try {
-                    CREDENTIALS = AwsTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
+                    CREDENTIALS = AwsTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentials();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

@@ -22,9 +22,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AwsSystemSetting;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.ProfileCredentialsProvider;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.profile.ProfileResourceLoader;
 import software.amazon.awssdk.auth.profile.ProfilesConfigFile;
 
@@ -45,7 +42,7 @@ public class ProfileCredentialsProviderTest {
     @Test
     public void testDefault() {
         ProfileCredentialsProvider provider = newProvider();
-        AwsCredentials credentials = provider.getCredentialsOrThrow();
+        AwsCredentials credentials = provider.getCredentials();
 
         // Yep, this is correct - they're backwards in
         // ProfilesContainingOtherConfigurations.tst
@@ -69,7 +66,7 @@ public class ProfileCredentialsProviderTest {
 
             ProfileCredentialsProvider provider = newProvider();
 
-            AwsCredentials credentials = provider.getCredentialsOrThrow();
+            AwsCredentials credentials = provider.getCredentials();
             Assert.assertEquals("test", credentials.accessKeyId());
             Assert.assertEquals("test key", credentials.secretAccessKey());
         } finally {
@@ -84,7 +81,7 @@ public class ProfileCredentialsProviderTest {
 
             ProfileCredentialsProvider provider = newProvider();
 
-            AwsCredentials credentials = provider.getCredentialsOrThrow();
+            AwsCredentials credentials = provider.getCredentials();
             Assert.assertEquals("test", credentials.accessKeyId());
             Assert.assertEquals("test key", credentials.secretAccessKey());
         } finally {
@@ -103,7 +100,7 @@ public class ProfileCredentialsProviderTest {
 
             ProfileCredentialsProvider provider = newProvider();
 
-            AwsCredentials credentials = provider.getCredentialsOrThrow();
+            AwsCredentials credentials = provider.getCredentials();
             Assert.assertEquals("test", credentials.accessKeyId());
             Assert.assertEquals("test key", credentials.secretAccessKey());
         } finally {
@@ -146,7 +143,7 @@ public class ProfileCredentialsProviderTest {
         ProfilesConfigFile profilesFile = new ProfilesConfigFile(
                 ProfileResourceLoader.profileWithRole().asFile(), targetRoleInfo -> {
                     AwsCredentials credentials = targetRoleInfo.getLongLivedCredentialsProvider()
-                                                               .getCredentialsOrThrow();
+                                                               .getCredentials();
                     Assert.assertEquals("sourceProfile AWSAccessKeyId", "defaultAccessKey",
                                         credentials.accessKeyId());
                     Assert.assertEquals("sourceProfile AWSSecretKey", "defaultSecretAccessKey",
@@ -164,7 +161,7 @@ public class ProfileCredentialsProviderTest {
                                                                                           .profilesConfigFile(profilesFile)
                                                                                           .profileName("test")
                                                                                           .build();
-        AwsCredentials credentials = profileCredentialsProvider.getCredentialsOrThrow();
+        AwsCredentials credentials = profileCredentialsProvider.getCredentials();
 
         Assert.assertEquals("sessionAccessKey", credentials.accessKeyId());
         Assert.assertEquals("sessionSecretKey", credentials.secretAccessKey());
@@ -175,7 +172,7 @@ public class ProfileCredentialsProviderTest {
         ProfilesConfigFile profilesFile = new ProfilesConfigFile(
                 ProfileResourceLoader.profileWithRole2().asFile(), targetRoleInfo -> {
                     AwsCredentials credentials = targetRoleInfo.getLongLivedCredentialsProvider()
-                                                               .getCredentialsOrThrow();
+                                                               .getCredentials();
                     Assert.assertEquals("sourceProfile AWSAccessKeyId", "defaultAccessKey",
                                         credentials.accessKeyId());
                     Assert.assertEquals("sourceProfile AWSSecretKey", "defaultSecretAccessKey",
@@ -194,7 +191,7 @@ public class ProfileCredentialsProviderTest {
                                                                                           .profilesConfigFile(profilesFile)
                                                                                           .profileName("test")
                                                                                           .build();
-        AwsCredentials credentials = profileCredentialsProvider.getCredentialsOrThrow();
+        AwsCredentials credentials = profileCredentialsProvider.getCredentials();
 
         Assert.assertEquals("sessionAccessKey", credentials.accessKeyId());
         Assert.assertEquals("sessionSecretKey", credentials.secretAccessKey());
@@ -205,7 +202,7 @@ public class ProfileCredentialsProviderTest {
         ProfilesConfigFile profilesFile = new ProfilesConfigFile(
                 ProfileResourceLoader.profileWithSourceAfterRole().asFile(), targetRoleInfo -> {
                     AwsCredentials credentials = targetRoleInfo
-                            .getLongLivedCredentialsProvider().getCredentialsOrThrow();
+                            .getLongLivedCredentialsProvider().getCredentials();
                     Assert.assertEquals("sourceProfile AWSAccessKeyId", "defaultAccessKey",
                                         credentials.accessKeyId());
                     Assert.assertEquals("sourceProfile AWSSecretKey", "defaultSecretAccessKey",
@@ -223,7 +220,7 @@ public class ProfileCredentialsProviderTest {
                                                                                           .profilesConfigFile(profilesFile)
                                                                                           .profileName("test")
                                                                                           .build();
-        AwsCredentials credentials = profileCredentialsProvider.getCredentialsOrThrow();
+        AwsCredentials credentials = profileCredentialsProvider.getCredentials();
 
         Assert.assertEquals("sessionAccessKey", credentials.accessKeyId());
         Assert.assertEquals("sessionSecretKey", credentials.secretAccessKey());

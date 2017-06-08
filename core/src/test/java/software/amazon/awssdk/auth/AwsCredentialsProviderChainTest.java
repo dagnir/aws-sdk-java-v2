@@ -17,7 +17,6 @@ package software.amazon.awssdk.auth;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Optional;
 import org.junit.Test;
 
 public class AwsCredentialsProviderChainTest {
@@ -89,7 +88,7 @@ public class AwsCredentialsProviderChainTest {
         }
 
         @Override
-        public Optional<AwsCredentials> getCredentials() {
+        public AwsCredentials getCredentials() {
             getCredentialsCallCount++;
 
             if (throwException) {

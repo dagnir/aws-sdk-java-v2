@@ -141,7 +141,7 @@ public class ProfilesConfigFile {
     public AwsCredentials getCredentials(String profileName) {
         final AwsCredentialsProvider provider = credentialProviderCache.get(profileName);
         if (provider != null) {
-            return provider.getCredentialsOrThrow();
+            return provider.getCredentials();
         } else {
             BasicProfile profile = allProfiles.getProfile(profileName);
             if (profile == null) {
@@ -149,7 +149,7 @@ public class ProfilesConfigFile {
             }
             final AwsCredentialsProvider newProvider = fromProfile(profile);
             credentialProviderCache.put(profileName, newProvider);
-            return newProvider.getCredentialsOrThrow();
+            return newProvider.getCredentials();
         }
     }
 

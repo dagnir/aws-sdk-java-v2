@@ -17,7 +17,6 @@ package software.amazon.awssdk.auth;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.utils.cache.CachedSupplier;
 import software.amazon.awssdk.utils.cache.RefreshResult;
@@ -47,7 +46,7 @@ abstract class FileSystemCredentialsProvider implements AwsCredentialsProvider {
     protected abstract AwsCredentials loadCredentials();
 
     @Override
-    public final Optional<AwsCredentials> getCredentials() {
-        return Optional.ofNullable(cachedCredentials.get());
+    public final AwsCredentials getCredentials() {
+        return cachedCredentials.get();
     }
 }
