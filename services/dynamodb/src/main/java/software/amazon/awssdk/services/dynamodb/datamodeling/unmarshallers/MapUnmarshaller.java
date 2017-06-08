@@ -43,7 +43,7 @@ public class MapUnmarshaller extends MUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) throws ParseException {
-        Map<String, AttributeValue> map = value.getM();
+        Map<String, AttributeValue> map = value.m();
         Map<String, Object> result = new HashMap<String, Object>();
 
         for (Map.Entry<String, AttributeValue> entry : map.entrySet()) {

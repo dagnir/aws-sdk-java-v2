@@ -43,6 +43,11 @@ public class SdkInternalMap<K, V> implements Map<K, V>, Serializable {
         autoConstruct = true;
     }
 
+    public SdkInternalMap(int initialCapacity) {
+        this.map = new HashMap<K, V>(initialCapacity);
+        autoConstruct = true;
+    }
+
     public SdkInternalMap(Map<K, V> m) {
         this.map = m;
         autoConstruct = false;

@@ -21,7 +21,6 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.builder.CopyableBuilder;
 import software.amazon.awssdk.builder.SdkBuilder;
 import software.amazon.awssdk.builder.ToCopyableBuilder;
-import software.amazon.awssdk.config.ClientListenerConfiguration;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.utils.Either;
@@ -87,7 +86,7 @@ public final class ClientHttpConfiguration
     }
 
     /**
-     * A builder for {@link ClientListenerConfiguration}.
+     * A builder for {@link ClientHttpConfiguration}.
      *
      * <p>All implementations of this interface are mutable and not thread safe.</p>
      */

@@ -36,7 +36,7 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
         this.client = client;
         this.spec = spec;
         Map<String, AttributeValue> startKey =
-                spec.getRequest().getExclusiveStartKey();
+                spec.getRequest().exclusiveStartKey();
         this.startKey = startKey == null
                         ? null
                         : new LinkedHashMap<String, AttributeValue>(startKey);
@@ -44,11 +44,13 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
 
     @Override
     public Page<Item, QueryOutcome> firstPage() {
-        QueryRequest request = spec.getRequest();
-        request.setExclusiveStartKey(startKey);
-        request.setLimit(InternalUtils.minimum(
-                spec.getMaxResultSize(),
-                spec.getMaxPageSize()));
+        QueryRequest request = spec.getRequest().toBuilder()
+                .exclusiveStartKey(startKey)
+                .limit(InternalUtils.minimum(
+                    spec.maxResultSize(),
+                    spec.maxPageSize()))
+                .build();
+        spec.setRequest(request);
         QueryResult result = client.query(request);
         QueryOutcome outcome = new QueryOutcome(result);
         setLastLowLevelResult(outcome);
@@ -57,13 +59,13 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
 
     @Override
     public Integer getMaxResultSize() {
-        return spec.getMaxResultSize();
+        return spec.maxResultSize();
     }
 
     protected void setLastLowLevelResult(QueryOutcome lowLevelResult) {
         super.setLastLowLevelResult(lowLevelResult);
         QueryResult result = lowLevelResult.getQueryResult();
-        accumulateStats(result.getConsumedCapacity(), result.getCount(),
-                        result.getScannedCount());
+        accumulateStats(result.consumedCapacity(), result.count(),
+                        result.scannedCount());
     }
 }

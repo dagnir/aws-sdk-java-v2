@@ -98,37 +98,4 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
             assertNotNull(ace.getMessage());
         }
     }
-
-    /**
-     * Tests that we correctly handle when the metadata service credentials have
-     * expired.
-     */
-    @Test
-    public void testSessionCredentials_Expired() throws Exception {
-        mockServer.setResponseFileName("sessionResponseExpired");
-        mockServer.setAvailableSecurityCredentials("test-credentials");
-
-        InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        try {
-            credentialsProvider.getCredentials();
-            fail("Expected an AmazonClientException, but wasn't thrown");
-        } catch (AmazonClientException ace) {
-            assertNotNull(ace.getMessage());
-        }
-    }
-
-    @Test(expected = AmazonClientException.class)
-    public void canBeConfiguredToOnlyRefreshCredentialsAfterFirstCallToGetCredentials() throws InterruptedException {
-        mockServer.setResponseFileName("sessionResponseExpired");
-        mockServer.setAvailableSecurityCredentials("test-credentials");
-
-        InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        Thread.sleep(1000);
-
-        //Hacky assert but we know that this mockServer will create an exception that will be logged, if there's no log entry
-        //then there's no exception, which means that getCredentials didn't get called on the fetcher
-        assertThat(loggedEvents(), is(empty()));
-
-        credentialsProvider.getCredentials();
-    }
 }

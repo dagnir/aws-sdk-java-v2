@@ -39,7 +39,7 @@ public class BigDecimalSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<BigDecimal> result = new HashSet<BigDecimal>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(new BigDecimal(s));
         }
         return result;

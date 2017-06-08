@@ -64,29 +64,29 @@ public class EmailIntegrationTest extends IntegrationTestBase {
 
     @BeforeClass
     public static void setup() {
-        email.verifyEmailIdentity(new VerifyEmailIdentityRequest().withEmailAddress(EMAIL));
-        DOMAIN_VERIFICATION_TOKEN = email.verifyDomainIdentity(new VerifyDomainIdentityRequest().withDomain(DOMAIN))
-                                         .getVerificationToken();
+        email.verifyEmailIdentity(VerifyEmailIdentityRequest.builder().emailAddress(EMAIL).build());
+        DOMAIN_VERIFICATION_TOKEN = email.verifyDomainIdentity(VerifyDomainIdentityRequest.builder().domain(DOMAIN).build())
+                                         .verificationToken();
 
     }
 
     @AfterClass
     public static void tearDown() {
-        email.deleteIdentity(new DeleteIdentityRequest().withIdentity(EMAIL));
-        email.deleteIdentity(new DeleteIdentityRequest().withIdentity(DOMAIN));
+        email.deleteIdentity(DeleteIdentityRequest.builder().identity(EMAIL).build());
+        email.deleteIdentity(DeleteIdentityRequest.builder().identity(DOMAIN).build());
     }
 
     @Test
     public void getSendQuota_ReturnsNonZeroQuotas() {
-        GetSendQuotaResult result = email.getSendQuota(new GetSendQuotaRequest());
-        assertThat(result.getMax24HourSend(), greaterThan(0.0));
-        assertThat(result.getMaxSendRate(), greaterThan(0.0));
+        GetSendQuotaResult result = email.getSendQuota(GetSendQuotaRequest.builder().build());
+        assertThat(result.max24HourSend(), greaterThan(0.0));
+        assertThat(result.maxSendRate(), greaterThan(0.0));
     }
 
     @Test
     public void listIdentities_WithNonVerifiedIdentity_ReturnsIdentityInList() {
         // Don't need to actually verify for it to show up in listIdentities
-        List<String> identities = email.listIdentities(new ListIdentitiesRequest()).getIdentities();
+        List<String> identities = email.listIdentities(ListIdentitiesRequest.builder().build()).identities();
         assertThat(identities, hasItem(EMAIL));
         assertThat(identities, hasItem(DOMAIN));
     }
@@ -94,7 +94,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
     @Test
     public void listIdentities_FilteredForDomainIdentities_OnlyHasDomainIdentityInList() {
         List<String> identities = email.listIdentities(
-                new ListIdentitiesRequest().withIdentityType(IdentityType.Domain)).getIdentities();
+                ListIdentitiesRequest.builder().identityType(IdentityType.Domain).build()).identities();
         assertThat(identities, not(hasItem(EMAIL)));
         assertThat(identities, hasItem(DOMAIN));
     }
@@ -102,88 +102,88 @@ public class EmailIntegrationTest extends IntegrationTestBase {
     @Test
     public void listIdentities_FilteredForEmailIdentities_OnlyHasEmailIdentityInList() {
         List<String> identities = email.listIdentities(
-                new ListIdentitiesRequest().withIdentityType(IdentityType.EmailAddress)).getIdentities();
+                ListIdentitiesRequest.builder().identityType(IdentityType.EmailAddress).build()).identities();
         assertThat(identities, hasItem(EMAIL));
         assertThat(identities, not(hasItem(DOMAIN)));
     }
 
     @Test
     public void listIdentitites_MaxResultsSetToOne_HasNonNullNextToken() {
-        assertNotNull(email.listIdentities(new ListIdentitiesRequest().withMaxItems(1)).getNextToken());
+        assertNotNull(email.listIdentities(ListIdentitiesRequest.builder().maxItems(1).build()).nextToken());
     }
 
     @Test(expected = AmazonServiceException.class)
     public void listIdentities_WithInvalidNextToken_ThrowsException() {
-        email.listIdentities(new ListIdentitiesRequest().withNextToken("invalid-next-token"));
+        email.listIdentities(ListIdentitiesRequest.builder().nextToken("invalid-next-token").build());
     }
 
     @Test(expected = MessageRejectedException.class)
     public void sendEmail_ToUnverifiedIdentity_ThrowsException() {
-        email.sendEmail(new SendEmailRequest().withDestination(new Destination().withToAddresses(EMAIL))
-                                              .withMessage(newMessage("test")).withSource(EMAIL));
+        email.sendEmail(SendEmailRequest.builder().destination(Destination.builder().toAddresses(EMAIL).build())
+                                              .message(newMessage("test")).source(EMAIL).build());
     }
 
     @Test
     public void getIdentityVerificationAttributes_ForNonVerifiedEmail_ReturnsPendingVerificatonStatus() {
         GetIdentityVerificationAttributesResult result = email
-                .getIdentityVerificationAttributes(new GetIdentityVerificationAttributesRequest().withIdentities(EMAIL));
-        IdentityVerificationAttributes identityVerificationAttributes = result.getVerificationAttributes().get(EMAIL);
-        assertEquals(VerificationStatus.Pending.toString(), identityVerificationAttributes.getVerificationStatus());
+                .getIdentityVerificationAttributes(GetIdentityVerificationAttributesRequest.builder().identities(EMAIL).build());
+        IdentityVerificationAttributes identityVerificationAttributes = result.verificationAttributes().get(EMAIL);
+        assertEquals(VerificationStatus.Pending.toString(), identityVerificationAttributes.verificationStatus());
         // Verificaton token not applicable for email identities
-        assertNull(identityVerificationAttributes.getVerificationToken());
+        assertNull(identityVerificationAttributes.verificationToken());
     }
 
     @Test
     public void getIdentityVerificationAttributes_ForNonVerifiedDomain_ReturnsPendingVerificatonStatus() {
         GetIdentityVerificationAttributesResult result = email
-                .getIdentityVerificationAttributes(new GetIdentityVerificationAttributesRequest()
-                                                           .withIdentities(DOMAIN));
-        IdentityVerificationAttributes identityVerificationAttributes = result.getVerificationAttributes().get(DOMAIN);
-        assertEquals(VerificationStatus.Pending.toString(), identityVerificationAttributes.getVerificationStatus());
-        assertEquals(DOMAIN_VERIFICATION_TOKEN, identityVerificationAttributes.getVerificationToken());
+                .getIdentityVerificationAttributes(GetIdentityVerificationAttributesRequest.builder()
+                                                           .identities(DOMAIN).build());
+        IdentityVerificationAttributes identityVerificationAttributes = result.verificationAttributes().get(DOMAIN);
+        assertEquals(VerificationStatus.Pending.toString(), identityVerificationAttributes.verificationStatus());
+        assertEquals(DOMAIN_VERIFICATION_TOKEN, identityVerificationAttributes.verificationToken());
     }
 
     @Test
     public void verifyDomainDkim_ChangesDkimVerificationStatusToPending() throws InterruptedException {
         String testDomain = "java-integ-test-dkim-" + System.currentTimeMillis() + ".com";
         try {
-            email.verifyDomainIdentity(new VerifyDomainIdentityRequest().withDomain(testDomain));
+            email.verifyDomainIdentity(VerifyDomainIdentityRequest.builder().domain(testDomain).build());
             GetIdentityDkimAttributesResult result = email
-                    .getIdentityDkimAttributes(new GetIdentityDkimAttributesRequest().withIdentities(testDomain));
-            assertTrue(result.getDkimAttributes().size() == 1);
+                    .getIdentityDkimAttributes(GetIdentityDkimAttributesRequest.builder().identities(testDomain).build());
+            assertTrue(result.dkimAttributes().size() == 1);
 
             // should be no tokens and no verification
-            IdentityDkimAttributes attributes = result.getDkimAttributes().get(testDomain);
-            assertFalse(attributes.getDkimEnabled());
-            assertEquals(VerificationStatus.NotStarted.toString(), attributes.getDkimVerificationStatus());
-            assertThat(attributes.getDkimTokens(), hasSize(0));
+            IdentityDkimAttributes attributes = result.dkimAttributes().get(testDomain);
+            assertFalse(attributes.dkimEnabled());
+            assertEquals(VerificationStatus.NotStarted.toString(), attributes.dkimVerificationStatus());
+            assertThat(attributes.dkimTokens(), hasSize(0));
 
-            VerifyDomainDkimResult dkim = email.verifyDomainDkim(new VerifyDomainDkimRequest().withDomain(testDomain));
+            VerifyDomainDkimResult dkim = email.verifyDomainDkim(VerifyDomainDkimRequest.builder().domain(testDomain).build());
             Thread.sleep(5 * 1000);
 
-            result = email.getIdentityDkimAttributes(new GetIdentityDkimAttributesRequest().withIdentities(testDomain));
-            assertTrue(result.getDkimAttributes().size() == 1);
+            result = email.getIdentityDkimAttributes(GetIdentityDkimAttributesRequest.builder().identities(testDomain).build());
+            assertTrue(result.dkimAttributes().size() == 1);
 
-            attributes = result.getDkimAttributes().get(testDomain);
-            assertTrue(attributes.getDkimEnabled());
-            assertTrue(attributes.getDkimVerificationStatus().equals(VerificationStatus.Pending.toString()));
-            assertTrue(attributes.getDkimTokens().size() == dkim.getDkimTokens().size());
+            attributes = result.dkimAttributes().get(testDomain);
+            assertTrue(attributes.dkimEnabled());
+            assertTrue(attributes.dkimVerificationStatus().equals(VerificationStatus.Pending.toString()));
+            assertTrue(attributes.dkimTokens().size() == dkim.dkimTokens().size());
 
             try {
-                email.setIdentityDkimEnabled(new SetIdentityDkimEnabledRequest().withIdentity(testDomain));
+                email.setIdentityDkimEnabled(SetIdentityDkimEnabledRequest.builder().identity(testDomain).build());
                 fail("Exception should have occurred during enable");
             } catch (AmazonServiceException exception) {
                 // exception expected
             }
         } finally {
             // Delete domain from verified list.
-            email.deleteIdentity(new DeleteIdentityRequest().withIdentity(testDomain));
+            email.deleteIdentity(DeleteIdentityRequest.builder().identity(testDomain).build());
         }
     }
 
     private Message newMessage(String subject) {
-        Content content = new Content().withData(subject);
-        Message message = new Message().withSubject(content).withBody(new Body().withText(content));
+        Content content = Content.builder().data(subject).build();
+        Message message = Message.builder().subject(content).body(Body.builder().text(content).build()).build();
 
         return message;
     }

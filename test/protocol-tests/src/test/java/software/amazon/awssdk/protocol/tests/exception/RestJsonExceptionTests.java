@@ -31,6 +31,7 @@ import org.junit.Test;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.EmptyModeledException;
@@ -54,7 +55,7 @@ public class RestJsonExceptionTests {
     public void setupClient() {
         client = ProtocolRestJsonClient.builder()
                                        .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
-                                       .region("us-east-1")
+                                       .region(Region.US_EAST_1)
                                        .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                        .build();
     }
@@ -94,7 +95,7 @@ public class RestJsonExceptionTests {
                         .willReturn(aResponse()
                                             .withStatus(404)
                                             .withHeader("x-amzn-ErrorType", "EmptyModeledException")));
-        assertThrowsException(() -> client.headOperation(new HeadOperationRequest()), EmptyModeledException.class);
+        assertThrowsException(() -> client.headOperation(HeadOperationRequest.builder().build()), EmptyModeledException.class);
     }
 
     @Test
@@ -103,23 +104,22 @@ public class RestJsonExceptionTests {
                         .willReturn(aResponse()
                                             .withStatus(404)
                                             .withHeader("x-amzn-ErrorType", "SomeUnknownType")));
-        assertThrowsServiceBaseException(() -> client.headOperation(new HeadOperationRequest()));
+        assertThrowsServiceBaseException(() -> client.headOperation(HeadOperationRequest.builder().build()));
     }
 
     @Test
     public void nullPathParam_ThrowsSdkClientException() {
-        assertThrowsSdkClientException(() -> client.multiLocationOperation(new MultiLocationOperationRequest()));
+        assertThrowsSdkClientException(() -> client.multiLocationOperation(MultiLocationOperationRequest.builder().build()));
     }
 
     @Test
     public void emptyPathParam_ThrowsSdkClientException() {
-        assertThrowsSdkClientException(() -> client.multiLocationOperation(
-                new MultiLocationOperationRequest().withPathParam("")));
+        assertThrowsSdkClientException(() -> client.multiLocationOperation(MultiLocationOperationRequest.builder().pathParam("").build()));
     }
 
 
     private void callAllTypes() {
-        client.allTypes(new AllTypesRequest());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {

@@ -15,179 +15,105 @@
 
 package software.amazon.awssdk.regions;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.client.builder.AwsClientBuilder;
-import software.amazon.awssdk.util.ValidationUtils;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import software.amazon.awssdk.utils.AbstractEnum;
 
 /**
- * Metadata for an AWS region, including its name and what services
- * are available in it.
+ * Class holding all public AWS regions at the time each version of the SDK is released.
+ * {@link Region#of(String)} can be used to allow the SDK to be forward compatible with future
+ * regions that were not available at the time this version of the SDK was released.
+ * <p>
+ * The {@link Region#value()} will be used as the signing region for all requests to AWS
+ * services unless an explicit region override is available in {@link RegionMetadata}. This value
+ * will also be used to construct the endpoint for accessing a service unless an explicit endpoint
+ * is available for that region in {@link RegionMetadata}.
+ * <p>
+ * Additional metadata about a region can be discovered using {@link RegionMetadata#of(Region)}
  */
-public class Region {
-
-    private final RegionImpl regionImpl;
-
-    public Region(RegionImpl regionImpl) {
-        ValidationUtils.assertNotNull(regionImpl, "region implementation");
-        this.regionImpl = regionImpl;
-    }
+public class Region extends AbstractEnum {
 
     /**
-     * Returns the region with the id given, or null if it cannot be found in
-     * the current regions.xml file.
+     * AWS Partition Regions
      */
-    public static Region getRegion(Regions region) {
-        return RegionUtils.getRegion(region.getName());
-    }
+    public static final Region AP_NORTHEAST_1 = Region.of("ap-northeast-1");
+    public static final Region AP_NORTHEAST_2 = Region.of("ap-northeast-2");
+    public static final Region AP_SOUTH_1 = Region.of("ap-south-1");
+    public static final Region AP_SOUTHEAST_1 = Region.of("ap-southeast-1");
+    public static final Region AP_SOUTHEAST_2 = Region.of("ap-southeast-2");
+
+    public static final Region CA_CENTRAL_1 = Region.of("ca-central-1");
+
+    public static final Region EU_CENTRAL_1 = Region.of("eu-central-1");
+    public static final Region EU_WEST_1 = Region.of("eu-west-1");
+    public static final Region EU_WEST_2 = Region.of("eu-west-2");
+
+    public static final Region SA_EAST_1 = Region.of("sa-east-1");
+
+    public static final Region US_EAST_1 = Region.of("us-east-1");
+    public static final Region US_EAST_2 = Region.of("us-east-2");
+    public static final Region US_WEST_1 = Region.of("us-west-1");
+    public static final Region US_WEST_2 = Region.of("us-west-2");
+
+    public static final Region AWS_GLOBAL = Region.of("aws-global");
 
     /**
-     * The unique system ID for this region; ex: &quot;us-east-1&quot;.
-     *
-     * @return The unique system ID for this region.
+     * AWS CN Partition Regions
      */
-    public String getName() {
-        return regionImpl.getName();
-    }
+    public static final Region CN_NORTH_1 = Region.of("cn-north-1");
+    public static final Region CN_NORTHWEST_1 = Region.of("cn-northwest-1");
+    public static final Region AWS_CN_GLOBAL = Region.of("aws-cn-global");
 
     /**
-     * Returns the domain for this region; ex: &quot;amazonaws.com&quot;.
-     *
-     * @return The domain for this region.
+     * AWS Gov Cloud Partition Regions
      */
-    public String getDomain() {
-        return regionImpl.getDomain();
-    }
+    public static final class GovCloud {
+        public static final Region US_GOV_WEST_1 = Region.of("us-gov-west-1");
+        public static final Region AWS_US_GOV_GLOBAL = Region.of("aws-us-gov-global");
 
-    /**
-     * Returns the partition this region is in. I.E. 'aws' or 'aws-cn'
-     *
-     * @return The partition this region is in.
-     */
-    public String getPartition() {
-        return regionImpl.getPartition();
-    }
+        public static final List<Region> REGIONS = Collections.unmodifiableList(Arrays.asList(
+                US_GOV_WEST_1,
+                AWS_US_GOV_GLOBAL
+        ));
 
-    /**
-     * Returns the endpoint for the service given.
-     *
-     * @param endpointPrefix
-     *         The service endpoint prefix which can be retrieved from the
-     *         constant ENDPOINT_PREFIX of the specific service client interface,
-     *         e.g. AmazonEC2.ENDPOINT_PREFIX.
-     */
-    public String getServiceEndpoint(String endpointPrefix) {
-        return regionImpl.getServiceEndpoint(endpointPrefix);
-    }
-
-    /**
-     * Returns whether the given service is supported in this region.
-     *
-     * @param serviceName
-     *         The service endpoint prefix which can be retrieved from the
-     *         constant ENDPOINT_PREFIX of the specific service client interface,
-     *         e.g. AmazonEC2.ENDPOINT_PREFIX.
-     */
-    public boolean isServiceSupported(String serviceName) {
-        return regionImpl.isServiceSupported(serviceName);
-    }
-
-    /**
-     * Returns whether the given service support the https protocol in this region.
-     *
-     * @param serviceName
-     *         The service endpoint prefix which can be retrieved from the
-     *         constant ENDPOINT_PREFIX of the specific service client interface,
-     *         e.g. AmazonEC2.ENDPOINT_PREFIX.
-     */
-    public boolean hasHttpsEndpoint(String serviceName) {
-        return regionImpl.hasHttpsEndpoint(serviceName);
-    }
-
-    /**
-     * Returns whether the given service support the http protocol in this region.
-     *
-     * @param serviceName
-     *         The service endpoint prefix which can be retrieved from the
-     *         constant ENDPOINT_PREFIX of the specific service client interface,
-     *         e.g. AmazonEC2.ENDPOINT_PREFIX.
-     */
-    public boolean hasHttpEndpoint(String serviceName) {
-        return regionImpl.hasHttpEndpoint(serviceName);
-    }
-
-    /**
-     * Returns a immutable collection of all endpoints available in the
-     * metadata.
-     */
-    public Collection<String> getAvailableEndpoints() {
-        return regionImpl.getAvailableEndpoints();
-    }
-
-    /**
-     * Creates a new service client of the class given and configures it. If
-     * credentials or config are null, defaults will be used.
-     *
-     * @param serviceClass The service client class to instantiate, e.g. AmazonS3Client.class
-     * @param credentials  The credentials provider to use, or null for the default
-     *                     credentials provider
-     * @param config       The configuration to use, or null for the default
-     *                     configuration
-     * @deprecated use appropriate {@link AwsClientBuilder} implementation
-     *             for the service being constructed. For example:
-     *             {@code AmazonSNSClient.builder().withRegion(region).build();}
-     */
-    @Deprecated
-    public <T extends AmazonWebServiceClient> T createClient(Class<T> serviceClass,
-                                                             AwsCredentialsProvider credentials,
-                                                             LegacyClientConfiguration config) {
-        Constructor<T> constructor;
-        T client;
-        try {
-            if (credentials == null && config == null) {
-                constructor = serviceClass.getConstructor();
-                client = constructor.newInstance();
-            } else if (credentials == null) {
-                constructor = serviceClass.getConstructor(LegacyClientConfiguration.class);
-                client = constructor.newInstance(config);
-            } else if (config == null) {
-                constructor = serviceClass.getConstructor(AwsCredentialsProvider.class);
-                client = constructor.newInstance(credentials);
-            } else {
-                constructor = serviceClass.getConstructor(AwsCredentialsProvider.class, LegacyClientConfiguration.class);
-                client = constructor.newInstance(credentials, config);
-            }
-
-            client.setRegion(this);
-            return client;
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException |
-                 InvocationTargetException | RuntimeException e) {
-            throw new RuntimeException("Couldn't instantiate instance of " + serviceClass, e);
+        public static List<Region> getRegions() {
+            return REGIONS;
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Region == false) {
-            return false;
-        }
+    public static final List<Region> REGIONS = Collections.unmodifiableList(Arrays.asList(
+            AP_NORTHEAST_1,
+            AP_NORTHEAST_2,
+            AP_SOUTH_1,
+            AP_SOUTHEAST_1,
+            AP_SOUTHEAST_2,
+            CA_CENTRAL_1,
+            EU_CENTRAL_1,
+            EU_WEST_1,
+            EU_WEST_2,
+            SA_EAST_1,
+            US_EAST_1,
+            US_EAST_2,
+            US_WEST_1,
+            US_WEST_2,
+            AWS_GLOBAL,
+            CN_NORTH_1,
+            CN_NORTHWEST_1,
+            AWS_CN_GLOBAL,
+            GovCloud.US_GOV_WEST_1,
+            GovCloud.AWS_US_GOV_GLOBAL));
 
-        Region region = (Region) obj;
-        return this.getName().equals(region.getName());
+    private Region(String value) {
+        super(value);
     }
 
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
+    public static Region of(String value) {
+        return AbstractEnum.value(value, Region.class, Region::new);
     }
 
-    @Override
-    public String toString() {
-        return getName();
+    public static List<Region> getRegions() {
+        return REGIONS;
     }
-
 }

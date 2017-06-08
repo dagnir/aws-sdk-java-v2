@@ -27,12 +27,12 @@ import software.amazon.awssdk.services.sts.model.Credentials;
 public class StsAssumeRoleCredentialsProviderTest extends StsCredentialsProviderTestBase<AssumeRoleRequest, AssumeRoleResult> {
     @Override
     protected AssumeRoleRequest getRequest() {
-        return new AssumeRoleRequest();
+        return AssumeRoleRequest.builder().build();
     }
 
     @Override
     protected AssumeRoleResult getResponse(Credentials credentials) {
-        return new AssumeRoleResult().withCredentials(credentials);
+        return AssumeRoleResult.builder().credentials(credentials).build();
     }
 
     @Override

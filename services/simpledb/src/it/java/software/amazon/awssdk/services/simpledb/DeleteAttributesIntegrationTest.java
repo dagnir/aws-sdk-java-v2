@@ -35,8 +35,9 @@ public class DeleteAttributesIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testDeleteAttributesMissingParameterException() {
-        DeleteAttributesRequest request = new DeleteAttributesRequest();
-        request.setItemName("foo");
+        DeleteAttributesRequest request = DeleteAttributesRequest.builder()
+                .itemName("foo")
+                .build();
         try {
             sdb.deleteAttributes(request);
             fail("Expected MissingParameterException, but wasn't thrown");
@@ -44,8 +45,9 @@ public class DeleteAttributesIntegrationTest extends IntegrationTestBase {
             assertValidException(e);
         }
 
-        request = new DeleteAttributesRequest();
-        request.setDomainName("foo");
+        request = DeleteAttributesRequest.builder()
+                .domainName("foo")
+                .build();
         try {
             sdb.deleteAttributes(request);
             fail("Expected MissingParameterException, but wasn't thrown");
@@ -60,9 +62,10 @@ public class DeleteAttributesIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testDeleteAttributesNoSuchDomainException() {
-        DeleteAttributesRequest request = new DeleteAttributesRequest();
-        request.setDomainName("foobarbazbarbashbarbazfoo");
-        request.setItemName("foobarbazbarbashbarbazfoo");
+        DeleteAttributesRequest request = DeleteAttributesRequest.builder()
+                .domainName("foobarbazbarbashbarbazfoo")
+                .itemName("foobarbazbarbashbarbazfoo")
+                .build();
         try {
             sdb.deleteAttributes(request);
             fail("Expected NoSuchDomainException, but wasn't thrown");

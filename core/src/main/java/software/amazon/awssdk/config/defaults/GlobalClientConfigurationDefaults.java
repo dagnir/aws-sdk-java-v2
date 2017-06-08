@@ -15,13 +15,14 @@
 
 package software.amazon.awssdk.config.defaults;
 
+import static software.amazon.awssdk.config.AdvancedClientOption.USER_AGENT_PREFIX;
+import static software.amazon.awssdk.config.AdvancedClientOption.USER_AGENT_SUFFIX;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.config.ClientConfiguration;
-import software.amazon.awssdk.config.ClientMarshallerConfiguration;
-import software.amazon.awssdk.config.ClientMetricsConfiguration;
-import software.amazon.awssdk.config.ClientRetryConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.util.VersionInfoUtils;
@@ -36,20 +37,14 @@ import software.amazon.awssdk.util.VersionInfoUtils;
 public final class GlobalClientConfigurationDefaults extends ClientConfigurationDefaults {
 
     @Override
-    protected void applyMarshallerDefaults(ClientMarshallerConfiguration.Builder builder) {
-        builder.gzipEnabled(builder.gzipEnabled().orElse(false));
-    }
-
-    @Override
-    protected void applyMetricsDefaults(ClientMetricsConfiguration.Builder builder) {
-        builder.userAgentPrefix(builder.userAgentPrefix().orElseGet(VersionInfoUtils::getUserAgent));
-        builder.userAgentSuffix(builder.userAgentSuffix().orElse(""));
-        builder.requestMetricCollector(builder.requestMetricCollector().orElse(RequestMetricCollector.NONE));
-    }
-
-    @Override
-    protected void applyRetryDefaults(ClientRetryConfiguration.Builder builder) {
-        builder.retryPolicy(builder.retryPolicy().orElse(PredefinedRetryPolicies.DEFAULT));
+    protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
+        ClientOverrideConfiguration configuration = builder.build();
+        builder.gzipEnabled(applyDefault(configuration.gzipEnabled(), () -> false));
+        builder.advancedOption(USER_AGENT_PREFIX,
+                               applyDefault(configuration.advancedOption(USER_AGENT_PREFIX), VersionInfoUtils::getUserAgent));
+        builder.advancedOption(USER_AGENT_SUFFIX, applyDefault(configuration.advancedOption(USER_AGENT_SUFFIX), () -> ""));
+        builder.requestMetricCollector(applyDefault(configuration.requestMetricCollector(), () -> RequestMetricCollector.NONE));
+        builder.retryPolicy(applyDefault(configuration.retryPolicy(), () -> PredefinedRetryPolicies.DEFAULT));
     }
 
     @Override

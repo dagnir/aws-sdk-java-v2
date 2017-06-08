@@ -16,16 +16,11 @@
 package software.amazon.awssdk.client.builder;
 
 import java.net.URI;
-import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.builder.SdkBuilder;
-import software.amazon.awssdk.config.ClientListenerConfiguration;
-import software.amazon.awssdk.config.ClientMarshallerConfiguration;
-import software.amazon.awssdk.config.ClientMetricsConfiguration;
-import software.amazon.awssdk.config.ClientRetryConfiguration;
-import software.amazon.awssdk.config.ClientSecurityConfiguration;
-import software.amazon.awssdk.config.ClientTimeoutConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * This includes required and optional override configuration required by every client builder. An instance can be acquired by
@@ -39,67 +34,6 @@ import software.amazon.awssdk.config.ClientTimeoutConfiguration;
 public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuilder<B, C> {
 
     /**
-     * Override configuration specifying request and response timeouts within the SDK. This will never return null.
-     */
-    ClientTimeoutConfiguration timeoutConfiguration();
-
-    /**
-     * Configure overrides specifying request and response timeouts within the SDK.
-     */
-    B timeoutConfiguration(ClientTimeoutConfiguration timeoutConfiguration);
-
-    /**
-     * Override configuration related to converting request objects to data that should be transmitted. This will never return
-     * null.
-     */
-    ClientMarshallerConfiguration marshallerConfiguration();
-
-    /**
-     * Configure overrides related to converting request objects to data that should be transmitted.
-     */
-    B marshallerConfiguration(ClientMarshallerConfiguration marshallerConfiguration);
-
-    /**
-     * Override configuration related to metrics gathered by the SDK. This will never return null.
-     */
-    ClientMetricsConfiguration metricsConfiguration();
-
-    /**
-     * Configure overrides related to metrics gathered by the SDK.
-     */
-    B metricsConfiguration(ClientMetricsConfiguration metricsConfiguration);
-
-    /**
-     * Override configuration related to the security of the integration with AWS. This will never return null.
-     */
-    ClientSecurityConfiguration securityConfiguration();
-
-    /**
-     * Configure overrides related to the security of the integration with AWS.
-     */
-    B securityConfiguration(ClientSecurityConfiguration securityConfiguration);
-
-    /**
-     * Override configuration related to the automatic request retry behavior of the SDK. This will never return null.
-     */
-    ClientRetryConfiguration retryConfiguration();
-
-    /**
-     * Configure overrides related to the automatic request retry behavior of the SDK.
-     */
-    B retryConfiguration(ClientRetryConfiguration retryConfiguration);
-
-    /**
-     * Override configuration related to behavioral hooks provided within the SDK. This will never return null.
-     */
-    ClientListenerConfiguration listenerConfiguration();
-
-    /**
-     * Configure overrides related to behavioral hooks provided within the SDK.
-     */
-    B listenerConfiguration(ClientListenerConfiguration listenerConfiguration);
-
-    /**
      * Configures the HTTP client used by the service client. Either a client factory may be provided (in which case
      * the SDK will merge any service specific configuration on top of customer supplied configuration) or provide an already
      * constructed instance of {@link software.amazon.awssdk.http.SdkHttpClient}. Note that if an {@link
@@ -109,15 +43,9 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
     B httpConfiguration(ClientHttpConfiguration httpConfiguration);
 
     /**
-     * HTTP client configuration. This will never return null.
+     * Configure overrides specifying request and response timeouts within the SDK.
      */
-    ClientHttpConfiguration httpConfiguration();
-
-    /**
-     * The credentials that should be used to authenticate the service with AWS.
-     */
-    @ReviewBeforeRelease("This is AWS-specific, so it should probably be broken out.")
-    Optional<AwsCredentialsProvider> credentialsProvider();
+    B overrideConfiguration(ClientOverrideConfiguration overrideConfiguration);
 
     /**
      * Configure the credentials that should be used to authenticate with AWS.
@@ -135,52 +63,27 @@ public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuil
      * <p>If the credentials are not found in any of the locations above, an exception will be thrown at {@link #build()} time.
      * </p>
      */
+    @ReviewBeforeRelease("This is AWS-specific, so it should probably be broken out.")
     B credentialsProvider(AwsCredentialsProvider credentialsProvider);
 
     /**
-     * Retrieve the value set with {@link #endpointOverride(URI)}.
-     */
-    Optional<URI> endpointOverride();
-
-    /**
      * Configure the endpoint with which the SDK should communicate. This will take precedent over the endpoint derived from the
-     * {@link #region()}. Even when this is used, the {@link #region(String)} must still be specified for the purposes of message
-     * signing.
+     * {@link #region(Region)}. Even when this is used, the {@link #region(Region)} must still be specified for the purposes of
+     * message signing.
      */
     B endpointOverride(URI endpointOverride);
 
     /**
-     * Retrieve the value set by {@link #defaultRegionDetectionEnabled(Boolean)}.
-     */
-    Optional<Boolean> defaultRegionDetectionEnabled();
-
-    /**
-     * Whether region detection should be enabled. Region detection is used when the {@link #region()} is not specified. This is
-     * enabled by default.
+     * Configure the region with which the SDK should communicate.
      *
-     * <p>By default, this will attempt to identify the endpoint automatically using the following logic:
+     * <p>If this is not specified, the SDK will attempt to identify the endpoint automatically using the following logic:
      * <ol>
-     *     <li>Check the 'aws.defaultRegion' system property for the region.</li>
-     *     <li>Check the 'AWS_DEFAULT_REGION' environment variable for the region.</li>
+     *     <li>Check the 'aws.region' system property for the region.</li>
+     *     <li>Check the 'AWS_REGION' environment variable for the region.</li>
      *     <li>Check the {user.home}/.aws/credentials and {user.home}/.aws/config files for the region.</li>
      *     <li>If running in EC2, check the EC2 metadata service for the region.</li>
      * </ol>
      * </p>
-     *
-     * <p>If the region is not found in any of the locations above, an exception will be thrown at {@link #build()} time.</p>
      */
-    @ReviewBeforeRelease("Should this be moved to an advancedOptions map to hide it from most customers who don't care about it?")
-    B defaultRegionDetectionEnabled(Boolean defaultRegionDetectionEnabled);
-
-    /**
-     * Retrieve the region that was configured with {@link #region(String)}.
-     */
-    Optional<String> region();
-
-    /**
-     * Configure the region with which the SDK should communicate. If this is not specified when creating a client, the
-     * behavior described in {@link #defaultRegionDetectionEnabled(Boolean)} (assuming it is enabled) will be used.
-     */
-    B region(String region);
-
+    B region(Region region);
 }

@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.s3.model;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 
 
@@ -311,9 +310,9 @@ public enum Region {
             // TODO This is a bit of a hack but customers are relying on this returning us-east-1 rather then
             // aws-global. For now we'll keep the legacy behavior and consider changing it in the next major version
             // bump. See TT0073140598
-            return RegionUtils.getRegion("us-east-1");
+            return software.amazon.awssdk.regions.Region.of("us-east-1");
         } else {
-            return RegionUtils.getRegion(s3regionId);
+            return software.amazon.awssdk.regions.Region.of(s3regionId);
         }
     }
 }

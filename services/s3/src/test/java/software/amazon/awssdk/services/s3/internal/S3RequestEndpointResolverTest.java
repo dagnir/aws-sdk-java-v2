@@ -31,7 +31,6 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.runtime.endpoint.ServiceEndpointBuilder;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 
@@ -57,7 +56,7 @@ public class S3RequestEndpointResolverTest {
 
     @Before
     public void setup() {
-        request = new DefaultRequest<String>(AmazonS3Client.S3_SERVICE_NAME);
+        request = new DefaultRequest<>(AmazonS3Client.S3_SERVICE_NAME);
         MockitoAnnotations.initMocks(this);
         Mockito.when(endpointBuilder.getServiceEndpoint()).thenReturn(toHttpsUri(ENDPOINT));
         Mockito.when(endpointBuilder.withRegion(Mockito.any(Region.class))).thenReturn(endpointBuilder);
@@ -79,14 +78,6 @@ public class S3RequestEndpointResolverTest {
                                                                                    KEY_WITH_SPACES);
         endpointResolver.resolveRequestEndpoint(request);
         assertHostStyleAddressing(ENDPOINT, BUCKET_NAME, "key%20with%20spaces");
-    }
-
-    @Test(expected = AmazonClientException.class)
-    public void
-    resolveRequestEndpoint_UnknownRegion_HostStyleAddressing_throwsException() {
-        S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, false, BUCKET_NAME,
-                                                                                   KEY);
-        endpointResolver.resolveRequestEndpoint(request, "unknown-region");
     }
 
     @Test
@@ -130,8 +121,8 @@ public class S3RequestEndpointResolverTest {
     public void resolveRequestEndpoint_WithNewRegion_ChangesRegionOnEndpointBuilder() {
         S3RequestEndpointResolver endpointResolver = new S3RequestEndpointResolver(endpointBuilder, true, BUCKET_NAME,
                                                                                    null);
-        final Region region = Region.getRegion(Regions.EU_CENTRAL_1);
-        endpointResolver.resolveRequestEndpoint(request, region.toString());
+        final Region region = Region.EU_CENTRAL_1;
+        endpointResolver.resolveRequestEndpoint(request, region.value());
         // The real assertion here is that we expect the region to change on the endpoint builder
         Mockito.verify(endpointBuilder).withRegion(region);
     }

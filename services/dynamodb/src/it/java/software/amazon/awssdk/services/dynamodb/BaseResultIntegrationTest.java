@@ -24,8 +24,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
@@ -37,8 +36,8 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @Before
     public void setup() {
         dynamoDB = DynamoDBClient.builder()
-                .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
-                .region(Regions.US_WEST_2.getName())
+                .region(Region.US_WEST_2)
+                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
     }
 
@@ -46,16 +45,16 @@ public class BaseResultIntegrationTest extends AwsIntegrationTestBase {
     @Ignore
     @ReviewBeforeRelease("Response metadata has been broken by client/interface refactoring. Fix before release")
     public void responseMetadataInBaseResultIsSameAsMetadataCache() {
-        ListTablesRequest request = new ListTablesRequest();
+        ListTablesRequest request = ListTablesRequest.builder().build();
         ListTablesResult result = dynamoDB.listTables(request);
-        assertNotNull(result.getSdkResponseMetadata());
+        assertNotNull(result.getSdkHttpMetadata());
     }
 
     @Test
     @Ignore
     @ReviewBeforeRelease("Response metadata has been broken by client/interface refactoring. Fix before release")
     public void httpMetadataInBaseResultIsValid() {
-        ListTablesResult result = dynamoDB.listTables(new ListTablesRequest());
+        ListTablesResult result = dynamoDB.listTables(ListTablesRequest.builder().build());
         assertEquals(200, result.getSdkHttpMetadata().getHttpStatusCode());
         assertThat(result.getSdkHttpMetadata().getHttpHeaders(), hasKey("x-amz-crc32"));
     }

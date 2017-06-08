@@ -18,10 +18,13 @@ package software.amazon.awssdk.services.cloudfront;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Optional;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionRequest;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionResult;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
@@ -32,11 +35,15 @@ import software.amazon.awssdk.test.AwsTestBase;
  */
 public abstract class IntegrationTestBase extends AwsTestBase {
 
-    /** Shared CloudFront client for all tests to use. */
+    /**
+     * Shared CloudFront client for all tests to use.
+     */
     protected static CloudFrontClient cloudfront;
 
-    /** Shared S3 client for all tests to use. */
-    protected static AmazonS3Client s3;
+    /**
+     * Shared S3 client for all tests to use.
+     */
+    protected static AmazonS3 s3;
 
     /**
      * Loads the AWS account info for the integration tests and creates an
@@ -45,24 +52,29 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        cloudfront = CloudFrontClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
-        s3 = new AmazonS3Client(credentials);
+        cloudfront = CloudFrontClient.builder()
+                                     .credentialsProvider(new StaticCredentialsProvider(credentials))
+                                     .region(Region.AWS_GLOBAL)
+                                     .build();
+        s3 = AmazonS3Client.builder()
+                           .withCredentials(new StaticCredentialsProvider(credentials))
+                           .build();
     }
 
     /**
      * Polls the test distribution until it moves into the "Deployed" state, or
      * throws an exception and gives up after waiting too long.
      *
-     * @param distributionId
-     *            The distribution to delete
+     * @param distributionId The distribution to delete
      */
     protected static void waitForDistributionToDeploy(String distributionId) throws Exception {
         int timeoutInMinutes = 20;
         long startTime = System.currentTimeMillis();
         while (true) {
-            GetDistributionResult getDistributionResult = cloudfront.getDistribution(new GetDistributionRequest()
-                                                                                             .withId(distributionId));
-            String status = getDistributionResult.getDistribution().getStatus();
+            GetDistributionResult getDistributionResult = cloudfront.getDistribution(GetDistributionRequest.builder()
+                                                                                                           .id(distributionId)
+                                                                                                           .build());
+            String status = getDistributionResult.distribution().status();
             System.out.println(status);
             if (status.equalsIgnoreCase("Deployed")) {
                 return;
@@ -80,8 +92,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     /**
      * Deletes all objects in the specified bucket, and then deletes the bucket.
      *
-     * @param bucketName
-     *            The bucket to empty and delete.
+     * @param bucketName The bucket to empty and delete.
      */
     protected static void deleteBucketAndAllContents(String bucketName) {
         ObjectListing objectListing = s3.listObjects(bucketName);

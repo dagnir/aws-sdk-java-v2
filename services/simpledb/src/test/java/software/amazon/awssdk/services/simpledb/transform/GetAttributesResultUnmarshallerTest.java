@@ -38,12 +38,12 @@ public class GetAttributesResultUnmarshallerTest {
         GetAttributesResult result = new GetAttributesResultUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
-        assertTrue(!result.getAttributes().isEmpty());
-        assertTrue(result.getAttributes().size() == 2);
-        assertTrue(((Attribute) result.getAttributes().get(0)).getName().equals("Color"));
-        assertTrue(((Attribute) result.getAttributes().get(0)).getValue().equals("Blue"));
-        assertTrue(((Attribute) result.getAttributes().get(1)).getName().equals("Price"));
-        assertTrue(((Attribute) result.getAttributes().get(1)).getValue().equals("$2.50"));
+        assertTrue(!result.attributes().isEmpty());
+        assertTrue(result.attributes().size() == 2);
+        assertTrue(((Attribute) result.attributes().get(0)).name().equals("Color"));
+        assertTrue(((Attribute) result.attributes().get(0)).value().equals("Blue"));
+        assertTrue(((Attribute) result.attributes().get(1)).name().equals("Price"));
+        assertTrue(((Attribute) result.attributes().get(1)).value().equals("$2.50"));
     }
 
 }

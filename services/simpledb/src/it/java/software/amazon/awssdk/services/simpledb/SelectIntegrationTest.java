@@ -36,7 +36,7 @@ public class SelectIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testSelectMissingParameterException() {
-        SelectRequest request = new SelectRequest();
+        SelectRequest request = SelectRequest.builder().build();
         try {
             sdb.select(request);
             fail("Excepted MissingParameterException, but wasn't thrown");
@@ -51,9 +51,9 @@ public class SelectIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testSelectNoSuchDomainException() {
-        SelectRequest request = new SelectRequest();
+        SelectRequest request = SelectRequest.builder().selectExpression("select * from foobarbazbarbashbar").build();
         try {
-            sdb.select(request.withSelectExpression("select * from foobarbazbarbashbar"));
+            sdb.select(request);
             fail("Expected NoSuchDomainException, but wasn't thrown");
         } catch (NoSuchDomainException e) {
             assertValidException(e);
@@ -66,9 +66,9 @@ public class SelectIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testSelectInvalidQueryExpressionException() {
-        SelectRequest request = new SelectRequest();
+        SelectRequest request = SelectRequest.builder().selectExpression("foobarbazbar").build();
         try {
-            sdb.select(request.withSelectExpression("foobarbazbar"));
+            sdb.select(request);
             fail("Expected InvalidQueryExpressionException, but wasn't thrown");
         } catch (InvalidQueryExpressionException e) {
             assertValidException(e);

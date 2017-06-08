@@ -29,7 +29,7 @@ import java.util.UUID;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
@@ -61,17 +61,18 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         // Create a table
         String keyName = DynamoDBMapperIntegrationTestBase.KEY_NAME;
         String rangeKey = "rangeKey";
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(TABLE_NAME)
-                .withKeySchema(new KeySchemaElement().withAttributeName(keyName).withKeyType(KeyType.HASH),
-                               new KeySchemaElement().withAttributeName(rangeKey).withKeyType(KeyType.RANGE))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(keyName).withAttributeType(
-                                ScalarAttributeType.S),
-                        new AttributeDefinition().withAttributeName(rangeKey).withAttributeType(
-                                ScalarAttributeType.S));
-        createTableRequest.setProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(10L)
-                                                                               .withWriteCapacityUnits(10L));
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
+                .tableName(TABLE_NAME)
+                .keySchema(KeySchemaElement.builder().attributeName(keyName).keyType(KeyType.HASH).build(),
+                               KeySchemaElement.builder().attributeName(rangeKey).keyType(KeyType.RANGE).build())
+                .attributeDefinitions(
+                        AttributeDefinition.builder().attributeName(keyName).attributeType(
+                                ScalarAttributeType.S).build(),
+                        AttributeDefinition.builder().attributeName(rangeKey).attributeType(
+                                ScalarAttributeType.S).build())
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(10L)
+                                                                               .writeCapacityUnits(10L).build())
+                .build();
 
         if (TableUtils.createTableIfNotExists(dynamo, createTableRequest)) {
             TableUtils.waitUntilActive(dynamo, TABLE_NAME);
@@ -88,7 +89,7 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
     // this package so this can be run as a unit test.
     // @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         CrossSdkVerificationClass obj = mapper.load(CrossSdkVerificationClass.class, HASH_KEY, RANGE_KEY);
 
@@ -100,18 +101,18 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         assertNotNull(obj.getRangeKey());
         assertEquals(obj.getRangeKey(), RANGE_KEY);
         assertNotNull(originalVersion);
-        assertNotNull(obj.getBigDecimalAttribute());
-        assertNotNull(obj.getBigDecimalSetAttribute());
-        assertEquals(3, obj.getBigDecimalSetAttribute().size());
-        assertNotNull(obj.getBigIntegerAttribute());
-        assertNotNull(obj.getBigIntegerSetAttribute());
-        assertEquals(3, obj.getBigIntegerSetAttribute().size());
-        assertNotNull(obj.getBooleanAttribute());
-        assertNotNull(obj.getBooleanSetAttribute());
-        assertEquals(2, obj.getBooleanSetAttribute().size());
-        assertNotNull(obj.getByteAttribute());
-        assertNotNull(obj.getByteSetAttribute());
-        assertEquals(3, obj.getByteSetAttribute().size());
+        assertNotNull(obj.bigDecimalAttribute());
+        assertNotNull(obj.bigDecimalSetAttribute());
+        assertEquals(3, obj.bigDecimalSetAttribute().size());
+        assertNotNull(obj.bigIntegerAttribute());
+        assertNotNull(obj.bigIntegerSetAttribute());
+        assertEquals(3, obj.bigIntegerSetAttribute().size());
+        assertNotNull(obj.booleanAttribute());
+        assertNotNull(obj.booleanSetAttribute());
+        assertEquals(2, obj.booleanSetAttribute().size());
+        assertNotNull(obj.byteAttribute());
+        assertNotNull(obj.byteSetAttribute());
+        assertEquals(3, obj.byteSetAttribute().size());
         assertNotNull(obj.getCalendarAttribute());
         assertNotNull(obj.getCalendarSetAttribute());
         assertEquals(3, obj.getCalendarSetAttribute().size());
@@ -127,11 +128,11 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
         assertNotNull(obj.getIntegerAttribute());
         assertNotNull(obj.getIntegerSetAttribute());
         assertEquals(3, obj.getIntegerSetAttribute().size());
-        assertNotNull(obj.getLongAttribute());
-        assertNotNull(obj.getLongSetAttribute());
-        assertEquals(3, obj.getLongSetAttribute().size());
-        assertNotNull(obj.getStringSetAttribute());
-        assertEquals(3, obj.getStringSetAttribute().size());
+        assertNotNull(obj.longAttribute());
+        assertNotNull(obj.longSetAttribute());
+        assertEquals(3, obj.longSetAttribute().size());
+        assertNotNull(obj.stringSetAttribute());
+        assertEquals(3, obj.stringSetAttribute().size());
 
         updateObjectValues(obj);
 
@@ -146,25 +147,25 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
      * Updates all values in the object (except for the keys and version)
      */
     private void updateObjectValues(CrossSdkVerificationClass obj) {
-        obj.setBigDecimalAttribute(obj.getBigDecimalAttribute().add(BigDecimal.ONE));
+        obj.setBigDecimalAttribute(obj.bigDecimalAttribute().add(BigDecimal.ONE));
         Set<BigDecimal> bigDecimals = new HashSet<BigDecimal>();
-        for (BigDecimal d : obj.getBigDecimalSetAttribute()) {
+        for (BigDecimal d : obj.bigDecimalSetAttribute()) {
             bigDecimals.add(d.add(BigDecimal.ONE));
         }
         obj.setBigDecimalSetAttribute(bigDecimals);
 
-        obj.setBigIntegerAttribute(obj.getBigIntegerAttribute().add(BigInteger.ONE));
+        obj.setBigIntegerAttribute(obj.bigIntegerAttribute().add(BigInteger.ONE));
         Set<BigInteger> bigInts = new HashSet<BigInteger>();
-        for (BigInteger d : obj.getBigIntegerSetAttribute()) {
+        for (BigInteger d : obj.bigIntegerSetAttribute()) {
             bigInts.add(d.add(BigInteger.ONE));
         }
         obj.setBigIntegerSetAttribute(bigInts);
 
-        obj.setBooleanAttribute(!obj.getBooleanAttribute());
+        obj.setBooleanAttribute(!obj.booleanAttribute());
 
-        obj.setByteAttribute((byte) ((obj.getByteAttribute() + 1) % Byte.MAX_VALUE));
+        obj.setByteAttribute((byte) ((obj.byteAttribute() + 1) % Byte.MAX_VALUE));
         Set<Byte> bytes = new HashSet<Byte>();
-        for (Byte b : obj.getByteSetAttribute()) {
+        for (Byte b : obj.byteSetAttribute()) {
             bytes.add((byte) ((b + 1) % Byte.MAX_VALUE));
         }
 
@@ -201,9 +202,9 @@ public class CrossSdkIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
         obj.setLastUpdater("java-sdk");
 
-        obj.setLongAttribute(obj.getLongAttribute() + 1);
+        obj.setLongAttribute(obj.longAttribute() + 1);
         Set<Long> longSet = new HashSet<Long>();
-        for (Long l : obj.getLongSetAttribute()) {
+        for (Long l : obj.longSetAttribute()) {
             longSet.add(l + 1);
         }
         obj.setLongSetAttribute(longSet);

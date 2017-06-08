@@ -345,19 +345,6 @@ public abstract class AbstractAmazonS3 implements AmazonS3 {
     }
 
     @Override
-    public Bucket createBucket(String bucketName,
-                               software.amazon.awssdk.services.s3.model.Region region)
-            throws SdkClientException, AmazonServiceException {
-        return createBucket(new CreateBucketRequest(bucketName, region));
-    }
-
-    @Override
-    public Bucket createBucket(String bucketName, String region)
-            throws SdkClientException, AmazonServiceException {
-        return createBucket(new CreateBucketRequest(bucketName, region));
-    }
-
-    @Override
     public AccessControlList getObjectAcl(String bucketName, String key)
             throws SdkClientException, AmazonServiceException {
         return getObjectAcl(new GetObjectAclRequest(bucketName, key));
@@ -1193,17 +1180,7 @@ public abstract class AbstractAmazonS3 implements AmazonS3 {
     }
 
     @Override
-    public software.amazon.awssdk.services.s3.model.Region getRegion() {
-        throw new UnsupportedOperationException("Extend AbstractAmazonS3 to provide an implementation");
-    }
-
-    @Override
     public void setRegion(Region region) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Extend AbstractAmazonS3 to provide an implementation");
-    }
-
-    @Override
-    public String getRegionName() {
         throw new UnsupportedOperationException("Extend AbstractAmazonS3 to provide an implementation");
     }
 

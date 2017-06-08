@@ -38,7 +38,7 @@ public class ByteSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<Byte> result = new HashSet<Byte>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(Byte.valueOf(s));
         }
         return result;

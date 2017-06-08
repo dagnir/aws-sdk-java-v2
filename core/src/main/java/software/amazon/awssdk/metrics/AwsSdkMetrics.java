@@ -29,8 +29,6 @@ import software.amazon.awssdk.jmx.spi.SdkMBeanRegistry;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.util.AwsServiceMetrics;
 
 /**
@@ -188,7 +186,7 @@ public enum AwsSdkMetrics {
      */
     private static final String ENABLE_HTTP_SOCKET_READ_METRIC = "enableHttpSocketReadMetric";
     /**
-     * True if the system property {@link #DEFAULT_METRICS_SYSTEM_PROPERTY} has
+     * True if the system property {@link #DEFAULT_METRICS_ENABLED} has
      * been set; false otherwise.
      */
     private static final boolean DEFAULT_METRICS_ENABLED;
@@ -277,7 +275,7 @@ public enum AwsSdkMetrics {
                         String value = pair[1].trim();
                         try {
                             if (CLOUDWATCH_REGION.equals(key)) {
-                                region = RegionUtils.getRegion(value);
+                                region = Region.of(value);
                             } else if (METRIC_QUEUE_SIZE.equals(key)) {
                                 Integer i = Integer.valueOf(value);
                                 if (i.intValue() < 1) {
@@ -693,20 +691,20 @@ public enum AwsSdkMetrics {
      * or null if the default is to be used.
      *
      * @throws IllegalArgumentException when using a region not included in
-     * {@link Regions}
+     * {@link Region}
      *
      * @deprecated Use {@link #getRegionName()}
      */
-    public static Regions getRegion() throws IllegalArgumentException {
-        return Regions.fromName(region.getName());
+    public static Region getRegion() throws IllegalArgumentException {
+        return region;
     }
 
     /**
      * Sets the region to be used for the default AWS SDK metric collector;
      * or null if the default is to be used.
      */
-    public static void setRegion(Regions region) {
-        AwsSdkMetrics.region = RegionUtils.getRegion(region.getName());
+    public static void setRegion(Region region) {
+        AwsSdkMetrics.region = region;
     }
 
     /**
@@ -714,7 +712,7 @@ public enum AwsSdkMetrics {
      * or null if the default is to be used.
      */
     public static void setRegion(String region) {
-        AwsSdkMetrics.region = RegionUtils.getRegion(region);
+        AwsSdkMetrics.region = Region.of(region);
     }
 
     /**
@@ -722,7 +720,7 @@ public enum AwsSdkMetrics {
      * or null if the default is to be used.
      */
     public static String getRegionName() {
-        return region == null ? null : region.getName();
+        return region == null ? null : region.value();
     }
 
     /**

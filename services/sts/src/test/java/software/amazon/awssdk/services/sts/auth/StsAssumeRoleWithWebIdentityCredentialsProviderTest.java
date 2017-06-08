@@ -29,12 +29,12 @@ public class StsAssumeRoleWithWebIdentityCredentialsProviderTest
         extends StsCredentialsProviderTestBase<AssumeRoleWithWebIdentityRequest, AssumeRoleWithWebIdentityResult> {
     @Override
     protected AssumeRoleWithWebIdentityRequest getRequest() {
-        return new AssumeRoleWithWebIdentityRequest();
+        return AssumeRoleWithWebIdentityRequest.builder().build();
     }
 
     @Override
     protected AssumeRoleWithWebIdentityResult getResponse(Credentials credentials) {
-        return new AssumeRoleWithWebIdentityResult().withCredentials(credentials);
+        return AssumeRoleWithWebIdentityResult.builder().credentials(credentials).build();
     }
 
     @Override

@@ -47,30 +47,19 @@ public class UserIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    public void TestGetUserImplicit() {
-        GetUserRequest request = new GetUserRequest();
-
-        GetUserResult Result = iam.getUser(request);
-
-        assertEquals("arn:aws:iam::599169622985:root", Result.getUser()
-                                                             .getArn());
-        assertEquals("599169622985", Result.getUser().getUserId());
-    }
-
-    @Test
     public void TestCreateGetUser() {
         String username = IAMUtil.uniqueName();
 
         try {
-            CreateUserRequest request = new CreateUserRequest().withUserName(
-                    username).withPath(IAMUtil.TEST_PATH);
+            CreateUserRequest request = CreateUserRequest.builder().userName(
+                    username).path(IAMUtil.TEST_PATH).build();
             CreateUserResult result = iam.createUser(request);
-            assertEquals(username, result.getUser().getUserName());
-            GetUserResult getResult = iam.getUser(new GetUserRequest()
-                                                          .withUserName(username));
-            assertEquals(username, getResult.getUser().getUserName());
+            assertEquals(username, result.user().userName());
+            GetUserResult getUserResult = iam.getUser(GetUserRequest.builder()
+                                                                    .userName(username).build());
+            assertEquals(username, getUserResult.user().userName());
         } finally {
-            iam.deleteUser(new DeleteUserRequest().withUserName(username));
+            iam.deleteUser(DeleteUserRequest.builder().userName(username).build());
         }
     }
 
@@ -80,20 +69,20 @@ public class UserIntegrationTest extends IntegrationTestBase {
         String username2 = IAMUtil.createTestUser();
         String username3 = IAMUtil.createTestUser();
         try {
-            ListUsersResult Result = iam.listUsers(new ListUsersRequest()
-                                                           .withPathPrefix(IAMUtil.TEST_PATH));
+            ListUsersResult Result = iam.listUsers(ListUsersRequest.builder()
+                                                                   .pathPrefix(IAMUtil.TEST_PATH).build());
 
-            assertEquals(3, Result.getUsers().size());
+            assertEquals(3, Result.users().size());
 
             int matches = 0;
-            for (User user : Result.getUsers()) {
-                if (user.getUserName().equals(username1)) {
+            for (User user : Result.users()) {
+                if (user.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (user.getUserName().equals(username2)) {
+                if (user.userName().equals(username2)) {
                     matches |= 2;
                 }
-                if (user.getUserName().equals(username3)) {
+                if (user.userName().equals(username3)) {
                     matches |= 4;
                 }
             }
@@ -108,12 +97,12 @@ public class UserIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.uniqueName();
         String path = IAMUtil.makePath("one", "two", "three");
         try {
-            iam.createUser(new CreateUserRequest().withPath(path).withUserName(
-                    username));
-            GetUserResult Result = iam.getUser(new GetUserRequest()
-                                                       .withUserName(username));
-            assertEquals(username, Result.getUser().getUserName());
-            assertEquals(path, Result.getUser().getPath());
+            iam.createUser(CreateUserRequest.builder().path(path).userName(
+                    username).build());
+            GetUserResult Result = iam.getUser(GetUserRequest.builder()
+                                                             .userName(username).build());
+            assertEquals(username, Result.user().userName());
+            assertEquals(path, Result.user().path());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }
@@ -130,64 +119,64 @@ public class UserIntegrationTest extends IntegrationTestBase {
         String pathB = IAMUtil.makePath("B");
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username1)
-                                                  .withPath(pathA));
-            iam.createUser(new CreateUserRequest().withUserName(username2)
-                                                  .withPath(pathA));
-            iam.createUser(new CreateUserRequest().withUserName(username3)
-                                                  .withPath(pathB));
-            iam.createUser(new CreateUserRequest().withUserName(username4)
-                                                  .withPath(pathA));
+            iam.createUser(CreateUserRequest.builder().userName(username1)
+                                            .path(pathA).build());
+            iam.createUser(CreateUserRequest.builder().userName(username2)
+                                            .path(pathA).build());
+            iam.createUser(CreateUserRequest.builder().userName(username3)
+                                            .path(pathB).build());
+            iam.createUser(CreateUserRequest.builder().userName(username4)
+                                            .path(pathA).build());
 
-            ListUsersResult Result = iam.listUsers(new ListUsersRequest()
-                                                           .withPathPrefix(pathA));
+            ListUsersResult Result = iam.listUsers(ListUsersRequest.builder()
+                                                                   .pathPrefix(pathA).build());
 
-            assertEquals(3, Result.getUsers().size());
+            assertEquals(3, Result.users().size());
 
             int matches = 0;
 
-            for (User u : Result.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : Result.users()) {
+                if (u.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     matches |= 2;
                 }
-                if (u.getUserName().equals(username4)) {
+                if (u.userName().equals(username4)) {
                     matches |= 4;
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     fail();
                 }
             }
             assertEquals(7, matches);
 
             Result = iam
-                    .listUsers(new ListUsersRequest().withPathPrefix(pathB));
+                    .listUsers(ListUsersRequest.builder().pathPrefix(pathB).build());
 
-            assertEquals(1, Result.getUsers().size());
+            assertEquals(1, Result.users().size());
 
             matches = 0;
 
-            for (User u : Result.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : Result.users()) {
+                if (u.userName().equals(username1)) {
                     fail();
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     fail();
                 }
-                if (u.getUserName().equals(username4)) {
+                if (u.userName().equals(username4)) {
                     fail();
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     matches = 1;
                 }
             }
             assertEquals(1, matches);
 
-            Result = iam.listUsers(new ListUsersRequest()
-                                           .withPathPrefix(IAMUtil.TEST_PATH));
-            assertEquals(4, Result.getUsers().size());
+            Result = iam.listUsers(ListUsersRequest.builder()
+                                                   .pathPrefix(IAMUtil.TEST_PATH).build());
+            assertEquals(4, Result.users().size());
 
         } finally {
             IAMUtil.deleteTestUsers(username1, username2, username3, username4);
@@ -202,48 +191,48 @@ public class UserIntegrationTest extends IntegrationTestBase {
         String username4 = IAMUtil.createTestUser();
 
         try {
-            ListUsersResult Result = iam.listUsers(new ListUsersRequest()
-                                                           .withMaxItems(2).withPathPrefix(IAMUtil.TEST_PATH));
+            ListUsersResult Result = iam.listUsers(ListUsersRequest.builder()
+                                                                   .maxItems(2).pathPrefix(IAMUtil.TEST_PATH).build());
 
-            assertEquals(2, Result.getUsers().size());
+            assertEquals(2, Result.users().size());
             assertEquals(true, Result.isTruncated());
 
             int matches = 0;
 
-            for (User u : Result.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : Result.users()) {
+                if (u.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     matches |= 2;
                 }
-                if (u.getUserName().equals(username4)) {
+                if (u.userName().equals(username4)) {
                     matches |= 3;
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     matches |= 4;
                 }
             }
 
-            String marker = Result.getMarker();
+            String marker = Result.marker();
 
-            Result = iam.listUsers(new ListUsersRequest().withPathPrefix(
-                    IAMUtil.TEST_PATH).withMarker(marker));
+            Result = iam.listUsers(ListUsersRequest.builder().pathPrefix(
+                    IAMUtil.TEST_PATH).marker(marker).build());
 
-            assertEquals(2, Result.getUsers().size());
+            assertEquals(2, Result.users().size());
             assertEquals(false, Result.isTruncated());
 
-            for (User u : Result.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : Result.users()) {
+                if (u.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     matches |= 2;
                 }
-                if (u.getUserName().equals(username4)) {
+                if (u.userName().equals(username4)) {
                     matches |= 3;
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     matches |= 4;
                 }
             }
@@ -262,26 +251,25 @@ public class UserIntegrationTest extends IntegrationTestBase {
                 .makePath("second");
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username)
-                                                  .withPath(firstPath));
+            iam.createUser(CreateUserRequest.builder().userName(username)
+                                            .path(firstPath).build());
 
-            GetUserResult Result = iam.getUser(new GetUserRequest()
-                                                       .withUserName(username));
-            assertEquals(firstPath, Result.getUser().getPath());
+            GetUserResult Result = iam.getUser(GetUserRequest.builder()
+                                                             .userName(username).build());
+            assertEquals(firstPath, Result.user().path());
 
-            String id = Result.getUser().getUserId();
+            String id = Result.user().userId();
 
-            iam.updateUser(new UpdateUserRequest().withUserName(username)
-                                                  .withNewPath(secondPath).withNewUserName(newusername));
+            iam.updateUser(UpdateUserRequest.builder().userName(username)
+                                            .newPath(secondPath).newUserName(newusername).build());
 
-            Result = iam
-                    .getUser(new GetUserRequest().withUserName(newusername));
+            Result = iam.getUser(GetUserRequest.builder().userName(newusername).build());
 
-            assertEquals(newusername, Result.getUser().getUserName());
-            assertEquals(secondPath, Result.getUser().getPath());
-            assertEquals(id, Result.getUser().getUserId());
+            assertEquals(newusername, Result.user().userName());
+            assertEquals(secondPath, Result.user().path());
+            assertEquals(id, Result.user().userId());
         } finally {
-            iam.deleteUser(new DeleteUserRequest().withUserName(newusername));
+            iam.deleteUser(DeleteUserRequest.builder().userName(newusername).build());
         }
     }
 
@@ -289,16 +277,16 @@ public class UserIntegrationTest extends IntegrationTestBase {
     public void TestDeleteUser() {
         String username = IAMUtil.uniqueName();
 
-        iam.createUser(new CreateUserRequest().withUserName(username).withPath(
-                IAMUtil.TEST_PATH));
+        iam.createUser(CreateUserRequest.builder().userName(username).path(
+                IAMUtil.TEST_PATH).build());
 
-        GetUserResult Result = iam.getUser(new GetUserRequest()
-                                                   .withUserName(username));
-        assertEquals(username, Result.getUser().getUserName());
+        GetUserResult Result = iam.getUser(GetUserRequest.builder()
+                                                         .userName(username).build());
+        assertEquals(username, Result.user().userName());
 
-        iam.deleteUser(new DeleteUserRequest().withUserName(username));
+        iam.deleteUser(DeleteUserRequest.builder().userName(username).build());
 
-        iam.getUser(new GetUserRequest().withUserName(username));
+        iam.getUser(GetUserRequest.builder().userName(username).build());
     }
 
     @Test(expected = EntityAlreadyExistsException.class)
@@ -306,12 +294,12 @@ public class UserIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.uniqueName();
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username)
-                                                  .withPath(IAMUtil.TEST_PATH));
+            iam.createUser(CreateUserRequest.builder().userName(username)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username)
+                                            .path(IAMUtil.TEST_PATH).build());
         } finally {
-            iam.deleteUser(new DeleteUserRequest().withUserName(username));
+            iam.deleteUser(DeleteUserRequest.builder().userName(username).build());
         }
     }
 
@@ -319,8 +307,8 @@ public class UserIntegrationTest extends IntegrationTestBase {
     public void TestUpdateNonexistantUser() {
         String username = IAMUtil.uniqueName();
 
-        iam.updateUser(new UpdateUserRequest().withUserName(username)
-                                              .withNewPath("/lala/"));
+        iam.updateUser(UpdateUserRequest.builder().userName(username)
+                                        .newPath("/lala/").build());
     }
 
 }

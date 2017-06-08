@@ -51,7 +51,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
@@ -90,8 +89,8 @@ import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field;
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.ServiceMetadata;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -237,7 +236,6 @@ import software.amazon.awssdk.services.s3.model.PartListing;
 import software.amazon.awssdk.services.s3.model.Permission;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResult;
-import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.services.s3.model.RequestPaymentConfiguration;
 import software.amazon.awssdk.services.s3.model.RequestPaymentConfiguration.Payer;
 import software.amazon.awssdk.services.s3.model.ResponseHeaderOverrides;
@@ -1256,20 +1254,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
     }
 
     @Override
-    @Deprecated
-    public Bucket createBucket(String bucketName, Region region)
-            throws SdkClientException, AmazonServiceException {
-        return createBucket(new CreateBucketRequest(bucketName, region));
-    }
-
-    @Override
-    @Deprecated
-    public Bucket createBucket(String bucketName, String region)
-            throws SdkClientException, AmazonServiceException {
-        return createBucket(new CreateBucketRequest(bucketName, region));
-    }
-
-    @Override
     public Bucket createBucket(CreateBucketRequest createBucketRequest)
             throws SdkClientException, AmazonServiceException {
         rejectNull(createBucketRequest,
@@ -1306,7 +1290,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
          * We can only send the CreateBucketConfiguration if we're *not*
          * creating a bucket in the US region.
          */
-        if (requestRegion != null && !StringUtils.upperCase(requestRegion).equals(Region.US_Standard.toString())) {
+        if (requestRegion != null && !StringUtils.upperCase(requestRegion).equals(Region.US_EAST_1.value())) {
             XmlWriter xml = new XmlWriter();
             xml.start("CreateBucketConfiguration", "xmlns", Constants.XML_NAMESPACE);
             xml.start("LocationConstraint").value(requestRegion).end();
@@ -1332,7 +1316,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         // is routed so that it will succeed.
 
         software.amazon.awssdk.regions.Region targetRegion =
-                software.amazon.awssdk.regions.Region.getRegion(Regions.fromName(requestRegion));
+                software.amazon.awssdk.regions.Region.of(requestRegion);
         return new DefaultServiceEndpointBuilder(getEndpointPrefix(),
                                                  clientConfiguration.getProtocol().toString()).withRegion(targetRegion)
                                                                                               .getServiceEndpoint();
@@ -3772,8 +3756,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                 if (region != null) {
                     // If cache contains the region for the bucket, create an endpoint for the region and
                     // update the request with that endpoint.
-                    URI endpoint = RuntimeHttpUtils.toUri(RegionUtils.getRegion(region).getServiceEndpoint(S3_SERVICE_NAME),
-                                                          clientConfiguration);
+                    URI endpoint = ServiceMetadata.of(ENDPOINT_PREFIX).endpointFor(Region.of(region));
                     resolveRequestEndpoint(request, bucketName, key, endpoint);
                     return updateSigV4SignerWithRegion((AwsS3V4Signer) signer, region);
                 } else if (request.getOriginalRequest() instanceof GeneratePresignedUrlRequest) {
@@ -4047,53 +4030,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         return ServiceUtils.convertRequestToUrl(request, false, false);
     }
 
-    @Override
-    public synchronized Region getRegion() {
-        String authority = super.endpoint.getAuthority();
-        if (Constants.S3_HOSTNAME.equals(authority)) {
-            return Region.US_Standard;
-        } else {
-            Matcher m = Region.S3_REGIONAL_ENDPOINT_PATTERN.matcher(authority);
-            if (m.matches()) {
-                return Region.fromValue(m.group(1));
-            } else {
-                throw new IllegalStateException(
-                        "S3 client with invalid S3 endpoint configured: " + authority);
-            }
-        }
-    }
-
-    /**
-     * @deprecated use {@link AmazonS3ClientBuilder#setRegion(String)}.
-     */
-    @Override
-    @Deprecated
-    public synchronized void setRegion(software.amazon.awssdk.regions.Region region) {
-        super.setRegion(region);
-        /*
-         * We need to preserve the user provided region. This is because the
-         * region might be mapped to a global s3 endpoint (e.g. when the client
-         * is in accelerate mode), in which case we won't be able to extract the
-         * region back from the endpoint during request signing phase.
-         */
-        clientRegion = region.getName();
-    }
-
-    @Override
-    public String getRegionName() {
-        String authority = super.endpoint.getAuthority();
-        if (Constants.S3_HOSTNAME.equals(authority)) {
-            return "us-east-1";
-        }
-        Matcher m = Region.S3_REGIONAL_ENDPOINT_PATTERN.matcher(authority);
-        try {
-            m.matches();
-            return RegionUtils.getRegion(m.group(1)).getName();
-        } catch (Exception e) {
-            throw new IllegalStateException("No valid region has been specified. Unable to return region name", e);
-        }
-    }
-
     /**
      * Creates and initializes a new request object for the specified S3
      * resource. This method is responsible for determining the right way to
@@ -4158,7 +4094,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
     private ServiceEndpointBuilder getBuilder(URI endpoint, String protocol, boolean useDefaultBuilder) {
         if (clientOptions.isDualstackEnabled() && !clientOptions.isAccelerateModeEnabled()) {
-            return new DualstackEndpointBuilder(getServiceNameIntern(), protocol, getRegion().toAwsRegion());
+            return new DualstackEndpointBuilder(getServiceNameIntern(), protocol, Region.of(getSignerRegion()));
         } else {
             if (useDefaultBuilder) {
                 return new DefaultServiceEndpointBuilder(getServiceName(), protocol);
@@ -4939,7 +4875,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         }
 
         final String regionStr = fetchRegionFromCache(bucketName);
-        final software.amazon.awssdk.regions.Region region = RegionUtils.getRegion(regionStr);
+        final software.amazon.awssdk.regions.Region region = Region.of(regionStr);
 
         if (region == null) {
             log.warn("Region information for "
@@ -4948,7 +4884,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         }
 
         return region != null
-               ? RuntimeHttpUtils.toUri(region.getServiceEndpoint(S3_SERVICE_NAME), clientConfiguration)
+               ? ServiceMetadata.of(ENDPOINT_PREFIX).endpointFor(region)
                : endpoint;
     }
 

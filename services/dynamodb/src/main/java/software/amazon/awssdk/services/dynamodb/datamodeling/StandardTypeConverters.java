@@ -40,17 +40,17 @@ import software.amazon.awssdk.util.DateUtils;
 /**
  * Type conversions.
  *
- * @see software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTypeConverter
+ * @see DynamoDbTypeConverter
  */
 @SdkInternalApi
-final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
+final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
 
     /**
      * Standard scalar type-converter factory.
      */
-    private static final DynamoDBTypeConverterFactory FACTORY = new StandardTypeConverters();
+    private static final DynamoDbTypeConverterFactory FACTORY = new StandardTypeConverters();
 
-    static DynamoDBTypeConverterFactory factory() {
+    static DynamoDbTypeConverterFactory factory() {
         return StandardTypeConverters.FACTORY;
     }
 
@@ -58,12 +58,12 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
      * {@inheritDoc}
      */
     @Override
-    public <S, T> DynamoDBTypeConverter<S, T> getConverter(Class<S> sourceType, Class<T> targetType) {
+    public <S, T> DynamoDbTypeConverter<S, T> getConverter(Class<S> sourceType, Class<T> targetType) {
         final Scalar source = Scalar.of(sourceType);
         final Scalar target = Scalar.of(targetType);
         final Converter<S, T> toSource = source.getConverter(sourceType, target.<T>type());
         final Converter<T, S> toTarget = target.getConverter(targetType, source.<S>type());
-        return new StandardDynamoDBTypeConverter<>(toSource, toTarget);
+        return new StandardDynamoDbTypeConverter<>(toSource, toTarget);
     }
 
     /**
@@ -369,11 +369,11 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
         abstract boolean is(Class<?> type);
 
         static final class ToList extends Vector {
-            <S, T> DynamoDBTypeConverter<List<S>, List<T>> join(final DynamoDBTypeConverter<S, T> scalar) {
+            <S, T> DynamoDbTypeConverter<List<S>, List<T>> join(final DynamoDbTypeConverter<S, T> scalar) {
                 return new ListTypeConverter<>(scalar);
             }
 
-            <S, T> List<S> convert(Collection<T> o, DynamoDBTypeConverter<S, T> scalar) {
+            <S, T> List<S> convert(Collection<T> o, DynamoDbTypeConverter<S, T> scalar) {
                 final List<S> vector = new ArrayList<S>(o.size());
                 for (final T t : o) {
                     vector.add(scalar.convert(t));
@@ -381,7 +381,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
                 return vector;
             }
 
-            <S, T> List<T> unconvert(Collection<S> o, DynamoDBTypeConverter<S, T> scalar) {
+            <S, T> List<T> unconvert(Collection<S> o, DynamoDbTypeConverter<S, T> scalar) {
                 final List<T> vector = new ArrayList<T>(o.size());
                 for (final S s : o) {
                     vector.add(scalar.unconvert(s));
@@ -394,10 +394,10 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
                 return List.class.isAssignableFrom(type);
             }
 
-            private static class ListTypeConverter<S, T> implements DynamoDBTypeConverter<List<S>, List<T>> {
-                private final DynamoDBTypeConverter<S, T> scalar;
+            private static class ListTypeConverter<S, T> implements DynamoDbTypeConverter<List<S>, List<T>> {
+                private final DynamoDbTypeConverter<S, T> scalar;
 
-                public ListTypeConverter(DynamoDBTypeConverter<S, T> scalar) {
+                public ListTypeConverter(DynamoDbTypeConverter<S, T> scalar) {
                     this.scalar = scalar;
                 }
 
@@ -414,11 +414,11 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
         }
 
         static final class ToMap extends Vector {
-            <K, S, T> DynamoDBTypeConverter<Map<K, S>, Map<K, T>> join(final DynamoDBTypeConverter<S, T> scalar) {
+            <K, S, T> DynamoDbTypeConverter<Map<K, S>, Map<K, T>> join(final DynamoDbTypeConverter<S, T> scalar) {
                 return new MapTypeConverter<>(scalar);
             }
 
-            <K, S, T> Map<K, S> convert(Map<K, T> o, DynamoDBTypeConverter<S, T> scalar) {
+            <K, S, T> Map<K, S> convert(Map<K, T> o, DynamoDbTypeConverter<S, T> scalar) {
                 final Map<K, S> vector = new LinkedHashMap<K, S>();
                 for (final Map.Entry<K, T> t : o.entrySet()) {
                     vector.put(t.getKey(), scalar.convert(t.getValue()));
@@ -426,7 +426,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
                 return vector;
             }
 
-            <K, S, T> Map<K, T> unconvert(Map<K, S> o, DynamoDBTypeConverter<S, T> scalar) {
+            <K, S, T> Map<K, T> unconvert(Map<K, S> o, DynamoDbTypeConverter<S, T> scalar) {
                 final Map<K, T> vector = new LinkedHashMap<K, T>();
                 for (final Map.Entry<K, S> s : o.entrySet()) {
                     vector.put(s.getKey(), scalar.unconvert(s.getValue()));
@@ -438,10 +438,10 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
                 return Map.class.isAssignableFrom(type);
             }
 
-            private static class MapTypeConverter<K, S, T> implements DynamoDBTypeConverter<Map<K, S>, Map<K, T>> {
-                private final DynamoDBTypeConverter<S, T> scalar;
+            private static class MapTypeConverter<K, S, T> implements DynamoDbTypeConverter<Map<K, S>, Map<K, T>> {
+                private final DynamoDbTypeConverter<S, T> scalar;
 
-                public MapTypeConverter(DynamoDBTypeConverter<S, T> scalar) {
+                public MapTypeConverter(DynamoDbTypeConverter<S, T> scalar) {
                     this.scalar = scalar;
                 }
 
@@ -458,15 +458,15 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
         }
 
         static final class ToSet extends Vector {
-            <S, T> DynamoDBTypeConverter<List<S>, Collection<T>> join(final DynamoDBTypeConverter<S, T> target) {
+            <S, T> DynamoDbTypeConverter<List<S>, Collection<T>> join(final DynamoDbTypeConverter<S, T> target) {
                 return new SetTypeConverter<>(target);
             }
 
-            <S, T> Set<T> unconvert(Collection<S> o, DynamoDBTypeConverter<S, T> scalar) {
+            <S, T> Set<T> unconvert(Collection<S> o, DynamoDbTypeConverter<S, T> scalar) {
                 final Set<T> vector = new LinkedHashSet<T>();
                 for (final S s : o) {
                     if (vector.add(scalar.unconvert(s)) == false) {
-                        throw new DynamoDBMappingException("duplicate value (" + s + ")");
+                        throw new DynamoDbMappingException("duplicate value (" + s + ")");
                     }
                 }
                 return vector;
@@ -476,10 +476,10 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
                 return Set.class.isAssignableFrom(type);
             }
 
-            private static class SetTypeConverter<S, T> implements DynamoDBTypeConverter<List<S>, Collection<T>> {
-                private final DynamoDBTypeConverter<S, T> target;
+            private static class SetTypeConverter<S, T> implements DynamoDbTypeConverter<List<S>, Collection<T>> {
+                private final DynamoDbTypeConverter<S, T> target;
 
-                public SetTypeConverter(DynamoDBTypeConverter<S, T> target) {
+                public SetTypeConverter(DynamoDbTypeConverter<S, T> target) {
                     this.target = target;
                 }
 
@@ -528,7 +528,7 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
             if (isAssignableFrom(targetType)) {
                 return (Converter<S, T>) ToObject.FROM_OBJECT;
             }
-            throw new DynamoDBMappingException(
+            throw new DynamoDbMappingException(
                     "type [" + targetType + "] is not supported; no conversion from " + referenceType
             );
         }
@@ -1019,11 +1019,11 @@ final class StandardTypeConverters extends DynamoDBTypeConverterFactory {
         public abstract S convert(T o);
     }
 
-    private static class StandardDynamoDBTypeConverter<S, T> implements DynamoDBTypeConverter<S, T> {
+    private static class StandardDynamoDbTypeConverter<S, T> implements DynamoDbTypeConverter<S, T> {
         private final Converter<S, T> toSource;
         private final Converter<T, S> toTarget;
 
-        public StandardDynamoDBTypeConverter(Converter<S, T> toSource, Converter<T, S> toTarget) {
+        public StandardDynamoDbTypeConverter(Converter<S, T> toSource, Converter<T, S> toTarget) {
             this.toSource = toSource;
             this.toTarget = toTarget;
         }

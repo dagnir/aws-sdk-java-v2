@@ -22,7 +22,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iot.model.AttributePayload;
 import software.amazon.awssdk.services.iot.model.CertificateStatus;
 import software.amazon.awssdk.services.iot.model.CreateCertificateFromCsrRequest;
@@ -72,17 +72,17 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setup() throws IOException {
         setUpCredentials();
-        client = IoTClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_WEST_2).build();
+        client = IoTClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_WEST_2).build();
         THING_ATTRIBUTES.put(ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
     }
 
     @AfterClass
     public static void tearDown() throws IOException {
         if (client != null) {
-            client.deleteThing(new DeleteThingRequest().withThingName(THING_NAME));
-            client.deletePolicy(new DeletePolicyRequest().withPolicyName(POLICY_NAME));
+            client.deleteThing(DeleteThingRequest.builder().thingName(THING_NAME).build());
+            client.deletePolicy(DeletePolicyRequest.builder().policyName(POLICY_NAME).build());
             if (certificateId != null) {
-                client.deleteCertificate(new DeleteCertificateRequest().withCertificateId(certificateId));
+                client.deleteCertificate(DeleteCertificateRequest.builder().certificateId(certificateId).build());
             }
         }
     }
@@ -90,68 +90,67 @@ public class IotControlPlaneIntegrationTest extends AwsTestBase {
     @Test
     public void describe_and_list_thing_returns_created_thing() {
 
-        final CreateThingRequest createReq = new CreateThingRequest()
-                .withThingName(THING_NAME)
-                .withAttributePayload(new AttributePayload()
-                                              .withAttributes(THING_ATTRIBUTES));
+        final CreateThingRequest createReq = CreateThingRequest.builder()
+                                                               .thingName(THING_NAME)
+                                                               .attributePayload(AttributePayload.builder().attributes(THING_ATTRIBUTES).build())
+                                                               .build();
         CreateThingResult result = client.createThing(createReq);
-        Assert.assertNotNull(result.getThingArn());
-        Assert.assertEquals(THING_NAME, result.getThingName());
+        Assert.assertNotNull(result.thingArn());
+        Assert.assertEquals(THING_NAME, result.thingName());
 
-        final DescribeThingRequest descRequest = new DescribeThingRequest()
-                .withThingName(THING_NAME);
+        final DescribeThingRequest descRequest = DescribeThingRequest.builder().thingName(THING_NAME).build();
 
         DescribeThingResult descResult = client.describeThing(descRequest);
-        Map<String, String> actualAttributes = descResult.getAttributes();
+        Map<String, String> actualAttributes = descResult.attributes();
         Assert.assertEquals(THING_ATTRIBUTES.size(), actualAttributes.size());
         Assert.assertTrue(actualAttributes.containsKey(ATTRIBUTE_NAME));
         Assert.assertEquals(THING_ATTRIBUTES.get(ATTRIBUTE_NAME), actualAttributes.get(ATTRIBUTE_NAME));
 
-        ListThingsResult listResult = client.listThings(new ListThingsRequest());
-        Assert.assertFalse(listResult.getThings().isEmpty());
+        ListThingsResult listResult = client.listThings(ListThingsRequest.builder().build());
+        Assert.assertFalse(listResult.things().isEmpty());
     }
 
     @Test
     public void get_policy_returns_created_policy() {
 
-        final CreatePolicyRequest createReq = new CreatePolicyRequest()
-                .withPolicyName(POLICY_NAME)
-                .withPolicyDocument(POLICY_DOC);
+        final CreatePolicyRequest createReq = CreatePolicyRequest.builder().policyName(POLICY_NAME).policyDocument(POLICY_DOC).build();
 
         CreatePolicyResult createResult = client.createPolicy(createReq);
-        Assert.assertNotNull(createResult.getPolicyArn());
-        Assert.assertNotNull(createResult.getPolicyVersionId());
+        Assert.assertNotNull(createResult.policyArn());
+        Assert.assertNotNull(createResult.policyVersionId());
 
 
-        final GetPolicyVersionRequest getRequest = new GetPolicyVersionRequest()
-                .withPolicyName(POLICY_NAME)
-                .withPolicyVersionId(createResult.getPolicyVersionId());
+        final GetPolicyVersionRequest request = GetPolicyVersionRequest.builder()
+                                                                       .policyName(POLICY_NAME)
+                                                                       .policyVersionId(createResult.policyVersionId())
+                                                                       .build();
 
-        GetPolicyVersionResult getResult = client.getPolicyVersion(getRequest);
-        Assert.assertEquals(createResult.getPolicyArn(), getResult.getPolicyArn());
-        Assert.assertEquals(createResult.getPolicyVersionId(), getResult.getPolicyVersionId());
+        GetPolicyVersionResult result = client.getPolicyVersion(request);
+        Assert.assertEquals(createResult.policyArn(), result.policyArn());
+        Assert.assertEquals(createResult.policyVersionId(), result.policyVersionId());
     }
 
     @Test
     public void createCertificate_Returns_success() {
-        final CreateKeysAndCertificateRequest createReq = new CreateKeysAndCertificateRequest()
-                .withSetAsActive(true);
+        final CreateKeysAndCertificateRequest createReq = CreateKeysAndCertificateRequest.builder().setAsActive(true).build();
         CreateKeysAndCertificateResult createResult = client.createKeysAndCertificate(createReq);
-        Assert.assertNotNull(createResult.getCertificateArn());
-        Assert.assertNotNull(createResult.getCertificateId());
-        Assert.assertNotNull(createResult.getCertificatePem());
-        Assert.assertNotNull(createResult.getKeyPair());
+        Assert.assertNotNull(createResult.certificateArn());
+        Assert.assertNotNull(createResult.certificateId());
+        Assert.assertNotNull(createResult.certificatePem());
+        Assert.assertNotNull(createResult.keyPair());
 
-        certificateId = createResult.getCertificateId();
+        certificateId = createResult.certificateId();
 
-        client.updateCertificate(new UpdateCertificateRequest()
-                                         .withCertificateId(certificateId)
-                                         .withNewStatus(CertificateStatus.REVOKED));
+        client.updateCertificate(UpdateCertificateRequest.builder()
+                                                         .certificateId(certificateId)
+                                                         .newStatus(CertificateStatus.REVOKED)
+                                                         .build());
     }
 
     @Test(expected = InvalidRequestException.class)
     public void create_certificate_from_invalid_csr_throws_exception() {
-        client.createCertificateFromCsr(new CreateCertificateFromCsrRequest()
-                                                .withCertificateSigningRequest("invalid-csr-string"));
+        client.createCertificateFromCsr(CreateCertificateFromCsrRequest.builder()
+                                                                       .certificateSigningRequest("invalid-csr-string")
+                                                                       .build());
     }
 }

@@ -24,6 +24,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static software.amazon.awssdk.config.AdvancedClientOption.ENABLE_DEFAULT_REGION_DETECTION;
+import static software.amazon.awssdk.config.AdvancedClientOption.SIGNER_PROVIDER;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -41,7 +43,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.StaticSignerProvider;
-import software.amazon.awssdk.config.ClientSecurityConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
@@ -49,6 +51,7 @@ import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
+import software.amazon.awssdk.regions.Region;
 
 /**
  * Validate the functionality of the {@link DefaultClientBuilder}.
@@ -62,7 +65,7 @@ public class DefaultClientBuilderTest {
             .build();
 
     private static final String ENDPOINT_PREFIX = "prefix";
-    private static final StaticSignerProvider SIGNER_PROVIDER = new StaticSignerProvider(new Aws4Signer());
+    private static final StaticSignerProvider TEST_SIGNER_PROVIDER = new StaticSignerProvider(new Aws4Signer());
     private static final URI ENDPOINT = URI.create("https://example.com");
 
     @Mock
@@ -75,39 +78,39 @@ public class DefaultClientBuilderTest {
 
     @Test
     public void buildIncludesServiceDefaults() {
-        TestClient client = testClientBuilder().region("us-west-1").build();
-        assertThat(client.syncClientConfiguration.securityConfiguration().signerProvider()).hasValue(SIGNER_PROVIDER);
-        assertThat(client.asyncClientConfiguration.securityConfiguration().signerProvider()).hasValue(SIGNER_PROVIDER);
+        TestClient client = testClientBuilder().region(Region.US_WEST_1).build();
+        assertThat(client.syncClientConfiguration.overrideConfiguration().advancedOption(SIGNER_PROVIDER))
+                .isEqualTo(TEST_SIGNER_PROVIDER);
+        assertThat(client.asyncClientConfiguration.overrideConfiguration().advancedOption(SIGNER_PROVIDER))
+                .isEqualTo(TEST_SIGNER_PROVIDER);
         assertThat(client.signingRegion).isNotNull();
     }
 
     @Test
     public void buildWithRegionShouldHaveCorrectEndpointAndSigningRegion() {
-        TestClient client = testClientBuilder().region("us-west-1").build();
+        TestClient client = testClientBuilder().region(Region.US_WEST_1).build();
 
         assertThat(client.syncClientConfiguration.endpoint())
                 .hasToString("https://" + ENDPOINT_PREFIX + ".us-west-1.amazonaws.com");
-        assertThat(client.signingRegion).isEqualTo("us-west-1");
+        assertThat(client.signingRegion).isEqualTo(Region.US_WEST_1);
     }
 
     @Test
     public void buildWithEndpointShouldHaveCorrectEndpointAndSigningRegion() {
-        TestClient client = testClientBuilder().region("us-west-1").endpointOverride(ENDPOINT).build();
+        TestClient client = testClientBuilder().region(Region.US_WEST_1).endpointOverride(ENDPOINT).build();
 
         assertThat(client.syncClientConfiguration.endpoint()).isEqualTo(ENDPOINT);
-        assertThat(client.signingRegion).isEqualTo("us-west-1");
+        assertThat(client.signingRegion).isEqualTo(Region.US_WEST_1);
     }
 
     @Test
     public void buildWithoutRegionOrEndpointOrDefaultProviderThrowsException() {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
-            testClientBuilder().build();
-        });
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> testClientBuilder().build());
     }
 
     @Test
     public void noClientProvided_DefaultHttpClientIsManagedBySdk() {
-        TestClient client = testClientBuilder().region("us-west-1").build();
+        TestClient client = testClientBuilder().region(Region.US_WEST_2).build();
         assertThat(client.syncClientConfiguration.httpClient())
                 .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
         verify(defaultHttpClientFactory, times(1)).createHttpClientWithDefaults(eq(MOCK_DEFAULTS));
@@ -116,7 +119,7 @@ public class DefaultClientBuilderTest {
     @Test
     public void clientFactoryProvided_ClientIsManagedBySdk() {
         TestClient client = testClientBuilder()
-                .region("us-west-1")
+                .region(Region.US_WEST_2)
                 .httpConfiguration(ClientHttpConfiguration.builder()
                                                           .httpClientFactory(serviceDefaults -> {
                                                               assertThat(serviceDefaults).isEqualTo(MOCK_DEFAULTS);
@@ -132,7 +135,7 @@ public class DefaultClientBuilderTest {
     @Test
     public void explicitClientProvided_ClientIsNotManagedBySdk() {
         TestClient client = testClientBuilder()
-                .region("us-west-1")
+                .region(Region.US_WEST_2)
                 .httpConfiguration(ClientHttpConfiguration.builder()
                                                           .httpClient(mock(SdkHttpClient.class))
                                                           .build())
@@ -158,7 +161,7 @@ public class DefaultClientBuilderTest {
                           .findFirst();
 
             assertThat(propertyForMethod).as(propertyName + " property").hasValueSatisfying(property -> {
-                assertThat(property.getReadMethod()).as(propertyName + " getter").isNotNull();
+                assertThat(property.getReadMethod()).as(propertyName + " getter").isNull();
                 assertThat(property.getWriteMethod()).as(propertyName + " setter").isNotNull();
             });
         });
@@ -166,18 +169,24 @@ public class DefaultClientBuilderTest {
     }
 
     private ClientBuilder<TestClientBuilder, TestClient> testClientBuilder() {
+        ClientOverrideConfiguration overrideConfig =
+                ClientOverrideConfiguration.builder()
+                                           .advancedOption(SIGNER_PROVIDER, TEST_SIGNER_PROVIDER)
+                                           .advancedOption(ENABLE_DEFAULT_REGION_DETECTION, false)
+                                           .build();
+
         return new TestClientBuilder().credentialsProvider(new AnonymousCredentialsProvider())
-                                      .defaultRegionDetectionEnabled(false);
+                                      .overrideConfiguration(overrideConfig);
     }
 
     private static class TestClient {
         private final ImmutableSyncClientConfiguration syncClientConfiguration;
         private final ImmutableAsyncClientConfiguration asyncClientConfiguration;
-        private final String signingRegion;
+        private final Region signingRegion;
 
-        public TestClient(ImmutableSyncClientConfiguration syncClientConfiguration,
-                          ImmutableAsyncClientConfiguration asyncClientConfiguration,
-                          String signingRegion) {
+        private TestClient(ImmutableSyncClientConfiguration syncClientConfiguration,
+                           ImmutableAsyncClientConfiguration asyncClientConfiguration,
+                           Region signingRegion) {
             this.syncClientConfiguration = syncClientConfiguration;
             this.asyncClientConfiguration = asyncClientConfiguration;
             this.signingRegion = signingRegion;
@@ -207,8 +216,9 @@ public class DefaultClientBuilderTest {
         protected ClientConfigurationDefaults serviceDefaults() {
             return new ClientConfigurationDefaults() {
                 @Override
-                protected void applySecurityDefaults(ClientSecurityConfiguration.Builder builder) {
-                    builder.signerProvider(SIGNER_PROVIDER);
+                protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
+                    ClientOverrideConfiguration config = builder.build();
+                    builder.advancedOption(SIGNER_PROVIDER, applyDefault(config.advancedOption(SIGNER_PROVIDER), () -> null));
                 }
             };
         }

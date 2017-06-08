@@ -28,7 +28,7 @@ import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.auth.internal.SignerConstants;
 import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.internal.AwsS3V4Signer;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
@@ -161,7 +161,7 @@ public class DefaultSigningMethodTest {
     @Test
     public void testStandardEndpointWithSetRegion() {
         AmazonS3Client s3 = new AmazonS3Client();
-        s3.setRegion(RegionUtils.getRegion("us-east-1"));
+        s3.setRegion(Region.of("us-east-1"));
 
         // Default to SigV4
         assertSigV4WithRegion(s3, "us-east-1");
@@ -174,7 +174,7 @@ public class DefaultSigningMethodTest {
     @Test
     public void testSetRegionAndRegionOverride() {
         AmazonS3Client s3 = new AmazonS3Client();
-        s3.setRegion(RegionUtils.getRegion("us-east-1"));
+        s3.setRegion(Region.of("us-east-1"));
 
         s3.setEndpoint("s3-eu-west-1.amazonaws.com");
         assertSigV4WithRegion(s3, "eu-west-1");

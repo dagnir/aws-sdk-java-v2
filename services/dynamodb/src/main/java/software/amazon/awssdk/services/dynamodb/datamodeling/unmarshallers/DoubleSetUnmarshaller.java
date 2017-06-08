@@ -38,7 +38,7 @@ public class DoubleSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<Double> result = new HashSet<Double>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(Double.valueOf(s));
         }
         return result;

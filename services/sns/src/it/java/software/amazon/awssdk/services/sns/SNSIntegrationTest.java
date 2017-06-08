@@ -23,7 +23,6 @@ import static org.junit.Assert.fail;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.sns.model.AddPermissionRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResult;
@@ -90,13 +90,13 @@ public class SNSIntegrationTest extends IntegrationTestBase {
     @After
     public void tearDown() throws Exception {
         if (topicArn != null) {
-            sns.deleteTopic(new DeleteTopicRequest(topicArn));
+            sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
         }
         if (queueUrl != null) {
-            sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+            sqs.deleteQueue(DeleteQueueRequest.builder().queueUrl(queueUrl).build());
         }
         if (subscriptionArn != null) {
-            sns.unsubscribe(new UnsubscribeRequest(subscriptionArn));
+            sns.unsubscribe(UnsubscribeRequest.builder().subscriptionArn(subscriptionArn).build());
         }
     }
 
@@ -106,7 +106,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
     @Test
     public void testCloudcastExceptionHandling() {
         try {
-            sns.createTopic(new CreateTopicRequest().withName(""));
+            sns.createTopic(CreateTopicRequest.builder().name("").build());
         } catch (AmazonServiceException ase) {
             assertEquals("InvalidParameter", ase.getErrorCode());
             assertEquals(ErrorType.Client, ase.getErrorType());
@@ -120,16 +120,17 @@ public class SNSIntegrationTest extends IntegrationTestBase {
     /** Tests the functionality in the Topics utility class. */
     @Test
     public void testTopics_subscribeQueue() throws Exception {
-        topicArn = sns.createTopic(new CreateTopicRequest("subscribeTopicTest-" + System.currentTimeMillis()))
-                      .getTopicArn();
-        queueUrl = sqs.createQueue(new CreateQueueRequest("subscribeTopicTest-" + System.currentTimeMillis()))
-                      .getQueueUrl();
+        topicArn = sns.createTopic(CreateTopicRequest.builder().name("subscribeTopicTest-" + System.currentTimeMillis()).build())
+                      .topicArn();
+        queueUrl = sqs.createQueue(
+                CreateQueueRequest.builder().queueName("subscribeTopicTest-" + System.currentTimeMillis()).build())
+                      .queueUrl();
 
         subscriptionArn = Topics.subscribeQueue(sns, sqs, topicArn, queueUrl);
         assertNotNull(subscriptionArn);
 
         // Verify that the queue is receiving messages
-        sns.publish(new PublishRequest(topicArn, "Hello SNS World").withSubject("Subject"));
+        sns.publish(PublishRequest.builder().topicArn(topicArn).message("Hello SNS World").subject("Subject").build());
         String message = receiveMessage();
         Map<String, String> messageDetails = parseJSON(message);
         assertEquals("Hello SNS World", messageDetails.get("Message"));
@@ -142,16 +143,17 @@ public class SNSIntegrationTest extends IntegrationTestBase {
     public void testSendUnicodeMessages() throws InterruptedException {
         String unicodeMessage = "你好";
         String unicodeSubject = "主题";
-        topicArn = sns.createTopic(new CreateTopicRequest("unicodeMessageTest-" + System.currentTimeMillis()))
-                      .getTopicArn();
-        queueUrl = sqs.createQueue(new CreateQueueRequest("unicodeMessageTest-" + System.currentTimeMillis()))
-                      .getQueueUrl();
+        topicArn = sns.createTopic(CreateTopicRequest.builder().name("unicodeMessageTest-" + System.currentTimeMillis()).build())
+                      .topicArn();
+        queueUrl = sqs.createQueue(
+                CreateQueueRequest.builder().queueName("unicodeMessageTest-" + System.currentTimeMillis()).build())
+                      .queueUrl();
 
         subscriptionArn = Topics.subscribeQueue(sns, sqs, topicArn, queueUrl);
         assertNotNull(subscriptionArn);
 
         // Verify that the queue is receiving unicode messages
-        sns.publish(new PublishRequest(topicArn, unicodeMessage).withSubject(unicodeSubject));
+        sns.publish(PublishRequest.builder().topicArn(topicArn).message(unicodeMessage).subject(unicodeSubject).build());
         String message = receiveMessage();
         Map<String, String> messageDetails = parseJSON(message);
         assertEquals(unicodeMessage, messageDetails.get("Message"));
@@ -159,9 +161,9 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         assertNotNull(messageDetails.get("MessageId"));
         assertNotNull(messageDetails.get("Signature"));
 
-        sns.deleteTopic(new DeleteTopicRequest(topicArn));
+        sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
         topicArn = null;
-        sqs.deleteQueue(new DeleteQueueRequest(queueUrl));
+        sqs.deleteQueue(DeleteQueueRequest.builder().queueUrl(queueUrl).build());
         queueUrl = null;
     }
 
@@ -169,41 +171,43 @@ public class SNSIntegrationTest extends IntegrationTestBase {
      * Tests that we can invoke operations on Cloudcast and correctly interpret the responses.
      */
     @Test
+    @ReviewBeforeRelease("This test uses a hardcoded certifacte. We should really download the cert from the SigningCertURL " +
+                         "in case SNS rotates their cert in the future.")
     public void testCloudcastOperations() throws Exception {
 
         // Create Topic
         CreateTopicResult createTopicResult = sns
-                .createTopic(new CreateTopicRequest("test-topic-" + System.currentTimeMillis()));
-        topicArn = createTopicResult.getTopicArn();
+                .createTopic(CreateTopicRequest.builder().name("test-topic-" + System.currentTimeMillis()).build());
+        topicArn = createTopicResult.topicArn();
         assertTrue(topicArn.length() > 1);
 
         // List Topics
         Thread.sleep(1000 * 5);
-        ListTopicsResult listTopicsResult = sns.listTopics(new ListTopicsRequest());
-        assertNotNull(listTopicsResult.getTopics());
-        assertTopicIsPresent(listTopicsResult.getTopics(), topicArn);
+        ListTopicsResult listTopicsResult = sns.listTopics(ListTopicsRequest.builder().build());
+        assertNotNull(listTopicsResult.topics());
+        assertTopicIsPresent(listTopicsResult.topics(), topicArn);
 
         // Set Topic Attributes
-        sns.setTopicAttributes(new SetTopicAttributesRequest().withTopicArn(topicArn).withAttributeName("DisplayName")
-                                                              .withAttributeValue("MyTopicName"));
+        sns.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(topicArn).attributeName("DisplayName")
+                                                        .attributeValue("MyTopicName").build());
 
         // Get Topic Attributes
         GetTopicAttributesResult getTopicAttributesResult = sns
-                .getTopicAttributes(new GetTopicAttributesRequest().withTopicArn(topicArn));
-        assertEquals("MyTopicName", getTopicAttributesResult.getAttributes().get("DisplayName"));
+                .getTopicAttributes(GetTopicAttributesRequest.builder().topicArn(topicArn).build());
+        assertEquals("MyTopicName", getTopicAttributesResult.attributes().get("DisplayName"));
 
         // Subscribe an SQS queue for notifications
         String queueArn = initializeReceivingQueue();
         SubscribeResult subscribeResult = sns
-                .subscribe(new SubscribeRequest().withEndpoint(queueArn).withProtocol("sqsAsync").withTopicArn(topicArn));
-        subscriptionArn = subscribeResult.getSubscriptionArn();
+                .subscribe(SubscribeRequest.builder().endpoint(queueArn).protocol("sqs").topicArn(topicArn).build());
+        subscriptionArn = subscribeResult.subscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
         // List Subscriptions by Topic
         Thread.sleep(1000 * 5);
         ListSubscriptionsByTopicResult listSubscriptionsByTopicResult = sns
-                .listSubscriptionsByTopic(new ListSubscriptionsByTopicRequest(topicArn));
-        assertSubscriptionIsPresent(listSubscriptionsByTopicResult.getSubscriptions(), subscriptionArn);
+                .listSubscriptionsByTopic(ListSubscriptionsByTopicRequest.builder().topicArn(topicArn).build());
+        assertSubscriptionIsPresent(listSubscriptionsByTopicResult.subscriptions(), subscriptionArn);
 
         // List Subscriptions
         List<Subscription> subscriptions = getAllSubscriptions(sns);
@@ -211,7 +215,8 @@ public class SNSIntegrationTest extends IntegrationTestBase {
 
         // Get Subscription Attributes
         Map<String, String> attributes = sns
-                .getSubscriptionAttributes(new GetSubscriptionAttributesRequest(subscriptionArn)).getAttributes();
+                .getSubscriptionAttributes(GetSubscriptionAttributesRequest.builder().subscriptionArn(subscriptionArn).build())
+                .attributes();
         assertTrue(attributes.size() > 0);
         Entry<String, String> entry = attributes.entrySet().iterator().next();
         assertNotNull(entry.getKey());
@@ -219,10 +224,11 @@ public class SNSIntegrationTest extends IntegrationTestBase {
 
         // Set Subscription Attributes
         sns.setSubscriptionAttributes(
-                new SetSubscriptionAttributesRequest(subscriptionArn, "DeliveryPolicy", DELIVERY_POLICY));
+                SetSubscriptionAttributesRequest.builder().subscriptionArn(subscriptionArn).attributeName("DeliveryPolicy")
+                                                .attributeValue(DELIVERY_POLICY).build());
 
         // Publish
-        sns.publish(new PublishRequest(topicArn, "Hello SNS World").withSubject("Subject"));
+        sns.publish(PublishRequest.builder().topicArn(topicArn).message("Hello SNS World").subject("Subject").build());
 
         // Receive Published Message
         String message = receiveMessage();
@@ -239,10 +245,14 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         assertTrue(signatureChecker.verifyMessageSignature(message, certificate.getPublicKey()));
 
         // Add/Remove Permissions
-        sns.addPermission(new AddPermissionRequest(topicArn, "foo", null, null)
-                                  .withActionNames(new String[] {"Publish"}).withAWSAccountIds(new String[] {"750203240092"}));
+        sns.addPermission(AddPermissionRequest.builder()
+                                              .topicArn(topicArn)
+                                              .label("foo")
+                                              .actionNames("Publish")
+                                              .awsAccountIds("750203240092")
+                                              .build());
         Thread.sleep(1000 * 5);
-        sns.removePermission(new RemovePermissionRequest(topicArn, "foo"));
+        sns.removePermission(RemovePermissionRequest.builder().topicArn(topicArn).label("foo").build());
     }
 
     /**
@@ -253,12 +263,11 @@ public class SNSIntegrationTest extends IntegrationTestBase {
      * @return List of all subscriptions
      */
     private List<Subscription> getAllSubscriptions(SNSClient sns) {
-        ListSubscriptionsResult result = sns.listSubscriptions(new ListSubscriptionsRequest());
-        List<Subscription> subscriptions = new ArrayList<Subscription>(result
-                                                                               .getSubscriptions());
-        while (result.getNextToken() != null) {
-            result = sns.listSubscriptions(new ListSubscriptionsRequest().withNextToken(result.getNextToken()));
-            subscriptions.addAll(result.getSubscriptions());
+        ListSubscriptionsResult result = sns.listSubscriptions(ListSubscriptionsRequest.builder().build());
+        List<Subscription> subscriptions = new ArrayList<>(result.subscriptions());
+        while (result.nextToken() != null) {
+            result = sns.listSubscriptions(ListSubscriptionsRequest.builder().nextToken(result.nextToken()).build());
+            subscriptions.addAll(result.subscriptions());
         }
         return subscriptions;
     }
@@ -266,50 +275,59 @@ public class SNSIntegrationTest extends IntegrationTestBase {
     @Test
     public void testSimplifiedMethods() throws InterruptedException {
         // Create Topic
-        CreateTopicResult createTopicResult = sns.createTopic(new CreateTopicRequest("test-topic-" + System.currentTimeMillis()));
-        topicArn = createTopicResult.getTopicArn();
+        CreateTopicResult createTopicResult =
+                sns.createTopic(CreateTopicRequest.builder().name("test-topic-" + System.currentTimeMillis()).build());
+        topicArn = createTopicResult.topicArn();
         assertTrue(topicArn.length() > 1);
 
         // List Topics
         Thread.sleep(1000 * 5);
-        ListTopicsResult listTopicsResult = sns.listTopics(new ListTopicsRequest());
-        assertNotNull(listTopicsResult.getTopics());
-        assertTopicIsPresent(listTopicsResult.getTopics(), topicArn);
+        ListTopicsResult listTopicsResult = sns.listTopics(ListTopicsRequest.builder().build());
+        assertNotNull(listTopicsResult.topics());
+        assertTopicIsPresent(listTopicsResult.topics(), topicArn);
 
         // Set Topic Attributes
-        sns.setTopicAttributes(new SetTopicAttributesRequest(topicArn, "DisplayName", "MyTopicName"));
+        sns.setTopicAttributes(
+                SetTopicAttributesRequest.builder().topicArn(topicArn).attributeName("DisplayName").attributeValue("MyTopicName")
+                                         .build());
 
         // Get Topic Attributes
-        GetTopicAttributesResult getTopicAttributesResult = sns.getTopicAttributes(new GetTopicAttributesRequest(topicArn));
-        assertEquals("MyTopicName", getTopicAttributesResult.getAttributes().get("DisplayName"));
+        GetTopicAttributesResult getTopicAttributesResult =
+                sns.getTopicAttributes(GetTopicAttributesRequest.builder().topicArn(topicArn).build());
+        assertEquals("MyTopicName", getTopicAttributesResult.attributes().get("DisplayName"));
 
         // Subscribe an SQS queue for notifications
-        queueUrl = sqs.createQueue(new CreateQueueRequest("subscribeTopicTest-" + System.currentTimeMillis()))
-                      .getQueueUrl();
+        queueUrl = sqs.createQueue(CreateQueueRequest.builder().queueName("subscribeTopicTest-" + System.currentTimeMillis())
+                                                     .build())
+                      .queueUrl();
         String queueArn = initializeReceivingQueue();
-        SubscribeResult subscribeResult = sns.subscribe(new SubscribeRequest(topicArn, "sqsAsync", queueArn));
-        String subscriptionArn = subscribeResult.getSubscriptionArn();
+        SubscribeResult subscribeResult =
+                sns.subscribe(SubscribeRequest.builder().topicArn(topicArn).protocol("sqs").endpoint(queueArn).build());
+        String subscriptionArn = subscribeResult.subscriptionArn();
         assertTrue(subscriptionArn.length() > 1);
 
         // List Subscriptions by Topic
         Thread.sleep(1000 * 5);
         ListSubscriptionsByTopicResult listSubscriptionsByTopicResult =
-                sns.listSubscriptionsByTopic(new ListSubscriptionsByTopicRequest(topicArn));
-        assertSubscriptionIsPresent(listSubscriptionsByTopicResult.getSubscriptions(), subscriptionArn);
+                sns.listSubscriptionsByTopic(ListSubscriptionsByTopicRequest.builder().topicArn(topicArn).build());
+        assertSubscriptionIsPresent(listSubscriptionsByTopicResult.subscriptions(), subscriptionArn);
 
         // Get Subscription Attributes
         Map<String, String> attributes =
-                sns.getSubscriptionAttributes(new GetSubscriptionAttributesRequest(subscriptionArn)).getAttributes();
+                sns.getSubscriptionAttributes(GetSubscriptionAttributesRequest.builder().subscriptionArn(subscriptionArn).build())
+                   .attributes();
         assertTrue(attributes.size() > 0);
         Entry<String, String> entry = attributes.entrySet().iterator().next();
         assertNotNull(entry.getKey());
         assertNotNull(entry.getValue());
 
         // Set Subscription Attributes
-        sns.setSubscriptionAttributes(new SetSubscriptionAttributesRequest(subscriptionArn, "DeliveryPolicy", DELIVERY_POLICY));
+        sns.setSubscriptionAttributes(
+                SetSubscriptionAttributesRequest.builder().subscriptionArn(subscriptionArn).attributeName("DeliveryPolicy")
+                                                .attributeValue(DELIVERY_POLICY).build());
 
         // Publish With Subject
-        sns.publish(new PublishRequest(topicArn, "Hello SNS World", "Subject"));
+        sns.publish(PublishRequest.builder().topicArn(topicArn).message("Hello SNS World").subject("Subject").build());
 
         // Receive Published Message
         String message = receiveMessage();
@@ -320,7 +338,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         assertNotNull(messageDetails.get("Signature"));
 
         // Publish Without Subject
-        sns.publish(new PublishRequest(topicArn, "Hello SNS World"));
+        sns.publish(PublishRequest.builder().topicArn(topicArn).message("Hello SNS World").build());
 
         // Receive Published Message
         message = receiveMessage();
@@ -330,15 +348,16 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         assertNotNull(messageDetails.get("Signature"));
 
         // Add/Remove Permissions
-        sns.addPermission(new AddPermissionRequest(topicArn, "foo", Arrays.asList("750203240092"), Arrays.asList("Publish")));
+        sns.addPermission(AddPermissionRequest.builder().topicArn(topicArn).label("foo").awsAccountIds("750203240092")
+                                              .actionNames("Publish").build());
         Thread.sleep(1000 * 5);
-        sns.removePermission(new RemovePermissionRequest(topicArn, "foo"));
+        sns.removePermission(RemovePermissionRequest.builder().topicArn(topicArn).label("foo").build());
 
         // Unsubscribe
-        sns.unsubscribe(new UnsubscribeRequest(subscriptionArn));
+        sns.unsubscribe(UnsubscribeRequest.builder().subscriptionArn(subscriptionArn).build());
 
         // Delete Topic
-        sns.deleteTopic(new DeleteTopicRequest(topicArn));
+        sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
         topicArn = null;
     }
 
@@ -354,9 +373,9 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         int maxRetries = 15;
         while (maxRetries-- > 0) {
             Thread.sleep(1000 * 10);
-            List<Message> messages = sqs.receiveMessage(new ReceiveMessageRequest(queueUrl)).getMessages();
+            List<Message> messages = sqs.receiveMessage(ReceiveMessageRequest.builder().queueUrl(queueUrl).build()).messages();
             if (messages.size() > 0) {
-                return new String(messages.get(0).getBody());
+                return new String(messages.get(0).body());
             }
         }
 
@@ -371,17 +390,16 @@ public class SNSIntegrationTest extends IntegrationTestBase {
      */
     private String initializeReceivingQueue() throws InterruptedException {
         String queueName = "sns-integ-test-" + System.currentTimeMillis();
-        this.queueUrl = sqs.createQueue(new CreateQueueRequest(queueName)).getQueueUrl();
+        this.queueUrl = sqs.createQueue(CreateQueueRequest.builder().queueName(queueName).build()).queueUrl();
 
         Thread.sleep(1000 * 4);
-        String queueArn = sqs
-                .getQueueAttributes(
-                        new GetQueueAttributesRequest(queueUrl).withAttributeNames(new String[] {"QueueArn"}))
-                .getAttributes().get("QueueArn");
-        HashMap<String, String> attributes = new HashMap<String, String>();
+        String queueArn = sqs.getQueueAttributes(
+                GetQueueAttributesRequest.builder().queueUrl(queueUrl).attributeNames(new String[] {"QueueArn"}).build())
+                             .attributes().get("QueueArn");
+        HashMap<String, String> attributes = new HashMap<>();
         attributes.put("Policy", generateSqsPolicyForTopic(queueArn, topicArn));
-        sqs.setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
-        int policyPropagationDelayInSeconds = 120;
+        sqs.setQueueAttributes(SetQueueAttributesRequest.builder().queueUrl(queueUrl).attributes(attributes).build());
+        int policyPropagationDelayInSeconds = 60;
         System.out.println("Sleeping " + policyPropagationDelayInSeconds + " seconds to let SQS policy propagate");
         Thread.sleep(1000 * policyPropagationDelayInSeconds);
         return queueArn;

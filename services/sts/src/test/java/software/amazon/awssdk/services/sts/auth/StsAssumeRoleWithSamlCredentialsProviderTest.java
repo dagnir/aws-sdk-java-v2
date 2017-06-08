@@ -29,12 +29,12 @@ public class StsAssumeRoleWithSamlCredentialsProviderTest
         extends StsCredentialsProviderTestBase<AssumeRoleWithSAMLRequest, AssumeRoleWithSAMLResult> {
     @Override
     protected AssumeRoleWithSAMLRequest getRequest() {
-        return new AssumeRoleWithSAMLRequest();
+        return AssumeRoleWithSAMLRequest.builder().build();
     }
 
     @Override
     protected AssumeRoleWithSAMLResult getResponse(Credentials credentials) {
-        return new AssumeRoleWithSAMLResult().withCredentials(credentials);
+        return AssumeRoleWithSAMLResult.builder().credentials(credentials).build();
     }
 
     @Override

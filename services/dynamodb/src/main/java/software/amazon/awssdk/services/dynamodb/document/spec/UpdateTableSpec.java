@@ -27,46 +27,47 @@ import software.amazon.awssdk.services.dynamodb.model.UpdateTableRequest;
  */
 public class UpdateTableSpec extends AbstractSpec<UpdateTableRequest> {
     public UpdateTableSpec() {
-        super(new UpdateTableRequest());
+        super(UpdateTableRequest.builder().build());
     }
 
     public ProvisionedThroughput getProvisionedThroughput() {
-        return getRequest().getProvisionedThroughput();
+        return getRequest().provisionedThroughput();
     }
 
     public UpdateTableSpec withProvisionedThroughput(
             ProvisionedThroughput provisionedThroughput) {
-        getRequest().setProvisionedThroughput(provisionedThroughput);
+        setRequest(getRequest().toBuilder().provisionedThroughput(provisionedThroughput).build());
         return this;
     }
 
     public List<AttributeDefinition> getAttributeDefinitions() {
-        return getRequest().getAttributeDefinitions();
+        return getRequest().attributeDefinitions();
     }
 
     public UpdateTableSpec withAttributeDefinitions(
             AttributeDefinition... attributeDefinitions) {
-        getRequest().withAttributeDefinitions(attributeDefinitions);
+        setRequest(getRequest().toBuilder().attributeDefinitions(attributeDefinitions).build());
         return this;
     }
 
     public UpdateTableSpec withAttributeDefinitions(
             Collection<AttributeDefinition> attributeDefinitions) {
-        getRequest().withAttributeDefinitions(attributeDefinitions);
+        setRequest(getRequest().toBuilder().attributeDefinitions(attributeDefinitions).build());
         return this;
     }
 
     public UpdateTableSpec withGlobalSecondaryIndexUpdates(
             GlobalSecondaryIndexUpdate... globalSecondaryIndexUpdates) {
-        getRequest().withGlobalSecondaryIndexUpdates(
-                globalSecondaryIndexUpdates);
+        setRequest(getRequest().toBuilder().globalSecondaryIndexUpdates(
+                globalSecondaryIndexUpdates).build());
         return this;
     }
 
     public UpdateTableSpec withGlobalSecondaryIndexUpdates(
             Collection<GlobalSecondaryIndexUpdate> globalSecondaryIndexUpdates) {
-        getRequest().withGlobalSecondaryIndexUpdates(
-                globalSecondaryIndexUpdates);
+        setRequest(getRequest().toBuilder().globalSecondaryIndexUpdates(
+                globalSecondaryIndexUpdates)
+                .build());
         return this;
     }
 }

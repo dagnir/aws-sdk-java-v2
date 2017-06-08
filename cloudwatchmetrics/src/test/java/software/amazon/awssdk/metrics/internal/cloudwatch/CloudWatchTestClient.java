@@ -39,8 +39,8 @@ public class CloudWatchTestClient implements CloudWatchClient {
     public PutMetricDataResult putMetricData(PutMetricDataRequest putMetricDataRequest)
             throws AmazonServiceException, AmazonClientException {
 
-        metricDatums.addAll(putMetricDataRequest.getMetricData());
-        return new PutMetricDataResult();
+        metricDatums.addAll(putMetricDataRequest.metricData());
+        return PutMetricDataResult.builder().build();
     }
 
     @Override

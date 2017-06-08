@@ -35,6 +35,6 @@ public class FloatUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return Float.valueOf(value.getN());
+        return Float.valueOf(value.n());
     }
 }

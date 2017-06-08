@@ -222,21 +222,21 @@ class QueueBuffer {
      */
     private boolean canBeRetrievedFromQueueBuffer(ReceiveMessageRequest rq) {
         return !hasRequestedQueueAttributes(rq) && !hasRequestedMessageAttributes(rq) && isBufferingEnabled()
-               && (rq.getVisibilityTimeout() == null);
+               && (rq.visibilityTimeout() == null);
     }
 
     /**
      * @return True if request has been configured to return queue attributes. False otherwise
      */
     private boolean hasRequestedQueueAttributes(ReceiveMessageRequest rq) {
-        return rq.getAttributeNames() != null && !rq.getAttributeNames().isEmpty();
+        return rq.attributeNames() != null && !rq.attributeNames().isEmpty();
     }
 
     /**
      * @return True if request has been configured to return message attributes. False otherwise
      */
     private boolean hasRequestedMessageAttributes(ReceiveMessageRequest rq) {
-        return rq.getMessageAttributeNames() != null && !rq.getMessageAttributeNames().isEmpty();
+        return rq.messageAttributeNames() != null && !rq.messageAttributeNames().isEmpty();
     }
 
     /**

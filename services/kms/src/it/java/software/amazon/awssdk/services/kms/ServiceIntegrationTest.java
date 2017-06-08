@@ -36,44 +36,50 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     private static void checkValid_KeyMetadata(KeyMetadata kmd) {
         Assert.assertNotNull(kmd);
 
-        Assert.assertNotNull(kmd.getArn());
-        Assert.assertNotNull(kmd.getAWSAccountId());
-        Assert.assertNotNull(kmd.getDescription());
-        Assert.assertNotNull(kmd.getKeyId());
-        Assert.assertNotNull(kmd.getKeyUsage());
-        Assert.assertNotNull(kmd.getCreationDate());
-        Assert.assertNotNull(kmd.getEnabled());
+        Assert.assertNotNull(kmd.arn());
+        Assert.assertNotNull(kmd.awsAccountId());
+        Assert.assertNotNull(kmd.description());
+        Assert.assertNotNull(kmd.keyId());
+        Assert.assertNotNull(kmd.keyUsage());
+        Assert.assertNotNull(kmd.creationDate());
+        Assert.assertNotNull(kmd.enabled());
     }
 
     @Test
     public void testKeyOperations() {
 
         // CreateKey
-        CreateKeyResult createKeyResult = kms.createKey(new CreateKeyRequest().withDescription("My KMS Key")
-                                                                              .withKeyUsage(KeyUsageType.ENCRYPT_DECRYPT));
-        checkValid_KeyMetadata(createKeyResult.getKeyMetadata());
+        CreateKeyResult createKeyResult = kms.createKey(CreateKeyRequest.builder()
+                                                                        .description("My KMS Key")
+                                                                        .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
+                                                                        .build());
+        checkValid_KeyMetadata(createKeyResult.keyMetadata());
 
-        final String keyId = createKeyResult.getKeyMetadata().getKeyId();
+        final String keyId = createKeyResult.keyMetadata().keyId();
 
         // DescribeKey
-        DescribeKeyResult describeKeyResult = kms.describeKey(new DescribeKeyRequest().withKeyId(keyId));
-        checkValid_KeyMetadata(describeKeyResult.getKeyMetadata());
+        DescribeKeyResult describeKeyResult = kms.describeKey(DescribeKeyRequest.builder().keyId(keyId).build());
+        checkValid_KeyMetadata(describeKeyResult.keyMetadata());
 
         // Enable/DisableKey
-        kms.enableKey(new EnableKeyRequest().withKeyId(keyId));
-        kms.disableKey(new DisableKeyRequest().withKeyId(keyId));
+        kms.enableKey(EnableKeyRequest.builder().keyId(keyId).build());
+        kms.disableKey(DisableKeyRequest.builder().keyId(keyId).build());
 
         // ListKeys
-        ListKeysResult listKeysResult = kms.listKeys(new ListKeysRequest());
-        Assert.assertFalse(listKeysResult.getKeys().isEmpty());
+        ListKeysResult listKeysResult = kms.listKeys(ListKeysRequest.builder().build());
+        Assert.assertFalse(listKeysResult.keys().isEmpty());
 
         // CreateAlias
-        kms.createAlias(new CreateAliasRequest().withAliasName("alias/my_key" + System.currentTimeMillis())
-                                                .withTargetKeyId(keyId));
+        kms.createAlias(CreateAliasRequest.builder()
+                                          .aliasName("alias/my_key" + System.currentTimeMillis())
+                                          .targetKeyId(keyId)
+                                          .build());
 
-        GetKeyPolicyResult getKeyPolicyResult = kms.getKeyPolicy(new GetKeyPolicyRequest().withKeyId(keyId)
-                                                                                          .withPolicyName("default"));
-        Assert.assertNotNull(getKeyPolicyResult.getPolicy());
+        GetKeyPolicyResult getKeyPolicyResult = kms.getKeyPolicy(GetKeyPolicyRequest.builder()
+                                                                                    .keyId(keyId)
+                                                                                    .policyName("default")
+                                                                                    .build());
+        Assert.assertNotNull(getKeyPolicyResult.policy());
 
     }
 }

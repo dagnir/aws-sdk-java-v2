@@ -39,13 +39,13 @@ public class ScanOutcome {
      * Returns a non-null list of the returned items; can be empty.
      */
     public List<Item> getItems() {
-        return InternalUtils.toItemList(result.getItems());
+        return InternalUtils.toItemList(result.items());
     }
 
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public ScanResult getScanResult() {
+    public ScanResult scanResult() {
         return result;
     }
 

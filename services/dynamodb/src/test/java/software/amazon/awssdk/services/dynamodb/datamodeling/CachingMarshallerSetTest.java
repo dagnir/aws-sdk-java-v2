@@ -42,12 +42,12 @@ public class CachingMarshallerSetTest {
 
         MOCK.queue.add(marshaller);
 
-        ArgumentMarshaller result = SUT.getMarshaller(
+        ArgumentMarshaller result = SUT.marshaller(
                 TestClass.class.getMethod("getString"));
 
         Assert.assertSame(marshaller, result);
 
-        result = SUT.getMarshaller(TestClass.class.getMethod("getString"));
+        result = SUT.marshaller(TestClass.class.getMethod("getString"));
 
         Assert.assertSame(marshaller, result);
 
@@ -60,7 +60,7 @@ public class CachingMarshallerSetTest {
 
         MOCK.queue.add(marshaller2);
 
-        result = SUT.getMarshaller(TestClass.class.getMethod("getInt"));
+        result = SUT.marshaller(TestClass.class.getMethod("getInt"));
 
         Assert.assertSame(marshaller2, result);
     }
@@ -74,12 +74,12 @@ public class CachingMarshallerSetTest {
                 new ArrayDeque<ArgumentMarshaller>();
 
         @Override
-        public ArgumentMarshaller getMarshaller(Method getter) {
+        public ArgumentMarshaller marshaller(Method getter) {
             return queue.remove();
         }
 
         @Override
-        public ArgumentMarshaller getMemberMarshaller(Type memberType) {
+        public ArgumentMarshaller memberMarshaller(Type memberType) {
             return memberQueue.remove();
         }
     }

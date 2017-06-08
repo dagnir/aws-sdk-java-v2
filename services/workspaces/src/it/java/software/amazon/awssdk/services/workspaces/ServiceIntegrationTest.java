@@ -32,27 +32,31 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void describeWorkspaces() {
-        DescribeWorkspacesResult result = client.describeWorkspaces(new DescribeWorkspacesRequest());
-        assertTrue(result.getWorkspaces().isEmpty());
+        DescribeWorkspacesResult result = client.describeWorkspaces(DescribeWorkspacesRequest.builder().build());
+        assertTrue(result.workspaces().isEmpty());
     }
 
     @Test
     public void describeWorkspaceBundles() {
-        DescribeWorkspaceBundlesResult result = client.describeWorkspaceBundles(new DescribeWorkspaceBundlesRequest());
-        assertTrue(result.getBundles().isEmpty());
+        DescribeWorkspaceBundlesResult result = client.describeWorkspaceBundles(DescribeWorkspaceBundlesRequest.builder().build());
+        assertTrue(result.bundles().isEmpty());
     }
 
     @Test
     public void describeWorkspaceDirectories() {
-        DescribeWorkspaceDirectoriesResult result = client.describeWorkspaceDirectories(new DescribeWorkspaceDirectoriesRequest());
-        assertTrue(result.getDirectories().isEmpty());
+        DescribeWorkspaceDirectoriesResult result = client.describeWorkspaceDirectories(DescribeWorkspaceDirectoriesRequest.builder().build());
+        assertTrue(result.directories().isEmpty());
     }
 
     @Test
     public void createWorkspaces() {
-        CreateWorkspacesResult result = client.createWorkspaces(new CreateWorkspacesRequest()
-                                                                        .withWorkspaces(new WorkspaceRequest().withUserName("hchar").withBundleId("wsb-12345678")
-                                                                                                              .withDirectoryId("d-12345678")));
-        assertTrue(result.getFailedRequests().size() == 1);
+        CreateWorkspacesResult result = client.createWorkspaces(CreateWorkspacesRequest.builder()
+                .workspaces(WorkspaceRequest.builder()
+                        .userName("hchar")
+                        .bundleId("wsb-12345678")
+                        .directoryId("d-12345678")
+                        .build())
+                .build());
+        assertTrue(result.failedRequests().size() == 1);
     }
 }

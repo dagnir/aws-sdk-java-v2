@@ -49,7 +49,7 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
         return doScan(new ScanSpec()
                               .withFilterExpression(filterExpression)
                               .withNameMap(nameMap)
-                              .withValueMap(valueMap));
+                              .valueMap(valueMap));
     }
 
 
@@ -61,7 +61,7 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
                               .withFilterExpression(filterExpression)
                               .withProjectionExpression(projectionExpression)
                               .withNameMap(nameMap)
-                              .withValueMap(valueMap));
+                              .valueMap(valueMap));
     }
 
     @Override
@@ -72,25 +72,27 @@ public class ScanImpl extends AbstractImpl implements ScanApi {
     protected ItemCollection<ScanOutcome> doScan(ScanSpec spec) {
         // set the table name
         String tableName = getTable().getTableName();
-        ScanRequest request = spec.getRequest().withTableName(tableName);
+        ScanRequest.Builder requestBuilder = spec.getRequest().toBuilder().tableName(tableName);
 
         // set up the start key, if any
         Collection<KeyAttribute> startKey = spec.getExclusiveStartKey();
         if (startKey != null) {
-            request.setExclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
+            requestBuilder.exclusiveStartKey(InternalUtils.toAttributeValueMap(startKey));
         }
 
         // scan filters;
-        Collection<ScanFilter> filters = spec.getScanFilters();
+        Collection<ScanFilter> filters = spec.scanFilters();
         if (filters != null) {
-            request.setScanFilter(InternalUtils.toAttributeConditionMap(filters));
+            requestBuilder.scanFilter(InternalUtils.toAttributeConditionMap(filters));
         }
 
         // set up the value map, if any (when expression API is used)
-        final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.getValueMap());
+        final Map<String, AttributeValue> attrValMap = InternalUtils.fromSimpleMap(spec.valueMap());
         // set up expressions, if any
-        request.withExpressionAttributeNames(spec.getNameMap())
-               .withExpressionAttributeValues(attrValMap);
+        requestBuilder.expressionAttributeNames(spec.nameMap())
+               .expressionAttributeValues(attrValMap);
+
+        spec.setRequest(requestBuilder.build());
         return new ScanCollection(getClient(), spec);
     }
 }

@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class StaticCredentialsProviderTest {
     @Test
-    public void getBasicAwsCredentials_ReturnsSameCredentials() throws Exception {
+    public void getAwsCredentials_ReturnsSameCredentials() throws Exception {
         final AwsCredentials credentials = new AwsCredentials("akid", "skid");
         final AwsCredentials actualCredentials =
                 new StaticCredentialsProvider(credentials).getCredentialsOrThrow();

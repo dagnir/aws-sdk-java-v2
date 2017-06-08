@@ -28,8 +28,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
-import software.amazon.awssdk.SDKGlobalTime;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.SdkGlobalTime;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
@@ -90,17 +90,18 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     @BeforeClass
     public static void createTestStacks() throws Exception {
         testStackName = uniqueName();
-        CreateStackResult response = cf.createStack(new CreateStackRequest()
-                                                            .withTemplateURL(templateUrlForStackIntegrationTests).withStackName(testStackName)
-                                                            .withStackPolicyBody(INIT_STACK_POLICY.toJson()));
-        testStackId = response.getStackId();
+        CreateStackResult response = cf.createStack(CreateStackRequest.builder()
+                                                                      .templateURL(templateUrlForStackIntegrationTests)
+                                                                      .stackName(testStackName)
+                                                                      .stackPolicyBody(INIT_STACK_POLICY.toJson()).build());
+        testStackId = response.stackId();
     }
 
     @AfterClass
     public static void tearDown() {
         CloudFormationIntegrationTestBase.tearDown();
         try {
-            cf.deleteStack(new DeleteStackRequest().withStackName(testStackName));
+            cf.deleteStack(DeleteStackRequest.builder().stackName(testStackName).build());
         } catch (Exception e) {
             // do not do any thing here.
         }
@@ -140,13 +141,13 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     @Test
     public void testDescribeStacks() throws Exception {
-        DescribeStacksResult response = cf.describeStacks(new DescribeStacksRequest().withStackName(testStackName));
+        DescribeStacksResult response = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build());
 
-        assertEquals(1, response.getStacks().size());
-        assertEquals(testStackId, response.getStacks().get(0).getStackId());
+        assertEquals(1, response.stacks().size());
+        assertEquals(testStackId, response.stacks().get(0).stackId());
 
-        response = cf.describeStacks(new DescribeStacksRequest());
-        assertTrue(response.getStacks().size() >= 1);
+        response = cf.describeStacks(DescribeStacksRequest.builder().build());
+        assertTrue(response.stacks().size() >= 1);
     }
 
     @Test
@@ -155,19 +156,19 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         DescribeStackResourcesResult response = null;
 
         int attempt = 0;
-        while (attempt++ < 60 && (response == null || response.getStackResources().size() == 0)) {
+        while (attempt++ < 60 && (response == null || response.stackResources().size() == 0)) {
             Thread.sleep(1000);
-            response = cf.describeStackResources(new DescribeStackResourcesRequest().withStackName(testStackName));
+            response = cf.describeStackResources(DescribeStackResourcesRequest.builder().stackName(testStackName).build());
         }
 
-        assertTrue(response.getStackResources().size() > 0);
-        for (StackResource sr : response.getStackResources()) {
-            assertEquals(testStackId, sr.getStackId());
-            assertEquals(testStackName, sr.getStackName());
-            assertNotNull(sr.getLogicalResourceId());
-            assertNotNull(sr.getResourceStatus());
-            assertNotNull(sr.getResourceType());
-            assertNotNull(sr.getTimestamp());
+        assertTrue(response.stackResources().size() > 0);
+        for (StackResource sr : response.stackResources()) {
+            assertEquals(testStackId, sr.stackId());
+            assertEquals(testStackName, sr.stackName());
+            assertNotNull(sr.logicalResourceId());
+            assertNotNull(sr.resourceStatus());
+            assertNotNull(sr.resourceType());
+            assertNotNull(sr.timestamp());
         }
     }
 
@@ -176,27 +177,29 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         DescribeStackResourcesResult response = null;
 
         int attempt = 0;
-        while (attempt++ < 60 && (response == null || response.getStackResources().size() == 0)) {
+        while (attempt++ < 60 && (response == null || response.stackResources().size() == 0)) {
             Thread.sleep(1000);
-            response = cf.describeStackResources(new DescribeStackResourcesRequest().withStackName(testStackName));
+            response = cf.describeStackResources(DescribeStackResourcesRequest.builder().stackName(testStackName).build());
         }
 
-        assertTrue(response.getStackResources().size() > 0);
-        for (StackResource sr : response.getStackResources()) {
-            assertEquals(testStackId, sr.getStackId());
-            assertEquals(testStackName, sr.getStackName());
+        assertTrue(response.stackResources().size() > 0);
+        for (StackResource sr : response.stackResources()) {
+            assertEquals(testStackId, sr.stackId());
+            assertEquals(testStackName, sr.stackName());
 
             DescribeStackResourceResult describeStackResource = cf
-                    .describeStackResource(new DescribeStackResourceRequest().withStackName(testStackName)
-                                                                             .withLogicalResourceId(sr.getLogicalResourceId()));
-            StackResourceDetail detail = describeStackResource.getStackResourceDetail();
-            assertNotNull(detail.getLastUpdatedTimestamp());
-            assertEquals(sr.getLogicalResourceId(), detail.getLogicalResourceId());
-            assertEquals(sr.getPhysicalResourceId(), detail.getPhysicalResourceId());
-            assertNotNull(detail.getResourceStatus());
-            assertNotNull(detail.getResourceType());
-            assertEquals(testStackId, detail.getStackId());
-            assertEquals(testStackName, detail.getStackName());
+                    .describeStackResource(DescribeStackResourceRequest.builder()
+                                                                       .stackName(testStackName)
+                                                                       .logicalResourceId(sr.logicalResourceId())
+                                                                       .build());
+            StackResourceDetail detail = describeStackResource.stackResourceDetail();
+            assertNotNull(detail.lastUpdatedTimestamp());
+            assertEquals(sr.logicalResourceId(), detail.logicalResourceId());
+            assertEquals(sr.physicalResourceId(), detail.physicalResourceId());
+            assertNotNull(detail.resourceStatus());
+            assertNotNull(detail.resourceType());
+            assertEquals(testStackId, detail.stackId());
+            assertEquals(testStackName, detail.stackName());
         }
     }
 
@@ -204,21 +207,21 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
     public void testListStackResources() throws Exception {
         waitForStackToChangeStatus(StackStatus.CREATE_IN_PROGRESS);
         List<StackResourceSummary> stackResourceSummaries = cf.listStackResources(
-                new ListStackResourcesRequest().withStackName(testStackName)).getStackResourceSummaries();
+                ListStackResourcesRequest.builder().stackName(testStackName).build()).stackResourceSummaries();
         for (StackResourceSummary sr : stackResourceSummaries) {
-            System.out.println(sr.getPhysicalResourceId());
-            assertNotNull(sr.getLogicalResourceId());
-            assertNotNull(sr.getPhysicalResourceId());
-            assertNotNull(sr.getResourceStatus());
-            assertNotNull(sr.getResourceType());
+            System.out.println(sr.physicalResourceId());
+            assertNotNull(sr.logicalResourceId());
+            assertNotNull(sr.physicalResourceId());
+            assertNotNull(sr.resourceStatus());
+            assertNotNull(sr.resourceType());
         }
     }
 
     @Test
     public void testGetStackPolicy() {
-        GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(new GetStackPolicyRequest()
-                                                                              .withStackName(testStackName));
-        Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.getStackPolicyBody());
+        GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(GetStackPolicyRequest.builder()
+                                                                                           .stackName(testStackName).build());
+        Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.stackPolicyBody());
         assertPolicyEquals(INIT_STACK_POLICY, returnedPolicy);
     }
 
@@ -228,13 +231,13 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
         Policy DENY_ALL_POLICY = new Policy().withStatements(new Statement(Effect.Deny).withActions(
                 new NamedAction("Update:*")).withResources(new Resource("*")));
-        cf.setStackPolicy(new SetStackPolicyRequest().withStackName(testStackName).withStackPolicyBody(
-                DENY_ALL_POLICY.toJson()));
+        cf.setStackPolicy(SetStackPolicyRequest.builder().stackName(testStackName).stackPolicyBody(
+                DENY_ALL_POLICY.toJson()).build());
 
         // Compares the policy from GetStackPolicy operation
-        GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(new GetStackPolicyRequest()
-                                                                              .withStackName(testStackName));
-        Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.getStackPolicyBody());
+        GetStackPolicyResult getStackPolicyResult = cf.getStackPolicy(GetStackPolicyRequest.builder()
+                                                                                           .stackName(testStackName).build());
+        Policy returnedPolicy = Policy.fromJson(getStackPolicyResult.stackPolicyBody());
         assertPolicyEquals(DENY_ALL_POLICY, returnedPolicy);
     }
 
@@ -243,130 +246,133 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
         DescribeStackEventsResult response = null;
         int attempt = 0;
-        while (attempt++ < 60 && (response == null || response.getStackEvents().size() == 0)) {
+        while (attempt++ < 60 && (response == null || response.stackEvents().size() == 0)) {
             Thread.sleep(1000);
-            response = cf.describeStackEvents(new DescribeStackEventsRequest().withStackName(testStackName));
+            response = cf.describeStackEvents(DescribeStackEventsRequest.builder().stackName(testStackName).build());
         }
 
-        assertTrue(response.getStackEvents().size() > 0);
+        assertTrue(response.stackEvents().size() > 0);
 
-        for (StackEvent e : response.getStackEvents()) {
-            System.out.println(e.getEventId());
-            assertEquals(testStackId, e.getStackId());
-            assertEquals(testStackName, e.getStackName());
-            assertNotNull(e.getEventId());
-            assertNotNull(e.getLogicalResourceId());
-            assertNotNull(e.getPhysicalResourceId());
-            assertNotNull(e.getResourceStatus());
-            assertNotNull(e.getResourceType());
-            assertNotNull(e.getTimestamp());
+        for (StackEvent e : response.stackEvents()) {
+            System.out.println(e.eventId());
+            assertEquals(testStackId, e.stackId());
+            assertEquals(testStackName, e.stackName());
+            assertNotNull(e.eventId());
+            assertNotNull(e.logicalResourceId());
+            assertNotNull(e.physicalResourceId());
+            assertNotNull(e.resourceStatus());
+            assertNotNull(e.resourceType());
+            assertNotNull(e.timestamp());
             LOG.debug(e);
         }
     }
 
     @Test
     public void testListStacks() throws Exception {
-        ListStacksResult listStacksResult = cf.listStacks(new ListStacksRequest());
+        ListStacksResult listStacksResult = cf.listStacks(ListStacksRequest.builder().build());
         assertNotNull(listStacksResult);
-        assertNotNull(listStacksResult.getStackSummaries());
+        assertNotNull(listStacksResult.stackSummaries());
         // There should be some deleted stacks, since we deleted at the start of this test
-        assertFalse(listStacksResult.getStackSummaries().isEmpty());
-        for (StackSummary summary : listStacksResult.getStackSummaries()) {
+        assertFalse(listStacksResult.stackSummaries().isEmpty());
+        for (StackSummary summary : listStacksResult.stackSummaries()) {
             assertNotNull(summary);
-            assertNotNull(summary.getStackStatus());
-            assertNotNull(summary.getCreationTime());
-            if (summary.getStackStatus().contains("DELETE")) {
-                assertNotNull(summary.getDeletionTime());
+            assertNotNull(summary.stackStatus());
+            assertNotNull(summary.creationTime());
+            if (summary.stackStatus().contains("DELETE")) {
+                assertNotNull(summary.deletionTime());
             }
-            assertNotNull(summary.getStackId());
-            assertNotNull(summary.getStackName());
-            assertNotNull(summary.getTemplateDescription());
+            assertNotNull(summary.stackId());
+            assertNotNull(summary.stackName());
+            assertNotNull(summary.templateDescription());
         }
 
-        String nextToken = listStacksResult.getNextToken();
-        listStacksResult = cf.listStacks(new ListStacksRequest().withNextToken(nextToken));
+        String nextToken = listStacksResult.nextToken();
+        listStacksResult = cf.listStacks(ListStacksRequest.builder().nextToken(nextToken).build());
 
         assertNotNull(listStacksResult);
-        assertNotNull(listStacksResult.getStackSummaries());
+        assertNotNull(listStacksResult.stackSummaries());
         // There should be some deleted stacks, since we deleted at the start of this test
-        assertFalse(listStacksResult.getStackSummaries().isEmpty());
-        for (StackSummary summary : listStacksResult.getStackSummaries()) {
+        assertFalse(listStacksResult.stackSummaries().isEmpty());
+        for (StackSummary summary : listStacksResult.stackSummaries()) {
             assertNotNull(summary);
-            assertNotNull(summary.getStackStatus());
-            assertNotNull(summary.getCreationTime());
-            if (summary.getStackStatus().contains("DELETE")) {
-                assertNotNull(summary.getDeletionTime());
+            assertNotNull(summary.stackStatus());
+            assertNotNull(summary.creationTime());
+            if (summary.stackStatus().contains("DELETE")) {
+                assertNotNull(summary.deletionTime());
             }
-            assertNotNull(summary.getStackId());
-            assertNotNull(summary.getStackName());
-            assertNotNull(summary.getTemplateDescription());
+            assertNotNull(summary.stackId());
+            assertNotNull(summary.stackName());
+            assertNotNull(summary.templateDescription());
         }
     }
 
     @Test
     public void testListStacksFilter() throws Exception {
-        ListStacksResult listStacksResult = cf.listStacks(new ListStacksRequest().withStackStatusFilters(
-                "CREATE_COMPLETE", "DELETE_COMPLETE"));
+        ListStacksResult listStacksResult = cf.listStacks(ListStacksRequest.builder().stackStatusFilters(
+                "CREATE_COMPLETE", "DELETE_COMPLETE").build());
         assertNotNull(listStacksResult);
-        assertNotNull(listStacksResult.getStackSummaries());
+        assertNotNull(listStacksResult.stackSummaries());
 
         // There should be some deleted stacks, since we deleted at the start of this test
-        assertFalse(listStacksResult.getStackSummaries().isEmpty());
-        for (StackSummary summary : listStacksResult.getStackSummaries()) {
+        assertFalse(listStacksResult.stackSummaries().isEmpty());
+        for (StackSummary summary : listStacksResult.stackSummaries()) {
             assertNotNull(summary);
-            assertNotNull(summary.getStackStatus());
-            assertTrue(summary.getStackStatus().equals("CREATE_COMPLETE")
-                       || summary.getStackStatus().equals("DELETE_COMPLETE"));
-            assertNotNull(summary.getCreationTime());
-            if (summary.getStackStatus().contains("DELETE")) {
-                assertNotNull(summary.getDeletionTime());
+            assertNotNull(summary.stackStatus());
+            assertTrue(summary.stackStatus().equals("CREATE_COMPLETE")
+                       || summary.stackStatus().equals("DELETE_COMPLETE"));
+            assertNotNull(summary.creationTime());
+            if (summary.stackStatus().contains("DELETE")) {
+                assertNotNull(summary.deletionTime());
             }
-            assertNotNull(summary.getStackId());
-            assertNotNull(summary.getStackName());
-            assertNotNull(summary.getTemplateDescription());
+            assertNotNull(summary.stackId());
+            assertNotNull(summary.stackName());
+            assertNotNull(summary.templateDescription());
         }
     }
 
     @Test
     public void testGetTemplate() {
-        GetTemplateResult response = cf.getTemplate(new GetTemplateRequest().withStackName(testStackName));
+        GetTemplateResult response = cf.getTemplate(GetTemplateRequest.builder().stackName(testStackName).build());
 
-        assertNotNull(response.getTemplateBody());
-        assertTrue(response.getTemplateBody().length() > 0);
+        assertNotNull(response.templateBody());
+        assertTrue(response.templateBody().length() > 0);
     }
 
     @Test
     public void testCancelUpdateStack() throws Exception {
         waitForStackToChangeStatus(StackStatus.CREATE_IN_PROGRESS);
 
-        List<Stack> stacks = cf.describeStacks(new DescribeStacksRequest().withStackName(testStackName)).getStacks();
+        List<Stack> stacks = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build()).stacks();
         assertEquals(1, stacks.size());
 
-        UpdateStackResult updateStack = cf.updateStack(new UpdateStackRequest().withStackName(testStackName)
-                                                                               .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
-        assertEquals(testStackId, updateStack.getStackId());
+        UpdateStackResult updateStack = cf.updateStack(UpdateStackRequest.builder().stackName(testStackName)
+                                                                         .templateURL(
+                                                                                 templateUrlForCloudFormationIntegrationTests)
+                                                                         .build());
+        assertEquals(testStackId, updateStack.stackId());
 
-        cf.cancelUpdateStack(new CancelUpdateStackRequest().withStackName(testStackName));
+        cf.cancelUpdateStack(CancelUpdateStackRequest.builder().stackName(testStackName).build());
         waitForStackToChangeStatus(StackStatus.UPDATE_ROLLBACK_IN_PROGRESS);
     }
 
     @Test
     public void testUpdateStack() throws Exception {
-        List<Stack> stacks = cf.describeStacks(new DescribeStacksRequest().withStackName(testStackName)).getStacks();
+        List<Stack> stacks = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build()).stacks();
         assertEquals(1, stacks.size());
 
-        UpdateStackResult updateStack = cf.updateStack(new UpdateStackRequest().withStackName(testStackName)
-                                                                               .withTemplateURL(templateUrlForCloudFormationIntegrationTests)
-                                                                               .withStackPolicyBody(INIT_STACK_POLICY.toJson()));
-        assertEquals(testStackId, updateStack.getStackId());
+        UpdateStackResult updateStack = cf.updateStack(UpdateStackRequest.builder().stackName(testStackName)
+                                                                         .templateURL(
+                                                                                 templateUrlForCloudFormationIntegrationTests)
+                                                                         .stackPolicyBody(INIT_STACK_POLICY.toJson()).build());
+        assertEquals(testStackId, updateStack.stackId());
         waitForStackToChangeStatus(StackStatus.UPDATE_IN_PROGRESS);
     }
 
     @Test
     public void testAlreadyExistsException() {
         try {
-            cf.createStack(new CreateStackRequest().withTemplateURL(templateUrlForStackIntegrationTests).withStackName(
-                    testStackName));
+            cf.createStack(CreateStackRequest.builder().templateURL(templateUrlForStackIntegrationTests).stackName(
+                    testStackName).build());
             fail("Should have thrown an Exception");
         } catch (AlreadyExistsException aex) {
             assertEquals("AlreadyExistsException", aex.getErrorCode());
@@ -387,16 +393,16 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         long startTime = System.currentTimeMillis();
         long timeoutInMinutes = 35;
         while (true) {
-            List<Stack> stacks = cf.describeStacks(new DescribeStacksRequest().withStackName(testStackName))
-                                   .getStacks();
+            List<Stack> stacks = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build())
+                                   .stacks();
             assertEquals(1, stacks.size());
 
-            if (!stacks.get(0).getStackStatus().equalsIgnoreCase(oldStatus.toString())) {
+            if (!stacks.get(0).stackStatus().equalsIgnoreCase(oldStatus.toString())) {
                 return;
             }
 
             System.out.println("Waiting for stack to change out of status " + oldStatus.toString()
-                               + " (current status: " + stacks.get(0).getStackStatus() + ")");
+                               + " (current status: " + stacks.get(0).stackStatus() + ")");
 
             if ((System.currentTimeMillis() - startTime) > (timeoutInMinutes * 1000 * 60)) {
                 throw new RuntimeException("Waited " + timeoutInMinutes
@@ -414,11 +420,12 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
      */
     @Test
     public void testClockSkew() {
-        SDKGlobalTime.setGlobalTimeOffset(3600);
+        SdkGlobalTime.setGlobalTimeOffset(3600);
         // Need to create a new client to have the time offset take affect
         CloudFormationClient clockSkewClient = CloudFormationClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
-        clockSkewClient.describeStacks(new DescribeStacksRequest());
-        assertTrue(SDKGlobalTime.getGlobalTimeOffset() < 60);
+                                                                   .credentialsProvider(
+                                                                           new StaticCredentialsProvider(credentials)).build();
+        clockSkewClient.describeStacks(DescribeStacksRequest.builder().build());
+        assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

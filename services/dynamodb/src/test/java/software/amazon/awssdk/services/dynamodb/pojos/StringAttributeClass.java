@@ -15,21 +15,21 @@
 
 package software.amazon.awssdk.services.dynamodb.pojos;
 
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
 
 /**
  * Test domain class with a single string attribute and a string key
  */
-@DynamoDBTable(tableName = "aws-java-sdk-util")
+@DynamoDbTable(tableName = "aws-java-sdk-util")
 public class StringAttributeClass {
 
     private String key;
     private String stringAttribute;
     private String renamedAttribute;
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public String getKey() {
         return key;
     }
@@ -38,7 +38,7 @@ public class StringAttributeClass {
         this.key = key;
     }
 
-    @DynamoDBAttribute
+    @DynamoDbAttribute
     public String getStringAttribute() {
         return stringAttribute;
     }
@@ -47,7 +47,7 @@ public class StringAttributeClass {
         this.stringAttribute = stringAttribute;
     }
 
-    @DynamoDBAttribute(attributeName = "originalName")
+    @DynamoDbAttribute(attributeName = "originalName")
     public String getRenamedAttribute() {
         return renamedAttribute;
     }

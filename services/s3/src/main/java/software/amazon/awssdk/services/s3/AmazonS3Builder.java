@@ -20,7 +20,7 @@ import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.client.builder.AwsSyncClientBuilder;
 import software.amazon.awssdk.function.SdkFunction;
-import software.amazon.awssdk.regions.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.SetBucketAccelerateConfigurationRequest;

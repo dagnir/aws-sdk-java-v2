@@ -40,7 +40,7 @@ public class UuidSetUnmarshaller extends SsUnmarshaller {
     public Set<UUID> unmarshall(AttributeValue value) {
         Set<UUID> result = new HashSet<UUID>();
 
-        for (String s : value.getSS()) {
+        for (String s : value.ss()) {
             result.add(UUID.fromString(s));
         }
 

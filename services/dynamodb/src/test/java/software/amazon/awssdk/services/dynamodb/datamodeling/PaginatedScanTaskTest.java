@@ -80,15 +80,15 @@ public class PaginatedScanTaskTest {
      */
     @Test
     public void segmentFailsToScan_ExecutorServiceIsShutdown() throws InterruptedException {
-        stubSuccessfulScan(0);
-        stubSuccessfulScan(1);
+        stubsuccessfulScan(0);
+        stubsuccessfulScan(1);
         when(dynamoDB.scan(isSegmentNumber(2)))
-                .thenThrow(new ProvisionedThroughputExceededException("Slow Down!"));
-        stubSuccessfulScan(3);
-        stubSuccessfulScan(4);
+                .thenThrow(ProvisionedThroughputExceededException.builder().message("Slow Down!").build());
+        stubsuccessfulScan(3);
+        stubsuccessfulScan(4);
 
         try {
-            parallelScanTask.getNextBatchOfScanResults();
+            parallelScanTask.nextBatchOfScanResults();
             fail("Expected ProvisionedThroughputExceededException");
         } catch (ProvisionedThroughputExceededException expected) {
             // Ignored or expected.
@@ -103,16 +103,16 @@ public class PaginatedScanTaskTest {
      *
      * @param segmentNumber Segment to stub.
      */
-    private void stubSuccessfulScan(int segmentNumber) {
+    private void stubsuccessfulScan(int segmentNumber) {
         when(dynamoDB.scan(isSegmentNumber(segmentNumber)))
-                .thenReturn(new ScanResult().withItems(generateItems()));
+                .thenReturn(ScanResult.builder().items(generateItems()).build());
     }
 
     private Map<String, AttributeValue> generateItems() {
         final int numItems = 10;
         Map<String, AttributeValue> items = new HashMap<String, AttributeValue>(numItems);
         for (int i = 0; i < numItems; i++) {
-            items.put(UUID.randomUUID().toString(), new AttributeValue().withS("foo"));
+            items.put(UUID.randomUUID().toString(), AttributeValue.builder().s("foo").build());
         }
         return items;
     }
@@ -126,10 +126,11 @@ public class PaginatedScanTaskTest {
     }
 
     private ScanRequest createScanRequest(int segmentNumber) {
-        return new ScanRequest()
-                .withTableName(TABLE_NAME)
-                .withSegment(segmentNumber)
-                .withTotalSegments(TOTAL_SEGMENTS);
+        return ScanRequest.builder()
+                .tableName(TABLE_NAME)
+                .segment(segmentNumber)
+                .totalSegments(TOTAL_SEGMENTS)
+                .build();
     }
 
     /**
@@ -148,7 +149,7 @@ public class PaginatedScanTaskTest {
             if (!(argument instanceof ScanRequest)) {
                 return false;
             }
-            return matchingSegmentNumber == ((ScanRequest) argument).getSegment();
+            return matchingSegmentNumber == ((ScanRequest) argument).segment();
         }
     }
 }

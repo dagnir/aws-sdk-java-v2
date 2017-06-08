@@ -37,10 +37,10 @@ public class SelectResultUnmarshallerTest {
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
         SelectResult result = new SelectResultUnmarshaller().unmarshall(unmarshallerContext);
 
-        assertTrue(!result.getItems().isEmpty());
-        assertTrue(result.getItems().size() == 2);
-        assertTrue(((Item) result.getItems().get(0)).getName().equals("ItemOne"));
-        assertTrue(((Item) result.getItems().get(1)).getName().equals("ItemTwo"));
+        assertTrue(!result.items().isEmpty());
+        assertTrue(result.items().size() == 2);
+        assertTrue(((Item) result.items().get(0)).name().equals("ItemOne"));
+        assertTrue(((Item) result.items().get(1)).name().equals("ItemTwo"));
     }
 
 }

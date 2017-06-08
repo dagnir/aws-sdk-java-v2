@@ -20,7 +20,6 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricCollector;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 /**
@@ -38,7 +37,7 @@ public class DefaultMetricCollectorFactory
     @Override
     public MetricCollector getInstance() {
         AwsCredentialsProvider provider = AwsSdkMetrics.getCredentialProvider();
-        Region region = RegionUtils.getRegion(AwsSdkMetrics.getRegionName());
+        Region region = Region.of(AwsSdkMetrics.getRegionName());
         Integer qSize = AwsSdkMetrics.getMetricQueueSize();
         Long timeoutMilli = AwsSdkMetrics.getQueuePollTimeoutMilli();
         CloudWatchMetricConfig config = new CloudWatchMetricConfig();
@@ -51,7 +50,7 @@ public class DefaultMetricCollectorFactory
         }
         config.setCloudWatchClient(CloudWatchClient.builder()
                                                    .credentialsProvider(provider)
-                                                   .region(region.getName())
+                                                   .region(region)
                                                    .build());
         MetricCollectorSupport.startSingleton(config);
         return MetricCollectorSupport.getInstance();

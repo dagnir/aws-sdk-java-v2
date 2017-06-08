@@ -17,8 +17,8 @@ package software.amazon.awssdk.services.autoscaling;
 
 import java.io.IOException;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.autoscaling.model.CreateAutoScalingGroupRequest;
 import software.amazon.awssdk.services.autoscaling.model.CreateLaunchConfigurationRequest;
 import software.amazon.awssdk.services.sns.SNSClient;
@@ -36,7 +36,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     /**
      * Region has to be us-east-1 to find AMI '{@value #AMI_ID}'.
      */
-    private static final String REGION = Regions.US_EAST_1.getName();
+    private static final Region REGION = Region.US_EAST_1;
 
     /*
      * Test data values
@@ -83,8 +83,8 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      *            The name for the new launch configuration.
      */
     protected void createLaunchConfiguration(String name) {
-        CreateLaunchConfigurationRequest createRequest = new CreateLaunchConfigurationRequest()
-                .withLaunchConfigurationName(name).withImageId(AMI_ID).withInstanceType(INSTANCE_TYPE);
+        CreateLaunchConfigurationRequest createRequest = CreateLaunchConfigurationRequest.builder()
+                .launchConfigurationName(name).imageId(AMI_ID).instanceType(INSTANCE_TYPE).build();
         autoscaling.createLaunchConfiguration(createRequest);
     }
 
@@ -97,9 +97,9 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      *            The name of an existing launch configuration to use in the new autoscaling group.
      */
     protected void createAutoscalingGroup(String name, String launchConfigurationName) {
-        CreateAutoScalingGroupRequest createRequest = new CreateAutoScalingGroupRequest()
-                .withAutoScalingGroupName(name).withLaunchConfigurationName(launchConfigurationName)
-                .withAvailabilityZones(AVAILABILITY_ZONE).withMaxSize(2).withMinSize(1);
+        CreateAutoScalingGroupRequest createRequest = CreateAutoScalingGroupRequest.builder()
+                .autoScalingGroupName(name).launchConfigurationName(launchConfigurationName)
+                .availabilityZones(AVAILABILITY_ZONE).maxSize(2).minSize(1).build();
         autoscaling.createAutoScalingGroup(createRequest);
     }
 

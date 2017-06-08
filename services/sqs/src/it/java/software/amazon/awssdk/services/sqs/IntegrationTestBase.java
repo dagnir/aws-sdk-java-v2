@@ -15,13 +15,8 @@
 
 package software.amazon.awssdk.services.sqs;
 
-import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 import org.junit.Before;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -29,6 +24,13 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.test.AwsTestBase;
 import software.amazon.awssdk.util.StringUtils;
+
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Base class for SQS integration tests. Provides convenience methods for creating test data, and
@@ -72,27 +74,29 @@ public class IntegrationTestBase extends AwsTestBase {
     public static SQSAsyncClient createSqsAyncClient() {
         return SQSAsyncClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Region.US_EAST_1)
                 .build();
     }
 
     public static SQSClient createSqsSyncClient() {
         return SQSClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                .region(Region.US_EAST_1)
                 .build();
     }
 
     protected static MessageAttributeValue createRandomStringAttributeValue() {
-        return new MessageAttributeValue().withDataType("String").withStringValue(UUID.randomUUID().toString());
+        return MessageAttributeValue.builder().dataType("String").stringValue(UUID.randomUUID().toString()).build();
     }
 
     protected static MessageAttributeValue createRandomNumberAttributeValue() {
-        return new MessageAttributeValue().withDataType("Number").withStringValue(Integer.toString(random.nextInt()));
+        return MessageAttributeValue.builder().dataType("Number").stringValue(Integer.toString(random.nextInt())).build();
     }
 
     protected static MessageAttributeValue createRandomBinaryAttributeValue() {
         byte[] randomBytes = new byte[10];
         random.nextBytes(randomBytes);
-        return new MessageAttributeValue().withDataType("Binary").withBinaryValue(ByteBuffer.wrap(randomBytes));
+        return MessageAttributeValue.builder().dataType("Binary").binaryValue(ByteBuffer.wrap(randomBytes)).build();
     }
 
     protected static Map<String, MessageAttributeValue> createRandomAttributeValues(int attrNumber) {
@@ -124,8 +128,8 @@ public class IntegrationTestBase extends AwsTestBase {
      * @return The queue url for the created queue
      */
     protected String createQueue(SQSAsyncClient sqsClient) {
-        CreateQueueResult res = sqsClient.createQueue(new CreateQueueRequest(getUniqueQueueName())).join();
-        return res.getQueueUrl();
+        CreateQueueResult res = sqsClient.createQueue(CreateQueueRequest.builder().queueName(getUniqueQueueName()).build()).join();
+        return res.queueUrl();
     }
 
     /**
@@ -142,9 +146,9 @@ public class IntegrationTestBase extends AwsTestBase {
         if (accountId == null) {
             IAMClient iamClient = IAMClient.builder()
                     .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                    .region("us-east-1")
+                    .region(Region.AWS_GLOBAL)
                     .build();
-            accountId = parseAccountIdFromArn(iamClient.getUser(new GetUserRequest()).getUser().getArn());
+            accountId = parseAccountIdFromArn(iamClient.getUser(GetUserRequest.builder().build()).user().arn());
         }
         return accountId;
     }

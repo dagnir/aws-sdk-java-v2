@@ -37,13 +37,14 @@ class ListTablesCollection extends TableCollection<ListTablesResult> {
 
     @Override
     public Page<Table, ListTablesResult> firstPage() {
-        ListTablesRequest request = spec.getRequest();
-        request.setExclusiveStartTableName(startKey);
-
-        request.setLimit(InternalUtils.minimum(
-                spec.getMaxResultSize(),
-                spec.getMaxPageSize()));
-
+        ListTablesRequest request = spec.getRequest()
+                .toBuilder()
+                .exclusiveStartTableName(startKey)
+                .limit(InternalUtils.minimum(
+                    spec.maxResultSize(),
+                    spec.maxPageSize()))
+                .build();
+        spec.setRequest(request);
         ListTablesResult result = client.listTables(request);
         setLastLowLevelResult(result);
         return new ListTablesPage(client, spec, request, 0, result);
@@ -51,6 +52,6 @@ class ListTablesCollection extends TableCollection<ListTablesResult> {
 
     @Override
     public Integer getMaxResultSize() {
-        return spec.getMaxResultSize();
+        return spec.maxResultSize();
     }
 }

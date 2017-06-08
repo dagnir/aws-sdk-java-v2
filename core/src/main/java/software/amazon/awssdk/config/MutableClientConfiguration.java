@@ -32,12 +32,7 @@ public final class MutableClientConfiguration
         implements ClientConfiguration, SyncClientConfiguration, AsyncClientConfiguration, Cloneable {
 
     // ClientConfiguration
-    private ClientTimeoutConfiguration timeoutConfiguration = ClientTimeoutConfiguration.builder().build();
-    private ClientMarshallerConfiguration marshallerConfiguration = ClientMarshallerConfiguration.builder().build();
-    private ClientMetricsConfiguration metricsConfiguration = ClientMetricsConfiguration.builder().build();
-    private ClientSecurityConfiguration securityConfiguration = ClientSecurityConfiguration.builder().build();
-    private ClientRetryConfiguration retryConfiguration = ClientRetryConfiguration.builder().build();
-    private ClientListenerConfiguration listenerConfiguration = ClientListenerConfiguration.builder().build();
+    private ClientOverrideConfiguration overrideConfiguration = ClientOverrideConfiguration.builder().build();
     private AwsCredentialsProvider credentialsProvider;
     private URI endpoint;
     private SdkHttpClient sdkHttpClient;
@@ -46,62 +41,12 @@ public final class MutableClientConfiguration
     private ExecutorService asyncExecutorService;
 
     @Override
-    public final ClientTimeoutConfiguration timeoutConfiguration() {
-        return timeoutConfiguration;
+    public final ClientOverrideConfiguration overrideConfiguration() {
+        return overrideConfiguration;
     }
 
-    public final MutableClientConfiguration timeoutConfiguration(ClientTimeoutConfiguration timeoutConfiguration) {
-        this.timeoutConfiguration = timeoutConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientMarshallerConfiguration marshallerConfiguration() {
-        return marshallerConfiguration;
-    }
-
-    public final MutableClientConfiguration marshallerConfiguration(ClientMarshallerConfiguration marshallerConfiguration) {
-        this.marshallerConfiguration = marshallerConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientMetricsConfiguration metricsConfiguration() {
-        return metricsConfiguration;
-    }
-
-    public final MutableClientConfiguration metricsConfiguration(ClientMetricsConfiguration metricsConfiguration) {
-        this.metricsConfiguration = metricsConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientSecurityConfiguration securityConfiguration() {
-        return securityConfiguration;
-    }
-
-    public final MutableClientConfiguration securityConfiguration(ClientSecurityConfiguration securityConfiguration) {
-        this.securityConfiguration = securityConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientRetryConfiguration retryConfiguration() {
-        return retryConfiguration;
-    }
-
-    public final MutableClientConfiguration retryConfiguration(ClientRetryConfiguration retryConfiguration) {
-        this.retryConfiguration = retryConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientListenerConfiguration listenerConfiguration() {
-        return listenerConfiguration;
-    }
-
-    public final MutableClientConfiguration listenerConfiguration(ClientListenerConfiguration listenerConfiguration) {
-        this.listenerConfiguration = listenerConfiguration;
+    public final MutableClientConfiguration overrideConfiguration(ClientOverrideConfiguration overrideConfiguration) {
+        this.overrideConfiguration = overrideConfiguration;
         return this;
     }
 

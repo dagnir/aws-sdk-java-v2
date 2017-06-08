@@ -27,12 +27,12 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBQueryExpression;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBScanExpression;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.ConsistentReads;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbQueryExpression;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbScanExpression;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.PaginatedList;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
@@ -57,7 +57,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
     }
 
     private static void createTestData() {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo);
 
         List<RangeKeyClass> objs = new ArrayList<RangeKeyClass>();
         for (int i = 0; i < OBJECTS_NUM; i++) {
@@ -71,56 +71,56 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
     }
 
     private static PaginatedList<RangeKeyClass> getTestPaginatedQueryList(PaginationLoadingStrategy paginationLoadingStrategy) {
-        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(ConsistentReads.CONSISTENT);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, mapperConfig);
+        DynamoDbMapperConfig mapperConfig = new DynamoDbMapperConfig(ConsistentReads.CONSISTENT);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         // Construct the query expression for the tested hash-key value and any range-key value greater that 1.0
         RangeKeyClass keyObject = new RangeKeyClass();
         keyObject.setKey(hashKey);
-        DynamoDBQueryExpression<RangeKeyClass> queryExpression = new DynamoDBQueryExpression<RangeKeyClass>()
+        DynamoDbQueryExpression<RangeKeyClass> queryExpression = new DynamoDbQueryExpression<RangeKeyClass>()
                 .withHashKeyValues(keyObject);
         queryExpression.withRangeKeyCondition("rangeKey",
-                                              new Condition().withComparisonOperator(ComparisonOperator.GT.toString())
-                                                             .withAttributeValueList(
-                                                                     new AttributeValue().withN("1.0"))).withLimit(PAGE_SIZE);
+                                              Condition.builder().comparisonOperator(ComparisonOperator.GT.toString())
+                                                             .attributeValueList(
+                                                                     AttributeValue.builder().n("1.0").build()).build()).withLimit(PAGE_SIZE);
 
-        return mapper.query(RangeKeyClass.class, queryExpression, new DynamoDBMapperConfig(paginationLoadingStrategy));
+        return mapper.query(RangeKeyClass.class, queryExpression, new DynamoDbMapperConfig(paginationLoadingStrategy));
     }
 
     private static PaginatedList<RangeKeyClass> getTestPaginatedScanList(PaginationLoadingStrategy paginationLoadingStrategy) {
-        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(ConsistentReads.CONSISTENT);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, mapperConfig);
+        DynamoDbMapperConfig mapperConfig = new DynamoDbMapperConfig(ConsistentReads.CONSISTENT);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         // Construct the scan expression with the exact same conditions
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        DynamoDbScanExpression scanExpression = new DynamoDbScanExpression();
         scanExpression.addFilterCondition("key",
-                                          new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(
-                                                  new AttributeValue().withN(Long.toString(hashKey))));
+                                          Condition.builder().comparisonOperator(ComparisonOperator.EQ).attributeValueList(
+                                                  AttributeValue.builder().n(Long.toString(hashKey)).build()).build());
         scanExpression.addFilterCondition("rangeKey",
-                                          new Condition().withComparisonOperator(ComparisonOperator.GT).withAttributeValueList(
-                                                  new AttributeValue().withN("1.0")));
+                                          Condition.builder().comparisonOperator(ComparisonOperator.GT).attributeValueList(
+                                                  AttributeValue.builder().n("1.0").build()).build());
         scanExpression.setLimit(PAGE_SIZE);
 
-        return mapper.scan(RangeKeyClass.class, scanExpression, new DynamoDBMapperConfig(paginationLoadingStrategy));
+        return mapper.scan(RangeKeyClass.class, scanExpression, new DynamoDbMapperConfig(paginationLoadingStrategy));
     }
 
     private static PaginatedList<RangeKeyClass> getTestPaginatedParallelScanList(
             PaginationLoadingStrategy paginationLoadingStrategy) {
-        DynamoDBMapperConfig mapperConfig = new DynamoDBMapperConfig(ConsistentReads.CONSISTENT);
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamo, mapperConfig);
+        DynamoDbMapperConfig mapperConfig = new DynamoDbMapperConfig(ConsistentReads.CONSISTENT);
+        DynamoDbMapper mapper = new DynamoDbMapper(dynamo, mapperConfig);
 
         // Construct the scan expression with the exact same conditions
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        DynamoDbScanExpression scanExpression = new DynamoDbScanExpression();
         scanExpression.addFilterCondition("key",
-                                          new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(
-                                                  new AttributeValue().withN(Long.toString(hashKey))));
+                                          Condition.builder().comparisonOperator(ComparisonOperator.EQ).attributeValueList(
+                                                  AttributeValue.builder().n(Long.toString(hashKey)).build()).build());
         scanExpression.addFilterCondition("rangeKey",
-                                          new Condition().withComparisonOperator(ComparisonOperator.GT).withAttributeValueList(
-                                                  new AttributeValue().withN("1.0")));
+                                          Condition.builder().comparisonOperator(ComparisonOperator.GT).attributeValueList(
+                                                  AttributeValue.builder().n("1.0").build()).build());
         scanExpression.setLimit(PAGE_SIZE);
 
         return mapper.parallelScan(RangeKeyClass.class, scanExpression, PARALLEL_SEGMENT,
-                                   new DynamoDBMapperConfig(paginationLoadingStrategy));
+                                   new DynamoDbMapperConfig(paginationLoadingStrategy));
     }
 
     private static void testAllPaginatedListOperations(PaginatedList<RangeKeyClass> list) {
@@ -239,7 +239,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
             assertEquals(hashKey, item.getKey());
             assertTrue(item.getRangeKey() < OBJECTS_NUM);
             // At most one page of results in memeory
-            assertTrue(getLoadedResultsNumber(list) <= PAGE_SIZE);
+            assertTrue(loadedResultsNumber(list) <= PAGE_SIZE);
         }
 
         // not twice
@@ -257,7 +257,7 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
      * Use reflection to get the size of the private allResults field
      **/
     @SuppressWarnings("unchecked")
-    private static int getLoadedResultsNumber(PaginatedList<RangeKeyClass> list) {
+    private static int loadedResultsNumber(PaginatedList<RangeKeyClass> list) {
         Field privateAllResults = null;
         try {
             privateAllResults = list.getClass().getSuperclass().getDeclaredField("allResults");
@@ -286,9 +286,9 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
         PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.LAZY_LOADING);
 
         // check that only at most one page of results are loaded up to this point
-        assertTrue(getLoadedResultsNumber(queryList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(scanList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
+        assertTrue(loadedResultsNumber(queryList) <= PAGE_SIZE);
+        assertTrue(loadedResultsNumber(scanList) <= PAGE_SIZE);
+        assertTrue(loadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
 
         testAllPaginatedListOperations(queryList);
         testAllPaginatedListOperations(scanList);
@@ -313,9 +313,9 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
         PaginatedList<RangeKeyClass> parallelScanList = getTestPaginatedParallelScanList(PaginationLoadingStrategy.EAGER_LOADING);
 
         // check that all results have been loaded
-        assertEquals(RESULTS_NUM, getLoadedResultsNumber(queryList));
-        assertEquals(RESULTS_NUM, getLoadedResultsNumber(scanList));
-        assertEquals(RESULTS_NUM, getLoadedResultsNumber(parallelScanList));
+        assertEquals(RESULTS_NUM, loadedResultsNumber(queryList));
+        assertEquals(RESULTS_NUM, loadedResultsNumber(scanList));
+        assertEquals(RESULTS_NUM, loadedResultsNumber(parallelScanList));
 
         testAllPaginatedListOperations(queryList);
         testAllPaginatedListOperations(scanList);
@@ -340,9 +340,9 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
                 PaginationLoadingStrategy.ITERATION_ONLY);
 
         // check that only at most one page of results are loaded up to this point
-        assertTrue(getLoadedResultsNumber(queryList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(scanList) <= PAGE_SIZE);
-        assertTrue(getLoadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
+        assertTrue(loadedResultsNumber(queryList) <= PAGE_SIZE);
+        assertTrue(loadedResultsNumber(scanList) <= PAGE_SIZE);
+        assertTrue(loadedResultsNumber(parallelScanList) <= PAGE_SIZE * PARALLEL_SEGMENT);
 
         testIterationOnlyPaginatedListOperations(queryList);
         testIterationOnlyPaginatedListOperations(scanList);

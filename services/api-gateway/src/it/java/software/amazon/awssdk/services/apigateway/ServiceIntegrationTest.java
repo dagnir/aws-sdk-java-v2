@@ -58,152 +58,152 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void createRestApi() {
         CreateRestApiResult createRestApiResult = apiGateway.createRestApi(
-                new CreateRestApiRequest().withName(NAME)
-                                          .withDescription(DESCRIPTION));
+                CreateRestApiRequest.builder().name(NAME)
+                                          .description(DESCRIPTION).build());
 
         Assert.assertNotNull(createRestApiResult);
-        Assert.assertNotNull(createRestApiResult.getDescription());
-        Assert.assertNotNull(createRestApiResult.getId());
-        Assert.assertNotNull(createRestApiResult.getName());
-        Assert.assertNotNull(createRestApiResult.getCreatedDate());
-        Assert.assertEquals(createRestApiResult.getName(), NAME);
-        Assert.assertEquals(createRestApiResult.getDescription(), DESCRIPTION);
+        Assert.assertNotNull(createRestApiResult.description());
+        Assert.assertNotNull(createRestApiResult.id());
+        Assert.assertNotNull(createRestApiResult.name());
+        Assert.assertNotNull(createRestApiResult.createdDate());
+        Assert.assertEquals(createRestApiResult.name(), NAME);
+        Assert.assertEquals(createRestApiResult.description(), DESCRIPTION);
 
-        restApiId = createRestApiResult.getId();
+        restApiId = createRestApiResult.id();
     }
 
     @AfterClass
     public static void deleteRestApiKey() {
         if (restApiId != null) {
-            apiGateway.deleteRestApi(new DeleteRestApiRequest().withRestApiId(restApiId));
+            apiGateway.deleteRestApi(DeleteRestApiRequest.builder().restApiId(restApiId).build());
         }
     }
 
     @Test
     public void testUpdateRetrieveRestApi() {
-        PatchOperation patch = new PatchOperation().withOp(Op.Replace)
-                                                   .withPath("/description").withValue("updatedDesc");
-        apiGateway.updateRestApi(new UpdateRestApiRequest().withRestApiId(restApiId)
-                                                           .withPatchOperations(patch));
+        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+                                                   .path("/description").value("updatedDesc").build();
+        apiGateway.updateRestApi(UpdateRestApiRequest.builder().restApiId(restApiId)
+                                                           .patchOperations(patch).build());
 
         GetRestApiResult getRestApiResult = apiGateway
-                .getRestApi(new GetRestApiRequest().withRestApiId(restApiId));
+                .getRestApi(GetRestApiRequest.builder().restApiId(restApiId).build());
 
         Assert.assertNotNull(getRestApiResult);
-        Assert.assertNotNull(getRestApiResult.getDescription());
-        Assert.assertNotNull(getRestApiResult.getId());
-        Assert.assertNotNull(getRestApiResult.getName());
-        Assert.assertNotNull(getRestApiResult.getCreatedDate());
-        Assert.assertEquals(getRestApiResult.getName(), NAME);
-        Assert.assertEquals(getRestApiResult.getDescription(), "updatedDesc");
+        Assert.assertNotNull(getRestApiResult.description());
+        Assert.assertNotNull(getRestApiResult.id());
+        Assert.assertNotNull(getRestApiResult.name());
+        Assert.assertNotNull(getRestApiResult.createdDate());
+        Assert.assertEquals(getRestApiResult.name(), NAME);
+        Assert.assertEquals(getRestApiResult.description(), "updatedDesc");
     }
 
     @Test
     public void testCreateUpdateRetrieveApiKey() {
         CreateApiKeyResult createApiKeyResult = apiGateway
-                .createApiKey(new CreateApiKeyRequest().withName(NAME)
-                                                       .withDescription(DESCRIPTION));
+                .createApiKey(CreateApiKeyRequest.builder().name(NAME)
+                                                       .description(DESCRIPTION).build());
 
         Assert.assertNotNull(createApiKeyResult);
-        Assert.assertNotNull(createApiKeyResult.getDescription());
-        Assert.assertNotNull(createApiKeyResult.getId());
-        Assert.assertNotNull(createApiKeyResult.getName());
-        Assert.assertNotNull(createApiKeyResult.getCreatedDate());
-        Assert.assertNotNull(createApiKeyResult.getEnabled());
-        Assert.assertNotNull(createApiKeyResult.getLastUpdatedDate());
-        Assert.assertNotNull(createApiKeyResult.getStageKeys());
+        Assert.assertNotNull(createApiKeyResult.description());
+        Assert.assertNotNull(createApiKeyResult.id());
+        Assert.assertNotNull(createApiKeyResult.name());
+        Assert.assertNotNull(createApiKeyResult.createdDate());
+        Assert.assertNotNull(createApiKeyResult.enabled());
+        Assert.assertNotNull(createApiKeyResult.lastUpdatedDate());
+        Assert.assertNotNull(createApiKeyResult.stageKeys());
 
-        String apiKeyId = createApiKeyResult.getId();
-        Assert.assertEquals(createApiKeyResult.getName(), NAME);
-        Assert.assertEquals(createApiKeyResult.getDescription(), DESCRIPTION);
+        String apiKeyId = createApiKeyResult.id();
+        Assert.assertEquals(createApiKeyResult.name(), NAME);
+        Assert.assertEquals(createApiKeyResult.description(), DESCRIPTION);
 
-        PatchOperation patch = new PatchOperation().withOp(Op.Replace)
-                                                   .withPath("/description").withValue("updatedDesc");
-        apiGateway.updateApiKey(new UpdateApiKeyRequest().withApiKey(apiKeyId)
-                                                         .withPatchOperations(patch));
+        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+                                                   .path("/description").value("updatedDesc").build();
+        apiGateway.updateApiKey(UpdateApiKeyRequest.builder().apiKey(apiKeyId)
+                                                         .patchOperations(patch).build());
 
         GetApiKeyResult getApiKeyResult = apiGateway
-                .getApiKey(new GetApiKeyRequest().withApiKey(apiKeyId));
+                .getApiKey(GetApiKeyRequest.builder().apiKey(apiKeyId).build());
 
         Assert.assertNotNull(getApiKeyResult);
-        Assert.assertNotNull(getApiKeyResult.getDescription());
-        Assert.assertNotNull(getApiKeyResult.getId());
-        Assert.assertNotNull(getApiKeyResult.getName());
-        Assert.assertNotNull(getApiKeyResult.getCreatedDate());
-        Assert.assertNotNull(getApiKeyResult.getEnabled());
-        Assert.assertNotNull(getApiKeyResult.getLastUpdatedDate());
-        Assert.assertNotNull(getApiKeyResult.getStageKeys());
-        Assert.assertEquals(getApiKeyResult.getId(), apiKeyId);
-        Assert.assertEquals(getApiKeyResult.getName(), NAME);
-        Assert.assertEquals(getApiKeyResult.getDescription(), "updatedDesc");
+        Assert.assertNotNull(getApiKeyResult.description());
+        Assert.assertNotNull(getApiKeyResult.id());
+        Assert.assertNotNull(getApiKeyResult.name());
+        Assert.assertNotNull(getApiKeyResult.createdDate());
+        Assert.assertNotNull(getApiKeyResult.enabled());
+        Assert.assertNotNull(getApiKeyResult.lastUpdatedDate());
+        Assert.assertNotNull(getApiKeyResult.stageKeys());
+        Assert.assertEquals(getApiKeyResult.id(), apiKeyId);
+        Assert.assertEquals(getApiKeyResult.name(), NAME);
+        Assert.assertEquals(getApiKeyResult.description(), "updatedDesc");
     }
 
     @Test
     public void testResourceOperations() {
         GetResourcesResult resourcesResult = apiGateway
-                .getResources(new GetResourcesRequest()
-                                      .withRestApiId(restApiId));
-        List<Resource> resources = resourcesResult.getItems();
+                .getResources(GetResourcesRequest.builder()
+                                      .restApiId(restApiId).build());
+        List<Resource> resources = resourcesResult.items();
         Assert.assertEquals(resources.size(), 1);
         Resource rootResource = resources.get(0);
         Assert.assertNotNull(rootResource);
-        Assert.assertEquals(rootResource.getPath(), "/");
-        String rootResourceId = rootResource.getId();
+        Assert.assertEquals(rootResource.path(), "/");
+        String rootResourceId = rootResource.id();
 
         CreateResourceResult createResourceResult = apiGateway
-                .createResource(new CreateResourceRequest()
-                                        .withRestApiId(restApiId)
-                                        .withPathPart("fooPath")
-                                        .withParentId(rootResourceId));
+                .createResource(CreateResourceRequest.builder()
+                                        .restApiId(restApiId)
+                                        .pathPart("fooPath")
+                                        .parentId(rootResourceId).build());
         Assert.assertNotNull(createResourceResult);
-        Assert.assertNotNull(createResourceResult.getId());
-        Assert.assertNotNull(createResourceResult.getParentId());
-        Assert.assertNotNull(createResourceResult.getPath());
-        Assert.assertNotNull(createResourceResult.getPathPart());
-        Assert.assertEquals(createResourceResult.getPathPart(), "fooPath");
-        Assert.assertEquals(createResourceResult.getParentId(), rootResourceId);
+        Assert.assertNotNull(createResourceResult.id());
+        Assert.assertNotNull(createResourceResult.parentId());
+        Assert.assertNotNull(createResourceResult.path());
+        Assert.assertNotNull(createResourceResult.pathPart());
+        Assert.assertEquals(createResourceResult.pathPart(), "fooPath");
+        Assert.assertEquals(createResourceResult.parentId(), rootResourceId);
 
-        PatchOperation patch = new PatchOperation().withOp(Op.Replace)
-                                                   .withPath("/pathPart").withValue("updatedPath");
-        apiGateway.updateResource(new UpdateResourceRequest()
-                                          .withRestApiId(restApiId)
-                                          .withResourceId(createResourceResult.getId())
-                                          .withPatchOperations(patch));
+        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+                                                   .path("/pathPart").value("updatedPath").build();
+        apiGateway.updateResource(UpdateResourceRequest.builder()
+                                          .restApiId(restApiId)
+                                          .resourceId(createResourceResult.id())
+                                          .patchOperations(patch).build());
 
         GetResourceResult getResourceResult = apiGateway
-                .getResource(new GetResourceRequest()
-                                     .withRestApiId(restApiId)
-                                     .withResourceId(createResourceResult.getId()));
+                .getResource(GetResourceRequest.builder()
+                                     .restApiId(restApiId)
+                                     .resourceId(createResourceResult.id()).build());
         Assert.assertNotNull(getResourceResult);
-        Assert.assertNotNull(getResourceResult.getId());
-        Assert.assertNotNull(getResourceResult.getParentId());
-        Assert.assertNotNull(getResourceResult.getPath());
-        Assert.assertNotNull(getResourceResult.getPathPart());
-        Assert.assertEquals(getResourceResult.getPathPart(), "updatedPath");
-        Assert.assertEquals(getResourceResult.getParentId(), rootResourceId);
+        Assert.assertNotNull(getResourceResult.id());
+        Assert.assertNotNull(getResourceResult.parentId());
+        Assert.assertNotNull(getResourceResult.path());
+        Assert.assertNotNull(getResourceResult.pathPart());
+        Assert.assertEquals(getResourceResult.pathPart(), "updatedPath");
+        Assert.assertEquals(getResourceResult.parentId(), rootResourceId);
 
         PutMethodResult putMethodResult = apiGateway
-                .putMethod(new PutMethodRequest().withRestApiId(restApiId)
-                                                 .withResourceId(createResourceResult.getId())
-                                                 .withAuthorizationType("AWS_IAM").withHttpMethod("PUT"));
+                .putMethod(PutMethodRequest.builder().restApiId(restApiId)
+                                                 .resourceId(createResourceResult.id())
+                                                 .authorizationType("AWS_IAM").httpMethod("PUT").build());
         Assert.assertNotNull(putMethodResult);
-        Assert.assertNotNull(putMethodResult.getAuthorizationType());
-        Assert.assertNotNull(putMethodResult.getApiKeyRequired());
-        Assert.assertNotNull(putMethodResult.getHttpMethod());
-        Assert.assertEquals(putMethodResult.getAuthorizationType(), "AWS_IAM");
-        Assert.assertEquals(putMethodResult.getHttpMethod(), "PUT");
+        Assert.assertNotNull(putMethodResult.authorizationType());
+        Assert.assertNotNull(putMethodResult.apiKeyRequired());
+        Assert.assertNotNull(putMethodResult.httpMethod());
+        Assert.assertEquals(putMethodResult.authorizationType(), "AWS_IAM");
+        Assert.assertEquals(putMethodResult.httpMethod(), "PUT");
 
         PutIntegrationResult putIntegrationResult = apiGateway
-                .putIntegration(new PutIntegrationRequest()
-                                        .withRestApiId(restApiId)
-                                        .withResourceId(createResourceResult.getId())
-                                        .withHttpMethod("PUT").withType(IntegrationType.MOCK)
-                                        .withUri("http://foo.bar")
-                                        .withIntegrationHttpMethod("GET"));
+                .putIntegration(PutIntegrationRequest.builder()
+                                        .restApiId(restApiId)
+                                        .resourceId(createResourceResult.id())
+                                        .httpMethod("PUT").type(IntegrationType.MOCK)
+                                        .uri("http://foo.bar")
+                                        .integrationHttpMethod("GET").build());
         Assert.assertNotNull(putIntegrationResult);
-        Assert.assertNotNull(putIntegrationResult.getCacheNamespace());
-        Assert.assertNotNull(putIntegrationResult.getType());
-        Assert.assertEquals(putIntegrationResult.getType(),
+        Assert.assertNotNull(putIntegrationResult.cacheNamespace());
+        Assert.assertNotNull(putIntegrationResult.type());
+        Assert.assertEquals(putIntegrationResult.type(),
                             IntegrationType.MOCK.toString());
     }
 }

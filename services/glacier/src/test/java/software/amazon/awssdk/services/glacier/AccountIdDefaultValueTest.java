@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.glacier.model.ListVaultsRequest;
 
 /**
@@ -46,7 +47,7 @@ public class AccountIdDefaultValueTest {
     public void setup() {
         glacier = GlacierClient.builder()
                 .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
-                .region("us-west-2").endpointOverride(URI.create(getEndpoint()))
+                .region(Region.US_WEST_2).endpointOverride(URI.create(getEndpoint()))
                 .build();
     }
 
@@ -60,7 +61,7 @@ public class AccountIdDefaultValueTest {
                         .willReturn(aResponse()
                                             .withStatus(200)
                                             .withBody("{}")));
-        glacier.listVaults(new ListVaultsRequest());
+        glacier.listVaults(ListVaultsRequest.builder().build());
         verify(getRequestedFor(urlEqualTo("/-/vaults")));
     }
 
@@ -70,7 +71,7 @@ public class AccountIdDefaultValueTest {
                         .willReturn(aResponse()
                                             .withStatus(200)
                                             .withBody("{}")));
-        glacier.listVaults(new ListVaultsRequest("1234"));
+        glacier.listVaults(ListVaultsRequest.builder().accountId("1234").build());
         verify(getRequestedFor(urlEqualTo("/1234/vaults")));
     }
 }

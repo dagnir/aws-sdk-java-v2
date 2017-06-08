@@ -47,7 +47,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     private Collection<KeyAttribute> exclusiveStartKey;
 
     public QuerySpec() {
-        super(new QueryRequest());
+        super(QueryRequest.builder().build());
     }
 
     public KeyAttribute getHashKey() {
@@ -76,44 +76,44 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     /**
      * When a key condition expression is specified, the corresponding name-map
      * and value-map can optionally be specified via {@link #withNameMap(Map)}
-     * and {@link #withValueMap(Map)}. (Note the hash key and range key
+     * and {@link #valueMap(Map)}. (Note the hash key and range key
      * conditions must not be specified if a key condition expression has been
      * specified.)
      */
     public QuerySpec withKeyConditionExpression(String keyConditionExpression) {
-        getRequest().withKeyConditionExpression(keyConditionExpression);
+        setRequest(getRequest().toBuilder().keyConditionExpression(keyConditionExpression).build());
         return this;
     }
 
     public String getKeyConditionExpression() {
-        return getRequest().getKeyConditionExpression();
+        return getRequest().keyConditionExpression();
     }
 
     public QuerySpec withAttributesToGet(String... attributes) {
-        getRequest().withAttributesToGet(Arrays.asList(attributes));
+        setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attributes)).build());
         return this;
     }
 
     public List<String> getAttributesToGet() {
-        return getRequest().getAttributesToGet();
+        return getRequest().attributesToGet();
     }
 
     public QuerySpec withConditionalOperator(ConditionalOperator op) {
-        getRequest().withConditionalOperator(op);
+        setRequest(getRequest().toBuilder().conditionalOperator(op).build());
         return this;
     }
 
     public String getConditionalOperator() {
-        return getRequest().getConditionalOperator();
+        return getRequest().conditionalOperator();
     }
 
     public QuerySpec withConsistentRead(boolean consistentRead) {
-        getRequest().setConsistentRead(consistentRead);
+        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build());
         return this;
     }
 
     public boolean isConsistentRead() {
-        return getRequest().isConsistentRead();
+        return getRequest().consistentRead();
     }
 
     public QuerySpec withQueryFilters(QueryFilter... queryFilters) {
@@ -140,34 +140,34 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     /**
      * When a filter expression is specified, the corresponding name-map and
      * value-map can optionally be specified via {@link #withNameMap(Map)} and
-     * {@link #withValueMap(Map)}. (Note query filters must not be specified if
+     * {@link #valueMap(Map)}. (Note query filters must not be specified if
      * a filter expression has been specified.)
      */
     public QuerySpec withFilterExpression(String filterExpression) {
-        getRequest().withFilterExpression(filterExpression);
+        setRequest(getRequest().toBuilder().filterExpression(filterExpression).build());
         return this;
     }
 
     public String getFilterExpression() {
-        return getRequest().getFilterExpression();
+        return getRequest().filterExpression();
     }
 
     /**
      * When a projection expression is specified, the corresponding name-map and
      * value-map can optionally be specified via {@link #withNameMap(Map)} and
-     * {@link #withValueMap(Map)}. (Note attributes-to-get must not be specified
+     * {@link #valueMap(Map)}. (Note attributes-to-get must not be specified
      * if a projection expression has been specified.)
      */
     public QuerySpec withProjectionExpression(String projectionExpression) {
-        getRequest().withProjectionExpression(projectionExpression);
+        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build());
         return this;
     }
 
     public String getProjectionExpression() {
-        return getRequest().getProjectionExpression();
+        return getRequest().projectionExpression();
     }
 
-    public Map<String, String> getNameMap() {
+    public Map<String, String> nameMap() {
         return nameMap;
     }
 
@@ -186,7 +186,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
         return this;
     }
 
-    public Map<String, Object> getValueMap() {
+    public Map<String, Object> valueMap() {
         return valueMap;
     }
 
@@ -194,7 +194,7 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
      * Applicable only when an expression has been specified. Used to
      * specify the actual values for the attribute-value placeholders.
      */
-    public QuerySpec withValueMap(Map<String, Object> valueMap) {
+    public QuerySpec valueMap(Map<String, Object> valueMap) {
         if (valueMap == null) {
             this.valueMap = null;
         } else {
@@ -204,31 +204,31 @@ public class QuerySpec extends AbstractCollectionSpec<QueryRequest> {
     }
 
     public String getReturnConsumedCapacity() {
-        return getRequest().getReturnConsumedCapacity();
+        return getRequest().returnConsumedCapacity();
     }
 
     public QuerySpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        getRequest().setReturnConsumedCapacity(returnConsumedCapacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
     public QuerySpec withScanIndexForward(boolean scanIndexForward) {
-        getRequest().withScanIndexForward(scanIndexForward);
+        setRequest(getRequest().toBuilder().scanIndexForward(scanIndexForward).build());
         return this;
     }
 
     public boolean isScanIndexForward() {
-        return getRequest().isScanIndexForward();
+        return getRequest().scanIndexForward();
     }
 
     public QuerySpec withSelect(Select select) {
-        getRequest().withSelect(select);
+        setRequest(getRequest().toBuilder().select(select).build());
         return this;
     }
 
-    public String getSelect() {
-        return getRequest().getSelect();
+    public String select() {
+        return getRequest().select();
     }
 
     // Exclusive start key

@@ -179,11 +179,6 @@ public class SignerUtils {
         }
     }
 
-    public static PrivateKey loadPrivateKey(String privateKeyFilePath) throws InvalidKeySpecException, IOException {
-        File privateKeyFile = new File(privateKeyFilePath);
-        return loadPrivateKey(privateKeyFile);
-    }
-
     /**
      * Enumeration of protocols for presigned URLs
      */

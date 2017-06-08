@@ -34,6 +34,6 @@ public class DoubleUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return Double.valueOf(value.getN());
+        return Double.valueOf(value.n());
     }
 }

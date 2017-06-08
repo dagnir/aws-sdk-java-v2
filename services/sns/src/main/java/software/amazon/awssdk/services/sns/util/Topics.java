@@ -186,7 +186,11 @@ public class Topics {
         List<String> sqsAttrNames = Arrays.asList(QueueAttributeName.QueueArn.toString(),
                                                   QueueAttributeName.Policy.toString());
         Map<String, String> sqsAttrs =
-                sqs.getQueueAttributes(new GetQueueAttributesRequest(sqsQueueUrl, sqsAttrNames)).getAttributes();
+                sqs.getQueueAttributes(GetQueueAttributesRequest.builder()
+                        .queueUrl(sqsQueueUrl)
+                        .attributeNames(sqsAttrNames)
+                        .build())
+                        .attributes();
         String sqsQueueArn = sqsAttrs.get(QueueAttributeName.QueueArn.toString());
 
         String policyJson = sqsAttrs.get(QueueAttributeName.Policy.toString());
@@ -201,9 +205,12 @@ public class Topics {
 
         Map<String, String> newAttrs = new HashMap<String, String>();
         newAttrs.put(QueueAttributeName.Policy.toString(), policy.toJson());
-        sqs.setQueueAttributes(new SetQueueAttributesRequest(sqsQueueUrl, newAttrs));
+        sqs.setQueueAttributes(SetQueueAttributesRequest.builder().queueUrl(sqsQueueUrl).attributes(newAttrs).build());
 
-        SubscribeResult subscribeResult = sns.subscribe(new SubscribeRequest(snsTopicArn, "sqs", sqsQueueArn));
-        return subscribeResult.getSubscriptionArn();
+        SubscribeResult subscribeResult = sns.subscribe(SubscribeRequest.builder()
+                .topicArn(snsTopicArn).protocol("sqs")
+                .endpoint(sqsQueueArn)
+                .build());
+        return subscribeResult.subscriptionArn();
     }
 }

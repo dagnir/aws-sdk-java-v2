@@ -39,7 +39,7 @@ public class SnsSignatureCheckerTest extends AwsTestBase {
     private PublicKey getPublicKey() throws URISyntaxException, IOException, CertificateException {
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) cf
-                .generateCertificate(getClass().getResourceAsStream(SnsTestResources.PUBLIC_CERT));
+                .generateCertificate(getClass().getResourceAsStream(SnsTestResources.FIXED_PUBLIC_CERT));
         return cert.getPublicKey();
     }
 }

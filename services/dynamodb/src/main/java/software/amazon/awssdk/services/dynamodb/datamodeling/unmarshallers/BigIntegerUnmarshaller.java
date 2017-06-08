@@ -36,6 +36,6 @@ public class BigIntegerUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return new BigInteger(value.getN());
+        return new BigInteger(value.n());
     }
 }

@@ -46,7 +46,7 @@ class PageIterator<T, R> implements Iterator<Page<T, R>> {
             page = col.firstPage();
         } else {
             page = page.nextPage();
-            col.setLastLowLevelResult(page.getLowLevelResult());
+            col.setLastLowLevelResult(page.lowLevelResult());
         }
         return page;
     }

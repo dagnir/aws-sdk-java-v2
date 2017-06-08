@@ -17,20 +17,17 @@ package software.amazon.awssdk.runtime.endpoint;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.ServiceMetadata;
 
 /**
- * Uses region metdata to construct an endpoint for a specific service
+ * Uses service metadata and the request region to construct an endpoint for a specific service
  */
 @NotThreadSafe
 @SdkProtectedApi
 public class DefaultServiceEndpointBuilder extends ServiceEndpointBuilder {
-
-    private static final Log LOG = LogFactory.getLog(DefaultServiceEndpointBuilder.class);
 
     private final String serviceName;
     private final String protocol;
@@ -51,28 +48,13 @@ public class DefaultServiceEndpointBuilder extends ServiceEndpointBuilder {
 
     @Override
     public URI getServiceEndpoint() {
-        String serviceEndpoint = region.getServiceEndpoint(serviceName);
-
-        if (serviceEndpoint == null) {
-
-            serviceEndpoint = String.format("%s.%s.%s", serviceName, region.getName(), region.getDomain());
-
-            LOG.info("{" + serviceName + ", " + region.getName() + "} was not "
-                     + "found in region metadata, trying to construct an "
-                     + "endpoint using the standard pattern for this region: '" + serviceEndpoint + "'.");
-
-        }
-        return toUri(stripProtocol(serviceEndpoint));
+        ServiceMetadata serviceMetadata = ServiceMetadata.of(serviceName);
+        return withProtocol(serviceMetadata.endpointFor(region));
     }
 
-    private String stripProtocol(final String endpoint) {
-        final int protocolIndex = endpoint.indexOf("://");
-        return protocolIndex >= 0 ? endpoint.substring(protocolIndex + "://".length()) : endpoint;
-    }
-
-    private URI toUri(String endpoint) throws IllegalArgumentException {
+    private URI withProtocol(URI endpointWithoutProtocol) throws IllegalArgumentException {
         try {
-            return new URI(String.format("%s://%s", protocol, endpoint));
+            return new URI(String.format("%s://%s", protocol, endpointWithoutProtocol));
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(e);
         }

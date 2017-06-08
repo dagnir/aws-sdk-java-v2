@@ -208,11 +208,4 @@ public class AwsSdkMetricsTest {
         AwsSdkMetrics.setRegion("us-east-9");
         assertTrue(AwsSdkMetrics.getRegionName().equals("us-east-9"));
     }
-
-    @Test
-    public void setRegions_RegionIsNull_When_NonExistingRegion() {
-        AwsSdkMetrics.setRegion("non-existent-region");
-        assertNull(AwsSdkMetrics.getRegionName());
-    }
-
 }

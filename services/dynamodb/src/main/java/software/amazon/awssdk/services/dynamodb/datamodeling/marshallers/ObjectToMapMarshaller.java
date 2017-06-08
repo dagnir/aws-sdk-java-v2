@@ -44,6 +44,6 @@ public class ObjectToMapMarshaller implements MapAttributeMarshaller {
     @Override
     public AttributeValue marshall(Object obj) {
         Map<String, AttributeValue> values = converter.convert(obj);
-        return new AttributeValue().withM(values);
+        return AttributeValue.builder().m(values).build();
     }
 }

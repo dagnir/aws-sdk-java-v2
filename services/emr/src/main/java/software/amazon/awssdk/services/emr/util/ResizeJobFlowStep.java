@@ -45,13 +45,13 @@ import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig;
  *     .toHadoopJarStepConfig();
  *
  * StepConfig resizeJobFlow = new StepConfig()
- *     .withName("Resize job flow")
- *     .withActionOnFailure("TERMINATE_JOB_FLOW")
+ *     .name("Resize job flow")
+ *     .actionOnFailure("TERMINATE_JOB_FLOW")
  *     .withHadoopJarStep(config);
  *
  * RunJobFlowRequest request = new RunJobFlowRequest()
- *     .withName("Resize job flow")
- *     .withSteps(resizeJobFlow)
+ *     .name("Resize job flow")
+ *     .steps(resizeJobFlow)
  *     .withLogUri("s3://log-bucket/")
  *     .withInstances(new JobFlowInstancesConfig()
  *         .withEc2KeyName("keypair")
@@ -59,7 +59,7 @@ import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig;
  *         .withInstanceCount(5)
  *         .withKeepJobFlowAliveWhenNoSteps(true)
  *         .withMasterInstanceType("m1.small")
- *         .withSlaveInstanceType("m1.small"));
+ *         .slaveInstanceType("m1.small"));
  *
  * RunJobFlowResult result = emr.runJobFlow(request);
  * </pre>
@@ -105,7 +105,7 @@ public class ResizeJobFlowStep {
      *         together.
      */
     public ResizeJobFlowStep withResizeAction(ResizeAction resizeAction) {
-        this.args.addAll(resizeAction.getArgs());
+        this.args.addAll(resizeAction.args());
         return this;
     }
 
@@ -171,9 +171,10 @@ public class ResizeJobFlowStep {
             args.add(onFailure.toString());
         }
 
-        return new HadoopJarStepConfig()
-                .withJar("s3://" + bucket + "/libs/resize-job-flow/0.1/resize-job-flow.jar")
-                .withArgs(args);
+        return HadoopJarStepConfig.builder()
+                .jar("s3://" + bucket + "/libs/resize-job-flow/0.1/resize-job-flow.jar")
+                .args(args)
+                .build();
     }
 
     /**
@@ -203,7 +204,7 @@ public class ResizeJobFlowStep {
 
 
     public static interface ResizeAction {
-        public List<String> getArgs();
+        public List<String> args();
     }
 
 
@@ -238,7 +239,7 @@ public class ResizeJobFlowStep {
             return this;
         }
 
-        public List<String> getArgs() {
+        public List<String> args() {
             if (instanceGroup == null) {
                 throw new AmazonServiceException("InstanceGroup must not be null.");
             }
@@ -297,7 +298,7 @@ public class ResizeJobFlowStep {
             return this;
         }
 
-        public List<String> getArgs() {
+        public List<String> args() {
             if (instanceGroup == null) {
                 throw new AmazonServiceException("InstanceGroup must not be null.");
             }

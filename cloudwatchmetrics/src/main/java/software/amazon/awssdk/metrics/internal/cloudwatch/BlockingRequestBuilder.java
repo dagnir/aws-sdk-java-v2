@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;
@@ -33,7 +34,6 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
 import software.amazon.awssdk.services.cloudwatch.model.StatisticSet;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.util.json.Jackson;
 
 /**
  * An internal builder used to retrieve the next batch of requests to be sent to
@@ -105,36 +105,43 @@ class BlockingRequestBuilder {
      * Summarizes the given datum into the statistics of the respective unique metric.
      */
     private void summarize(MetricDatum datum, Map<String, MetricDatum> uniqueMetrics) {
-        Double value = datum.getValue();
+        Double value = datum.value();
         if (value == null) {
             return;
         }
-        List<Dimension> dims = datum.getDimensions();
+        List<Dimension> dims = datum.dimensions();
         Collections.sort(dims, DimensionComparator.INSTANCE);
-        String metricName = datum.getMetricName();
-        String key = metricName + Jackson.toJsonString(dims);
+        String metricName = datum.metricName();
+        String key = metricName + dims.toString();
         MetricDatum statDatum = uniqueMetrics.get(key);
         if (statDatum == null) {
-            statDatum = new MetricDatum()
-                    .withDimensions(datum.getDimensions())
-                    .withMetricName(metricName)
-                    .withUnit(datum.getUnit())
-                    .withStatisticValues(new StatisticSet()
-                                                 .withMaximum(value)
-                                                 .withMinimum(value)
-                                                 .withSampleCount(0.0)
-                                                 .withSum(0.0))
+            statDatum = MetricDatum.builder()
+                    .dimensions(datum.dimensions())
+                    .metricName(metricName)
+                    .unit(datum.unit())
+                    .statisticValues(StatisticSet.builder()
+                            .maximum(value)
+                            .minimum(value)
+                            .sampleCount(0.0)
+                            .sum(0.0)
+                            .build())
+                    .build()
             ;
             uniqueMetrics.put(key, statDatum);
         }
-        StatisticSet stat = statDatum.getStatisticValues();
-        stat.setSampleCount(stat.getSampleCount() + 1.0);
-        stat.setSum(stat.getSum() + value);
-        if (value > stat.getMaximum()) {
-            stat.setMaximum(value);
-        } else if (value < stat.getMinimum()) {
-            stat.setMinimum(value);
+        StatisticSet stat = statDatum.statisticValues();
+
+        StatisticSet.Builder newStatBuilder = stat.toBuilder()
+                .sampleCount(stat.sampleCount() + 1.0)
+                .sum(stat.sum() + value);
+
+        if (value > stat.maximum()) {
+            newStatBuilder.maximum(value);
+        } else if (value < stat.minimum()) {
+            newStatBuilder.minimum(value);
         }
+
+        uniqueMetrics.put(key, statDatum.toBuilder().statisticValues(newStatBuilder.build()).build());
     }
 
     /**
@@ -226,7 +233,7 @@ class BlockingRequestBuilder {
     private Collection<MetricDatum> filterOsMetrics(Collection<MetricDatum> data) {
         Collection<MetricDatum> output = new ArrayList<MetricDatum>(data.size());
         for (MetricDatum datum : data) {
-            if (!OS_METRIC_NAME.equals(datum.getMetricName())) {
+            if (!OS_METRIC_NAME.equals(datum.metricName())) {
                 output.add(datum);
             }
         }
@@ -241,17 +248,18 @@ class BlockingRequestBuilder {
             // To do so, we copy the metric data to avoid mutability problems.
             Collection<MetricDatum> newData = new ArrayList<MetricDatum>(data.size());
             for (MetricDatum md : data) {
-                MetricDatum newMd = cloneMetricDatum(md);
+                MetricDatum.Builder newMdBuilder = cloneMetricDatum(md).toBuilder();
                 for (Dimension dim : extraDims) {
-                    newMd.withDimensions(dim);  // add the extra dimensions to the new metric datum
+                    newMdBuilder.dimensions(dim);  // add the extra dimensions to the new metric datum
                 }
-                newData.add(newMd);
+                newData.add(newMdBuilder.build());
             }
             data = newData;
         }
-        return new PutMetricDataRequest()
-                .withNamespace(namespace)
-                .withMetricData(data)
+        return PutMetricDataRequest.builder()
+                .namespace(namespace)
+                .metricData(data)
+                .build()
                 .withRequestMetricCollector(RequestMetricCollector.NONE)
                 ;
     }
@@ -261,16 +269,17 @@ class BlockingRequestBuilder {
      * Made package private only for testing purposes.
      */
     final MetricDatum cloneMetricDatum(MetricDatum md) {
-        return new MetricDatum()
-                .withDimensions(md.getDimensions()) // a new collection is created
-                .withMetricName(md.getMetricName())
-                .withStatisticValues(md.getStatisticValues())
-                .withTimestamp(md.getTimestamp())
-                .withUnit(md.getUnit())
-                .withValue(md.getValue());
+        return MetricDatum.builder()
+                .dimensions(md.dimensions()) // a new collection is created
+                .metricName(md.metricName())
+                .statisticValues(md.statisticValues())
+                .timestamp(md.timestamp())
+                .unit(md.unit())
+                .value(md.value())
+                .build();
     }
 
     private Dimension dimension(Dimensions name, String value) {
-        return new Dimension().withName(name.toString()).withValue(value);
+        return Dimension.builder().name(name.toString()).value(value).build();
     }
 }
