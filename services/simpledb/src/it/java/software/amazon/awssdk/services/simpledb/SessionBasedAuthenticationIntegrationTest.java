@@ -31,7 +31,7 @@ public class SessionBasedAuthenticationIntegrationTest extends IntegrationTestBa
         // STSSessionCredentials(credentials);
         // AmazonSimpleDBClient sdb = new AmazonSimpleDBClient(sessionCredentials);
         //
-        // sdb.createDomain(new CreateDomainRequest().withDomainName("java" +
+        // sdb.createDomain(new CreateDomainRequest().domainName("java" +
         // this.getClass().getSimpleName() + System.currentTimeMillis()));
     }
 }

@@ -16,7 +16,6 @@
 package software.amazon.awssdk.codegen.model.intermediate.customization;
 
 public class ArtificialResultWrapper {
-
     private String wrappedMemberName;
     private String wrappedMemberSimpleType;
 

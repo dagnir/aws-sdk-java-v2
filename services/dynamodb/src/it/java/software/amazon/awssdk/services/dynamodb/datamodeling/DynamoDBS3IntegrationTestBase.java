@@ -35,7 +35,6 @@ import java.util.Iterator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
@@ -55,9 +54,9 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
     public static void setUp() throws Exception {
         DynamoDBIntegrationTestBase.setUp();
         s3East = new AmazonS3Client(credentials);
-        s3East.setRegion(Region.getRegion(Regions.US_EAST_1));
+        s3East.setRegion(Region.US_EAST_1);
         s3West = new AmazonS3Client(credentials);
-        s3West.setRegion(Region.getRegion(Regions.US_WEST_2));
+        s3West.setRegion(Region.US_WEST_2);
 
         createBucket(s3East, EAST_BUCKET);
         createBucket(s3West, WEST_BUCKET);

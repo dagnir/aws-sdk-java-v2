@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.inspector.model.AccessDeniedException;
 import software.amazon.awssdk.services.inspector.model.ListRulesPackagesRequest;
 
@@ -41,7 +42,7 @@ public class InspectorErrorUnmarshallingTest {
         StaticCredentialsProvider credsProvider = new StaticCredentialsProvider(new AwsCredentials("akid", "skid"));
         inspector = InspectorClient.builder()
                                    .credentialsProvider(credsProvider)
-                                   .region("us-east-1")
+                                   .region(Region.US_EAST_1)
                                    .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                    .build();
     }
@@ -59,10 +60,10 @@ public class InspectorErrorUnmarshallingTest {
                 "\"Message\":\"User: arn:aws:iam::1234:user/no-perms is not authorized to perform: inspector:ListRulesPackages\"}")));
 
         try {
-            inspector.listRulesPackages(new ListRulesPackagesRequest());
+            inspector.listRulesPackages(ListRulesPackagesRequest.builder().build());
         } catch (AccessDeniedException e) {
             assertEquals("AccessDeniedException", e.getErrorCode());
-            assertEquals("ACCESS_DENIED_TO_RULES_PACKAGE", e.getInspectorErrorCode());
+            assertEquals("ACCESS_DENIED_TO_RULES_PACKAGE", e.inspectorErrorCode());
         }
     }
 

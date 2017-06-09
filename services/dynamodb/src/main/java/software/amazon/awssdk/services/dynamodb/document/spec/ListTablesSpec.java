@@ -25,15 +25,15 @@ import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 public class ListTablesSpec extends AbstractCollectionSpec<ListTablesRequest> {
 
     public ListTablesSpec() {
-        super(new ListTablesRequest());
+        super(ListTablesRequest.builder().build());
     }
 
     public String getExclusiveStartTableName() {
-        return getRequest().getExclusiveStartTableName();
+        return getRequest().exclusiveStartTableName();
     }
 
     public ListTablesSpec withExclusiveStartTableName(String exclusiveStartTableName) {
-        getRequest().setExclusiveStartTableName(exclusiveStartTableName);
+        setRequest(getRequest().toBuilder().exclusiveStartTableName(exclusiveStartTableName).build());
         return this;
     }
 

@@ -20,13 +20,13 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 public class StandardModelFactoriesOverrideTest extends StandardModelFactoriesV2Test {
 
-    private final DynamoDBMapperConfig config = new DynamoDBMapperConfig.Builder()
-            .withTypeConverterFactory(DynamoDBMapperConfig.DEFAULT.getTypeConverterFactory())
+    private final DynamoDbMapperConfig config = new DynamoDbMapperConfig.Builder()
+            .withTypeConverterFactory(DynamoDbMapperConfig.DEFAULT.getTypeConverterFactory())
             .withConversionSchema(ConversionSchemas.v2Builder("V2Override").build())
             .build();
 
-    private final DynamoDBMapperModelFactory factory = StandardModelFactories.of(S3Link.Factory.of(null));
-    private final DynamoDBMapperModelFactory.TableFactory models = factory.getTableFactory(config);
+    private final DynamoDbMapperModelFactory factory = StandardModelFactories.of(S3Link.Factory.of(null));
+    private final DynamoDbMapperModelFactory.TableFactory models = factory.getTableFactory(config);
 
     @Override
     protected <T> AttributeValue convert(Class<T> clazz, Method getter, Object value) {

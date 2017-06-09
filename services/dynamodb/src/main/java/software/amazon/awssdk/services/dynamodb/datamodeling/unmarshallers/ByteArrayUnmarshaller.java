@@ -35,7 +35,7 @@ public class ByteArrayUnmarshaller extends BUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        ByteBuffer buffer = value.getB();
+        ByteBuffer buffer = value.b();
 
         if (buffer.hasArray()) {
             return buffer.array();

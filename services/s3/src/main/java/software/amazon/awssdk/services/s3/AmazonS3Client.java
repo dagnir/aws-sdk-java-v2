@@ -46,12 +46,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.regex.Matcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
@@ -68,7 +66,6 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
@@ -91,8 +88,8 @@ import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics.Field;
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.ServiceMetadata;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -238,7 +235,6 @@ import software.amazon.awssdk.services.s3.model.PartListing;
 import software.amazon.awssdk.services.s3.model.Permission;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResult;
-import software.amazon.awssdk.services.s3.model.Region;
 import software.amazon.awssdk.services.s3.model.RequestPaymentConfiguration;
 import software.amazon.awssdk.services.s3.model.RequestPaymentConfiguration.Payer;
 import software.amazon.awssdk.services.s3.model.ResponseHeaderOverrides;
@@ -306,7 +302,6 @@ import software.amazon.awssdk.utils.Base16;
 import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.utils.IoUtils;
-import software.amazon.awssdk.utils.OptionalUtils;
 
 /**
  * <p>
@@ -334,8 +329,6 @@ import software.amazon.awssdk.utils.OptionalUtils;
 public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
     public static final String S3_SERVICE_NAME = "s3";
-    protected static final AmazonS3LegacyClientConfigurationFactory CONFIG_FACTORY =
-            new AmazonS3LegacyClientConfigurationFactory();
     private static final String S3_SIGNER = "S3SignerType";
     private static final String S3_V4_SIGNER = "AWSS3V4SignerType";
     /** Shared factory for converting configuration objects to XML. */
@@ -445,7 +438,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client(AwsCredentials awsCredentials) {
-        this(awsCredentials, CONFIG_FACTORY.getConfig());
+        this(awsCredentials, new LegacyClientConfiguration());
     }
 
     /**
@@ -480,7 +473,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     @Deprecated
     public AmazonS3Client(AwsCredentialsProvider credentialsProvider) {
-        this(credentialsProvider, CONFIG_FACTORY.getConfig());
+        this(credentialsProvider, new LegacyClientConfiguration());
     }
 
     /**
@@ -1257,20 +1250,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
     }
 
     @Override
-    @Deprecated
-    public Bucket createBucket(String bucketName, Region region)
-            throws SdkClientException, AmazonServiceException {
-        return createBucket(new CreateBucketRequest(bucketName, region));
-    }
-
-    @Override
-    @Deprecated
-    public Bucket createBucket(String bucketName, String region)
-            throws SdkClientException, AmazonServiceException {
-        return createBucket(new CreateBucketRequest(bucketName, region));
-    }
-
-    @Override
     public Bucket createBucket(CreateBucketRequest createBucketRequest)
             throws SdkClientException, AmazonServiceException {
         rejectNull(createBucketRequest,
@@ -1307,7 +1286,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
          * We can only send the CreateBucketConfiguration if we're *not*
          * creating a bucket in the US region.
          */
-        if (requestRegion != null && !StringUtils.upperCase(requestRegion).equals(Region.US_Standard.toString())) {
+        if (requestRegion != null && !StringUtils.upperCase(requestRegion).equals(Region.US_EAST_1.value())) {
             XmlWriter xml = new XmlWriter();
             xml.start("CreateBucketConfiguration", "xmlns", Constants.XML_NAMESPACE);
             xml.start("LocationConstraint").value(requestRegion).end();
@@ -1333,7 +1312,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         // is routed so that it will succeed.
 
         software.amazon.awssdk.regions.Region targetRegion =
-                software.amazon.awssdk.regions.Region.getRegion(Regions.fromName(requestRegion));
+                software.amazon.awssdk.regions.Region.of(requestRegion);
         return new DefaultServiceEndpointBuilder(getEndpointPrefix(),
                                                  clientConfiguration.getProtocol().toString()).withRegion(targetRegion)
                                                                                               .getServiceEndpoint();
@@ -1940,15 +1919,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         MD5DigestCalculatingInputStream md5DigestStream = null;
         try {
             Request<PutObjectRequest> request = createRequest(bucketName, key, putObjectRequest, HttpMethodName.PUT);
-            // Make backward compatible with buffer size via system property
-            final Integer bufsize = Constants.getS3StreamBufferSize();
-            if (bufsize != null) {
-                AmazonWebServiceRequest awsreq = request.getOriginalRequest();
-                // Note awsreq is never null at this point even if the original
-                // request was
-                awsreq.getRequestClientOptions()
-                      .setReadLimit(bufsize.intValue());
-            }
+
             if (putObjectRequest.getAccessControlList() != null) {
                 addAclHeaders(request, putObjectRequest.getAccessControlList());
             } else if (putObjectRequest.getCannedAcl() != null) {
@@ -3166,7 +3137,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             // delegate directly to it.
             AwsCredentials credentials =
                     CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
-                                   .getCredentialsOrThrow();
+                                   .getCredentials();
             ((Presigner) signer).presignRequest(request, credentials, req.getExpiration());
         } else {
             // Otherwise use the default presigning method, which is hardcoded
@@ -3464,15 +3435,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                     // When isCurr is a FileInputStream, this wrapping enables
                     // unlimited mark-and-reset
                     isCurr = ReleasableInputStream.wrap(isCurr);
-                }
-                // Make backward compatible with buffer size via system property
-                final Integer bufsize = Constants.getS3StreamBufferSize();
-                if (bufsize != null) {
-                    AmazonWebServiceRequest awsreq = request.getOriginalRequest();
-                    // Note awsreq is never null at this point even if the original
-                    // request was
-                    awsreq.getRequestClientOptions()
-                          .setReadLimit(bufsize.intValue());
                 }
             } else {
                 try {
@@ -3790,8 +3752,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                 if (region != null) {
                     // If cache contains the region for the bucket, create an endpoint for the region and
                     // update the request with that endpoint.
-                    URI endpoint = RuntimeHttpUtils.toUri(RegionUtils.getRegion(region).getServiceEndpoint(S3_SERVICE_NAME),
-                                                          clientConfiguration);
+                    URI endpoint = ServiceMetadata.of(ENDPOINT_PREFIX).endpointFor(Region.of(region));
                     resolveRequestEndpoint(request, bucketName, key, endpoint);
                     return updateSigV4SignerWithRegion((AwsS3V4Signer) signer, region);
                 } else if (request.getOriginalRequest() instanceof GeneratePresignedUrlRequest) {
@@ -3913,7 +3874,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
         new S3QueryStringSigner(methodName.toString(), resourcePath, expiration)
                 .sign(request, CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
-                                              .getCredentialsOrThrow());
+                                              .getCredentials());
 
         // The Amazon S3 DevPay token header is a special exception and can be safely moved
         // from the request's headers into the query string to ensure that it travels along
@@ -4065,53 +4026,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         return ServiceUtils.convertRequestToUrl(request, false, false);
     }
 
-    @Override
-    public synchronized Region getRegion() {
-        String authority = super.endpoint.getAuthority();
-        if (Constants.S3_HOSTNAME.equals(authority)) {
-            return Region.US_Standard;
-        } else {
-            Matcher m = Region.S3_REGIONAL_ENDPOINT_PATTERN.matcher(authority);
-            if (m.matches()) {
-                return Region.fromValue(m.group(1));
-            } else {
-                throw new IllegalStateException(
-                        "S3 client with invalid S3 endpoint configured: " + authority);
-            }
-        }
-    }
-
-    /**
-     * @deprecated use {@link AmazonS3ClientBuilder#setRegion(String)}.
-     */
-    @Override
-    @Deprecated
-    public synchronized void setRegion(software.amazon.awssdk.regions.Region region) {
-        super.setRegion(region);
-        /*
-         * We need to preserve the user provided region. This is because the
-         * region might be mapped to a global s3 endpoint (e.g. when the client
-         * is in accelerate mode), in which case we won't be able to extract the
-         * region back from the endpoint during request signing phase.
-         */
-        clientRegion = region.getName();
-    }
-
-    @Override
-    public String getRegionName() {
-        String authority = super.endpoint.getAuthority();
-        if (Constants.S3_HOSTNAME.equals(authority)) {
-            return "us-east-1";
-        }
-        Matcher m = Region.S3_REGIONAL_ENDPOINT_PATTERN.matcher(authority);
-        try {
-            m.matches();
-            return RegionUtils.getRegion(m.group(1)).getName();
-        } catch (Exception e) {
-            throw new IllegalStateException("No valid region has been specified. Unable to return region name", e);
-        }
-    }
-
     /**
      * Creates and initializes a new request object for the specified S3
      * resource. This method is responsible for determining the right way to
@@ -4176,7 +4090,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
     private ServiceEndpointBuilder getBuilder(URI endpoint, String protocol, boolean useDefaultBuilder) {
         if (clientOptions.isDualstackEnabled() && !clientOptions.isAccelerateModeEnabled()) {
-            return new DualstackEndpointBuilder(getServiceNameIntern(), protocol, getRegion().toAwsRegion());
+            return new DualstackEndpointBuilder(getServiceNameIntern(), protocol, Region.of(getSignerRegion()));
         } else {
             if (useDefaultBuilder) {
                 return new DefaultServiceEndpointBuilder(getServiceName(), protocol);
@@ -4253,7 +4167,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             executionContext.setCredentialsProvider(CredentialUtils.getCredentialsProvider(request.getOriginalRequest(),
                                                                                            awsCredentialsProvider));
 
-            validateRequestBeforeTransmit(request);
             response = client.execute(request, responseHandler, errorResponseHandler, executionContext);
 
             return response.getAwsResponse();
@@ -4282,32 +4195,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         } finally {
             endClientExecution(awsRequestMetrics, request, response);
         }
-    }
-
-    private void validateRequestBeforeTransmit(Request<?> request) {
-        boolean implicitCrossRegionForbidden = areImplicitGlobalClientsDisabled();
-        boolean explicitCrossRegionEnabled = clientOptions.isForceGlobalBucketAccessEnabled();
-
-        // The region must be set if implicit cross region clients are not allowed
-        if (noExplicitRegionProvided(request) && implicitCrossRegionForbidden && !explicitCrossRegionEnabled) {
-            String error = String.format("While the %s system property is enabled, Amazon S3 clients cannot be used without " +
-                                         "first configuring a region or explicitly enabling global bucket access discovery " +
-                                         "in the S3 client builder.",
-                                         SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
-            throw new IllegalStateException(error);
-        }
-    }
-
-    /**
-     * Returns true in the event that the {@link SdkGlobalConfiguration#DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY}
-     * is non-null and not "false".
-     *
-     * If this system property is set, S3 clients may not act in a cross-region manner unless cross-region behavior is
-     * explicitly enabled, using options like {@link AmazonS3ClientBuilder#enableForceGlobalBucketAccess()}.
-     */
-    private boolean areImplicitGlobalClientsDisabled() {
-        String setting = System.getProperty(SdkGlobalConfiguration.DISABLE_S3_IMPLICIT_GLOBAL_CLIENTS_SYSTEM_PROPERTY);
-        return setting != null && !setting.equals("false");
     }
 
     private boolean shouldPerformHeadRequestToFindRegion(Request<?> request, String bucket) {
@@ -4546,7 +4433,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         ExecutorService es = req.getExecutorService();
         final boolean defaultExecutorService = es == null;
         if (es == null) {
-            es = Executors.newFixedThreadPool(clientConfiguration.getMaxConnections());
+            es = Executors.newFixedThreadPool(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS);
         }
         UploadObjectObserver observer = req.getUploadObjectObserver();
         if (observer == null) {
@@ -4984,7 +4871,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         }
 
         final String regionStr = fetchRegionFromCache(bucketName);
-        final software.amazon.awssdk.regions.Region region = RegionUtils.getRegion(regionStr);
+        final software.amazon.awssdk.regions.Region region = Region.of(regionStr);
 
         if (region == null) {
             log.warn("Region information for "
@@ -4993,7 +4880,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         }
 
         return region != null
-               ? RuntimeHttpUtils.toUri(region.getServiceEndpoint(S3_SERVICE_NAME), clientConfiguration)
+               ? ServiceMetadata.of(ENDPOINT_PREFIX).endpointFor(region)
                : endpoint;
     }
 
@@ -5104,11 +4991,17 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      * If the {@link DefaultCredentialsProvider} cannot find any credentials, fall back to anonymous access.
      */
     private static class S3CredentialsProvider extends DefaultCredentialsProvider {
-        private static final AwsCredentials ANONYMOUS_CREDENTIALS = new AnonymousCredentialsProvider().getCredentialsOrThrow();
+        private static final AwsCredentials ANONYMOUS_CREDENTIALS = new AnonymousCredentialsProvider().getCredentials();
 
         @Override
-        public Optional<AwsCredentials> getCredentials() {
-            return OptionalUtils.firstPresent(super.getCredentials(), () -> Optional.of(ANONYMOUS_CREDENTIALS));
+        public AwsCredentials getCredentials() {
+            try {
+                return super.getCredentials();
+            } catch (RuntimeException e) {
+                log.debug("Unable to load credentials from the default credentials provider. "
+                          + "Falling back to anonymous access.", e);
+                return ANONYMOUS_CREDENTIALS;
+            }
         }
 
         @Override

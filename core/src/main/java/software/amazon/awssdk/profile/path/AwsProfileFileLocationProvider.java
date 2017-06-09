@@ -17,17 +17,18 @@ package software.amazon.awssdk.profile.path;
 
 import java.io.File;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.profile.path.config.ConfigEnvVarOverrideLocationProvider;
 import software.amazon.awssdk.profile.path.config.SharedConfigDefaultLocationProvider;
+import software.amazon.awssdk.profile.path.config.SystemSettingsProfileLocationProvider;
 import software.amazon.awssdk.profile.path.cred.CredentialsDefaultLocationProvider;
-import software.amazon.awssdk.profile.path.cred.CredentialsEnvVarOverrideLocationProvider;
 import software.amazon.awssdk.profile.path.cred.CredentialsLegacyConfigLocationProvider;
+import software.amazon.awssdk.profile.path.cred.CredentialsSystemSettingsLocationProvider;
 
 /**
  * Provides the location of both the AWS Shared credentials file (~/.aws/credentials) or the AWS
  * Shared config file (~/.aws/config).
  */
 @SdkInternalApi
+@FunctionalInterface
 public interface AwsProfileFileLocationProvider {
 
     /**
@@ -36,7 +37,7 @@ public interface AwsProfileFileLocationProvider {
      * legacy config file (~/.aws/config) that we still support loading credentials from.
      */
     AwsProfileFileLocationProvider DEFAULT_CREDENTIALS_LOCATION_PROVIDER = new AwsProfileFileLocationProviderChain(
-            new CredentialsEnvVarOverrideLocationProvider(), new CredentialsDefaultLocationProvider(),
+            new CredentialsSystemSettingsLocationProvider(), new CredentialsDefaultLocationProvider(),
             new CredentialsLegacyConfigLocationProvider());
 
     /**
@@ -44,7 +45,7 @@ public interface AwsProfileFileLocationProvider {
      * falls back to the default location (~/.aws/config) if not present.
      */
     AwsProfileFileLocationProvider DEFAULT_CONFIG_LOCATION_PROVIDER = new AwsProfileFileLocationProviderChain(
-            new ConfigEnvVarOverrideLocationProvider(), new SharedConfigDefaultLocationProvider());
+            new SystemSettingsProfileLocationProvider(), new SharedConfigDefaultLocationProvider());
 
     /**
      * @return Location of file containing profile data. Null if implementation cannot provide the

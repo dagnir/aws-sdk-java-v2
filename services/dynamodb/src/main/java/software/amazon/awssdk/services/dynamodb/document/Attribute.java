@@ -30,11 +30,11 @@ public class Attribute {
         this.value = value;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
-    public Object getValue() {
+    public Object value() {
         return value;
     }
 
@@ -48,9 +48,9 @@ public class Attribute {
         final int prime = 31;
         int hashCode = 1;
         // attribute name is never null as enforced in ctor
-        hashCode = prime * hashCode + getName().hashCode();
+        hashCode = prime * hashCode + name().hashCode();
         hashCode = prime * hashCode
-                   + ((getValue() == null) ? 0 : getValue().hashCode());
+                   + ((value() == null) ? 0 : value().hashCode());
         return hashCode;
     }
 

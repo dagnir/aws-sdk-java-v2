@@ -40,19 +40,19 @@ public class ConfigureS3LinksTest {
         S3Link s3 = new S3Link(s3cc, "ap-southeast-1", "nonexisting-test-bucketname2", "key");
         obj.setS3(s3);
 
-        assertNotNull(obj.getS3());
-        assertEquals("nonexisting-test-bucketname2", obj.getS3().getBucketName());
-        assertSame(Region.AP_Singapore, obj.getS3().getS3Region());
-        assertSame("ap-southeast-1", obj.getS3().getRegion());
+        assertNotNull(obj.s3());
+        assertEquals("nonexisting-test-bucketname2", obj.s3().bucketName());
+        assertSame(Region.AP_Singapore.toString(), obj.s3().s3Region().value());
+        assertSame("ap-southeast-1", obj.s3().getRegion());
     }
 
     @Test
     public void testManyS3LinksClass() {
         ManyS3LinksTestClass obj = new ManyS3LinksTestClass();
-        assertNull(obj.getS31());
+        assertNull(obj.s31());
     }
 
-    @DynamoDBTable(tableName = "nonexisting-test-tablename")
+    @DynamoDbTable(tableName = "nonexisting-test-tablename")
     public static class CorrectTestClass {
 
         private String hk;
@@ -61,7 +61,7 @@ public class ConfigureS3LinksTest {
         public CorrectTestClass() {
         }
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getHk() {
             return hk;
         }
@@ -70,7 +70,7 @@ public class ConfigureS3LinksTest {
             this.hk = hk;
         }
 
-        public S3Link getS3() {
+        public S3Link s3() {
             return s3;
         }
 
@@ -79,7 +79,7 @@ public class ConfigureS3LinksTest {
         }
     }
 
-    @DynamoDBTable(tableName = "nonexisting-test-tablename")
+    @DynamoDbTable(tableName = "nonexisting-test-tablename")
     public static class ManyS3LinksTestClass {
 
         private String hk;
@@ -93,7 +93,7 @@ public class ConfigureS3LinksTest {
         public ManyS3LinksTestClass() {
         }
 
-        @DynamoDBHashKey
+        @DynamoDbHashKey
         public String getHk() {
             return hk;
         }
@@ -102,7 +102,7 @@ public class ConfigureS3LinksTest {
             this.hk = hk;
         }
 
-        public S3Link getS31() {
+        public S3Link s31() {
             return s31;
         }
 
@@ -110,7 +110,7 @@ public class ConfigureS3LinksTest {
             this.s31 = s31;
         }
 
-        public S3Link getS32() {
+        public S3Link s32() {
             return s32;
         }
 
@@ -118,7 +118,7 @@ public class ConfigureS3LinksTest {
             this.s32 = s32;
         }
 
-        public S3Link getS33() {
+        public S3Link s33() {
             return s33;
         }
 
@@ -126,7 +126,7 @@ public class ConfigureS3LinksTest {
             this.s33 = s33;
         }
 
-        public S3Link getS34() {
+        public S3Link s34() {
             return s34;
         }
 
@@ -134,7 +134,7 @@ public class ConfigureS3LinksTest {
             this.s34 = s34;
         }
 
-        public S3Link getS35() {
+        public S3Link s35() {
             return s35;
         }
 
@@ -142,7 +142,7 @@ public class ConfigureS3LinksTest {
             this.s35 = s35;
         }
 
-        public S3Link getS36() {
+        public S3Link s36() {
             return s36;
         }
 

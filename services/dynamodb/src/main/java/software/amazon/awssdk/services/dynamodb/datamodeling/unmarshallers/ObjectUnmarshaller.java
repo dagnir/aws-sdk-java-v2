@@ -49,7 +49,7 @@ public class ObjectUnmarshaller extends MUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) throws ParseException {
-        Map<String, AttributeValue> map = value.getM();
+        Map<String, AttributeValue> map = value.m();
         return converter.unconvert(clazz, map);
     }
 }

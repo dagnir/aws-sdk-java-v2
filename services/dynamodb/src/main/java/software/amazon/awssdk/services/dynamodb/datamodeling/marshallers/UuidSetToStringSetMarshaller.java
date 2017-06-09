@@ -49,6 +49,6 @@ public class UuidSetToStringSetMarshaller
             strings.add(uuid.toString());
         }
 
-        return new AttributeValue().withSS(strings);
+        return AttributeValue.builder().ss(strings).build();
     }
 }

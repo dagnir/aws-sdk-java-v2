@@ -44,9 +44,9 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateGlobalSecondaryIndexAction;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableResult;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResult;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexDescription;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexUpdate;
 import software.amazon.awssdk.services.dynamodb.model.IndexStatus;
@@ -55,7 +55,7 @@ import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.UpdateTableResult;
+import software.amazon.awssdk.services.dynamodb.model.UpdateTableResponse;
 import software.amazon.awssdk.waiters.FixedDelayStrategy;
 import software.amazon.awssdk.waiters.MaxAttemptsRetryStrategy;
 import software.amazon.awssdk.waiters.PollingStrategy;
@@ -127,9 +127,9 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * @throws ResourceNotFoundException if the table doesn't exist
      */
     public TableDescription describe() {
-        DescribeTableResult result = client.describeTable(
-                InternalUtils.applyUserAgent(new DescribeTableRequest(tableName)));
-        TableDescription description = result.getTable();
+        DescribeTableResponse result = client.describeTable(
+                InternalUtils.applyUserAgent(DescribeTableRequest.builder().tableName(tableName).build()));
+        TableDescription description = result.table();
         tableDescription = description;
         return description;
     }
@@ -343,11 +343,13 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
      * @return the updated table description returned from DynamoDB.
      */
     public TableDescription updateTable(UpdateTableSpec spec) {
-        UpdateTableRequest req = spec.getRequest();
-        req.setTableName(getTableName());
-        UpdateTableResult result = client.updateTable(req);
-        TableDescription description = result.getTableDescription();
+        UpdateTableRequest.Builder reqBuilder = spec.getRequest().toBuilder();
+        reqBuilder.tableName(getTableName());
+        UpdateTableRequest updated = reqBuilder.build();
+        UpdateTableResponse result = client.updateTable(updated);
+        TableDescription description = result.tableDescription();
         this.tableDescription = description;
+
         return description;
     }
 
@@ -404,10 +406,10 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
             AttributeDefinition... keyDefinitions) {
         UpdateTableSpec spec = new UpdateTableSpec()
                 .withAttributeDefinitions(keyDefinitions)
-                .withGlobalSecondaryIndexUpdates(
-                        new GlobalSecondaryIndexUpdate().withCreate(create));
+                .withGlobalSecondaryIndexUpdates(GlobalSecondaryIndexUpdate.builder()
+                        .create(create).build());
         updateTable(spec);
-        return this.getIndex(create.getIndexName());
+        return this.getIndex(create.indexName());
     }
 
     /**
@@ -457,7 +459,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         Waiter waiter = client.waiters().tableExists();
 
         try {
-            waiter.run(new WaiterParameters<>(new DescribeTableRequest(tableName))
+            waiter.run(new WaiterParameters<>(DescribeTableRequest.builder().tableName(tableName).build())
                                .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25),
                                                                         new FixedDelayStrategy(5))));
             return describe();
@@ -478,7 +480,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     public void waitForDelete() throws InterruptedException {
         Waiter waiter = client.waiters().tableNotExists();
         try {
-            waiter.run(new WaiterParameters<>(new DescribeTableRequest(tableName))
+            waiter.run(new WaiterParameters<>(DescribeTableRequest.builder().tableName(tableName).build())
                                .withPollingStrategy(new PollingStrategy(new MaxAttemptsRetryStrategy(25),
                                                                         new FixedDelayStrategy(5))));
         } catch (Exception exception) {
@@ -505,7 +507,7 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
         try {
             for (; ; ) {
                 TableDescription desc = describe();
-                final String status = desc.getTableStatus();
+                final String status = desc.tableStatus();
                 if (TableStatus.fromValue(status) == TableStatus.ACTIVE) {
                     return desc;
                 } else {
@@ -539,13 +541,13 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
             retry:
             for (; ; ) {
                 TableDescription desc = describe();
-                String status = desc.getTableStatus();
+                String status = desc.tableStatus();
                 if (TableStatus.fromValue(status) == TableStatus.ACTIVE) {
                     List<GlobalSecondaryIndexDescription> descriptions =
-                            desc.getGlobalSecondaryIndexes();
+                            desc.globalSecondaryIndexes();
                     if (descriptions != null) {
                         for (GlobalSecondaryIndexDescription d : descriptions) {
-                            status = d.getIndexStatus();
+                            status = d.indexStatus();
                             if (IndexStatus.fromValue(status) != IndexStatus.ACTIVE) {
                                 // Some index is not active.  Keep waiting.
                                 Thread.sleep(SLEEP_TIME_MILLIS);
@@ -567,8 +569,8 @@ public class Table implements PutItemApi, GetItemApi, QueryApi, ScanApi,
     /**
      * Deletes the table from DynamoDB. Involves network calls.
      */
-    public DeleteTableResult delete() {
-        return client.deleteTable(new DeleteTableRequest(tableName));
+    public DeleteTableResponse delete() {
+        return client.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
     }
 
     @Override

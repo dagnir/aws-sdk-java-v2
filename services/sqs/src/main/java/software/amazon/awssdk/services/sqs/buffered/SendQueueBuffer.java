@@ -28,22 +28,22 @@ import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResult;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResponse;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResult;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchResult;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
-import software.amazon.awssdk.services.sqs.model.DeleteMessageResult;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
-import software.amazon.awssdk.services.sqs.model.SendMessageBatchResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 /**
  * This class is responsible for buffering outgoing SQS requests, i.e. requests to send a message,
@@ -134,16 +134,17 @@ public class SendQueueBuffer {
     /**
      * @return never null
      */
-    public QueueBufferFuture<SendMessageRequest, SendMessageResult>
-            sendMessage(SendMessageRequest request, QueueBufferCallback<SendMessageRequest, SendMessageResult> callback) {
+    public QueueBufferFuture<SendMessageRequest, SendMessageResponse>
+            sendMessage(SendMessageRequest request, QueueBufferCallback<SendMessageRequest, SendMessageResponse> callback) {
         return submitOutboundRequest(sendMessageLock, openSendMessageBatchTask, request, inflightSendMessageBatches, callback);
     }
 
     /**
      * @return never null
      */
-    public QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult>
-            deleteMessage(DeleteMessageRequest request, QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback) {
+    public QueueBufferFuture<DeleteMessageRequest, DeleteMessageResponse>
+            deleteMessage(DeleteMessageRequest request,
+                          QueueBufferCallback<DeleteMessageRequest, DeleteMessageResponse> callback) {
         return submitOutboundRequest(deleteMessageLock, openDeleteMessageBatchTask, request,
                                      inflightDeleteMessageBatches, callback);
     }
@@ -151,9 +152,9 @@ public class SendQueueBuffer {
     /**
      * @return never null
      */
-    public QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> changeMessageVisibility(
+    public QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> changeMessageVisibility(
             ChangeMessageVisibilityRequest request,
-            QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> callback) {
+            QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> callback) {
         return submitOutboundRequest(changeMessageVisibilityLock, openChangeMessageVisibilityBatchTask, request,
                                      inflightChangeMessageVisibilityBatches, callback);
     }
@@ -232,12 +233,13 @@ public class SendQueueBuffer {
          * maxBatchOpenMs elapses. The total number of batch task in flight is controlled by the
          * inflightOperationBatch semaphore capped at maxInflightOutboundBatches.
          */
-        QueueBufferFuture<R, ResultT> theFuture;
+        QueueBufferFuture<R, ResultT> theFuture = null;
         try {
             synchronized (operationLock) {
-                theFuture = openOutboundBatchTask[0].addRequest(request, callback);
+                if (openOutboundBatchTask[0] != null) {
+                    theFuture = openOutboundBatchTask[0].addRequest(request, callback);
+                }
                 if (openOutboundBatchTask[0] == null || theFuture == null) {
-
                     OBT obt = (OBT) newOutboundBatchTask(request);
                     inflightOperationBatches.acquire();
                     openOutboundBatchTask[0] = obt;
@@ -458,19 +460,19 @@ public class SendQueueBuffer {
         }
     }
 
-    private class SendMessageBatchTask extends OutboundBatchTask<SendMessageRequest, SendMessageResult> {
+    private class SendMessageBatchTask extends OutboundBatchTask<SendMessageRequest, SendMessageResponse> {
 
         int batchSizeBytes = 0;
 
         @Override
         protected boolean isOkToAdd(SendMessageRequest request) {
             return (requests.size() < config.getMaxBatchSize())
-                   && ((request.getMessageBody().getBytes().length + batchSizeBytes) < config.getMaxBatchSizeBytes());
+                   && ((request.messageBody().getBytes().length + batchSizeBytes) < config.getMaxBatchSizeBytes());
         }
 
         @Override
         protected void onRequestAdded(SendMessageRequest request) {
-            batchSizeBytes += request.getMessageBody().getBytes().length;
+            batchSizeBytes += request.messageBody().getBytes().length;
         }
 
         @Override
@@ -480,37 +482,37 @@ public class SendQueueBuffer {
 
         @Override
         protected void process(List<SendMessageRequest> requests,
-                               List<QueueBufferFuture<SendMessageRequest, SendMessageResult>> futures) {
+                               List<QueueBufferFuture<SendMessageRequest, SendMessageResponse>> futures) {
 
             if (requests.isEmpty()) {
                 return;
             }
 
-            SendMessageBatchRequest batchRequest = new SendMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
+            SendMessageBatchRequest.Builder batchRequestBuilder = SendMessageBatchRequest.builder().queueUrl(qUrl);
 
             List<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>(requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
-                entries.add(new SendMessageBatchRequestEntry().withId(Integer.toString(i))
-                                                              .withMessageBody(requests.get(i).getMessageBody())
-                                                              .withDelaySeconds(requests.get(i).getDelaySeconds())
-                                                              .withMessageAttributes(requests.get(i).getMessageAttributes()));
+                entries.add(SendMessageBatchRequestEntry.builder().id(Integer.toString(i))
+                                                              .messageBody(requests.get(i).messageBody())
+                                                              .delaySeconds(requests.get(i).delaySeconds())
+                                                              .messageAttributes(requests.get(i).messageAttributes()).build());
             }
-            batchRequest.setEntries(entries);
+            SendMessageBatchRequest batchRequest = batchRequestBuilder.entries(entries).build();
 
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
-            SendMessageBatchResult batchResult;
+            SendMessageBatchResponse batchResult;
 
             batchResult = sqsClient.sendMessageBatch(batchRequest).join();
 
-            for (SendMessageBatchResultEntry entry : batchResult.getSuccessful()) {
-                int index = Integer.parseInt(entry.getId());
+            for (SendMessageBatchResultEntry entry : batchResult.successful()) {
+                int index = Integer.parseInt(entry.id());
                 futures.get(index).setSuccess(ResultConverter.convert(entry));
             }
 
-            for (BatchResultErrorEntry errorEntry : batchResult.getFailed()) {
-                int index = Integer.parseInt(errorEntry.getId());
-                if (errorEntry.isSenderFault()) {
+            for (BatchResultErrorEntry errorEntry : batchResult.failed()) {
+                int index = Integer.parseInt(errorEntry.id());
+                if (errorEntry.senderFault()) {
                     futures.get(index).setFailure(ResultConverter.convert(errorEntry));
                 } else {
                     // retry.
@@ -527,37 +529,38 @@ public class SendQueueBuffer {
 
     }
 
-    private class DeleteMessageBatchTask extends OutboundBatchTask<DeleteMessageRequest, DeleteMessageResult> {
+    private class DeleteMessageBatchTask extends OutboundBatchTask<DeleteMessageRequest, DeleteMessageResponse> {
 
         @Override
         protected void process(List<DeleteMessageRequest> requests,
-                               List<QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult>> futures) {
+                               List<QueueBufferFuture<DeleteMessageRequest, DeleteMessageResponse>> futures) {
 
             if (requests.isEmpty()) {
                 return;
             }
 
-            DeleteMessageBatchRequest batchRequest = new DeleteMessageBatchRequest().withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
+            DeleteMessageBatchRequest.Builder batchRequestBuilder = DeleteMessageBatchRequest.builder().queueUrl(qUrl);
 
             List<DeleteMessageBatchRequestEntry> entries = new ArrayList<DeleteMessageBatchRequestEntry>(
                     requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
-                entries.add(new DeleteMessageBatchRequestEntry().withId(Integer.toString(i)).withReceiptHandle(
-                        requests.get(i).getReceiptHandle()));
+                entries.add(DeleteMessageBatchRequestEntry.builder().id(Integer.toString(i)).receiptHandle(
+                        requests.get(i).receiptHandle()).build());
             }
-            batchRequest.setEntries(entries);
+            DeleteMessageBatchRequest batchRequest = batchRequestBuilder.entries(entries).build();
 
-            DeleteMessageBatchResult batchResult = sqsClient.deleteMessageBatch(batchRequest).join();
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
 
-            for (DeleteMessageBatchResultEntry entry : batchResult.getSuccessful()) {
-                int index = Integer.parseInt(entry.getId());
+            DeleteMessageBatchResponse batchResult = sqsClient.deleteMessageBatch(batchRequest).join();
+
+            for (DeleteMessageBatchResultEntry entry : batchResult.successful()) {
+                int index = Integer.parseInt(entry.id());
                 futures.get(index).setSuccess(null);
             }
 
-            for (BatchResultErrorEntry errorEntry : batchResult.getFailed()) {
-                int index = Integer.parseInt(errorEntry.getId());
-                if (errorEntry.isSenderFault()) {
+            for (BatchResultErrorEntry errorEntry : batchResult.failed()) {
+                int index = Integer.parseInt(errorEntry.id());
+                if (errorEntry.senderFault()) {
                     futures.get(index).setFailure(ResultConverter.convert(errorEntry));
                 } else {
                     try {
@@ -573,40 +576,42 @@ public class SendQueueBuffer {
     }
 
     private class ChangeMessageVisibilityBatchTask
-            extends OutboundBatchTask<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> {
+            extends OutboundBatchTask<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> {
 
         @Override
         protected void process(List<ChangeMessageVisibilityRequest> requests,
-                               List<QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult>> futures) {
+                               List<QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse>> futures) {
 
             if (requests.isEmpty()) {
                 return;
             }
 
-            ChangeMessageVisibilityBatchRequest batchRequest = new ChangeMessageVisibilityBatchRequest()
-                    .withQueueUrl(qUrl);
-            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
+            ChangeMessageVisibilityBatchRequest.Builder batchRequestBuilder = ChangeMessageVisibilityBatchRequest.builder()
+                    .queueUrl(qUrl);
 
             List<ChangeMessageVisibilityBatchRequestEntry> entries = new ArrayList<ChangeMessageVisibilityBatchRequestEntry>(
                     requests.size());
             for (int i = 0, n = requests.size(); i < n; i++) {
-                entries.add(new ChangeMessageVisibilityBatchRequestEntry()
-                                    .withId(Integer.toString(i))
-                                    .withReceiptHandle(requests.get(i).getReceiptHandle())
-                                    .withVisibilityTimeout(requests.get(i).getVisibilityTimeout()));
+                entries.add(ChangeMessageVisibilityBatchRequestEntry.builder()
+                                    .id(Integer.toString(i))
+                                    .receiptHandle(requests.get(i).receiptHandle())
+                                    .visibilityTimeout(requests.get(i).visibilityTimeout()).build());
             }
-            batchRequest.setEntries(entries);
 
-            ChangeMessageVisibilityBatchResult batchResult = sqsClient.changeMessageVisibilityBatch(batchRequest).join();
+            ChangeMessageVisibilityBatchRequest batchRequest = batchRequestBuilder.entries(entries).build();
 
-            for (ChangeMessageVisibilityBatchResultEntry entry : batchResult.getSuccessful()) {
-                int index = Integer.parseInt(entry.getId());
+            ResultConverter.appendUserAgent(batchRequest, SqsBufferedAsyncClient.USER_AGENT);
+
+            ChangeMessageVisibilityBatchResponse batchResult = sqsClient.changeMessageVisibilityBatch(batchRequest).join();
+
+            for (ChangeMessageVisibilityBatchResultEntry entry : batchResult.successful()) {
+                int index = Integer.parseInt(entry.id());
                 futures.get(index).setSuccess(null);
             }
 
-            for (BatchResultErrorEntry errorEntry : batchResult.getFailed()) {
-                int index = Integer.parseInt(errorEntry.getId());
-                if (errorEntry.isSenderFault()) {
+            for (BatchResultErrorEntry errorEntry : batchResult.failed()) {
+                int index = Integer.parseInt(errorEntry.id());
+                if (errorEntry.senderFault()) {
                     futures.get(index).setFailure(ResultConverter.convert(errorEntry));
                 } else {
                     try {

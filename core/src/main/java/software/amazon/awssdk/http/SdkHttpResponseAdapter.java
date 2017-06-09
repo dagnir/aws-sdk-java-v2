@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 
 /**
@@ -31,16 +30,18 @@ import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
  */
 public class SdkHttpResponseAdapter {
 
-    public static HttpResponse adapt(HttpClientSettings httpSettings, Request<?> request, SdkHttpFullResponse awsHttpResponse) {
+    public static HttpResponse adapt(boolean calculateCrc32FromCompressedData,
+                                     Request<?> request,
+                                     SdkHttpFullResponse awsHttpResponse) {
         final HttpResponse httpResponse = new HttpResponse(request);
         httpResponse.setStatusCode(awsHttpResponse.getStatusCode());
         httpResponse.setStatusText(awsHttpResponse.getStatusText());
 
         // Legacy HttpResponse only supports a single value for a header
         awsHttpResponse.getHeaders()
-                .forEach((k, v) -> httpResponse.addHeader(k, v.get(0)));
+                       .forEach((k, v) -> httpResponse.addHeader(k, v.get(0)));
 
-        httpResponse.setContent(getContent(httpSettings, awsHttpResponse, httpResponse));
+        httpResponse.setContent(getContent(calculateCrc32FromCompressedData, awsHttpResponse, httpResponse));
 
         return httpResponse;
     }
@@ -49,12 +50,12 @@ public class SdkHttpResponseAdapter {
         return new Crc32ChecksumValidatingInputStream(source, expectedChecksum);
     }
 
-    private static InputStream getContent(HttpClientSettings httpSettings,
+    private static InputStream getContent(boolean calculateCrc32FromCompressedData,
                                           SdkHttpFullResponse awsHttpResponse,
                                           HttpResponse httpResponse) {
         final Optional<Long> crc32Checksum = getCrc32Checksum(httpResponse);
         if (shouldDecompress(httpResponse)) {
-            if (httpSettings.calculateCrc32FromCompressedData() && crc32Checksum.isPresent()) {
+            if (calculateCrc32FromCompressedData && crc32Checksum.isPresent()) {
                 return decompressing(crc32Validating(awsHttpResponse.getContent(), crc32Checksum.get()));
             } else if (crc32Checksum.isPresent()) {
                 return crc32Validating(decompressing(awsHttpResponse.getContent()), crc32Checksum.get());
@@ -69,7 +70,7 @@ public class SdkHttpResponseAdapter {
 
     private static Optional<Long> getCrc32Checksum(HttpResponse httpResponse) {
         return Optional.ofNullable(httpResponse.getHeader("x-amz-crc32"))
-                .map(Long::valueOf);
+                       .map(Long::valueOf);
     }
 
     private static boolean shouldDecompress(HttpResponse httpResponse) {

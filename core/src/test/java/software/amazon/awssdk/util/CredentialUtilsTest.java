@@ -46,8 +46,8 @@ public class CredentialUtilsTest {
                                                                                null);
 
         Assert.assertThat(actual, Matchers.instanceOf(StaticCredentialsProvider.class));
-        assertEquals(awsAccessKeyId, actual.getCredentialsOrThrow().accessKeyId());
-        assertEquals(awsSecretAccessKey, actual.getCredentialsOrThrow().secretAccessKey());
+        assertEquals(awsAccessKeyId, actual.getCredentials().accessKeyId());
+        assertEquals(awsSecretAccessKey, actual.getCredentials().secretAccessKey());
     }
 
     @Test
@@ -60,8 +60,8 @@ public class CredentialUtilsTest {
         AwsCredentialsProvider actual = CredentialUtils
                 .getCredentialsProvider((AmazonWebServiceRequest) null, base);
         Assert.assertThat(actual, Matchers.instanceOf(StaticCredentialsProvider.class));
-        assertEquals(awsAccessKeyId, actual.getCredentialsOrThrow().accessKeyId());
-        assertEquals(awsSecretAccessKey, actual.getCredentialsOrThrow().secretAccessKey());
+        assertEquals(awsAccessKeyId, actual.getCredentials().accessKeyId());
+        assertEquals(awsSecretAccessKey, actual.getCredentials().secretAccessKey());
     }
 
     @Test

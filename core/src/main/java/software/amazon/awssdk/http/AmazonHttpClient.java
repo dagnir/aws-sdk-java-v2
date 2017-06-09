@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.utils.Validate.paramNotNull;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
@@ -30,7 +32,6 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.http.apache.ApacheHttpClientFactory;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
 import software.amazon.awssdk.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.http.pipeline.stages.AfterCallbackStage;
@@ -55,7 +56,6 @@ import software.amazon.awssdk.http.pipeline.stages.TimerExceptionHandlingStage;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.internal.http.response.AwsErrorResponseHandler;
 import software.amazon.awssdk.internal.http.response.AwsResponseHandlerAdapter;
-import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -99,12 +99,6 @@ public class AmazonHttpClient implements AutoCloseable {
     private static final int THROTTLED_RETRIES = 100;
 
     /**
-     * Timer to enforce timeouts on the whole execution of the request (request handlers, retries,
-     * backoff strategy, unmarshalling, etc).
-     */
-    private final ClientExecutionTimer clientExecutionTimer;
-
-    /**
      * A request metric collector used specifically for this httpClientSettings client; or null if
      * there is none. This collector, if specified, always takes precedence over the one specified
      * at the AWS SDK level.
@@ -113,17 +107,10 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     private final RequestMetricCollector requestMetricCollector;
 
-    /**
-     * Internal client for sending HTTP requests.
-     */
-    private final SdkHttpClient sdkHttpClient;
-
     private final HttpClientDependencies httpClientDependencies;
 
     private AmazonHttpClient(HttpClientDependencies httpClientDependencies, RequestMetricCollector requestMetricCollector) {
-        this.httpClientDependencies = httpClientDependencies;
-        this.clientExecutionTimer = httpClientDependencies.clientExecutionTimer();
-        this.sdkHttpClient = httpClientDependencies.sdkHttpClient();
+        this.httpClientDependencies = paramNotNull(httpClientDependencies, "HttpClientDependencies");
         this.requestMetricCollector = requestMetricCollector;
     }
 
@@ -150,8 +137,7 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     @Override
     public void close() throws Exception {
-        clientExecutionTimer.shutdown();
-        sdkHttpClient.close();
+        httpClientDependencies.close();;
     }
 
     /**
@@ -159,7 +145,7 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     @SdkTestInternalApi
     public ClientExecutionTimer getClientExecutionTimer() {
-        return this.clientExecutionTimer;
+        return this.httpClientDependencies.clientExecutionTimer();
     }
 
     /**
@@ -310,7 +296,6 @@ public class AmazonHttpClient implements AutoCloseable {
         private LegacyClientConfiguration clientConfig;
         private RetryPolicy retryPolicy;
         private RequestMetricCollector requestMetricCollector;
-        private boolean useBrowserCompatibleHostNameVerifier;
         private boolean calculateCrc32FromCompressedData;
         private SdkHttpClient sdkHttpClient;
 
@@ -332,11 +317,6 @@ public class AmazonHttpClient implements AutoCloseable {
             return this;
         }
 
-        public Builder useBrowserCompatibleHostNameVerifier(boolean useBrowserCompatibleHostNameVerifier) {
-            this.useBrowserCompatibleHostNameVerifier = useBrowserCompatibleHostNameVerifier;
-            return this;
-        }
-
         public Builder calculateCrc32FromCompressedData(boolean calculateCrc32FromCompressedData) {
             this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
             return this;
@@ -348,16 +328,14 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         public AmazonHttpClient build() {
-            HttpClientSettings httpClientSettings = HttpClientSettings
-                    .adapt(clientConfig, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData);
             return new AmazonHttpClient(HttpClientDependencies.builder()
-                                                .clientExecutionTimer(new ClientExecutionTimer())
-                                                .config(clientConfig)
-                                                .retryCapacity(createCapacityManager())
-                                                .httpClientSettings(httpClientSettings)
-                                                .retryPolicy(resolveRetryPolicy())
-                                                .sdkHttpClient(resolveSdkHttpClient(httpClientSettings))
-                                                .build(),
+                                                              .clientExecutionTimer(new ClientExecutionTimer())
+                                                              .config(clientConfig)
+                                                              .retryCapacity(createCapacityManager())
+                                                              .retryPolicy(resolveRetryPolicy())
+                                                              .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData)
+                                                              .sdkHttpClient(sdkHttpClient)
+                                                              .build(),
                                         requestMetricCollector);
         }
 
@@ -371,10 +349,6 @@ public class AmazonHttpClient implements AutoCloseable {
 
         private RetryPolicy resolveRetryPolicy() {
             return retryPolicy == null ? new RetryPolicyAdapter(clientConfig.getRetryPolicy(), clientConfig) : retryPolicy;
-        }
-
-        private SdkHttpClient resolveSdkHttpClient(HttpClientSettings httpClientSettings) {
-            return sdkHttpClient != null ? sdkHttpClient : new ApacheHttpClientFactory().create(httpClientSettings);
         }
     }
 
@@ -465,10 +439,10 @@ public class AmazonHttpClient implements AutoCloseable {
 
         private RequestExecutionContext createRequestExecutionDependencies() {
             return RequestExecutionContext.builder()
-                    .request(request)
-                    .requestConfig(resolveRequestConfig())
-                    .executionContext(executionContext)
-                    .build();
+                                          .request(request)
+                                          .requestConfig(resolveRequestConfig())
+                                          .executionContext(executionContext)
+                                          .build();
         }
 
         private RequestConfig resolveRequestConfig() {

@@ -16,12 +16,13 @@
 package software.amazon.awssdk.config.defaults;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static software.amazon.awssdk.config.AdvancedClientOption.SIGNER_PROVIDER;
 
 import java.net.URI;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.config.ClientSecurityConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.MutableClientConfiguration;
@@ -41,9 +42,9 @@ public class GlobalClientConfigurationDefaultsTest {
         // Add the required values not expected to be included in the global configuration.
         ClientConfigurationDefaults configCompleter = new ClientConfigurationDefaults() {
             @Override
-            protected void applySecurityDefaults(ClientSecurityConfiguration.Builder builder) {
-                assertThat(builder.signerProvider()).isEmpty();
-                builder.signerProvider(new NoOpSignerProvider());
+            protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
+                assertThat(builder.build().advancedOption(SIGNER_PROVIDER)).isNull();
+                builder.advancedOption(SIGNER_PROVIDER, new NoOpSignerProvider());
             }
 
             @Override

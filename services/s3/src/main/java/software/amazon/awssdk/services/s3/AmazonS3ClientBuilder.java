@@ -15,13 +15,12 @@
 
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.function.SdkFunction;
-import software.amazon.awssdk.regions.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 
 /**
  * Fluent builder for AmazonS3. Capable of building synchronous and asynchronous clients. Use of the
@@ -36,9 +35,8 @@ public final class AmazonS3ClientBuilder extends AmazonS3Builder<AmazonS3ClientB
 
     @SdkTestInternalApi
     AmazonS3ClientBuilder(SdkFunction<AmazonS3ClientParamsWrapper, AmazonS3> clientFactory,
-                          LegacyClientConfigurationFactory clientConfigFactory,
                           AwsRegionProvider regionProvider) {
-        super(clientFactory, clientConfigFactory, regionProvider);
+        super(clientFactory, regionProvider);
     }
 
     /**
@@ -50,7 +48,7 @@ public final class AmazonS3ClientBuilder extends AmazonS3Builder<AmazonS3ClientB
 
     /**
      * @return Default client using the {@link DefaultCredentialsProvider}
-     *     and {@link software.amazon.awssdk.regions.DefaultAwsRegionProviderChain} chain
+     *     and {@link software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain} chain
      */
     public static AmazonS3 defaultClient() {
         return standard().build();

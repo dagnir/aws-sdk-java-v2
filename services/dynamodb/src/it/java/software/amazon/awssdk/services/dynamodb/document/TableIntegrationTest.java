@@ -29,17 +29,17 @@ import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 public class TableIntegrationTest extends IntegrationTestBase {
-    private final ProvisionedThroughput THRUPUT = new ProvisionedThroughput(1L, 2L);
-    private final ProvisionedThroughput THRUPUT2 = new ProvisionedThroughput(2L, 2L);
+    private final ProvisionedThroughput THRUPUT = ProvisionedThroughput.builder().readCapacityUnits(1L).writeCapacityUnits(2L).build();
+    private final ProvisionedThroughput THRUPUT2 = ProvisionedThroughput.builder().readCapacityUnits(2L).writeCapacityUnits(2L).build();
 
     //    @Test
     public void testCreate_Wait_Delete() throws InterruptedException {
-        Table table = dynamo.createTable(new CreateTableRequest()
-                                                 .withTableName("TableTest-" + UUID.randomUUID().toString())
-                                                 .withAttributeDefinitions(
-                                                         new AttributeDefinition(HASH_KEY_NAME, ScalarAttributeType.S))
-                                                 .withKeySchema(new KeySchemaElement(HASH_KEY_NAME, KeyType.HASH))
-                                                 .withProvisionedThroughput(THRUPUT));
+        Table table = dynamo.createTable(CreateTableRequest.builder()
+                                                 .tableName("TableTest-" + UUID.randomUUID().toString())
+                                                 .attributeDefinitions(
+                                                         AttributeDefinition.builder().attributeName(HASH_KEY_NAME).attributeType(ScalarAttributeType.S).build())
+                                                 .keySchema(KeySchemaElement.builder().attributeName(HASH_KEY_NAME).keyType(KeyType.HASH).build())
+                                                 .provisionedThroughput(THRUPUT).build());
         TableDescription desc = table.waitForActive();
         System.out.println(desc);
         Assert.assertSame(desc, table.getDescription());

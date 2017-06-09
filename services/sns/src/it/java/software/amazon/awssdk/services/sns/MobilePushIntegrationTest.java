@@ -25,26 +25,26 @@ import java.util.Map;
 import java.util.Random;
 import org.junit.Test;
 import software.amazon.awssdk.services.sns.model.CreatePlatformApplicationRequest;
-import software.amazon.awssdk.services.sns.model.CreatePlatformApplicationResult;
+import software.amazon.awssdk.services.sns.model.CreatePlatformApplicationResponse;
 import software.amazon.awssdk.services.sns.model.CreatePlatformEndpointRequest;
-import software.amazon.awssdk.services.sns.model.CreatePlatformEndpointResult;
+import software.amazon.awssdk.services.sns.model.CreatePlatformEndpointResponse;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
-import software.amazon.awssdk.services.sns.model.CreateTopicResult;
+import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 import software.amazon.awssdk.services.sns.model.DeleteEndpointRequest;
 import software.amazon.awssdk.services.sns.model.DeletePlatformApplicationRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
 import software.amazon.awssdk.services.sns.model.Endpoint;
 import software.amazon.awssdk.services.sns.model.GetEndpointAttributesRequest;
-import software.amazon.awssdk.services.sns.model.GetEndpointAttributesResult;
+import software.amazon.awssdk.services.sns.model.GetEndpointAttributesResponse;
 import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttributesRequest;
-import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttributesResult;
+import software.amazon.awssdk.services.sns.model.GetPlatformApplicationAttributesResponse;
 import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationRequest;
-import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationResult;
+import software.amazon.awssdk.services.sns.model.ListEndpointsByPlatformApplicationResponse;
 import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsRequest;
-import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsResult;
+import software.amazon.awssdk.services.sns.model.ListPlatformApplicationsResponse;
 import software.amazon.awssdk.services.sns.model.PlatformApplication;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
-import software.amazon.awssdk.services.sns.model.PublishResult;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
 import software.amazon.awssdk.services.sns.model.SetEndpointAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SetPlatformApplicationAttributesRequest;
 
@@ -52,7 +52,8 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
 
     private String platformAppName = "JavaSDKTestApp" + new Random().nextInt();
     private String platformCredential = "AIzaSyD-4pBAk6M7eveE9dwRFyGv-cfYBPiHRmk";
-    private String token = "APA91bHXHl9bxaaNvHHWNXKwzzaeAjJnBP3g6ieaGta1aPMgrilr0H-QL4AxUZUJ-1mk0gnLpmeXF0Kg7-9fBXfXHTKzPGlCyT6E6oOfpdwLpcRMxQp5vCPFiFeru9oQylc22HvZSwQTDgmmw9WdNlXMerUPzmoX0w";
+    private String token =
+            "APA91bHXHl9bxaaNvHHWNXKwzzaeAjJnBP3g6ieaGta1aPMgrilr0H-QL4AxUZUJ-1mk0gnLpmeXF0Kg7-9fBXfXHTKzPGlCyT6E6oOfpdwLpcRMxQp5vCPFiFeru9oQylc22HvZSwQTDgmmw9WdNlXMerUPzmoX0w";
 
     /**
      * Tests for mobile push API
@@ -66,20 +67,20 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
         String topicArn = null;
 
         try {
-            CreateTopicResult createTopicResult = sns.createTopic(new CreateTopicRequest("TestTopic"));
-            topicArn = createTopicResult.getTopicArn();
+            CreateTopicResponse createTopicResult = sns.createTopic(CreateTopicRequest.builder().name("TestTopic").build());
+            topicArn = createTopicResult.topicArn();
 
             // List platform applications
-            ListPlatformApplicationsResult listPlatformAppsResult =
-                    sns.listPlatformApplications(new ListPlatformApplicationsRequest());
-            int platformAppsCount = listPlatformAppsResult.getPlatformApplications().size();
-            for (PlatformApplication platformApp : listPlatformAppsResult.getPlatformApplications()) {
-                assertNotNull(platformApp.getPlatformApplicationArn());
-                validateAttributes(platformApp.getAttributes());
+            ListPlatformApplicationsResponse listPlatformAppsResult =
+                    sns.listPlatformApplications(ListPlatformApplicationsRequest.builder().build());
+            int platformAppsCount = listPlatformAppsResult.platformApplications().size();
+            for (PlatformApplication platformApp : listPlatformAppsResult.platformApplications()) {
+                assertNotNull(platformApp.platformApplicationArn());
+                validateAttributes(platformApp.attributes());
             }
 
             // Create a platform application for GCM.
-            Map<String, String> attributes = new HashMap<String, String>();
+            Map<String, String> attributes = new HashMap<>();
             attributes.put("PlatformCredential", platformCredential);
             attributes.put("PlatformPrincipal", "NA");
             attributes.put("EventEndpointCreated", topicArn);
@@ -87,86 +88,89 @@ public class MobilePushIntegrationTest extends IntegrationTestBase {
             attributes.put("EventEndpointUpdated", topicArn);
             attributes.put("EventDeliveryAttemptFailure", topicArn);
             attributes.put("EventDeliveryFailure", "");
-            CreatePlatformApplicationResult createPlatformAppResult = sns
-                    .createPlatformApplication(new CreatePlatformApplicationRequest().withName(platformAppName)
-                                                                                     .withPlatform("GCM").withAttributes(attributes));
-            assertNotNull(createPlatformAppResult.getPlatformApplicationArn());
-            platformApplicationArn = createPlatformAppResult.getPlatformApplicationArn();
+            CreatePlatformApplicationResponse createPlatformAppResult = sns
+                    .createPlatformApplication(CreatePlatformApplicationRequest.builder().name(platformAppName)
+                                                                               .platform("GCM").attributes(attributes).build());
+            assertNotNull(createPlatformAppResult.platformApplicationArn());
+            platformApplicationArn = createPlatformAppResult.platformApplicationArn();
 
             Thread.sleep(5 * 1000);
-            listPlatformAppsResult = sns.listPlatformApplications(new ListPlatformApplicationsRequest());
-            assertEquals(platformAppsCount + 1, listPlatformAppsResult.getPlatformApplications().size());
+            listPlatformAppsResult = sns.listPlatformApplications(ListPlatformApplicationsRequest.builder().build());
+            assertEquals(platformAppsCount + 1, listPlatformAppsResult.platformApplications().size());
 
             // Get attributes
-            GetPlatformApplicationAttributesResult getPlatformAttributesResult = sns.getPlatformApplicationAttributes(
-                    new GetPlatformApplicationAttributesRequest().withPlatformApplicationArn(platformApplicationArn));
-            validateAttributes(getPlatformAttributesResult.getAttributes());
+            GetPlatformApplicationAttributesResponse platformAttributesResult = sns.getPlatformApplicationAttributes(
+                    GetPlatformApplicationAttributesRequest.builder().platformApplicationArn(platformApplicationArn).build());
+            validateAttributes(platformAttributesResult.attributes());
 
             // Set attributes
             attributes.clear();
             attributes.put("EventDeliveryFailure", topicArn);
 
-            sns.setPlatformApplicationAttributes(new SetPlatformApplicationAttributesRequest()
-                                                         .withPlatformApplicationArn(platformApplicationArn).withAttributes(attributes));
+            sns.setPlatformApplicationAttributes(SetPlatformApplicationAttributesRequest.builder()
+                                                                                        .platformApplicationArn(
+                                                                                                platformApplicationArn)
+                                                                                        .attributes(attributes).build());
 
             Thread.sleep(1 * 1000);
             // Verify attribute change
-            getPlatformAttributesResult = sns.getPlatformApplicationAttributes(
-                    new GetPlatformApplicationAttributesRequest().withPlatformApplicationArn(platformApplicationArn));
-            validateAttribute(getPlatformAttributesResult.getAttributes(), "EventDeliveryFailure", topicArn);
+            platformAttributesResult = sns.getPlatformApplicationAttributes(
+                    GetPlatformApplicationAttributesRequest.builder().platformApplicationArn(platformApplicationArn).build());
+            validateAttribute(platformAttributesResult.attributes(), "EventDeliveryFailure", topicArn);
 
             // Create platform endpoint
-            CreatePlatformEndpointResult createPlatformEndpointResult = sns.createPlatformEndpoint(
-                    new CreatePlatformEndpointRequest().withPlatformApplicationArn(platformApplicationArn)
-                                                       .withCustomUserData("Custom Data").withToken(token));
-            assertNotNull(createPlatformEndpointResult.getEndpointArn());
-            endpointArn = createPlatformEndpointResult.getEndpointArn();
+            CreatePlatformEndpointResponse createPlatformEndpointResult = sns.createPlatformEndpoint(
+                    CreatePlatformEndpointRequest.builder().platformApplicationArn(platformApplicationArn)
+                                                 .customUserData("Custom Data").token(token).build());
+            assertNotNull(createPlatformEndpointResult.endpointArn());
+            endpointArn = createPlatformEndpointResult.endpointArn();
 
             // List platform endpoints
             Thread.sleep(5 * 1000);
-            ListEndpointsByPlatformApplicationResult listEndpointsResult = sns.listEndpointsByPlatformApplication(
-                    new ListEndpointsByPlatformApplicationRequest().withPlatformApplicationArn(platformApplicationArn));
-            assertTrue(listEndpointsResult.getEndpoints().size() == 1);
-            for (Endpoint endpoint : listEndpointsResult.getEndpoints()) {
-                assertNotNull(endpoint.getEndpointArn());
-                validateAttributes(endpoint.getAttributes());
+            ListEndpointsByPlatformApplicationResponse listEndpointsResult = sns.listEndpointsByPlatformApplication(
+                    ListEndpointsByPlatformApplicationRequest.builder().platformApplicationArn(platformApplicationArn).build());
+            assertTrue(listEndpointsResult.endpoints().size() == 1);
+            for (Endpoint endpoint : listEndpointsResult.endpoints()) {
+                assertNotNull(endpoint.endpointArn());
+                validateAttributes(endpoint.attributes());
             }
 
             // Publish to the endpoint
-            PublishResult publishResult = sns.publish(new PublishRequest().withMessage("Mobile push test message")
-                                                                          .withSubject("Mobile Push test subject").withTargetArn(endpointArn));
-            assertNotNull(publishResult.getMessageId());
+            PublishResponse publishResult = sns.publish(PublishRequest.builder().message("Mobile push test message")
+                                                                    .subject("Mobile Push test subject").targetArn(endpointArn)
+                                                                    .build());
+            assertNotNull(publishResult.messageId());
 
             // Get endpoint attributes
-            GetEndpointAttributesResult getEndpointAttributesResult = sns
-                    .getEndpointAttributes(new GetEndpointAttributesRequest().withEndpointArn(endpointArn));
-            validateAttributes(getEndpointAttributesResult.getAttributes());
+            GetEndpointAttributesResponse endpointAttributesResult = sns
+                    .getEndpointAttributes(GetEndpointAttributesRequest.builder().endpointArn(endpointArn).build());
+            validateAttributes(endpointAttributesResult.attributes());
 
             // Set endpoint attributes
             attributes.clear();
             attributes.put("CustomUserData", "Updated Custom Data");
             sns.setEndpointAttributes(
-                    new SetEndpointAttributesRequest().withEndpointArn(endpointArn).withAttributes(attributes));
+                    SetEndpointAttributesRequest.builder().endpointArn(endpointArn).attributes(attributes).build());
 
             Thread.sleep(1 * 1000);
             // Validate set endpoint attributes
-            getEndpointAttributesResult = sns
-                    .getEndpointAttributes(new GetEndpointAttributesRequest().withEndpointArn(endpointArn));
-            validateAttribute(getEndpointAttributesResult.getAttributes(), "CustomUserData", "Updated Custom Data");
+            endpointAttributesResult = sns
+                    .getEndpointAttributes(GetEndpointAttributesRequest.builder().endpointArn(endpointArn).build());
+            validateAttribute(endpointAttributesResult.attributes(), "CustomUserData", "Updated Custom Data");
 
         } finally {
             if (platformApplicationArn != null) {
                 if (endpointArn != null) {
                     // Delete endpoint
-                    sns.deleteEndpoint(new DeleteEndpointRequest().withEndpointArn(endpointArn));
+                    sns.deleteEndpoint(DeleteEndpointRequest.builder().endpointArn(endpointArn).build());
                 }
                 // Delete application platform
                 sns.deletePlatformApplication(
-                        new DeletePlatformApplicationRequest().withPlatformApplicationArn(platformApplicationArn));
+                        DeletePlatformApplicationRequest.builder().platformApplicationArn(platformApplicationArn).build());
             }
             if (topicArn != null) {
                 // Delete the topic
-                sns.deleteTopic(new DeleteTopicRequest(topicArn));
+                sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
             }
         }
     }

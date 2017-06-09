@@ -21,8 +21,8 @@ public class DimensionComparatorTest {
         // above names and values in two Dimension objects
         for (int[] is : new IndexValues(names.length, value.length, names.length, value.length)) {
             int j=0;
-            Dimension from = new Dimension().withName(names[is[j++]]).withValue(value[is[j++]]);
-            Dimension to = new Dimension().withName(names[is[j++]]).withValue(value[is[j++]]);
+            Dimension from = Dimension.builder().name(names[is[j++]]).value(value[is[j++]]).build();
+            Dimension to = Dimension.builder().name(names[is[j++]]).value(value[is[j++]]).build();
             int compared = DimensionComparator.INSTANCE.compare(from, to);
             if (DEBUG)
                 System.out.println("from=" + from + ", to=" + to + ", compared=" + compared);
@@ -44,38 +44,38 @@ public class DimensionComparatorTest {
     @Test
     public void test() {
         // Test case entry format: from, to, expected-result
-        Object[][] cases =  
-        { 
-            {   new Dimension().withName("dim1").withValue("val1"),
-                new Dimension().withName("dim1").withValue("val1"), 
+        Object[][] cases =
+        {
+            {   Dimension.builder().name("dim1").value("val1").build(),
+                Dimension.builder().name("dim1").value("val1").build(),
                 0
             },
-            {   new Dimension().withName("dim2").withValue("val2"),
-                new Dimension().withName("dim2").withValue("val2x"),
+            {   Dimension.builder().name("dim2").value("val2").build(),
+                Dimension.builder().name("dim2").value("val2x").build(),
                 -1
             },
-            {   new Dimension().withName("dim2").withValue("val2x"),
-                new Dimension().withName("dim2").withValue("val2"),
+            {   Dimension.builder().name("dim2").value("val2x").build(),
+                Dimension.builder().name("dim2").value("val2").build(),
                 1
             },
-            {   new Dimension().withName("dim3").withValue("val2x"),
-                new Dimension().withName("dim2").withValue("val2x"),
+            {   Dimension.builder().name("dim3").value("val2x").build(),
+                Dimension.builder().name("dim2").value("val2x").build(),
                 1
             },
-            {   new Dimension().withName(null).withValue("val2x"),
-                new Dimension().withName("dim2").withValue("val2x"),
+            {   Dimension.builder().name(null).value("val2x").build(),
+                Dimension.builder().name("dim2").value("val2x").build(),
                 -1
             },
-            {   new Dimension().withName(null).withValue("val2x"),
-                new Dimension().withName(null).withValue("val2x"),
+            {   Dimension.builder().name(null).value("val2x").build(),
+                Dimension.builder().name(null).value("val2x").build(),
                 0
             },
-            {   new Dimension().withName(null).withValue(null),
-                new Dimension().withName(null).withValue("val2x"),
+            {   Dimension.builder().name(null).value(null).build(),
+                Dimension.builder().name(null).value("val2x").build(),
                 -1
             },
-            {   new Dimension().withName(null).withValue(null),
-                new Dimension().withName(null).withValue(null),
+            {   Dimension.builder().name(null).value(null).build(),
+                Dimension.builder().name(null).value(null).build(),
                 0
             },
         };

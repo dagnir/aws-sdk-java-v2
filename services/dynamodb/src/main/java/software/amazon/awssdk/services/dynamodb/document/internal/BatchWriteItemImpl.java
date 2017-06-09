@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.dynamodb.document.TableWriteItems;
 import software.amazon.awssdk.services.dynamodb.document.api.BatchWriteItemApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.BatchWriteItemSpec;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.DeleteRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
@@ -90,25 +90,29 @@ public class BatchWriteItemImpl implements BatchWriteItemApi {
                 // Put requests for a single table
                 if (itemsToPut != null) {
                     for (Item item : itemsToPut) {
-                        writeRequests.add(new WriteRequest()
-                                                  .withPutRequest(new PutRequest()
-                                                                          .withItem(toAttributeValues(item))));
+                        writeRequests.add(WriteRequest.builder()
+                                                  .putRequest(PutRequest.builder()
+                                                          .item(toAttributeValues(item))
+                                                          .build())
+                                .build());
                     }
                 }
                 // Delete requests for a single table
                 if (pksToDelete != null) {
                     for (PrimaryKey pkToDelete : pksToDelete) {
-                        writeRequests.add(new WriteRequest()
-                                                  .withDeleteRequest(new DeleteRequest()
-                                                                             .withKey(toAttributeValueMap(pkToDelete))));
+                        writeRequests.add(WriteRequest.builder()
+                                                  .deleteRequest(DeleteRequest.builder()
+                                                          .key(toAttributeValueMap(pkToDelete))
+                                                          .build())
+                                .build());
                     }
                 }
                 requestItems.put(tableWriteItems.getTableName(), writeRequests);
             }
         }
-        BatchWriteItemRequest req = spec.getRequest()
-                                        .withRequestItems(requestItems);
-        BatchWriteItemResult result = client.batchWriteItem(req);
+        BatchWriteItemRequest req = spec.getRequest().toBuilder()
+                                        .requestItems(requestItems).build();
+        BatchWriteItemResponse result = client.batchWriteItem(req);
         return new BatchWriteItemOutcome(result);
     }
 }

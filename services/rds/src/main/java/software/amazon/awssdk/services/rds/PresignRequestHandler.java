@@ -29,7 +29,7 @@ import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
@@ -128,14 +128,16 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
     }
 
     private URI createEndpoint(String regionName, String serviceName) {
-        final Region region = RegionUtils.getRegion(regionName);
+        final Region region = Region.of(regionName);
 
         if (region == null) {
             throw new AmazonClientException("{" + serviceName + ", " + regionName + "} was not "
                     + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
-        return toUri(region.getServiceEndpoint(serviceName));
+        return new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
+                .withRegion(region)
+                .getServiceEndpoint();
     }
 
     private String generateUrl(Request<?> request) {

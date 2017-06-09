@@ -34,7 +34,7 @@ import software.amazon.awssdk.internal.http.timers.TimeoutThreadPoolBuilder;
 // order and even concurrently, we need to rely on AmazonHttpClient to call our shutdown() method.
 @SdkInternalApi
 @ThreadSafe
-public class ClientExecutionTimer {
+public class ClientExecutionTimer implements AutoCloseable {
 
     private static final String THREAD_NAME_PREFIX = "AwsSdkClientExecutionTimerThread";
 
@@ -82,7 +82,8 @@ public class ClientExecutionTimer {
      * Shutdown the underlying {@link ScheduledThreadPoolExecutor}. Should be invoked when
      * {@link AmazonHttpClient} is shutdown
      */
-    public synchronized void shutdown() {
+    @Override
+    public void close() throws Exception {
         if (executor != null) {
             executor.shutdown();
         }

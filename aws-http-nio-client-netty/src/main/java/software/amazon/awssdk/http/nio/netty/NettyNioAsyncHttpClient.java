@@ -31,8 +31,10 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.http.SdkHttpClientSettings;
+import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.async.AbortableRunnable;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
@@ -42,30 +44,36 @@ import software.amazon.awssdk.http.nio.netty.internal.ChannelPipelineInitializer
 import software.amazon.awssdk.http.nio.netty.internal.RequestAdapter;
 import software.amazon.awssdk.http.nio.netty.internal.RequestContext;
 import software.amazon.awssdk.http.nio.netty.internal.RunnableRequest;
+import software.amazon.awssdk.utils.AttributeMap;
 
+@SdkInternalApi
+final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
-public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
+    @ReviewBeforeRelease("Finalize on default value")
+    private static final int DEFAULT_MAX_CONNECTIONS_PER_ENDPOINT = 10;
 
-    @ReviewBeforeRelease("Needs to be moved into configuration once we decide on an approach there.")
-    private static final int MAX_CONNECTIONS_PER_ENDPOINT = 10;
     private final EventLoopGroup group = new NioEventLoopGroup();
     private final RequestAdapter requestAdapter = new RequestAdapter();
     private final ChannelPoolMap<URI, ChannelPool> pools;
+    private final boolean trustAllCertificates;
+    private final int maxConnectionsPerEndpoint;
 
-    public NettyNioAsyncHttpClient(SdkHttpClientSettings settings) {
-        this.pools = createChannelPoolMap(settings);
+    @ReviewBeforeRelease("Use service defaults")
+    NettyNioAsyncHttpClient(NettySdkHttpClientFactory factory, AttributeMap serviceDefaults) {
+        this.trustAllCertificates = factory.trustAllCertificates().orElse(Boolean.FALSE);
+        this.maxConnectionsPerEndpoint = factory.maxConnectionsPerEndpoint().orElse(DEFAULT_MAX_CONNECTIONS_PER_ENDPOINT);
+        this.pools = createChannelPoolMap();
     }
 
-    private AbstractChannelPoolMap<URI, ChannelPool> createChannelPoolMap(SdkHttpClientSettings settings) {
+    private AbstractChannelPoolMap<URI, ChannelPool> createChannelPoolMap() {
         return new AbstractChannelPoolMap<URI, ChannelPool>() {
             @Override
             protected ChannelPool newPool(URI key) {
                 final Bootstrap bootstrap =
-                    new Bootstrap().group(group).channel(NioSocketChannel.class).remoteAddress(addressFor(key));
-                SslContext sslContext = sslContext(key.getScheme(), settings.trustAllCertificates());
+                        new Bootstrap().group(group).channel(NioSocketChannel.class).remoteAddress(addressFor(key));
+                SslContext sslContext = sslContext(key.getScheme());
                 return new FixedChannelPool(bootstrap,
-                                            new ChannelPipelineInitializer(sslContext),
-                                            MAX_CONNECTIONS_PER_ENDPOINT);
+                                            new ChannelPipelineInitializer(sslContext), maxConnectionsPerEndpoint);
             }
         };
     }
@@ -79,6 +87,12 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                                           requestAdapter.adapt(sdkRequest),
                                                           handler);
         return new RunnableRequest(context);
+    }
+
+    @Override
+    @ReviewBeforeRelease("Add support for as many of the service defaults as we can")
+    public <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key) {
+        return Optional.empty();
     }
 
     @Override
@@ -98,7 +112,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
         return uri.getPort() != -1 ? uri.getPort() : uri.getScheme().equalsIgnoreCase("https") ? 443 : 80;
     }
 
-    private static SslContext sslContext(String scheme, boolean trustAllCertificates) {
+    private SslContext sslContext(String scheme) {
         if (scheme.equalsIgnoreCase("https")) {
             SslContextBuilder builder = SslContextBuilder.forClient().sslProvider(defaultClientProvider());
             if (trustAllCertificates) {

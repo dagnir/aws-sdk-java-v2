@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeResult;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 /**
  * Tests the default function name resolution and the ability to customize it through
@@ -63,9 +63,9 @@ public class LambdaInvokerFactoryNameResolutionTest {
      * successful response
      */
     private void stubSucessfulInvokeResponse() {
-        InvokeResult result = new InvokeResult();
-        result.setPayload(ByteBuffer.wrap(new byte[] {}));
-        result.setStatusCode(200);
+        InvokeResponse result = InvokeResponse.builder()
+                .payload(ByteBuffer.wrap(new byte[] {}))
+                .statusCode(200).build();
         when(lambda.invoke(any(InvokeRequest.class))).thenReturn(CompletableFuture.completedFuture(result));
     }
 
@@ -76,7 +76,7 @@ public class LambdaInvokerFactoryNameResolutionTest {
                                                       .build(UnitTestInterface.class);
         proxy.functionNameOverridenInAnnotation();
         InvokeRequest capturedRequest = captureInvokeRequestArgument();
-        assertEquals(OVERRIDDEN_NAME, capturedRequest.getFunctionName());
+        assertEquals(OVERRIDDEN_NAME, capturedRequest.functionName());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class LambdaInvokerFactoryNameResolutionTest {
                                                       .build(UnitTestInterface.class);
         proxy.functionNameNotSetInAnnotation();
         InvokeRequest capturedRequest = captureInvokeRequestArgument();
-        assertEquals("functionNameNotSetInAnnotation", capturedRequest.getFunctionName());
+        assertEquals("functionNameNotSetInAnnotation", capturedRequest.functionName());
     }
 
     private InvokeRequest captureInvokeRequestArgument() {
@@ -104,7 +104,7 @@ public class LambdaInvokerFactoryNameResolutionTest {
                                                       .build(UnitTestInterface.class);
         proxy.functionNameOverridenInAnnotation();
         InvokeRequest capturedRequest = captureInvokeRequestArgument();
-        assertEquals(STATIC_FUNCTION_NAME, capturedRequest.getFunctionName());
+        assertEquals(STATIC_FUNCTION_NAME, capturedRequest.functionName());
     }
 
     @Test
@@ -115,7 +115,7 @@ public class LambdaInvokerFactoryNameResolutionTest {
                                                       .build(UnitTestInterface.class);
         proxy.functionNameNotSetInAnnotation();
         InvokeRequest capturedRequest = captureInvokeRequestArgument();
-        assertEquals(STATIC_FUNCTION_NAME, capturedRequest.getFunctionName());
+        assertEquals(STATIC_FUNCTION_NAME, capturedRequest.functionName());
     }
 
     /**

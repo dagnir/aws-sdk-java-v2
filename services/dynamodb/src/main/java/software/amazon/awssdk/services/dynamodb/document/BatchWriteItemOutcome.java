@@ -19,19 +19,19 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.services.dynamodb.document.api.BatchWriteItemApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.BatchWriteItemSpec;
-import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 /**
  * The outcome of a batch write-item operation from DynamoDB.
  */
 public class BatchWriteItemOutcome {
-    private final BatchWriteItemResult result;
+    private final BatchWriteItemResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public BatchWriteItemOutcome(BatchWriteItemResult result) {
+    public BatchWriteItemOutcome(BatchWriteItemResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -45,13 +45,13 @@ public class BatchWriteItemOutcome {
      * @see BatchWriteItemSpec#withUnprocessedItems(Map)
      */
     public Map<String, List<WriteRequest>> getUnprocessedItems() {
-        return result.getUnprocessedItems();
+        return result.unprocessedItems();
     }
 
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public BatchWriteItemResult getBatchWriteItemResult() {
+    public BatchWriteItemResponse batchWriteItemResult() {
         return result;
     }
 

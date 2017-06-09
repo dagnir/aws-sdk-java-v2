@@ -87,12 +87,12 @@ public interface AttributeTransformer {
         /**
          * @return the type of the model class we're transforming to or from
          */
-        Class<T> getModelClass();
+        Class<T> modelClass();
 
         /**
          * @return the mapper config for this operation
          */
-        DynamoDBMapperConfig getMapperConfig();
+        DynamoDbMapperConfig mapperConfig();
 
         /**
          * @return the name of the DynamoDB table the attributes were read

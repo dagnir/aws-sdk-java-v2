@@ -21,7 +21,7 @@ import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.ProfileCredentialsProvider;
-import software.amazon.awssdk.auth.SystemPropertiesCredentialsProvider;
+import software.amazon.awssdk.auth.SystemPropertyCredentialsProvider;
 import software.amazon.awssdk.utils.IoUtils;
 
 public abstract class AwsIntegrationTestBase {
@@ -34,7 +34,7 @@ public abstract class AwsIntegrationTestBase {
                                    .credentialsProviders(ProfileCredentialsProvider.builder()
                                                                                    .profileName(TEST_CREDENTIALS_PROFILE_NAME)
                                                                                    .build(),
-                                                         new SystemPropertiesCredentialsProvider(),
+                                                         new SystemPropertyCredentialsProvider(),
                                                          new EnvironmentVariableCredentialsProvider())
                                    .build();
 
@@ -52,7 +52,7 @@ public abstract class AwsIntegrationTestBase {
     public static void setUpCredentials() {
         if (credentials == null) {
             try {
-                credentials = CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
+                credentials = CREDENTIALS_PROVIDER_CHAIN.getCredentials();
             } catch (Exception ignored) {
                 // Ignored.
             }

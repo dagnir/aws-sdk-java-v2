@@ -15,12 +15,10 @@
 
 package software.amazon.awssdk.auth;
 
-import java.util.Optional;
-
 /**
  * AWS credentials provider chain that looks for credentials in this order:
  * <ul>
- *   <li>Java System Properties - aws.accessKeyId and aws.secretKey</li>
+ *   <li>Java System Properties - <code>aws.accessKeyId</code> and <code>aws.secretKey</code></li>
  *   <li>Environment Variables - <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code></li>
  *   <li>Credential profiles file at the default location (~/.aws/credentials) shared by all AWS SDKs and the AWS CLI</li>
  *   <li>Credentials delivered through the Amazon EC2 container service if AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" environment
@@ -28,7 +26,7 @@ import java.util.Optional;
  *   <li>Instance profile credentials delivered through the Amazon EC2 metadata service</li>
  * </ul>
  *
- * @see SystemPropertiesCredentialsProvider
+ * @see SystemPropertyCredentialsProvider
  * @see EnvironmentVariableCredentialsProvider
  * @see ProfileCredentialsProvider
  * @see ElasticContainerCredentialsProvider
@@ -64,7 +62,7 @@ public class DefaultCredentialsProvider implements AwsCredentialsProvider, AutoC
      */
     private static AwsCredentialsProviderChain createChain(Builder builder) {
         AwsCredentialsProvider[] credentialsProviders = new AwsCredentialsProvider[] {
-                new SystemPropertiesCredentialsProvider(),
+                new SystemPropertyCredentialsProvider(),
                 new EnvironmentVariableCredentialsProvider(),
                 new ProfileCredentialsProvider(),
                 ElasticContainerCredentialsProvider.builder()
@@ -89,7 +87,7 @@ public class DefaultCredentialsProvider implements AwsCredentialsProvider, AutoC
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         return providerChain.getCredentials();
     }
 

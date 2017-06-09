@@ -20,11 +20,9 @@ import java.util.concurrent.ConcurrentMap;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.s3.model.Region;
 
 /**
  * A smart Map for {@link AmazonS3} objects. {@link S3ClientCache} keeps the
@@ -44,7 +42,7 @@ public class S3ClientCache {
 
     /**
      * Create a client cache using the given AWSCredentialsProvider. If
-     * {@link #getClient(Regions)} or {@link #getTransferManager(Regions)} is
+     * {@link #getClient(Region)} or {@link #getTransferManager(Region)} is
      * called and a client has not been provided for the region, the cache will
      * instantiate one from the provided {@link AwsCredentialsProvider}.
      *
@@ -55,6 +53,7 @@ public class S3ClientCache {
     S3ClientCache(AwsCredentialsProvider awsCredentialsProvider) {
         this.awscredentialsProvider = awsCredentialsProvider;
     }
+
 
     /**
      * Force the client cache to provide a certain client for the region which
@@ -71,9 +70,8 @@ public class S3ClientCache {
      *            An {@link AmazonS3} to use in the cache. Its region will
      *            be detected automatically.
      */
-    public void useClient(AmazonS3 client) {
-        String region = client.getRegionName();
-        clientsByRegion.put(region, client);
+    public void useClient(AmazonS3 client, Region region) {
+        clientsByRegion.put(region.value(), client);
     }
 
     /**
@@ -85,10 +83,10 @@ public class S3ClientCache {
      *            configured to use.
      * @return A client for the given region from the cache, either instantiated
      *         automatically from the provided {@link AwsCredentials} or
-     *         provided with {@link #useClient(AmazonS3)}.
+     *         provided with {@link #useClient(AmazonS3, Region)}.
      * @throws IllegalArgumentException
      *             When a region is requested that has not been provided to the
-     *             cache with {@link #useClient(AmazonS3)}, and the cache
+     *             cache with {@link #useClient(AmazonS3, Region)}, and the cache
      *             has no {@link AwsCredentials} with which a client may be
      *             instantiated.
      */
@@ -96,7 +94,7 @@ public class S3ClientCache {
         if (region == null) {
             throw new IllegalArgumentException("S3 region must be specified");
         }
-        return getClient(region.toAwsRegion().getName());
+        return getClient(region.value());
     }
 
     /**
@@ -108,10 +106,10 @@ public class S3ClientCache {
      *            configured to use.
      * @return A client for the given region from the cache, either instantiated
      *         automatically from the provided {@link AwsCredentials} or
-     *         provided with {@link #useClient(AmazonS3)}.
+     *         provided with {@link #useClient(AmazonS3, Region)}.
      * @throws IllegalArgumentException
      *             When a region is requested that has not been provided to the
-     *             cache with {@link #useClient(AmazonS3)}, and the cache
+     *             cache with {@link #useClient(AmazonS3, Region)}, and the cache
      *             has no {@link AwsCredentials} with which a client may be
      *             instantiated.
      */
@@ -139,7 +137,7 @@ public class S3ClientCache {
             throw new IllegalArgumentException("No credentials provider found to connect to S3");
         }
         AmazonS3 client = new AmazonS3Client(awscredentialsProvider);
-        client.setRegion(RegionUtils.getRegion(region));
+        client.setRegion(Region.of(region));
         clientsByRegion.put(region, client);
         return client;
     }

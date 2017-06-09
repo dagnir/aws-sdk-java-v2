@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
 
 /**
  * An implementation of {@link ClientConfiguration}, {@link SyncClientConfiguration} and {@link AsyncClientConfiguration} that
@@ -31,119 +32,21 @@ public final class MutableClientConfiguration
         implements ClientConfiguration, SyncClientConfiguration, AsyncClientConfiguration, Cloneable {
 
     // ClientConfiguration
-    private ClientHttpConfiguration httpConfiguration = ClientHttpConfiguration.builder().build();
-    private ClientHttpProxyConfiguration httpProxyConfiguration = ClientHttpProxyConfiguration.builder().build();
-    private ClientTcpConfiguration tcpConfiguration = ClientTcpConfiguration.builder().build();
-    private ClientIpConfiguration ipConfiguration = ClientIpConfiguration.builder().build();
-    private ClientTimeoutConfiguration timeoutConfiguration = ClientTimeoutConfiguration.builder().build();
-    private ClientMarshallerConfiguration marshallerConfiguration = ClientMarshallerConfiguration.builder().build();
-    private ClientMetricsConfiguration metricsConfiguration = ClientMetricsConfiguration.builder().build();
-    private ClientSecurityConfiguration securityConfiguration = ClientSecurityConfiguration.builder().build();
-    private ClientRetryConfiguration retryConfiguration = ClientRetryConfiguration.builder().build();
-    private ClientListenerConfiguration listenerConfiguration = ClientListenerConfiguration.builder().build();
+    private ClientOverrideConfiguration overrideConfiguration = ClientOverrideConfiguration.builder().build();
     private AwsCredentialsProvider credentialsProvider;
     private URI endpoint;
+    private SdkHttpClient sdkHttpClient;
 
     // AsyncClientConfiguration
     private ExecutorService asyncExecutorService;
 
     @Override
-    public final ClientHttpConfiguration httpConfiguration() {
-        return httpConfiguration;
+    public final ClientOverrideConfiguration overrideConfiguration() {
+        return overrideConfiguration;
     }
 
-    public final MutableClientConfiguration httpConfiguration(ClientHttpConfiguration httpConfiguration) {
-        this.httpConfiguration = httpConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientHttpProxyConfiguration httpProxyConfiguration() {
-        return httpProxyConfiguration;
-    }
-
-    public final MutableClientConfiguration httpProxyConfiguration(ClientHttpProxyConfiguration httpProxyConfiguration) {
-        this.httpProxyConfiguration = httpProxyConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientTcpConfiguration tcpConfiguration() {
-        return tcpConfiguration;
-    }
-
-    public final MutableClientConfiguration tcpConfiguration(ClientTcpConfiguration tcpConfiguration) {
-        this.tcpConfiguration = tcpConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientIpConfiguration ipConfiguration() {
-        return ipConfiguration;
-    }
-
-    public final MutableClientConfiguration ipConfiguration(ClientIpConfiguration ipConfiguration) {
-        this.ipConfiguration = ipConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientTimeoutConfiguration timeoutConfiguration() {
-        return timeoutConfiguration;
-    }
-
-    public final MutableClientConfiguration timeoutConfiguration(ClientTimeoutConfiguration timeoutConfiguration) {
-        this.timeoutConfiguration = timeoutConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientMarshallerConfiguration marshallerConfiguration() {
-        return marshallerConfiguration;
-    }
-
-    public final MutableClientConfiguration marshallerConfiguration(ClientMarshallerConfiguration marshallerConfiguration) {
-        this.marshallerConfiguration = marshallerConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientMetricsConfiguration metricsConfiguration() {
-        return metricsConfiguration;
-    }
-
-    public final MutableClientConfiguration metricsConfiguration(ClientMetricsConfiguration metricsConfiguration) {
-        this.metricsConfiguration = metricsConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientSecurityConfiguration securityConfiguration() {
-        return securityConfiguration;
-    }
-
-    public final MutableClientConfiguration securityConfiguration(ClientSecurityConfiguration securityConfiguration) {
-        this.securityConfiguration = securityConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientRetryConfiguration retryConfiguration() {
-        return retryConfiguration;
-    }
-
-    public final MutableClientConfiguration retryConfiguration(ClientRetryConfiguration retryConfiguration) {
-        this.retryConfiguration = retryConfiguration;
-        return this;
-    }
-
-    @Override
-    public final ClientListenerConfiguration listenerConfiguration() {
-        return listenerConfiguration;
-    }
-
-    public final MutableClientConfiguration listenerConfiguration(ClientListenerConfiguration listenerConfiguration) {
-        this.listenerConfiguration = listenerConfiguration;
+    public final MutableClientConfiguration overrideConfiguration(ClientOverrideConfiguration overrideConfiguration) {
+        this.overrideConfiguration = overrideConfiguration;
         return this;
     }
 
@@ -174,6 +77,16 @@ public final class MutableClientConfiguration
 
     public final MutableClientConfiguration asyncExecutorService(ExecutorService executorService) {
         this.asyncExecutorService = executorService;
+        return this;
+    }
+
+    @Override
+    public final SdkHttpClient httpClient() {
+        return sdkHttpClient;
+    }
+
+    public final MutableClientConfiguration httpClient(SdkHttpClient sdkHttpClient) {
+        this.sdkHttpClient = sdkHttpClient;
         return this;
     }
 

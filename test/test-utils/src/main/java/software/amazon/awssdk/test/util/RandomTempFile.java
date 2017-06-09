@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import software.amazon.awssdk.utils.JavaSystemSetting;
 import software.amazon.awssdk.utils.Logger;
 
 /**
@@ -37,7 +38,7 @@ public class RandomTempFile extends File {
     private static final long serialVersionUID = -8232143353692832238L;
 
     /** Java temp dir where all temp files will be created. */
-    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+    private static final String TEMP_DIR = JavaSystemSetting.TEMP_DIRECTORY.getStringValueOrThrow();
 
     /** Flag controlling whether binary or character data is used. */
     private final boolean binaryData;

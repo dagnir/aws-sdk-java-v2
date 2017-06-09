@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.s3;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -24,8 +23,8 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.function.SdkFunction;
-import software.amazon.awssdk.regions.AwsRegionProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 
 public class AmazonS3ClientBuilderTest {
 
@@ -36,9 +35,8 @@ public class AmazonS3ClientBuilderTest {
     public void setup() {
         mockClientFactory = new MockClientFactory();
         builder = new AmazonS3ClientBuilder(mockClientFactory,
-                                            new AmazonS3LegacyClientConfigurationFactory(),
                                             new FindNothingAwsRegionProvider());
-        builder.withRegion(Regions.US_WEST_2);
+        builder.withRegion(Region.US_WEST_2);
     }
 
     @Test
@@ -155,40 +153,6 @@ public class AmazonS3ClientBuilderTest {
         assertTrue(clientOptions.isDualstackEnabled());
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void withCrossRegionDisabledAndNullRegion_ThrowsExceptionOnBuild() {
-        builder.setRegion(null);
-        builder.withForceGlobalBucketAccessEnabled(false);
-        builder.build();
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void withCrossRegionEnabledAndNullRegion_ThrowsExceptionOnBuild() {
-        builder.setRegion(null);
-        builder.withForceGlobalBucketAccessEnabled(true);
-        builder.build();
-    }
-
-    @Test
-    public void withCrossRegionDisabledAndDefinedRegion_DisablesCrossRegionInClient() {
-        builder.setRegion(Regions.CN_NORTH_1.getName());
-        builder.withForceGlobalBucketAccessEnabled(false);
-
-        final S3ClientOptions clientOptions = buildAndCaptureClientOptions();
-        assertFalse(clientOptions.isForceGlobalBucketAccessEnabled());
-        assertEquals(Regions.CN_NORTH_1.getName(), builder.build().getRegionName());
-    }
-
-    @Test
-    public void withCrossRegionEnabledAndDefinedRegion_EnablesCrossRegionInClient() {
-        builder.setRegion(Regions.CN_NORTH_1.getName());
-        builder.withForceGlobalBucketAccessEnabled(true);
-
-        final S3ClientOptions clientOptions = buildAndCaptureClientOptions();
-        assertTrue(clientOptions.isForceGlobalBucketAccessEnabled());
-        assertEquals(Regions.CN_NORTH_1.getName(), builder.build().getRegionName());
-    }
-
     private S3ClientOptions buildAndCaptureClientOptions() {
         builder.build();
         return mockClientFactory.getCapturedParams().getS3ClientOptions();
@@ -211,7 +175,7 @@ public class AmazonS3ClientBuilderTest {
 
     private static class FindNothingAwsRegionProvider extends AwsRegionProvider {
         @Override
-        public String getRegion() throws AmazonClientException {
+        public Region getRegion() throws AmazonClientException {
             // Imitates the buggy region provider chain that throws an exception instead of returning null when no
             // region is found.
             throw new SdkClientException("No region will ever be found.");

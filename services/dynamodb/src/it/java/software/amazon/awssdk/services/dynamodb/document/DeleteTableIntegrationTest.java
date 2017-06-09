@@ -24,8 +24,8 @@ public class DeleteTableIntegrationTest extends IntegrationTestBase {
 
     //    @Test
     public void testDeleteHashTable() {
-        DynamoDB[] ddbs = {dynamo, dynamoOld};
-        for (DynamoDB ddb : ddbs) {
+        DynamoDb[] ddbs = {dynamo, dynamoOld};
+        for (DynamoDb ddb : ddbs) {
             Table table = ddb.getTable(HASH_ONLY_TABLE_NAME);
             System.out.println(table.delete());
         }
@@ -33,8 +33,8 @@ public class DeleteTableIntegrationTest extends IntegrationTestBase {
 
     //    @Test
     public void testDeleteRangeTable() {
-        DynamoDB[] ddbs = {dynamo, dynamoOld};
-        for (DynamoDB ddb : ddbs) {
+        DynamoDb[] ddbs = {dynamo, dynamoOld};
+        for (DynamoDb ddb : ddbs) {
             Table table = ddb.getTable(RANGE_TABLE_NAME);
             System.out.println(table.delete());
         }

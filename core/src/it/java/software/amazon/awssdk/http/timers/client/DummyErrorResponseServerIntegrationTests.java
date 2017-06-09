@@ -18,6 +18,7 @@ package software.amazon.awssdk.http.timers.client;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
+import static utils.HttpTestUtils.builderWithDefaultClient;
 
 import java.util.List;
 import org.junit.BeforeClass;
@@ -34,6 +35,7 @@ import software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils;
 import software.amazon.awssdk.internal.http.request.SlowRequestHandler;
 import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
 import software.amazon.awssdk.internal.http.response.UnresponsiveErrorResponseHandler;
+import utils.HttpTestUtils;
 
 /**
  * Tests that use a server that returns a predetermined error response within the timeout limit
@@ -57,7 +59,7 @@ public class DummyErrorResponseServerIntegrationTests extends MockServerTestBase
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowErrorResponseHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = AmazonHttpClient.builder()
+        httpClient = builderWithDefaultClient()
                 .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
                 .build();
 
@@ -68,7 +70,7 @@ public class DummyErrorResponseServerIntegrationTests extends MockServerTestBase
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowAfterErrorRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = AmazonHttpClient.builder()
+        httpClient = builderWithDefaultClient()
                 .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
                 .build();
 

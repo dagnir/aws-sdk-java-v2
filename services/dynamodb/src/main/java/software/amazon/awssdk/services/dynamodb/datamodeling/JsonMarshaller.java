@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
  * @deprecated Replaced by {@link DynamoDbTypeConvertedJson}
  */
 @Deprecated
-public class JsonMarshaller<T extends Object> implements DynamoDBMarshaller<T> {
+public class JsonMarshaller<T extends Object> implements DynamoDbMarshaller<T> {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final ObjectWriter WRITER = MAPPER.writer();
@@ -57,7 +57,7 @@ public class JsonMarshaller<T extends Object> implements DynamoDBMarshaller<T> {
      * Gets the value type.
      * @return The value type.
      */
-    protected final Class<T> getValueType() {
+    protected final Class<T> valueType() {
         return this.valueType;
     }
 
@@ -76,7 +76,7 @@ public class JsonMarshaller<T extends Object> implements DynamoDBMarshaller<T> {
     @Override
     public T unmarshall(Class<T> clazz, String json) {
         try {
-            return MAPPER.readValue(json, (getValueType() == null ? clazz : getValueType()));
+            return MAPPER.readValue(json, (valueType() == null ? clazz : valueType()));
         } catch (Exception e) {
             throw failure(e, "Unable to unmarshall the string " + json
                              + "into " + clazz);

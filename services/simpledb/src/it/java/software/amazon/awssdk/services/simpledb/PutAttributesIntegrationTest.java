@@ -37,17 +37,21 @@ public class PutAttributesIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testPutAttributesMissingParameterException() {
-        PutAttributesRequest request = new PutAttributesRequest();
+        PutAttributesRequest request = PutAttributesRequest.builder()
+                .domainName("foo")
+                .build();
         try {
-            sdb.putAttributes(request.withDomainName("foo"));
+            sdb.putAttributes(request);
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);
         }
 
-        request = new PutAttributesRequest();
+        request = PutAttributesRequest.builder()
+                .itemName("foo")
+                .build();
         try {
-            sdb.putAttributes(request.withItemName("foo"));
+            sdb.putAttributes(request);
             fail("Expected MissingParameterException, but wasn't thrown");
         } catch (MissingParameterException e) {
             assertValidException(e);
@@ -60,17 +64,14 @@ public class PutAttributesIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testPutAttributesNoSuchDomainException() {
-        PutAttributesRequest request = new PutAttributesRequest();
-        request.setItemName("foobarbazbarbashbar");
-        request.setDomainName("foobarbazbarbashbar");
-        ArrayList<ReplaceableAttribute> attributes = new ArrayList<ReplaceableAttribute>();
-
-        ReplaceableAttribute attribute = new ReplaceableAttribute();
-        attribute.setName("foo");
-        attribute.setValue("bar");
-        attributes.add(attribute);
-        request.setAttributes(attributes);
-
+        PutAttributesRequest request = PutAttributesRequest.builder()
+                .itemName("foobarbazbarbashbar")
+                .domainName("foobarbazbarbashbar")
+                .attributes(ReplaceableAttribute.builder()
+                        .name("foo")
+                        .value("bar")
+                        .build())
+                .build();
         try {
             sdb.putAttributes(request);
             fail("Expected NoSuchDomainException, but wasn't thrown");

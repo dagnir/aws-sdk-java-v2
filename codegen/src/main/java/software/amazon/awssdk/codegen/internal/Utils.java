@@ -134,17 +134,24 @@ public class Utils {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
+        StringBuilder sb = new StringBuilder(name.length());
 
-        return name.length() < 2 ? StringUtils.lowerCase(name) : StringUtils.lowerCase(name.substring(0, 1))
-                + name.substring(1);
+        int i = 0;
+        do {
+            sb.append(Character.toLowerCase(name.charAt(i++)));
+        } while ((i < name.length() && Character.isUpperCase(name.charAt(i)))
+                // not followed by a lowercase character
+                && !(i < name.length() - 1 && Character.isLowerCase(name.charAt(i + 1))));
 
+        sb.append(name.substring(i));
+
+        return sb.toString();
     }
 
     public static String capitialize(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
-
         return name.length() < 2 ? StringUtils.upperCase(name) : StringUtils.upperCase(name.substring(0, 1))
                 + name.substring(1);
     }
@@ -267,39 +274,6 @@ public class Utils {
         }
 
         return resourceStream;
-    }
-
-    /**
-     * Retrieve system property by name, failing if it's not found
-     *
-     * @return Value of property if it exists
-     */
-    public static String getRequiredSystemProperty(String propertyName, String errorMsgIfNotFound) {
-        String propertyValue = System.getProperty(propertyName);
-        if (propertyValue == null) {
-            throw new RuntimeException(errorMsgIfNotFound);
-        }
-        return propertyValue;
-    }
-
-    /**
-     * Retrieve optional system property by name, returning null if not found
-     *
-     * @return Value of property if it exists, null if it does not
-     */
-    public static String getOptionalSystemProperty(String propertyName) {
-        return System.getProperty(propertyName);
-    }
-
-    /**
-     * Throws IllegalArgumentException with the specified error message if the input
-     * is null, otherwise return the input as is.
-     */
-    public static <T> T assertNotNull(T argument, String msg) {
-        if (argument == null) {
-            throw new IllegalArgumentException(msg);
-        }
-        return argument;
     }
 
     /**

@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.runtime.endpoint.ServiceEndpointBuilder;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
@@ -100,7 +99,7 @@ public class S3RequestEndpointResolver {
      */
     public void resolveRequestEndpoint(Request<?> request, String regionString) {
         if (regionString != null) {
-            final Region r = RegionUtils.getRegion(regionString);
+            final Region r = Region.of(regionString);
 
             if (r == null) {
                 throw new SdkClientException("Not able to determine region" +

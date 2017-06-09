@@ -92,7 +92,7 @@ public class CachingUnmarshallerSetTest {
         }
 
         @Override
-        public ArgumentUnmarshaller getMemberUnmarshaller(Type type) {
+        public ArgumentUnmarshaller memberUnmarshaller(Type type) {
             return memberQueue.remove();
         }
     }

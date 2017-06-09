@@ -36,6 +36,6 @@ public class DateUnmarshaller extends SUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return DateUtils.parseIso8601Date(value.getS());
+        return DateUtils.parseIso8601Date(value.s());
     }
 }

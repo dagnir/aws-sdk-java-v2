@@ -23,12 +23,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityResult;
+import software.amazon.awssdk.services.sts.model.AssumeRoleWithWebIdentityResponse;
 import software.amazon.awssdk.services.sts.model.InvalidIdentityTokenException;
 
-
+@ReviewBeforeRelease("This could be useful to cleanup and present as a customer sample")
+@Ignore
 public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBase {
 
     private static final String GOOGLE_OPENID_TOKEN =
@@ -52,12 +55,12 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
     @Test
     public void testGoogleOAuth() throws Exception {
         AssumeRoleWithWebIdentityRequest request =
-                new AssumeRoleWithWebIdentityRequest().withWebIdentityToken(GOOGLE_OPENID_TOKEN)
-                                                      .withRoleArn(ROLE_ARN)
-                                                      .withRoleSessionName(SESSION_NAME);
+                AssumeRoleWithWebIdentityRequest.builder().webIdentityToken(GOOGLE_OPENID_TOKEN)
+                                                .roleArn(ROLE_ARN)
+                                                .roleSessionName(SESSION_NAME).build();
 
         try {
-            AssumeRoleWithWebIdentityResult result = sts.assumeRoleWithWebIdentity(request);
+            AssumeRoleWithWebIdentityResponse result = sts.assumeRoleWithWebIdentity(request);
             fail("Expected Expired token error");
         } catch (InvalidIdentityTokenException e) {
             // expected error
@@ -82,21 +85,21 @@ public class AssumeRoleWithWebIdentityIntegrationTest extends IntegrationTestBas
 
         String token = json.get("access_token").asText();
         try {
-            AssumeRoleWithWebIdentityRequest request = new AssumeRoleWithWebIdentityRequest().withWebIdentityToken(token)
-                                                                                             .withProviderId(FACEBOOK_PROVIDER)
-                                                                                             .withRoleArn(ROLE_ARN)
-                                                                                             .withRoleSessionName(SESSION_NAME);
+            AssumeRoleWithWebIdentityRequest request = AssumeRoleWithWebIdentityRequest.builder().webIdentityToken(token)
+                                                                                       .providerId(FACEBOOK_PROVIDER)
+                                                                                       .roleArn(ROLE_ARN)
+                                                                                       .roleSessionName(SESSION_NAME).build();
 
-            AssumeRoleWithWebIdentityResult result = sts.assumeRoleWithWebIdentity(request);
+            AssumeRoleWithWebIdentityResponse result = sts.assumeRoleWithWebIdentity(request);
 
-            System.out.println(result.getCredentials().getAccessKeyId());
-            System.out.println(result.getCredentials().getSecretAccessKey());
-            System.out.println(result.getCredentials().getSessionToken());
+            System.out.println(result.credentials().accessKeyId());
+            System.out.println(result.credentials().secretAccessKey());
+            System.out.println(result.credentials().sessionToken());
 
-            assertNotNull(result.getCredentials());
-            assertNotNull(result.getCredentials().getAccessKeyId());
-            assertNotNull(result.getCredentials().getSecretAccessKey());
-            assertNotNull(result.getCredentials().getSessionToken());
+            assertNotNull(result.credentials());
+            assertNotNull(result.credentials().accessKeyId());
+            assertNotNull(result.credentials().secretAccessKey());
+            assertNotNull(result.credentials().sessionToken());
         } finally {
             URL deleteURL = new URL("https://graph.facebook.com/" + json.get("id").asText() +
                                     "?method=delete&access_token=" + token);

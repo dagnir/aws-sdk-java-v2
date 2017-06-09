@@ -19,7 +19,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.document.TableCollection;
 import software.amazon.awssdk.services.dynamodb.document.api.ListTablesApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.ListTablesSpec;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
 /**
  * The implementation for <code>ListTablesApi</code>.
@@ -32,23 +32,23 @@ public class ListTablesImpl implements ListTablesApi {
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(ListTablesSpec spec) {
+    public TableCollection<ListTablesResponse> listTables(ListTablesSpec spec) {
         return doList(spec);
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables() {
+    public TableCollection<ListTablesResponse> listTables() {
         return doList(new ListTablesSpec());
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName) {
+    public TableCollection<ListTablesResponse> listTables(String exclusiveStartTableName) {
         return doList(new ListTablesSpec()
                               .withExclusiveStartTableName(exclusiveStartTableName));
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName,
+    public TableCollection<ListTablesResponse> listTables(String exclusiveStartTableName,
                                                         int maxResultSize) {
         return doList(new ListTablesSpec()
                               .withExclusiveStartTableName(exclusiveStartTableName)
@@ -56,12 +56,12 @@ public class ListTablesImpl implements ListTablesApi {
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(int maxResultSize) {
+    public TableCollection<ListTablesResponse> listTables(int maxResultSize) {
         return doList(new ListTablesSpec()
                               .withMaxResultSize(maxResultSize));
     }
 
-    private TableCollection<ListTablesResult> doList(ListTablesSpec spec) {
+    private TableCollection<ListTablesResponse> doList(ListTablesSpec spec) {
         return new ListTablesCollection(client, spec);
     }
 }

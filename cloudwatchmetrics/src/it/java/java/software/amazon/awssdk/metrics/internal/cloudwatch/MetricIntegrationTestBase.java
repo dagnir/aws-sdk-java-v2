@@ -82,9 +82,10 @@ public class MetricIntegrationTestBase extends AWSTestBase {
     protected static final String ENDPOINT = "http://dynamodb.sa-east-1.amazonaws.com";
 
     /** Provisioned Throughput for the test table created in Amazon DynamoDB */
-    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = new ProvisionedThroughput()
-            .withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(
-                    WRITE_CAPACITY);
+    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = ProvisionedThroughput.builder()
+            .readCapacityUnits(READ_CAPACITY)
+            .writeCapacityUnits(WRITE_CAPACITY)
+            .build();
 
     /** Name of the table created in Amazon DynamoDB for testing. */
     protected static final String tableName = "integ-test-table-metric-"
@@ -162,8 +163,7 @@ public class MetricIntegrationTestBase extends AWSTestBase {
      */
     protected static boolean doesTableExist(String tableName) {
         try {
-            TableDescription table = dynamo.describeTable(
-                    new DescribeTableRequest().withTableName(tableName))
+            TableDescription table = dynamo.describeTable(DescribeTableRequest.builder().tableName(tableName).build())
                     .getTable();
             return "ACTIVE".equals(table.getTableStatus());
         } catch (AmazonServiceException ase) {
@@ -178,33 +178,32 @@ public class MetricIntegrationTestBase extends AWSTestBase {
      */
     protected static void createTestTable(
             ProvisionedThroughput provisionedThroughput) {
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(tableName)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(
-                                dynamoDBFieldName).withKeyType(KeyType.HASH))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                dynamoDBFieldName).withAttributeType(
-                                ScalarAttributeType.S));
-        createTableRequest.setProvisionedThroughput(provisionedThroughput);
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
+                .tableName(tableName)
+                .keySchema(KeySchemaElement.builder().attributeName(
+                        dynamoDBFieldName).keyType(KeyType.HASH).build())
+                .attributeDefinitions(AttributeDefinition.builder().attributeName(
+                        dynamoDBFieldName).attributeType(
+                        ScalarAttributeType.S).build())
+                .provisionedThroughput(provisionedThroughput)
+                .build();
 
         TableDescription createdTableDescription = dynamo.createTable(
                 createTableRequest).getTableDescription();
         System.out.println("Created Table: " + createdTableDescription);
-        assertEquals(tableName, createdTableDescription.getTableName());
-        assertNotNull(createdTableDescription.getTableStatus());
-        assertEquals(dynamoDBFieldName, createdTableDescription.getKeySchema()
-                .get(0).getAttributeName());
+        assertEquals(tableName, createdTableDescription.tableName());
+        assertNotNull(createdTableDescription.tableStatus());
+        assertEquals(dynamoDBFieldName, createdTableDescription.keySchema()
+                .get(0).attributeName());
         assertEquals(KeyType.HASH.toString(), createdTableDescription
-                .getKeySchema().get(0).getKeyType());
+                .keySchema().get(0).keyType());
     }
 
     protected static void deleteAllTables() {
         if (true)
             return;
         ListTablesResult res = dynamo.listTables();
-        for (String name: res.getTableNames()) {
+        for (String name: res.tableNames()) {
             DeleteTableRequest req = new DeleteTableRequest(name);
             System.err.println("Deleting table " + name);
             DeleteTableResult dr = dynamo.deleteTable(req);
@@ -221,23 +220,25 @@ public class MetricIntegrationTestBase extends AWSTestBase {
 
         long startTime = System.currentTimeMillis();
         long endTime = startTime + (10 * 60 * 1000);
-        GetMetricStatisticsRequest getMetricStatisticsRequest = new GetMetricStatisticsRequest();
         List<String> statistics = new ArrayList<String>();
         statistics.add("Sum");
 
-        getMetricStatisticsRequest.setNamespace(AwsSdkMetrics.getMetricNameSpace());
-        getMetricStatisticsRequest.setStatistics(statistics);
-        getMetricStatisticsRequest.setMetricName(METRIC_NAME);
         Collection<Dimension> dims = new ArrayList<Dimension>();
         // Looking specifically for the HttpRequestTime for a PutItemRequest
-        dims.add(new Dimension()
-            .withName(Dimensions.MetricType.name())
-            .withValue(Field.HttpRequestTime.name()));
-        dims.add(new Dimension()
-            .withName(Dimensions.RequestType.name())
-            .withValue(PutItemRequest.class.getSimpleName()));
-        getMetricStatisticsRequest.setDimensions(dims);
-        getMetricStatisticsRequest.setPeriod(60);
+        dims.add(Dimension.builder()
+                .name(Dimensions.MetricType.name())
+                .value(Field.HttpRequestTime.name()).build());
+        dims.add(Dimension.builder()
+                .name(Dimensions.RequestType.name())
+                .value(PutItemRequest.class.getSimpleName()).build());
+
+        GetMetricStatisticsRequest getMetricStatisticsRequest = GetMetricStatisticsRequest.builder()
+                .namespace(AwsSdkMetrics.getMetricNameSpace())
+                .statistics(statistics)
+                .metricName(METRIC_NAME)
+                .dimensions(dims)
+                .period(60)
+                .build();
 
         while (System.currentTimeMillis() < endTime) {
             try {
@@ -246,12 +247,12 @@ public class MetricIntegrationTestBase extends AWSTestBase {
             }
             try {
 
-                getMetricStatisticsRequest.setStartTime
-                    (new Date(new Date().getTime() - ONE_HOUR_IN_MILLISECONDS));
-                getMetricStatisticsRequest.setEndTime(new Date());
+                getMetricStatisticsRequest = getMetricStatisticsRequest.toBuilder()
+                        .startTime(new Date(new Date().getTime() - ONE_HOUR_IN_MILLISECONDS))
+                        .endTime(new Date()).build();
                 GetMetricStatisticsResult result = cloudWatch.getMetricStatistics(getMetricStatisticsRequest);
 
-                List<Datapoint> datapoints = result.getDatapoints();
+                List<Datapoint> datapoints = result.datapoints();
                 System.err.println("datapoints.size(): " + datapoints.size());
                 if (datapoints.size() > 0) {
                     return datapoints;

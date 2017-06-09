@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudsearchdomain.CloudSearchDomainClient;
 import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
 
@@ -48,7 +49,7 @@ public class SearchRequestUnitTest {
     public void testSetup() {
         searchClient = CloudSearchDomainClient.builder()
                                               .credentialsProvider(new StaticCredentialsProvider(CREDENTIALS))
-                                              .region("us-east-1")
+                                              .region(Region.US_EAST_1)
                                               .endpointOverride(URI.create("http://localhost:" + wireMockRule.port()))
                                               .build();
     }
@@ -64,7 +65,7 @@ public class SearchRequestUnitTest {
                             .withStatus(200)
                             .withBody("{\"status\":{\"rid\":\"fooBar\",\"time-ms\":7},\"hits\":{\"found\":0,\"start\":0,\"hit\":[]}}")));
 
-        searchClient.search(new SearchRequest().withQuery("Lord of the Rings"));
+        searchClient.search(SearchRequest.builder().query("Lord of the Rings").build());
 
         verify(postRequestedFor(urlMatching("/.*")).withRequestBody(equalTo("format=sdk&pretty=true&q=Lord+of+the+Rings")));
     }

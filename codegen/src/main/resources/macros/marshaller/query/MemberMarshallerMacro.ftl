@@ -3,7 +3,7 @@
 
 <#if shape.members??>
 <#list shape.members as member>
-<#local getMember = getterFunctionPrefix + "." + member.getterMethodName />
+<#local getMember = getterFunctionPrefix + "." + member.fluentGetterMethodName />
 <#local http = member.http />
 <#local variable = member.variable />
 

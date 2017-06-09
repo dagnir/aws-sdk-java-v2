@@ -15,9 +15,10 @@
 
 package software.amazon.awssdk.internal.http.timers.client;
 
+import static software.amazon.awssdk.utils.Validate.notNull;
+
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AbortableCallable;
-import software.amazon.awssdk.utils.Validate;
 
 /**
  * Implementation of {@link ClientExecutionAbortTask} that interrupts the caller thread and aborts
@@ -27,7 +28,7 @@ import software.amazon.awssdk.utils.Validate;
 public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
 
     private final Thread thread;
-    private boolean hasTaskExecuted;
+    private volatile boolean hasTaskExecuted;
     private volatile AbortableCallable<?> currentRequest;
 
     public ClientExecutionAbortTaskImpl(Thread thread) {
@@ -36,18 +37,18 @@ public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
 
     @Override
     public void run() {
-        Validate.notNull(currentRequest, "Current request must not be null.");
-
         hasTaskExecuted = true;
         if (!thread.isInterrupted()) {
             thread.interrupt();
         }
-        currentRequest.abort();
+        if (currentRequest != null) {
+            currentRequest.abort();
+        }
     }
 
     @Override
     public void setCurrentHttpRequest(AbortableCallable<?> newRequest) {
-        this.currentRequest = newRequest;
+        this.currentRequest = notNull(newRequest, "AbortableCallable caonnot be null");
     }
 
     public boolean hasClientExecutionAborted() {

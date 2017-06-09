@@ -21,23 +21,24 @@ import software.amazon.awssdk.Response;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.services.route53.model.AliasTarget;
 import software.amazon.awssdk.services.route53.model.ChangeInfo;
-import software.amazon.awssdk.services.route53.model.ChangeResourceRecordSetsResult;
-import software.amazon.awssdk.services.route53.model.CreateHealthCheckResult;
-import software.amazon.awssdk.services.route53.model.CreateHostedZoneResult;
-import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResult;
+import software.amazon.awssdk.services.route53.model.ChangeResourceRecordSetsResponse;
+import software.amazon.awssdk.services.route53.model.CreateHealthCheckResponse;
+import software.amazon.awssdk.services.route53.model.CreateHostedZoneResponse;
+import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResponse;
 import software.amazon.awssdk.services.route53.model.DelegationSet;
-import software.amazon.awssdk.services.route53.model.DeleteHostedZoneResult;
-import software.amazon.awssdk.services.route53.model.GetChangeResult;
-import software.amazon.awssdk.services.route53.model.GetHealthCheckResult;
-import software.amazon.awssdk.services.route53.model.GetHostedZoneResult;
-import software.amazon.awssdk.services.route53.model.GetReusableDelegationSetResult;
+import software.amazon.awssdk.services.route53.model.DeleteHostedZoneResponse;
+import software.amazon.awssdk.services.route53.model.GetChangeResponse;
+import software.amazon.awssdk.services.route53.model.GetHealthCheckResponse;
+import software.amazon.awssdk.services.route53.model.GetHostedZoneResponse;
+import software.amazon.awssdk.services.route53.model.GetReusableDelegationSetResponse;
 import software.amazon.awssdk.services.route53.model.HealthCheck;
 import software.amazon.awssdk.services.route53.model.HostedZone;
-import software.amazon.awssdk.services.route53.model.ListHealthChecksResult;
-import software.amazon.awssdk.services.route53.model.ListHostedZonesResult;
-import software.amazon.awssdk.services.route53.model.ListResourceRecordSetsResult;
-import software.amazon.awssdk.services.route53.model.ListReusableDelegationSetsResult;
+import software.amazon.awssdk.services.route53.model.ListHealthChecksResponse;
+import software.amazon.awssdk.services.route53.model.ListHostedZonesResponse;
+import software.amazon.awssdk.services.route53.model.ListResourceRecordSetsResponse;
+import software.amazon.awssdk.services.route53.model.ListReusableDelegationSetsResponse;
 import software.amazon.awssdk.services.route53.model.ResourceRecordSet;
+import software.amazon.awssdk.util.ImmutableObjectUtils;
 
 /**
  * Route 53 returns a portion of the URL resource path as the ID for a few
@@ -51,56 +52,56 @@ public class Route53IdRequestHandler extends RequestHandler2 {
     @Override
     public void afterResponse(Request<?> request, Response<?> response) {
         Object obj = ((AmazonWebServiceResponse) response.getAwsResponse()).getResult();
-        if (obj instanceof ChangeResourceRecordSetsResult) {
-            ChangeResourceRecordSetsResult result = (ChangeResourceRecordSetsResult) obj;
-            removePrefix(result.getChangeInfo());
-        } else if (obj instanceof CreateHostedZoneResult) {
-            CreateHostedZoneResult result = (CreateHostedZoneResult) obj;
-            removePrefix(result.getChangeInfo());
-            removePrefix(result.getHostedZone());
-            removePrefix(result.getDelegationSet());
-        } else if (obj instanceof DeleteHostedZoneResult) {
-            DeleteHostedZoneResult result = (DeleteHostedZoneResult) obj;
-            removePrefix(result.getChangeInfo());
-        } else if (obj instanceof GetChangeResult) {
-            GetChangeResult result = (GetChangeResult) obj;
-            removePrefix(result.getChangeInfo());
-        } else if (obj instanceof GetHostedZoneResult) {
-            GetHostedZoneResult result = (GetHostedZoneResult) obj;
-            removePrefix(result.getHostedZone());
-        } else if (obj instanceof ListHostedZonesResult) {
-            ListHostedZonesResult result = (ListHostedZonesResult) obj;
-            for (HostedZone zone : result.getHostedZones()) {
+        if (obj instanceof ChangeResourceRecordSetsResponse) {
+            ChangeResourceRecordSetsResponse result = (ChangeResourceRecordSetsResponse) obj;
+            removePrefix(result.changeInfo());
+        } else if (obj instanceof CreateHostedZoneResponse) {
+            CreateHostedZoneResponse result = (CreateHostedZoneResponse) obj;
+            removePrefix(result.changeInfo());
+            removePrefix(result.hostedZone());
+            removePrefix(result.delegationSet());
+        } else if (obj instanceof DeleteHostedZoneResponse) {
+            DeleteHostedZoneResponse result = (DeleteHostedZoneResponse) obj;
+            removePrefix(result.changeInfo());
+        } else if (obj instanceof GetChangeResponse) {
+            GetChangeResponse result = (GetChangeResponse) obj;
+            removePrefix(result.changeInfo());
+        } else if (obj instanceof GetHostedZoneResponse) {
+            GetHostedZoneResponse result = (GetHostedZoneResponse) obj;
+            removePrefix(result.hostedZone());
+        } else if (obj instanceof ListHostedZonesResponse) {
+            ListHostedZonesResponse result = (ListHostedZonesResponse) obj;
+            for (HostedZone zone : result.hostedZones()) {
                 removePrefix(zone);
             }
-        } else if (obj instanceof ListResourceRecordSetsResult) {
-            ListResourceRecordSetsResult result = (ListResourceRecordSetsResult) obj;
-            for (ResourceRecordSet rrset : result.getResourceRecordSets()) {
+        } else if (obj instanceof ListResourceRecordSetsResponse) {
+            ListResourceRecordSetsResponse result = (ListResourceRecordSetsResponse) obj;
+            for (ResourceRecordSet rrset : result.resourceRecordSets()) {
                 removePrefix(rrset);
             }
-        } else if (obj instanceof CreateHealthCheckResult) {
-            CreateHealthCheckResult result = (CreateHealthCheckResult) obj;
-            removePrefix(result.getHealthCheck());
-        } else if (obj instanceof GetHealthCheckResult) {
-            GetHealthCheckResult result = (GetHealthCheckResult) obj;
-            removePrefix(result.getHealthCheck());
-        } else if (obj instanceof ListHealthChecksResult) {
-            ListHealthChecksResult result = (ListHealthChecksResult) obj;
-            for (HealthCheck check : result.getHealthChecks()) {
+        } else if (obj instanceof CreateHealthCheckResponse) {
+            CreateHealthCheckResponse result = (CreateHealthCheckResponse) obj;
+            removePrefix(result.healthCheck());
+        } else if (obj instanceof GetHealthCheckResponse) {
+            GetHealthCheckResponse result = (GetHealthCheckResponse) obj;
+            removePrefix(result.healthCheck());
+        } else if (obj instanceof ListHealthChecksResponse) {
+            ListHealthChecksResponse result = (ListHealthChecksResponse) obj;
+            for (HealthCheck check : result.healthChecks()) {
                 removePrefix(check);
             }
-        } else if (obj instanceof CreateReusableDelegationSetResult) {
-            CreateReusableDelegationSetResult result = (CreateReusableDelegationSetResult) obj;
-            removePrefix(result.getDelegationSet());
-        } else if (obj instanceof GetHostedZoneResult) {
-            GetHostedZoneResult result = (GetHostedZoneResult) obj;
-            removePrefix(result.getDelegationSet());
-        } else if (obj instanceof GetReusableDelegationSetResult) {
-            GetReusableDelegationSetResult result = (GetReusableDelegationSetResult) obj;
-            removePrefix(result.getDelegationSet());
-        } else if (obj instanceof ListReusableDelegationSetsResult) {
-            ListReusableDelegationSetsResult result = (ListReusableDelegationSetsResult) obj;
-            for (DelegationSet delegationSet : result.getDelegationSets()) {
+        } else if (obj instanceof CreateReusableDelegationSetResponse) {
+            CreateReusableDelegationSetResponse result = (CreateReusableDelegationSetResponse) obj;
+            removePrefix(result.delegationSet());
+        } else if (obj instanceof GetHostedZoneResponse) {
+            GetHostedZoneResponse result = (GetHostedZoneResponse) obj;
+            removePrefix(result.delegationSet());
+        } else if (obj instanceof GetReusableDelegationSetResponse) {
+            GetReusableDelegationSetResponse result = (GetReusableDelegationSetResponse) obj;
+            removePrefix(result.delegationSet());
+        } else if (obj instanceof ListReusableDelegationSetsResponse) {
+            ListReusableDelegationSetsResponse result = (ListReusableDelegationSetsResponse) obj;
+            for (DelegationSet delegationSet : result.delegationSets()) {
                 removePrefix(delegationSet);
             }
         }
@@ -111,9 +112,9 @@ public class Route53IdRequestHandler extends RequestHandler2 {
             return;
         }
 
-        removePrefix(rrset.getAliasTarget());
-        rrset.setHealthCheckId(removePrefix(rrset.getHealthCheckId()));
-        rrset.setSetIdentifier(removePrefix(rrset.getSetIdentifier()));
+        removePrefix(rrset.aliasTarget());
+        ImmutableObjectUtils.setObjectMember(rrset, "healthCheckId", removePrefix(rrset.healthCheckId()));
+        ImmutableObjectUtils.setObjectMember(rrset, "setIdentifier", removePrefix(rrset.setIdentifier()));
     }
 
     private void removePrefix(AliasTarget aliasTarget) {
@@ -121,7 +122,8 @@ public class Route53IdRequestHandler extends RequestHandler2 {
             return;
         }
 
-        aliasTarget.setHostedZoneId(removePrefix(aliasTarget.getHostedZoneId()));
+        ImmutableObjectUtils.setObjectMember(aliasTarget, "hostedZoneId", removePrefix(aliasTarget.hostedZoneId()));
+        //aliasTarget.setHostedZoneId(removePrefix(aliasTarget.hostedZoneId()));
     }
 
     private void removePrefix(ChangeInfo changeInfo) {
@@ -129,8 +131,9 @@ public class Route53IdRequestHandler extends RequestHandler2 {
             return;
         }
 
-        if (changeInfo.getId() != null) {
-            changeInfo.setId(removePrefix(changeInfo.getId()));
+        if (changeInfo.id() != null) {
+            ImmutableObjectUtils.setObjectMember(changeInfo, "id", removePrefix(changeInfo.id()));
+            //changeInfo.setId(removePrefix(changeInfo.getId()));
         }
     }
 
@@ -139,8 +142,9 @@ public class Route53IdRequestHandler extends RequestHandler2 {
             return;
         }
 
-        if (hostedZone.getId() != null) {
-            hostedZone.setId(removePrefix(hostedZone.getId()));
+        if (hostedZone.id() != null) {
+            ImmutableObjectUtils.setObjectMember(hostedZone, "id", removePrefix(hostedZone.id()));
+            //hostedZone.setId(removePrefix(hostedZone.getId()));
         }
     }
 
@@ -149,8 +153,9 @@ public class Route53IdRequestHandler extends RequestHandler2 {
             return;
         }
 
-        if (healthCheck.getId() != null) {
-            healthCheck.setId(removePrefix(healthCheck.getId()));
+        if (healthCheck.id() != null) {
+            ImmutableObjectUtils.setObjectMember(healthCheck, "id", removePrefix(healthCheck.id()));
+            //healthCheck.setId(removePrefix(healthCheck.getId()));
         }
     }
 
@@ -159,8 +164,9 @@ public class Route53IdRequestHandler extends RequestHandler2 {
             return;
         }
 
-        if (delegationSet.getId() != null) {
-            delegationSet.setId(removePrefix(delegationSet.getId()));
+        if (delegationSet.id() != null) {
+            ImmutableObjectUtils.setObjectMember(delegationSet, "id", removePrefix(delegationSet.id()));
+            //delegationSet.setId(removePrefix(delegationSet.getId()));
         }
     }
 

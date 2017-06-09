@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
@@ -60,18 +60,18 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
         setUpCredentials();
         ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        ddb.createTable(new CreateTableRequest()
-                .withTableName(TABLE)
-                .withKeySchema(new KeySchemaElement(HASH, KeyType.HASH))
-                .withAttributeDefinitions(new AttributeDefinition(HASH, ScalarAttributeType.S))
-                .withProvisionedThroughput(new ProvisionedThroughput(1L, 1L)));
+        ddb.createTable(CreateTableRequest.builder()
+                .tableName(TABLE)
+                .keySchema(KeySchemaElement.builder().attributeName(HASH).keyType(KeyType.HASH).build())
+                .attributeDefinitions(AttributeDefinition.builder().attributeName(HASH).attributeType(ScalarAttributeType.S).build())
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(1L).writeCapacityUnits(1L).build()).build());
 
         TableUtils.waitUntilActive(ddb, TABLE);
     }
 
     @AfterClass
     public static void tearDown() {
-        ddb.deleteTable(new DeleteTableRequest(TABLE));
+        ddb.deleteTable(DeleteTableRequest.builder().tableName(TABLE).build());
     }
 
     @Test
@@ -82,20 +82,22 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
         AttributeValue nestedJson = buildNestedMapAttribute(MAX_MAP_DEPTH);
 
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(HASH, new AttributeValue().withS("foo"));
+        item.put(HASH, AttributeValue.builder().s("foo").build());
         item.put(JSON_MAP_ATTRIBUTE, nestedJson);
 
-        ddb.putItem(new PutItemRequest()
-                .withTableName(TABLE)
-                .withItem(item));
+        ddb.putItem(PutItemRequest.builder()
+                .tableName(TABLE)
+                .item(item)
+                .build());
 
         // Make sure we can read the max-depth item
-        GetItemResult getItemResult = ddb.getItem(new GetItemRequest(
-                TABLE,
-                Collections.singletonMap(HASH,
-                        new AttributeValue().withS("foo"))));
+        GetItemResponse itemResult = ddb.getItem(GetItemRequest.builder()
+                .tableName(TABLE)
+                .key(Collections.singletonMap(HASH,
+                        AttributeValue.builder().s("foo").build()))
+                .build());
         int mapDepth = computeDepthOfNestedMapAttribute(
-                getItemResult.getItem().get(JSON_MAP_ATTRIBUTE));
+                itemResult.item().get(JSON_MAP_ATTRIBUTE));
         Assert.assertEquals(MAX_MAP_DEPTH, mapDepth);
 
 
@@ -103,13 +105,13 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
         AttributeValue nestedJson_OverLimit = buildNestedMapAttribute(MAX_MAP_DEPTH + 1);
 
         Map<String, AttributeValue> item_OverLimit = new HashMap<String, AttributeValue>();
-        item_OverLimit.put(HASH, new AttributeValue().withS("foo"));
+        item_OverLimit.put(HASH, AttributeValue.builder().s("foo").build());
         item_OverLimit.put("json", nestedJson_OverLimit);
 
         try {
-            ddb.putItem(new PutItemRequest()
-                    .withTableName(TABLE)
-                    .withItem(item_OverLimit));
+            ddb.putItem(PutItemRequest.builder()
+                    .tableName(TABLE)
+                    .item(item_OverLimit).build());
             Assert.fail("ValidationException is expected, since the depth exceeds the service limit.");
         } catch (AmazonServiceException expected) {
             // Ignored or expected.
@@ -117,18 +119,18 @@ public class NestedJsonDocumentIntegrationTest extends AwsTestBase {
     }
 
     private AttributeValue buildNestedMapAttribute(int depth) {
-        AttributeValue value = new AttributeValue("foo");
+        AttributeValue value = AttributeValue.builder().s("foo").build();
         while (depth-- > 0) {
-            value = new AttributeValue().withM(Collections.singletonMap(JSON_MAP_NESTED_KEY, value));
+            value = AttributeValue.builder().m(Collections.singletonMap(JSON_MAP_NESTED_KEY, value)).build();
         }
         return value;
     }
 
     private int computeDepthOfNestedMapAttribute(AttributeValue mapAttr) {
         int depth = 0;
-        while (mapAttr != null && mapAttr.getM() != null) {
+        while (mapAttr != null && mapAttr.m() != null) {
             depth++;
-            mapAttr = mapAttr.getM().get(JSON_MAP_NESTED_KEY);
+            mapAttr = mapAttr.m().get(JSON_MAP_NESTED_KEY);
         }
         return depth;
     }

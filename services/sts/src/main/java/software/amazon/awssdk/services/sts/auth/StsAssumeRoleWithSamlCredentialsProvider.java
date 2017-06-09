@@ -58,7 +58,7 @@ public class StsAssumeRoleWithSamlCredentialsProvider extends StsCredentialsProv
 
     @Override
     protected Credentials getUpdatedCredentials(STSClient stsClient) {
-        return stsClient.assumeRoleWithSAML(assumeRoleWithSamlRequest).getCredentials();
+        return stsClient.assumeRoleWithSAML(assumeRoleWithSamlRequest).credentials();
     }
 
     /**

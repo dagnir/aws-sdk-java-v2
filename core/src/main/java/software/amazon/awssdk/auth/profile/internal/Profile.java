@@ -17,7 +17,6 @@ package software.amazon.awssdk.auth.profile.internal;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -86,7 +85,7 @@ public class Profile {
         return profileName;
     }
 
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         return awsCredentials.getCredentials();
     }
 

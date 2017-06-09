@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.services.sns;
 
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+
 /**
  * Constants for test resource locations
  */
@@ -30,5 +32,11 @@ public class SnsTestResources {
     /**
      * Public cert used to verify message authenticity
      */
+    @ReviewBeforeRelease("Don't hard code this, get from SigningCertURL param")
     public static final String PUBLIC_CERT = PACKAGE_ROOT + "sns-public-cert.pem";
+
+    /**
+     * Public cert used to verify message authenticity. Fixed for unit tests.
+     */
+    public static final String FIXED_PUBLIC_CERT = PACKAGE_ROOT + "unit-test-public-cert.pem";
 }

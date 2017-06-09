@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.auth;
 
-import java.util.Optional;
 import software.amazon.awssdk.annotation.SdkPublicApi;
 import software.amazon.awssdk.utils.Validate;
 
@@ -34,8 +33,8 @@ public class StaticCredentialsProvider implements AwsCredentialsProvider {
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
-        return Optional.of(credentials);
+    public AwsCredentials getCredentials() {
+        return credentials;
     }
 
     @Override

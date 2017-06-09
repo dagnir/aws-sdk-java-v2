@@ -39,11 +39,11 @@ public class TestParameters<T>
         return false;
     }
 
-    public Class<T> getModelClass() {
+    public Class<T> modelClass() {
         return null;
     }
 
-    public DynamoDBMapperConfig getMapperConfig() {
+    public DynamoDbMapperConfig mapperConfig() {
         return null;
     }
 

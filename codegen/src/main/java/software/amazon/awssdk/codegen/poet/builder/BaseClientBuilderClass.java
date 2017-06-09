@@ -32,11 +32,10 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
-import software.amazon.awssdk.config.ClientListenerConfiguration;
-import software.amazon.awssdk.config.ClientSecurityConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
-import software.amazon.awssdk.handlers.HandlerChainFactory;
+import software.amazon.awssdk.config.defaults.ServiceBuilderConfigurationDefaults;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.utils.AttributeMap;
 
 public class BaseClientBuilderClass implements ClassSpec {
     private final IntermediateModel model;
@@ -53,65 +52,82 @@ public class BaseClientBuilderClass implements ClassSpec {
 
     @Override
     public TypeSpec poetSpec() {
-        return PoetUtils.createClassBuilder(builderClassName)
-                        .addModifiers(Modifier.ABSTRACT)
-                        .addAnnotation(SdkInternalApi.class)
-                        .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", builderInterfaceName, "B", "C"))
-                        .addTypeVariable(TypeVariableName.get("C"))
-                        .superclass(PoetUtils.createParameterizedTypeName(DefaultClientBuilder.class, "B", "C"))
-                        .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"))
-                        .addMethod(getServiceEndpointPrefixMethod())
-                        .addMethod(applyServiceDefaultsMethod())
-                        .build();
+        final TypeSpec.Builder builder =
+                PoetUtils.createClassBuilder(builderClassName)
+                         .addModifiers(Modifier.ABSTRACT)
+                         .addAnnotation(SdkInternalApi.class)
+                         .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", builderInterfaceName, "B", "C"))
+                         .addTypeVariable(TypeVariableName.get("C"))
+                         .superclass(PoetUtils.createParameterizedTypeName(DefaultClientBuilder.class, "B", "C"))
+                         .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"))
+                         .addMethod(serviceEndpointPrefixMethod())
+                         .addMethod(serviceDefaultsMethod())
+                         .addMethod(defaultSignerProviderMethod());
+        if (model.getCustomizationConfig().getServiceSpecificHttpConfig() != null) {
+            builder.addMethod(serviceSpecificHttpConfigMethod());
+        }
+        return builder.build();
     }
 
-    private MethodSpec getServiceEndpointPrefixMethod() {
+    private MethodSpec serviceEndpointPrefixMethod() {
         return MethodSpec.methodBuilder("serviceEndpointPrefix")
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
                          .returns(String.class)
-                         .addCode("return \"$L\";", model.getMetadata().getEndpointPrefix())
+                         .addCode("return $S;", model.getMetadata().getEndpointPrefix())
                          .build();
     }
 
-    private MethodSpec applyServiceDefaultsMethod() {
+    private MethodSpec serviceDefaultsMethod() {
+        String requestHandlerDirectory = Utils.packageToDirectory(model.getMetadata().getFullClientPackageName());
+        String requestHandlerPath = String.format("/%s/request.handlers", requestHandlerDirectory);
+        String requestHandler2Path = String.format("/%s/request.handler2s", requestHandlerDirectory);
+
         return MethodSpec.methodBuilder("serviceDefaults")
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
                          .returns(ClientConfigurationDefaults.class)
-                         .addCode("return new $T() {\n", ClientConfigurationDefaults.class)
-                         .addCode(applySecurityDefaultsMethod())
-                         .addCode(applyListenerDefaultsMethod())
-                         .addCode("};")
+                         .addCode("return $T.builder()\n", ServiceBuilderConfigurationDefaults.class)
+                         .addCode("         .defaultSignerProvider(this::defaultSignerProvider)\n")
+                         .addCode("         .addHandler1Path($S)\n", requestHandlerPath)
+                         .addCode("         .addHandler2Path($S)\n", requestHandler2Path)
+                         .addCode("         .build();\n", requestHandlerPath)
                          .build();
     }
 
-    private CodeBlock applySecurityDefaultsMethod() {
-        return CodeBlock.builder()
-                        .add("@Override\n" +
-                             "protected void applySecurityDefaults($T builder) {\n" +
-                             "    builder.signerProvider(builder.signerProvider().orElseGet(this::defaultSignerProvider));\n" +
-                             "}\n",
-                             ClientSecurityConfiguration.Builder.class)
-                        .add("private $T defaultSignerProvider() {\n", SignerProvider.class)
-                        .add(signerDefinitionMethodBody())
-                        .add("}\n")
-                        .build();
+    private MethodSpec serviceSpecificHttpConfigMethod() {
+        return MethodSpec.methodBuilder("serviceSpecificHttpConfig")
+                         .addAnnotation(Override.class)
+                         .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
+                         .returns(AttributeMap.class)
+                         .addCode("return $L;", model.getCustomizationConfig().getServiceSpecificHttpConfig())
+                         .build();
+    }
+
+    private MethodSpec defaultSignerProviderMethod() {
+        return MethodSpec.methodBuilder("defaultSignerProvider")
+                         .returns(SignerProvider.class)
+                         .addModifiers(Modifier.PRIVATE)
+                         .addCode(signerDefinitionMethodBody())
+                         .build();
     }
 
     private CodeBlock signerDefinitionMethodBody() {
         AuthType authType = model.getMetadata().getAuthType();
         switch (authType) {
-            case V4: return v4SignerDefinitionMethodBody();
-            case V2: return v2SignerDefinitionMethodBody();
-            default: throw new UnsupportedOperationException("Unsupported signer type: " + authType);
+            case V4:
+                return v4SignerDefinitionMethodBody();
+            case V2:
+                return v2SignerDefinitionMethodBody();
+            default:
+                throw new UnsupportedOperationException("Unsupported signer type: " + authType);
         }
     }
 
     private CodeBlock v4SignerDefinitionMethodBody() {
         return CodeBlock.of("$T signer = new $T();\n" +
-                            "signer.setServiceName(\"$L\");\n" +
-                            "signer.setRegionName(signingRegion());\n" +
+                            "signer.setServiceName($S);\n" +
+                            "signer.setRegionName(signingRegion().value());\n" +
                             "return new $T(signer);\n",
                             Aws4Signer.class,
                             Aws4Signer.class,
@@ -123,22 +139,6 @@ public class BaseClientBuilderClass implements ClassSpec {
         return CodeBlock.of("return new $T(new $T());\n",
                             StaticSignerProvider.class,
                             QueryStringSigner.class);
-    }
-
-    private CodeBlock applyListenerDefaultsMethod() {
-        String requestHandlerDirectory = Utils.packageToDirectory(model.getMetadata().getFullClientPackageName());
-        String requestHandlerPath = String.format("/%s/request.handlers", requestHandlerDirectory);
-        String requestHandler2Path = String.format("/%s/request.handler2s", requestHandlerDirectory);
-        return CodeBlock.builder()
-                        .add("@Override\n" +
-                             "protected void applyListenerDefaults($T builder) {\n", ClientListenerConfiguration.Builder.class)
-                        .addStatement("$1T chainFactory = new $1T()", HandlerChainFactory.class)
-                        .addStatement("chainFactory.newRequestHandlerChain($S).forEach(builder::addRequestListener)",
-                                      requestHandlerPath)
-                        .addStatement("chainFactory.newRequestHandler2Chain($S).forEach(builder::addRequestListener)",
-                                      requestHandler2Path)
-                        .add("}\n")
-                        .build();
     }
 
     @Override

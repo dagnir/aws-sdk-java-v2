@@ -15,16 +15,14 @@
 
 package software.amazon.awssdk.auth;
 
-import java.util.Optional;
-
 /**
  * Credentials provider that always returns anonymous {@link AwsCredentials}. Anonymous AWS credentials result in un-authenticated
  * requests and will fail unless the resource or API's policy has been configured to specifically allow anonymous access.
  */
 public class AnonymousCredentialsProvider implements AwsCredentialsProvider {
     @Override
-    public Optional<AwsCredentials> getCredentials() {
-        return Optional.of(AwsCredentials.ANONYMOUS_CREDENTIALS);
+    public AwsCredentials getCredentials() {
+        return AwsCredentials.ANONYMOUS_CREDENTIALS;
     }
 
     @Override

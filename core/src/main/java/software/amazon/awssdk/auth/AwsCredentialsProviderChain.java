@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.awssdk.utils.Logger;
 import software.amazon.awssdk.utils.Validate;
@@ -77,28 +77,26 @@ public final class AwsCredentialsProviderChain implements AwsCredentialsProvider
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         if (reuseLastProviderEnabled && lastUsedProvider != null) {
             return lastUsedProvider.getCredentials();
         }
 
         for (AwsCredentialsProvider provider : credentialsProviders) {
             try {
-                Optional<AwsCredentials> credentials = provider.getCredentials();
+                AwsCredentials credentials = provider.getCredentials();
 
-                if (credentials.isPresent()) {
-                    LOG.debug(() -> "Loading credentials from " + provider.toString());
+                LOG.debug(() -> "Loading credentials from " + provider.toString());
 
-                    lastUsedProvider = provider;
-                    return credentials;
-                }
+                lastUsedProvider = provider;
+                return credentials;
             } catch (RuntimeException e) {
                 // Ignore any exceptions and move onto the next provider
                 LOG.debug(() -> "Unable to load credentials from " + provider.toString() + ": " + e.getMessage(), e);
             }
         }
 
-        return Optional.empty();
+        throw new SdkClientException("Unable to load credentials from any of the providers in the chain: " + this);
     }
 
     @Override

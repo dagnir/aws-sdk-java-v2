@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 
 public class GetUrlTest {
 
@@ -31,10 +31,10 @@ public class GetUrlTest {
 
     @Before
     public void setup() {
-        s3 = AmazonS3Client.builder()
-                           .withCredentials(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
-                           .withRegion(Regions.US_WEST_2)
-                           .build();
+        s3 = AmazonS3ClientBuilder.standard()
+                                  .withCredentials(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
+                                  .withRegion(Region.US_WEST_2)
+                                  .build();
     }
 
     @Test

@@ -28,10 +28,10 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.services.cloudformation.model.EstimateTemplateCostRequest;
-import software.amazon.awssdk.services.cloudformation.model.EstimateTemplateCostResult;
+import software.amazon.awssdk.services.cloudformation.model.EstimateTemplateCostResponse;
 import software.amazon.awssdk.services.cloudformation.model.TemplateParameter;
 import software.amazon.awssdk.services.cloudformation.model.ValidateTemplateRequest;
-import software.amazon.awssdk.services.cloudformation.model.ValidateTemplateResult;
+import software.amazon.awssdk.services.cloudformation.model.ValidateTemplateResponse;
 
 /**
  * Integration tests of the template-related API of CloudFormation.
@@ -43,32 +43,34 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
 
     @Test
     public void testValidateTemplateURL() {
-        ValidateTemplateResult response = cf.validateTemplate(new ValidateTemplateRequest()
-                                                                      .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
+        ValidateTemplateResponse response = cf.validateTemplate(ValidateTemplateRequest.builder()
+                                                                                     .templateURL(
+                                                                                             templateUrlForCloudFormationIntegrationTests)
+                                                                                     .build());
 
-        assertTrue(response.getParameters().size() > 0);
-        for (TemplateParameter tp : response.getParameters()) {
-            assertNotNull(tp.getParameterKey());
+        assertTrue(response.parameters().size() > 0);
+        for (TemplateParameter tp : response.parameters()) {
+            assertNotNull(tp.parameterKey());
         }
     }
 
     @Test
     public void testValidateTemplateBody() throws Exception {
         String templateText = FileUtils.readFileToString(new File("tst/" + templateForCloudFormationIntegrationTests));
-        ValidateTemplateResult response = cf.validateTemplate(new ValidateTemplateRequest()
-                                                                      .withTemplateBody(templateText));
-        assertEquals(TEMPLATE_DESCRIPTION, response.getDescription());
-        assertEquals(3, response.getParameters().size());
+        ValidateTemplateResponse response = cf.validateTemplate(ValidateTemplateRequest.builder()
+                                                                                     .templateBody(templateText).build());
+        assertEquals(TEMPLATE_DESCRIPTION, response.description());
+        assertEquals(3, response.parameters().size());
 
         Set<String> expectedTemplateKeys = new HashSet<String>();
         expectedTemplateKeys.add("InstanceType");
         expectedTemplateKeys.add("WebServerPort");
         expectedTemplateKeys.add("KeyPair");
 
-        for (TemplateParameter tp : response.getParameters()) {
-            assertTrue(expectedTemplateKeys.remove(tp.getParameterKey()));
-            assertNotNull(tp.getDefaultValue());
-            assertNotEmpty(tp.getDescription());
+        for (TemplateParameter tp : response.parameters()) {
+            assertTrue(expectedTemplateKeys.remove(tp.parameterKey()));
+            assertNotNull(tp.defaultValue());
+            assertNotEmpty(tp.description());
         }
 
         assertTrue("expected parameter not found", expectedTemplateKeys.isEmpty());
@@ -77,7 +79,7 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
     @Test
     public void testInvalidTemplate() {
         try {
-            cf.validateTemplate(new ValidateTemplateRequest().withTemplateBody("{\"Foo\" : \"Bar\"}"));
+            cf.validateTemplate(ValidateTemplateRequest.builder().templateBody("{\"Foo\" : \"Bar\"}").build());
             fail("Should have thrown an exception");
         } catch (AmazonServiceException acfx) {
             assertEquals("ValidationError", acfx.getErrorCode());
@@ -90,13 +92,17 @@ public class TemplateIntegrationTests extends CloudFormationIntegrationTestBase 
     @Test
     public void testEstimateCost() throws Exception {
         String templateText = FileUtils.readFileToString(new File("tst/" + templateForCloudFormationIntegrationTests));
-        EstimateTemplateCostResult estimateTemplateCost = cf.estimateTemplateCost(new EstimateTemplateCostRequest()
-                                                                                          .withTemplateBody(templateText));
-        assertNotNull(estimateTemplateCost.getUrl());
+        EstimateTemplateCostResponse estimateTemplateCost = cf.estimateTemplateCost(EstimateTemplateCostRequest.builder()
+                                                                                                             .templateBody(
+                                                                                                                     templateText)
+                                                                                                             .build());
+        assertNotNull(estimateTemplateCost.url());
 
-        estimateTemplateCost = cf.estimateTemplateCost(new EstimateTemplateCostRequest()
-                                                               .withTemplateURL(templateUrlForCloudFormationIntegrationTests));
-        assertNotNull(estimateTemplateCost.getUrl());
+        estimateTemplateCost = cf.estimateTemplateCost(EstimateTemplateCostRequest.builder()
+                                                                                  .templateURL(
+                                                                                          templateUrlForCloudFormationIntegrationTests)
+                                                                                  .build());
+        assertNotNull(estimateTemplateCost.url());
     }
 
 }

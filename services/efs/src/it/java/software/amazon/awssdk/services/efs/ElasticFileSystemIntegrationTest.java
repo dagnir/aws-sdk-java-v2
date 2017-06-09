@@ -22,7 +22,7 @@ import java.util.UUID;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.efs.model.CreateFileSystemRequest;
 import software.amazon.awssdk.services.efs.model.DeleteFileSystemRequest;
 import software.amazon.awssdk.services.efs.model.DescribeFileSystemsRequest;
@@ -38,25 +38,25 @@ public class ElasticFileSystemIntegrationTest extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setupFixture() throws Exception {
-        client = EFSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_WEST_2.getName()).build();
+        client = EFSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_WEST_2).build();
     }
 
     @After
     public void tearDown() {
         if (!StringUtils.isNullOrEmpty(fileSystemId)) {
-            client.deleteFileSystem(new DeleteFileSystemRequest().withFileSystemId(fileSystemId));
+            client.deleteFileSystem(DeleteFileSystemRequest.builder().fileSystemId(fileSystemId).build());
         }
     }
 
     @Test
     public void describeFileSystems_ReturnsNonNull() {
-        assertNotNull(client.describeFileSystems(new DescribeFileSystemsRequest()));
+        assertNotNull(client.describeFileSystems(DescribeFileSystemsRequest.builder().build()));
     }
 
     @Test
     public void describeFileSystem_NonExistentFileSystem_ThrowsException() {
         try {
-            client.describeFileSystems(new DescribeFileSystemsRequest().withFileSystemId("fs-00000000"));
+            client.describeFileSystems(DescribeFileSystemsRequest.builder().fileSystemId("fs-00000000").build());
         } catch (FileSystemNotFoundException e) {
             assertEquals("FileSystemNotFound", e.getErrorCode());
         }
@@ -68,12 +68,12 @@ public class ElasticFileSystemIntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void createFileSystem_WithDuplicateCreationToken_ThrowsExceptionWithFileSystemIdPresent() {
         String creationToken = UUID.randomUUID().toString();
-        this.fileSystemId = client.createFileSystem(new CreateFileSystemRequest().withCreationToken(creationToken))
-                                  .getFileSystemId();
+        this.fileSystemId = client.createFileSystem(CreateFileSystemRequest.builder().creationToken(creationToken).build())
+                                  .fileSystemId();
         try {
-            client.createFileSystem(new CreateFileSystemRequest().withCreationToken(creationToken)).getFileSystemId();
+            client.createFileSystem(CreateFileSystemRequest.builder().creationToken(creationToken).build()).fileSystemId();
         } catch (FileSystemAlreadyExistsException e) {
-            assertEquals(fileSystemId, e.getFileSystemId());
+            assertEquals(fileSystemId, e.fileSystemId());
         }
     }
 }

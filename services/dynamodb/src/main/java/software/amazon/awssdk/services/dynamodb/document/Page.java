@@ -80,7 +80,7 @@ public abstract class Page<T, R> implements Iterable<T> {
         return content.toString();
     }
 
-    public final R getLowLevelResult() {
+    public final R lowLevelResult() {
         return lowLevelResult;
     }
 }

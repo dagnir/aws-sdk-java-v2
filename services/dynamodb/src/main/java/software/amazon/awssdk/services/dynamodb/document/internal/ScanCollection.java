@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.document.ScanOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.ScanSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 class ScanCollection extends ItemCollection<ScanOutcome> {
 
@@ -37,20 +37,23 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
         this.client = client;
         this.spec = spec;
         Map<String, AttributeValue> startKey = spec.getRequest()
-                                                   .getExclusiveStartKey();
+                                                   .exclusiveStartKey();
         this.startKey = startKey == null ? null : new LinkedHashMap<String, AttributeValue>(startKey);
     }
 
     @Override
     public Page<Item, ScanOutcome> firstPage() {
         ScanRequest request = spec.getRequest();
-        request.setExclusiveStartKey(startKey);
+        request = request.toBuilder()
+                .exclusiveStartKey(startKey)
+                .limit(InternalUtils.minimum(
+                        spec.maxResultSize(),
+                        spec.maxPageSize()))
+                .build();
 
-        request.setLimit(InternalUtils.minimum(
-                spec.getMaxResultSize(),
-                spec.getMaxPageSize()));
+        spec.setRequest(request);
 
-        ScanResult result = client.scan(request);
+        ScanResponse result = client.scan(request);
         ScanOutcome outcome = new ScanOutcome(result);
         setLastLowLevelResult(outcome);
         return new ScanPage(client, spec, request, 0, outcome);
@@ -58,13 +61,13 @@ class ScanCollection extends ItemCollection<ScanOutcome> {
 
     @Override
     public Integer getMaxResultSize() {
-        return spec.getMaxResultSize();
+        return spec.maxResultSize();
     }
 
     protected void setLastLowLevelResult(ScanOutcome lowLevelResult) {
         super.setLastLowLevelResult(lowLevelResult);
-        ScanResult result = lowLevelResult.getScanResult();
-        accumulateStats(result.getConsumedCapacity(), result.getCount(),
-                        result.getScannedCount());
+        ScanResponse result = lowLevelResult.scanResult();
+        accumulateStats(result.consumedCapacity(), result.count(),
+                        result.scannedCount());
     }
 }

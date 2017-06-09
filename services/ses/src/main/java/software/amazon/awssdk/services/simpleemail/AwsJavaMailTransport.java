@@ -36,11 +36,12 @@ import javax.mail.internet.MimeMessage;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SESClient;
 import software.amazon.awssdk.services.ses.SESClientBuilder;
 import software.amazon.awssdk.services.ses.model.RawMessage;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
-import software.amazon.awssdk.services.ses.model.SendRawEmailResult;
+import software.amazon.awssdk.services.ses.model.SendRawEmailResponse;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.VersionInfoUtils;
 
@@ -235,13 +236,13 @@ public class AwsJavaMailTransport extends Transport {
         try {
             OutputStream byteOutput = new ByteArrayOutputStream();
             m.writeTo(byteOutput);
-            SendRawEmailRequest req = new SendRawEmailRequest();
+            SendRawEmailRequest.Builder req = SendRawEmailRequest.builder();
             byte[] messageByteArray = ((ByteArrayOutputStream) byteOutput)
                     .toByteArray();
-            RawMessage message = new RawMessage();
-            message.setData(ByteBuffer.wrap(messageByteArray));
-            req.setRawMessage(message);
-            return req;
+            RawMessage message = RawMessage.builder()
+                    .data(ByteBuffer.wrap(messageByteArray)).build();
+            req.rawMessage(message);
+            return req.build();
         } catch (Exception e) {
             Address[] sent = new Address[0];
             Address[] unsent = new Address[0];
@@ -271,8 +272,8 @@ public class AwsJavaMailTransport extends Transport {
 
         try {
             appendUserAgent(req, USER_AGENT);
-            SendRawEmailResult resp = this.emailService.sendRawEmail(req);
-            lastMessageId = resp.getMessageId();
+            SendRawEmailResponse resp = this.emailService.sendRawEmail(req);
+            lastMessageId = resp.messageId();
             sent = m.getAllRecipients();
             unsent = new Address[0];
             invalid = new Address[0];
@@ -339,10 +340,10 @@ public class AwsJavaMailTransport extends Transport {
 
         if (!isNullOrEmpty(host)) {
             String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
-            builder.region(region).endpointOverride(URI.create(host));
+            builder.region(Region.of(region)).endpointOverride(URI.create(host));
         } else if (this.httpsEndpoint != null) {
             String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
-            builder.region(region).endpointOverride(URI.create(httpsEndpoint));
+            builder.region(Region.of(region)).endpointOverride(URI.create(httpsEndpoint));
         }
 
         emailService = builder.build();

@@ -53,19 +53,24 @@ import java.util.stream.Stream;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.http.SdkHttpClientSettings;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkRequestContext;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkRequestChannel;
+import software.amazon.awssdk.utils.AttributeMap;
 
 public class NettyNioAsyncHttpClientIntegrationTest {
 
     @Rule
     public WireMockRule mockServer = new WireMockRule(wireMockConfig().dynamicPort().dynamicHttpsPort());
 
-    private static NettyNioAsyncHttpClient client = new NettyNioAsyncHttpClient(createSettings());
+    private static SdkAsyncHttpClient client = NettySdkHttpClientFactory.builder()
+                                                                        .trustAllCertificates(true)
+                                                                        .build()
+                                                                        .createHttpClient();
 
     @AfterClass
     public static void tearDown() throws Exception {
@@ -110,8 +115,8 @@ public class NettyNioAsyncHttpClientIntegrationTest {
     public void canSendContentAndGetThatContentBack() throws Exception {
         String body = randomAlphabetic(50);
         stubFor(any(urlEqualTo("/echo?reversed=true"))
-                    .withRequestBody(equalTo(body))
-                    .willReturn(aResponse().withBody(reverse(body))));
+                        .withRequestBody(equalTo(body))
+                        .willReturn(aResponse().withBody(reverse(body))));
         URI uri = URI.create("http://localhost:" + mockServer.port());
 
         SdkHttpRequest request = createRequest(uri, "/echo", body, SdkHttpMethod.POST, singletonMap("reversed", "true"));
@@ -137,21 +142,20 @@ public class NettyNioAsyncHttpClientIntegrationTest {
         recorder.completeFuture.get(5, TimeUnit.SECONDS);
 
         assertThat(recorder.responses).hasOnlyOneElementSatisfying(
-            headerResponse -> {
-                assertThat(headerResponse.getHeaders()).containsKey("Some-Header");
-                assertThat(headerResponse.getStatusCode()).isEqualTo(200);
-            });
+                headerResponse -> {
+                    assertThat(headerResponse.getHeaders()).containsKey("Some-Header");
+                    assertThat(headerResponse.getStatusCode()).isEqualTo(200);
+                });
 
         assertThat(recorder.fullResponseAsString()).isEqualTo(body);
         verify(1, getRequestedFor(urlMatching("/")));
     }
 
 
-    private static SdkHttpClientSettings createSettings() {
-        SdkHttpClientSettings settings = mock(SdkHttpClientSettings.class);
-        when(settings.getMaxConnections()).thenReturn(10);
-        when(settings.trustAllCertificates()).thenReturn(true);
-        return settings;
+    private static AttributeMap createSettings() {
+        return AttributeMap.builder()
+                           .put(SdkHttpConfigurationOption.USE_STRICT_HOSTNAME_VERIFICATION, Boolean.FALSE)
+                           .build();
     }
 
     private SdkHttpRequestProvider createProvider(SdkHttpRequest request, String body) {

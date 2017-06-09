@@ -22,11 +22,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
-import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -36,15 +35,16 @@ import software.amazon.awssdk.auth.SignerFactory;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
-import software.amazon.awssdk.regions.AwsRegionProvider;
-import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.RegionUtils;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
+import software.amazon.awssdk.utils.AttributeMap;
 import software.amazon.awssdk.utils.Validate;
 
 /**
@@ -55,6 +55,7 @@ import software.amazon.awssdk.utils.Validate;
  */
 @NotThreadSafe
 @SdkProtectedApi
+@ReviewBeforeRelease("Remove when S3 is migrated to new builder pattern")
 public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeToBuildT> {
 
     /**
@@ -62,13 +63,6 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * region.
      */
     private static final AwsRegionProvider DEFAULT_REGION_PROVIDER = new DefaultAwsRegionProviderChain();
-
-    /**
-     * Different services may have custom client configuration factories to vend defaults tailored
-     * for that service. If no explicit client configuration is provided to the builder the default
-     * factory for the service is used.
-     */
-    private final LegacyClientConfigurationFactory clientConfigFactory;
 
     /**
      * {@link AwsRegionProvider} to use when no explicit region or endpointConfiguration is configured.
@@ -83,14 +77,12 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     private List<RequestHandler2> requestHandlers;
     private EndpointConfiguration endpointConfiguration;
 
-    protected AwsClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
-        this(clientConfigFactory, DEFAULT_REGION_PROVIDER);
+    protected AwsClientBuilder() {
+        this(DEFAULT_REGION_PROVIDER);
     }
 
     @SdkTestInternalApi
-    protected AwsClientBuilder(LegacyClientConfigurationFactory clientConfigFactory,
-                               AwsRegionProvider regionProvider) {
-        this.clientConfigFactory = clientConfigFactory;
+    protected AwsClientBuilder(AwsRegionProvider regionProvider) {
         this.regionProvider = regionProvider;
     }
 
@@ -166,7 +158,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * ClientConfiguration's copy constructor to avoid mutation.
      */
     private LegacyClientConfiguration resolveClientConfiguration() {
-        return (clientConfig == null) ? clientConfigFactory.getConfig() :
+        return (clientConfig == null) ? new LegacyClientConfiguration() :
                 new LegacyClientConfiguration(clientConfig);
     }
 
@@ -201,7 +193,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * Gets the region in use by the builder.
      */
     public final String getRegion() {
-        return region == null ? null : region.getName();
+        return region == null ? null : region.value();
     }
 
     /**
@@ -213,36 +205,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * @param region Region to use
      */
     public final void setRegion(String region) {
-        withRegion(region);
-    }
-
-    /**
-     * Sets the region to be used by the client. This will be used to determine both the
-     * service endpoint (eg: https://sns.us-west-1.amazonaws.com) and signing region (eg: us-west-1)
-     * for requests. If neither region or endpoint configuration {@link #setEndpointConfiguration(EndpointConfiguration)}
-     * are explicitly provided in the builder the {@link #DEFAULT_REGION_PROVIDER} is consulted.
-     * <p>
-     * <p> For regions not explicitly in the {@link Regions} enum use the {@link
-     * #withRegion(String)} overload.</p>
-     *
-     * @param region Region to use
-     * @return This object for method chaining.
-     */
-    public final SubclassT withRegion(Regions region) {
-        return withRegion(region.getName());
-    }
-
-    /**
-     * Sets the region to be used by the client. This will be used to determine both the
-     * service endpoint (eg: https://sns.us-west-1.amazonaws.com) and signing region (eg: us-west-1)
-     * for requests. If neither region or endpoint configuration {@link #setEndpointConfiguration(EndpointConfiguration)}
-     * are explicitly provided in the builder the {@link #DEFAULT_REGION_PROVIDER} is consulted.
-     *
-     * @param region Region to use
-     * @return This object for method chaining.
-     */
-    public final SubclassT withRegion(String region) {
-        return withRegion(RegionUtils.getRegion(region));
+        withRegion(Region.of(region));
     }
 
     /**
@@ -255,7 +218,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      *               and the signing region
      * @return This object for method chaining.
      */
-    private SubclassT withRegion(Region region) {
+    public SubclassT withRegion(Region region) {
         this.region = region;
         return getSubclass();
     }
@@ -283,11 +246,11 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
     /**
      * Sets the endpoint configuration (service endpoint & signing region) to be used for requests. If neither region
-     * {@link #withRegion(String)} or endpoint configuration are explicitly provided in the builder the
+     * {@link #withRegion(Region)} or endpoint configuration are explicitly provided in the builder the
      * {@link #DEFAULT_REGION_PROVIDER} is consulted.
      * <p>
      * <p><b>Only use this if using a non-standard service endpoint - the recommended approach for configuring a client is to use
-     * {@link #withRegion(String)}</b>
+     * {@link #withRegion(Region)}</b>
      *
      * @param endpointConfiguration The endpointConfiguration to use
      * @return This object for method chaining.
@@ -339,10 +302,10 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      */
     private Region resolveSigningRegion() {
         if (endpointConfiguration != null) {
-            return RegionUtils.getRegion(endpointConfiguration.getSigningRegion());
+            return Region.of(endpointConfiguration.getSigningRegion());
         }
 
-        return region != null ? region : RegionUtils.getRegion(determineRegionFromRegionProvider());
+        return region != null ? region : determineRegionFromRegionProvider();
     }
 
     /**
@@ -367,7 +330,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * Attempt to determine the region from the configured region provider. This will return null in the event that the
      * region provider could not determine the region automatically.
      */
-    private String determineRegionFromRegionProvider() {
+    private Region determineRegionFromRegionProvider() {
         try {
             return regionProvider.getRegion();
         } catch (SdkClientException e) {
@@ -458,7 +421,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
         @Override
         public SignerProvider getSignerProvider() {
-            Signer signer = SignerFactory.getSigner(getServiceName(), signingRegion.getName());
+            Signer signer = SignerFactory.getSigner(getServiceName(), signingRegion.value());
 
             return new DefaultSignerProvider(signer);
         }
@@ -477,6 +440,11 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         @Override
         public ExecutorService getExecutor() {
             throw new UnsupportedOperationException("ExecutorService is not used for sync client.");
+        }
+
+        @Override
+        public SdkHttpClient sdkHttpClient() {
+            return new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(AttributeMap.empty());
         }
     }
 

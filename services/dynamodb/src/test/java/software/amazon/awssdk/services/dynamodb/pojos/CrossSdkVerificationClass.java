@@ -20,16 +20,16 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBRangeKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBVersionAttribute;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbRangeKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbVersionAttribute;
 
 /**
  * Exhaustive exercise of DynamoDB domain mapping, exercising every supported
  * data type.
  */
-@DynamoDBTable(tableName = "aws-xsdk")
+@DynamoDbTable(tableName = "aws-xsdk")
 public class CrossSdkVerificationClass {
 
     private String key;
@@ -62,7 +62,7 @@ public class CrossSdkVerificationClass {
     // these are kind of pointless, but here for completeness
     private Set<Boolean> booleanSetAttribute;
 
-    @DynamoDBHashKey
+    @DynamoDbHashKey
     public String getKey() {
         return key;
     }
@@ -71,7 +71,7 @@ public class CrossSdkVerificationClass {
         this.key = key;
     }
 
-    @DynamoDBRangeKey
+    @DynamoDbRangeKey
     public String getRangeKey() {
         return rangeKey;
     }
@@ -80,7 +80,7 @@ public class CrossSdkVerificationClass {
         this.rangeKey = rangeKey;
     }
 
-    @DynamoDBVersionAttribute
+    @DynamoDbVersionAttribute
     public Long getVersion() {
         return version;
     }
@@ -89,7 +89,7 @@ public class CrossSdkVerificationClass {
         this.version = version;
     }
 
-    public String getLastUpdater() {
+    public String lastUpdater() {
         return lastUpdater;
     }
 
@@ -105,7 +105,7 @@ public class CrossSdkVerificationClass {
         this.integerAttribute = integerAttribute;
     }
 
-    public Long getLongAttribute() {
+    public Long longAttribute() {
         return longAttribute;
     }
 
@@ -129,7 +129,7 @@ public class CrossSdkVerificationClass {
         this.floatAttribute = floatAttribute;
     }
 
-    public BigDecimal getBigDecimalAttribute() {
+    public BigDecimal bigDecimalAttribute() {
         return bigDecimalAttribute;
     }
 
@@ -137,7 +137,7 @@ public class CrossSdkVerificationClass {
         this.bigDecimalAttribute = bigDecimalAttribute;
     }
 
-    public BigInteger getBigIntegerAttribute() {
+    public BigInteger bigIntegerAttribute() {
         return bigIntegerAttribute;
     }
 
@@ -145,7 +145,7 @@ public class CrossSdkVerificationClass {
         this.bigIntegerAttribute = bigIntegerAttribute;
     }
 
-    public Byte getByteAttribute() {
+    public Byte byteAttribute() {
         return byteAttribute;
     }
 
@@ -169,7 +169,7 @@ public class CrossSdkVerificationClass {
         this.calendarAttribute = calendarAttribute;
     }
 
-    public Boolean getBooleanAttribute() {
+    public Boolean booleanAttribute() {
         return booleanAttribute;
     }
 
@@ -201,7 +201,7 @@ public class CrossSdkVerificationClass {
         this.floatSetAttribute = floatSetAttribute;
     }
 
-    public Set<BigDecimal> getBigDecimalSetAttribute() {
+    public Set<BigDecimal> bigDecimalSetAttribute() {
         return bigDecimalSetAttribute;
     }
 
@@ -209,7 +209,7 @@ public class CrossSdkVerificationClass {
         this.bigDecimalSetAttribute = bigDecimalSetAttribute;
     }
 
-    public Set<BigInteger> getBigIntegerSetAttribute() {
+    public Set<BigInteger> bigIntegerSetAttribute() {
         return bigIntegerSetAttribute;
     }
 
@@ -217,7 +217,7 @@ public class CrossSdkVerificationClass {
         this.bigIntegerSetAttribute = bigIntegerSetAttribute;
     }
 
-    public Set<Long> getLongSetAttribute() {
+    public Set<Long> longSetAttribute() {
         return longSetAttribute;
     }
 
@@ -225,7 +225,7 @@ public class CrossSdkVerificationClass {
         this.longSetAttribute = longSetAttribute;
     }
 
-    public Set<Byte> getByteSetAttribute() {
+    public Set<Byte> byteSetAttribute() {
         return byteSetAttribute;
     }
 
@@ -249,7 +249,7 @@ public class CrossSdkVerificationClass {
         this.calendarSetAttribute = calendarSetAttribute;
     }
 
-    public Set<Boolean> getBooleanSetAttribute() {
+    public Set<Boolean> booleanSetAttribute() {
         return booleanSetAttribute;
     }
 
@@ -257,7 +257,7 @@ public class CrossSdkVerificationClass {
         this.booleanSetAttribute = booleanSetAttribute;
     }
 
-    public Set<String> getStringSetAttribute() {
+    public Set<String> stringSetAttribute() {
         return stringSetAttribute;
     }
 

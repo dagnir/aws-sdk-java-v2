@@ -79,7 +79,7 @@
     }
 
     private IpRange newIpRange(String ipRange) {
-        return new IpRange().withCidrIp(ipRange);
+        return new IpRange().cidrIp(ipRange);
     }
 
     private com.amazonaws.internal.SdkInternalList<IpRange> newIpRangeList(java.util.Collection<String> ipRanges) {

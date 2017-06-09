@@ -15,12 +15,11 @@
 
 package software.amazon.awssdk.client.builder;
 
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.regions.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 
 /**
  * Base class for all service specific sync client builders.
@@ -32,13 +31,13 @@ import software.amazon.awssdk.regions.AwsRegionProvider;
 @SdkProtectedApi
 public abstract class AwsSyncClientBuilder<SubclassT extends AwsSyncClientBuilder, TypeToBuildT>
         extends AwsClientBuilder<SubclassT, TypeToBuildT> {
-    protected AwsSyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
-        super(clientConfigFactory);
+    protected AwsSyncClientBuilder() {
+        super();
     }
 
     @SdkInternalApi
-    protected AwsSyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory, AwsRegionProvider regionProvider) {
-        super(clientConfigFactory, regionProvider);
+    protected AwsSyncClientBuilder(AwsRegionProvider regionProvider) {
+        super(regionProvider);
     }
 
 

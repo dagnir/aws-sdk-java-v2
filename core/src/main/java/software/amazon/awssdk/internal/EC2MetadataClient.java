@@ -21,8 +21,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalConfiguration;
 import software.amazon.awssdk.util.EC2MetadataUtils;
 
 /**
@@ -35,8 +35,7 @@ public class EC2MetadataClient {
 
     /** Default resource path for credentials in the Amazon EC2 Instance Metadata Service. */
     public static final String SECURITY_CREDENTIALS_RESOURCE = "/latest/meta-data/iam/security-credentials/";
-    /** Default endpoint for the Amazon EC2 Instance Metadata Service. */
-    private static final String EC2_METADATA_SERVICE_URL = "http://169.254.169.254";
+
     private static final Log log = LogFactory.getLog(EC2MetadataClient.class);
 
     /**
@@ -145,11 +144,6 @@ public class EC2MetadataClient {
      *             If a valid URL could not be constructed.
      */
     private URL getEc2MetadataServiceUrlForResource(String resourcePath) throws IOException {
-        String endpoint = EC2_METADATA_SERVICE_URL;
-        if (System.getProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY) != null) {
-            endpoint = System.getProperty(SdkGlobalConfiguration.EC2_METADATA_SERVICE_OVERRIDE_SYSTEM_PROPERTY);
-        }
-
-        return new URL(endpoint + resourcePath);
+        return new URL(AwsSystemSetting.AWS_EC2_METADATA_SERVICE_ENDPOINT.getStringValueOrThrow() + resourcePath);
     }
 }

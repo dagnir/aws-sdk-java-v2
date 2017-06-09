@@ -147,7 +147,7 @@ public class Aws4SignerTest {
      */
     @Test
     public void testAnonymous() throws Exception {
-        AwsCredentials credentials = new AnonymousCredentialsProvider().getCredentialsOrThrow();
+        AwsCredentials credentials = new AnonymousCredentialsProvider().getCredentials();
         SignableRequest<?> request = generateBasicRequest();
 
         Calendar c = new GregorianCalendar();

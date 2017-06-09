@@ -41,6 +41,6 @@ public class StringToStringMarshaller implements StringAttributeMarshaller {
             return null;
         }
 
-        return new AttributeValue().withS(string);
+        return AttributeValue.builder().s(string).build();
     }
 }

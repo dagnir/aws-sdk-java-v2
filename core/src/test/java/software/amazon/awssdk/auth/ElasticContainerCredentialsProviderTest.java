@@ -27,6 +27,8 @@ import java.net.URISyntaxException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import software.amazon.awssdk.AwsSystemSetting;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 
 /**
@@ -53,12 +55,11 @@ public class ElasticContainerCredentialsProviderTest {
     }
 
     /**
-     * Tests that when "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" is not set, returns null.
+     * Tests that when "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" is not set, throws exception.
      */
-    @Test
+    @Test(expected = SdkClientException.class)
     public void testEnvVariableNotSet() {
-        ElasticContainerCredentialsProvider credentialsProvider = new ElasticContainerCredentialsProvider();
-        assertThat(credentialsProvider.getCredentials()).isEmpty();
+        new ElasticContainerCredentialsProvider().getCredentials();
     }
 
     /**
@@ -67,18 +68,18 @@ public class ElasticContainerCredentialsProviderTest {
     @Test
     public void testGetCredentialsReturnsValidResponseFromEcsEndpoint() {
         try {
-            System.setProperty(ElasticContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH, "");
+            System.setProperty(AwsSystemSetting.AWS_CONTAINER_CREDENTIALS_PATH.property(), "");
 
             stubForSuccessResponse();
 
-            AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
+            AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
             assertThat(credentials).isNotNull();
             assertThat(credentials.accessKeyId()).isEqualTo(ACCESS_KEY_ID);
             assertThat(credentials.secretAccessKey()).isEqualTo(SECRET_ACCESS_KEY);
             assertThat(credentials.sessionToken()).isEqualTo(TOKEN);
         } finally {
-            System.clearProperty(ElasticContainerCredentialsProvider.ECS_CONTAINER_CREDENTIALS_PATH);
+            System.clearProperty(AwsSystemSetting.AWS_CONTAINER_CREDENTIALS_PATH.property());
         }
     }
 

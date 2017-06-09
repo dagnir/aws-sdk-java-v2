@@ -24,7 +24,7 @@ import java.util.List;
 import org.junit.Test;
 import software.amazon.awssdk.services.simpledb.model.InvalidParameterValueException;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;
-import software.amazon.awssdk.services.simpledb.model.ListDomainsResult;
+import software.amazon.awssdk.services.simpledb.model.ListDomainsResponse;
 
 /**
  * Integration tests for the SimpleDB ListDomains operation. This test currently requires at least
@@ -42,23 +42,24 @@ public class ListDomainsIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testListDomainsMaxDomains() throws Exception {
-        ListDomainsRequest request = new ListDomainsRequest();
-        request.setMaxNumberOfDomains(new Integer(1));
+        ListDomainsRequest request = ListDomainsRequest.builder()
+                .maxNumberOfDomains(new Integer(1))
+                .build();
 
-        ListDomainsResult listDomains = sdb.listDomains(request);
+        ListDomainsResponse listDomains = sdb.listDomains(request);
         assertNotNull(listDomains);
 
-        if (listDomains.getDomainNames().size() < 2) {
+        if (listDomains.domainNames().size() < 2) {
             System.err.println("Unable to run " + this.getClass().getName()
                                + " integration test with the current AWS account"
                                + " because not enough domains are present to test list pagination");
             return;
         }
 
-        List<String> domainNames = listDomains.getDomainNames();
+        List<String> domainNames = listDomains.domainNames();
         assertNotNull(domainNames);
         assertEquals(1, domainNames.size());
-        assertNotNull(listDomains.getNextToken());
+        assertNotNull(listDomains.nextToken());
     }
 
     /**
@@ -68,22 +69,23 @@ public class ListDomainsIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testListDomainsNextToken() throws Exception {
-        ListDomainsRequest request = new ListDomainsRequest();
-        request.setMaxNumberOfDomains(new Integer(1));
+        ListDomainsRequest request = ListDomainsRequest.builder()
+                .maxNumberOfDomains(new Integer(1))
+                .build();
 
-        ListDomainsResult listDomainsResult = sdb.listDomains(request);
+        ListDomainsResponse listDomainsResult = sdb.listDomains(request);
 
-        if (listDomainsResult.getDomainNames().size() < 2) {
+        if (listDomainsResult.domainNames().size() < 2) {
             System.err.println("Unable to run " + this.getClass().getName()
                                + " integration test with the current AWS account"
                                + " because not enough domains are present to test list pagination");
             return;
         }
 
-        String firstDomainName = (String) listDomainsResult.getDomainNames().get(0);
+        String firstDomainName = (String) listDomainsResult.domainNames().get(0);
 
-        request.setNextToken(listDomainsResult.getNextToken());
-        String secondDomainName = (String) sdb.listDomains(request).getDomainNames().get(0);
+        request = request.toBuilder().nextToken(listDomainsResult.nextToken()).build();
+        String secondDomainName = (String) sdb.listDomains(request).domainNames().get(0);
 
         assertFalse(firstDomainName.equals(secondDomainName));
     }
@@ -94,8 +96,9 @@ public class ListDomainsIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testListDomainsInvalidParameterValueException() throws Exception {
-        ListDomainsRequest request = new ListDomainsRequest();
-        request.setMaxNumberOfDomains(new Integer(-1));
+        ListDomainsRequest request = ListDomainsRequest.builder()
+                .maxNumberOfDomains(new Integer(-1))
+                .build();
 
         try {
             sdb.listDomains(request);

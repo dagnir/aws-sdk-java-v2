@@ -28,13 +28,13 @@ import software.amazon.awssdk.services.iam.model.DeleteGroupPolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.GetGroupPolicyRequest;
-import software.amazon.awssdk.services.iam.model.GetGroupPolicyResult;
+import software.amazon.awssdk.services.iam.model.GetGroupPolicyResponse;
 import software.amazon.awssdk.services.iam.model.GetUserPolicyRequest;
-import software.amazon.awssdk.services.iam.model.GetUserPolicyResult;
+import software.amazon.awssdk.services.iam.model.GetUserPolicyResponse;
 import software.amazon.awssdk.services.iam.model.ListGroupPoliciesRequest;
-import software.amazon.awssdk.services.iam.model.ListGroupPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListGroupPoliciesResponse;
 import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResponse;
 import software.amazon.awssdk.services.iam.model.MalformedPolicyDocumentException;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 import software.amazon.awssdk.services.iam.model.PutGroupPolicyRequest;
@@ -63,18 +63,18 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String policyName = IAMUtil.uniqueName();
 
         try {
-            iam.putUserPolicy(new PutUserPolicyRequest().withUserName(username)
-                                                        .withPolicyName(policyName)
-                                                        .withPolicyDocument(TEST_ALLOW_POLICY));
+            iam.putUserPolicy(PutUserPolicyRequest.builder().userName(username)
+                                                  .policyName(policyName)
+                                                  .policyDocument(TEST_ALLOW_POLICY).build());
 
-            GetUserPolicyResult response = iam
-                    .getUserPolicy(new GetUserPolicyRequest().withUserName(
-                            username).withPolicyName(policyName));
+            GetUserPolicyResponse response = iam
+                    .getUserPolicy(GetUserPolicyRequest.builder().userName(
+                            username).policyName(policyName).build());
 
-            assertEquals(username, response.getUserName());
-            assertEquals(policyName, response.getPolicyName());
+            assertEquals(username, response.userName());
+            assertEquals(policyName, response.policyName());
             assertEquals(TEST_ALLOW_POLICY,
-                         URLDecoder.decode(response.getPolicyDocument(), "UTF-8"));
+                         URLDecoder.decode(response.policyDocument(), "UTF-8"));
         } finally {
             IAMUtil.deleteTestUsers(username);
         }
@@ -86,24 +86,24 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String policyName = IAMUtil.uniqueName();
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname)
+                                              .path(IAMUtil.TEST_PATH).build());
 
-            iam.putGroupPolicy(new PutGroupPolicyRequest()
-                                       .withGroupName(groupname).withPolicyName(policyName)
-                                       .withPolicyDocument(TEST_ALLOW_POLICY));
+            iam.putGroupPolicy(PutGroupPolicyRequest.builder()
+                                                    .groupName(groupname).policyName(policyName)
+                                                    .policyDocument(TEST_ALLOW_POLICY).build());
 
-            GetGroupPolicyResult response = iam
-                    .getGroupPolicy(new GetGroupPolicyRequest().withGroupName(
-                            groupname).withPolicyName(policyName));
+            GetGroupPolicyResponse response = iam
+                    .getGroupPolicy(GetGroupPolicyRequest.builder().groupName(
+                            groupname).policyName(policyName).build());
 
-            assertEquals(groupname, response.getGroupName());
-            assertEquals(policyName, response.getPolicyName());
+            assertEquals(groupname, response.groupName());
+            assertEquals(policyName, response.policyName());
             assertEquals(TEST_ALLOW_POLICY,
-                         URLDecoder.decode(response.getPolicyDocument(), "UTF-8"));
+                         URLDecoder.decode(response.policyDocument(), "UTF-8"));
         } finally {
-            iam.deleteGroupPolicy(new DeleteGroupPolicyRequest().withGroupName(
-                    groupname).withPolicyName(policyName));
+            iam.deleteGroupPolicy(DeleteGroupPolicyRequest.builder().groupName(
+                    groupname).policyName(policyName).build());
         }
     }
 
@@ -113,8 +113,8 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String policyName = IAMUtil.uniqueName();
 
         try {
-            iam.getUserPolicy(new GetUserPolicyRequest().withUserName(username)
-                                                        .withPolicyName(policyName));
+            iam.getUserPolicy(GetUserPolicyRequest.builder().userName(username)
+                                                  .policyName(policyName).build());
         } finally {
             IAMUtil.deleteTestUsers();
         }
@@ -129,19 +129,19 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         try {
             for (int i = 0; i < nPolicies; i++) {
                 policyNames[i] = IAMUtil.uniqueName();
-                iam.putUserPolicy(new PutUserPolicyRequest()
-                                          .withUserName(username).withPolicyName(policyNames[i])
-                                          .withPolicyDocument(TEST_ALLOW_POLICY));
+                iam.putUserPolicy(PutUserPolicyRequest.builder()
+                                                      .userName(username).policyName(policyNames[i])
+                                                      .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListUserPoliciesResult response = iam
-                    .listUserPolicies(new ListUserPoliciesRequest()
-                                              .withUserName(username));
+            ListUserPoliciesResponse response = iam
+                    .listUserPolicies(ListUserPoliciesRequest.builder()
+                                                             .userName(username).build());
 
-            assertEquals(nPolicies, response.getPolicyNames().size());
+            assertEquals(nPolicies, response.policyNames().size());
 
             int matches = 0;
-            for (String name : response.getPolicyNames()) {
+            for (String name : response.policyNames()) {
                 for (int i = 0; i < nPolicies; i++) {
                     if (name.equals(policyNames[i])) {
                         matches |= (1 << i);
@@ -161,25 +161,25 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         int nPolicies = 3;
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(grpname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(grpname)
+                                              .path(IAMUtil.TEST_PATH).build());
 
             for (int i = 0; i < nPolicies; i++) {
                 policyNames[i] = IAMUtil.uniqueName();
-                iam.putGroupPolicy(new PutGroupPolicyRequest()
-                                           .withGroupName(grpname).withPolicyName(policyNames[i])
-                                           .withPolicyDocument(TEST_ALLOW_POLICY));
+                iam.putGroupPolicy(PutGroupPolicyRequest.builder()
+                                                        .groupName(grpname).policyName(policyNames[i])
+                                                        .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListGroupPoliciesResult response = iam
-                    .listGroupPolicies(new ListGroupPoliciesRequest()
-                                               .withGroupName(grpname));
+            ListGroupPoliciesResponse response = iam
+                    .listGroupPolicies(ListGroupPoliciesRequest.builder()
+                                                               .groupName(grpname).build());
 
             assertEquals(nPolicies,
-                         response.getPolicyNames().size());
+                         response.policyNames().size());
 
             int matches = 0;
-            for (String name : response.getPolicyNames()) {
+            for (String name : response.policyNames()) {
                 for (int i = 0; i < nPolicies; i++) {
                     if (name.equals(policyNames[i])) {
                         matches |= (1 << i);
@@ -189,11 +189,11 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
             assertEquals((1 << nPolicies) - 1, matches);
         } finally {
             for (int i = 0; i < nPolicies; i++) {
-                iam.deleteGroupPolicy(new DeleteGroupPolicyRequest()
-                                              .withGroupName(grpname).withPolicyName(policyNames[i]));
+                iam.deleteGroupPolicy(DeleteGroupPolicyRequest.builder()
+                                                              .groupName(grpname).policyName(policyNames[i]).build());
             }
 
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(grpname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(grpname).build());
         }
     }
 
@@ -206,21 +206,21 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         try {
             for (int i = 0; i < nPolicies; i++) {
                 policyNames[i] = IAMUtil.uniqueName();
-                iam.putUserPolicy(new PutUserPolicyRequest()
-                                          .withUserName(username).withPolicyName(policyNames[i])
-                                          .withPolicyDocument(TEST_ALLOW_POLICY));
+                iam.putUserPolicy(PutUserPolicyRequest.builder()
+                                                      .userName(username).policyName(policyNames[i])
+                                                      .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListUserPoliciesResult response = iam
-                    .listUserPolicies(new ListUserPoliciesRequest()
-                                              .withUserName(username).withMaxItems(2));
+            ListUserPoliciesResponse response = iam
+                    .listUserPolicies(ListUserPoliciesRequest.builder()
+                                                             .userName(username).maxItems(2).build());
 
-            assertEquals(2, response.getPolicyNames().size());
+            assertEquals(2, response.policyNames().size());
             assertTrue(response.isTruncated());
-            String marker = response.getMarker();
+            String marker = response.marker();
 
             int matches = 0;
-            for (String name : response.getPolicyNames()) {
+            for (String name : response.policyNames()) {
                 for (int i = 0; i < nPolicies; i++) {
                     if (name.equals(policyNames[i])) {
                         matches |= (1 << i);
@@ -228,14 +228,14 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                 }
             }
 
-            response = iam.listUserPolicies(new ListUserPoliciesRequest()
-                                                    .withUserName(username).withMarker(marker));
+            response = iam.listUserPolicies(ListUserPoliciesRequest.builder()
+                                                                   .userName(username).marker(marker).build());
 
             assertEquals(nPolicies - 2,
-                         response.getPolicyNames().size());
+                         response.policyNames().size());
             assertFalse(response.isTruncated());
 
-            for (String name : response.getPolicyNames()) {
+            for (String name : response.policyNames()) {
                 for (int i = 0; i < nPolicies; i++) {
                     if (name.equals(policyNames[i])) {
                         matches |= (1 << i);
@@ -256,27 +256,27 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String[] policyNames = new String[nPolicies];
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(grpname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(grpname)
+                                              .path(IAMUtil.TEST_PATH).build());
 
             for (int i = 0; i < nPolicies; i++) {
                 policyNames[i] = IAMUtil.uniqueName();
-                iam.putGroupPolicy(new PutGroupPolicyRequest()
-                                           .withGroupName(grpname).withPolicyName(policyNames[i])
-                                           .withPolicyDocument(TEST_ALLOW_POLICY));
+                iam.putGroupPolicy(PutGroupPolicyRequest.builder()
+                                                        .groupName(grpname).policyName(policyNames[i])
+                                                        .policyDocument(TEST_ALLOW_POLICY).build());
             }
 
-            ListGroupPoliciesResult response = iam
-                    .listGroupPolicies(new ListGroupPoliciesRequest()
-                                               .withGroupName(grpname).withMaxItems(2));
+            ListGroupPoliciesResponse response = iam
+                    .listGroupPolicies(ListGroupPoliciesRequest.builder()
+                                                               .groupName(grpname).maxItems(2).build());
 
             assertEquals(2,
-                         response.getPolicyNames().size());
+                         response.policyNames().size());
             assertTrue(response.isTruncated());
-            String marker = response.getMarker();
+            String marker = response.marker();
 
             int matches = 0;
-            for (String name : response.getPolicyNames()) {
+            for (String name : response.policyNames()) {
                 for (int i = 0; i < nPolicies; i++) {
                     if (name.equals(policyNames[i])) {
                         matches |= (1 << i);
@@ -284,14 +284,14 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
                 }
             }
 
-            response = iam.listGroupPolicies(new ListGroupPoliciesRequest()
-                                                     .withGroupName(grpname).withMarker(marker));
+            response = iam.listGroupPolicies(ListGroupPoliciesRequest.builder()
+                                                                     .groupName(grpname).marker(marker).build());
 
             assertEquals(nPolicies - 2,
-                         response.getPolicyNames().size());
+                         response.policyNames().size());
             assertFalse(response.isTruncated());
 
-            for (String name : response.getPolicyNames()) {
+            for (String name : response.policyNames()) {
                 for (int i = 0; i < nPolicies; i++) {
                     if (name.equals(policyNames[i])) {
                         matches |= (1 << i);
@@ -302,11 +302,11 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
             assertEquals((1 << nPolicies) - 1, matches);
         } finally {
             for (int i = 0; i < nPolicies; i++) {
-                iam.deleteGroupPolicy(new DeleteGroupPolicyRequest()
-                                              .withGroupName(grpname).withPolicyName(policyNames[i]));
+                iam.deleteGroupPolicy(DeleteGroupPolicyRequest.builder()
+                                                              .groupName(grpname).policyName(policyNames[i]).build());
             }
 
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(grpname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(grpname).build());
         }
     }
 
@@ -316,23 +316,23 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String pName = IAMUtil.uniqueName();
 
         try {
-            iam.putUserPolicy(new PutUserPolicyRequest().withUserName(username)
-                                                        .withPolicyName(pName)
-                                                        .withPolicyDocument(TEST_ALLOW_POLICY));
+            iam.putUserPolicy(PutUserPolicyRequest.builder().userName(username)
+                                                  .policyName(pName)
+                                                  .policyDocument(TEST_ALLOW_POLICY).build());
 
-            ListUserPoliciesResult response = iam
-                    .listUserPolicies(new ListUserPoliciesRequest()
-                                              .withUserName(username));
+            ListUserPoliciesResponse response = iam
+                    .listUserPolicies(ListUserPoliciesRequest.builder()
+                                                             .userName(username).build());
 
-            assertEquals(1, response.getPolicyNames().size());
+            assertEquals(1, response.policyNames().size());
 
-            iam.deleteUserPolicy(new DeleteUserPolicyRequest().withUserName(
-                    username).withPolicyName(pName));
+            iam.deleteUserPolicy(DeleteUserPolicyRequest.builder().userName(
+                    username).policyName(pName).build());
 
-            response = iam.listUserPolicies(new ListUserPoliciesRequest()
-                                                    .withUserName(username));
+            response = iam.listUserPolicies(ListUserPoliciesRequest.builder()
+                                                                   .userName(username).build());
 
-            assertEquals(0, response.getPolicyNames().size());
+            assertEquals(0, response.policyNames().size());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }
@@ -344,30 +344,30 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String pName = IAMUtil.uniqueName();
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname)
+                                              .path(IAMUtil.TEST_PATH).build());
 
-            iam.putGroupPolicy(new PutGroupPolicyRequest()
-                                       .withGroupName(groupname).withPolicyName(pName)
-                                       .withPolicyDocument(TEST_ALLOW_POLICY));
+            iam.putGroupPolicy(PutGroupPolicyRequest.builder()
+                                                    .groupName(groupname).policyName(pName)
+                                                    .policyDocument(TEST_ALLOW_POLICY).build());
 
-            ListGroupPoliciesResult response = iam
-                    .listGroupPolicies(new ListGroupPoliciesRequest()
-                                               .withGroupName(groupname));
+            ListGroupPoliciesResponse response = iam
+                    .listGroupPolicies(ListGroupPoliciesRequest.builder()
+                                                               .groupName(groupname).build());
 
             assertEquals(1,
-                         response.getPolicyNames().size());
+                         response.policyNames().size());
 
-            iam.deleteGroupPolicy(new DeleteGroupPolicyRequest().withGroupName(
-                    groupname).withPolicyName(pName));
+            iam.deleteGroupPolicy(DeleteGroupPolicyRequest.builder().groupName(
+                    groupname).policyName(pName).build());
 
-            response = iam.listGroupPolicies(new ListGroupPoliciesRequest()
-                                                     .withGroupName(groupname));
+            response = iam.listGroupPolicies(ListGroupPoliciesRequest.builder()
+                                                                     .groupName(groupname).build());
 
             assertEquals(0,
-                         response.getPolicyNames().size());
+                         response.policyNames().size());
         } finally {
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname).build());
         }
     }
 
@@ -376,12 +376,12 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String groupname = IAMUtil.uniqueName();
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.deleteGroupPolicy(new DeleteGroupPolicyRequest().withGroupName(
-                    groupname).withPolicyName(IAMUtil.uniqueName()));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.deleteGroupPolicy(DeleteGroupPolicyRequest.builder().groupName(
+                    groupname).policyName(IAMUtil.uniqueName()).build());
         } finally {
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname).build());
         }
     }
 
@@ -390,12 +390,12 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String groupname = IAMUtil.uniqueName();
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.getGroupPolicy(new GetGroupPolicyRequest().withGroupName(
-                    groupname).withPolicyName(IAMUtil.uniqueName()));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.getGroupPolicy(GetGroupPolicyRequest.builder().groupName(
+                    groupname).policyName(IAMUtil.uniqueName()).build());
         } finally {
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname).build());
         }
     }
 
@@ -404,8 +404,8 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
 
         try {
-            iam.deleteUserPolicy(new DeleteUserPolicyRequest().withUserName(
-                    username).withPolicyName(IAMUtil.uniqueName()));
+            iam.deleteUserPolicy(DeleteUserPolicyRequest.builder().userName(
+                    username).policyName(IAMUtil.uniqueName()).build());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }
@@ -416,8 +416,8 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
 
         try {
-            iam.getUserPolicy(new GetUserPolicyRequest().withUserName(username)
-                                                        .withPolicyName(IAMUtil.uniqueName()));
+            iam.getUserPolicy(GetUserPolicyRequest.builder().userName(username)
+                                                  .policyName(IAMUtil.uniqueName()).build());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }
@@ -429,8 +429,8 @@ public class PolicyIntegrationTest extends IntegrationTestBase {
         String policyName = IAMUtil.uniqueName();
 
         try {
-            iam.putUserPolicy(new PutUserPolicyRequest().withUserName(username)
-                                                        .withPolicyName(policyName).withPolicyDocument("["));
+            iam.putUserPolicy(PutUserPolicyRequest.builder().userName(username)
+                                                  .policyName(policyName).policyDocument("[").build());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }

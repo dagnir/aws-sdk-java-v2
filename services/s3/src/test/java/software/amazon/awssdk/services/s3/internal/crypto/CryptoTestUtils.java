@@ -428,7 +428,7 @@ public class CryptoTestUtils {
     }
 
     public static AwsCredentials awsTestCredentials() throws IOException {
-        return AwsTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
+        return AwsTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentials();
     }
 
     public static Provider newBouncyCastleProvider()

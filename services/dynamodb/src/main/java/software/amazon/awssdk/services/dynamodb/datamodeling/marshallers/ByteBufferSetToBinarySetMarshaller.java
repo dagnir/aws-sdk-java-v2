@@ -49,6 +49,6 @@ public class ByteBufferSetToBinarySetMarshaller
             attributes.add(b);
         }
 
-        return new AttributeValue().withBS(attributes);
+        return AttributeValue.builder().bs(attributes).build();
     }
 }

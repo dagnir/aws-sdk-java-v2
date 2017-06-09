@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.document.api.BatchGetItemApi;
 import software.amazon.awssdk.services.dynamodb.document.spec.BatchGetItemSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 
@@ -83,18 +83,22 @@ public class BatchGetItemImpl implements BatchGetItemApi {
                 for (PrimaryKey pk : pks) {
                     keys.add(InternalUtils.toAttributeValueMap(pk));
                 }
-                final KeysAndAttributes keysAndAttrs = new KeysAndAttributes()
-                        .withAttributesToGet(attrNames)
-                        .withConsistentRead(tableKeysAndAttributes.isConsistentRead())
-                        .withKeys(keys)
-                        .withProjectionExpression(tableKeysAndAttributes.getProjectionExpression())
-                        .withExpressionAttributeNames(tableKeysAndAttributes.getNameMap());
+                final KeysAndAttributes keysAndAttrs = KeysAndAttributes.builder()
+                        .attributesToGet(attrNames)
+                        .consistentRead(tableKeysAndAttributes.isConsistentRead())
+                        .keys(keys)
+                        .projectionExpression(tableKeysAndAttributes.getProjectionExpression())
+                        .expressionAttributeNames(tableKeysAndAttributes.nameMap())
+                        .build();
                 requestItems.put(tableKeysAndAttributes.getTableName(), keysAndAttrs);
             }
         }
         BatchGetItemRequest req = spec.getRequest()
-                                      .withRequestItems(requestItems);
-        BatchGetItemResult result = client.batchGetItem(req);
+                .toBuilder()
+                .requestItems(requestItems)
+                .build();
+        spec.setRequest(req);
+        BatchGetItemResponse result = client.batchGetItem(req);
         return new BatchGetItemOutcome(result);
     }
 

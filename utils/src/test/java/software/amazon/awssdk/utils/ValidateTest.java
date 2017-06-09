@@ -496,4 +496,18 @@ public class ValidateTest  {
         }
     }
 
+    @Test
+    public void paramNotNull_NullParam_ThrowsException() {
+        try {
+            Validate.paramNotNull(null, "someField");
+        } catch (NullPointerException e) {
+            assertEquals(e.getMessage(), "someField must not be null.");
+        }
+    }
+
+    @Test
+    public void paramNotNull_NonNullParam_ReturnsObject() {
+        assertEquals("foo", Validate.paramNotNull("foo", "someField"));
+    }
+
 }

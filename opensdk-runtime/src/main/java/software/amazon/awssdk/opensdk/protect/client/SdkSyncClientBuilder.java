@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.http.conn.ConnectTimeoutException;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.NoOpSigner;
@@ -31,6 +31,8 @@ import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerAsRequestSigner;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
 import software.amazon.awssdk.opensdk.config.ProxyConfiguration;
@@ -46,6 +48,7 @@ import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.util.VersionInfoUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Base class for all Open SDK client builders.
@@ -63,7 +66,6 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
      * Different services may have custom client configuration factories to vend defaults
      * tailored for that service.
      */
-    private final LegacyClientConfigurationFactory clientConfigFactory;
     private AwsCredentialsProvider iamCredentials;
     private String endpoint;
     private String apiKey;
@@ -71,8 +73,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
     private RetryPolicy retryPolicy;
     private RequestSignerRegistry signerRegistry = new RequestSignerRegistry();
 
-    protected SdkSyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
-        this.clientConfigFactory = clientConfigFactory;
+    protected SdkSyncClientBuilder() {
     }
 
     protected void setApiKey(String apiKey) {
@@ -235,7 +236,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
 
         private LegacyClientConfiguration resolveClientConfiguration() {
             LegacyClientConfiguration config = ClientConfigurationAdapter
-                    .adapt(apiGatewayClientConfiguration, clientConfigFactory.getConfig());
+                    .adapt(apiGatewayClientConfiguration, new LegacyClientConfiguration());
 
             if (apiKey != null) {
                 config.addHeader("x-api-key", apiKey);
@@ -271,6 +272,12 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
         @Override
         public RetryPolicy getRetryPolicy() {
             return retryPolicy == null ? getDefaultRetryPolicy() : retryPolicy;
+        }
+
+        @Override
+        @ReviewBeforeRelease("Revisit when we integrate APIG back")
+        public SdkHttpClient sdkHttpClient() {
+            return new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(AttributeMap.empty());
         }
     }
 

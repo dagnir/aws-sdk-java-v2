@@ -24,12 +24,12 @@ import software.amazon.awssdk.services.dynamodb.document.Page;
 import software.amazon.awssdk.services.dynamodb.document.Table;
 import software.amazon.awssdk.services.dynamodb.document.spec.ListTablesSpec;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
-class ListTablesPage extends Page<Table, ListTablesResult> {
+class ListTablesPage extends Page<Table, ListTablesResponse> {
     private final DynamoDBClient client;
     private final ListTablesSpec spec;
-    private final ListTablesRequest request;
+    private ListTablesRequest request;
     private final int index;
     private final String lastEvaluatedKey;
 
@@ -38,19 +38,19 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
             ListTablesSpec spec,
             ListTablesRequest request,
             int index,
-            ListTablesResult result) {
+            ListTablesResponse result) {
         super(Collections.unmodifiableList(
-                toTableList(client, result.getTableNames())),
+                toTableList(client, result.tableNames())),
               result);
         this.client = client;
         this.spec = spec;
         this.request = request;
         this.index = index;
-        Integer max = spec.getMaxResultSize();
-        if (max != null && (index + result.getTableNames().size()) > max) {
+        Integer max = spec.maxResultSize();
+        if (max != null && (index + result.tableNames().size()) > max) {
             this.lastEvaluatedKey = null;
         } else {
-            this.lastEvaluatedKey = result.getLastEvaluatedTableName();
+            this.lastEvaluatedKey = result.lastEvaluatedTableName();
         }
     }
 
@@ -70,7 +70,7 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
         if (lastEvaluatedKey == null) {
             return false;
         }
-        Integer max = spec.getMaxResultSize();
+        Integer max = spec.maxResultSize();
         if (max == null) {
             return true;
         }
@@ -81,24 +81,24 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
         int nextIndex = index + this.size();
         return InternalUtils.minimum(
                 max - nextIndex,
-                spec.getMaxPageSize());
+                spec.maxPageSize());
     }
 
     @Override
-    public Page<Table, ListTablesResult> nextPage() {
+    public Page<Table, ListTablesResponse> nextPage() {
         if (lastEvaluatedKey == null) {
             throw new NoSuchElementException("No more pages");
         }
-        final Integer max = spec.getMaxResultSize();
+        final Integer max = spec.maxResultSize();
         if (max != null) {
             int nextLimit = nextRequestLimit(max.intValue());
             if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
             }
-            request.setLimit(nextLimit);
+            request = request.toBuilder().limit(nextLimit).build();
         }
-        request.setExclusiveStartTableName(lastEvaluatedKey);
-        ListTablesResult result = client.listTables(request);
+        request = request.toBuilder().exclusiveStartTableName(lastEvaluatedKey).build();
+        ListTablesResponse result = client.listTables(request);
         final int nextIndex = index + this.size();
         return new ListTablesPage(client, spec, request, nextIndex, result);
     }

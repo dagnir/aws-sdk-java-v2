@@ -16,14 +16,15 @@
 package software.amazon.awssdk.config;
 
 import java.net.URI;
-
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
 
 /**
  * An interface that represents all configuration required by an AWS client in order to operate. AWS clients accept
- * implementations of the child interfaces ({@link AsyncClientConfiguration} or {@link SyncClientConfiguration}) when constructed.
+ * implementations of the child interfaces ({@link AsyncClientConfiguration} or {@link SyncClientConfiguration}) when
+ * constructed.
  *
  * <p>Implementations of this interface are not necessarily immutable or thread safe. If thread safety is required, consider
  * creating an immutable representation with {@link ImmutableClientConfiguration}.</p>
@@ -34,68 +35,24 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
                      + "the credential configuration is separated from the other security configuration.")
 public interface ClientConfiguration {
     /**
-     * Override configuration related to the AWS HTTP communication layer. This will never return null.
+     * Override default client configuration options, such as request timeouts, retry behavior and compression. This will never
+     * return null.
      */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientHttpConfiguration httpConfiguration();
-
-    /**
-     * Override configuration that defines how to communicate via an HTTP proxy. This will never return null.
-     */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientHttpProxyConfiguration httpProxyConfiguration();
-
-    /**
-     * Override configuration related to the TCP communication layer. This will never return null.
-     */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientTcpConfiguration tcpConfiguration();
-
-    /**
-     * Override configuration related to the IP communication layer. This will never return null.
-     */
-    @ReviewBeforeRelease("Transport configuration will likely change drastically before release due to the pluggable HTTP.")
-    ClientIpConfiguration ipConfiguration();
-
-    /**
-     * Override configuration specifying request and response timeouts within the SDK. This will never return null.
-     */
-    ClientTimeoutConfiguration timeoutConfiguration();
-
-    /**
-     * Override configuration related to converting request objects to data that should be transmitted. This will never return
-     * null.
-     */
-    ClientMarshallerConfiguration marshallerConfiguration();
-
-    /**
-     * Override configuration related to metrics gathered by the SDK. This will never return null.
-     */
-    ClientMetricsConfiguration metricsConfiguration();
-
-    /**
-     * Override configuration related to the security of the integration with AWS. This will never return null.
-     */
-    ClientSecurityConfiguration securityConfiguration();
-
-    /**
-     * Override configuration related to the automatic request retry behavior of the SDK. This will never return null.
-     */
-    ClientRetryConfiguration retryConfiguration();
-
-    /**
-     * Override configuration related to behavioral hooks provided within the SDK. This will never return null.
-     */
-    ClientListenerConfiguration listenerConfiguration();
+    ClientOverrideConfiguration overrideConfiguration();
 
     /**
      * The credentials that should be used to authenticate the service with AWS.
      */
-    @ReviewBeforeRelease("This is AWS-specific, so it should probably be broken out.")
+    @ReviewBeforeRelease("This is AWS-specific, so it should be broken out.")
     AwsCredentialsProvider credentialsProvider();
 
     /**
      * The endpoint with which the SDK should communicate.
      */
     URI endpoint();
+
+    /**
+     * The HTTP client the SDK will use to make HTTP requests.
+     */
+    SdkHttpClient httpClient();
 }

@@ -21,14 +21,14 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.SDKGlobalConfiguration;
+import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyRequest;
-import software.amazon.awssdk.services.iam.model.CreateAccessKeyResult;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.LimitExceededException;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 
 /**
@@ -55,20 +55,20 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
         String keyId = null;
         try {
-            CreateAccessKeyResult response = iam
-                    .createAccessKey(new CreateAccessKeyRequest()
-                                             .withUserName(username));
-            keyId = response.getAccessKey().getAccessKeyId();
+            CreateAccessKeyResponse response = iam
+                    .createAccessKey(CreateAccessKeyRequest.builder()
+                                                           .userName(username).build());
+            keyId = response.accessKey().accessKeyId();
             assertEquals(System.currentTimeMillis() / MILLISECONDS_IN_DAY,
-                         response.getAccessKey().getCreateDate().getTime()
+                         response.accessKey().createDate().getTime()
                          / MILLISECONDS_IN_DAY);
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
             if (keyId != null) {
-                iam.deleteAccessKey(new DeleteAccessKeyRequest().withUserName(
-                        username).withAccessKeyId(keyId));
+                iam.deleteAccessKey(DeleteAccessKeyRequest.builder().userName(
+                        username).accessKeyId(keyId).build());
             }
 
             IAMUtil.deleteTestUsers(username);
@@ -78,7 +78,7 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     @Test(expected = NoSuchEntityException.class)
     public void testCreateAccessKeyNonExistentUserException() {
         String username = IAMUtil.uniqueName();
-        iam.createAccessKey(new CreateAccessKeyRequest().withUserName(username));
+        iam.createAccessKey(CreateAccessKeyRequest.builder().userName(username).build());
     }
 
     @Test
@@ -87,23 +87,23 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
         String[] keyIds = new String[2];
         try {
             for (int i = 0; i < 2; i++) {
-                CreateAccessKeyResult response = iam
-                        .createAccessKey(new CreateAccessKeyRequest()
-                                                 .withUserName(username));
+                CreateAccessKeyResponse response = iam
+                        .createAccessKey(CreateAccessKeyRequest.builder()
+                                                               .userName(username).build());
 
-                keyIds[i] = response.getAccessKey().getAccessKeyId();
+                keyIds[i] = response.accessKey().accessKeyId();
             }
 
-            ListAccessKeysResult listRes = iam
-                    .listAccessKeys(new ListAccessKeysRequest()
-                                            .withUserName(username));
+            ListAccessKeysResponse listRes = iam
+                    .listAccessKeys(ListAccessKeysRequest.builder()
+                                                         .userName(username).build());
 
             int matches = 0;
-            for (AccessKeyMetadata akm : listRes.getAccessKeyMetadata()) {
-                if (akm.getAccessKeyId().equals(keyIds[0])) {
+            for (AccessKeyMetadata akm : listRes.accessKeyMetadata()) {
+                if (akm.accessKeyId().equals(keyIds[0])) {
                     matches |= 1;
                 }
-                if (akm.getAccessKeyId().equals(keyIds[1])) {
+                if (akm.accessKeyId().equals(keyIds[1])) {
                     matches |= 2;
                 }
             }
@@ -124,8 +124,8 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
 
         try {
             for (int i = 0; i < 3; i++) {
-                iam.createAccessKey(new CreateAccessKeyRequest()
-                                            .withUserName(username));
+                iam.createAccessKey(CreateAccessKeyRequest.builder()
+                                                          .userName(username).build());
             }
         } finally {
             IAMUtil.deleteTestUsers(username);
@@ -138,28 +138,28 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
         String[] keyIds = new String[2];
         try {
             for (int i = 0; i < 2; i++) {
-                CreateAccessKeyResult response = iam
-                        .createAccessKey(new CreateAccessKeyRequest()
-                                                 .withUserName(username));
+                CreateAccessKeyResponse response = iam
+                        .createAccessKey(CreateAccessKeyRequest.builder()
+                                                               .userName(username).build());
 
-                keyIds[i] = response.getAccessKey().getAccessKeyId();
+                keyIds[i] = response.accessKey().accessKeyId();
             }
 
-            ListAccessKeysResult lakRes = iam
-                    .listAccessKeys(new ListAccessKeysRequest()
-                                            .withUserName(username));
+            ListAccessKeysResponse lakRes = iam
+                    .listAccessKeys(ListAccessKeysRequest.builder()
+                                                         .userName(username).build());
 
-            assertEquals(2, lakRes.getAccessKeyMetadata().size());
+            assertEquals(2, lakRes.accessKeyMetadata().size());
 
-            iam.deleteAccessKey(new DeleteAccessKeyRequest().withUserName(
-                    username).withAccessKeyId(keyIds[0]));
+            iam.deleteAccessKey(DeleteAccessKeyRequest.builder().userName(
+                    username).accessKeyId(keyIds[0]).build());
 
-            lakRes = iam.listAccessKeys(new ListAccessKeysRequest()
-                                                .withUserName(username));
+            lakRes = iam.listAccessKeys(ListAccessKeysRequest.builder()
+                                                             .userName(username).build());
 
-            assertEquals(1, lakRes.getAccessKeyMetadata().size());
-            assertEquals(keyIds[1], lakRes.getAccessKeyMetadata().get(0)
-                                          .getAccessKeyId());
+            assertEquals(1, lakRes.accessKeyMetadata().size());
+            assertEquals(keyIds[1], lakRes.accessKeyMetadata().get(0)
+                                          .accessKeyId());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -172,30 +172,19 @@ public class AccessKeyIntegrationTest extends IntegrationTestBase {
     public void testDeleteNonExistentAccessKeyException() {
         String username = IAMUtil.createTestUser();
         try {
-            CreateAccessKeyResult response = iam
-                    .createAccessKey(new CreateAccessKeyRequest()
-                                             .withUserName(username));
+            CreateAccessKeyResponse response = iam
+                    .createAccessKey(CreateAccessKeyRequest.builder()
+                                                           .userName(username).build());
 
-            String keyId = response.getAccessKey().getAccessKeyId();
+            String keyId = response.accessKey().accessKeyId();
 
-            iam.deleteAccessKey(new DeleteAccessKeyRequest().withUserName(
-                    username).withAccessKeyId(keyId));
-            iam.deleteAccessKey(new DeleteAccessKeyRequest().withUserName(
-                    username).withAccessKeyId(keyId));
+            iam.deleteAccessKey(DeleteAccessKeyRequest.builder().userName(
+                    username).accessKeyId(keyId).build());
+            iam.deleteAccessKey(DeleteAccessKeyRequest.builder().userName(
+                    username).accessKeyId(keyId).build());
         } finally {
             IAMUtil.deleteTestUsers(username);
         }
     }
 
-    /**
-     * In the following test, we purposely setting the time offset to trigger a clock skew error.
-     * The time offset must be fixed and then we validate the global value for time offset has been
-     * update.
-     */
-    @Test
-    public void testClockSkew() {
-        SDKGlobalConfiguration.setGlobalTimeOffset(3600);
-        iam.listAccessKeys(new ListAccessKeysRequest());
-        assertTrue("Clockskew is fixed!", SDKGlobalConfiguration.getGlobalTimeOffset() < 60);
-    }
 }

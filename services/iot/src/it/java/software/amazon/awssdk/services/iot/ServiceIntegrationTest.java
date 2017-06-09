@@ -26,18 +26,18 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.iotdataplane.IoTDataPlaneClient;
 import software.amazon.awssdk.services.iotdataplane.model.DeleteThingShadowRequest;
-import software.amazon.awssdk.services.iotdataplane.model.DeleteThingShadowResult;
+import software.amazon.awssdk.services.iotdataplane.model.DeleteThingShadowResponse;
 import software.amazon.awssdk.services.iotdataplane.model.GetThingShadowRequest;
-import software.amazon.awssdk.services.iotdataplane.model.GetThingShadowResult;
+import software.amazon.awssdk.services.iotdataplane.model.GetThingShadowResponse;
 import software.amazon.awssdk.services.iotdataplane.model.InternalFailureException;
 import software.amazon.awssdk.services.iotdataplane.model.InvalidRequestException;
 import software.amazon.awssdk.services.iotdataplane.model.PublishRequest;
 import software.amazon.awssdk.services.iotdataplane.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowRequest;
-import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowResult;
-import software.amazon.awssdk.services.iotdataplane.IoTDataPlaneClient;
+import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowResponse;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
 public class ServiceIntegrationTest extends AwsIntegrationTestBase {
@@ -78,55 +78,42 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Before
     public void setup() throws Exception {
-        iot = IoTDataPlaneClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).withRegion(Regions.US_EAST_1).build();
+        iot = IoTDataPlaneClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_EAST_1).build();
     }
 
     @Test
     public void publish_ValidTopicAndNonEmptyPayload_DoesNotThrowException() {
-        iot.publish(new PublishRequest().withTopic(THING_NAME).withPayload(ByteBuffer.wrap(new byte[] {1, 2, 3, 4})));
+        iot.publish(PublishRequest.builder().topic(THING_NAME).payload(ByteBuffer.wrap(new byte[] {1, 2, 3, 4})).build());
     }
 
     @Test
     public void publish_WithValidTopicAndEmptyPayload_DoesNotThrowException() {
-        iot.publish(new PublishRequest().withTopic(THING_NAME).withPayload(null));
-    }
-
-    @Test(expected = InternalFailureException.class)
-    public void publish_WithNullTopic_ThrowsException() {
-        iot.publish(new PublishRequest().withTopic(null).withPayload(null));
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void updateThingShadow_NullThingName_ThrowsServiceException() throws Exception {
-        UpdateThingShadowRequest request = new UpdateThingShadowRequest().withThingName(null).withPayload(null);
-        iot.updateThingShadow(request);
-
+        iot.publish(PublishRequest.builder().topic(THING_NAME).payload(null).build());
     }
 
     @Test(expected = InvalidRequestException.class)
     public void updateThingShadow_NullPayload_ThrowsServiceException() throws Exception {
-        UpdateThingShadowRequest request = new UpdateThingShadowRequest().withThingName(THING_NAME).withPayload(null);
+        UpdateThingShadowRequest request = UpdateThingShadowRequest.builder().thingName(THING_NAME).payload(null).build();
         iot.updateThingShadow(request);
     }
 
     @Test(expected = InvalidRequestException.class)
     public void updateThingShadow_MalformedPayload_ThrowsServiceException() throws Exception {
         ByteBuffer payload = getPayloadAsByteBuffer("{ }");
-        UpdateThingShadowRequest request = new UpdateThingShadowRequest().withThingName(THING_NAME)
-                                                                         .withPayload(payload);
+        UpdateThingShadowRequest request = UpdateThingShadowRequest.builder().thingName(THING_NAME).payload(payload).build();
         iot.updateThingShadow(request);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void getThingShadow_InvalidThingName_ThrowsException() {
-        iot.getThingShadow(new GetThingShadowRequest().withThingName(INVALID_THING_NAME));
+        iot.getThingShadow(GetThingShadowRequest.builder().thingName(INVALID_THING_NAME).build());
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void deleteThingShadow_InvalidThing_ThrowsException() {
-        DeleteThingShadowResult result = iot
-                .deleteThingShadow(new DeleteThingShadowRequest().withThingName(INVALID_THING_NAME));
-        assertPayloadNonEmpty(result.getPayload());
+        DeleteThingShadowResponse result = iot
+                .deleteThingShadow(DeleteThingShadowRequest.builder().thingName(INVALID_THING_NAME).build());
+        assertPayloadNonEmpty(result.payload());
     }
 
     @Test
@@ -138,24 +125,23 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     private void updateThingShadow_ValidRequest_ReturnsValidResponse(String thingName) throws Exception {
         ByteBuffer originalPayload = getPayloadAsByteBuffer("{ \"state\": {\"reported\":{ \"r\": {}}}}");
-        UpdateThingShadowRequest request = new UpdateThingShadowRequest().withThingName(thingName)
-                                                                         .withPayload(originalPayload);
-        UpdateThingShadowResult result = iot.updateThingShadow(request);
+        UpdateThingShadowRequest request = UpdateThingShadowRequest.builder().thingName(thingName).payload(originalPayload).build();
+        UpdateThingShadowResponse result = iot.updateThingShadow(request);
 
         // Comes back with some extra metadata so we assert it's bigger than the original
-        assertThat(result.getPayload().capacity(), greaterThan(originalPayload.capacity()));
-        assertPayloadIsValid(originalPayload, result.getPayload());
+        assertThat(result.payload().capacity(), greaterThan(originalPayload.capacity()));
+        assertPayloadIsValid(originalPayload, result.payload());
     }
 
     private void getThingShadow_ValidThing_ReturnsThingData(String thingName) {
-        GetThingShadowRequest request = new GetThingShadowRequest().withThingName(thingName);
-        GetThingShadowResult result = iot.getThingShadow(request);
-        assertPayloadNonEmpty(result.getPayload());
+        GetThingShadowRequest request = GetThingShadowRequest.builder().thingName(thingName).build();
+        GetThingShadowResponse result = iot.getThingShadow(request);
+        assertPayloadNonEmpty(result.payload());
     }
 
     private void deleteThingShadow_ValidThing_DeletesSuccessfully(String thingName) {
-        DeleteThingShadowResult result = iot.deleteThingShadow(new DeleteThingShadowRequest().withThingName(thingName));
-        assertPayloadNonEmpty(result.getPayload());
+        DeleteThingShadowResponse result = iot.deleteThingShadow(DeleteThingShadowRequest.builder().thingName(thingName).build());
+        assertPayloadNonEmpty(result.payload());
     }
 
 }

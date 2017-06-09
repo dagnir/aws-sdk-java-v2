@@ -35,6 +35,6 @@ public class LongUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return Long.valueOf(value.getN());
+        return Long.valueOf(value.n());
     }
 }

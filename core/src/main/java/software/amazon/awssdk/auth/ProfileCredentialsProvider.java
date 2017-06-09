@@ -15,8 +15,12 @@
 
 package software.amazon.awssdk.auth;
 
+import java.io.File;
+import software.amazon.awssdk.AwsSystemSetting;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.profile.ProfilesConfigFile;
-import software.amazon.awssdk.auth.profile.internal.AwsProfileNameLoader;
+import software.amazon.awssdk.profile.path.AwsProfileFileLocationProvider;
+import software.amazon.awssdk.utils.Validate;
 
 /**
  * Credentials provider based on AWS configuration profiles. This provider vends AWSCredentials from the profile configuration
@@ -45,8 +49,16 @@ public class ProfileCredentialsProvider extends FileSystemCredentialsProvider {
      * @see #builder()
      */
     private ProfileCredentialsProvider(Builder builder) {
-        this.profilesConfigFile = builder.profilesConfigFile != null ? builder.profilesConfigFile : new ProfilesConfigFile();
-        this.profileName = builder.profileName != null ? builder.profileName : new AwsProfileNameLoader().loadProfileName();
+        if (builder.profilesConfigFile == null) {
+            Validate.notNull(builder.profileFileLocationProvider, "Profile file location provider must not be null.");
+            File defaultProfileFile = builder.profileFileLocationProvider.getLocation();
+            this.profilesConfigFile = defaultProfileFile == null ? null : new ProfilesConfigFile(defaultProfileFile);
+        } else {
+            this.profilesConfigFile = builder.profilesConfigFile;
+        }
+
+        this.profileName = builder.profileName != null ? builder.profileName
+                                                       : AwsSystemSetting.AWS_DEFAULT_PROFILE.getStringValueOrThrow();
     }
 
     /**
@@ -58,7 +70,7 @@ public class ProfileCredentialsProvider extends FileSystemCredentialsProvider {
 
     @Override
     protected AwsCredentials loadCredentials() {
-        return profilesConfigFile.getCredentials(profileName);
+        return profilesConfigFile == null ? null : profilesConfigFile.getCredentials(profileName);
     }
 
     @Override
@@ -72,6 +84,9 @@ public class ProfileCredentialsProvider extends FileSystemCredentialsProvider {
     public static final class Builder {
         private ProfilesConfigFile profilesConfigFile;
         private String profileName;
+
+        private AwsProfileFileLocationProvider profileFileLocationProvider =
+                AwsProfileFileLocationProvider.DEFAULT_CREDENTIALS_LOCATION_PROVIDER;
 
         private Builder() {}
 
@@ -88,10 +103,20 @@ public class ProfileCredentialsProvider extends FileSystemCredentialsProvider {
         /**
          * Define the name of the profile that should be used by this credentials provider.
          *
-         * By default, the result of {@link AwsProfileNameLoader#loadProfileName()} is used.
+         * By default, the value in {@link AwsSystemSetting#AWS_DEFAULT_PROFILE} is used.
          */
         public Builder profileName(String profileName) {
             this.profileName = profileName;
+            return this;
+        }
+
+        /**
+         * Override the default configuration file locator to be used when the customer does not explicitly set
+         * {@link #profilesConfigFile(ProfilesConfigFile)}. This is only useful for testing the default behavior.
+         */
+        @SdkTestInternalApi
+        Builder defaultProfilesConfigFileLocator(AwsProfileFileLocationProvider profileFileLocationProvider) {
+            this.profileFileLocationProvider = profileFileLocationProvider;
             return this;
         }
 

@@ -21,7 +21,7 @@ package software.amazon.awssdk.http;
  *
  * <p>Implementations MUST be thread safe.</p>
  */
-public interface SdkHttpClient extends AutoCloseable {
+public interface SdkHttpClient extends AutoCloseable, ConfigurationProvider {
 
     /**
      * Create a {@link AbortableCallable} that can be used to execute the HTTP request.

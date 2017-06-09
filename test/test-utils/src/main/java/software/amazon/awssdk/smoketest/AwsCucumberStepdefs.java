@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceClient;
-import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.util.Classes;
 
 /**
@@ -48,7 +48,7 @@ public class AwsCucumberStepdefs {
     @Inject
     public AwsCucumberStepdefs(AmazonWebServiceClient client) {
         this.client = client;
-        this.client.setRegion(RegionUtils.getRegion("us-east-1"));
+        this.client.setRegion(Region.US_EAST_1);
 
         Class<?> httpClientClass = Classes.childClassOf(AmazonWebServiceClient.class, this.client);
 

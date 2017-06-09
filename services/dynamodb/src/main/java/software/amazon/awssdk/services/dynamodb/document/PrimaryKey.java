@@ -88,7 +88,7 @@ public class PrimaryKey {
         if (components != null) {
             for (KeyAttribute ka : components) {
                 InternalUtils.rejectNullInput(ka);
-                this.components.put(ka.getName(), ka);
+                this.components.put(ka.name(), ka);
             }
         }
         return this;

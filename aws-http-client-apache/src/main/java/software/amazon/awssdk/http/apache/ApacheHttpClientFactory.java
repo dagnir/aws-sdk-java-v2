@@ -21,85 +21,88 @@ import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpClientFactory;
-import software.amazon.awssdk.http.SdkHttpClientSettings;
+import software.amazon.awssdk.http.apache.internal.ApacheHttpRequestConfig;
+import software.amazon.awssdk.http.apache.internal.Defaults;
 import software.amazon.awssdk.http.apache.internal.SdkHttpRequestExecutor;
 import software.amazon.awssdk.http.apache.internal.SdkProxyRoutePlanner;
 import software.amazon.awssdk.http.apache.internal.conn.ClientConnectionManagerFactory;
-import software.amazon.awssdk.http.apache.internal.conn.IdleConnectionReaper;
 import software.amazon.awssdk.http.apache.internal.conn.SdkConnectionKeepAliveStrategy;
 import software.amazon.awssdk.http.apache.internal.impl.ApacheConnectionManagerFactory;
 import software.amazon.awssdk.http.apache.internal.impl.ApacheSdkClient;
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
-public class ApacheHttpClientFactory implements SdkHttpClientFactory {
+@SdkInternalApi
+class ApacheHttpClientFactory {
 
     private static final Log LOG = LogFactory.getLog(ApacheHttpClientFactory.class);
+
     private final ApacheConnectionManagerFactory cmFactory = new ApacheConnectionManagerFactory();
 
-    @Override
-    public SdkHttpClient create(SdkHttpClientSettings settings) {
-        return new ApacheHttpClient(createClient(settings), settings);
+    public SdkHttpClient create(ApacheSdkHttpClientFactory configuration,
+                                AttributeMap resolvedOptions,
+                                ApacheHttpRequestConfig requestConfig) {
+        return new ApacheHttpClient(createClient(configuration, resolvedOptions), requestConfig, resolvedOptions);
     }
 
-    private ConnectionManagerAwareHttpClient createClient(SdkHttpClientSettings settings) {
+    private ConnectionManagerAwareHttpClient createClient(ApacheSdkHttpClientFactory configuration,
+                                                          AttributeMap standardOptions) {
         final HttpClientBuilder builder = HttpClients.custom();
         // Note that it is important we register the original connection manager with the
         // IdleConnectionReaper as it's required for the successful deregistration of managers
         // from the reaper. See https://github.com/aws/aws-sdk-java/issues/722.
-        final HttpClientConnectionManager cm = cmFactory.create(settings);
+        final HttpClientConnectionManager cm = cmFactory.create(configuration, standardOptions);
 
         builder.setRequestExecutor(new SdkHttpRequestExecutor())
-                // SDK handles decompression
-                .disableContentCompression()
-                .setKeepAliveStrategy(buildKeepAliveStrategy(settings))
-                .disableRedirectHandling()
-                .disableAutomaticRetries()
-                .setConnectionManager(ClientConnectionManagerFactory.wrap(cm));
+               // SDK handles decompression
+               .disableContentCompression()
+               .setKeepAliveStrategy(buildKeepAliveStrategy(configuration))
+               .disableRedirectHandling()
+               .disableAutomaticRetries()
+               .setConnectionManager(ClientConnectionManagerFactory.wrap(cm));
 
-        addProxyConfig(builder, settings);
+        addProxyConfig(builder, configuration.proxyConfiguration());
 
-        final ConnectionManagerAwareHttpClient httpClient = new ApacheSdkClient(
-                builder.build(), cm);
+        // TODO idle connection reaper
+        //        if (.useReaper()) {
+        //            IdleConnectionReaper.registerConnectionManager(cm, settings.getMaxIdleConnectionTime());
+        //        }
 
-        if (settings.useReaper()) {
-            IdleConnectionReaper.registerConnectionManager(cm, settings.getMaxIdleConnectionTime());
-        }
-
-        return httpClient;
+        return new ApacheSdkClient(builder.build(), cm);
     }
 
     private void addProxyConfig(HttpClientBuilder builder,
-                                SdkHttpClientSettings settings) {
-        if (isProxyEnabled(settings)) {
+                                ProxyConfiguration proxyConfiguration) {
+        if (isProxyEnabled(proxyConfiguration)) {
 
-            LOG.info("Configuring Proxy. Proxy Host: " + settings.getProxyHost() + " " +
-                     "Proxy Port: " + settings.getProxyPort());
+            LOG.info("Configuring Proxy. Proxy Host: " + proxyConfiguration.endpoint());
 
-            builder.setRoutePlanner(new SdkProxyRoutePlanner(
-                    settings.getProxyHost(), settings.getProxyPort(), settings.getNonProxyHosts()));
+            builder.setRoutePlanner(new SdkProxyRoutePlanner(proxyConfiguration.endpoint().getHost(),
+                                                             proxyConfiguration.endpoint().getPort(),
+                                                             proxyConfiguration.nonProxyHosts()));
 
-            if (isAuthenticatedProxy(settings)) {
-                builder.setDefaultCredentialsProvider(ApacheUtils
-                                                              .newProxyCredentialsProvider(settings));
+            if (isAuthenticatedProxy(proxyConfiguration)) {
+                builder.setDefaultCredentialsProvider(ApacheUtils.newProxyCredentialsProvider(proxyConfiguration));
             }
         }
     }
 
-    private ConnectionKeepAliveStrategy buildKeepAliveStrategy(SdkHttpClientSettings settings) {
-        return settings.getMaxIdleConnectionTime() > 0
-                ? new SdkConnectionKeepAliveStrategy(settings.getMaxIdleConnectionTime())
-                : null;
+    private ConnectionKeepAliveStrategy buildKeepAliveStrategy(ApacheSdkHttpClientFactory configuration) {
+        final long maxIdle = configuration.connectionMaxIdleTime().orElse(Defaults.MAX_IDLE_CONNECTION_TIME).toMillis();
+        return maxIdle > 0 ? new SdkConnectionKeepAliveStrategy(maxIdle) : null;
     }
 
-    private boolean isAuthenticatedProxy(SdkHttpClientSettings settings) {
-        return settings.getProxyUsername() != null
-               && settings.getProxyPassword() != null;
+    private boolean isAuthenticatedProxy(ProxyConfiguration proxyConfiguration) {
+        return proxyConfiguration.username() != null && proxyConfiguration.password() != null;
     }
 
-    private boolean isProxyEnabled(SdkHttpClientSettings settings) {
-        return settings.getProxyHost() != null && settings.getProxyPort() > 0;
+    private boolean isProxyEnabled(ProxyConfiguration proxyConfiguration) {
+        return proxyConfiguration.endpoint() != null
+               && proxyConfiguration.endpoint().getHost() != null
+               && proxyConfiguration.endpoint().getPort() > 0;
     }
 }
+

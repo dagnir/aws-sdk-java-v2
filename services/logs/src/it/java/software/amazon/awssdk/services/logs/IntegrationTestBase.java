@@ -20,11 +20,11 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
 import software.amazon.awssdk.services.cloudwatchlogs.model.MetricFilter;
@@ -59,15 +59,15 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         String nextToken = null;
 
         do {
-            DescribeLogGroupsResult result = awsLogs
-                    .describeLogGroups(new DescribeLogGroupsRequest().withNextToken(nextToken));
+            DescribeLogGroupsResponse result = awsLogs
+                    .describeLogGroups(DescribeLogGroupsRequest.builder().nextToken(nextToken).build());
 
-            for (LogGroup group : result.getLogGroups()) {
-                if (group.getLogGroupName().equals(groupName)) {
+            for (LogGroup group : result.logGroups()) {
+                if (group.logGroupName().equals(groupName)) {
                     return group;
                 }
             }
-            nextToken = result.getNextToken();
+            nextToken = result.nextToken();
         } while (nextToken != null);
 
         return null;
@@ -83,15 +83,18 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         String nextToken = null;
 
         do {
-            DescribeLogStreamsResult result = awsLogs
-                    .describeLogStreams(new DescribeLogStreamsRequest(logGroupName).withNextToken(nextToken));
+            DescribeLogStreamsResponse result = awsLogs
+                    .describeLogStreams(DescribeLogStreamsRequest.builder()
+                                                                 .logGroupName(logGroupName)
+                                                                 .nextToken(nextToken)
+                                                                 .build());
 
-            for (LogStream stream : result.getLogStreams()) {
-                if (stream.getLogStreamName().equals(logStreamName)) {
+            for (LogStream stream : result.logStreams()) {
+                if (stream.logStreamName().equals(logStreamName)) {
                     return stream;
                 }
             }
-            nextToken = result.getNextToken();
+            nextToken = result.nextToken();
         } while (nextToken != null);
 
         return null;
@@ -107,15 +110,18 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         String nextToken = null;
 
         do {
-            DescribeMetricFiltersResult result = awsLogs
-                    .describeMetricFilters(new DescribeMetricFiltersRequest(logGroupName).withNextToken(nextToken));
+            DescribeMetricFiltersResponse result = awsLogs
+                    .describeMetricFilters(DescribeMetricFiltersRequest.builder()
+                                                                       .logGroupName(logGroupName)
+                                                                       .nextToken(nextToken)
+                                                                       .build());
 
-            for (MetricFilter mf : result.getMetricFilters()) {
-                if (mf.getFilterName().equals(filterName)) {
+            for (MetricFilter mf : result.metricFilters()) {
+                if (mf.filterName().equals(filterName)) {
                     return mf;
                 }
             }
-            nextToken = result.getNextToken();
+            nextToken = result.nextToken();
         } while (nextToken != null);
 
         return null;

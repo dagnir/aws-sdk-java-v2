@@ -126,7 +126,7 @@ public class AttributeUpdate {
         return attributeValues;
     }
 
-    public Object getValue() {
+    public Object value() {
         return value;
     }
 }

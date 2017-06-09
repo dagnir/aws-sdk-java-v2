@@ -20,7 +20,6 @@ import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -41,7 +40,6 @@ import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
@@ -162,7 +160,6 @@ public abstract class AmazonWebServiceClient {
         client = AmazonHttpClient.builder()
                 .clientConfiguration(clientConfiguration)
                 .requestMetricCollector(requestMetricCollector)
-                .useBrowserCompatibleHostNameVerifier(disableStrictHostNameVerification)
                 .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
                 .build();
     }
@@ -171,16 +168,11 @@ public abstract class AmazonWebServiceClient {
         this.clientConfiguration = clientParams.getClientConfiguration();
         requestHandler2s = clientParams.getRequestHandlers();
         client = AmazonHttpClient.builder()
-                .clientConfiguration(clientConfiguration)
-                .requestMetricCollector(clientParams.getRequestMetricCollector())
-                .useBrowserCompatibleHostNameVerifier(!useStrictHostNameVerification())
-                .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
-                .build();
-    }
-
-    /* Check the profiling system property and return true if set. */
-    protected static boolean isProfilingEnabled() {
-        return System.getProperty(SdkGlobalConfiguration.PROFILING_SYSTEM_PROPERTY) != null;
+                                 .sdkHttpClient(clientParams.sdkHttpClient())
+                                 .clientConfiguration(clientConfiguration)
+                                 .requestMetricCollector(clientParams.getRequestMetricCollector())
+                                 .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
+                                 .build();
     }
 
     /**
@@ -336,15 +328,14 @@ public abstract class AmazonWebServiceClient {
      * By default, all service endpoints in all regions use the https protocol. To use http instead,
      * specify it in the {@link LegacyClientConfiguration} supplied at construction.
      *
-     * @param region The region this client will communicate with. See
-     *               {@link Region#getRegion(Regions)} for accessing a given
-     *               region.
-     * @throws java.lang.IllegalArgumentException If the given region is null, or if this service isn't available in the given
-     *                                            region. See {@link Region#isServiceSupported(String)}
-     * @see Region#getRegion(Regions)
-     * @see Region#createClient(Class, AwsCredentialsProvider,
+     * @param region The of this client will communicate with. See
+     *               {@link Region#of(String)} for accessing a given
+     *               of.
+     * @throws java.lang.IllegalArgumentException If the given of is null, or if this service isn't available in the given
+     *                                            of. See {@link Region#getRegionMetadata()} isServiceSupported(String)}
+     * @see Region#of(String)
      * LegacyClientConfiguration)
-     * @deprecated use {@link AwsClientBuilder#setRegion(String)}
+     * @deprecated use {@link AwsClientBuilder#setRegion(Region)}
      */
     @Deprecated
     public void setRegion(Region region) throws IllegalArgumentException {
@@ -357,28 +348,12 @@ public abstract class AmazonWebServiceClient {
         String protocol = clientConfiguration.getProtocol().toString();
         URI uri = new DefaultServiceEndpointBuilder(serviceNameForEndpoint, protocol).withRegion(region).getServiceEndpoint();
 
-        Signer signer = computeSignerByServiceRegion(serviceNameForSigner, region.getName(), signerRegionOverride, false);
+        Signer signer = computeSignerByServiceRegion(serviceNameForSigner, region.value(), signerRegionOverride, false);
 
         synchronized (this) {
             this.endpoint = uri;
             this.signerProvider = createSignerProvider(signer);
         }
-    }
-
-    /**
-     * Convenient method for setting region.
-     *
-     * @param region region to set to; must not be null.
-     * @see #setRegion(Region)
-     * @deprecated use {@link AwsClientBuilder#setRegion(String)}
-     */
-    @Deprecated
-    public final void configureRegion(Regions region) {
-        checkMutability();
-        if (region == null) {
-            throw new IllegalArgumentException("No region provided");
-        }
-        this.setRegion(Region.getRegion(region));
     }
 
     /**
@@ -467,7 +442,7 @@ public abstract class AmazonWebServiceClient {
 
     protected ExecutionContext createExecutionContext(AmazonWebServiceRequest req,
                                                       SignerProvider signerProvider) {
-        boolean isMetricsEnabled = isRequestMetricsEnabled(req) || isProfilingEnabled();
+        boolean isMetricsEnabled = isRequestMetricsEnabled(req);
         return ExecutionContext.builder()
                 .withRequestHandler2s(requestHandler2s)
                 .withUseRequestMetrics(isMetricsEnabled)
@@ -777,22 +752,6 @@ public abstract class AmazonWebServiceClient {
     @Deprecated
     public <T extends AmazonWebServiceClient> T withRegion(Region region) {
         setRegion(region);
-        @SuppressWarnings("unchecked")
-        T t = (T) this;
-        return t;
-    }
-
-    /**
-     * Convenient fluent method for setting region.
-     *
-     * @param region region to set to; must not be null.
-     * @see #withRegion(Region)
-     * @deprecated use {@link AwsClientBuilder#withRegion(Regions)} for example:
-     * {@code AmazonSNSClient.builder().withRegion(region).build();}
-     */
-    @Deprecated
-    public <T extends AmazonWebServiceClient> T withRegion(Regions region) {
-        configureRegion(region);
         @SuppressWarnings("unchecked")
         T t = (T) this;
         return t;

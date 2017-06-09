@@ -15,8 +15,9 @@
 
 package software.amazon.awssdk.http.async;
 
+import software.amazon.awssdk.http.ConfigurationProvider;
 
-public interface SdkAsyncHttpClient extends AutoCloseable {
+public interface SdkAsyncHttpClient extends AutoCloseable, ConfigurationProvider {
 
     /**
      * Create an {@link AbortableRunnable} that can be used to execute the HTTP request.

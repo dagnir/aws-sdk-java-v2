@@ -33,7 +33,7 @@ public class TempTableWithBinaryKey extends DynamoDBTableResource {
     public static final Long READ_CAPACITY = 10L;
     public static final Long WRITE_CAPACITY = 5L;
     public static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT =
-            new ProvisionedThroughput().withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(WRITE_CAPACITY);
+            ProvisionedThroughput.builder().readCapacityUnits(READ_CAPACITY).writeCapacityUnits(WRITE_CAPACITY).build();
 
     @Override
     protected DynamoDBClient getClient() {
@@ -42,16 +42,17 @@ public class TempTableWithBinaryKey extends DynamoDBTableResource {
 
     @Override
     protected CreateTableRequest getCreateTableRequest() {
-        CreateTableRequest request = new CreateTableRequest()
-                .withTableName(TEMP_BINARY_TABLE_NAME)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(HASH_KEY_NAME)
-                                              .withKeyType(KeyType.HASH))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                HASH_KEY_NAME).withAttributeType(
-                                ScalarAttributeType.B));
-        request.setProvisionedThroughput(DEFAULT_PROVISIONED_THROUGHPUT);
+        CreateTableRequest request = CreateTableRequest.builder()
+                .tableName(TEMP_BINARY_TABLE_NAME)
+                .keySchema(
+                        KeySchemaElement.builder().attributeName(HASH_KEY_NAME)
+                                              .keyType(KeyType.HASH).build())
+                .attributeDefinitions(
+                        AttributeDefinition.builder().attributeName(
+                                HASH_KEY_NAME).attributeType(
+                                ScalarAttributeType.B).build())
+                .provisionedThroughput(DEFAULT_PROVISIONED_THROUGHPUT)
+                .build();
         return request;
     }
 

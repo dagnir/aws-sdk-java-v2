@@ -26,7 +26,6 @@ import java.security.Security;
 import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.CryptoMode;
 
@@ -98,19 +97,19 @@ public class CryptoConfigurationTest {
     public void use_deprecated_methods_for_setting_kms_region() {
         CryptoConfiguration c = new CryptoConfiguration();
         // default is null
-        assertNull(c.getKmsRegion());
+        assertNull(c.getAwsKmsRegion());
         // change to AP_NORTHEAST_1
-        c.withKmsRegion(Regions.AP_NORTHEAST_1);
-        assertEquals(Regions.AP_NORTHEAST_1, c.getKmsRegion());
+        c.withAwsKmsRegion(Region.AP_NORTHEAST_1);
+        assertEquals(Region.AP_NORTHEAST_1, c.getAwsKmsRegion());
         // change back to null
-        c.setKmsRegion(null);
-        assertNull(c.getKmsRegion());
+        c.setAwsKmsRegion(null);
+        assertNull(c.getAwsKmsRegion());
         // the cloned should also be null
-        assertNull(c.clone().readOnly().getKmsRegion());
+        assertNull(c.clone().readOnly().getAwsKmsRegion());
         // change to AP_NORTHEAST_1
-        c.setKmsRegion(Regions.AP_NORTHEAST_1);
+        c.setAwsKmsRegion(Region.AP_NORTHEAST_1);
         // the cloned should now be false
-        assertEquals(Regions.AP_NORTHEAST_1, c.clone().readOnly().getKmsRegion());
+        assertEquals(Region.AP_NORTHEAST_1, c.clone().readOnly().getAwsKmsRegion());
     }
 
     @Test
@@ -120,10 +119,10 @@ public class CryptoConfigurationTest {
         assertNull(c.getAwsKmsRegion());
 
         // change to AP_NORTHEAST_1
-        c.setAwsKmsRegion(Region.getRegion(Regions.AP_NORTHEAST_1));
+        c.setAwsKmsRegion(Region.AP_NORTHEAST_1);
         // the cloned should now be false
-        assertEquals(Regions.AP_NORTHEAST_1.getName(), c.clone().readOnly()
-                                                        .getAwsKmsRegion().getName());
+        assertEquals(Region.AP_NORTHEAST_1.value(), c.clone().readOnly()
+                                                        .getAwsKmsRegion().value());
 
         // change back to null
         c.setAwsKmsRegion(null);
@@ -131,8 +130,8 @@ public class CryptoConfigurationTest {
         // the cloned should also be null
         assertNull(c.clone().readOnly().getAwsKmsRegion());
         // change to AP_NORTHEAST_1
-        c.setAwsKmsRegion(Region.getRegion(Regions.AP_NORTHEAST_1));
+        c.setAwsKmsRegion(Region.AP_NORTHEAST_1);
         // the cloned should now be false
-        assertEquals(Regions.AP_NORTHEAST_1, c.clone().readOnly().getKmsRegion());
+        assertEquals(Region.AP_NORTHEAST_1, c.clone().readOnly().getAwsKmsRegion());
     }
 }

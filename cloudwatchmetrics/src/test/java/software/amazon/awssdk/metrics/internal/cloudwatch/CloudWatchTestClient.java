@@ -22,7 +22,7 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest;
-import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataResult;
+import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataResponse;
 import software.amazon.awssdk.services.cloudwatch.waiters.CloudWatchClientWaiters;
 
 /**
@@ -36,11 +36,11 @@ public class CloudWatchTestClient implements CloudWatchClient {
      */
     private List<MetricDatum> metricDatums = new ArrayList<MetricDatum>();
 
-    public PutMetricDataResult putMetricData(PutMetricDataRequest putMetricDataRequest)
+    public PutMetricDataResponse putMetricData(PutMetricDataRequest putMetricDataRequest)
             throws AmazonServiceException, AmazonClientException {
 
-        metricDatums.addAll(putMetricDataRequest.getMetricData());
-        return new PutMetricDataResult();
+        metricDatums.addAll(putMetricDataRequest.metricData());
+        return PutMetricDataResponse.builder().build();
     }
 
     @Override

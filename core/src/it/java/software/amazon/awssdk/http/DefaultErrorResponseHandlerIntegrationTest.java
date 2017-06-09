@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThat;
 import static software.amazon.awssdk.http.HttpResponseHandler.X_AMZN_REQUEST_ID_HEADER;
+import static utils.HttpTestUtils.builderWithDefaultClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +35,15 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.util.LogCaptor;
+import utils.HttpTestUtils;
 import utils.http.WireMockTestBase;
 
 public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase {
 
     private static final String RESOURCE = "/some-path";
-    private final AmazonHttpClient client = AmazonHttpClient.builder()
-            .clientConfiguration(new LegacyClientConfiguration())
-            .build();
+    private final AmazonHttpClient client = builderWithDefaultClient()
+                                                            .clientConfiguration(new LegacyClientConfiguration())
+                                                            .build();
     private final DefaultErrorResponseHandler sut = new DefaultErrorResponseHandler(new ArrayList<>());
     private LogCaptor logCaptor = new LogCaptor.DefaultLogCaptor(Level.INFO);
 
@@ -74,7 +76,7 @@ public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase
         String requestId = RandomStringUtils.randomAlphanumeric(10);
 
         stubFor(get(urlPathEqualTo(RESOURCE)).willReturn(aResponse().withStatus(418)
-                                                                 .withHeader(X_AMZN_REQUEST_ID_HEADER, requestId)));
+                                                                    .withHeader(X_AMZN_REQUEST_ID_HEADER, requestId)));
 
         executeRequest();
 

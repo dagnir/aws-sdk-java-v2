@@ -20,24 +20,24 @@ import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 /** this class converts sqs batch entry results to individual results. */
 class ResultConverter {
 
-    static SendMessageResult convert(SendMessageBatchResultEntry br) {
-        SendMessageResult toReturn = new SendMessageResult();
-        toReturn.setMD5OfMessageBody(br.getMD5OfMessageBody());
-        toReturn.setMessageId(br.getMessageId());
-        toReturn.setMD5OfMessageAttributes(br.getMD5OfMessageAttributes());
-        return toReturn;
+    static SendMessageResponse convert(SendMessageBatchResultEntry br) {
+        SendMessageResponse.Builder toReturnBuilder = SendMessageResponse.builder()
+            .md5OfMessageBody(br.md5OfMessageBody())
+            .messageId(br.messageId())
+            .md5OfMessageAttributes(br.md5OfMessageAttributes());
+        return toReturnBuilder.build();
     }
 
     static Exception convert(BatchResultErrorEntry be) {
-        AmazonServiceException toReturn = new AmazonServiceException(be.getMessage());
+        AmazonServiceException toReturn = new AmazonServiceException(be.message());
 
-        toReturn.setErrorCode(be.getCode());
-        toReturn.setErrorType(be.isSenderFault() ? ErrorType.Client : ErrorType.Service);
+        toReturn.setErrorCode(be.code());
+        toReturn.setErrorType(be.senderFault() ? ErrorType.Client : ErrorType.Service);
         toReturn.setServiceName("AmazonSQS");
 
         return toReturn;

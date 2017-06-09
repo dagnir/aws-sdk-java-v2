@@ -8,7 +8,7 @@
  *  http://aws.amazon.com/apache2.0
  *
  * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * on an "AS IS" BASIS, oUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
@@ -18,10 +18,11 @@ package software.amazon.awssdk.services.sts;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.auth.BasicAwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Policy;
 import software.amazon.awssdk.auth.policy.Resource;
 import software.amazon.awssdk.auth.policy.Statement;
@@ -29,20 +30,22 @@ import software.amazon.awssdk.auth.policy.Statement.Effect;
 import software.amazon.awssdk.auth.policy.actions.SecurityTokenServiceActions;
 import software.amazon.awssdk.services.iam.model.AccessKeyMetadata;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyRequest;
-import software.amazon.awssdk.services.iam.model.CreateAccessKeyResult;
+import software.amazon.awssdk.services.iam.model.CreateAccessKeyResponse;
 import software.amazon.awssdk.services.iam.model.CreateUserRequest;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteLoginProfileRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
-import software.amazon.awssdk.services.iam.model.ListAccessKeysResult;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.ListUserPoliciesRequest;
-import software.amazon.awssdk.services.iam.model.ListUserPoliciesResult;
+import software.amazon.awssdk.services.iam.model.ListUserPoliciesResponse;
 import software.amazon.awssdk.services.iam.model.PutUserPolicyRequest;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
-import software.amazon.awssdk.services.sts.model.AssumeRoleResult;
+import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 
+@ReviewBeforeRelease("This could be useful to cleanup and present as a customer sample")
+@Ignore
 public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
 
     private static final int SESSION_DURATION = 60 * 60;
@@ -55,16 +58,16 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
     }
 
     private static void deleteAccessKeysForUser(String userName) {
-        ListAccessKeysResult response = iam.listAccessKeys(new ListAccessKeysRequest().withUserName(userName));
-        for (AccessKeyMetadata akm : response.getAccessKeyMetadata()) {
-            iam.deleteAccessKey(new DeleteAccessKeyRequest().withUserName(userName).withAccessKeyId(akm.getAccessKeyId()));
+        ListAccessKeysResponse response = iam.listAccessKeys(ListAccessKeysRequest.builder().userName(userName).build());
+        for (AccessKeyMetadata akm : response.accessKeyMetadata()) {
+            iam.deleteAccessKey(DeleteAccessKeyRequest.builder().userName(userName).accessKeyId(akm.accessKeyId()).build());
         }
     }
 
     private static void deleteUserPoliciesForUser(String userName) {
-        ListUserPoliciesResult response = iam.listUserPolicies(new ListUserPoliciesRequest().withUserName(userName));
-        for (String pName : response.getPolicyNames()) {
-            iam.deleteUserPolicy(new DeleteUserPolicyRequest().withUserName(userName).withPolicyName(pName));
+        ListUserPoliciesResponse response = iam.listUserPolicies(ListUserPoliciesRequest.builder().userName(userName).build());
+        for (String pName : response.policyNames()) {
+            iam.deleteUserPolicy(DeleteUserPolicyRequest.builder().userName(userName).policyName(pName).build());
         }
     }
 
@@ -80,13 +83,13 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
             // Ignore.
         }
         try {
-            iam.deleteLoginProfile(new DeleteLoginProfileRequest()
-                                           .withUserName(userName));
+            iam.deleteLoginProfile(DeleteLoginProfileRequest.builder()
+                                                            .userName(userName).build());
         } catch (Exception e) {
             // Ignore.
         }
         try {
-            iam.deleteUser(new DeleteUserRequest().withUserName(userName));
+            iam.deleteUser(DeleteUserRequest.builder().userName(userName).build());
         } catch (Exception e) {
             // Ignore.
         }
@@ -98,25 +101,24 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
         Statement statement = new Statement(Effect.Allow)
                 .withActions(SecurityTokenServiceActions.AllSecurityTokenServiceActions)
                 .withResources(new Resource("*"));
-        AssumeRoleRequest assumeRoleRequest = new AssumeRoleRequest()
-                .withDurationSeconds(SESSION_DURATION)
-                .withRoleArn(ROLE_ARN)
-                .withRoleSessionName("Name")
-                .withPolicy(new Policy().withStatements(statement)
-                                        .toJson());
+        AssumeRoleRequest assumeRoleRequest = AssumeRoleRequest.builder()
+                                                               .durationSeconds(SESSION_DURATION)
+                                                               .roleArn(ROLE_ARN)
+                                                               .roleSessionName("Name")
+                                                               .policy(new Policy().withStatements(statement).toJson()).build();
 
-        STSClient sts = getStsClient();
+        STSClient sts = stsClient();
         Thread.sleep(1000 * 60);
-        AssumeRoleResult assumeRoleResult = sts.assumeRole(assumeRoleRequest);
-        assertNotNull(assumeRoleResult.getAssumedRoleUser());
-        assertNotNull(assumeRoleResult.getAssumedRoleUser().getArn());
-        assertNotNull(assumeRoleResult.getAssumedRoleUser().getAssumedRoleId());
-        assertNotNull(assumeRoleResult.getCredentials());
-        assertNotNull(assumeRoleResult.getPackedPolicySize());
+        AssumeRoleResponse assumeRoleResult = sts.assumeRole(assumeRoleRequest);
+        assertNotNull(assumeRoleResult.assumedRoleUser());
+        assertNotNull(assumeRoleResult.assumedRoleUser().arn());
+        assertNotNull(assumeRoleResult.assumedRoleUser().assumedRoleId());
+        assertNotNull(assumeRoleResult.credentials());
+        assertNotNull(assumeRoleResult.packedPolicySize());
     }
 
-    private STSClient getStsClient() {
-        iam.createUser(new CreateUserRequest().withUserName(USER_NAME));
+    private STSClient stsClient() {
+        iam.createUser(CreateUserRequest.builder().userName(USER_NAME).build());
 
         String policyDoc = new Policy()
                 .withStatements(new Statement(Effect.Allow)
@@ -124,11 +126,12 @@ public class AssumeRoleIntegrationTest extends IntegrationTestBaseWithIAM {
                                         .withResources(new Resource("*")))
                 .toJson();
 
-        iam.putUserPolicy(new PutUserPolicyRequest().withPolicyDocument(policyDoc)
-                                                    .withUserName(USER_NAME).withPolicyName("assume-role"));
-        CreateAccessKeyResult createAccessKeyResult = iam.createAccessKey(new CreateAccessKeyRequest().withUserName(USER_NAME));
-        AwsCredentials credentials = new BasicAwsCredentials(createAccessKeyResult.getAccessKey().getAccessKeyId(),
-                                                             createAccessKeyResult.getAccessKey().getSecretAccessKey());
-        return STSClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(credentials)).build();
+        iam.putUserPolicy(PutUserPolicyRequest.builder().policyDocument(policyDoc)
+                                              .userName(USER_NAME).policyName("assume-role").build());
+        CreateAccessKeyResponse createAccessKeyResult =
+                iam.createAccessKey(CreateAccessKeyRequest.builder().userName(USER_NAME).build());
+        AwsCredentials credentials = new AwsCredentials(createAccessKeyResult.accessKey().accessKeyId(),
+                                                        createAccessKeyResult.accessKey().secretAccessKey());
+        return STSClient.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).build();
     }
 }

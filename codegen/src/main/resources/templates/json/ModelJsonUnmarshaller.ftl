@@ -21,7 +21,7 @@ import static com.fasterxml.jackson.core.JsonToken.*;
 public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shapeName}, JsonUnmarshallerContext> {
 
     public ${shape.shapeName} unmarshall(JsonUnmarshallerContext context) throws Exception {
-        ${shape.shapeName} ${shape.variable.variableName} = new ${shape.shapeName}();
+        ${shape.shapeName}.Builder ${shape.variable.variableName}Builder = ${shape.shapeName}.builder();
 
 <#if shape.hasHeaderMember >
         if (context.isStartOfDocument()) {
@@ -30,9 +30,9 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
             if (context.getHeader("${memberModel.http.unmarshallLocationName}") != null) {
                 context.setCurrentHeader("${memberModel.http.unmarshallLocationName}");
                 <#if memberModel.variable.simpleType == "Date">
-                    ${shape.variable.variableName}.${memberModel.setterMethodName}(software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
+                    ${shape.variable.variableName}Builder.${memberModel.fluentSetterMethodName}(software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
                 <#else>
-                    ${shape.variable.variableName}.${memberModel.setterMethodName}(<@MemberUnmarshallerDeclarationMacro.content memberModel />.unmarshall(context));
+                    ${shape.variable.variableName}Builder.${memberModel.fluentSetterMethodName}(<@MemberUnmarshallerDeclarationMacro.content memberModel />.unmarshall(context));
                 </#if>
             }
         </#if>
@@ -43,7 +43,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 <#if shape.hasStatusCodeMember >
     <#list shape.members as memberModel>
         <#if memberModel.http.isStatusCode() >
-        ${shape.variable.variableName}.${memberModel.setterMethodName}(context.getHttpResponse().getStatusCode());
+        ${shape.variable.variableName}Builder.${memberModel.fluentSetterMethodName}(context.getHttpResponse().getStatusCode());
         </#if>
     </#list>
 </#if>
@@ -51,12 +51,12 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 <#if shape.hasPayloadMember>
     <#assign explicitPayloadMember=shape.payloadMember />
     <#if explicitPayloadMember.http.isStreaming>
-        ${shape.variable.variableName}.${explicitPayloadMember.setterMethodName}(context.getHttpResponse().getContent());
+        ${shape.variable.variableName}Builder.${explicitPayloadMember.fluentSetterMethodName}(context.getHttpResponse().getContent());
     <#elseif explicitPayloadMember.variable.variableType == "java.nio.ByteBuffer">
         java.io.InputStream is = context.getHttpResponse().getContent();
         if(is != null) {
             try {
-                ${shape.variable.variableName}.${explicitPayloadMember.setterMethodName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.utils.IoUtils.toByteArray(is)));
+                ${shape.variable.variableName}Builder.${explicitPayloadMember.fluentSetterMethodName}(java.nio.ByteBuffer.wrap(software.amazon.awssdk.utils.IoUtils.toByteArray(is)));
             } finally {
                 software.amazon.awssdk.utils.IoUtils.closeQuietly(is, null);
             }
@@ -68,7 +68,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
     <@PayloadUnmarshallerMacro.content shape />
 </#if>
 
-        return ${shape.variable.variableName};
+        return ${shape.variable.variableName}Builder.build();
     }
 
     private static ${shape.shapeName}Unmarshaller INSTANCE;

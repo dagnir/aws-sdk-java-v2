@@ -24,18 +24,18 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DeleteStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamResult;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.kinesis.model.GetRecordsRequest;
-import software.amazon.awssdk.services.kinesis.model.GetRecordsResult;
+import software.amazon.awssdk.services.kinesis.model.GetRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
-import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResult;
+import software.amazon.awssdk.services.kinesis.model.GetShardIteratorResponse;
 import software.amazon.awssdk.services.kinesis.model.HashKeyRange;
 import software.amazon.awssdk.services.kinesis.model.InvalidArgumentException;
 import software.amazon.awssdk.services.kinesis.model.ListStreamsRequest;
-import software.amazon.awssdk.services.kinesis.model.ListStreamsResult;
+import software.amazon.awssdk.services.kinesis.model.ListStreamsResponse;
 import software.amazon.awssdk.services.kinesis.model.MergeShardsRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
-import software.amazon.awssdk.services.kinesis.model.PutRecordResult;
+import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.kinesis.model.SequenceNumberRange;
@@ -50,9 +50,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
     @Test
     public void testDescribeBogusStream() {
         try {
-            client.describeStream(
-                    new DescribeStreamRequest().withStreamName("bogus-stream-name")
-                                 );
+            client.describeStream(DescribeStreamRequest.builder().streamName("bogus-stream-name").build());
             Assert.fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException exception) {
             // Ignored or expected.
@@ -62,9 +60,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
     @Test
     public void testDeleteBogusStream() {
         try {
-            client.deleteStream(
-                    new DeleteStreamRequest().withStreamName("bogus-stream-name")
-                               );
+            client.deleteStream(DeleteStreamRequest.builder().streamName("bogus-stream-name").build());
             Assert.fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException exception) {
             // Ignored or expected.
@@ -74,12 +70,11 @@ public class KinesisIntegrationTests extends AbstractTestCase {
     @Test
     public void testGetIteratorForBogusStream() {
         try {
-            client.getShardIterator(
-                    new GetShardIteratorRequest()
-                            .withStreamName("bogus-stream-name")
-                            .withShardId("bogus-shard-id")
-                            .withShardIteratorType(ShardIteratorType.LATEST)
-                                   );
+            client.getShardIterator(GetShardIteratorRequest.builder()
+                                                           .streamName("bogus-stream-name")
+                                                           .shardId("bogus-shard-id")
+                                                           .shardIteratorType(ShardIteratorType.LATEST)
+                                                           .build());
             Assert.fail("Expected ResourceNotFoundException");
         } catch (ResourceNotFoundException exception) {
             // Ignored or expected.
@@ -89,7 +84,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
     @Test
     public void testGetFromNullIterator() {
         try {
-            client.getRecords(new GetRecordsRequest());
+            client.getRecords(GetRecordsRequest.builder().build());
             Assert.fail("Expected InvalidArgumentException");
         } catch (AmazonServiceException exception) {
             // Ignored or expected.
@@ -99,10 +94,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
     @Test
     public void testGetFromBogusIterator() {
         try {
-            client.getRecords(
-                    new GetRecordsRequest()
-                            .withShardIterator("bogusmonkeys")
-                             );
+            client.getRecords(GetRecordsRequest.builder().shardIterator("bogusmonkeys").build());
             Assert.fail("Expected InvalidArgumentException");
         } catch (InvalidArgumentException exception) {
             // Ignored or expected.
@@ -119,11 +111,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
 
             // Create a stream with one shard.
             System.out.println("Creating Stream...");
-            client.createStream(
-                    new CreateStreamRequest()
-                            .withStreamName(streamName)
-                            .withShardCount(1)
-                               );
+            client.createStream(CreateStreamRequest.builder().streamName(streamName).shardCount(1).build());
             System.out.println("  OK");
             created = true;
 
@@ -152,31 +140,27 @@ public class KinesisIntegrationTests extends AbstractTestCase {
 
         } finally {
             if (created) {
-                client.deleteStream(
-                        new DeleteStreamRequest().withStreamName(streamName)
-                                   );
+                client.deleteStream(DeleteStreamRequest.builder().streamName(streamName).build());
             }
         }
     }
 
     private void testGets(final String streamName, final Shard shard) {
         // Get an iterator for the first shard.
-        GetShardIteratorResult iteratorResult = client.getShardIterator(
-                new GetShardIteratorRequest()
-                        .withStreamName(streamName)
-                        .withShardId(shard.getShardId())
-                        .withShardIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER)
-                        .withStartingSequenceNumber(
-                                shard.getSequenceNumberRange().getStartingSequenceNumber()
-                                                   )
-                                                                       );
+        GetShardIteratorResponse iteratorResult = client.getShardIterator(
+                GetShardIteratorRequest.builder()
+                                       .streamName(streamName)
+                                       .shardId(shard.shardId())
+                                       .shardIteratorType(ShardIteratorType.AT_SEQUENCE_NUMBER)
+                                       .startingSequenceNumber(shard.sequenceNumberRange().startingSequenceNumber())
+                                       .build());
         Assert.assertNotNull(iteratorResult);
 
-        String iterator = iteratorResult.getShardIterator();
+        String iterator = iteratorResult.shardIterator();
         Assert.assertNotNull(iterator);
 
         int tries = 0;
-        GetRecordsResult result;
+        GetRecordsResponse result;
         List<Record> records;
 
         // Read the first record from the first shard (looping until it's
@@ -187,16 +171,15 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                 Assert.fail("Failed to read any records after 100 seconds");
             }
 
-            result = client.getRecords(
-                    new GetRecordsRequest()
-                            .withShardIterator(iterator)
-                            .withLimit(1)
-                                      );
+            result = client.getRecords(GetRecordsRequest.builder()
+                                                        .shardIterator(iterator)
+                                                        .limit(1)
+                                                        .build());
             Assert.assertNotNull(result);
-            Assert.assertNotNull(result.getRecords());
-            Assert.assertNotNull(result.getNextShardIterator());
+            Assert.assertNotNull(result.records());
+            Assert.assertNotNull(result.nextShardIterator());
 
-            records = result.getRecords();
+            records = result.records();
             if (records.size() > 0) {
                 break;
             }
@@ -207,7 +190,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                 throw new RuntimeException(exception);
             }
 
-            iterator = result.getNextShardIterator();
+            iterator = result.nextShardIterator();
         }
 
         System.out.println("  [Succeeded after " + tries + " tries]");
@@ -215,39 +198,37 @@ public class KinesisIntegrationTests extends AbstractTestCase {
         validateRecord(records.get(0), "See No Evil");
 
         // Read the second record from the first shard.
-        result = client.getRecords(
-                new GetRecordsRequest()
-                        .withShardIterator(result.getNextShardIterator())
-                                  );
+        result = client.getRecords(GetRecordsRequest.builder()
+                                                    .shardIterator(result.nextShardIterator())
+                                                    .build());
         Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getRecords());
-        Assert.assertNotNull(result.getNextShardIterator());
+        Assert.assertNotNull(result.records());
+        Assert.assertNotNull(result.nextShardIterator());
 
-        records = result.getRecords();
+        records = result.records();
         Assert.assertEquals(1, records.size());
         validateRecord(records.get(0), "See No Evil");
 
         // Try to read some more, get EOF.
-        result = client.getRecords(
-                new GetRecordsRequest()
-                        .withShardIterator(result.getNextShardIterator())
-                                  );
+        result = client.getRecords(GetRecordsRequest.builder()
+                                                    .shardIterator(result.nextShardIterator())
+                                                    .build());
         Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getRecords());
-        Assert.assertTrue(result.getRecords().isEmpty());
-        Assert.assertNull(result.getNextShardIterator());
+        Assert.assertNotNull(result.records());
+        Assert.assertTrue(result.records().isEmpty());
+        Assert.assertNull(result.nextShardIterator());
     }
 
     private void validateRecord(final Record record, String data) {
         Assert.assertNotNull(record);
 
-        Assert.assertNotNull(record.getSequenceNumber());
-        new BigInteger(record.getSequenceNumber());
+        Assert.assertNotNull(record.sequenceNumber());
+        new BigInteger(record.sequenceNumber());
 
-        String value = new String(record.getData().array());
+        String value = new String(record.data().array());
         Assert.assertEquals(data, value);
 
-        Assert.assertNotNull(record.getPartitionKey());
+        Assert.assertNotNull(record.partitionKey());
     }
 
     private void testPuts(final String streamName, final Shard shard)
@@ -255,20 +236,20 @@ public class KinesisIntegrationTests extends AbstractTestCase {
 
         // Put a record into the shard.
         System.out.println("Putting two records...");
-        PutRecordResult r1 = putRecord(streamName, "See No Evil");
-        Assert.assertEquals(shard.getShardId(), r1.getShardId());
+        PutRecordResponse r1 = putRecord(streamName, "See No Evil");
+        Assert.assertEquals(shard.shardId(), r1.shardId());
 
         // Check that it's sequence number is sane.
         BigInteger startingSQN = new BigInteger(
-                shard.getSequenceNumberRange().getStartingSequenceNumber()
+                shard.sequenceNumberRange().startingSequenceNumber()
         );
-        BigInteger sqn1 = new BigInteger(r1.getSequenceNumber());
+        BigInteger sqn1 = new BigInteger(r1.sequenceNumber());
         Assert.assertTrue(sqn1.compareTo(startingSQN) >= 0);
 
         // Put another record, which should show up later in the same shard.
-        PutRecordResult r2 = putRecord(streamName, "See No Evil");
-        Assert.assertEquals(shard.getShardId(), r2.getShardId());
-        BigInteger sqn2 = new BigInteger(r2.getSequenceNumber());
+        PutRecordResponse r2 = putRecord(streamName, "See No Evil");
+        Assert.assertEquals(shard.shardId(), r2.shardId());
+        BigInteger sqn2 = new BigInteger(r2.sequenceNumber());
         System.out.println("  OK");
 
         // Not guaranteed an order unless we explicitly ask for one, but
@@ -286,21 +267,21 @@ public class KinesisIntegrationTests extends AbstractTestCase {
 
         // Put records into the two new shards, one after another.
         System.out.println("Putting some more...");
-        PutRecordResult r3 = putRecordExplicit(streamName, "999");
-        PutRecordResult r4 = putRecordExplicit(streamName,
+        PutRecordResponse r3 = putRecordExplicit(streamName, "999");
+        PutRecordResponse r4 = putRecordExplicit(streamName,
                                                "1000",
-                                               r3.getSequenceNumber());
+                                               r3.sequenceNumber());
 
-        BigInteger sqn3 = new BigInteger(r3.getSequenceNumber());
-        BigInteger sqn4 = new BigInteger(r4.getSequenceNumber());
+        BigInteger sqn3 = new BigInteger(r3.sequenceNumber());
+        BigInteger sqn4 = new BigInteger(r4.sequenceNumber());
         Assert.assertTrue(sqn4.compareTo(sqn3) >= 0);
         System.out.println("  OK");
 
         // Merge the two shards back together.
         System.out.println("Merging the shards back together...");
         mergeShards(streamName,
-                    shards.get(1).getShardId(),
-                    shards.get(2).getShardId());
+                    shards.get(1).shardId(),
+                    shards.get(2).shardId());
         System.out.println("  OK");
     }
 
@@ -310,32 +291,31 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                                    final long splitHashKey)
             throws InterruptedException {
 
-        client.splitShard(
-                new SplitShardRequest()
-                        .withStreamName(streamName)
-                        .withShardToSplit(shard.getShardId())
-                        .withNewStartingHashKey(Long.toString(splitHashKey))
-                         );
+        client.splitShard(SplitShardRequest.builder()
+                                           .streamName(streamName)
+                                           .shardToSplit(shard.shardId())
+                                           .newStartingHashKey(Long.toString(splitHashKey))
+                                           .build());
 
         List<Shard> shards = waitForStream(streamName);
 
         Assert.assertEquals(3, shards.size());
 
         Shard old = shards.get(0);
-        Assert.assertEquals(shard.getShardId(), old.getShardId());
+        Assert.assertEquals(shard.shardId(), old.shardId());
         Assert.assertNotNull(
-                old.getSequenceNumberRange().getEndingSequenceNumber()
+                old.sequenceNumberRange().endingSequenceNumber()
                             );
 
         Shard new1 = shards.get(1);
-        Assert.assertEquals(shard.getShardId(), new1.getParentShardId());
-        validateHashKeyRange(new1.getHashKeyRange(), 0L, splitHashKey - 1);
+        Assert.assertEquals(shard.shardId(), new1.parentShardId());
+        validateHashKeyRange(new1.hashKeyRange(), 0L, splitHashKey - 1);
 
         Shard new2 = shards.get(2);
-        Assert.assertEquals(shard.getShardId(), new2.getParentShardId());
-        validateHashKeyRange(new2.getHashKeyRange(), splitHashKey, null);
-        Assert.assertEquals(old.getHashKeyRange().getEndingHashKey(),
-                            new2.getHashKeyRange().getEndingHashKey());
+        Assert.assertEquals(shard.shardId(), new2.parentShardId());
+        validateHashKeyRange(new2.hashKeyRange(), splitHashKey, null);
+        Assert.assertEquals(old.hashKeyRange().endingHashKey(),
+                            new2.hashKeyRange().endingHashKey());
 
         return shards;
     }
@@ -345,12 +325,11 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                                     final String shard2)
             throws InterruptedException {
 
-        client.mergeShards(
-                new MergeShardsRequest()
-                        .withStreamName(streamName)
-                        .withShardToMerge(shard1)
-                        .withAdjacentShardToMerge(shard2)
-                          );
+        client.mergeShards(MergeShardsRequest.builder()
+                                             .streamName(streamName)
+                                             .shardToMerge(shard1)
+                                             .adjacentShardToMerge(shard2)
+                                             .build());
 
         List<Shard> shards = waitForStream(streamName);
 
@@ -358,9 +337,9 @@ public class KinesisIntegrationTests extends AbstractTestCase {
         Shard merged = shards.get(3);
 
         BigInteger start =
-                new BigInteger(merged.getHashKeyRange().getStartingHashKey());
+                new BigInteger(merged.hashKeyRange().startingHashKey());
         BigInteger end =
-                new BigInteger(merged.getHashKeyRange().getEndingHashKey());
+                new BigInteger(merged.hashKeyRange().endingHashKey());
 
         Assert.assertEquals(BigInteger.valueOf(0), start);
         Assert.assertTrue(end.compareTo(BigInteger.valueOf(1000)) >= 0);
@@ -373,65 +352,63 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                                       final Long end) {
         if (start != null) {
             Assert.assertEquals(BigInteger.valueOf(start),
-                                new BigInteger(range.getStartingHashKey()));
+                                new BigInteger(range.startingHashKey()));
         }
         if (end != null) {
             Assert.assertEquals(BigInteger.valueOf(end),
-                                new BigInteger(range.getEndingHashKey()));
+                                new BigInteger(range.endingHashKey()));
         }
     }
 
-    private PutRecordResult putRecord(final String streamName,
+    private PutRecordResponse putRecord(final String streamName,
                                       final String data) {
 
-        PutRecordResult result = client.putRecord(
-                new PutRecordRequest()
-                        .withStreamName(streamName)
-                        .withPartitionKey("foobar")
-                        .withData(ByteBuffer.wrap(data.getBytes()))
-                                                 );
+        PutRecordResponse result = client.putRecord(
+                PutRecordRequest.builder()
+                                .streamName(streamName)
+                                .partitionKey("foobar")
+                                .data(ByteBuffer.wrap(data.getBytes()))
+                                .build());
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getShardId());
-        Assert.assertNotNull(result.getSequenceNumber());
+        Assert.assertNotNull(result.shardId());
+        Assert.assertNotNull(result.sequenceNumber());
 
         return result;
     }
 
-    private PutRecordResult putRecordExplicit(final String streamName,
+    private PutRecordResponse putRecordExplicit(final String streamName,
                                               final String hashKey) {
 
-        PutRecordResult result = client.putRecord(
-                new PutRecordRequest()
-                        .withStreamName(streamName)
-                        .withPartitionKey("foobar")
-                        .withExplicitHashKey(hashKey)
-                        .withData(ByteBuffer.wrap("Speak No Evil".getBytes()))
-                                                 );
+        PutRecordResponse result = client.putRecord(PutRecordRequest.builder()
+                                                                  .streamName(streamName)
+                                                                  .partitionKey("foobar")
+                                                                  .explicitHashKey(hashKey)
+                                                                  .data(ByteBuffer.wrap("Speak No Evil".getBytes()))
+                                                                  .build());
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getShardId());
-        Assert.assertNotNull(result.getSequenceNumber());
+        Assert.assertNotNull(result.shardId());
+        Assert.assertNotNull(result.sequenceNumber());
 
         return result;
     }
 
-    private PutRecordResult putRecordExplicit(final String streamName,
+    private PutRecordResponse putRecordExplicit(final String streamName,
                                               final String hashKey,
                                               final String minSQN) {
 
-        PutRecordResult result = client.putRecord(
-                new PutRecordRequest()
-                        .withStreamName(streamName)
-                        .withPartitionKey("foobar")
-                        .withExplicitHashKey(hashKey)
-                        .withSequenceNumberForOrdering(minSQN)
-                        .withData(ByteBuffer.wrap("Hear No Evil".getBytes()))
-                                                 );
+        PutRecordResponse result = client.putRecord(PutRecordRequest.builder()
+                                                                  .streamName(streamName)
+                                                                  .partitionKey("foobar")
+                                                                  .explicitHashKey(hashKey)
+                                                                  .sequenceNumberForOrdering(minSQN)
+                                                                  .data(ByteBuffer.wrap("Hear No Evil".getBytes()))
+                                                                  .build());
         Assert.assertNotNull(result);
 
-        Assert.assertNotNull(result.getShardId());
-        Assert.assertNotNull(result.getSequenceNumber());
+        Assert.assertNotNull(result.shardId());
+        Assert.assertNotNull(result.sequenceNumber());
 
         return result;
     }
@@ -442,13 +419,11 @@ public class KinesisIntegrationTests extends AbstractTestCase {
         String start = null;
         while (true) {
 
-            ListStreamsResult result = client.listStreams(
-                    new ListStreamsRequest().withExclusiveStartStreamName(start)
-                                                         );
+            ListStreamsResponse result = client.listStreams(ListStreamsRequest.builder().exclusiveStartStreamName(start).build());
 
             Assert.assertNotNull(result);
 
-            List<String> names = result.getStreamNames();
+            List<String> names = result.streamNames();
             Assert.assertNotNull(names);
 
             if (names.size() > 0) {
@@ -459,7 +434,7 @@ public class KinesisIntegrationTests extends AbstractTestCase {
                 start = names.get(names.size() - 1);
             }
 
-            if (!result.getHasMoreStreams()) {
+            if (!result.hasMoreStreams()) {
                 break;
             }
 
@@ -472,24 +447,22 @@ public class KinesisIntegrationTests extends AbstractTestCase {
             throws InterruptedException {
 
         while (true) {
-            DescribeStreamResult result = client.describeStream(
-                    new DescribeStreamRequest().withStreamName(streamName)
-                                                               );
+            DescribeStreamResponse result = client.describeStream(DescribeStreamRequest.builder().streamName(streamName).build());
             Assert.assertNotNull(result);
 
-            StreamDescription description = result.getStreamDescription();
+            StreamDescription description = result.streamDescription();
             Assert.assertNotNull(description);
 
-            Assert.assertEquals(streamName, description.getStreamName());
-            Assert.assertNotNull(description.getStreamARN());
-            Assert.assertFalse(description.getHasMoreShards());
+            Assert.assertEquals(streamName, description.streamName());
+            Assert.assertNotNull(description.streamARN());
+            Assert.assertFalse(description.hasMoreShards());
 
             StreamStatus status =
-                    StreamStatus.valueOf(description.getStreamStatus());
+                    StreamStatus.valueOf(description.streamStatus());
             Assert.assertNotNull(status);
 
             if (status == StreamStatus.ACTIVE) {
-                List<Shard> shards = description.getShards();
+                List<Shard> shards = description.shards();
                 validateShards(shards);
 
                 return shards;
@@ -511,10 +484,10 @@ public class KinesisIntegrationTests extends AbstractTestCase {
 
         for (Shard shard : shards) {
             Assert.assertNotNull(shard);
-            Assert.assertNotNull(shard.getShardId());
+            Assert.assertNotNull(shard.shardId());
 
-            validateHashKeyRange(shard.getHashKeyRange());
-            validateSQNRange(shard.getSequenceNumberRange());
+            validateHashKeyRange(shard.hashKeyRange());
+            validateSQNRange(shard.sequenceNumberRange());
         }
 
     }
@@ -522,22 +495,22 @@ public class KinesisIntegrationTests extends AbstractTestCase {
     private void validateHashKeyRange(final HashKeyRange range) {
 
         Assert.assertNotNull(range);
-        Assert.assertNotNull(range.getStartingHashKey());
-        Assert.assertNotNull(range.getEndingHashKey());
+        Assert.assertNotNull(range.startingHashKey());
+        Assert.assertNotNull(range.endingHashKey());
 
-        BigInteger start = new BigInteger(range.getStartingHashKey());
-        BigInteger end = new BigInteger(range.getEndingHashKey());
+        BigInteger start = new BigInteger(range.startingHashKey());
+        BigInteger end = new BigInteger(range.endingHashKey());
         Assert.assertTrue(start.compareTo(end) <= 0);
     }
 
     private void validateSQNRange(final SequenceNumberRange range) {
         Assert.assertNotNull(range);
-        Assert.assertNotNull(range.getStartingSequenceNumber());
+        Assert.assertNotNull(range.startingSequenceNumber());
 
-        BigInteger start = new BigInteger(range.getStartingSequenceNumber());
+        BigInteger start = new BigInteger(range.startingSequenceNumber());
 
-        if (range.getEndingSequenceNumber() != null) {
-            BigInteger end = new BigInteger(range.getEndingSequenceNumber());
+        if (range.endingSequenceNumber() != null) {
+            BigInteger end = new BigInteger(range.endingSequenceNumber());
 
             Assert.assertTrue(start.compareTo(end) <= 0);
         }

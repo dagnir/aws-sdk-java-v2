@@ -75,6 +75,9 @@ class EC2CredentialsProvider implements AwsCredentialsProvider, AutoCloseable {
                                   : new AwsSessionCredentials(accessKey.asText(), secretKey.asText(), token.asText());
 
             Instant expiration = getExpiration(expirationNode).orElse(null);
+            if (expiration != null && Instant.now().isAfter(expiration)) {
+                throw new SdkClientException("Credentials obtained from EC2 metadata service are already expired");
+            }
             return RefreshResult.builder(credentials)
                                 .staleTime(getStaleTime(expiration))
                                 .prefetchTime(getPrefetchTime(expiration))
@@ -113,8 +116,8 @@ class EC2CredentialsProvider implements AwsCredentialsProvider, AutoCloseable {
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
-        return Optional.ofNullable(credentialsCache.get());
+    public AwsCredentials getCredentials() {
+        return credentialsCache.get();
     }
 
     @Override

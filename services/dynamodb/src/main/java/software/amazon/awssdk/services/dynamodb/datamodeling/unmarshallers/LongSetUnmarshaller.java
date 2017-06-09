@@ -38,7 +38,7 @@ public class LongSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<Long> result = new HashSet<Long>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(Long.valueOf(s));
         }
         return result;

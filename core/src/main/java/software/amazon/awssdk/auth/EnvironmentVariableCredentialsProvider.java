@@ -16,30 +16,18 @@
 package software.amazon.awssdk.auth;
 
 import java.util.Optional;
-import software.amazon.awssdk.SdkGlobalConfiguration;
-import software.amazon.awssdk.utils.StringUtils;
+import software.amazon.awssdk.utils.SystemSetting;
 
 /**
- * {@link AwsCredentialsProvider} implementation that provides credentials by looking at the: <code>AWS_ACCESS_KEY_ID</code> and
- * <code>AWS_SECRET_KEY</code> environment variables.
+ * {@link AwsCredentialsProvider} implementation that loads credentials from the AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and
+ * AWS_SESSION_TOKEN environment variables.
  */
-public class EnvironmentVariableCredentialsProvider implements AwsCredentialsProvider {
+public class EnvironmentVariableCredentialsProvider extends SystemSettingsCredentialsProvider {
     @Override
-    public Optional<AwsCredentials> getCredentials() {
-        String accessKey = StringUtils.trim(System.getenv(SdkGlobalConfiguration.ACCESS_KEY_ID_ENV_VAR));
-        String secretKey = StringUtils.trim(System.getenv(SdkGlobalConfiguration.SECRET_KEY_ENV_VAR));
-        String sessionToken = StringUtils.trim(System.getenv(SdkGlobalConfiguration.AWS_SESSION_TOKEN_ENV_VAR));
-
-        if (StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(sessionToken == null ? new AwsCredentials(accessKey, secretKey)
-                                                : new AwsSessionCredentials(accessKey, secretKey, sessionToken));
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
+    protected Optional<String> loadSetting(SystemSetting setting) {
+        // CHECKSTYLE:OFF - Customers should be able to specify a credentials provider that only looks at the environment
+        // variables, but not the system properties. For that reason, we're only checking the environment variable here.
+        return Optional.ofNullable(System.getenv(setting.environmentVariable()));
+        // CHECKSTYLE:ON
     }
 }

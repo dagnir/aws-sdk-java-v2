@@ -34,7 +34,7 @@ public class IndexScanImpl extends ScanImpl {
 
     @Override
     protected ItemCollection<ScanOutcome> doScan(ScanSpec spec) {
-        spec.getRequest().setIndexName(index.getIndexName());
+        spec.setRequest(spec.getRequest().toBuilder().indexName(index.getIndexName()).build());
         return super.doScan(spec);
     }
 }

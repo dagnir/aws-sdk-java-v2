@@ -26,9 +26,13 @@ import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
  * @param <T> request type
  */
 class AbstractSpec<T extends AmazonWebServiceRequest> {
-    private final T req;
+    private T req;
 
     AbstractSpec(T req) {
+        setRequest(req);
+    }
+
+    public void setRequest(T req) {
         InternalUtils.applyUserAgent(req);
         this.req = req;
     }

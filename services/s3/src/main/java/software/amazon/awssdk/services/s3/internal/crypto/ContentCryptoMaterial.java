@@ -40,9 +40,9 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.DecryptRequest;
-import software.amazon.awssdk.services.kms.model.DecryptResult;
+import software.amazon.awssdk.services.kms.model.DecryptResponse;
 import software.amazon.awssdk.services.kms.model.EncryptRequest;
-import software.amazon.awssdk.services.kms.model.EncryptResult;
+import software.amazon.awssdk.services.kms.model.EncryptResponse;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.KeyWrapException;
 import software.amazon.awssdk.services.s3.model.CryptoMode;
@@ -165,11 +165,11 @@ final class ContentCryptoMaterial {
     private static SecretKey cekByKms(byte[] cekSecured, String keyWrapAlgo,
                                       EncryptionMaterials materials,
                                       ContentCryptoScheme contentCryptoScheme, KMSClient kms) {
-        DecryptRequest kmsreq = new DecryptRequest()
-                .withEncryptionContext(materials.getMaterialsDescription())
-                .withCiphertextBlob(ByteBuffer.wrap(cekSecured));
-        DecryptResult result = kms.decrypt(kmsreq);
-        return new SecretKeySpec(copyAllBytesFrom(result.getPlaintext()),
+        DecryptRequest kmsreq = DecryptRequest.builder()
+                .encryptionContext(materials.getMaterialsDescription())
+                .ciphertextBlob(ByteBuffer.wrap(cekSecured)).build();
+        DecryptResponse result = kms.decrypt(kmsreq);
+        return new SecretKeySpec(copyAllBytesFrom(result.plaintext()),
                                  contentCryptoScheme.getKeyGeneratorAlgorithm());
     }
 
@@ -579,16 +579,17 @@ final class ContentCryptoMaterial {
 
         if (materials.isKmsEnabled()) {
             matdesc = mergeMaterialDescriptions(materials, req);
-            EncryptRequest encryptRequest = new EncryptRequest()
-                    .withEncryptionContext(matdesc)
-                    .withKeyId(materials.getCustomerMasterKeyId())
-                    .withPlaintext(ByteBuffer.wrap(cek.getEncoded()));
+            EncryptRequest encryptRequest = EncryptRequest.builder()
+                    .encryptionContext(matdesc)
+                    .keyId(materials.getCustomerMasterKeyId())
+                    .plaintext(ByteBuffer.wrap(cek.getEncoded()))
+                    .build();
             encryptRequest
                     .withGeneralProgressListener(req.getGeneralProgressListener())
                     .withRequestMetricCollector(req.getRequestMetricCollector())
             ;
-            EncryptResult encryptResult = kms.encrypt(encryptRequest);
-            byte[] keyBlob = copyAllBytesFrom(encryptResult.getCiphertextBlob());
+            EncryptResponse encryptResult = kms.encrypt(encryptRequest);
+            byte[] keyBlob = copyAllBytesFrom(encryptResult.ciphertextBlob());
             return new KmsSecuredCek(keyBlob, matdesc);
         } else {
             matdesc = materials.getMaterialsDescription();

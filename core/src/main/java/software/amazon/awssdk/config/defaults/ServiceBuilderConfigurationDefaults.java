@@ -1,0 +1,83 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+package software.amazon.awssdk.config.defaults;
+
+import static software.amazon.awssdk.config.AdvancedClientOption.SIGNER_PROVIDER;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.handlers.HandlerChainFactory;
+import software.amazon.awssdk.runtime.auth.SignerProvider;
+
+/**
+ * An implementation of {@link ClientConfigurationDefaults} that can be used by client builders to define their service defaults.
+ */
+@SdkProtectedApi
+public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefaults {
+    private final Supplier<SignerProvider> defaultSignerProvider;
+    private final List<String> handler1Paths;
+    private final List<String> handler2Paths;
+
+    private ServiceBuilderConfigurationDefaults(Builder builder) {
+        this.defaultSignerProvider = builder.defaultSignerProvider;
+        this.handler1Paths = new ArrayList<>(builder.handler1Paths);
+        this.handler2Paths = new ArrayList<>(builder.handler2Paths);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
+        ClientOverrideConfiguration config = builder.build();
+        builder.advancedOption(SIGNER_PROVIDER,
+                               applyDefault(config.advancedOption(SIGNER_PROVIDER), defaultSignerProvider));
+        HandlerChainFactory chainFactory = new HandlerChainFactory();
+        handler1Paths.forEach(path -> chainFactory.newRequestHandlerChain(path).forEach(builder::addRequestListener));
+        handler2Paths.forEach(path -> chainFactory.newRequestHandler2Chain(path).forEach(builder::addRequestListener));
+    }
+
+    public static final class Builder {
+        private Supplier<SignerProvider> defaultSignerProvider;
+        private List<String> handler1Paths = new ArrayList<>();
+        private List<String> handler2Paths = new ArrayList<>();
+
+        private Builder() {}
+
+        public Builder defaultSignerProvider(Supplier<SignerProvider> defaultSignerProvider) {
+            this.defaultSignerProvider = defaultSignerProvider;
+            return this;
+        }
+
+        public Builder addHandler1Path(String handlerPath) {
+            handler1Paths.add(handlerPath);
+            return this;
+        }
+
+        public Builder addHandler2Path(String handlerPath) {
+            handler2Paths.add(handlerPath);
+            return this;
+        }
+
+        public ServiceBuilderConfigurationDefaults build() {
+            return new ServiceBuilderConfigurationDefaults(this);
+        }
+    }
+}

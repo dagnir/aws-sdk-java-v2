@@ -15,9 +15,15 @@
 
 package software.amazon.awssdk.utils;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toMap;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
@@ -64,5 +70,35 @@ public class CollectionUtils {
             }
         }
         return joinedString.toString();
+    }
+
+    /**
+     * Perform a deep copy of the provided map of lists. This only performs a deep copy of the map and lists. Entries are not
+     * copied, so care should be taken to ensure that entries are immutable if preventing unwanted mutations of the elements is
+     * desired.
+     */
+    public static <T, U> Map<T, List<U>> deepCopyMap(Map<T, ? extends List<U>> map) {
+        return map.entrySet().stream()
+                  .collect(toMap(Map.Entry::getKey, e -> new ArrayList<>(e.getValue())));
+    }
+
+    /**
+     * Create an unmodifiable version of the provdied map of lists. Modifications of the original map will not "write through" to
+     * the unmodifiable map, but modifications of the original list will. For true immutability, ensure that the original map
+     * is first copied with {@link #deepCopyMap(Map)}, or use {@link #deepCopiedUnmodifiableMap(Map)}
+     */
+    public static <T, U> Map<T, List<U>> deepUnmodifiableMap(Map<T, ? extends List<U>> map) {
+        return unmodifiableMap(map.entrySet().stream()
+                                  .collect(toMap(Map.Entry::getKey, e -> unmodifiableList(e.getValue()))));
+    }
+
+    /**
+     * Perform a deep copy of the provided map of lists, and make the result unmodifiable. This is slightly more efficient than
+     * calling {@link #deepCopyMap(Map)} followed by {@link #deepUnmodifiableMap(Map)}, because only one intermediate map copy
+     * is created.
+     */
+    public static <T, U> Map<T, List<U>> deepCopiedUnmodifiableMap(Map<T, ? extends List<U>> map) {
+        return unmodifiableMap(map.entrySet().stream()
+                                  .collect(toMap(Map.Entry::getKey, e -> unmodifiableList(new ArrayList<>(e.getValue())))));
     }
 }

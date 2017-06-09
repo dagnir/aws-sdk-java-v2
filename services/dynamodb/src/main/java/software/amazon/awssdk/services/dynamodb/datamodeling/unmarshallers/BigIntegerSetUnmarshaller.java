@@ -39,7 +39,7 @@ public class BigIntegerSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<BigInteger> result = new HashSet<BigInteger>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(new BigInteger(s));
         }
         return result;

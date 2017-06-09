@@ -24,12 +24,11 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import java.util.ArrayList;
 import java.util.List;
-import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.internal.utils.LoggingHandler;
 import software.amazon.awssdk.utils.Logger;
 
 public class ChannelPipelineInitializer extends AbstractChannelPoolHandler {
-    private static final Logger log = Logger.loggerFor(NettyNioAsyncHttpClient.class);
+    private static final Logger log = Logger.loggerFor(ChannelPipelineInitializer.class);
 
     private final SslContext sslContext;
     private final ChannelHandler[] handlers;

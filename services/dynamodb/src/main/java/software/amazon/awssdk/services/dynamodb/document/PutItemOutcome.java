@@ -17,18 +17,18 @@ package software.amazon.awssdk.services.dynamodb.document;
 
 import java.util.Map;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
-import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 
 /**
  * The outcome of putting an item to a DynamoDB table.
  */
 public class PutItemOutcome {
-    private final PutItemResult result;
+    private final PutItemResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public PutItemOutcome(PutItemResult result) {
+    public PutItemOutcome(PutItemResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -40,7 +40,7 @@ public class PutItemOutcome {
      */
     public Item getItem() {
         Map<String, Object> attributes =
-                InternalUtils.toSimpleMapValue(result.getAttributes());
+                InternalUtils.toSimpleMapValue(result.attributes());
         Item item = Item.fromMap(attributes);
         return item;
     }
@@ -48,7 +48,7 @@ public class PutItemOutcome {
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public PutItemResult getPutItemResult() {
+    public PutItemResponse getPutItemResponse() {
         return result;
     }
 
