@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.dynamodb.document.QueryOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 class QueryCollection extends ItemCollection<QueryOutcome> {
     private final DynamoDBClient client;
@@ -36,7 +36,7 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
         this.client = client;
         this.spec = spec;
         Map<String, AttributeValue> startKey =
-                spec.getRequest().getExclusiveStartKey();
+                spec.getRequest().exclusiveStartKey();
         this.startKey = startKey == null
                         ? null
                         : new LinkedHashMap<String, AttributeValue>(startKey);
@@ -44,12 +44,14 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
 
     @Override
     public Page<Item, QueryOutcome> firstPage() {
-        QueryRequest request = spec.getRequest();
-        request.setExclusiveStartKey(startKey);
-        request.setLimit(InternalUtils.minimum(
-                spec.getMaxResultSize(),
-                spec.getMaxPageSize()));
-        QueryResult result = client.query(request);
+        QueryRequest request = spec.getRequest().toBuilder()
+                .exclusiveStartKey(startKey)
+                .limit(InternalUtils.minimum(
+                    spec.maxResultSize(),
+                    spec.maxPageSize()))
+                .build();
+        spec.setRequest(request);
+        QueryResponse result = client.query(request);
         QueryOutcome outcome = new QueryOutcome(result);
         setLastLowLevelResult(outcome);
         return new QueryPage(client, spec, request, 0, outcome);
@@ -57,13 +59,13 @@ class QueryCollection extends ItemCollection<QueryOutcome> {
 
     @Override
     public Integer getMaxResultSize() {
-        return spec.getMaxResultSize();
+        return spec.maxResultSize();
     }
 
     protected void setLastLowLevelResult(QueryOutcome lowLevelResult) {
         super.setLastLowLevelResult(lowLevelResult);
-        QueryResult result = lowLevelResult.getQueryResult();
-        accumulateStats(result.getConsumedCapacity(), result.getCount(),
-                        result.getScannedCount());
+        QueryResponse result = lowLevelResult.getQueryResponse();
+        accumulateStats(result.consumedCapacity(), result.count(),
+                        result.scannedCount());
     }
 }

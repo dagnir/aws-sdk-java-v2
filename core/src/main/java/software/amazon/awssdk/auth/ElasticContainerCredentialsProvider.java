@@ -17,8 +17,8 @@ package software.amazon.awssdk.auth;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
 import software.amazon.awssdk.AwsSystemSetting;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.retry.internal.CredentialsEndpointRetryPolicy;
@@ -49,14 +49,6 @@ public class ElasticContainerCredentialsProvider implements AwsCredentialsProvid
      * @see #builder()
      */
     private ElasticContainerCredentialsProvider(Builder builder) {
-        if (!isEnabled()) {
-            LOG.debug(() -> String.format("The ECS credentials environment variable (%s) and system property (%s) were not set"
-                                          + "or could not be accessed due to the security manager. ECS container credentials "
-                                          + "will not be loaded until this environment variable is available.",
-                                          AwsSystemSetting.AWS_CONTAINER_SERVICE_ENDPOINT.environmentVariable(),
-                                          AwsSystemSetting.AWS_CONTAINER_SERVICE_ENDPOINT.property()));
-        }
-
         this.credentialsFetcher = new EC2CredentialsProvider(builder.credentialsEndpointProvider,
                                                              builder.asyncCredentialUpdateEnabled,
                                                              "elastic-container-credentials-provider");
@@ -71,8 +63,15 @@ public class ElasticContainerCredentialsProvider implements AwsCredentialsProvid
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
-        return !isEnabled() ? Optional.empty() : credentialsFetcher.getCredentials();
+    public AwsCredentials getCredentials() {
+        if (!isEnabled()) {
+            throw new SdkClientException(String.format(
+                    "Credentials cannot be loaded from ECS because the ECS credentials environment variable (%s) and system "
+                    + "property (%s) are not set or cannot be accessed due to the security manager.",
+                    AwsSystemSetting.AWS_CONTAINER_SERVICE_ENDPOINT.environmentVariable(),
+                    AwsSystemSetting.AWS_CONTAINER_SERVICE_ENDPOINT.property()));
+        }
+        return credentialsFetcher.getCredentials();
     }
 
     @Override

@@ -24,11 +24,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreateRoleRequest;
-import software.amazon.awssdk.services.iam.model.CreateRoleResult;
+import software.amazon.awssdk.services.iam.model.CreateRoleResponse;
 import software.amazon.awssdk.services.iam.model.DeletePolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
 import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
@@ -73,15 +74,15 @@ public class IntegrationTestBase extends AwsTestBase {
 
     @AfterClass
     public static void tearDown() {
-        iam.detachRolePolicy(new DetachRolePolicyRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME).withPolicyArn(
-                roleExecutionPolicyArn));
+        iam.detachRolePolicy(DetachRolePolicyRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME).policyArn(
+                roleExecutionPolicyArn).build());
 
-        iam.deletePolicy(new DeletePolicyRequest().withPolicyArn(roleExecutionPolicyArn));
+        iam.deletePolicy(DeletePolicyRequest.builder().policyArn(roleExecutionPolicyArn).build());
 
-        iam.deleteRole(new DeleteRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME));
+        iam.deleteRole(DeleteRoleRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME).build());
 
         if (kinesis != null) {
-            kinesis.deleteStream(new DeleteStreamRequest().withStreamName(KINESIS_STREAM_NAME));
+            kinesis.deleteStream(DeleteStreamRequest.builder().streamName(KINESIS_STREAM_NAME).build());
         }
     }
 
@@ -109,42 +110,41 @@ public class IntegrationTestBase extends AwsTestBase {
     private static void createLambdaServiceRole() {
         iam = IAMClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region("us-east-1")
+                .region(Region.AWS_GLOBAL)
                 .build();
 
-        CreateRoleResult result = iam.createRole(new CreateRoleRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME)
-                                                                        .withAssumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY));
+        CreateRoleResponse result = iam.createRole(CreateRoleRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME)
+                                                                        .assumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY).build());
 
-        lambdaServiceRoleArn = result.getRole().getArn();
+        lambdaServiceRoleArn = result.role().arn();
 
         roleExecutionPolicyArn = iam
-                .createPolicy(
-                        new CreatePolicyRequest().withPolicyName(LAMBDA_SERVICE_ROLE_POLICY_NAME).withPolicyDocument(
-                                LAMBDA_ROLE_EXECUTION_POLICY)).getPolicy().getArn();
+                .createPolicy(CreatePolicyRequest.builder().policyName(LAMBDA_SERVICE_ROLE_POLICY_NAME).policyDocument(
+                                LAMBDA_ROLE_EXECUTION_POLICY).build()).policy().arn();
 
-        iam.attachRolePolicy(new AttachRolePolicyRequest().withRoleName(LAMBDA_SERVICE_ROLE_NAME).withPolicyArn(
-                roleExecutionPolicyArn));
+        iam.attachRolePolicy(AttachRolePolicyRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME).policyArn(
+                roleExecutionPolicyArn).build());
     }
 
     protected static void createKinesisStream() {
         kinesis = KinesisClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
 
-        kinesis.createStream(new CreateStreamRequest().withStreamName(KINESIS_STREAM_NAME).withShardCount(1));
+        kinesis.createStream(CreateStreamRequest.builder().streamName(KINESIS_STREAM_NAME).shardCount(1).build());
 
-        StreamDescription description = kinesis.describeStream(new DescribeStreamRequest().withStreamName(KINESIS_STREAM_NAME))
-                .getStreamDescription();
-        streamArn = description.getStreamARN();
+        StreamDescription description = kinesis.describeStream(DescribeStreamRequest.builder().streamName(KINESIS_STREAM_NAME).build())
+                .streamDescription();
+        streamArn = description.streamARN();
 
         // Wait till stream is active (less than a minute)
-        while (!StreamStatus.ACTIVE.toString().equals(description.getStreamStatus())) {
+        while (!StreamStatus.ACTIVE.toString().equals(description.streamStatus())) {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
                 // Ignored or expected.
             }
 
-            description = kinesis.describeStream(new DescribeStreamRequest().withStreamName(KINESIS_STREAM_NAME))
-                    .getStreamDescription();
+            description = kinesis.describeStream(DescribeStreamRequest.builder().streamName(KINESIS_STREAM_NAME).build())
+                    .streamDescription();
         }
     }
 

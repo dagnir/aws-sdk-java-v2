@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http;
 
+import software.amazon.awssdk.utils.AttributeMap;
+
 /**
  * Interface for creating an {@link SdkHttpClient} with service specific defaults applied.
  *
@@ -26,8 +28,9 @@ public interface SdkHttpClientFactory {
      * Create an {@link SdkHttpClient} with service specific defaults applied. Applying service defaults is optional
      * and some options may not be supported by a particular implementation.
      *
-     * @param serviceDefaults Service specific defaults.
+     * @param serviceDefaults Service specific defaults. Keys will be one of the constants defined in
+     *                        {@link SdkHttpConfigurationOption}.
      * @return Created client
      */
-    SdkHttpClient createHttpClientWithDefaults(SdkHttpConfigurationOptions serviceDefaults);
+    SdkHttpClient createHttpClientWithDefaults(AttributeMap serviceDefaults);
 }

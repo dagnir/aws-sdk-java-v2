@@ -36,6 +36,6 @@ public class BigDecimalUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return new BigDecimal(value.getN());
+        return new BigDecimal(value.n());
     }
 }

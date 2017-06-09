@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.auth;
 
-import java.util.Optional;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.utils.Validate;
 
@@ -34,7 +33,7 @@ public class MetricsReportingCredentialsProvider implements AwsCredentialsProvid
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         awsRequestMetrics.startEvent(AwsRequestMetrics.Field.CredentialsRequestTime);
         try {
             return delegate.getCredentials();

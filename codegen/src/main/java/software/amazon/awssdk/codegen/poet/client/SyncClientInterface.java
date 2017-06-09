@@ -26,6 +26,7 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.regions.ServiceMetadata;
 
 public final class SyncClientInterface implements ClassSpec {
 
@@ -53,6 +54,7 @@ public final class SyncClientInterface implements ClassSpec {
                 .addMethods(operations())
                 .addMethod(builder())
                 .addMethod(create())
+                .addMethod(serviceMetadata())
                 .addSuperinterface(AutoCloseable.class);
 
         if (model.getHasWaiters()) {
@@ -89,6 +91,14 @@ public final class SyncClientInterface implements ClassSpec {
                 .returns(className)
                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                 .addStatement("return builder().build()")
+                .build();
+    }
+
+    private MethodSpec serviceMetadata() {
+        return MethodSpec.methodBuilder("serviceMetadata")
+                .returns(ServiceMetadata.class)
+                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                .addStatement("return $T.of($S)", ServiceMetadata.class, model.getMetadata().getEndpointPrefix())
                 .build();
     }
 

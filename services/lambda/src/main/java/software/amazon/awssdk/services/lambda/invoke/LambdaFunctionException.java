@@ -22,13 +22,13 @@ import java.util.Collections;
 import java.util.List;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.services.lambda.model.InvokeResult;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import software.amazon.awssdk.util.CollectionUtils;
 
 /**
  * An exception representing the failed execution of a remote Lambda function.
  *
- * @see InvokeResult#getFunctionError()
+ * @see InvokeResponse#functionError()
  */
 public class LambdaFunctionException extends AmazonClientException {
 
@@ -72,7 +72,7 @@ public class LambdaFunctionException extends AmazonClientException {
 
     /**
      * @return true if this was a Handled error
-     * @see InvokeResult#getFunctionError()
+     * @see InvokeResponse#functionError()
      */
     public boolean isHandled() {
         return "Handled".equals(functionError);

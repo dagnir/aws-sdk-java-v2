@@ -17,7 +17,6 @@ package software.amazon.awssdk.auth;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -56,7 +55,7 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("aws-dr-tools-test");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
         assertEquals("ACCESS_KEY_ID", credentials.accessKeyId());
         assertEquals("SECRET_ACCESS_KEY", credentials.secretAccessKey());
@@ -73,7 +72,7 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         mockServer.setAvailableSecurityCredentials("test-credentials");
 
         InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
+        AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
         assertEquals("ACCESS_KEY_ID", credentials.accessKeyId());
         assertEquals("SECRET_ACCESS_KEY", credentials.secretAccessKey());
@@ -97,38 +96,5 @@ public class InstanceProfileCredentialsProviderIntegrationTest extends LogCaptor
         } catch (AmazonClientException ace) {
             assertNotNull(ace.getMessage());
         }
-    }
-
-    /**
-     * Tests that we correctly handle when the metadata service credentials have
-     * expired.
-     */
-    @Test
-    public void testSessionCredentials_Expired() throws Exception {
-        mockServer.setResponseFileName("sessionResponseExpired");
-        mockServer.setAvailableSecurityCredentials("test-credentials");
-
-        InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        try {
-            credentialsProvider.getCredentials();
-            fail("Expected an AmazonClientException, but wasn't thrown");
-        } catch (AmazonClientException ace) {
-            assertNotNull(ace.getMessage());
-        }
-    }
-
-    @Test(expected = AmazonClientException.class)
-    public void canBeConfiguredToOnlyRefreshCredentialsAfterFirstCallToGetCredentials() throws InterruptedException {
-        mockServer.setResponseFileName("sessionResponseExpired");
-        mockServer.setAvailableSecurityCredentials("test-credentials");
-
-        InstanceProfileCredentialsProvider credentialsProvider = new InstanceProfileCredentialsProvider();
-        Thread.sleep(1000);
-
-        //Hacky assert but we know that this mockServer will create an exception that will be logged, if there's no log entry
-        //then there's no exception, which means that getCredentials didn't get called on the fetcher
-        assertThat(loggedEvents(), is(empty()));
-
-        credentialsProvider.getCredentials();
     }
 }

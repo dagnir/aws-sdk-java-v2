@@ -17,11 +17,11 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
-import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResult;
+import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 public class ReceiveQueueBufferTest {
 
@@ -85,15 +85,15 @@ public class ReceiveQueueBufferTest {
             throws InterruptedException, ExecutionException {
         // These calls to SQS are triggered by the first receiveMessage call. The first one with is
         // fulfilled immediately, allowing two more calls to be made to meet the batch count
-        expectReceiveMessages(new Message(), new Message()); // First assertion
-        expectReceiveMessagesWithSleep(VISIBILITY_TIMEOUT_SECONDS + 1, new Message());
+        expectReceiveMessages(Message.builder().build(), Message.builder().build()); // First assertion
+        expectReceiveMessagesWithSleep(VISIBILITY_TIMEOUT_SECONDS + 1, Message.builder().build());
         expectReceiveMessages();
 
         // Since the expired message and the empty message following it are purged this will queue
         // up another call to SQS returning one message that will be fulfilled immediately. Two more
         // calls will be made to again meet the batch count (we don't really care about the last two
         // calls, just the fact they are made)
-        expectReceiveMessages(new Message()); // Second assertion
+        expectReceiveMessages(Message.builder().build()); // Second assertion
         expectReceiveMessages();
         expectReceiveMessages();
 
@@ -105,7 +105,7 @@ public class ReceiveQueueBufferTest {
 
     private void expectGetQueueAttributes(Map<String, String> queueAttributes) {
         expect(mockSqs.getQueueAttributes(isA(GetQueueAttributesRequest.class))).andStubReturn(
-                CompletableFuture.completedFuture(new GetQueueAttributesResult().withAttributes(queueAttributes)));
+                CompletableFuture.completedFuture(GetQueueAttributesResponse.builder().attributes(queueAttributes).build()));
     }
 
     private void expectReceiveMessages(Message... messages) {
@@ -127,7 +127,7 @@ public class ReceiveQueueBufferTest {
             if (sleepSeconds > 0) {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(sleepSeconds));
             }
-            return CompletableFuture.completedFuture(new ReceiveMessageResult().withMessages(asArray(messages)));
+            return CompletableFuture.completedFuture(ReceiveMessageResponse.builder().messages(asArray(messages)).build());
         });
     }
 
@@ -150,6 +150,6 @@ public class ReceiveQueueBufferTest {
      * the result
      */
     private int receiveMessageWithSize() throws InterruptedException, ExecutionException {
-        return buffer.receiveMessageAsync(new ReceiveMessageRequest(), null).get().getMessages().size();
+        return buffer.receiveMessageAsync(ReceiveMessageRequest.builder().build(), null).get().messages().size();
     }
 }

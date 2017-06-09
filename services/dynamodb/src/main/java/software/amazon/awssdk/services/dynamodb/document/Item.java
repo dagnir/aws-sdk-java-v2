@@ -111,7 +111,7 @@ public class Item {
      */
     public boolean isNull(String attrName) {
         return attributes.containsKey(attrName)
-               && attributes.get(attrName) == null;
+                && attributes.get(attrName) == null;
     }
 
     /**
@@ -170,8 +170,8 @@ public class Item {
             return null;
         }
         return val instanceof BigDecimal
-               ? (BigDecimal) val
-               : new BigDecimal(val.toString())
+                ? (BigDecimal) val
+                : new BigDecimal(val.toString())
                 ;
     }
 
@@ -431,7 +431,7 @@ public class Item {
             return copyAllBytesFrom((ByteBuffer) val);
         }
         throw new IncompatibleTypeException(val.getClass()
-                                            + " cannot be converted into a byte array");
+                + " cannot be converted into a byte array");
     }
 
     private ByteBuffer toByteBuffer(Object val) {
@@ -449,7 +449,7 @@ public class Item {
             return (ByteBuffer) val;
         }
         throw new IncompatibleTypeException(val.getClass()
-                                            + " cannot be converted into a ByteBuffer");
+                + " cannot be converted into a ByteBuffer");
     }
 
     /**
@@ -502,7 +502,7 @@ public class Item {
                 String s = element == null ? null : valToString(element);
                 if (!stringSet.add(s)) {
                     throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of strings because " +
-                                                        "of duplicate elements");
+                            "of duplicate elements");
                 }
             }
             return stringSet;
@@ -568,7 +568,7 @@ public class Item {
                 BigDecimal bd = toBigDecimal(element);
                 if (!numSet.add(bd)) {
                     throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of BigDecimal's " +
-                                                        "because of duplicate elements");
+                            "because of duplicate elements");
                 }
             }
             return numSet;
@@ -660,7 +660,7 @@ public class Item {
                 byte[] ba = toByteArray(element);
                 if (!binarySet.add(ba)) {
                     throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of byte arrays " +
-                                                        "because of duplicate elements");
+                            "because of duplicate elements");
                 }
             }
             return binarySet;
@@ -677,7 +677,7 @@ public class Item {
             return binarySet;
         }
         throw new IncompatibleTypeException(val.getClass()
-                                            + " cannot be converted into a set of byte arrays");
+                + " cannot be converted into a set of byte arrays");
     }
 
     /**
@@ -709,7 +709,7 @@ public class Item {
                 ByteBuffer ba = toByteBuffer(element);
                 if (!binarySet.add(ba)) {
                     throw new IncompatibleTypeException(val.getClass() + " cannot be converted into a set of ByteBuffer " +
-                                                        "because of duplicate elements");
+                            "because of duplicate elements");
                 }
             }
             return binarySet;
@@ -725,7 +725,7 @@ public class Item {
             return binarySet;
         }
         throw new IncompatibleTypeException(val.getClass()
-                                            + " cannot be converted into a set of ByteBuffer");
+                + " cannot be converted into a set of ByteBuffer");
     }
 
     /**
@@ -897,13 +897,13 @@ public class Item {
     public <T extends Number> Map<String, T> getMapOfNumbers(String attrName,
                                                              Class<T> valueType) {
         if (valueType == Short.class
-            || valueType == Integer.class
-            || valueType == Long.class
-            || valueType == Float.class
-            || valueType == Double.class
-            || valueType == Number.class
-            || valueType == BigDecimal.class
-            || valueType == BigInteger.class) {
+                || valueType == Integer.class
+                || valueType == Long.class
+                || valueType == Float.class
+                || valueType == Double.class
+                || valueType == Number.class
+                || valueType == BigDecimal.class
+                || valueType == BigInteger.class) {
             final Map<String, BigDecimal> src =
                     (Map<String, BigDecimal>) attributes.get(attrName);
             if (src == null) {
@@ -934,7 +934,7 @@ public class Item {
             return dst;
         } else {
             throw new UnsupportedOperationException("Value type " + valueType
-                                                    + " is not currently supported");
+                    + " is not currently supported");
         }
     }
 
@@ -973,7 +973,7 @@ public class Item {
     public Item withJson(String attrName, String json) {
         checkInvalidAttribute(attrName, json);
         attributes.put(attrName,
-                       VALUE_CONFORMER.transform(Jackson.fromJsonString(json, Object.class)));
+                VALUE_CONFORMER.transform(Jackson.fromJsonString(json, Object.class)));
         return this;
     }
 
@@ -1037,8 +1037,8 @@ public class Item {
             return Boolean.valueOf((String) val);
         }
         throw new IncompatibleTypeException("Value of attribute " + attrName
-                                            + " of type " + getTypeOf(attrName)
-                                            + " cannot be converted into a boolean value");
+                + " of type " + getTypeOf(attrName)
+                + " cannot be converted into a boolean value");
     }
 
     /**
@@ -1152,10 +1152,10 @@ public class Item {
                 return withByteBufferSet(attrName, bs);
             }
             throw new UnsupportedOperationException("Set of "
-                                                    + representative.getClass() + " is not currently supported");
+                    + representative.getClass() + " is not currently supported");
         }
         throw new UnsupportedOperationException("Input type "
-                                                + val.getClass() + " is not currently supported");
+                + val.getClass() + " is not currently supported");
     }
 
     /**
@@ -1168,7 +1168,7 @@ public class Item {
             throw new IllegalArgumentException("primary key must not be empty");
         }
         for (KeyAttribute ka : primaryKey.getComponents()) {
-            this.with(ka.getName(), ka.getValue());
+            this.with(ka.name(), ka.value());
         }
         return this;
     }
@@ -1199,7 +1199,7 @@ public class Item {
         rejectNullOrEmptyInput(components);
         for (KeyAttribute ka : components) {
             rejectNullValue(ka);
-            this.with(ka.getName(), ka.getValue());
+            this.with(ka.name(), ka.value());
         }
         return this;
     }

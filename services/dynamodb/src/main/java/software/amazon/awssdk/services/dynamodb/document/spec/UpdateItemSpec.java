@@ -46,7 +46,7 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
     private Map<String, Object> valueMap;
 
     public UpdateItemSpec() {
-        super(new UpdateItemRequest());
+        super(UpdateItemRequest.builder().build());
     }
 
     @Override
@@ -133,24 +133,24 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
     }
 
     public String getUpdateExpression() {
-        return getRequest().getUpdateExpression();
+        return getRequest().updateExpression();
     }
 
     public UpdateItemSpec withUpdateExpression(String updateExpression) {
-        getRequest().setUpdateExpression(updateExpression);
+        setRequest(getRequest().toBuilder().updateExpression(updateExpression).build());
         return this;
     }
 
     public String getConditionExpression() {
-        return getRequest().getConditionExpression();
+        return getRequest().conditionExpression();
     }
 
     public UpdateItemSpec withConditionExpression(String conditionExpression) {
-        getRequest().setConditionExpression(conditionExpression);
+        setRequest(getRequest().toBuilder().conditionExpression(conditionExpression).build());
         return this;
     }
 
-    public Map<String, String> getNameMap() {
+    public Map<String, String> nameMap() {
         return nameMap;
     }
 
@@ -170,7 +170,7 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
         return this;
     }
 
-    public Map<String, Object> getValueMap() {
+    public Map<String, Object> valueMap() {
         return valueMap;
     }
 
@@ -178,7 +178,7 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
      * Applicable only when an expression has been specified. Used to
      * specify the actual values for the attribute-value placeholders.
      */
-    public UpdateItemSpec withValueMap(Map<String, Object> valueMap) {
+    public UpdateItemSpec valueMap(Map<String, Object> valueMap) {
         if (valueMap == null) {
             this.valueMap = null;
         } else {
@@ -189,52 +189,52 @@ public class UpdateItemSpec extends AbstractSpecWithPrimaryKey<UpdateItemRequest
     }
 
     public String getConditionalOperator() {
-        return getRequest().getConditionalOperator();
+        return getRequest().conditionalOperator();
     }
 
     public String getReturnConsumedCapacity() {
-        return getRequest().getReturnConsumedCapacity();
+        return getRequest().returnConsumedCapacity();
     }
 
     public UpdateItemSpec withReturnConsumedCapacity(
             String returnConsumedCapacity) {
-        getRequest().setReturnConsumedCapacity(returnConsumedCapacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
     public UpdateItemSpec withReturnConsumedCapacity(
             ReturnConsumedCapacity returnConsumedCapacity) {
-        getRequest().setReturnConsumedCapacity(returnConsumedCapacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(returnConsumedCapacity).build());
         return this;
     }
 
     public String getReturnItemCollectionMetrics() {
-        return getRequest().getReturnItemCollectionMetrics();
+        return getRequest().returnItemCollectionMetrics();
     }
 
     public UpdateItemSpec withReturnItemCollectionMetrics(
             ReturnItemCollectionMetrics returnItemCollectionMetrics) {
-        getRequest().setReturnItemCollectionMetrics(returnItemCollectionMetrics);
+        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build());
         return this;
     }
 
     public UpdateItemSpec withReturnItemCollectionMetrics(
             String returnItemCollectionMetrics) {
-        getRequest().setReturnItemCollectionMetrics(returnItemCollectionMetrics);
+        setRequest(getRequest().toBuilder().returnItemCollectionMetrics(returnItemCollectionMetrics).build());
         return this;
     }
 
     public String getReturnValues() {
-        return getRequest().getReturnValues();
+        return getRequest().returnValues();
     }
 
     public UpdateItemSpec withReturnValues(ReturnValue returnValues) {
-        getRequest().setReturnValues(returnValues);
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build());
         return this;
     }
 
     public UpdateItemSpec withReturnValues(String returnValues) {
-        getRequest().setReturnValues(returnValues);
+        setRequest(getRequest().toBuilder().returnValues(returnValues).build());
         return this;
     }
 

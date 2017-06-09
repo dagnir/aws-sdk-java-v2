@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.auth;
 
-import java.util.Optional;
-
 /**
  * AWS credentials provider chain that looks for credentials in this order:
  * <ul>
@@ -89,7 +87,7 @@ public class DefaultCredentialsProvider implements AwsCredentialsProvider, AutoC
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         return providerChain.getCredentials();
     }
 

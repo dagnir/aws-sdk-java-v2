@@ -32,9 +32,9 @@ enum DimensionComparator implements Comparator<Dimension> {
     public int compare(Dimension dim1, Dimension dim2) {
         int result = nullCompare(dim1, dim2);
         if (result == NON_NULLS) {
-            result = nullSafeCompare(dim1.getName(), dim2.getName());
+            result = nullSafeCompare(dim1.name(), dim2.name());
             if (result == 0) {
-                return nullSafeCompare(dim1.getValue(), dim2.getValue());
+                return nullSafeCompare(dim1.value(), dim2.value());
             }
         }
         return result;

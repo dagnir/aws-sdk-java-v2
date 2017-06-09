@@ -51,7 +51,7 @@ public class QueryResultPage<T> {
      * @return The key-value pairs which map from the attribute name of each component
      *             of the primary key to its value.
      */
-    public Map<String, AttributeValue> getLastEvaluatedKey() {
+    public Map<String, AttributeValue> lastEvaluatedKey() {
         return lastEvaluatedKey;
     }
 
@@ -101,7 +101,7 @@ public class QueryResultPage<T> {
      *         <p>If you did not use a filter in the request, then
      *         <i>ScannedCount</i> is the same as <i>Count</i>.
      */
-    public Integer getScannedCount() {
+    public Integer scannedCount() {
         return scannedCount;
     }
 

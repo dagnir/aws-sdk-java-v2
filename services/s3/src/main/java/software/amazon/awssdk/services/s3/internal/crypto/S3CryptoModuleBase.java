@@ -52,7 +52,7 @@ import software.amazon.awssdk.runtime.io.ResettableInputStream;
 import software.amazon.awssdk.runtime.io.SdkFilterInputStream;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.kms.model.GenerateDataKeyRequest;
-import software.amazon.awssdk.services.kms.model.GenerateDataKeyResult;
+import software.amazon.awssdk.services.kms.model.GenerateDataKeyResponse;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.internal.InputSubstream;
 import software.amazon.awssdk.services.s3.internal.Mimetypes;
@@ -568,19 +568,20 @@ public abstract class S3CryptoModuleBase<T extends MultipartUploadCryptoContext>
         if (materials.isKmsEnabled()) {
             final Map<String, String> encryptionContext =
                     ContentCryptoMaterial.mergeMaterialDescriptions(materials, req);
-            GenerateDataKeyRequest keyGenReq = new GenerateDataKeyRequest()
-                    .withEncryptionContext(encryptionContext)
-                    .withKeyId(materials.getCustomerMasterKeyId())
-                    .withKeySpec(contentCryptoScheme.getKeySpec());
+            GenerateDataKeyRequest keyGenReq = GenerateDataKeyRequest.builder()
+                    .encryptionContext(encryptionContext)
+                    .keyId(materials.getCustomerMasterKeyId())
+                    .keySpec(contentCryptoScheme.getKeySpec())
+                    .build();
             keyGenReq
                     .withGeneralProgressListener(req.getGeneralProgressListener())
                     .withRequestMetricCollector(req.getRequestMetricCollector())
             ;
-            GenerateDataKeyResult keyGenRes = kms.generateDataKey(keyGenReq);
+            GenerateDataKeyResponse keyGenRes = kms.generateDataKey(keyGenReq);
             final SecretKey cek =
-                    new SecretKeySpec(copyAllBytesFrom(keyGenRes.getPlaintext()),
+                    new SecretKeySpec(copyAllBytesFrom(keyGenRes.plaintext()),
                                       contentCryptoScheme.getKeyGeneratorAlgorithm());
-            byte[] keyBlob = copyAllBytesFrom(keyGenRes.getCiphertextBlob());
+            byte[] keyBlob = copyAllBytesFrom(keyGenRes.ciphertextBlob());
             return ContentCryptoMaterial.wrap(cek, iv,
                                               contentCryptoScheme, provider,
                                               new KmsSecuredCek(keyBlob, encryptionContext));

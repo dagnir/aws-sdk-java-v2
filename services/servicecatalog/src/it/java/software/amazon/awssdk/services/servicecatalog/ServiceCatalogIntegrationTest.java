@@ -34,8 +34,8 @@ public class ServiceCatalogIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void testList() {
-        List<RecordDetail> recordDetails = serviceCatalog.listRecordHistory(
-                new ListRecordHistoryRequest()).getRecordDetails();
+        List<RecordDetail> recordDetails = serviceCatalog.listRecordHistory(ListRecordHistoryRequest.builder().build())
+                                                         .recordDetails();
         Assert.assertNotNull(recordDetails);
         Assert.assertTrue(recordDetails.isEmpty());
     }

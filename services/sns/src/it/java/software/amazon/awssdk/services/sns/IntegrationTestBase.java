@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.model.Subscription;
 import software.amazon.awssdk.services.sns.model.Topic;
 import software.amazon.awssdk.services.sqs.SQSClient;
@@ -52,13 +52,13 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         sns = SNSClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
+                .region(Region.US_WEST_2)
                 .build();
 
         sqs = SQSClient.builder()
-                .credentialsProvider(new AwsStaticCredentialsProvider(getCredentials()))
-                .withRegion(Regions.US_WEST_2)
+                .credentialsProvider(new StaticCredentialsProvider(getCredentials()))
+                .region(Region.US_WEST_2)
                 .build();
     }
 
@@ -68,7 +68,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     protected void assertTopicIsPresent(List<Topic> topics, String topicArn) {
         for (Topic topic : topics) {
-            if (topic.getTopicArn().equals(topicArn)) {
+            if (topic.topicArn().equals(topicArn)) {
                 return;
             }
         }
@@ -82,7 +82,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
      */
     protected void assertSubscriptionIsPresent(List<Subscription> subscriptions, String subscriptionArn) {
         for (Subscription subscription : subscriptions) {
-            if (subscription.getSubscriptionArn().equals(subscriptionArn)) {
+            if (subscription.subscriptionArn().equals(subscriptionArn)) {
                 return;
             }
         }

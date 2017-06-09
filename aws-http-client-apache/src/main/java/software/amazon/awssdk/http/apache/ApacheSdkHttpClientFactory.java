@@ -15,16 +15,22 @@
 
 package software.amazon.awssdk.http.apache;
 
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.CONNECTION_TIMEOUT;
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.GLOBAL_HTTP_DEFAULTS;
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.MAX_CONNECTIONS;
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.SOCKET_TIMEOUT;
+
 import java.net.InetAddress;
 import java.time.Duration;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.apache.internal.ApacheHttpRequestConfig;
 import software.amazon.awssdk.http.apache.internal.Defaults;
+import software.amazon.awssdk.utils.AttributeMap;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  * Factory for creating an instance of {@link SdkHttpClient}. The factory can be configured through the builder {@link
@@ -39,9 +45,10 @@ import software.amazon.awssdk.http.apache.internal.Defaults;
  * .createHttpClient();
  * </pre>
  */
-public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
+public final class ApacheSdkHttpClientFactory
+        implements SdkHttpClientFactory, ToCopyableBuilder<ApacheSdkHttpClientFactory.Builder, ApacheSdkHttpClientFactory> {
 
-    private final SdkHttpConfigurationOptions standardOptions;
+    private final AttributeMap standardOptions;
     private final ProxyConfiguration proxyConfiguration;
     private final Optional<InetAddress> localAddress;
     private final Optional<Boolean> expectContinueEnabled;
@@ -50,11 +57,11 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
 
     private ApacheSdkHttpClientFactory(DefaultBuilder builder) {
         this.standardOptions = builder.standardOptions.build();
-        this.proxyConfiguration = builder.proxyConfiguration();
-        this.localAddress = builder.localAddress();
-        this.expectContinueEnabled = builder.expectContinueEnabled();
-        this.connectionPoolTtl = builder.connectionPoolTtl();
-        this.maxIdleConnectionTimeout = builder.maxIdleConnectionTimeout();
+        this.proxyConfiguration = builder.proxyConfiguration;
+        this.localAddress = Optional.ofNullable(builder.localAddress);
+        this.expectContinueEnabled = Optional.ofNullable(builder.expectContinueEnabled);
+        this.connectionPoolTtl = Optional.ofNullable(builder.connectionTimeToLive);
+        this.maxIdleConnectionTimeout = Optional.ofNullable(builder.connectionMaxIdleTime);
     }
 
     public ProxyConfiguration proxyConfiguration() {
@@ -69,28 +76,28 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
         return expectContinueEnabled;
     }
 
-    public Optional<Duration> connectionPoolTtl() {
+    public Optional<Duration> connectionTimeToLive() {
         return connectionPoolTtl;
     }
 
-    public Optional<Duration> maxIdleConnectionTime() {
+    public Optional<Duration> connectionMaxIdleTime() {
         return maxIdleConnectionTimeout;
     }
 
     public SdkHttpClient createHttpClient() {
-        return createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty());
+        return createHttpClientWithDefaults(AttributeMap.empty());
     }
 
     @Override
-    public SdkHttpClient createHttpClientWithDefaults(SdkHttpConfigurationOptions serviceDefaults) {
-        SdkHttpConfigurationOptions resolvedOptions = standardOptions.merge(serviceDefaults).mergeGlobalDefaults();
+    public SdkHttpClient createHttpClientWithDefaults(AttributeMap serviceDefaults) {
+        AttributeMap resolvedOptions = standardOptions.merge(serviceDefaults).merge(GLOBAL_HTTP_DEFAULTS);
         return new ApacheHttpClientFactory().create(this, resolvedOptions, createRequestConfig(resolvedOptions));
     }
 
-    private ApacheHttpRequestConfig createRequestConfig(SdkHttpConfigurationOptions resolvedOptions) {
+    private ApacheHttpRequestConfig createRequestConfig(AttributeMap resolvedOptions) {
         return ApacheHttpRequestConfig.builder()
-                                      .socketTimeout(resolvedOptions.option(SdkHttpConfigurationOption.SOCKET_TIMEOUT))
-                                      .connectionTimeout(resolvedOptions.option(SdkHttpConfigurationOption.CONNECTION_TIMEOUT))
+                                      .socketTimeout(resolvedOptions.get(SOCKET_TIMEOUT))
+                                      .connectionTimeout(resolvedOptions.get(CONNECTION_TIMEOUT))
                                       .proxyConfiguration(proxyConfiguration)
                                       .localAddress(localAddress.orElse(null))
                                       .expectContinueEnabled(expectContinueEnabled.orElse(Defaults.EXPECT_CONTINUE_ENABLED))
@@ -104,46 +111,67 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
         return new DefaultBuilder();
     }
 
+    @Override
+    public Builder toBuilder() {
+        return builder()
+                .socketTimeout(standardOptions.get(SOCKET_TIMEOUT))
+                .connectionTimeout(standardOptions.get(CONNECTION_TIMEOUT))
+                .maxConnections(standardOptions.get(MAX_CONNECTIONS))
+                .proxyConfiguration(proxyConfiguration)
+                .localAddress(localAddress.orElse(null))
+                .expectContinueEnabled(expectContinueEnabled.orElse(null))
+                .connectionTimeToLive(connectionPoolTtl.orElse(null))
+                .connectionMaxIdleTime(maxIdleConnectionTimeout.orElse(null));
+    }
+
     /**
      * Builder for {@link ApacheSdkHttpClientFactory}.
      */
-    public interface Builder {
-        Builder socketTimeout(Duration socketTimeout);
-
-        Optional<Duration> socketTimeout();
-
-        Builder connectionTimeout(Duration connectionTimeout);
-
-        Optional<Duration> connectionTimeout();
-
-        Builder maxConnections(Integer maxConnections);
-
-        Optional<Integer> maxConnections();
-
-        Builder proxyConfiguration(ProxyConfiguration proxyConfiguration);
-
-        ProxyConfiguration proxyConfiguration();
-
-        Builder localAddress(InetAddress localAddress);
-
-        Optional<InetAddress> localAddress();
-
-        Builder expectContinueEnabled(Boolean expectContinueEnabled);
-
-        Optional<Boolean> expectContinueEnabled();
-
-        Builder connectionPoolTtl(Duration connectionPoolTtl);
-
-        Optional<Duration> connectionPoolTtl();
-
-        Builder maxIdleConnectionTimeout(Duration maxIdleConnectionTimeout);
-
-        Optional<Duration> maxIdleConnectionTimeout();
+    public interface Builder extends CopyableBuilder<Builder, ApacheSdkHttpClientFactory> {
 
         /**
-         * @return An immutable {@link ApacheSdkHttpClientFactory} object.
+         * The amount of time to wait for data to be transferred over an established, open connection before the connection is
+         * timed out. A duration of 0 means infinity, and is not recommended.
          */
-        ApacheSdkHttpClientFactory build();
+        Builder socketTimeout(Duration socketTimeout);
+
+        /**
+         * The amount of time to wait when initially establishing a connection before giving up and timing out. A duration of 0
+         * means infinity, and is not recommended.
+         */
+        Builder connectionTimeout(Duration connectionTimeout);
+
+        /**
+         * The maximum number of connections allowed in the connection pool. Each built HTTP client has it's own private
+         * connection pool.
+         */
+        Builder maxConnections(Integer maxConnections);
+
+        /**
+         * Configuration that defines how to communicate via an HTTP proxy.
+         */
+        Builder proxyConfiguration(ProxyConfiguration proxyConfiguration);
+
+        /**
+         * Configure the local address that the HTTP client should use for communication.
+         */
+        Builder localAddress(InetAddress localAddress);
+
+        /**
+         * Configure whether the client should send an HTTP expect-continue handshake before each request.
+         */
+        Builder expectContinueEnabled(Boolean expectContinueEnabled);
+
+        /**
+         * The maximum amount of time that a connection should be allowed to remain open, regardless of usage frequency.
+         */
+        Builder connectionTimeToLive(Duration connectionTimeToLive);
+
+        /**
+         * Configure the maximum amount of time that a connection should be allowed to remain open while idle.
+         */
+        Builder connectionMaxIdleTime(Duration connectionMaxIdleTime);
+
     }
 
     /**
@@ -152,29 +180,20 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
     @ReviewBeforeRelease("Review the options we expose and revisit organization of options.")
     private static final class DefaultBuilder implements Builder {
 
-        private final SdkHttpConfigurationOptions.Builder standardOptions = SdkHttpConfigurationOptions.builder();
+        private final AttributeMap.Builder standardOptions = AttributeMap.builder();
         private ProxyConfiguration proxyConfiguration = ProxyConfiguration.builder().build();
         private InetAddress localAddress;
         private Boolean expectContinueEnabled;
-        private Duration connectionPoolTtl;
-        private Duration maxIdleConnectionTimeout;
+        private Duration connectionTimeToLive;
+        private Duration connectionMaxIdleTime;
 
         private DefaultBuilder() {
         }
 
         @Override
-        public Optional<Duration> socketTimeout() {
-            return Optional.ofNullable(getSocketTimeout());
-        }
-
-        @Override
         public Builder socketTimeout(Duration socketTimeout) {
-            standardOptions.option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, socketTimeout);
+            standardOptions.put(SOCKET_TIMEOUT, socketTimeout);
             return this;
-        }
-
-        public Duration getSocketTimeout() {
-            return standardOptions.option(SdkHttpConfigurationOption.SOCKET_TIMEOUT);
         }
 
         public void setSocketTimeout(Duration socketTimeout) {
@@ -182,18 +201,9 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
         }
 
         @Override
-        public Optional<Duration> connectionTimeout() {
-            return Optional.ofNullable(getConnectionTimeout());
-        }
-
-        @Override
         public Builder connectionTimeout(Duration connectionTimeout) {
-            standardOptions.option(SdkHttpConfigurationOption.CONNECTION_TIMEOUT, connectionTimeout);
+            standardOptions.put(CONNECTION_TIMEOUT, connectionTimeout);
             return this;
-        }
-
-        public Duration getConnectionTimeout() {
-            return standardOptions.option(SdkHttpConfigurationOption.CONNECTION_TIMEOUT);
         }
 
         public void setConnectionTimeout(Duration connectionTimeout) {
@@ -201,27 +211,13 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
         }
 
         @Override
-        public Optional<Integer> maxConnections() {
-            return Optional.ofNullable(getMaxConnections());
-        }
-
-        @Override
         public Builder maxConnections(Integer maxConnections) {
-            standardOptions.option(SdkHttpConfigurationOption.MAX_CONNECTIONS, maxConnections);
+            standardOptions.put(MAX_CONNECTIONS, maxConnections);
             return this;
-        }
-
-        public Integer getMaxConnections() {
-            return standardOptions.option(SdkHttpConfigurationOption.MAX_CONNECTIONS);
         }
 
         public void setMaxConnections(Integer maxConnections) {
             maxConnections(maxConnections);
-        }
-
-        @Override
-        public ProxyConfiguration proxyConfiguration() {
-            return proxyConfiguration;
         }
 
         @Override
@@ -230,17 +226,8 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
             return this;
         }
 
-        public ProxyConfiguration getProxyConfiguration() {
-            return proxyConfiguration;
-        }
-
         public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
             proxyConfiguration(proxyConfiguration);
-        }
-
-        @Override
-        public Optional<InetAddress> localAddress() {
-            return Optional.ofNullable(getLocalAddress());
         }
 
         @Override
@@ -249,17 +236,8 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
             return this;
         }
 
-        public InetAddress getLocalAddress() {
-            return localAddress;
-        }
-
         public void setLocalAddress(InetAddress localAddress) {
             localAddress(localAddress);
-        }
-
-        @Override
-        public Optional<Boolean> expectContinueEnabled() {
-            return Optional.ofNullable(getExpectContinueEnabled());
         }
 
         @Override
@@ -268,50 +246,28 @@ public final class ApacheSdkHttpClientFactory implements SdkHttpClientFactory {
             return this;
         }
 
-        public Boolean getExpectContinueEnabled() {
-            return expectContinueEnabled;
-        }
-
         public void setExpectContinueEnabled(Boolean useExpectContinue) {
             this.expectContinueEnabled = useExpectContinue;
         }
 
         @Override
-        public Optional<Duration> connectionPoolTtl() {
-            return Optional.ofNullable(getConnectionPoolTtl());
-        }
-
-        @Override
-        public Builder connectionPoolTtl(Duration connectionPoolTtl) {
-            this.connectionPoolTtl = connectionPoolTtl;
+        public Builder connectionTimeToLive(Duration connectionTimeToLive) {
+            this.connectionTimeToLive = connectionTimeToLive;
             return this;
         }
 
-        public Duration getConnectionPoolTtl() {
-            return connectionPoolTtl;
-        }
-
-        public void setConnectionPoolTtl(Duration connectionPoolTtl) {
-            connectionPoolTtl(connectionPoolTtl);
+        public void setConnectionTimeToLive(Duration connectionTimeToLive) {
+            connectionTimeToLive(connectionTimeToLive);
         }
 
         @Override
-        public Optional<Duration> maxIdleConnectionTimeout() {
-            return Optional.ofNullable(getMaxIdleConnectionTimeout());
-        }
-
-        @Override
-        public Builder maxIdleConnectionTimeout(Duration maxIdleConnectionTimeout) {
-            this.maxIdleConnectionTimeout = maxIdleConnectionTimeout;
+        public Builder connectionMaxIdleTime(Duration maxIdleConnectionTimeout) {
+            this.connectionMaxIdleTime = maxIdleConnectionTimeout;
             return this;
         }
 
-        public Duration getMaxIdleConnectionTimeout() {
-            return maxIdleConnectionTimeout;
-        }
-
-        public void setMaxIdleConnectionTimeout(Duration maxIdleConnectionTimeout) {
-            maxIdleConnectionTimeout(maxIdleConnectionTimeout);
+        public void setConnectionMaxIdleTime(Duration connectionMaxIdleTime) {
+            connectionMaxIdleTime(connectionMaxIdleTime);
         }
 
         @Override

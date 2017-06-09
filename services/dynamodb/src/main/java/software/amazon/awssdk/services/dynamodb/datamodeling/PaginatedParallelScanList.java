@@ -18,8 +18,8 @@ package software.amazon.awssdk.services.dynamodb.datamodeling;
 import java.util.LinkedList;
 import java.util.List;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.PaginationLoadingStrategy;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.PaginationLoadingStrategy;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 /**
  * Implementation of the List interface that represents the results from a parallel scan
@@ -41,22 +41,22 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
     /** The current parallel scan task which contains all the information about the scan request. */
     private final ParallelScanTask parallelScanTask;
 
-    private final DynamoDBMapperConfig config;
+    private final DynamoDbMapperConfig config;
 
     public PaginatedParallelScanList(
-            DynamoDBMapper mapper,
+            DynamoDbMapper mapper,
             Class<T> clazz,
             DynamoDBClient dynamo,
             ParallelScanTask parallelScanTask,
             PaginationLoadingStrategy paginationLoadingStrategy,
-            DynamoDBMapperConfig config) {
+            DynamoDbMapperConfig config) {
         super(mapper, clazz, dynamo, paginationLoadingStrategy);
 
         this.parallelScanTask = parallelScanTask;
         this.config = config;
 
         // Marshal the first batch of results in allResults
-        allResults.addAll(marshalParallelScanResultsIntoObjects(parallelScanTask.getNextBatchOfScanResults()));
+        allResults.addAll(marshalParallelScanResponsesIntoObjects(parallelScanTask.nextBatchOfScanResponses()));
 
         // If the results should be eagerly loaded at once
         if (paginationLoadingStrategy == PaginationLoadingStrategy.EAGER_LOADING) {
@@ -71,16 +71,16 @@ public class PaginatedParallelScanList<T> extends PaginatedList<T> {
 
     @Override
     protected List<T> fetchNextPage() {
-        return marshalParallelScanResultsIntoObjects(parallelScanTask.getNextBatchOfScanResults());
+        return marshalParallelScanResponsesIntoObjects(parallelScanTask.nextBatchOfScanResponses());
     }
 
-    private List<T> marshalParallelScanResultsIntoObjects(List<ScanResult> scanResults) {
+    private List<T> marshalParallelScanResponsesIntoObjects(List<ScanResponse> scanResults) {
         List<T> allItems = new LinkedList<T>();
-        for (ScanResult scanResult : scanResults) {
+        for (ScanResponse scanResult : scanResults) {
             if (null != scanResult) {
                 allItems.addAll(mapper.marshallIntoObjects(
                         mapper.toParameters(
-                                scanResult.getItems(),
+                                scanResult.items(),
                                 clazz,
                                 parallelScanTask.getTableName(),
                                 config)));

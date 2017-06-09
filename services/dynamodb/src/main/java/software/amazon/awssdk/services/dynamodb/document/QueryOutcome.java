@@ -17,18 +17,18 @@ package software.amazon.awssdk.services.dynamodb.document;
 
 import java.util.List;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 /**
  * The outcome of query on DynamoDB table.
  */
 public class QueryOutcome {
-    private final QueryResult result;
+    private final QueryResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public QueryOutcome(QueryResult result) {
+    public QueryOutcome(QueryResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -39,13 +39,13 @@ public class QueryOutcome {
      * Returns a non-null list of the returned items; can be empty.
      */
     public List<Item> getItems() {
-        return InternalUtils.toItemList(result.getItems());
+        return InternalUtils.toItemList(result.items());
     }
 
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public QueryResult getQueryResult() {
+    public QueryResponse getQueryResponse() {
         return result;
     }
 

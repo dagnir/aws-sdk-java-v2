@@ -28,9 +28,9 @@ import software.amazon.awssdk.auth.SystemPropertyCredentialsProvider;
 import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.profile.path.config.SystemSettingsProfileLocationProvider;
-import software.amazon.awssdk.regions.InstanceProfileRegionProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.SystemSettingsRegionProvider;
+import software.amazon.awssdk.regions.providers.InstanceProfileRegionProvider;
+import software.amazon.awssdk.regions.providers.SystemSettingsRegionProvider;
 import software.amazon.awssdk.utils.JavaSystemSetting;
 import software.amazon.awssdk.utils.SystemSetting;
 
@@ -79,11 +79,11 @@ public enum AwsSystemSetting implements SystemSetting {
 
     /**
      * Configure the default region used in the {@link SystemSettingsRegionProvider}. This value is checked by the
-     * {@link ClientBuilder} when no region is specified via {@link ClientBuilder#region(String)}.
+     * {@link ClientBuilder} when no region is specified via {@link ClientBuilder#region(Region)}.
      *
      * @see Region
      */
-    AWS_DEFAULT_REGION("aws.defaultRegion", null),
+    AWS_REGION("aws.region", null),
 
     /**
      * Configure the default configuration file used in the {@link SystemSettingsProfileLocationProvider}. This value is

@@ -49,7 +49,7 @@ public class SdkHttpFullRequestAdapter implements SdkHttpFullRequest {
     @Override
     public Optional<String> getFirstHeaderValue(String header) {
         return Optional.ofNullable(headers.get(header))
-                .filter(h -> h.size() > 0)
+                .filter(h -> !h.isEmpty())
                 .map(h -> h.get(0));
     }
 

@@ -120,6 +120,25 @@ public class Validate {
         return object;
     }
 
+    /**
+     * <p>Validate that the specified field/param is not {@code null};
+     * otherwise throwing an exception with a precanned message that includes the parameter name.
+     *
+     * <pre>Validate.paramNotNull(myObject, "myObject");</pre>
+     *
+     * @param <T> the object type
+     * @param object  the object to check
+     * @param paramName  The name of the param or field being checked.
+     * @return the validated object (never {@code null} for method chaining)
+     * @throws NullPointerException if the object is {@code null}
+     */
+    public static <T> T paramNotNull(final T object, final String paramName) {
+        if (object == null) {
+            throw new NullPointerException(String.format("%s must not be null.", paramName));
+        }
+        return object;
+    }
+
     // notEmpty array
     //---------------------------------------------------------------------------------
 

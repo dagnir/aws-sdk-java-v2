@@ -129,7 +129,7 @@ public class ItemValueConformerTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void uknownSetType() {
+    public void uknownsetType() {
         new ItemValueConformer().transform(new FluentHashSet<Object>(new Object()));
     }
 }

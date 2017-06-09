@@ -109,6 +109,7 @@
         <!-- These properties are used by S3 for its test dependencies -->
         <takari.cpsuite.version>1.2.7</takari.cpsuite.version>
         <bouncycastle.version>1.56</bouncycastle.version>
+        <skip.unit.tests>${skipTests}</skip.unit.tests>
     </properties>
 
     <dependencyManagement>
@@ -306,6 +307,7 @@
                             <include>**/*Test.java</include>
                             <include>**/*TestCase.java</include>
                         </includes>
+                        <skipTests>${skip.unit.tests}</skipTests>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -337,6 +339,18 @@
                                         <directory>${basedir}/src/it/resources</directory>
                                     </resource>
                                 </resources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>add-generated-sources</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>${basedir}/target/generated-sources/sdk</source>
+                                </sources>
                             </configuration>
                         </execution>
                     </executions>

@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.protocolec2.ProtocolEc2Client;
 import software.amazon.awssdk.services.protocolec2.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolec2.model.ProtocolEc2Exception;
@@ -41,7 +42,7 @@ public class Ec2ExceptionTests {
     public void setupClient() {
         client = ProtocolEc2Client.builder()
                                   .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
-                                  .region("us-east-1")
+                                  .region(Region.US_EAST_1)
                                   .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                   .build();
     }
@@ -66,7 +67,7 @@ public class Ec2ExceptionTests {
     }
 
     private void callAllTypes() {
-        client.allTypes(new AllTypesRequest());
+        client.allTypes(AllTypesRequest.builder().build());
     }
 
     private void assertThrowsServiceBaseException(Runnable runnable) {

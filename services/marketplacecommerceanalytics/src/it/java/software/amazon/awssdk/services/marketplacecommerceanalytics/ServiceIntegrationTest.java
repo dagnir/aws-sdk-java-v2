@@ -21,7 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
 import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.DataSetType;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.GenerateDataSetRequest;
+import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
@@ -52,7 +53,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     private static final String BUCKET_NAME = "java-sdk-integ-mp-commerce-" + System.currentTimeMillis();
 
     private MarketplaceCommerceAnalyticsClient client;
-    private AmazonS3Client s3;
+    private AmazonS3 s3;
     private SNSClient sns;
     private IAMClient iam;
 
@@ -67,54 +68,55 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     }
 
     private void setupClients() {
-        s3 = new AmazonS3Client(getCredentials());
-        s3.configureRegion(Regions.US_EAST_1);
+        s3 = AmazonS3Client.builder()
+                           .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
+                           .build();
 
         client = MarketplaceCommerceAnalyticsClient.builder()
-                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .region(Regions.US_EAST_1.getName())
-                .build();
+                                                   .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                                                   .region(Region.US_EAST_1)
+                                                   .build();
 
-        sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
+        sns = SNSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_EAST_1).build();
 
-        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
+        iam = IAMClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.AWS_GLOBAL).build();
     }
 
     private void setupResources() throws IOException, Exception {
         s3.createBucket(BUCKET_NAME);
-        topicArn = sns.createTopic(new CreateTopicRequest(TOPIC_NAME)).getTopicArn();
+        topicArn = sns.createTopic(CreateTopicRequest.builder().name(TOPIC_NAME).build()).topicArn();
         policyArn = createPolicy();
         roleArn = createRole();
-        iam.attachRolePolicy(new AttachRolePolicyRequest().withRoleName(ROLE_NAME).withPolicyArn(policyArn));
+        iam.attachRolePolicy(AttachRolePolicyRequest.builder().roleName(ROLE_NAME).policyArn(policyArn).build());
     }
 
     private String createPolicy() throws IOException {
-        CreatePolicyRequest createPolicyRequest = new CreatePolicyRequest().withPolicyName(POLICY_NAME)
-                                                                           .withPolicyDocument(getPolicyDocument());
-        return iam.createPolicy(createPolicyRequest).getPolicy().getArn();
+        CreatePolicyRequest createPolicyRequest = CreatePolicyRequest.builder().policyName(POLICY_NAME)
+                                                                     .policyDocument(getPolicyDocument()).build();
+        return iam.createPolicy(createPolicyRequest).policy().arn();
     }
 
     private String createRole() throws Exception {
-        CreateRoleRequest createRoleRequest = new CreateRoleRequest().withRoleName(ROLE_NAME)
-                                                                     .withAssumeRolePolicyDocument(getAssumeRolePolicy());
-        return iam.createRole(createRoleRequest).getRole().getArn();
+        CreateRoleRequest createRoleRequest = CreateRoleRequest.builder().roleName(ROLE_NAME)
+                                                               .assumeRolePolicyDocument(getAssumeRolePolicy()).build();
+        return iam.createRole(createRoleRequest).role().arn();
     }
 
     @After
     public void tearDown() {
         try {
-            iam.detachRolePolicy(new DetachRolePolicyRequest().withRoleName(ROLE_NAME).withPolicyArn(policyArn));
-            iam.deleteRole(new DeleteRoleRequest().withRoleName(ROLE_NAME));
+            iam.detachRolePolicy(DetachRolePolicyRequest.builder().roleName(ROLE_NAME).policyArn(policyArn).build());
+            iam.deleteRole(DeleteRoleRequest.builder().roleName(ROLE_NAME).build());
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            iam.deletePolicy(new DeletePolicyRequest().withPolicyArn(policyArn));
+            iam.deletePolicy(DeletePolicyRequest.builder().policyArn(policyArn).build());
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            sns.deleteTopic(new DeleteTopicRequest(topicArn));
+            sns.deleteTopic(DeleteTopicRequest.builder().topicArn(topicArn).build());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,11 +129,14 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test(expected = AmazonServiceException.class)
     public void test() {
-        client.generateDataSet(new GenerateDataSetRequest().withDataSetPublicationDate(new Date())
-                                                           .withRoleNameArn(roleArn).withDestinationS3BucketName(BUCKET_NAME).withSnsTopicArn(topicArn)
-                                                           .withDestinationS3BucketName(BUCKET_NAME).withDestinationS3Prefix("some-prefix")
-                                                           .withDataSetPublicationDate(new Date())
-                                                           .withDataSetType(DataSetType.Customer_subscriber_hourly_monthly_subscriptions));
+        client.generateDataSet(GenerateDataSetRequest.builder()
+                                                     .dataSetPublicationDate(new Date())
+                                                     .roleNameArn(roleArn).destinationS3BucketName(BUCKET_NAME)
+                                                     .snsTopicArn(topicArn)
+                                                     .destinationS3BucketName(BUCKET_NAME).destinationS3Prefix("some-prefix")
+                                                     .dataSetPublicationDate(new Date())
+                                                     .dataSetType(DataSetType.Customer_subscriber_hourly_monthly_subscriptions)
+                                                     .build());
     }
 
     private String getAssumeRolePolicy() throws Exception {

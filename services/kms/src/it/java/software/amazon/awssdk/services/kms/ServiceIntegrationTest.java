@@ -19,61 +19,67 @@ import junit.framework.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.services.kms.model.CreateAliasRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
-import software.amazon.awssdk.services.kms.model.CreateKeyResult;
+import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DescribeKeyRequest;
-import software.amazon.awssdk.services.kms.model.DescribeKeyResult;
+import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
 import software.amazon.awssdk.services.kms.model.DisableKeyRequest;
 import software.amazon.awssdk.services.kms.model.EnableKeyRequest;
 import software.amazon.awssdk.services.kms.model.GetKeyPolicyRequest;
-import software.amazon.awssdk.services.kms.model.GetKeyPolicyResult;
+import software.amazon.awssdk.services.kms.model.GetKeyPolicyResponse;
 import software.amazon.awssdk.services.kms.model.KeyMetadata;
 import software.amazon.awssdk.services.kms.model.KeyUsageType;
 import software.amazon.awssdk.services.kms.model.ListKeysRequest;
-import software.amazon.awssdk.services.kms.model.ListKeysResult;
+import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 
     private static void checkValid_KeyMetadata(KeyMetadata kmd) {
         Assert.assertNotNull(kmd);
 
-        Assert.assertNotNull(kmd.getArn());
-        Assert.assertNotNull(kmd.getAWSAccountId());
-        Assert.assertNotNull(kmd.getDescription());
-        Assert.assertNotNull(kmd.getKeyId());
-        Assert.assertNotNull(kmd.getKeyUsage());
-        Assert.assertNotNull(kmd.getCreationDate());
-        Assert.assertNotNull(kmd.getEnabled());
+        Assert.assertNotNull(kmd.arn());
+        Assert.assertNotNull(kmd.awsAccountId());
+        Assert.assertNotNull(kmd.description());
+        Assert.assertNotNull(kmd.keyId());
+        Assert.assertNotNull(kmd.keyUsage());
+        Assert.assertNotNull(kmd.creationDate());
+        Assert.assertNotNull(kmd.enabled());
     }
 
     @Test
     public void testKeyOperations() {
 
         // CreateKey
-        CreateKeyResult createKeyResult = kms.createKey(new CreateKeyRequest().withDescription("My KMS Key")
-                                                                              .withKeyUsage(KeyUsageType.ENCRYPT_DECRYPT));
-        checkValid_KeyMetadata(createKeyResult.getKeyMetadata());
+        CreateKeyResponse createKeyResult = kms.createKey(CreateKeyRequest.builder()
+                                                                        .description("My KMS Key")
+                                                                        .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
+                                                                        .build());
+        checkValid_KeyMetadata(createKeyResult.keyMetadata());
 
-        final String keyId = createKeyResult.getKeyMetadata().getKeyId();
+        final String keyId = createKeyResult.keyMetadata().keyId();
 
         // DescribeKey
-        DescribeKeyResult describeKeyResult = kms.describeKey(new DescribeKeyRequest().withKeyId(keyId));
-        checkValid_KeyMetadata(describeKeyResult.getKeyMetadata());
+        DescribeKeyResponse describeKeyResult = kms.describeKey(DescribeKeyRequest.builder().keyId(keyId).build());
+        checkValid_KeyMetadata(describeKeyResult.keyMetadata());
 
         // Enable/DisableKey
-        kms.enableKey(new EnableKeyRequest().withKeyId(keyId));
-        kms.disableKey(new DisableKeyRequest().withKeyId(keyId));
+        kms.enableKey(EnableKeyRequest.builder().keyId(keyId).build());
+        kms.disableKey(DisableKeyRequest.builder().keyId(keyId).build());
 
         // ListKeys
-        ListKeysResult listKeysResult = kms.listKeys(new ListKeysRequest());
-        Assert.assertFalse(listKeysResult.getKeys().isEmpty());
+        ListKeysResponse listKeysResult = kms.listKeys(ListKeysRequest.builder().build());
+        Assert.assertFalse(listKeysResult.keys().isEmpty());
 
         // CreateAlias
-        kms.createAlias(new CreateAliasRequest().withAliasName("alias/my_key" + System.currentTimeMillis())
-                                                .withTargetKeyId(keyId));
+        kms.createAlias(CreateAliasRequest.builder()
+                                          .aliasName("alias/my_key" + System.currentTimeMillis())
+                                          .targetKeyId(keyId)
+                                          .build());
 
-        GetKeyPolicyResult getKeyPolicyResult = kms.getKeyPolicy(new GetKeyPolicyRequest().withKeyId(keyId)
-                                                                                          .withPolicyName("default"));
-        Assert.assertNotNull(getKeyPolicyResult.getPolicy());
+        GetKeyPolicyResponse getKeyPolicyResult = kms.getKeyPolicy(GetKeyPolicyRequest.builder()
+                                                                                    .keyId(keyId)
+                                                                                    .policyName("default")
+                                                                                    .build());
+        Assert.assertNotNull(getKeyPolicyResult.policy());
 
     }
 }

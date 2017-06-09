@@ -43,12 +43,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.ConsistentReads;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.SaveBehavior;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.ConsistentReads;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.SaveBehavior;
 import software.amazon.awssdk.services.dynamodb.mapper.NumberSetAttributeClass;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.RangeKeyClass;
 
@@ -59,7 +59,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     private static int start = 1;
     private static int byteStart = 1;
     private static int startKeyDebug = 1;
-    DynamoDBMapper mapper = new DynamoDBMapper(dynamo, new DynamoDBMapperConfig(SaveBehavior.UPDATE,
+    DynamoDbMapper mapper = new DynamoDbMapper(dynamo, new DynamoDbMapperConfig(SaveBehavior.UPDATE,
                                                                                 ConsistentReads.CONSISTENT, null));
 
     @BeforeClass
@@ -70,7 +70,7 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
     @AfterClass
     public static void tearDown() {
         try {
-            dynamo.deleteTable(new DeleteTableRequest(TABLE_WITH_RANGE_ATTRIBUTE));
+            dynamo.deleteTable(DeleteTableRequest.builder().tableName(TABLE_WITH_RANGE_ATTRIBUTE).build());
         } catch (Exception e) {
             // Ignore.
         }
@@ -182,24 +182,25 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
             throws NoSuchFieldException, SecurityException,
                    IllegalArgumentException, IllegalAccessException {
         long startTime = System.currentTimeMillis();
-        long maxBackOffTimePerRetry = DynamoDBMapper.MAX_BACKOFF_IN_MILLISECONDS;
-        int NoOfRetries = DynamoDBMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
+        long maxBackOffTimePerRetry = DynamoDbMapper.MAX_BACKOFF_IN_MILLISECONDS;
+        int NoOfRetries = DynamoDbMapper.BATCH_GET_MAX_RETRY_COUNT_ALL_KEYS;
 
         List<Object> objs = new ArrayList<Object>();
         NumberSetAttributeClass obj = getUniqueNumericObject();
         objs.add(obj);
         DynamoDBClient mockClient = mock(DynamoDBClient.class);
-        when(mockClient.batchGetItem(any())).thenAnswer(new Answer<BatchGetItemResult>() {
+        when(mockClient.batchGetItem(any())).thenAnswer(new Answer<BatchGetItemResponse>() {
             @Override
-            public BatchGetItemResult answer(InvocationOnMock invocation) throws Throwable {
+            public BatchGetItemResponse answer(InvocationOnMock invocation) throws Throwable {
                 Thread.sleep(3000);
-                BatchGetItemResult result = new BatchGetItemResult();
-                result.setResponses(new HashMap<>());
-                result.setUnprocessedKeys(((BatchGetItemRequest) invocation.getArguments()[0]).getRequestItems());
+                BatchGetItemResponse result = BatchGetItemResponse.builder()
+                        .responses(new HashMap<>())
+                        .unprocessedKeys(((BatchGetItemRequest) invocation.getArguments()[0]).requestItems())
+                        .build();
                 return result;
             }
         });
-        DynamoDBMapper mapper = new DynamoDBMapper(mockClient);
+        DynamoDbMapper mapper = new DynamoDbMapper(mockClient);
         try {
             mapper.batchLoad(objs);
             fail("Expecting an expection due to exceed of number of retries.");

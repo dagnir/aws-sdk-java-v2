@@ -34,11 +34,11 @@ import org.junit.Test;
 import software.amazon.awssdk.services.sqs.buffered.SqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
-import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
+import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 /**
@@ -84,7 +84,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
         logger.setLevel(Level.ERROR);
         ExecutorService exec = Executors.newCachedThreadPool();
 
-        CreateQueueResult createRes = buffSqs.createQueue(new CreateQueueRequest(queueName)).join();
+        CreateQueueResponse createRes = buffSqs.createQueue(CreateQueueRequest.builder().queueName(queueName).build()).join();
 
         AtomicBoolean keepGoing = new AtomicBoolean(true);
         List<Future<?>> allFutures = new LinkedList<Future<?>>();
@@ -97,17 +97,17 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
         }
 
         for (int i = 0; i < MAX_SENDER; i++) {
-            Sender sender = new Sender(keepGoing, buffSqs, sendCounter, createRes.getQueueUrl(), sentSet);
+            Sender sender = new Sender(keepGoing, buffSqs, sendCounter, createRes.queueUrl(), sentSet);
             allFutures.add(exec.submit(sender));
         }
         for (int i = 0; i < MAX_CONSUMER; i++) {
-            Consumer consumer = new Consumer(keepGoing, buffSqs, receiveCounter, createRes.getQueueUrl(), sentSet,
+            Consumer consumer = new Consumer(keepGoing, buffSqs, receiveCounter, createRes.queueUrl(), sentSet,
                                              handleLists);
             allFutures.add(exec.submit(consumer));
         }
 
         for (int i = 0; i < MAX_DELETER; i++) {
-            Deleter deleter = new Deleter(keepGoing, buffSqs, deleteCounter, createRes.getQueueUrl(), handleLists);
+            Deleter deleter = new Deleter(keepGoing, buffSqs, deleteCounter, createRes.queueUrl(), handleLists);
             allFutures.add(exec.submit(deleter));
         }
 
@@ -210,10 +210,11 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
             System.out.println("Sender starting...");
 
             while (keepGoing.get()) {
-                SendMessageRequest sendReq = new SendMessageRequest();
-                sendReq.setQueueUrl(url);
-                String body = BufferedSqsPerfIntegrationTest.BODY + counter.addAndGet(1) + "_" + System.nanoTime();
-                sendReq.setMessageBody(body);
+                final String body = BufferedSqsPerfIntegrationTest.BODY + counter.addAndGet(1) + "_" + System.nanoTime();
+                SendMessageRequest sendReq = SendMessageRequest.builder()
+                        .queueUrl(url)
+                        .messageBody(body)
+                        .build();
                 sqs.sendMessage(sendReq);
                 int size = 0;
                 synchronized (sent) {
@@ -259,19 +260,20 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
 
             System.out.println("Consumer starting...");
             while (keepGoing.get()) {
-                ReceiveMessageRequest recReq = new ReceiveMessageRequest();
-                recReq.setQueueUrl(url);
-                ReceiveMessageResult recRes = sqs.receiveMessage(recReq).join();
-                recCount.addAndGet(recRes.getMessages().size());
+                ReceiveMessageRequest recReq = ReceiveMessageRequest.builder()
+                        .queueUrl(url)
+                        .build();
+                ReceiveMessageResponse recRes = sqs.receiveMessage(recReq).join();
+                recCount.addAndGet(recRes.messages().size());
                 int listSize = 0;
-                for (Message m : recRes.getMessages()) {
+                for (Message m : recRes.messages()) {
                     synchronized (sentSet) {
-                        sentSet.remove(m.getBody());
+                        sentSet.remove(m.body());
                     }
 
                     List<String> list = hanldeListList.get(random.nextInt(hanldeListList.size()));
                     synchronized (list) {
-                        list.add(m.getReceiptHandle());
+                        list.add(m.receiptHandle());
                         listSize = list.size();
                     }
                 }
@@ -335,9 +337,10 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
                 }
 
                 if (null != handle) {
-                    DeleteMessageRequest delReq = new DeleteMessageRequest();
-                    delReq.setQueueUrl(url);
-                    delReq.setReceiptHandle(handle);
+                    DeleteMessageRequest delReq = DeleteMessageRequest.builder()
+                            .queueUrl(url)
+                            .receiptHandle(handle)
+                            .build();
                     sqs.deleteMessage(delReq);
                     delCount.addAndGet(1);
 

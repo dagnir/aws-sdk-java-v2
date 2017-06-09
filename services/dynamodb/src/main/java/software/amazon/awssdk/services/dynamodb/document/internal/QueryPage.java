@@ -28,12 +28,12 @@ import software.amazon.awssdk.services.dynamodb.document.QueryOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 class QueryPage extends Page<Item, QueryOutcome> {
     private final DynamoDBClient client;
     private final QuerySpec spec;
-    private final QueryRequest request;
+    private QueryRequest request;
     private final int index;
     private final Map<String, AttributeValue> lastEvaluatedKey;
 
@@ -44,21 +44,21 @@ class QueryPage extends Page<Item, QueryOutcome> {
             int index,
             QueryOutcome outcome) {
         super(Collections.unmodifiableList(
-                toItemList(outcome.getQueryResult().getItems())),
+                toItemList(outcome.getQueryResponse().items())),
               outcome);
         this.client = client;
         this.spec = spec;
         this.request = request;
         this.index = index;
 
-        final Integer max = spec.getMaxResultSize();
-        final QueryResult result = outcome.getQueryResult();
-        final List<?> ilist = result.getItems();
+        final Integer max = spec.maxResultSize();
+        final QueryResponse result = outcome.getQueryResponse();
+        final List<?> ilist = result.items();
         final int size = ilist == null ? 0 : ilist.size();
         if (max != null && (index + size) > max) {
             this.lastEvaluatedKey = null;
         } else {
-            this.lastEvaluatedKey = result.getLastEvaluatedKey();
+            this.lastEvaluatedKey = result.lastEvaluatedKey();
         }
     }
 
@@ -67,7 +67,7 @@ class QueryPage extends Page<Item, QueryOutcome> {
         if (lastEvaluatedKey == null) {
             return false;
         }
-        Integer max = spec.getMaxResultSize();
+        Integer max = spec.maxResultSize();
         if (max == null) {
             return true;
         }
@@ -78,7 +78,7 @@ class QueryPage extends Page<Item, QueryOutcome> {
         int nextIndex = index + this.size();
         return InternalUtils.minimum(
                 max - nextIndex,
-                spec.getMaxPageSize());
+                spec.maxPageSize());
     }
 
     @Override
@@ -86,16 +86,16 @@ class QueryPage extends Page<Item, QueryOutcome> {
         if (lastEvaluatedKey == null) {
             throw new NoSuchElementException("No more pages");
         }
-        final Integer max = spec.getMaxResultSize();
+        final Integer max = spec.maxResultSize();
         if (max != null) {
             int nextLimit = nextRequestLimit(max.intValue());
             if (nextLimit == 0) {
                 throw new NoSuchElementException("No more pages");
             }
-            request.setLimit(nextLimit);
+            request = request.toBuilder().limit(nextLimit).build();
         }
-        request.setExclusiveStartKey(lastEvaluatedKey);
-        QueryResult result = client.query(request);
+        request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build();
+        QueryResponse result = client.query(request);
         final int nextIndex = index + this.size();
         return new QueryPage(client, spec, request, nextIndex,
                              new QueryOutcome(result));

@@ -34,7 +34,7 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
     private Map<String, String> nameMap;
 
     public GetItemSpec() {
-        super(new GetItemRequest());
+        super(GetItemRequest.builder().build());
     }
 
     @Override
@@ -63,38 +63,38 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
     }
 
     public String getReturnConsumedCapacity() {
-        return getRequest().getReturnConsumedCapacity();
+        return getRequest().returnConsumedCapacity();
     }
 
     public GetItemSpec withReturnConsumedCapacity(ReturnConsumedCapacity capacity) {
-        getRequest().setReturnConsumedCapacity(capacity);
+        setRequest(getRequest().toBuilder().returnConsumedCapacity(capacity).build());
         return this;
     }
 
     public List<String> getAttributesToGet() {
-        return getRequest().getAttributesToGet();
+        return getRequest().attributesToGet();
     }
 
     public GetItemSpec withAttributesToGet(String... attrNames) {
         if (attrNames == null) {
-            getRequest().setAttributesToGet(null);
+            setRequest(getRequest().toBuilder().attributesToGet((String[]) null).build());
         } else {
-            getRequest().setAttributesToGet(Arrays.asList(attrNames));
+            setRequest(getRequest().toBuilder().attributesToGet(Arrays.asList(attrNames)).build());
         }
         return this;
     }
 
     public Boolean isConsistentRead() {
-        return getRequest().isConsistentRead();
+        return getRequest().consistentRead();
     }
 
     public GetItemSpec withConsistentRead(boolean consistentRead) {
-        getRequest().setConsistentRead(consistentRead);
+        setRequest(getRequest().toBuilder().consistentRead(consistentRead).build());
         return this;
     }
 
     public String getProjectionExpression() {
-        return getRequest().getProjectionExpression();
+        return getRequest().projectionExpression();
     }
 
     /**
@@ -104,11 +104,11 @@ public class GetItemSpec extends AbstractSpecWithPrimaryKey<GetItemRequest> {
      * been specified.)
      */
     public GetItemSpec withProjectionExpression(String projectionExpression) {
-        getRequest().setProjectionExpression(projectionExpression);
+        setRequest(getRequest().toBuilder().projectionExpression(projectionExpression).build());
         return this;
     }
 
-    public Map<String, String> getNameMap() {
+    public Map<String, String> nameMap() {
         return nameMap;
     }
 

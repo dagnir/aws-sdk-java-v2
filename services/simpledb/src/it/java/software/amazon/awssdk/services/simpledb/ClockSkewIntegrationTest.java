@@ -32,7 +32,7 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
     public void testClockSkewSdb() {
         SdkGlobalTime.setGlobalTimeOffset(3600);
         SimpleDBClient clockSkewClient = SimpleDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
-        clockSkewClient.listDomains(new ListDomainsRequest());
+        clockSkewClient.listDomains(ListDomainsRequest.builder().build());
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 
@@ -48,7 +48,7 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
 
-        clockSkewClient.listDomains(new ListDomainsRequest());
+        clockSkewClient.listDomains(ListDomainsRequest.builder().build());
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }

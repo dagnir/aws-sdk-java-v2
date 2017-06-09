@@ -75,22 +75,22 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
 
             @Override
             public RequestMetricCollector getRequestMetricCollector() {
-                return metricsConfiguration().requestMetricCollector().orElse(null);
+                return overrideConfiguration().requestMetricCollector();
             }
 
             @Override
             public List<RequestHandler2> getRequestHandlers() {
-                return listenerConfiguration().requestListeners();
+                return overrideConfiguration().requestListeners();
             }
 
             @Override
             public SignerProvider getSignerProvider() {
-                return securityConfiguration().signerProvider().orElse(null);
+                return overrideConfiguration().advancedOption(AdvancedClientOption.SIGNER_PROVIDER);
             }
 
             @Override
             public SdkHttpClient sdkHttpClient() {
-                return ImmutableAsyncClientConfiguration.this.httpClient();
+                return httpClient();
             }
 
             @Override

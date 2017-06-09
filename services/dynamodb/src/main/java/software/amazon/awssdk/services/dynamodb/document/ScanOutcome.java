@@ -17,18 +17,18 @@ package software.amazon.awssdk.services.dynamodb.document;
 
 import java.util.List;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 /**
  * The outcome of scanning the DynamoDB table.
  */
 public class ScanOutcome {
-    private final ScanResult result;
+    private final ScanResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public ScanOutcome(ScanResult result) {
+    public ScanOutcome(ScanResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -39,13 +39,13 @@ public class ScanOutcome {
      * Returns a non-null list of the returned items; can be empty.
      */
     public List<Item> getItems() {
-        return InternalUtils.toItemList(result.getItems());
+        return InternalUtils.toItemList(result.items());
     }
 
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public ScanResult getScanResult() {
+    public ScanResponse scanResult() {
         return result;
     }
 

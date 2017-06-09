@@ -152,7 +152,7 @@ public class TableUtils {
                                        final int interval) throws InterruptedException, TableNeverTransitionedToStateException {
         TableDescription table = waitForTableDescription(dynamo, tableName, TableStatus.ACTIVE, timeout, interval);
 
-        if (table == null || !table.getTableStatus().equals(TableStatus.ACTIVE.toString())) {
+        if (table == null || !table.tableStatus().equals(TableStatus.ACTIVE.toString())) {
             throw new TableNeverTransitionedToStateException(tableName, TableStatus.ACTIVE);
         }
     }
@@ -194,8 +194,8 @@ public class TableUtils {
         TableDescription table = null;
         while (System.currentTimeMillis() < endTime) {
             try {
-                table = dynamo.describeTable(new DescribeTableRequest(tableName)).getTable();
-                if (desiredStatus == null || table.getTableStatus().equals(desiredStatus.toString())) {
+                table = dynamo.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
+                if (desiredStatus == null || table.tableStatus().equals(desiredStatus.toString())) {
                     return table;
 
                 }
@@ -221,7 +221,7 @@ public class TableUtils {
             return true;
         } catch (final ResourceInUseException e) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Table " + createTableRequest.getTableName() + " already exists", e);
+                LOG.trace("Table " + createTableRequest.tableName() + " already exists", e);
             }
         }
         return false;
@@ -239,7 +239,7 @@ public class TableUtils {
             return true;
         } catch (final ResourceNotFoundException e) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Table " + deleteTableRequest.getTableName() + " does not exist", e);
+                LOG.trace("Table " + deleteTableRequest.tableName() + " does not exist", e);
             }
         }
         return false;

@@ -24,7 +24,6 @@ import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.HttpMethod;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.regions.RegionUtils;
 import software.amazon.awssdk.services.s3.internal.Constants;
 import software.amazon.awssdk.services.s3.internal.S3DirectSpi;
 import software.amazon.awssdk.services.s3.model.AbortMultipartUploadRequest;
@@ -189,7 +188,7 @@ public interface AmazonS3 extends S3DirectSpi {
      * use this value to retrieve metadata (such as supported regions) of the
      * service.
      *
-     * @see RegionUtils#getRegionsForService(String)
+     * @see software.amazon.awssdk.regions.ServiceMetadata#of(String)
      */
     String ENDPOINT_PREFIX = "s3";
 
@@ -1318,158 +1317,6 @@ public interface AmazonS3 extends S3DirectSpi {
      * @sample AmazonS3.CreateBucket
      */
     public Bucket createBucket(String bucketName)
-            throws SdkClientException, AmazonServiceException;
-
-    /**
-     * <p>
-     * Creates a new Amazon S3 bucket with the specified name in the specified
-     * Amazon S3 region.
-     * </p>
-     * <p>
-     * Every object stored in Amazon S3 is contained within a bucket. Buckets
-     * partition the namespace of objects stored in Amazon S3 at the top level.
-     * Within a bucket, any name can be used for objects. However, bucket names
-     * must be unique across all of Amazon S3.
-     * </p>
-     * <p>
-     * Bucket ownership is similar to the ownership of Internet domain names.
-     * Within Amazon S3, only a single user owns each bucket.
-     * Once a uniquely named bucket is created in Amazon S3,
-     * organize and name the objects within the bucket in any way.
-     * Ownership of the bucket is retained as long as the owner has an Amazon S3 account.
-     * </p>
-     * <p>
-     * To conform with DNS requirements, the following constraints apply:
-     *  <ul>
-     *      <li>Bucket names should not contain underscores</li>
-     *      <li>Bucket names should be between 3 and 63 characters long</li>
-     *      <li>Bucket names should not end with a dash</li>
-     *      <li>Bucket names cannot contain adjacent periods</li>
-     *      <li>Bucket names cannot contain dashes next to periods (e.g.,
-     *      "my-.bucket.com" and "my.-bucket" are invalid)</li>
-     *      <li>Bucket names cannot contain uppercase characters</li>
-     *  </ul>
-     * </p>
-     * <p>
-     * There are no limits to the number of objects that can be stored in a bucket.
-     * Performance does not vary based on the number of buckets used. Store
-     * all objects within a single bucket or organize them across several buckets.
-     * </p>
-     * <p>
-     * Buckets cannot be nested; buckets cannot be created within
-     * other buckets.
-     * </p>
-     * <p>
-     * Do not make bucket
-     * create or delete calls in the high availability code path of an
-     * application. Create or delete buckets in a separate
-     * initialization or setup routine that runs less often.
-     * </p>
-     * <p>
-     * To create a bucket, authenticate with an account that has a
-     * valid AWS Access Key ID and is registered with Amazon S3. Anonymous
-     * requests are never allowed to create buckets.
-     * </p>
-     *
-     *
-     * @param bucketName
-     *            The name of the bucket to create.
-     * @param region
-     *            The Amazon S3 region in which to create the new bucket.
-     *
-     * @return The newly created bucket.
-     *
-     * @throws SdkClientException
-     *             If any errors are encountered in the client while making the
-     *             request or handling the response.
-     * @throws AmazonServiceException
-     *             If any errors occurred in Amazon S3 while processing the
-     *             request.
-     *
-     * @deprecated Use regional endpoint and call {@link #createBucket(String)} instead.
-     *
-     * @see software.amazon.awssdk.services.s3.model.Region
-     * @see <a href="http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/CreateBucket">AWS API Documentation</a>
-     */
-    @Deprecated
-    public Bucket createBucket(String bucketName, Region region)
-            throws SdkClientException, AmazonServiceException;
-
-    /**
-     * <p>
-     * Creates a new Amazon S3 bucket with the specified name in the specified
-     * Amazon S3 region. This method is provided for non-standard cases;
-     * use {@link #createBucket(String, Region)} and pass in a {@link Region}
-     * enumeration value in standard cases.
-     * </p>
-     * <p>
-     * Every object stored in Amazon S3 is contained within a bucket. Buckets
-     * partition the namespace of objects stored in Amazon S3 at the top level.
-     * Within a bucket, any name can be used for objects. However, bucket names
-     * must be unique across all of Amazon S3.
-     * </p>
-     * <p>
-     * Bucket ownership is similar to the ownership of Internet domain names.
-     * Within Amazon S3, only a single user owns each bucket.
-     * Once a uniquely named bucket is created in Amazon S3,
-     * organize and name the objects within the bucket in any way.
-     * Ownership of the bucket is retained as long as the owner has an Amazon S3 account.
-     * </p>
-     * <p>
-     * To conform with DNS requirements, the following constraints apply:
-     *  <ul>
-     *      <li>Bucket names should not contain underscores</li>
-     *      <li>Bucket names should be between 3 and 63 characters long</li>
-     *      <li>Bucket names should not end with a dash</li>
-     *      <li>Bucket names cannot contain adjacent periods</li>
-     *      <li>Bucket names cannot contain dashes next to periods (e.g.,
-     *      "my-.bucket.com" and "my.-bucket" are invalid)</li>
-     *      <li>Bucket names cannot contain uppercase characters</li>
-     *  </ul>
-     * </p>
-     * <p>
-     * There are no limits to the number of objects that can be stored in a bucket.
-     * Performance does not vary based on the number of buckets used. Store
-     * all objects within a single bucket or organize them across several buckets.
-     * </p>
-     * <p>
-     * Buckets cannot be nested; buckets cannot be created within
-     * other buckets.
-     * </p>
-     * <p>
-     * Do not make bucket
-     * create or delete calls in the high availability code path of an
-     * application. Create or delete buckets in a separate
-     * initialization or setup routine that runs less often.
-     * </p>
-     * <p>
-     * To create a bucket, authenticate with an account that has a
-     * valid AWS Access Key ID and is registered with Amazon S3. Anonymous
-     * requests are never allowed to create buckets.
-     * </p>
-     *
-     *
-     * @param bucketName
-     *            The name of the bucket to create.
-     * @param region
-     *            The Amazon S3 region in which to create the new bucket.
-     *
-     * @return The newly created bucket.
-     *
-     * @throws SdkClientException
-     *             If any errors are encountered in the client while making the
-     *             request or handling the response.
-     * @throws AmazonServiceException
-     *             If any errors occurred in Amazon S3 while processing the
-     *             request.
-     *
-     * @deprecated Use regional endpoint and call {@link #createBucket(String)} instead.
-     *
-     * @see software.amazon.awssdk.services.s3.model.Region
-     * @see <a href="http://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/CreateBucket">AWS API Documentation</a>
-     */
-    @Deprecated
-    public Bucket createBucket(String bucketName, String region)
             throws SdkClientException, AmazonServiceException;
 
     /**
@@ -5052,13 +4899,6 @@ public interface AmazonS3 extends S3DirectSpi {
             throws AmazonServiceException, SdkClientException;
 
     /**
-     * Returns the region with which the client is configured.
-     *
-     * @return The region this client will communicate with.
-     */
-    Region getRegion();
-
-    /**
      * An alternative to {@link AmazonS3#setEndpoint(String)}, sets the
      * regional endpoint for this client's service calls. Callers can use this
      * method to control which AWS region they want to work with.
@@ -5074,25 +4914,15 @@ public interface AmazonS3 extends S3DirectSpi {
      *
      * @param region
      *            The region this client will communicate with. See
-     *            {@link software.amazon.awssdk.regions.Region#getRegion(software.amazon.awssdk.regions.Regions)} for
+     *            {@link software.amazon.awssdk.regions.Region#of(String)} for
      *            accessing a given region.
      * @throws java.lang.IllegalArgumentException
      *             If the given region is null, or if this service isn't
      *             available in the given region. See
-     *             {@link software.amazon.awssdk.regions.Region#isServiceSupported(String)}
-     * @see software.amazon.awssdk.regions.Region#getRegion(software.amazon.awssdk.regions.Regions)
-     * @see software.amazon.awssdk.regions.Region#createClient(Class, AwsCredentialsProvider, LegacyClientConfiguration)
+     *             {@link software.amazon.awssdk.regions.ServiceMetadata#of(String)}
+     * @see software.amazon.awssdk.regions.Region#of(String)
      */
     public void setRegion(software.amazon.awssdk.regions.Region region) throws IllegalArgumentException;
-
-    /**
-     * Returns a string representation of the region with which this
-     * client is configured.
-     *
-     * @return String value representing the region this client will
-     *     communicate with
-     */
-    String getRegionName();
 
     /**
      * Returns an URL for the object stored in the specified bucket and

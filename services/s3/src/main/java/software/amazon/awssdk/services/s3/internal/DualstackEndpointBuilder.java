@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.s3.internal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.RegionMetadata;
 import software.amazon.awssdk.runtime.endpoint.ServiceEndpointBuilder;
 
 /**
@@ -46,8 +47,9 @@ public class DualstackEndpointBuilder extends ServiceEndpointBuilder {
 
     @Override
     public URI getServiceEndpoint() {
+        RegionMetadata metadata = RegionMetadata.of(region);
         String serviceEndpoint =
-                String.format("%s.%s.%s.%s", serviceName, Constants.S3_DUALSTACK_QUALIFIER, region.getName(), region.getDomain());
+                String.format("%s.%s.%s.%s", serviceName, Constants.S3_DUALSTACK_QUALIFIER, region.value(), metadata.getDomain());
         return toUri(stripProtocol(serviceEndpoint));
     }
 

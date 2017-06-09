@@ -23,12 +23,12 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.iam.model.LimitExceededException;
 import software.amazon.awssdk.services.iam.model.ListSigningCertificatesRequest;
-import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResult;
+import software.amazon.awssdk.services.iam.model.ListSigningCertificatesResponse;
 import software.amazon.awssdk.services.iam.model.MalformedCertificateException;
 import software.amazon.awssdk.services.iam.model.SigningCertificate;
 import software.amazon.awssdk.services.iam.model.UpdateSigningCertificateRequest;
 import software.amazon.awssdk.services.iam.model.UploadSigningCertificateRequest;
-import software.amazon.awssdk.services.iam.model.UploadSigningCertificateResult;
+import software.amazon.awssdk.services.iam.model.UploadSigningCertificateResponse;
 
 /**
  * Certs integ tests for IAM.
@@ -117,12 +117,12 @@ public class CertsIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
 
         try {
-            UploadSigningCertificateResult response = iam
-                    .uploadSigningCertificate(new UploadSigningCertificateRequest()
-                                                      .withUserName(username).withCertificateBody(
-                                    SAMPLE_CERT));
+            UploadSigningCertificateResponse response = iam
+                    .uploadSigningCertificate(UploadSigningCertificateRequest.builder()
+                                                                             .userName(username).certificateBody(
+                                    SAMPLE_CERT).build());
 
-            assertEquals(username, response.getCertificate().getUserName());
+            assertEquals(username, response.certificate().userName());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -136,8 +136,9 @@ public class CertsIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
 
         try {
-            iam.uploadSigningCertificate(new UploadSigningCertificateRequest()
-                                                 .withUserName(username).withCertificateBody(EXPIRED_CERT));
+            iam.uploadSigningCertificate(UploadSigningCertificateRequest.builder()
+                                                                        .userName(username).certificateBody(EXPIRED_CERT)
+                                                                        .build());
 
         } finally {
             IAMUtil.deleteTestUsers(username);
@@ -152,26 +153,26 @@ public class CertsIntegrationTest extends IntegrationTestBase {
 
         try {
             for (int i = 0; i < 2; i++) {
-                UploadSigningCertificateResult response = iam
-                        .uploadSigningCertificate(new UploadSigningCertificateRequest()
-                                                          .withUserName(username).withCertificateBody(
-                                        certs[i]));
+                UploadSigningCertificateResponse response = iam
+                        .uploadSigningCertificate(UploadSigningCertificateRequest.builder()
+                                                                                 .userName(username).certificateBody(
+                                        certs[i]).build());
 
-                certId[i] = response.getCertificate().getCertificateId();
+                certId[i] = response.certificate().certificateId();
             }
 
-            ListSigningCertificatesResult listRes = iam
-                    .listSigningCertificates(new ListSigningCertificatesRequest()
-                                                     .withUserName(username));
+            ListSigningCertificatesResponse listRes = iam
+                    .listSigningCertificates(ListSigningCertificatesRequest.builder()
+                                                                           .userName(username).build());
 
-            assertEquals(2, listRes.getCertificates().size());
+            assertEquals(2, listRes.certificates().size());
             assertFalse(listRes.isTruncated());
 
             int matches = 0;
 
-            for (SigningCertificate cert : listRes.getCertificates()) {
+            for (SigningCertificate cert : listRes.certificates()) {
                 for (int i = 0; i < 2; i++) {
-                    if (certId[i].equals(cert.getCertificateId())) {
+                    if (certId[i].equals(cert.certificateId())) {
                         matches |= 1 << i;
                     }
                 }
@@ -193,8 +194,9 @@ public class CertsIntegrationTest extends IntegrationTestBase {
 
         try {
             for (int i = 0; i < 3; i++) {
-                iam.uploadSigningCertificate(new UploadSigningCertificateRequest()
-                                                     .withUserName(username).withCertificateBody(certs[i]));
+                iam.uploadSigningCertificate(UploadSigningCertificateRequest.builder()
+                                                                            .userName(username).certificateBody(certs[i])
+                                                                            .build());
             }
         } finally {
             IAMUtil.deleteTestUsers(username);
@@ -206,24 +208,24 @@ public class CertsIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.createTestUser();
 
         try {
-            UploadSigningCertificateResult response = iam
-                    .uploadSigningCertificate(new UploadSigningCertificateRequest()
-                                                      .withUserName(username).withCertificateBody(
-                                    SAMPLE_CERT));
+            UploadSigningCertificateResponse response = iam
+                    .uploadSigningCertificate(UploadSigningCertificateRequest.builder()
+                                                                             .userName(username).certificateBody(
+                                    SAMPLE_CERT).build());
 
-            String certId = response.getCertificate().getCertificateId();
-            assertEquals("Active", response.getCertificate().getStatus());
+            String certId = response.certificate().certificateId();
+            assertEquals("Active", response.certificate().status());
 
-            iam.updateSigningCertificate(new UpdateSigningCertificateRequest()
-                                                 .withUserName(username).withCertificateId(certId)
-                                                 .withStatus("Inactive"));
+            iam.updateSigningCertificate(UpdateSigningCertificateRequest.builder()
+                                                                        .userName(username).certificateId(certId)
+                                                                        .status("Inactive").build());
 
-            ListSigningCertificatesResult listRes = iam
-                    .listSigningCertificates(new ListSigningCertificatesRequest()
-                                                     .withUserName(username));
+            ListSigningCertificatesResponse listRes = iam
+                    .listSigningCertificates(ListSigningCertificatesRequest.builder()
+                                                                           .userName(username).build());
 
-            assertEquals("Inactive", listRes.getCertificates().iterator()
-                                            .next().getStatus());
+            assertEquals("Inactive", listRes.certificates().iterator()
+                                            .next().status());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());

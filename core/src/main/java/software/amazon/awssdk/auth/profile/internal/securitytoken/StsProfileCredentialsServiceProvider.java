@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.auth.profile.internal.securitytoken;
 
-import java.util.Optional;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentials;
@@ -67,7 +66,7 @@ public class StsProfileCredentialsServiceProvider implements AwsCredentialsProvi
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         return getProfileCredentialsProvider().getCredentials();
     }
 }

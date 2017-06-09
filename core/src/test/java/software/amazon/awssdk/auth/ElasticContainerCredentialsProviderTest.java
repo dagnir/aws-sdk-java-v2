@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import software.amazon.awssdk.AwsSystemSetting;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 
 /**
@@ -54,12 +55,11 @@ public class ElasticContainerCredentialsProviderTest {
     }
 
     /**
-     * Tests that when "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" is not set, returns null.
+     * Tests that when "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" is not set, throws exception.
      */
-    @Test
+    @Test(expected = SdkClientException.class)
     public void testEnvVariableNotSet() {
-        ElasticContainerCredentialsProvider credentialsProvider = new ElasticContainerCredentialsProvider();
-        assertThat(credentialsProvider.getCredentials()).isEmpty();
+        new ElasticContainerCredentialsProvider().getCredentials();
     }
 
     /**
@@ -72,7 +72,7 @@ public class ElasticContainerCredentialsProviderTest {
 
             stubForSuccessResponse();
 
-            AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
+            AwsSessionCredentials credentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
 
             assertThat(credentials).isNotNull();
             assertThat(credentials.accessKeyId()).isEqualTo(ACCESS_KEY_ID);

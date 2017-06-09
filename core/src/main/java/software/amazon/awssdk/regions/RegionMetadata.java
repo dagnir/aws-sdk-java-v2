@@ -15,86 +15,39 @@
 
 package software.amazon.awssdk.regions;
 
-import java.util.List;
-
 /**
- * A collection of metadata about a set of regions and the services they
- * contain.
- *
- * @see RegionUtils
+ * Interface for a region implementation.
  */
-public class RegionMetadata {
-
-    private final RegionMetadataProvider provider;
+public interface RegionMetadata {
 
     /**
-     * Creates a new RegionMetadata object from the given list of regions.
+     * The unique system ID for this region; ex: &quot;us-east-1&quot;.
      *
-     * @param regions the list of regions
+     * @return The unique system ID for this region.
      */
-    public RegionMetadata(final List<Region> regions) {
-        this.provider = new InMemoryRegionsProvider(regions);
-    }
-
-    public RegionMetadata(RegionMetadataProvider provider) {
-        this.provider = provider;
-    }
+    String getName();
 
     /**
-     * Returns an immutable list of all regions known to this region metadata
-     * object, in no particular order.
+     * Returns the domain for this region; ex: &quot;amazonaws.com&quot;.
      *
-     * @return an immutable list of all regions
+     * @return The domain for this region.
      */
-    public List<Region> getRegions() {
-        return provider.getRegions();
-    }
+    String getDomain();
 
     /**
-     * Returns the region with the name given, if it exists. Otherwise, returns
-     * null.
+     * Returns the partition this region is in. I.E. 'aws' or 'aws-cn'
      *
-     * @param name the name of the region to search for
-     * @return the corresponding region, if it exists
+     * @return The partition this region is in.
      */
-    public Region getRegion(final String name) {
-        return provider.getRegion(name);
-    }
+    String getPartition();
 
     /**
-     * Returns a list of the regions that support the service given.
+     * Returns the region metadata pertaining to the given region.
      *
-     * @param service
-     *         The service endpoint prefix which can be retrieved from the
-     *         constant ENDPOINT_PREFIX of the specific service client interface,
-     *         e.g. AmazonEC2.ENDPOINT_PREFIX.
-     * @return the list of regions with support for the given service
+     * @param region The region to get the metadata for.
+     * @return The metadata for that region.
      */
-    public List<Region> getRegionsForService(final String service) {
-        return provider.getRegionsForService(service);
-    }
-
-    /**
-     * Searches through all known regions to find one with any service at the
-     * specified endpoint. If no region is found with a service at that
-     * endpoint, an exception is thrown.
-     *
-     * @param endpoint The endpoint for any service residing in the desired region.
-     * @return The region containing any service running at the specified
-     *     endpoint, otherwise an exception is thrown if no region is found
-     *     with a service at the specified endpoint.
-     * @throws IllegalArgumentException If the given URL is malformed, or if the one of the service
-     *                                  URLs on record is malformed.
-     * @deprecated sdk no longer holds the complete endpoint for every service in the region.
-     *     It now uses the partition metadata to compute the endpoints dynamically for new regions and services.
-     */
-    @Deprecated
-    public Region getRegionByEndpoint(final String endpoint) {
-        return provider.getRegionByEndpoint(endpoint);
-    }
-
-    @Override
-    public String toString() {
-        return provider.toString();
+    static RegionMetadata of(Region region) {
+        return RegionMetadataLoader.getRegionMetadata(region);
     }
 }

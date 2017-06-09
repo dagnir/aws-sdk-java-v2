@@ -21,39 +21,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.junit.Test;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 
 /**
  * Validate the functionality of the Client*Configuration classes
  */
 public class ConfigurationBuilderTest {
-    private static final Class<?>[] CONFIGURATION_CLASSES = {
-            ClientListenerConfiguration.class,
-            ClientMarshallerConfiguration.class,
-            ClientMetricsConfiguration.class,
-            ClientRetryConfiguration.class,
-            ClientSecurityConfiguration.class,
-            ClientTimeoutConfiguration.class,
-    };
-
-    private static final Set<String> IGNORED_METHODS = new HashSet<>(Arrays.stream(ToCopyableBuilder.class.getMethods())
-                                                                             .map(Method::getName)
-                                                                             .collect(Collectors.toList()));
-
     @Test
-    public void configurationClassesAndBuildersHaveExpectedMethods() throws Exception {
-        for (Class<?> configurationClass : CONFIGURATION_CLASSES) {
-            assertConfigurationClassIsValid(configurationClass);
-        }
+    public void overrideConfigurationClassHasExpectedMethods() throws Exception {
+        assertConfigurationClassIsValid(ClientOverrideConfiguration.class);
     }
 
     private void assertConfigurationClassIsValid(Class<?> configurationClass) throws Exception {
@@ -80,50 +61,22 @@ public class ConfigurationBuilderTest {
         Map<String, PropertyDescriptor> builderProperties = Arrays.stream(builderBeanInfo.getPropertyDescriptors())
                 .collect(toMap(PropertyDescriptor::getName, p -> p));
 
-        // Validate method behavior
-        for (Method configMethod : configurationClass.getDeclaredMethods()) {
-            // Don't validate static methods
-            if (Modifier.isStatic(configMethod.getModifiers()) || IGNORED_METHODS.contains(configMethod.getName())) {
-                continue;
-            }
+        // Validate method names
+        for (Field field : configurationClass.getFields()) {
+            String builderPropertyName = builderClass.getSimpleName() + "'s " + field.getName() + " property";
+            PropertyDescriptor builderProperty = builderProperties.get(field.getName());
 
-            // Builders should have bean-style methods for reading and writing properties
-            String builderPropertyName = builderClass.getSimpleName() + "'s " + configMethod.getName() + " property";
-            PropertyDescriptor builderProperty = builderProperties.get(configMethod.getName());
-
+            // Builders should have a bean-style write method for each field
             assertThat(builderProperty).as(builderPropertyName).isNotNull();
-            assertThat(builderProperty.getReadMethod()).as(builderPropertyName + "'s read method").isNotNull();
+            assertThat(builderProperty.getReadMethod()).as(builderPropertyName + "'s read method").isNull();
             assertThat(builderProperty.getWriteMethod()).as(builderPropertyName + "'s write method").isNotNull();
 
-            // Builders should have a fluent read method matching the configuration object
-            Method builderFluentReadMethod = Arrays.stream(builderMethods)
-                    .filter(builderMethod -> matchesSignature(configMethod, builderMethod))
-                    .findAny()
-                    .orElseThrow(() -> new AssertionError(builderClass + " can't read " + configMethod.getName()));
-
-            // Builders should have a fluent write method for each property
-            Method builderFluentWriteMethod = Arrays.stream(builderMethods)
-                    .filter(builderMethod -> matchesSignature(configMethod.getName(), builderProperty, builderMethod))
-                    .findAny()
-                    .orElseThrow(() -> new AssertionError(builderClass + " can't write " + configMethod.getName()));
-
-            // Builder's bean read methods should return a value that can be written to its write methods without
-            // raising an exception
-            Object beanReadValue = builderProperty.getReadMethod().invoke(builder);
-            builderProperty.getWriteMethod().invoke(builder, beanReadValue);
-            builderFluentWriteMethod.invoke(builder, beanReadValue);
-
-            // Builder's should be readable via fluent methods without raising an exception
-            builderFluentReadMethod.invoke(builder);
-
-            // Objects built from the builder should be readable without raising an exception
-            configMethod.invoke(builtObject);
+            // Builders should have a fluent write method for each field
+            Arrays.stream(builderMethods)
+                  .filter(builderMethod -> matchesSignature(field.getName(), builderProperty, builderMethod))
+                  .findAny()
+                  .orElseThrow(() -> new AssertionError(builderClass + " can't write " + field.getName()));
         }
-    }
-
-    private boolean matchesSignature(Method configMethod, Method builderMethod) {
-        return builderMethod.getName().equals(configMethod.getName()) &&
-               Arrays.equals(builderMethod.getParameters(), configMethod.getTypeParameters());
     }
 
     private boolean matchesSignature(String methodName, PropertyDescriptor property, Method builderMethod) {

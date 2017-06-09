@@ -173,10 +173,10 @@ abstract class AddShapes {
         memberModel.setDocumentation(c2jMemberDefinition.getDocumentation());
         memberModel.setDeprecated(c2jMemberDefinition.isDeprecated());
         memberModel
-                .withGetterMethodName(namingStrategy.getGetterMethodName(c2jMemberName))
-                .withSetterMethodName(namingStrategy.getSetterMethodName(c2jMemberName))
-                .withFluentSetterMethodName(namingStrategy.getFluentSetterMethodName(c2jMemberName));
-
+                .withFluentGetterMethodName(namingStrategy.getFluentGetterMethodName(c2jMemberName))
+                .withFluentSetterMethodName(namingStrategy.getFluentSetterMethodName(c2jMemberName))
+                .withBeanStyleGetterMethodName(namingStrategy.getBeanStyleGetterMethodName(c2jMemberName))
+                .withBeanStyleSetterMethodName(namingStrategy.getBeanStyleSetterMethodName(c2jMemberName));
         memberModel.setIdempotencyToken(c2jMemberDefinition.isIdempotencyToken());
 
         // Pass the xmlNameSpace from the member reference

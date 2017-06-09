@@ -26,7 +26,7 @@ import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.auth.policy.actions.SnsActions;
 import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesRequest;
-import software.amazon.awssdk.services.sns.model.GetTopicAttributesResult;
+import software.amazon.awssdk.services.sns.model.GetTopicAttributesResponse;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 
 public class BucketNotificationTestUtils {
@@ -58,9 +58,9 @@ public class BucketNotificationTestUtils {
     }
 
     private static Policy getSnsPolicy(SNSClient sns, String topicArn) {
-        GetTopicAttributesResult getTopicAttributesResult = sns.getTopicAttributes(new GetTopicAttributesRequest(
-                topicArn));
-        String policyString = getTopicAttributesResult.getAttributes().get("Policy");
+        GetTopicAttributesResponse getTopicAttributesResult = sns.getTopicAttributes(GetTopicAttributesRequest.builder()
+                .topicArn(topicArn).build());
+        String policyString = getTopicAttributesResult.attributes().get("Policy");
         return policyString == null ? new Policy() : Policy.fromJson(policyString);
     }
 
@@ -72,7 +72,7 @@ public class BucketNotificationTestUtils {
         Statement s3AccessStatement = createAllowS3AccessToResourcePolicyStatement(bucketName, topicArn,
                                                                                    SnsActions.Publish);
         policy.getStatements().add(s3AccessStatement);
-        sns.setTopicAttributes(new SetTopicAttributesRequest(topicArn, "Policy", policy.toJson()));
+        sns.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(topicArn).attributeName("Policy").attributeValue(policy.toJson()).build());
     }
 
 }

@@ -89,7 +89,7 @@ public class QueryStringSignerTest {
                                                        .withPath("bar")
                                                        .build();
 
-        signer.sign(request, new AnonymousCredentialsProvider().getCredentialsOrThrow());
+        signer.sign(request, new AnonymousCredentialsProvider().getCredentials());
 
         assertNull(request.getParameters().get("Signature"));
     }

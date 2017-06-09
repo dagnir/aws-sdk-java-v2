@@ -22,6 +22,7 @@ import static software.amazon.awssdk.codegen.internal.DocumentationUtils.removeF
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -252,6 +253,9 @@ public class ShapeModel extends DocumentationModel implements HasDeprecation {
     }
 
     public List<MemberModel> getMembers() {
+        if (members == null) {
+            return Collections.emptyList();
+        }
         return members;
     }
 

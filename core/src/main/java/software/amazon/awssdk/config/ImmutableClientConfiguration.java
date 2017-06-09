@@ -31,12 +31,7 @@ import software.amazon.awssdk.utils.Validate;
  */
 @SdkInternalApi
 public abstract class ImmutableClientConfiguration implements ClientConfiguration {
-    private final ClientTimeoutConfiguration timeoutConfiguration;
-    private final ClientMarshallerConfiguration marshallerConfiguration;
-    private final ClientMetricsConfiguration metricsConfiguration;
-    private final ClientSecurityConfiguration securityConfiguration;
-    private final ClientRetryConfiguration retryConfiguration;
-    private final ClientListenerConfiguration listenerConfiguration;
+    private final ClientOverrideConfiguration overrideConfiguration;
     private final AwsCredentialsProvider credentialsProvider;
     private final URI endpoint;
     private final SdkHttpClient sdkHttpClient;
@@ -46,12 +41,7 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
      * Copy the provided client configuration into an immutable version.
      */
     public ImmutableClientConfiguration(ClientConfiguration configuration) {
-        this.timeoutConfiguration = configuration.timeoutConfiguration();
-        this.marshallerConfiguration = configuration.marshallerConfiguration();
-        this.metricsConfiguration = configuration.metricsConfiguration();
-        this.securityConfiguration = configuration.securityConfiguration();
-        this.retryConfiguration = configuration.retryConfiguration();
-        this.listenerConfiguration = configuration.listenerConfiguration();
+        this.overrideConfiguration = configuration.overrideConfiguration();
         this.credentialsProvider = configuration.credentialsProvider();
         this.endpoint = configuration.endpoint();
         this.sdkHttpClient = configuration.httpClient();
@@ -59,14 +49,6 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         validate();
 
         this.legacyConfiguration = initializeLegacyConfiguration();
-    }
-
-    /**
-     * Validate that the provided optional is present, raising an exception if it is not.
-     */
-    protected final <T> T requireField(String field, Optional<T> requiredConfiguration) {
-        return requiredConfiguration.orElseThrow(() -> new IllegalStateException(String.format(
-                "The '%s' must be configured in the client builder.", field)));
     }
 
     /**
@@ -83,43 +65,22 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         // Ensure they have configured something that allows us to derive the endpoint
         Validate.validState(endpoint() != null, "The endpoint could not be determined.");
 
-        requireField("securityConfiguration.signerProvider", securityConfiguration().signerProvider());
+        requireField("overrideConfiguration.advancedOption[SIGNER_PROVIDER]",
+                     overrideConfiguration().advancedOption(AdvancedClientOption.SIGNER_PROVIDER));
+        requireField("overrideConfiguration.gzipEnabled", overrideConfiguration().gzipEnabled());
+        requireField("overrideConfiguration.requestMetricCollector", overrideConfiguration().requestMetricCollector());
+        requireField("overrideConfiguration.advancedOption[USER_AGENT_PREFIX]",
+                     overrideConfiguration().advancedOption(AdvancedClientOption.USER_AGENT_PREFIX));
+        requireField("overrideConfiguration.advancedOption[USER_AGENT_SUFFIX]",
+                     overrideConfiguration().advancedOption(AdvancedClientOption.USER_AGENT_SUFFIX));
+        requireField("overrideConfiguration.retryPolicy", overrideConfiguration().retryPolicy());
         requireField("credentialsProvider", credentialsProvider());
-        requireField("marshallerConfiguration.gzipEnabled", marshallerConfiguration().gzipEnabled());
-        requireField("metricsConfiguration.requestMetricCollector", metricsConfiguration().requestMetricCollector());
-        requireField("metricsConfiguration.userAgentPrefix", metricsConfiguration().userAgentPrefix());
-        requireField("metricsConfiguration.userAgentSuffix", metricsConfiguration().userAgentSuffix());
-        requireField("retryConfiguration.retryPolicy", retryConfiguration().retryPolicy());
+        requireField("endpoint", endpoint());
     }
 
     @Override
-    public ClientTimeoutConfiguration timeoutConfiguration() {
-        return timeoutConfiguration;
-    }
-
-    @Override
-    public ClientMarshallerConfiguration marshallerConfiguration() {
-        return marshallerConfiguration;
-    }
-
-    @Override
-    public ClientMetricsConfiguration metricsConfiguration() {
-        return metricsConfiguration;
-    }
-
-    @Override
-    public ClientSecurityConfiguration securityConfiguration() {
-        return securityConfiguration;
-    }
-
-    @Override
-    public ClientRetryConfiguration retryConfiguration() {
-        return retryConfiguration;
-    }
-
-    @Override
-    public ClientListenerConfiguration listenerConfiguration() {
-        return listenerConfiguration;
+    public ClientOverrideConfiguration overrideConfiguration() {
+        return overrideConfiguration;
     }
 
     @Override
@@ -152,43 +113,36 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
     private LegacyClientConfiguration initializeLegacyConfiguration() {
         LegacyClientConfiguration configuration = new LegacyClientConfiguration();
 
-        copyTimeoutConfiguration(configuration, timeoutConfiguration());
-        copyMarshallerConfiguration(configuration, marshallerConfiguration());
-        copyMetricsConfiguration(configuration, metricsConfiguration());
-        copyRetryConfiguration(configuration, retryConfiguration());
+        copyOverrideConfiguration(configuration, overrideConfiguration());
 
         configuration.setProtocol(schemeToProtocol(endpoint().getScheme()).orElse(Protocol.HTTPS));
 
         return configuration;
     }
 
-    private void copyTimeoutConfiguration(LegacyClientConfiguration configuration,
-                                          ClientTimeoutConfiguration timeoutConfiguration) {
-        timeoutConfiguration.totalExecutionTimeout().ifPresent(d ->
-                                                                       configuration.setClientExecutionTimeout(
-                                                                               Math.toIntExact(d.toMillis())));
-    }
+    private void copyOverrideConfiguration(LegacyClientConfiguration configuration,
+                                          ClientOverrideConfiguration overrideConfiguration) {
+        Optional.ofNullable(overrideConfiguration.totalExecutionTimeout())
+                .ifPresent(d -> configuration.setClientExecutionTimeout(Math.toIntExact(d.toMillis())));
 
-    private void copyMarshallerConfiguration(LegacyClientConfiguration configuration,
-                                             ClientMarshallerConfiguration marshallerConfig) {
-        marshallerConfig.gzipEnabled().ifPresent(configuration::setUseGzip);
-        marshallerConfig.additionalHeaders().forEach((header, values) -> {
+        Optional.ofNullable(overrideConfiguration.gzipEnabled())
+                .ifPresent(configuration::setUseGzip);
+
+        overrideConfiguration.additionalHttpHeaders().forEach((header, values) -> {
             if (values.size() > 1) {
                 throw new IllegalArgumentException("Multiple values under the same header are not supported at this time.");
             }
             values.forEach(value -> configuration.addHeader(header, value));
         });
-    }
 
-    private void copyMetricsConfiguration(LegacyClientConfiguration configuration,
-                                          ClientMetricsConfiguration metricsConfiguration) {
-        metricsConfiguration.userAgentPrefix().ifPresent(configuration::setUserAgentPrefix);
-        metricsConfiguration.userAgentSuffix().ifPresent(configuration::setUserAgentSuffix);
-    }
+        Optional.ofNullable(overrideConfiguration.advancedOption(AdvancedClientOption.USER_AGENT_PREFIX))
+                .ifPresent(configuration::setUserAgentPrefix);
 
-    private void copyRetryConfiguration(LegacyClientConfiguration configuration,
-                                        ClientRetryConfiguration retryConfiguration) {
-        retryConfiguration.retryPolicy().ifPresent(configuration::setRetryPolicy);
+        Optional.ofNullable(overrideConfiguration.advancedOption(AdvancedClientOption.USER_AGENT_SUFFIX))
+                .ifPresent(configuration::setUserAgentSuffix);
+
+        Optional.ofNullable(overrideConfiguration.retryPolicy())
+                .ifPresent(configuration::setRetryPolicy);
     }
 
     private Optional<Protocol> schemeToProtocol(String scheme) {

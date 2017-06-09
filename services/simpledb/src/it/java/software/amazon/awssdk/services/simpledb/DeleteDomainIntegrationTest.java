@@ -34,8 +34,7 @@ public class DeleteDomainIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testDeleteDomainMissingParameterException() {
-        DeleteDomainRequest request = new DeleteDomainRequest();
-
+        DeleteDomainRequest request = DeleteDomainRequest.builder().build();
         try {
             sdb.deleteDomain(request);
             fail("Expected MissingParameterException, but wasn't thrown");

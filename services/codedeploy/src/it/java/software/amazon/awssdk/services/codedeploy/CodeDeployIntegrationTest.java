@@ -29,13 +29,13 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.codedeploy.model.ApplicationInfo;
 import software.amazon.awssdk.services.codedeploy.model.CreateApplicationRequest;
-import software.amazon.awssdk.services.codedeploy.model.CreateApplicationResult;
+import software.amazon.awssdk.services.codedeploy.model.CreateApplicationResponse;
 import software.amazon.awssdk.services.codedeploy.model.CreateDeploymentGroupRequest;
 import software.amazon.awssdk.services.codedeploy.model.DeleteApplicationRequest;
 import software.amazon.awssdk.services.codedeploy.model.GetApplicationRequest;
-import software.amazon.awssdk.services.codedeploy.model.GetApplicationResult;
+import software.amazon.awssdk.services.codedeploy.model.GetApplicationResponse;
 import software.amazon.awssdk.services.codedeploy.model.ListApplicationsRequest;
-import software.amazon.awssdk.services.codedeploy.model.ListApplicationsResult;
+import software.amazon.awssdk.services.codedeploy.model.ListApplicationsResponse;
 
 /**
  * Performs basic integration tests for AWS Code Deploy service.
@@ -64,11 +64,12 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         IntegrationTestBase.setUp();
-        CreateApplicationRequest createRequest = new CreateApplicationRequest()
-                .withApplicationName(APP_NAME);
-        CreateApplicationResult createResult = codeDeploy
+        CreateApplicationRequest createRequest = CreateApplicationRequest.builder()
+                .applicationName(APP_NAME)
+                .build();
+        CreateApplicationResponse createResult = codeDeploy
                 .createApplication(createRequest);
-        applicationId = createResult.getApplicationId();
+        applicationId = createResult.applicationId();
         assertNotNull(applicationId);
     }
 
@@ -78,8 +79,9 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     @AfterClass
     public static void tearDown() {
         if (applicationId != null) {
-            codeDeploy.deleteApplication(new DeleteApplicationRequest()
-                                                 .withApplicationName(APP_NAME));
+            codeDeploy.deleteApplication(DeleteApplicationRequest.builder()
+                    .applicationName(APP_NAME)
+                    .build());
         }
     }
 
@@ -89,8 +91,8 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testListApplication() {
-        ListApplicationsResult listResult = codeDeploy.listApplications(new ListApplicationsRequest());
-        List<String> applicationList = listResult.getApplications();
+        ListApplicationsResponse listResult = codeDeploy.listApplications(ListApplicationsRequest.builder().build());
+        List<String> applicationList = listResult.applications();
         assertTrue(applicationList.size() >= 1);
         assertTrue(applicationList.contains(APP_NAME));
     }
@@ -101,12 +103,13 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
      */
     @Test
     public void testGetApplication() {
-        GetApplicationResult getResult = codeDeploy
-                .getApplication(new GetApplicationRequest()
-                                        .withApplicationName(APP_NAME));
-        ApplicationInfo applicationInfo = getResult.getApplication();
-        assertEquals(applicationId, applicationInfo.getApplicationId());
-        assertEquals(APP_NAME, applicationInfo.getApplicationName());
+        GetApplicationResponse getResult = codeDeploy
+                .getApplication(GetApplicationRequest.builder()
+                        .applicationName(APP_NAME)
+                        .build());
+        ApplicationInfo applicationInfo = getResult.application();
+        assertEquals(applicationId, applicationInfo.applicationId());
+        assertEquals(APP_NAME, applicationInfo.applicationName());
     }
 
     /**
@@ -117,9 +120,9 @@ public class CodeDeployIntegrationTest extends IntegrationTestBase {
     @Test
     public void testCreateDeploymentGroup() {
         try {
-            codeDeploy.createDeploymentGroup(new CreateDeploymentGroupRequest()
-                                                     .withApplicationName(APP_NAME).withDeploymentGroupName(
-                            DEPLOYMENT_GROUP_NAME));
+            codeDeploy.createDeploymentGroup(CreateDeploymentGroupRequest.builder()
+                    .applicationName(APP_NAME)
+                    .deploymentGroupName(DEPLOYMENT_GROUP_NAME).build());
             fail("Create Deployment group should fail as it requires a service role ARN to be specified");
         } catch (Exception ace) {
             assertTrue(ace instanceof AmazonServiceException);

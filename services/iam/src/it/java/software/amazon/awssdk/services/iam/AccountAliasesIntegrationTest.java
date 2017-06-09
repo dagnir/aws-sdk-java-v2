@@ -33,14 +33,14 @@ public class AccountAliasesIntegrationTest extends IntegrationTestBase {
     /** Tests that we can create, list and delete account aliases. */
     @Test
     public void testAccountAliases() throws Exception {
-        iam.createAccountAlias(new CreateAccountAliasRequest(ACCOUNT_ALIAS));
+        iam.createAccountAlias(CreateAccountAliasRequest.builder().accountAlias(ACCOUNT_ALIAS).build());
 
-        List<String> accountAliases = iam.listAccountAliases(new ListAccountAliasesRequest()).getAccountAliases();
+        List<String> accountAliases = iam.listAccountAliases(ListAccountAliasesRequest.builder().build()).accountAliases();
         assertNotNull(accountAliases);
         assertEquals(1, accountAliases.size());
         assertEquals(ACCOUNT_ALIAS, accountAliases.get(0));
 
-        iam.deleteAccountAlias(new DeleteAccountAliasRequest(ACCOUNT_ALIAS));
-        assertTrue(iam.listAccountAliases(new ListAccountAliasesRequest()).getAccountAliases().isEmpty());
+        iam.deleteAccountAlias(DeleteAccountAliasRequest.builder().accountAlias(ACCOUNT_ALIAS).build());
+        assertTrue(iam.listAccountAliases(ListAccountAliasesRequest.builder().build()).accountAliases().isEmpty());
     }
 }

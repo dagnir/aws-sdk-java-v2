@@ -25,13 +25,13 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.handlers.AsyncHandler;
 import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResult;
+import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
-import software.amazon.awssdk.services.sqs.model.DeleteMessageResult;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 /**
  * A buffer to operate on an SQS queue. The buffer batches outbound ( {@code SendMessage},
@@ -76,13 +76,13 @@ class QueueBuffer {
      *
      * @return a Future object that will be notified when the operation is completed; never null
      */
-    public Future<SendMessageResult> sendMessage(SendMessageRequest request,
-                                                 AsyncHandler<SendMessageRequest, SendMessageResult> handler) {
-        QueueBufferCallback<SendMessageRequest, SendMessageResult> callback = null;
+    public Future<SendMessageResponse> sendMessage(SendMessageRequest request,
+                                                 AsyncHandler<SendMessageRequest, SendMessageResponse> handler) {
+        QueueBufferCallback<SendMessageRequest, SendMessageResponse> callback = null;
         if (handler != null) {
-            callback = new QueueBufferCallback<SendMessageRequest, SendMessageResult>(handler, request);
+            callback = new QueueBufferCallback<SendMessageRequest, SendMessageResponse>(handler, request);
         }
-        QueueBufferFuture<SendMessageRequest, SendMessageResult> future = sendBuffer.sendMessage(request, callback);
+        QueueBufferFuture<SendMessageRequest, SendMessageResponse> future = sendBuffer.sendMessage(request, callback);
         future.setBuffer(this);
         return future;
     }
@@ -92,8 +92,8 @@ class QueueBuffer {
      *
      * @return never null
      */
-    public SendMessageResult sendMessageSync(SendMessageRequest request) {
-        Future<SendMessageResult> future = sendMessage(request, null);
+    public SendMessageResponse sendMessageSync(SendMessageRequest request) {
+        Future<SendMessageResponse> future = sendMessage(request, null);
         return waitForFuture(future);
     }
 
@@ -103,14 +103,14 @@ class QueueBuffer {
      * @return a Future object that will be notified when the operation is completed; never null
      */
 
-    public Future<DeleteMessageResult> deleteMessage(DeleteMessageRequest request,
-                                                     AsyncHandler<DeleteMessageRequest, DeleteMessageResult> handler) {
-        QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult> callback = null;
+    public Future<DeleteMessageResponse> deleteMessage(DeleteMessageRequest request,
+                                                     AsyncHandler<DeleteMessageRequest, DeleteMessageResponse> handler) {
+        QueueBufferCallback<DeleteMessageRequest, DeleteMessageResponse> callback = null;
         if (handler != null) {
-            callback = new QueueBufferCallback<DeleteMessageRequest, DeleteMessageResult>(handler, request);
+            callback = new QueueBufferCallback<DeleteMessageRequest, DeleteMessageResponse>(handler, request);
         }
 
-        QueueBufferFuture<DeleteMessageRequest, DeleteMessageResult> future = sendBuffer.deleteMessage(request, callback);
+        QueueBufferFuture<DeleteMessageRequest, DeleteMessageResponse> future = sendBuffer.deleteMessage(request, callback);
         future.setBuffer(this);
         return future;
     }
@@ -120,8 +120,8 @@ class QueueBuffer {
      *
      * @return never null
      */
-    public DeleteMessageResult deleteMessageSync(DeleteMessageRequest request) {
-        Future<DeleteMessageResult> future = deleteMessage(request, null);
+    public DeleteMessageResponse deleteMessageSync(DeleteMessageRequest request) {
+        Future<DeleteMessageResponse> future = deleteMessage(request, null);
         return waitForFuture(future);
     }
 
@@ -131,15 +131,15 @@ class QueueBuffer {
      * @return a Future object that will be notified when the operation is completed; never null
      */
 
-    public Future<ChangeMessageVisibilityResult>
+    public Future<ChangeMessageVisibilityResponse>
             changeMessageVisibility(ChangeMessageVisibilityRequest request,
-                                    AsyncHandler<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> handler) {
-        QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> callback = null;
+                                    AsyncHandler<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> handler) {
+        QueueBufferCallback<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> callback = null;
         if (handler != null) {
             callback = new QueueBufferCallback<>(handler, request);
         }
 
-        QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResult> future =
+        QueueBufferFuture<ChangeMessageVisibilityRequest, ChangeMessageVisibilityResponse> future =
                 sendBuffer.changeMessageVisibility(request, callback);
         future.setBuffer(this);
         return future;
@@ -149,8 +149,8 @@ class QueueBuffer {
      * Changes visibility of a message in SQS. Does not return until a confirmation from SQS has
      * been received.
      */
-    public ChangeMessageVisibilityResult changeMessageVisibilitySync(ChangeMessageVisibilityRequest request) {
-        Future<ChangeMessageVisibilityResult> future = sendBuffer.changeMessageVisibility(request, null);
+    public ChangeMessageVisibilityResponse changeMessageVisibilitySync(ChangeMessageVisibilityRequest request) {
+        Future<ChangeMessageVisibilityResponse> future = sendBuffer.changeMessageVisibility(request, null);
         return waitForFuture(future);
     }
 
@@ -160,15 +160,15 @@ class QueueBuffer {
      * @return a Future object that will be notified when the operation is completed; never null;
      */
 
-    public Future<ReceiveMessageResult> receiveMessage(ReceiveMessageRequest rq,
-                                                       AsyncHandler<ReceiveMessageRequest, ReceiveMessageResult> handler) {
+    public Future<ReceiveMessageResponse> receiveMessage(ReceiveMessageRequest rq,
+                                                       AsyncHandler<ReceiveMessageRequest, ReceiveMessageResponse> handler) {
         if (canBeRetrievedFromQueueBuffer(rq)) {
-            QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult> callback = null;
+            QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResponse> callback = null;
             if (handler != null) {
-                callback = new QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult>(handler, rq);
+                callback = new QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResponse>(handler, rq);
             }
 
-            QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult> future = receiveBuffer.receiveMessageAsync(
+            QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResponse> future = receiveBuffer.receiveMessageAsync(
                     rq, callback);
             future.setBuffer(this);
             return future;
@@ -184,8 +184,8 @@ class QueueBuffer {
      *
      * @return never null
      */
-    public ReceiveMessageResult receiveMessageSync(ReceiveMessageRequest rq) {
-        Future<ReceiveMessageResult> future = receiveMessage(rq, null);
+    public ReceiveMessageResponse receiveMessageSync(ReceiveMessageRequest rq) {
+        Future<ReceiveMessageResponse> future = receiveMessage(rq, null);
         return waitForFuture(future);
     }
 
@@ -222,21 +222,21 @@ class QueueBuffer {
      */
     private boolean canBeRetrievedFromQueueBuffer(ReceiveMessageRequest rq) {
         return !hasRequestedQueueAttributes(rq) && !hasRequestedMessageAttributes(rq) && isBufferingEnabled()
-               && (rq.getVisibilityTimeout() == null);
+               && (rq.visibilityTimeout() == null);
     }
 
     /**
      * @return True if request has been configured to return queue attributes. False otherwise
      */
     private boolean hasRequestedQueueAttributes(ReceiveMessageRequest rq) {
-        return rq.getAttributeNames() != null && !rq.getAttributeNames().isEmpty();
+        return rq.attributeNames() != null && !rq.attributeNames().isEmpty();
     }
 
     /**
      * @return True if request has been configured to return message attributes. False otherwise
      */
     private boolean hasRequestedMessageAttributes(ReceiveMessageRequest rq) {
-        return rq.getMessageAttributeNames() != null && !rq.getMessageAttributeNames().isEmpty();
+        return rq.messageAttributeNames() != null && !rq.messageAttributeNames().isEmpty();
     }
 
     /**

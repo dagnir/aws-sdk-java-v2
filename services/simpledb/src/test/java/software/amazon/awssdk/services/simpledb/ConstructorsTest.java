@@ -16,6 +16,7 @@
 package software.amazon.awssdk.services.simpledb;
 
 import org.junit.Test;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.simpledb.model.BatchPutAttributesRequest;
 import software.amazon.awssdk.services.simpledb.model.CreateDomainRequest;
 import software.amazon.awssdk.services.simpledb.model.DeleteAttributesRequest;
@@ -35,17 +36,18 @@ import software.amazon.awssdk.services.simpledb.model.SelectRequest;
  * A more automated solution for detecting backwards incompatible changes would be a lot better,
  * especially considering all the Coral models we don't own.
  */
+@ReviewBeforeRelease("Pending simple methods story")
 public class ConstructorsTest {
 
-    @Test
-    public void testConstructors() {
-        new BatchPutAttributesRequest(null, null);
-        new CreateDomainRequest(null);
-        new DeleteAttributesRequest(null, null);
-        new DeleteDomainRequest(null);
-        new DomainMetadataRequest(null);
-        new GetAttributesRequest(null, null);
-        new PutAttributesRequest(null, null, null);
-        new SelectRequest(null);
-    }
+//    @Test
+//    public void testConstructors() {
+//        new BatchPutAttributesRequest(null, null);
+//        new CreateDomainRequest(null);
+//        new DeleteAttributesRequest(null, null);
+//        new DeleteDomainRequest(null);
+//        new DomainMetadataRequest(null);
+//        new GetAttributesRequest(null, null);
+//        new PutAttributesRequest(null, null, null);
+//        new SelectRequest(null);
+//    }
 }

@@ -22,11 +22,11 @@ import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.storagegateway.model.DeleteGatewayRequest;
 import software.amazon.awssdk.services.storagegateway.model.InvalidGatewayRequestException;
 import software.amazon.awssdk.services.storagegateway.model.ListGatewaysRequest;
-import software.amazon.awssdk.services.storagegateway.model.ListGatewaysResult;
+import software.amazon.awssdk.services.storagegateway.model.ListGatewaysResponse;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -40,24 +40,24 @@ public class ServiceIntegrationTest extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
-        sg = StorageGatewayClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Regions.US_EAST_1.getName()).build();
+        sg = StorageGatewayClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.US_EAST_1).build();
     }
 
     @Test
     public void testListGateways() {
-        ListGatewaysResult listGateways = sg.listGateways(new ListGatewaysRequest());
+        ListGatewaysResponse listGateways = sg.listGateways(ListGatewaysRequest.builder().build());
         assertNotNull(listGateways);
-        assertThat(listGateways.getGateways().size(), greaterThanOrEqualTo(0));
+        assertThat(listGateways.gateways().size(), greaterThanOrEqualTo(0));
     }
 
     @Test(expected = InvalidGatewayRequestException.class)
     public void deleteGateway_InvalidArn_ThrowsException() {
-        sg.deleteGateway(new DeleteGatewayRequest().withGatewayARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+        sg.deleteGateway(DeleteGatewayRequest.builder().gatewayARN("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").build());
     }
 
     @Test(expected = AmazonServiceException.class)
     public void deleteGateway_NullArn_ThrowsAmazonServiceException() {
-        sg.deleteGateway(new DeleteGatewayRequest());
+        sg.deleteGateway(DeleteGatewayRequest.builder().build());
 
     }
 

@@ -23,6 +23,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
@@ -143,8 +145,37 @@ public class SdkStructuredIonFactoryTest {
     private static class InvalidParameterException extends AmazonServiceException {
         private static final long serialVersionUID = 0;
 
-        public InvalidParameterException(String errorMessage) {
-            super(errorMessage);
+        public InvalidParameterException(BeanStyleBuilder builder) {
+            super(builder.message);
+        }
+
+        public static Class<?> beanStyleBuilderClass() {
+            return BeanStyleBuilder.class;
+        }
+
+        public interface Builder {
+            Builder message(String message);
+            InvalidParameterException build();
+        }
+
+        private static class BeanStyleBuilder implements Builder {
+            private String message;
+
+            @Override
+            public Builder message(String message) {
+                this.message = message;
+                return this;
+            }
+
+            @JsonProperty("ErrorMessage")
+            public void setMessage(String message) {
+                this.message = message;
+            }
+
+            @Override
+            public InvalidParameterException build() {
+                return new InvalidParameterException(this);
+            }
         }
     }
 }

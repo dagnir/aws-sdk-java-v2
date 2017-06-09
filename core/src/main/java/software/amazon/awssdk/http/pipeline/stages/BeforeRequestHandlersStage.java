@@ -30,7 +30,7 @@ public class BeforeRequestHandlersStage implements RequestToRequestPipeline {
 
     @Override
     public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
-        AwsCredentials credentials = context.credentialsProvider().getCredentialsOrThrow();
+        AwsCredentials credentials = context.credentialsProvider().getCredentials();
         request.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, credentials);
         // Apply any additional service specific request handlers that need to be run
         for (RequestHandler2 requestHandler2 : context.requestHandler2s()) {

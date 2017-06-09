@@ -23,7 +23,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.apache.internal.ApacheHttpRequestConfig;
 import software.amazon.awssdk.http.apache.internal.Defaults;
 import software.amazon.awssdk.http.apache.internal.SdkHttpRequestExecutor;
@@ -34,6 +33,7 @@ import software.amazon.awssdk.http.apache.internal.impl.ApacheConnectionManagerF
 import software.amazon.awssdk.http.apache.internal.impl.ApacheSdkClient;
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
 @SdkInternalApi
 class ApacheHttpClientFactory {
@@ -43,13 +43,13 @@ class ApacheHttpClientFactory {
     private final ApacheConnectionManagerFactory cmFactory = new ApacheConnectionManagerFactory();
 
     public SdkHttpClient create(ApacheSdkHttpClientFactory configuration,
-                                SdkHttpConfigurationOptions resolvedOptions,
+                                AttributeMap resolvedOptions,
                                 ApacheHttpRequestConfig requestConfig) {
         return new ApacheHttpClient(createClient(configuration, resolvedOptions), requestConfig, resolvedOptions);
     }
 
     private ConnectionManagerAwareHttpClient createClient(ApacheSdkHttpClientFactory configuration,
-                                                          SdkHttpConfigurationOptions standardOptions) {
+                                                          AttributeMap standardOptions) {
         final HttpClientBuilder builder = HttpClients.custom();
         // Note that it is important we register the original connection manager with the
         // IdleConnectionReaper as it's required for the successful deregistration of managers
@@ -78,12 +78,11 @@ class ApacheHttpClientFactory {
                                 ProxyConfiguration proxyConfiguration) {
         if (isProxyEnabled(proxyConfiguration)) {
 
-            LOG.info("Configuring Proxy. Proxy Host: " + proxyConfiguration.proxyHost() + " " +
-                     "Proxy Port: " + proxyConfiguration.proxyPort());
+            LOG.info("Configuring Proxy. Proxy Host: " + proxyConfiguration.endpoint());
 
-            builder.setRoutePlanner(new SdkProxyRoutePlanner(
-                    proxyConfiguration.proxyHost(), proxyConfiguration.proxyPort(),
-                    proxyConfiguration.nonProxyHosts()));
+            builder.setRoutePlanner(new SdkProxyRoutePlanner(proxyConfiguration.endpoint().getHost(),
+                                                             proxyConfiguration.endpoint().getPort(),
+                                                             proxyConfiguration.nonProxyHosts()));
 
             if (isAuthenticatedProxy(proxyConfiguration)) {
                 builder.setDefaultCredentialsProvider(ApacheUtils.newProxyCredentialsProvider(proxyConfiguration));
@@ -92,7 +91,7 @@ class ApacheHttpClientFactory {
     }
 
     private ConnectionKeepAliveStrategy buildKeepAliveStrategy(ApacheSdkHttpClientFactory configuration) {
-        final long maxIdle = configuration.maxIdleConnectionTime().orElse(Defaults.MAX_IDLE_CONNECTION_TIME).toMillis();
+        final long maxIdle = configuration.connectionMaxIdleTime().orElse(Defaults.MAX_IDLE_CONNECTION_TIME).toMillis();
         return maxIdle > 0 ? new SdkConnectionKeepAliveStrategy(maxIdle) : null;
     }
 
@@ -101,7 +100,9 @@ class ApacheHttpClientFactory {
     }
 
     private boolean isProxyEnabled(ProxyConfiguration proxyConfiguration) {
-        return proxyConfiguration.proxyHost() != null && proxyConfiguration.proxyPort() > 0;
+        return proxyConfiguration.endpoint() != null
+               && proxyConfiguration.endpoint().getHost() != null
+               && proxyConfiguration.endpoint().getPort() > 0;
     }
 }
 

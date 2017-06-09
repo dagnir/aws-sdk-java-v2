@@ -22,13 +22,13 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBAttribute;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBHashKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapperConfig.SaveBehavior;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBRangeKey;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBTable;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbAttribute;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbHashKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfig.SaveBehavior;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbRangeKey;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbTable;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
@@ -42,13 +42,13 @@ import utils.test.util.DynamoDBIntegrationTestBase;
 
 public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
 
-    protected static final DynamoDBMapperConfig defaultConfig = new DynamoDBMapperConfig(
+    protected static final DynamoDbMapperConfig defaultConfig = new DynamoDbMapperConfig(
             SaveBehavior.UPDATE);
-    protected static final DynamoDBMapperConfig updateSkipNullConfig = new DynamoDBMapperConfig(
+    protected static final DynamoDbMapperConfig updateSkipNullConfig = new DynamoDbMapperConfig(
             SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES);
-    protected static final DynamoDBMapperConfig appendSetConfig = new DynamoDBMapperConfig(
+    protected static final DynamoDbMapperConfig appendSetConfig = new DynamoDbMapperConfig(
             SaveBehavior.APPEND_SET);
-    protected static final DynamoDBMapperConfig clobberConfig = new DynamoDBMapperConfig(
+    protected static final DynamoDbMapperConfig clobberConfig = new DynamoDbMapperConfig(
             SaveBehavior.CLOBBER);
     protected static final String tableName = "aws-java-sdk-dynamodb-mapper-save-config-test";
     protected static final String hashKeyName = "hashKey";
@@ -66,16 +66,16 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
     /**
      * Provisioned Throughput for the test table created in Amazon DynamoDB
      */
-    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = new ProvisionedThroughput()
-            .withReadCapacityUnits(READ_CAPACITY).withWriteCapacityUnits(
-                    WRITE_CAPACITY);
-    protected static DynamoDBMapper dynamoMapper;
+    protected static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = ProvisionedThroughput.builder()
+            .readCapacityUnits(READ_CAPACITY).writeCapacityUnits(
+                    WRITE_CAPACITY).build();
+    protected static DynamoDbMapper dynamoMapper;
 
     @BeforeClass
     public static void setUp() throws Exception {
         setUpCredentials();
         dynamo = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
-        dynamoMapper = new DynamoDBMapper(dynamo);
+        dynamoMapper = new DynamoDbMapper(dynamo);
 
         createTestTable(DEFAULT_PROVISIONED_THROUGHPUT);
         TableUtils.waitUntilActive(dynamo, tableName);
@@ -83,7 +83,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
 
     @AfterClass
     public static void tearDown() {
-        dynamo.deleteTable(new DeleteTableRequest(tableName));
+        dynamo.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
     }
 
     /**
@@ -91,42 +91,43 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
      */
     protected static void createTestTable(
             ProvisionedThroughput provisionedThroughput) {
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(tableName)
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(
-                                hashKeyName).withKeyType(
-                                KeyType.HASH))
-                .withKeySchema(
-                        new KeySchemaElement().withAttributeName(
-                                rangeKeyName).withKeyType(
-                                KeyType.RANGE))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                hashKeyName).withAttributeType(
-                                ScalarAttributeType.S))
-                .withAttributeDefinitions(
-                        new AttributeDefinition().withAttributeName(
-                                rangeKeyName).withAttributeType(
-                                ScalarAttributeType.N));
-        createTableRequest.setProvisionedThroughput(provisionedThroughput);
+        CreateTableRequest createTableRequest = CreateTableRequest.builder()
+                .tableName(tableName)
+                .keySchema(
+                        KeySchemaElement.builder().attributeName(
+                                hashKeyName).keyType(
+                                KeyType.HASH).build())
+                .keySchema(
+                        KeySchemaElement.builder().attributeName(
+                                rangeKeyName).keyType(
+                                KeyType.RANGE).build())
+                .attributeDefinitions(
+                        AttributeDefinition.builder().attributeName(
+                                hashKeyName).attributeType(
+                                ScalarAttributeType.S).build())
+                .attributeDefinitions(
+                        AttributeDefinition.builder().attributeName(
+                                rangeKeyName).attributeType(
+                                ScalarAttributeType.N).build())
+                .provisionedThroughput(provisionedThroughput)
+                .build();
 
         TableDescription createdTableDescription = dynamo.createTable(
-                createTableRequest).getTableDescription();
+                createTableRequest).tableDescription();
         System.out.println("Created Table: " + createdTableDescription);
-        assertEquals(tableName, createdTableDescription.getTableName());
-        assertNotNull(createdTableDescription.getTableStatus());
+        assertEquals(tableName, createdTableDescription.tableName());
+        assertNotNull(createdTableDescription.tableStatus());
         assertEquals(hashKeyName, createdTableDescription
-                .getKeySchema().get(0).getAttributeName());
+                .keySchema().get(0).attributeName());
         assertEquals(KeyType.HASH.toString(), createdTableDescription
-                .getKeySchema().get(0).getKeyType());
+                .keySchema().get(0).keyType());
         assertEquals(rangeKeyName, createdTableDescription
-                .getKeySchema().get(1).getAttributeName());
+                .keySchema().get(1).attributeName());
         assertEquals(KeyType.RANGE.toString(), createdTableDescription
-                .getKeySchema().get(1).getKeyType());
+                .keySchema().get(1).keyType());
     }
 
-    @DynamoDBTable(tableName = tableName)
+    @DynamoDbTable(tableName = tableName)
     public static class TestItem {
 
         private String hashKey;
@@ -134,7 +135,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
         private String nonKeyAttribute;
         private Set<String> stringSetAttribute;
 
-        @DynamoDBHashKey(attributeName = hashKeyName)
+        @DynamoDbHashKey(attributeName = hashKeyName)
         public String getHashKey() {
             return hashKey;
         }
@@ -143,7 +144,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
             this.hashKey = hashKey;
         }
 
-        @DynamoDBRangeKey(attributeName = rangeKeyName)
+        @DynamoDbRangeKey(attributeName = rangeKeyName)
         public Long getRangeKey() {
             return rangeKey;
         }
@@ -152,7 +153,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
             this.rangeKey = rangeKey;
         }
 
-        @DynamoDBAttribute(attributeName = nonKeyAttributeName)
+        @DynamoDbAttribute(attributeName = nonKeyAttributeName)
         public String getNonKeyAttribute() {
             return nonKeyAttribute;
         }
@@ -161,7 +162,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
             this.nonKeyAttribute = nonKeyAttribute;
         }
 
-        @DynamoDBAttribute(attributeName = stringSetAttributeName)
+        @DynamoDbAttribute(attributeName = stringSetAttributeName)
         public Set<String> getStringSetAttribute() {
             return stringSetAttribute;
         }
@@ -172,14 +173,14 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
 
     }
 
-    @DynamoDBTable(tableName = tableName)
+    @DynamoDbTable(tableName = tableName)
     public static class TestAppendToScalarItem {
 
         private String hashKey;
         private Long rangeKey;
         private Set<String> fakeStringSetAttribute;
 
-        @DynamoDBHashKey(attributeName = hashKeyName)
+        @DynamoDbHashKey(attributeName = hashKeyName)
         public String getHashKey() {
             return hashKey;
         }
@@ -188,7 +189,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
             this.hashKey = hashKey;
         }
 
-        @DynamoDBRangeKey(attributeName = rangeKeyName)
+        @DynamoDbRangeKey(attributeName = rangeKeyName)
         public Long getRangeKey() {
             return rangeKey;
         }
@@ -197,7 +198,7 @@ public class MapperSaveConfigTestBase extends DynamoDBIntegrationTestBase {
             this.rangeKey = rangeKey;
         }
 
-        @DynamoDBAttribute(attributeName = nonKeyAttributeName)
+        @DynamoDbAttribute(attributeName = nonKeyAttributeName)
         public Set<String> getFakeStringSetAttribute() {
             return fakeStringSetAttribute;
         }

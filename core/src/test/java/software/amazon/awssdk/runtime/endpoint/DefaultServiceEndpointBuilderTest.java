@@ -18,44 +18,28 @@ package software.amazon.awssdk.runtime.endpoint;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import software.amazon.awssdk.regions.CustomRegionFactory;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.Regions;
 
 public class DefaultServiceEndpointBuilderTest {
 
     @Test
     public void getServiceEndpoint_S3StandardRegion_HttpsProtocol() throws Exception {
         DefaultServiceEndpointBuilder endpointBuilder = new DefaultServiceEndpointBuilder("s3", "https")
-                .withRegion(Region.getRegion(Regions.US_EAST_1));
+                .withRegion(Region.US_EAST_1);
         assertEquals("https://s3.amazonaws.com", endpointBuilder.getServiceEndpoint().toString());
     }
 
     @Test
     public void getServiceEndpoint_S3StandardRegion_HttpProtocol() throws Exception {
         DefaultServiceEndpointBuilder endpointBuilder = new DefaultServiceEndpointBuilder("s3", "http")
-                .withRegion(Region.getRegion(Regions.US_EAST_1));
+                .withRegion(Region.US_EAST_1);
         assertEquals("http://s3.amazonaws.com", endpointBuilder.getServiceEndpoint().toString());
     }
 
     @Test
     public void getServiceEndpoint_S3NonStandardRegion_HttpProtocol() throws Exception {
         DefaultServiceEndpointBuilder endpointBuilder = new DefaultServiceEndpointBuilder("s3", "http")
-                .withRegion(Region.getRegion(Regions.EU_CENTRAL_1));
+                .withRegion(Region.EU_CENTRAL_1);
         assertEquals("http://s3.eu-central-1.amazonaws.com", endpointBuilder.getServiceEndpoint().toString());
-    }
-
-    @Test
-    public void getServiceEndpoint_CustomRegion_HttpProtocol() {
-        DefaultServiceEndpointBuilder endpointBuilder = new DefaultServiceEndpointBuilder("s3", "http")
-                .withRegion(CustomRegionFactory.getCustomRegion("test-region", "test.domain"));
-        assertEquals("http://s3.test-region.test.domain", endpointBuilder.getServiceEndpoint().toString());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void getServiceEndpoint_CustomRegion_InvalidEndpoint() {
-        DefaultServiceEndpointBuilder endpointBuilder = new DefaultServiceEndpointBuilder("s3", "http")
-                .withRegion(CustomRegionFactory.getCustomRegion("test-region", "\\invalid.domain"));
-        endpointBuilder.getServiceEndpoint();
     }
 }

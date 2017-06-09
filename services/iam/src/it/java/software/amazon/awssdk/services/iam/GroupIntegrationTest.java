@@ -31,10 +31,10 @@ import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.EntityAlreadyExistsException;
 import software.amazon.awssdk.services.iam.model.GetGroupRequest;
-import software.amazon.awssdk.services.iam.model.GetGroupResult;
+import software.amazon.awssdk.services.iam.model.GetGroupResponse;
 import software.amazon.awssdk.services.iam.model.Group;
 import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
-import software.amazon.awssdk.services.iam.model.ListGroupsResult;
+import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
 import software.amazon.awssdk.services.iam.model.User;
@@ -60,15 +60,15 @@ public class GroupIntegrationTest extends IntegrationTestBase {
         String groupname = UUID.randomUUID().toString().replace('-', '0');
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname));
-            GetGroupResult response = iam.getGroup(new GetGroupRequest()
-                                                           .withGroupName(groupname));
-            assertEquals(0, response.getUsers().size());
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname).build());
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
+                                                                  .groupName(groupname).build());
+            assertEquals(0, response.users().size());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname).build());
         }
     }
 
@@ -79,39 +79,39 @@ public class GroupIntegrationTest extends IntegrationTestBase {
                 .uniqueName();
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username1)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username2)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username3)
-                                                  .withPath(IAMUtil.TEST_PATH));
+            iam.createUser(CreateUserRequest.builder().userName(username1)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username2)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username3)
+                                            .path(IAMUtil.TEST_PATH).build());
 
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname)
+                                              .path(IAMUtil.TEST_PATH).build());
 
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username1));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username2));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username3));
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username1).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username2).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username3).build());
 
-            GetGroupResult response = iam.getGroup(new GetGroupRequest()
-                                                           .withGroupName(groupname));
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
+                                                                  .groupName(groupname).build());
 
-            assertEquals(3, response.getUsers().size());
+            assertEquals(3, response.users().size());
             assertFalse(response.isTruncated());
 
             int matches = 0;
 
-            for (User u : response.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : response.users()) {
+                if (u.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     matches |= 2;
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     matches |= 4;
                 }
             }
@@ -121,16 +121,16 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username1));
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username2));
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username3));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username1));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username2));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username3));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname));
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username1).build());
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username2).build());
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username3).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username1).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username2).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username3).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname).build());
         }
     }
 
@@ -141,46 +141,46 @@ public class GroupIntegrationTest extends IntegrationTestBase {
                 .uniqueName();
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username1)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username2)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username3)
-                                                  .withPath(IAMUtil.TEST_PATH));
+            iam.createUser(CreateUserRequest.builder().userName(username1)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username2)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username3)
+                                            .path(IAMUtil.TEST_PATH).build());
 
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname)
+                                              .path(IAMUtil.TEST_PATH).build());
 
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username1));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username2));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username3));
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username1).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username2).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username3).build());
 
-            GetGroupResult response = iam.getGroup(new GetGroupRequest()
-                                                           .withGroupName(groupname));
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
+                                                                  .groupName(groupname).build());
 
-            assertEquals(3, response.getUsers().size());
+            assertEquals(3, response.users().size());
 
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username2));
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username2).build());
 
-            response = iam.getGroup(new GetGroupRequest()
-                                            .withGroupName(groupname));
+            response = iam.getGroup(GetGroupRequest.builder()
+                                                   .groupName(groupname).build());
 
-            assertEquals(2, response.getUsers().size());
+            assertEquals(2, response.users().size());
 
             int matches = 0;
 
-            for (User u : response.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : response.users()) {
+                if (u.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     fail();
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     matches |= 4;
                 }
             }
@@ -191,14 +191,14 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username1));
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username3));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username1));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username2));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username3));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname));
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username1).build());
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username3).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username1).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username2).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username3).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname).build());
         }
     }
 
@@ -209,69 +209,69 @@ public class GroupIntegrationTest extends IntegrationTestBase {
                 .uniqueName(), groupname = IAMUtil.uniqueName();
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username1)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username2)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username3)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createUser(new CreateUserRequest().withUserName(username4)
-                                                  .withPath(IAMUtil.TEST_PATH));
+            iam.createUser(CreateUserRequest.builder().userName(username1)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username2)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username3)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createUser(CreateUserRequest.builder().userName(username4)
+                                            .path(IAMUtil.TEST_PATH).build());
 
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname)
+                                              .path(IAMUtil.TEST_PATH).build());
 
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username1));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username2));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username3));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    groupname).withUserName(username4));
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username1).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username2).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username3).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    groupname).userName(username4).build());
 
-            GetGroupResult response = iam.getGroup(new GetGroupRequest()
-                                                           .withGroupName(groupname).withMaxItems(2));
+            GetGroupResponse response = iam.getGroup(GetGroupRequest.builder()
+                                                                  .groupName(groupname).maxItems(2).build());
 
-            assertEquals(2, response.getUsers().size());
+            assertEquals(2, response.users().size());
             assertTrue(response.isTruncated());
 
-            String marker = response.getMarker();
+            String marker = response.marker();
 
             int matches = 0;
 
-            for (User u : response.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : response.users()) {
+                if (u.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     matches |= 2;
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     matches |= 4;
                 }
-                if (u.getUserName().equals(username4)) {
+                if (u.userName().equals(username4)) {
                     matches |= 8;
                 }
             }
 
-            response = iam.getGroup(new GetGroupRequest().withMarker(marker)
-                                                         .withGroupName(groupname));
+            response = iam.getGroup(GetGroupRequest.builder().marker(marker)
+                                                   .groupName(groupname).build());
 
-            assertEquals(2, response.getUsers().size());
+            assertEquals(2, response.users().size());
             assertFalse(response.isTruncated());
 
-            for (User u : response.getUsers()) {
-                if (u.getUserName().equals(username1)) {
+            for (User u : response.users()) {
+                if (u.userName().equals(username1)) {
                     matches |= 1;
                 }
-                if (u.getUserName().equals(username2)) {
+                if (u.userName().equals(username2)) {
                     matches |= 2;
                 }
-                if (u.getUserName().equals(username3)) {
+                if (u.userName().equals(username3)) {
                     matches |= 4;
                 }
-                if (u.getUserName().equals(username4)) {
+                if (u.userName().equals(username4)) {
                     matches |= 8;
                 }
             }
@@ -281,19 +281,19 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username1));
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username2));
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username3));
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(groupname).withUserName(username4));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username1));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username2));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username3));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username4));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname));
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username1).build());
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username2).build());
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username3).build());
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(groupname).userName(username4).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username1).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username2).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username3).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username4).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname).build());
         }
     }
 
@@ -306,53 +306,53 @@ public class GroupIntegrationTest extends IntegrationTestBase {
         String pathA = IAMUtil.makePath("A"), pathB = IAMUtil.makePath("B");
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname1)
-                                                    .withPath(pathA));
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname2)
-                                                    .withPath(pathA));
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname3)
-                                                    .withPath(pathB));
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname4)
-                                                    .withPath(pathB));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname1)
+                                              .path(pathA).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname2)
+                                              .path(pathA).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname3)
+                                              .path(pathB).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname4)
+                                              .path(pathB).build());
 
-            ListGroupsResult response = iam.listGroups(new ListGroupsRequest()
-                                                               .withPathPrefix(pathA));
+            ListGroupsResponse response = iam.listGroups(ListGroupsRequest.builder()
+                                                                        .pathPrefix(pathA).build());
 
-            assertEquals(2, response.getGroups().size());
+            assertEquals(2, response.groups().size());
 
             int matches = 0;
 
-            for (Group g : response.getGroups()) {
-                if (g.getGroupName().equals(groupname1)) {
+            for (Group g : response.groups()) {
+                if (g.groupName().equals(groupname1)) {
                     matches |= 1;
                 }
-                if (g.getGroupName().equals(groupname2)) {
+                if (g.groupName().equals(groupname2)) {
                     matches |= 2;
                 }
-                if (g.getGroupName().equals(groupname3)) {
+                if (g.groupName().equals(groupname3)) {
                     fail();
                 }
-                if (g.getGroupName().equals(groupname4)) {
+                if (g.groupName().equals(groupname4)) {
                     fail();
                 }
             }
 
-            response = iam.listGroups(new ListGroupsRequest()
-                                              .withPathPrefix(pathB));
+            response = iam.listGroups(ListGroupsRequest.builder()
+                                                       .pathPrefix(pathB).build());
 
-            assertEquals(2, response.getGroups().size());
+            assertEquals(2, response.groups().size());
 
-            for (Group g : response.getGroups()) {
-                if (g.getGroupName().equals(groupname1)) {
+            for (Group g : response.groups()) {
+                if (g.groupName().equals(groupname1)) {
                     fail();
                 }
-                if (g.getGroupName().equals(groupname2)) {
+                if (g.groupName().equals(groupname2)) {
                     fail();
                 }
-                if (g.getGroupName().equals(groupname3)) {
+                if (g.groupName().equals(groupname3)) {
                     matches |= 4;
                 }
-                if (g.getGroupName().equals(groupname4)) {
+                if (g.groupName().equals(groupname4)) {
                     matches |= 8;
                 }
             }
@@ -363,10 +363,10 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname1));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname2));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname3));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname4));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname1).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname2).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname3).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname4).build());
         }
     }
 
@@ -377,57 +377,57 @@ public class GroupIntegrationTest extends IntegrationTestBase {
                 .uniqueName();
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname1)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname2)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname3)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.createGroup(new CreateGroupRequest().withGroupName(groupname4)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname1)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname2)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname3)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(groupname4)
+                                              .path(IAMUtil.TEST_PATH).build());
 
-            ListGroupsResult response = iam.listGroups(new ListGroupsRequest()
-                                                               .withMaxItems(2).withPathPrefix(IAMUtil.TEST_PATH));
+            ListGroupsResponse response = iam.listGroups(ListGroupsRequest.builder()
+                                                                        .maxItems(2).pathPrefix(IAMUtil.TEST_PATH).build());
 
-            assertEquals(2, response.getGroups().size());
+            assertEquals(2, response.groups().size());
             assertTrue(response.isTruncated());
 
-            String marker = response.getMarker();
+            String marker = response.marker();
 
             int matches = 0;
 
-            for (Group g : response.getGroups()) {
-                if (g.getGroupName().equals(groupname1)) {
+            for (Group g : response.groups()) {
+                if (g.groupName().equals(groupname1)) {
                     matches |= 1;
                 }
-                if (g.getGroupName().equals(groupname2)) {
+                if (g.groupName().equals(groupname2)) {
                     matches |= 2;
                 }
-                if (g.getGroupName().equals(groupname3)) {
+                if (g.groupName().equals(groupname3)) {
                     matches |= 4;
                 }
-                if (g.getGroupName().equals(groupname4)) {
+                if (g.groupName().equals(groupname4)) {
                     matches |= 8;
                 }
             }
 
-            response = iam.listGroups(new ListGroupsRequest()
-                                              .withMarker(marker).withPathPrefix(IAMUtil.TEST_PATH));
+            response = iam.listGroups(ListGroupsRequest.builder()
+                                                       .marker(marker).pathPrefix(IAMUtil.TEST_PATH).build());
 
-            assertEquals(2, response.getGroups().size());
+            assertEquals(2, response.groups().size());
             assertFalse(response.isTruncated());
 
-            for (Group g : response.getGroups()) {
-                if (g.getGroupName().equals(groupname1)) {
+            for (Group g : response.groups()) {
+                if (g.groupName().equals(groupname1)) {
                     matches |= 1;
                 }
-                if (g.getGroupName().equals(groupname2)) {
+                if (g.groupName().equals(groupname2)) {
                     matches |= 2;
                 }
-                if (g.getGroupName().equals(groupname3)) {
+                if (g.groupName().equals(groupname3)) {
                     matches |= 4;
                 }
-                if (g.getGroupName().equals(groupname4)) {
+                if (g.groupName().equals(groupname4)) {
                     matches |= 8;
                 }
             }
@@ -438,10 +438,10 @@ public class GroupIntegrationTest extends IntegrationTestBase {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname1));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname2));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname3));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(groupname4));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname1).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname2).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname3).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(groupname4).build());
         }
 
     }
@@ -450,12 +450,12 @@ public class GroupIntegrationTest extends IntegrationTestBase {
     public void AddUserToNonExistentGroup() {
         String username = IAMUtil.uniqueName(), grpname = IAMUtil.uniqueName();
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.addUserToGroup(new AddUserToGroupRequest().withGroupName(
-                    grpname).withUserName(username));
+            iam.createUser(CreateUserRequest.builder().userName(username)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().groupName(
+                    grpname).userName(username).build());
         } finally {
-            iam.deleteUser(new DeleteUserRequest().withUserName(username));
+            iam.deleteUser(DeleteUserRequest.builder().userName(username).build());
         }
     }
 
@@ -464,12 +464,12 @@ public class GroupIntegrationTest extends IntegrationTestBase {
         String grpname = IAMUtil.uniqueName();
 
         try {
-            iam.createGroup(new CreateGroupRequest().withGroupName(grpname)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.createGroup(new CreateGroupRequest().withGroupName(grpname)
-                                                    .withPath(IAMUtil.TEST_PATH));
+            iam.createGroup(CreateGroupRequest.builder().groupName(grpname)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(grpname)
+                                              .path(IAMUtil.TEST_PATH).build());
         } finally {
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(grpname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(grpname).build());
         }
     }
 
@@ -478,19 +478,19 @@ public class GroupIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.uniqueName(), grpname = IAMUtil.uniqueName();
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createGroup(new CreateGroupRequest().withGroupName(grpname)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.addUserToGroup(new AddUserToGroupRequest().withUserName(
-                    username).withGroupName(grpname));
+            iam.createUser(CreateUserRequest.builder().userName(username)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(grpname)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().userName(
+                    username).groupName(grpname).build());
 
-            iam.deleteUser(new DeleteUserRequest().withUserName(username));
+            iam.deleteUser(DeleteUserRequest.builder().userName(username).build());
         } finally {
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(grpname).withUserName(username));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(grpname));
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(grpname).userName(username).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(grpname).build());
         }
     }
 
@@ -499,19 +499,19 @@ public class GroupIntegrationTest extends IntegrationTestBase {
         String username = IAMUtil.uniqueName(), grpname = IAMUtil.uniqueName();
 
         try {
-            iam.createUser(new CreateUserRequest().withUserName(username)
-                                                  .withPath(IAMUtil.TEST_PATH));
-            iam.createGroup(new CreateGroupRequest().withGroupName(grpname)
-                                                    .withPath(IAMUtil.TEST_PATH));
-            iam.addUserToGroup(new AddUserToGroupRequest().withUserName(
-                    username).withGroupName(grpname));
+            iam.createUser(CreateUserRequest.builder().userName(username)
+                                            .path(IAMUtil.TEST_PATH).build());
+            iam.createGroup(CreateGroupRequest.builder().groupName(grpname)
+                                              .path(IAMUtil.TEST_PATH).build());
+            iam.addUserToGroup(AddUserToGroupRequest.builder().userName(
+                    username).groupName(grpname).build());
 
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(grpname));
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(grpname).build());
         } finally {
-            iam.removeUserFromGroup(new RemoveUserFromGroupRequest()
-                                            .withGroupName(grpname).withUserName(username));
-            iam.deleteUser(new DeleteUserRequest().withUserName(username));
-            iam.deleteGroup(new DeleteGroupRequest().withGroupName(grpname));
+            iam.removeUserFromGroup(RemoveUserFromGroupRequest.builder()
+                                                              .groupName(grpname).userName(username).build());
+            iam.deleteUser(DeleteUserRequest.builder().userName(username).build());
+            iam.deleteGroup(DeleteGroupRequest.builder().groupName(grpname).build());
         }
     }
 }

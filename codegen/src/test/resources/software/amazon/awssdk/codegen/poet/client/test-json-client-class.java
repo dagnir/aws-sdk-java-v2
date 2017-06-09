@@ -32,14 +32,14 @@ import software.amazon.awssdk.protocol.json.JsonOperationMetadata;
 import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
 import software.amazon.awssdk.services.acm.presign.AcmClientPresigners;
 import software.amazon.awssdk.services.json.model.APostOperationRequest;
-import software.amazon.awssdk.services.json.model.APostOperationResult;
+import software.amazon.awssdk.services.json.model.APostOperationResponse;
 import software.amazon.awssdk.services.json.model.APostOperationWithOutputRequest;
-import software.amazon.awssdk.services.json.model.APostOperationWithOutputResult;
+import software.amazon.awssdk.services.json.model.APostOperationWithOutputResponse;
 import software.amazon.awssdk.services.json.model.InvalidInputException;
 import software.amazon.awssdk.services.json.transform.APostOperationRequestMarshaller;
-import software.amazon.awssdk.services.json.transform.APostOperationResultUnmarshaller;
+import software.amazon.awssdk.services.json.transform.APostOperationResponseUnmarshaller;
 import software.amazon.awssdk.services.json.transform.APostOperationWithOutputRequestMarshaller;
-import software.amazon.awssdk.services.json.transform.APostOperationWithOutputResultUnmarshaller;
+import software.amazon.awssdk.services.json.transform.APostOperationWithOutputResponseUnmarshaller;
 
 @Generated("software.amazon.awssdk:codegen")
 public class DefaultJsonClient implements JsonClient {
@@ -57,33 +57,33 @@ public class DefaultJsonClient implements JsonClient {
     }
 
     @Override
-    public APostOperationResult aPostOperation(APostOperationRequest aPostOperationRequest) {
+    public APostOperationResponse aPostOperation(APostOperationRequest aPostOperationRequest) {
 
-        HttpResponseHandler<AmazonWebServiceResponse<APostOperationResult>> responseHandler = protocolFactory
+        HttpResponseHandler<AmazonWebServiceResponse<APostOperationResponse>> responseHandler = protocolFactory
             .createResponseHandler(new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
-                                   new APostOperationResultUnmarshaller());
+                                   new APostOperationResponseUnmarshaller());
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
         return clientHandler.execute(
-            new ClientExecutionParams<APostOperationRequest, AmazonWebServiceResponse<APostOperationResult>>()
+            new ClientExecutionParams<APostOperationRequest, AmazonWebServiceResponse<APostOperationResponse>>()
                 .withMarshaller(new APostOperationRequestMarshaller(protocolFactory))
                 .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
                 .withInput(aPostOperationRequest)).getResult();
     }
 
     @Override
-    public APostOperationWithOutputResult aPostOperationWithOutput(APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
+    public APostOperationWithOutputResponse aPostOperationWithOutput(APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
 
-        HttpResponseHandler<AmazonWebServiceResponse<APostOperationWithOutputResult>> responseHandler = protocolFactory
+        HttpResponseHandler<AmazonWebServiceResponse<APostOperationWithOutputResponse>> responseHandler = protocolFactory
             .createResponseHandler(new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
-                                   new APostOperationWithOutputResultUnmarshaller());
+                                   new APostOperationWithOutputResponseUnmarshaller());
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
         return clientHandler
             .execute(
-                new ClientExecutionParams<APostOperationWithOutputRequest, AmazonWebServiceResponse<APostOperationWithOutputResult>>()
+                new ClientExecutionParams<APostOperationWithOutputRequest, AmazonWebServiceResponse<APostOperationWithOutputResponse>>()
                     .withMarshaller(new APostOperationWithOutputRequestMarshaller(protocolFactory))
                     .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
                     .withInput(aPostOperationWithOutputRequest)).getResult();

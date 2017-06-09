@@ -41,7 +41,7 @@ public @interface LambdaFunction {
      * public interface LambdaFunctions {
      *
      * @LambdaFunction(functionName="ActualFunctionName") void notTheRealFunctionName(); } </code>
-     * @see InvokeRequest#setFunctionName(String)
+     * @see InvokeRequest#functionName(String)
      */
     String functionName() default "";
 
@@ -58,7 +58,7 @@ public @interface LambdaFunction {
      *                                      doItAsynchronously();
      * @LambdaFunction(functionName="DoIt", invocationType=InvocationType.DryRun) void dryRunIt(); }
      *                                      </code>
-     * @see InvokeRequest#setInvocationType(InvocationType)
+     * @see InvokeRequest#invocationType(InvocationType)
      */
     InvocationType invocationType() default InvocationType.RequestResponse;
 
@@ -69,7 +69,7 @@ public @interface LambdaFunction {
      * When specified, the log information returned by the Lambda function will be emitted to the
      * JCL log for the interface class at the {@code INFO} level.
      *
-     * @see InvokeRequest#setLogType(LogType)
+     * @see InvokeRequest#logType(LogType)
      * @see LogFactory#getLog(Class)
      */
     LogType logType() default LogType.None;

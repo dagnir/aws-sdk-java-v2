@@ -58,7 +58,7 @@ public class StorageGatewayUtils {
      * @param gatewayAddress
      *            The DNS name or IP address of a running AWS Storage Gateway
      * 
-     * @param activationRegionName
+     * @param activationRegion
      *            The region in which the gateway will be activated.
      * 
      * @return The activation key required for some API calls to AWS Storage
@@ -71,7 +71,7 @@ public class StorageGatewayUtils {
     public static String getActivationKey(String gatewayAddress, Region activationRegion) throws AmazonClientException {
         return getActivationKey(gatewayAddress, 
                 activationRegion == null ?
-                        null : activationRegion.getName());
+                        null : activationRegion.value());
     }
 
     /**

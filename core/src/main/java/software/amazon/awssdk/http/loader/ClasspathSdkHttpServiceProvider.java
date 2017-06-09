@@ -21,7 +21,7 @@ import java.util.ServiceLoader;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.SdkHttpService;
-import software.amazon.awssdk.utils.JavaSystemSetting;
+import software.amazon.awssdk.utils.SdkSystemSetting;
 
 /**
  * {@link SdkHttpServiceProvider} implementation that uses {@link ServiceLoader} to find HTTP implementations on the
@@ -54,7 +54,7 @@ class ClasspathSdkHttpServiceProvider implements SdkHttpServiceProvider {
                             "Multiple HTTP implementations were found on the classpath. To avoid non-determinstic loading " +
                             "implementations, please explicitly provide an HTTP client via the client builders, set the %s " +
                             "system property with the FQCN of the HTTP service to use as the default, or remove all but one " +
-                            "HTTP implementation from the classpath", JavaSystemSetting.HTTP_SERVICE_IMPL.property()));
+                            "HTTP implementation from the classpath", SdkSystemSetting.HTTP_SERVICE_IMPL.property()));
         }
         return Optional.of(httpService);
     }

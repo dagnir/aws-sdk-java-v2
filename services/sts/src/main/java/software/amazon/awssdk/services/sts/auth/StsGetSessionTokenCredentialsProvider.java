@@ -57,7 +57,7 @@ public class StsGetSessionTokenCredentialsProvider extends StsCredentialsProvide
 
     @Override
     protected Credentials getUpdatedCredentials(STSClient stsClient) {
-        return stsClient.getSessionToken(getSessionTokenRequest).getCredentials();
+        return stsClient.getSessionToken(getSessionTokenRequest).credentials();
     }
 
     /**
@@ -66,7 +66,7 @@ public class StsGetSessionTokenCredentialsProvider extends StsCredentialsProvide
      */
     @NotThreadSafe
     public static final class Builder extends BaseBuilder<Builder, StsGetSessionTokenCredentialsProvider> {
-        private GetSessionTokenRequest getSessionTokenRequest;
+        private GetSessionTokenRequest getSessionTokenRequest = GetSessionTokenRequest.builder().build();
 
         private Builder() {
             super(StsGetSessionTokenCredentialsProvider::new);
@@ -75,6 +75,8 @@ public class StsGetSessionTokenCredentialsProvider extends StsCredentialsProvide
         /**
          * Configure the {@link GetSessionTokenRequest} that should be periodically sent to the STS service to update the session
          * token when it gets close to expiring.
+         *
+         * If this is not specified, default values are used.
          *
          * @param getSessionTokenRequest The request to send to STS whenever the assumed session expires.
          * @return This object for chained calls.

@@ -19,6 +19,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kms.KMSClient;
 import software.amazon.awssdk.services.s3.model.CryptoConfiguration;
 import software.amazon.awssdk.services.s3.model.EncryptionMaterialsProvider;
@@ -32,14 +33,14 @@ public class AmazonS3EncryptionClientBuilderTest {
         KMSClient kmsClient = mock(KMSClient.class);
         LegacyClientConfiguration clientConfig = new LegacyClientConfiguration();
 
-        AmazonS3EncryptionClient.encryptionBuilder()
-                                .withCryptoConfiguration(cryptoConfig)
-                                .withRegion("us-west-1")
-                                .withEncryptionMaterials(encryptionMaterials)
-                                .withKmsClient(kmsClient)
-                                .withPathStyleAccessEnabled(true)
-                                .withClientConfiguration(clientConfig)
-                                .build();
+        AmazonS3EncryptionClientBuilder.standard()
+                                       .withCryptoConfiguration(cryptoConfig)
+                                       .withRegion(Region.US_WEST_1)
+                                       .withEncryptionMaterials(encryptionMaterials)
+                                       .withKmsClient(kmsClient)
+                                       .withPathStyleAccessEnabled(true)
+                                       .withClientConfiguration(clientConfig)
+                                       .build();
     }
 
 }

@@ -54,11 +54,11 @@ public class Expected {
         return op;
     }
 
-    public Object[] getValues() {
+    public Object[] values() {
         return values == null ? null : values.clone();
     }
 
-    private Expected withValues(Object... values) {
+    private Expected values(Object... values) {
         this.values = values.clone();
         return this;
     }
@@ -73,11 +73,11 @@ public class Expected {
      * value.
      */
     public Expected eq(Object val) {
-        return withComparisonOperator(ComparisonOperator.EQ).withValues(val);
+        return withComparisonOperator(ComparisonOperator.EQ).values(val);
     }
 
     public Expected ne(Object val) {
-        return withComparisonOperator(ComparisonOperator.NE).withValues(val);
+        return withComparisonOperator(ComparisonOperator.NE).values(val);
     }
 
     /**
@@ -95,11 +95,11 @@ public class Expected {
     }
 
     public Expected contains(Object val) {
-        return withComparisonOperator(ComparisonOperator.CONTAINS).withValues(val);
+        return withComparisonOperator(ComparisonOperator.CONTAINS).values(val);
     }
 
     public Expected notContains(Object val) {
-        return withComparisonOperator(ComparisonOperator.NOT_CONTAINS).withValues(val);
+        return withComparisonOperator(ComparisonOperator.NOT_CONTAINS).values(val);
     }
 
     /**
@@ -107,7 +107,7 @@ public class Expected {
      * with the given value.
      */
     public Expected beginsWith(String val) {
-        return withComparisonOperator(ComparisonOperator.BEGINS_WITH).withValues(val);
+        return withComparisonOperator(ComparisonOperator.BEGINS_WITH).values(val);
     }
 
     public Expected in(Object... values) {
@@ -115,7 +115,7 @@ public class Expected {
             throw new IllegalArgumentException("values must not be null or empty.");
         }
 
-        return withComparisonOperator(ComparisonOperator.IN).withValues(values);
+        return withComparisonOperator(ComparisonOperator.IN).values(values);
     }
 
     /**
@@ -123,7 +123,7 @@ public class Expected {
      * the given values.
      */
     public Expected between(Object low, Object hi) {
-        return withComparisonOperator(ComparisonOperator.BETWEEN).withValues(low, hi);
+        return withComparisonOperator(ComparisonOperator.BETWEEN).values(low, hi);
     }
 
     /**
@@ -131,7 +131,7 @@ public class Expected {
      * equal to the given value.
      */
     public Expected ge(Object val) {
-        return withComparisonOperator(ComparisonOperator.GE).withValues(val);
+        return withComparisonOperator(ComparisonOperator.GE).values(val);
     }
 
     /**
@@ -139,7 +139,7 @@ public class Expected {
      * given value.
      */
     public Expected gt(Object val) {
-        return withComparisonOperator(ComparisonOperator.GT).withValues(val);
+        return withComparisonOperator(ComparisonOperator.GT).values(val);
     }
 
     /**
@@ -147,7 +147,7 @@ public class Expected {
      * to the given value.
      */
     public Expected le(Object val) {
-        return withComparisonOperator(ComparisonOperator.LE).withValues(val);
+        return withComparisonOperator(ComparisonOperator.LE).values(val);
     }
 
     /**
@@ -155,6 +155,6 @@ public class Expected {
      * given value.
      */
     public Expected lt(Object val) {
-        return withComparisonOperator(ComparisonOperator.LT).withValues(val);
+        return withComparisonOperator(ComparisonOperator.LT).values(val);
     }
 }

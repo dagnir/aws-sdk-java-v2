@@ -16,6 +16,8 @@
 package software.amazon.awssdk.runtime.transform;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
@@ -64,8 +66,29 @@ public abstract class AbstractErrorUnmarshaller<T> implements Unmarshaller<Amazo
      *             exception class's constructor.
      */
     protected AmazonServiceException newException(String message) throws Exception {
-        Constructor<? extends AmazonServiceException> constructor = exceptionClass.getConstructor(String.class);
-        return constructor.newInstance(message);
+        Method builderMethod = null;
+
+        try {
+            builderMethod = exceptionClass.getDeclaredMethod("builder");
+            builderMethod.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            // ignored
+        }
+
+        if (builderMethod != null) {
+            Object exceptionBuilder = builderMethod.invoke(null);
+            Method buildMethod = exceptionBuilder.getClass().getDeclaredMethod("build");
+            Method messageSetter = exceptionBuilder.getClass().getDeclaredMethod("message", String.class);
+            messageSetter.setAccessible(true);
+            buildMethod.setAccessible(true);
+
+            messageSetter.invoke(exceptionBuilder, message);
+
+            return (AmazonServiceException) buildMethod.invoke(exceptionBuilder);
+        } else {
+            Constructor<? extends AmazonServiceException> constructor = exceptionClass.getConstructor(String.class);
+            return constructor.newInstance(message);
+        }
     }
 
 }

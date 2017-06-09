@@ -19,7 +19,7 @@ import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.regions.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 
 /**
  * Base class for all service specific sync client builders.

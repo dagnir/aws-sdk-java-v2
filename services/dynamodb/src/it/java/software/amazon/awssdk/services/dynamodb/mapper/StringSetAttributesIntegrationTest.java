@@ -25,7 +25,7 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.dynamodb.DynamoDBMapperIntegrationTestBase;
-import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDBMapper;
+import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.StringSetAttributeClass;
@@ -45,10 +45,10 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
     static {
         for (int i = 0; i < 5; i++) {
             Map<String, AttributeValue> attr = new HashMap<String, AttributeValue>();
-            attr.put(KEY_NAME, new AttributeValue().withS("" + startKey++));
-            attr.put(STRING_SET_ATTRIBUTE, new AttributeValue().withSS("" + ++startKey, "" + ++startKey, "" + ++startKey));
-            attr.put(ORIGINAL_NAME_ATTRIBUTE, new AttributeValue().withSS("" + ++startKey, "" + ++startKey, "" + ++startKey));
-            attr.put(EXTRA_ATTRIBUTE, new AttributeValue().withSS("" + ++startKey, "" + ++startKey, "" + ++startKey));
+            attr.put(KEY_NAME, AttributeValue.builder().s("" + startKey++).build());
+            attr.put(STRING_SET_ATTRIBUTE, AttributeValue.builder().ss("" + ++startKey, "" + ++startKey, "" + ++startKey).build());
+            attr.put(ORIGINAL_NAME_ATTRIBUTE, AttributeValue.builder().ss("" + ++startKey, "" + ++startKey, "" + ++startKey).build());
+            attr.put(EXTRA_ATTRIBUTE, AttributeValue.builder().ss("" + ++startKey, "" + ++startKey, "" + ++startKey).build());
             attrs.add(attr);
         }
     }
@@ -61,19 +61,19 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
 
         // Insert the data
         for (Map<String, AttributeValue> attr : attrs) {
-            dynamo.putItem(new PutItemRequest(TABLE_NAME, attr));
+            dynamo.putItem(PutItemRequest.builder().tableName(TABLE_NAME).item(attr).build());
         }
     }
 
     @Test
     public void testLoad() throws Exception {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         for (Map<String, AttributeValue> attr : attrs) {
-            StringSetAttributeClass x = util.load(StringSetAttributeClass.class, attr.get(KEY_NAME).getS());
-            assertEquals(x.getKey(), attr.get(KEY_NAME).getS());
-            assertSetsEqual(x.getStringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).getSS()));
-            assertSetsEqual(x.getStringSetAttributeRenamed(), toSet(attr.get(ORIGINAL_NAME_ATTRIBUTE).getSS()));
+            StringSetAttributeClass x = util.load(StringSetAttributeClass.class, attr.get(KEY_NAME).s());
+            assertEquals(x.getKey(), attr.get(KEY_NAME).s());
+            assertSetsEqual(x.getStringSetAttribute(), toSet(attr.get(STRING_SET_ATTRIBUTE).ss()));
+            assertSetsEqual(x.getStringSetAttributeRenamed(), toSet(attr.get(ORIGINAL_NAME_ATTRIBUTE).ss()));
         }
     }
 
@@ -82,7 +82,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
      */
     @Test
     public void testIncompleteObject() {
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
 
         StringSetAttributeClass obj = getUniqueObject();
         obj.setStringSetAttribute(null);
@@ -103,7 +103,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (StringSetAttributeClass obj : objs) {
             util.save(obj);
         }
@@ -122,7 +122,7 @@ public class StringSetAttributesIntegrationTest extends DynamoDBMapperIntegratio
             objs.add(obj);
         }
 
-        DynamoDBMapper util = new DynamoDBMapper(dynamo);
+        DynamoDbMapper util = new DynamoDbMapper(dynamo);
         for (StringSetAttributeClass obj : objs) {
             util.save(obj);
         }

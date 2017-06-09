@@ -28,6 +28,7 @@ import software.amazon.awssdk.profile.path.cred.CredentialsSystemSettingsLocatio
  * Shared config file (~/.aws/config).
  */
 @SdkInternalApi
+@FunctionalInterface
 public interface AwsProfileFileLocationProvider {
 
     /**

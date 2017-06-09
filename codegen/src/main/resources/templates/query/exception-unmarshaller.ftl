@@ -30,7 +30,7 @@ public class ${shape.shapeName}Unmarshaller extends ${exceptionUnmarshallerImpl}
               <#assign variableName = "${memberModel.variable.variableName}"?cap_first/>
               <#if !memberModel.isList() && !memberModel.isMap() >
                 <#-- List and Map are yet to be supported -->
-                e.${memberModel.setterMethodName}(XpathUtils.as${memberModel.variable.simpleType}(getErrorPropertyPath("${memberModel.c2jName}"), node));
+                e = e.toBuilder().${memberModel.fluentSetterMethodName}(XpathUtils.as${memberModel.variable.simpleType}(getErrorPropertyPath("${memberModel.c2jName}"), node)).build();
               </#if >
             </#list>
         </#if>

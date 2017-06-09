@@ -27,12 +27,12 @@ import org.junit.Test;
 import software.amazon.awssdk.SdkGlobalTime;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.directconnect.model.CreateConnectionRequest;
-import software.amazon.awssdk.services.directconnect.model.CreateConnectionResult;
+import software.amazon.awssdk.services.directconnect.model.CreateConnectionResponse;
 import software.amazon.awssdk.services.directconnect.model.DeleteConnectionRequest;
 import software.amazon.awssdk.services.directconnect.model.DescribeConnectionsRequest;
-import software.amazon.awssdk.services.directconnect.model.DescribeConnectionsResult;
+import software.amazon.awssdk.services.directconnect.model.DescribeConnectionsResponse;
 import software.amazon.awssdk.services.directconnect.model.DescribeLocationsRequest;
-import software.amazon.awssdk.services.directconnect.model.DescribeLocationsResult;
+import software.amazon.awssdk.services.directconnect.model.DescribeLocationsResponse;
 import software.amazon.awssdk.services.directconnect.model.Location;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
@@ -44,46 +44,48 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @BeforeClass
     public static void setup() {
-        CreateConnectionResult result = dc.createConnection(new CreateConnectionRequest()
-                                                                    .withConnectionName(CONNECTION_NAME)
-                                                                    .withBandwidth("1Gbps")
-                                                                    .withLocation("EqSV5"));
-        connectionId = result.getConnectionId();
+        CreateConnectionResponse result = dc.createConnection(CreateConnectionRequest.builder()
+                .connectionName(CONNECTION_NAME)
+                .bandwidth("1Gbps")
+                .location("EqSV5")
+                .build());
+        connectionId = result.connectionId();
     }
 
     @AfterClass
     public static void tearDown() {
-        dc.deleteConnection(new DeleteConnectionRequest().withConnectionId(connectionId));
+        dc.deleteConnection(DeleteConnectionRequest.builder().connectionId(connectionId).build());
     }
 
     @Test
     public void describeLocations_ReturnsNonEmptyList() {
-        DescribeLocationsResult describeLocations = dc.describeLocations(new DescribeLocationsRequest());
-        assertTrue(describeLocations.getLocations().size() > 0);
-        for (Location location : describeLocations.getLocations()) {
-            assertNotNull(location.getLocationCode());
-            assertNotNull(location.getLocationName());
+        DescribeLocationsResponse describeLocations = dc.describeLocations(DescribeLocationsRequest.builder().build());
+        assertTrue(describeLocations.locations().size() > 0);
+        for (Location location : describeLocations.locations()) {
+            assertNotNull(location.locationCode());
+            assertNotNull(location.locationName());
         }
     }
 
     @Test
     public void describeConnections_ReturnsNonEmptyList() {
-        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(new DescribeConnectionsRequest());
-        assertTrue(describeConnectionsResult.getConnections().size() > 0);
-        assertNotNull(describeConnectionsResult.getConnections().get(0).getConnectionId());
-        assertNotNull(describeConnectionsResult.getConnections().get(0).getConnectionName());
-        assertNotNull(describeConnectionsResult.getConnections().get(0).getConnectionState());
-        assertNotNull(describeConnectionsResult.getConnections().get(0).getLocation());
-        assertNotNull(describeConnectionsResult.getConnections().get(0).getRegion());
+        DescribeConnectionsResponse describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder().build());
+        assertTrue(describeConnectionsResult.connections().size() > 0);
+        assertNotNull(describeConnectionsResult.connections().get(0).connectionId());
+        assertNotNull(describeConnectionsResult.connections().get(0).connectionName());
+        assertNotNull(describeConnectionsResult.connections().get(0).connectionState());
+        assertNotNull(describeConnectionsResult.connections().get(0).location());
+        assertNotNull(describeConnectionsResult.connections().get(0).region());
     }
 
     @Test
     public void describeConnections_FilteredByCollectionId_ReturnsOnlyOneConnection() {
-        DescribeConnectionsResult describeConnectionsResult = dc.describeConnections(new DescribeConnectionsRequest()
-                                                                                             .withConnectionId(connectionId));
-        assertThat(describeConnectionsResult.getConnections(), hasSize(1));
-        assertEquals(connectionId, describeConnectionsResult.getConnections().get(0).getConnectionId());
-        assertEquals(EXPECTED_CONNECTION_STATUS, describeConnectionsResult.getConnections().get(0).getConnectionState());
+        DescribeConnectionsResponse describeConnectionsResult = dc.describeConnections(DescribeConnectionsRequest.builder()
+                .connectionId(connectionId)
+                .build());
+        assertThat(describeConnectionsResult.connections(), hasSize(1));
+        assertEquals(connectionId, describeConnectionsResult.connections().get(0).connectionId());
+        assertEquals(EXPECTED_CONNECTION_STATUS, describeConnectionsResult.connections().get(0).connectionState());
     }
 
     /**
@@ -98,7 +100,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
                 .credentialsProvider(new StaticCredentialsProvider(credentials))
                 .build();
 
-        clockSkewClient.describeConnections(new DescribeConnectionsRequest());
+        clockSkewClient.describeConnections(DescribeConnectionsRequest.builder().build());
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 

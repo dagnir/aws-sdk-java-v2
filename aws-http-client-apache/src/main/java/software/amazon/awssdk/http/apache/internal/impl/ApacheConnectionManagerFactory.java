@@ -34,10 +34,10 @@ import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.http.apache.internal.Defaults;
 import software.amazon.awssdk.http.apache.internal.conn.SdkTlsSocketFactory;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Factory class to create connection manager used by the apache client.
@@ -45,7 +45,7 @@ import software.amazon.awssdk.http.apache.internal.conn.SdkTlsSocketFactory;
 public class ApacheConnectionManagerFactory {
 
     public HttpClientConnectionManager create(ApacheSdkHttpClientFactory configuration,
-                                              SdkHttpConfigurationOptions standardOptions) {
+                                              AttributeMap standardOptions) {
         ConnectionSocketFactory sslsf = getPreferredSocketFactory(standardOptions);
 
         final PoolingHttpClientConnectionManager cm = new
@@ -54,17 +54,17 @@ public class ApacheConnectionManagerFactory {
                 null,
                 DefaultSchemePortResolver.INSTANCE,
                 null,
-                configuration.connectionPoolTtl().orElse(Defaults.CONNECTION_POOL_TTL).toMillis(),
+                configuration.connectionTimeToLive().orElse(Defaults.CONNECTION_POOL_TTL).toMillis(),
                 TimeUnit.MILLISECONDS);
 
-        cm.setDefaultMaxPerRoute(standardOptions.option(SdkHttpConfigurationOption.MAX_CONNECTIONS));
-        cm.setMaxTotal(standardOptions.option(SdkHttpConfigurationOption.MAX_CONNECTIONS));
+        cm.setDefaultMaxPerRoute(standardOptions.get(SdkHttpConfigurationOption.MAX_CONNECTIONS));
+        cm.setMaxTotal(standardOptions.get(SdkHttpConfigurationOption.MAX_CONNECTIONS));
         cm.setDefaultSocketConfig(buildSocketConfig(standardOptions));
 
         return cm;
     }
 
-    private ConnectionSocketFactory getPreferredSocketFactory(SdkHttpConfigurationOptions standardOptions) {
+    private ConnectionSocketFactory getPreferredSocketFactory(AttributeMap standardOptions) {
         // TODO v2 custom socket factory
         return new SdkTlsSocketFactory(getPreferredSslContext(),
                                        getHostNameVerifier(standardOptions));
@@ -81,12 +81,12 @@ public class ApacheConnectionManagerFactory {
         }
     }
 
-    private SocketConfig buildSocketConfig(SdkHttpConfigurationOptions standardOptions) {
+    private SocketConfig buildSocketConfig(AttributeMap standardOptions) {
         return SocketConfig.custom()
                            // TODO do we want to keep SO keep alive
                            .setSoKeepAlive(false)
                            .setSoTimeout(
-                                   saturatedCast(standardOptions.option(SdkHttpConfigurationOption.SOCKET_TIMEOUT).toMillis()))
+                                   saturatedCast(standardOptions.get(SdkHttpConfigurationOption.SOCKET_TIMEOUT).toMillis()))
                            .setTcpNoDelay(true)
                            .build();
     }
@@ -94,9 +94,9 @@ public class ApacheConnectionManagerFactory {
     @ReviewBeforeRelease("Need to have a way to communicate with HTTP impl supports disabling of strict" +
                          "hostname verification. If it doesn't we either need to fail in S3 or switch to path style" +
                          "addressing.")
-    private HostnameVerifier getHostNameVerifier(SdkHttpConfigurationOptions standardOptions) {
+    private HostnameVerifier getHostNameVerifier(AttributeMap standardOptions) {
         // TODO Need to find a better way to handle these deprecations.
-        return standardOptions.option(SdkHttpConfigurationOption.USE_STRICT_HOSTNAME_VERIFICATION)
+        return standardOptions.get(SdkHttpConfigurationOption.USE_STRICT_HOSTNAME_VERIFICATION)
                 ? SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER
                 : SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER;
     }

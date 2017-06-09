@@ -17,18 +17,18 @@ package software.amazon.awssdk.services.dynamodb.document;
 
 import java.util.Map;
 import software.amazon.awssdk.services.dynamodb.document.internal.InternalUtils;
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse;
 
 /**
  * The outcome of deleting an item from a DynamoDB table.
  */
 public class DeleteItemOutcome {
-    private final DeleteItemResult result;
+    private final DeleteItemResponse result;
 
     /**
      * @param result the low-level result; must not be null
      */
-    public DeleteItemOutcome(DeleteItemResult result) {
+    public DeleteItemOutcome(DeleteItemResponse result) {
         if (result == null) {
             throw new IllegalArgumentException();
         }
@@ -40,7 +40,7 @@ public class DeleteItemOutcome {
      */
     public Item getItem() {
         Map<String, Object> attributes =
-                InternalUtils.toSimpleMapValue(result.getAttributes());
+                InternalUtils.toSimpleMapValue(result.attributes());
         Item item = Item.fromMap(attributes);
         return item;
     }
@@ -48,7 +48,7 @@ public class DeleteItemOutcome {
     /**
      * Returns a non-null low-level result returned from the server side.
      */
-    public DeleteItemResult getDeleteItemResult() {
+    public DeleteItemResponse getDeleteItemResponse() {
         return result;
     }
 

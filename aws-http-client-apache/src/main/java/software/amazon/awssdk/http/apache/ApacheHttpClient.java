@@ -35,7 +35,6 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
@@ -44,6 +43,7 @@ import software.amazon.awssdk.http.apache.internal.impl.ApacheHttpRequestFactory
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
+import software.amazon.awssdk.utils.AttributeMap;
 
 @SdkInternalApi
 class ApacheHttpClient implements SdkHttpClient {
@@ -51,11 +51,11 @@ class ApacheHttpClient implements SdkHttpClient {
     private final ApacheHttpRequestFactory apacheHttpRequestFactory = new ApacheHttpRequestFactory();
     private final ConnectionManagerAwareHttpClient httpClient;
     private final ApacheHttpRequestConfig requestConfig;
-    private final SdkHttpConfigurationOptions resolvedOptions;
+    private final AttributeMap resolvedOptions;
 
     ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient,
                      ApacheHttpRequestConfig requestConfig,
-                     SdkHttpConfigurationOptions resolvedOptions) {
+                     AttributeMap resolvedOptions) {
         this.httpClient = notNull(httpClient, "httpClient must not be null.");
         this.requestConfig = notNull(requestConfig, "requestConfig must not be null.");
         this.resolvedOptions = notNull(resolvedOptions, "resolvedOptions must not be null");
@@ -79,7 +79,7 @@ class ApacheHttpClient implements SdkHttpClient {
 
     @Override
     public <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key) {
-        return Optional.ofNullable(resolvedOptions.option(key));
+        return Optional.ofNullable(resolvedOptions.get(key));
     }
 
     @Override
@@ -135,8 +135,7 @@ class ApacheHttpClient implements SdkHttpClient {
                                   .statusCode(apacheHttpResponse.getStatusLine().getStatusCode())
                                   .statusText(apacheHttpResponse.getStatusLine().getReasonPhrase())
                                   .content(apacheHttpResponse.getEntity() != null
-                                                   ? apacheHttpResponse.getEntity().getContent()
-                                                   : null)
+                                                   ? apacheHttpResponse.getEntity().getContent() : null)
                                   .headers(transformHeaders(apacheHttpResponse))
                                   .build();
 

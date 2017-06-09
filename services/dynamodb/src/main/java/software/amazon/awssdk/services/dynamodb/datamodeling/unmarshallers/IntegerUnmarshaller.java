@@ -35,6 +35,6 @@ public class IntegerUnmarshaller extends NUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return Integer.valueOf(value.getN());
+        return Integer.valueOf(value.n());
     }
 }

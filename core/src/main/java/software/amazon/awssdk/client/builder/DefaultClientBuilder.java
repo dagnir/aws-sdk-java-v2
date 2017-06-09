@@ -15,22 +15,17 @@
 
 package software.amazon.awssdk.client.builder;
 
+import static software.amazon.awssdk.config.AdvancedClientOption.ENABLE_DEFAULT_REGION_DETECTION;
 import static software.amazon.awssdk.utils.Validate.notNull;
 
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
-import software.amazon.awssdk.config.ClientListenerConfiguration;
-import software.amazon.awssdk.config.ClientMarshallerConfiguration;
-import software.amazon.awssdk.config.ClientMetricsConfiguration;
-import software.amazon.awssdk.config.ClientRetryConfiguration;
-import software.amazon.awssdk.config.ClientSecurityConfiguration;
-import software.amazon.awssdk.config.ClientTimeoutConfiguration;
+import software.amazon.awssdk.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.MutableClientConfiguration;
@@ -41,16 +36,16 @@ import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
-import software.amazon.awssdk.regions.AwsRegionProvider;
-import software.amazon.awssdk.regions.DefaultAwsRegionProviderChain;
-import software.amazon.awssdk.regions.RegionUtils;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.ServiceMetadata;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.util.EndpointUtils;
-import software.amazon.awssdk.utils.OptionalUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * An SDK-internal implementation of the methods in {@link ClientBuilder}, {@link AsyncClientBuilder} and
@@ -81,8 +76,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
 
     private MutableClientConfiguration mutableClientConfiguration = new MutableClientConfiguration();
 
-    private String region;
-    private Boolean defaultRegionDetectionEnabled;
+    private Region region;
     private ExecutorProvider asyncExecutorProvider;
     private ClientHttpConfiguration httpConfiguration = ClientHttpConfiguration.builder().build();
 
@@ -137,17 +131,17 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      *
      * @return The service defaults that should be applied.
      */
-    protected SdkHttpConfigurationOptions serviceSpecificHttpConfig() {
-        return SdkHttpConfigurationOptions.empty();
+    protected AttributeMap serviceSpecificHttpConfig() {
+        return AttributeMap.empty();
     }
 
     /**
      * Used by child classes to get the signing region configured on this builder. This is usually used when generating the child
      * class's signer. This will never return null.
      */
-    @ReviewBeforeRelease("Signing region is not always endpoint region. When dust settles with region refactor revisit this")
-    protected final String signingRegion() {
-        return resolveRegion().orElseThrow(() -> new IllegalStateException("The signing region could not be determined."));
+    protected final Region signingRegion() {
+        return ServiceMetadata.of(serviceEndpointPrefix()).signingRegion(
+                resolveRegion().orElseThrow(() -> new IllegalStateException("The signing region could not be determined.")));
     }
 
     /**
@@ -194,6 +188,8 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         builderDefaults().applyAsyncDefaults(configuration);
         serviceDefaults().applyAsyncDefaults(configuration);
         new GlobalClientConfigurationDefaults().applyAsyncDefaults(configuration);
+        // TODO resolve async client
+        applySdkHttpClient(configuration);
         return new ImmutableAsyncClientConfiguration(configuration);
     }
 
@@ -231,7 +227,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
              * Add the global request handlers.
              */
             @Override
-            protected void applyListenerDefaults(ClientListenerConfiguration.Builder builder) {
+            protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
                 new HandlerChainFactory().getGlobalHandlers().forEach(builder::addRequestListener);
             }
         };
@@ -240,63 +236,51 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     /**
      * Resolve the region that should be used based on the customer's configuration.
      */
-    private Optional<String> resolveRegion() {
-        return OptionalUtils.firstPresent(region(), this::regionFromDefaultProvider);
+    private Optional<Region> resolveRegion() {
+        return region != null ? Optional.of(region) : regionFromDefaultProvider();
     }
 
     /**
      * Resolve the service endpoint that should be used based on the customer's configuration.
      */
     private Optional<URI> resolveEndpoint() {
-        return OptionalUtils.firstPresent(endpointOverride(), this::endpointFromRegion);
+        URI configuredEndpoint = mutableClientConfiguration.endpoint();
+        return configuredEndpoint != null ? Optional.of(configuredEndpoint) : endpointFromRegion();
     }
 
     /**
      * Load the region from the default region provider if enabled.
      */
-    private Optional<String> regionFromDefaultProvider() {
+    private Optional<Region> regionFromDefaultProvider() {
         return useRegionProviderChain() ? Optional.ofNullable(DEFAULT_REGION_PROVIDER.getRegion()) : Optional.empty();
     }
 
     /**
-     * @return True if loading from region provider chain is allowed per options. False otherwise False otherwise.
+     * Determine whether loading the region from the region provider chain is allowed by the options. True by default.
      */
     private boolean useRegionProviderChain() {
-        return defaultRegionDetectionEnabled == null || defaultRegionDetectionEnabled;
+        Boolean configuredToUseRegionProviderChain =
+                mutableClientConfiguration.overrideConfiguration().advancedOption(ENABLE_DEFAULT_REGION_DETECTION);
+        return configuredToUseRegionProviderChain != null ? configuredToUseRegionProviderChain : true;
     }
 
     /**
      * Load the endpoint from the resolved region.
      */
     private Optional<URI> endpointFromRegion() {
-        return resolveRegion().map(r -> EndpointUtils.buildEndpoint(DEFAULT_ENDPOINT_PROTOCOL, serviceEndpointPrefix(),
-                                                                    RegionUtils.getRegion(r)));
+        return resolveRegion().map(r -> EndpointUtils.buildEndpoint(DEFAULT_ENDPOINT_PROTOCOL, serviceEndpointPrefix(), r));
     }
 
     // Getters and Setters
 
     @Override
-    public final Optional<String> region() {
-        return Optional.ofNullable(region);
-    }
-
-    @Override
-    public final B region(String region) {
+    public final B region(Region region) {
         this.region = region;
         return thisBuilder();
     }
 
-    public final String getRegion() {
-        return region;
-    }
-
-    public final void setRegion(String region) {
+    public final void setRegion(Region region) {
         region(region);
-    }
-
-    @Override
-    public Optional<URI> endpointOverride() {
-        return Optional.ofNullable(mutableClientConfiguration.endpoint());
     }
 
     @Override
@@ -305,44 +289,13 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         return thisBuilder();
     }
 
-    public URI getEndpointOverride() {
-        return endpointOverride().orElse(null);
-    }
-
     public void setEndpointOverride(URI endpointOverride) {
         endpointOverride(endpointOverride);
-    }
-
-    @Override
-    public Optional<Boolean> defaultRegionDetectionEnabled() {
-        return Optional.ofNullable(defaultRegionDetectionEnabled);
-    }
-
-    @Override
-    public B defaultRegionDetectionEnabled(Boolean defaultRegionDetectionEnabled) {
-        this.defaultRegionDetectionEnabled = defaultRegionDetectionEnabled;
-        return thisBuilder();
-    }
-
-    public Boolean getDefaultRegionDetectionEnabled() {
-        return defaultRegionDetectionEnabled().orElse(null);
-    }
-
-    public void setDefaultRegionDetectionEnabled(Boolean defaultRegionDetectionEnabled) {
-        defaultRegionDetectionEnabled(defaultRegionDetectionEnabled);
-    }
-
-    public Optional<ExecutorProvider> asyncExecutorProvider() {
-        return Optional.ofNullable(asyncExecutorProvider);
     }
 
     public B asyncExecutorProvider(ExecutorProvider asyncExecutorProvider) {
         this.asyncExecutorProvider = asyncExecutorProvider;
         return thisBuilder();
-    }
-
-    public ExecutorProvider getAsyncExecutorProvider() {
-        return asyncExecutorProvider;
     }
 
     public void setAsyncExecutorProvider(ExecutorProvider asyncExecutorProvider) {
@@ -352,117 +305,13 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     // Getters and setters that just delegate to the mutable client configuration
 
     @Override
-    public final ClientTimeoutConfiguration timeoutConfiguration() {
-        return mutableClientConfiguration.timeoutConfiguration();
-    }
-
-    @Override
-    public final B timeoutConfiguration(ClientTimeoutConfiguration timeoutConfiguration) {
-        mutableClientConfiguration.timeoutConfiguration(timeoutConfiguration);
+    public final B overrideConfiguration(ClientOverrideConfiguration overrideConfiguration) {
+        mutableClientConfiguration.overrideConfiguration(overrideConfiguration);
         return thisBuilder();
     }
 
-    public final ClientTimeoutConfiguration getTimeoutConfiguration() {
-        return timeoutConfiguration();
-    }
-
-    public final void setTimeoutConfiguration(ClientTimeoutConfiguration timeoutConfiguration) {
-        timeoutConfiguration(timeoutConfiguration);
-    }
-
-    @Override
-    public final ClientMarshallerConfiguration marshallerConfiguration() {
-        return mutableClientConfiguration.marshallerConfiguration();
-    }
-
-    @Override
-    public final B marshallerConfiguration(ClientMarshallerConfiguration marshallerConfiguration) {
-        mutableClientConfiguration.marshallerConfiguration(marshallerConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientMarshallerConfiguration getMarshallerConfiguration() {
-        return marshallerConfiguration();
-    }
-
-    public final void setMarshallerConfiguration(ClientMarshallerConfiguration marshallerConfiguration) {
-        marshallerConfiguration(marshallerConfiguration);
-    }
-
-    @Override
-    public final ClientMetricsConfiguration metricsConfiguration() {
-        return mutableClientConfiguration.metricsConfiguration();
-    }
-
-    @Override
-    public final B metricsConfiguration(ClientMetricsConfiguration metricsConfiguration) {
-        mutableClientConfiguration.metricsConfiguration(metricsConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientMetricsConfiguration getMetricsConfiguration() {
-        return metricsConfiguration();
-    }
-
-    public final void setMetricsConfiguration(ClientMetricsConfiguration metricsConfiguration) {
-        metricsConfiguration(metricsConfiguration);
-    }
-
-    @Override
-    public final ClientSecurityConfiguration securityConfiguration() {
-        return mutableClientConfiguration.securityConfiguration();
-    }
-
-    @Override
-    public final B securityConfiguration(ClientSecurityConfiguration securityConfiguration) {
-        mutableClientConfiguration.securityConfiguration(securityConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientSecurityConfiguration getSecurityConfiguration() {
-        return securityConfiguration();
-    }
-
-    public final void setSecurityConfiguration(ClientSecurityConfiguration securityConfiguration) {
-        securityConfiguration(securityConfiguration);
-    }
-
-    @Override
-    public final ClientRetryConfiguration retryConfiguration() {
-        return mutableClientConfiguration.retryConfiguration();
-    }
-
-    @Override
-    public final B retryConfiguration(ClientRetryConfiguration retryConfiguration) {
-        mutableClientConfiguration.retryConfiguration(retryConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientRetryConfiguration getRetryConfiguration() {
-        return retryConfiguration();
-    }
-
-    public final void setRetryConfiguration(ClientRetryConfiguration retryConfiguration) {
-        retryConfiguration(retryConfiguration);
-    }
-
-    @Override
-    public final ClientListenerConfiguration listenerConfiguration() {
-        return mutableClientConfiguration.listenerConfiguration();
-    }
-
-    @Override
-    public final B listenerConfiguration(ClientListenerConfiguration listenerConfiguration) {
-        mutableClientConfiguration.listenerConfiguration(listenerConfiguration);
-        return thisBuilder();
-    }
-
-    public final ClientListenerConfiguration getListenerConfiguration() {
-        return listenerConfiguration();
-    }
-
-    public final void setListenerConfiguration(ClientListenerConfiguration listenerConfiguration) {
-        listenerConfiguration(listenerConfiguration);
+    public final void setOverrideConfiguration(ClientOverrideConfiguration overrideConfiguration) {
+        overrideConfiguration(overrideConfiguration);
     }
 
     @Override
@@ -471,32 +320,14 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         return thisBuilder();
     }
 
-    @Override
-    public final ClientHttpConfiguration httpConfiguration() {
-        return this.httpConfiguration;
-    }
-
-    public final ClientHttpConfiguration getHttpConfiguration() {
-        return this.httpConfiguration;
-    }
-
     public final void setHttpConfiguration(ClientHttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
-    }
-
-    @Override
-    public final Optional<AwsCredentialsProvider> credentialsProvider() {
-        return Optional.ofNullable(mutableClientConfiguration.credentialsProvider());
     }
 
     @Override
     public final B credentialsProvider(AwsCredentialsProvider credentialsProvider) {
         mutableClientConfiguration.credentialsProvider(credentialsProvider);
         return thisBuilder();
-    }
-
-    public final AwsCredentialsProvider getCredentialsProvider() {
-        return credentialsProvider().orElse(null);
     }
 
     public final void setCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
@@ -515,6 +346,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * Wrapper around {@link SdkHttpClient} to prevent it from being closed. Used when the customer provides
      * an already built client in which case they are responsible for the lifecycle of it.
      */
+    @SdkTestInternalApi
     static class NonManagedSdkHttpClient implements SdkHttpClient {
 
         private final SdkHttpClient delegate;

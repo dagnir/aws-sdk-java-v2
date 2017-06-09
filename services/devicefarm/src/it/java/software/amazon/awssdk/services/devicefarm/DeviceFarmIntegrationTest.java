@@ -22,7 +22,7 @@ import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.devicefarm.model.CreateProjectRequest;
-import software.amazon.awssdk.services.devicefarm.model.CreateProjectResult;
+import software.amazon.awssdk.services.devicefarm.model.CreateProjectResponse;
 import software.amazon.awssdk.services.devicefarm.model.ListDevicePoolsRequest;
 import software.amazon.awssdk.services.devicefarm.model.Project;
 import software.amazon.awssdk.test.AwsTestBase;
@@ -44,17 +44,17 @@ public class DeviceFarmIntegrationTest extends AwsTestBase {
 
     @Test
     public void testCreateProject() {
-        CreateProjectResult result = client
-                .createProject(new CreateProjectRequest()
-                                       .withName(PROJECT_NAME));
-        final Project project = result.getProject();
+        CreateProjectResponse result = client
+                .createProject(CreateProjectRequest.builder()
+                        .name(PROJECT_NAME)
+                        .build());
+        final Project project = result.project();
         assertNotNull(project);
-        assertNotNull(project.getArn());
+        assertNotNull(project.arn());
     }
 
     @Test(expected = AmazonServiceException.class)
     public void testExceptionHandling() {
-        client.listDevicePools(new ListDevicePoolsRequest()
-                                       .withNextToken("fake-token"));
+        client.listDevicePools(ListDevicePoolsRequest.builder().nextToken("fake-token").build());
     }
 }

@@ -31,11 +31,8 @@ public final class Defaults {
      */
     public static final Duration CONNECTION_POOL_TTL = Duration.ofMillis(-1);
 
-    public static final Duration SOCKET_TIMEOUT = Duration.ofSeconds(50);
-
-    public static final Duration CONNECTION_TIMEOUT = Duration.ofSeconds(10);
-
-    public static final int MAX_CONNECTIONS = 50;
-
     public static final Boolean EXPECT_CONTINUE_ENABLED = Boolean.TRUE;
+
+    private Defaults() {
+    }
 }

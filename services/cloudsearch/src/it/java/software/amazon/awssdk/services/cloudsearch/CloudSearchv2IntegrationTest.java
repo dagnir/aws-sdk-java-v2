@@ -11,34 +11,34 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsStaticCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudsearch.model.AccessPoliciesStatus;
 import software.amazon.awssdk.services.cloudsearch.model.AnalysisScheme;
 import software.amazon.awssdk.services.cloudsearch.model.AnalysisSchemeLanguage;
 import software.amazon.awssdk.services.cloudsearch.model.AnalysisSchemeStatus;
 import software.amazon.awssdk.services.cloudsearch.model.BuildSuggestersRequest;
 import software.amazon.awssdk.services.cloudsearch.model.CreateDomainRequest;
-import software.amazon.awssdk.services.cloudsearch.model.CreateDomainResult;
+import software.amazon.awssdk.services.cloudsearch.model.CreateDomainResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DefineAnalysisSchemeRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DefineExpressionRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DefineIndexFieldRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DefineSuggesterRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DefineSuggesterResult;
+import software.amazon.awssdk.services.cloudsearch.model.DefineSuggesterResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DeleteDomainRequest;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeAnalysisSchemesRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeAnalysisSchemesResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeAnalysisSchemesResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeDomainsRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeDomainsResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeDomainsResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeExpressionsRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeExpressionsResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeExpressionsResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeIndexFieldsRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeIndexFieldsResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeIndexFieldsResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeScalingParametersRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeScalingParametersResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeScalingParametersResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeServiceAccessPoliciesRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeServiceAccessPoliciesResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeServiceAccessPoliciesResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DescribeSuggestersRequest;
-import software.amazon.awssdk.services.cloudsearch.model.DescribeSuggestersResult;
+import software.amazon.awssdk.services.cloudsearch.model.DescribeSuggestersResponse;
 import software.amazon.awssdk.services.cloudsearch.model.DocumentSuggesterOptions;
 import software.amazon.awssdk.services.cloudsearch.model.DomainStatus;
 import software.amazon.awssdk.services.cloudsearch.model.Expression;
@@ -48,7 +48,7 @@ import software.amazon.awssdk.services.cloudsearch.model.IndexField;
 import software.amazon.awssdk.services.cloudsearch.model.IndexFieldStatus;
 import software.amazon.awssdk.services.cloudsearch.model.IndexFieldType;
 import software.amazon.awssdk.services.cloudsearch.model.ListDomainNamesRequest;
-import software.amazon.awssdk.services.cloudsearch.model.ListDomainNamesResult;
+import software.amazon.awssdk.services.cloudsearch.model.ListDomainNamesResponse;
 import software.amazon.awssdk.services.cloudsearch.model.PartitionInstanceType;
 import software.amazon.awssdk.services.cloudsearch.model.ScalingParameters;
 import software.amazon.awssdk.services.cloudsearch.model.Suggester;
@@ -93,7 +93,7 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
      */
     @BeforeClass
     public static void setUp() throws Exception {
-        cloudSearch = CloudSearchClient.builder().credentialsProvider(new AwsStaticCredentialsProvider(getCredentials())).build();
+        cloudSearch = CloudSearchClient.builder().credentialsProvider(new StaticCredentialsProvider(getCredentials())).build();
     }
 
     /**
@@ -106,8 +106,8 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
 
         testDomainName = testDomainNamePrefix + System.currentTimeMillis();
 
-        cloudSearch.createDomain(new CreateDomainRequest()
-                                         .withDomainName(testDomainName));
+        cloudSearch.createDomain(CreateDomainRequest.builder()
+                                                    .domainName(testDomainName).build());
     }
 
     /**
@@ -115,8 +115,8 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
      */
     @After
     public void deleteDomain() {
-        cloudSearch.deleteDomain(new DeleteDomainRequest()
-                                         .withDomainName(testDomainName));
+        cloudSearch.deleteDomain(DeleteDomainRequest.builder()
+                                                    .domainName(testDomainName).build());
     }
 
     /**
@@ -131,37 +131,37 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void testCreateDomains() {
 
-        CreateDomainResult createDomainResult = null;
+        CreateDomainResponse createDomainResult = null;
         String domainName = "test-" + System.currentTimeMillis();
         try {
-            DescribeDomainsResult describeDomainResult = cloudSearch
-                    .describeDomains(new DescribeDomainsRequest());
-            ListDomainNamesResult listDomainNamesResult = cloudSearch
-                    .listDomainNames(new ListDomainNamesRequest());
+            DescribeDomainsResponse describeDomainResult = cloudSearch
+                    .describeDomains(DescribeDomainsRequest.builder().build());
+            ListDomainNamesResponse listDomainNamesResult = cloudSearch
+                    .listDomainNames(ListDomainNamesRequest.builder().build());
 
-            assertTrue(describeDomainResult.getDomainStatusList().size() >= 0);
-            assertTrue(listDomainNamesResult.getDomainNames().size() >= 0);
+            assertTrue(describeDomainResult.domainStatusList().size() >= 0);
+            assertTrue(listDomainNamesResult.domainNames().size() >= 0);
 
             createDomainResult = cloudSearch
-                    .createDomain(new CreateDomainRequest()
-                                          .withDomainName(domainName));
+                    .createDomain(CreateDomainRequest.builder()
+                                                     .domainName(domainName).build());
 
             describeDomainResult = cloudSearch
-                    .describeDomains(new DescribeDomainsRequest()
-                                             .withDomainNames(domainName));
+                    .describeDomains(DescribeDomainsRequest.builder()
+                                                           .domainNames(domainName).build());
             DomainStatus domainStatus = describeDomainResult
-                    .getDomainStatusList().get(0);
+                    .domainStatusList().get(0);
 
-            assertTrue(domainStatus.getCreated());
-            assertFalse(domainStatus.getDeleted());
-            assertNotNull(domainStatus.getARN());
-            assertEquals(domainStatus.getDomainName(), domainName);
-            assertNotNull(domainStatus.getDomainId());
-            assertTrue(domainStatus.getProcessing());
+            assertTrue(domainStatus.created());
+            assertFalse(domainStatus.deleted());
+            assertNotNull(domainStatus.arn());
+            assertEquals(domainStatus.domainName(), domainName);
+            assertNotNull(domainStatus.domainId());
+            assertTrue(domainStatus.processing());
         } finally {
             if (createDomainResult != null) {
-                cloudSearch.deleteDomain(new DeleteDomainRequest()
-                                                 .withDomainName(domainName));
+                cloudSearch.deleteDomain(DeleteDomainRequest.builder()
+                                                            .domainName(domainName).build());
             }
         }
 
@@ -176,21 +176,21 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
     @Test
     public void testIndexDocuments() {
 
-        IndexField indexField = new IndexField().withIndexFieldName(
-                testIndexName).withIndexFieldType(IndexFieldType.Literal);
+        IndexField indexField = IndexField.builder().indexFieldName(
+                testIndexName).indexFieldType(IndexFieldType.Literal).build();
 
-        cloudSearch.defineIndexField(new DefineIndexFieldRequest()
-                                             .withDomainName(testDomainName).withIndexField(indexField));
-        DescribeDomainsResult describeDomainResult = cloudSearch
-                .describeDomains(new DescribeDomainsRequest()
-                                         .withDomainNames(testDomainName));
-        DomainStatus status = describeDomainResult.getDomainStatusList().get(0);
-        assertTrue(status.getRequiresIndexDocuments());
+        cloudSearch.defineIndexField(DefineIndexFieldRequest.builder()
+                                                            .domainName(testDomainName).indexField(indexField).build());
+        DescribeDomainsResponse describeDomainResult = cloudSearch
+                .describeDomains(DescribeDomainsRequest.builder()
+                                                       .domainNames(testDomainName).build());
+        DomainStatus status = describeDomainResult.domainStatusList().get(0);
+        assertTrue(status.requiresIndexDocuments());
 
-        cloudSearch.indexDocuments(new IndexDocumentsRequest()
-                                           .withDomainName(testDomainName));
-        status = describeDomainResult.getDomainStatusList().get(0);
-        assertTrue(status.getProcessing());
+        cloudSearch.indexDocuments(IndexDocumentsRequest.builder()
+                                                        .domainName(testDomainName).build());
+        status = describeDomainResult.domainStatusList().get(0);
+        assertTrue(status.processing());
 
     }
 
@@ -206,28 +206,28 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DAY_OF_MONTH, -1);
 
-        DescribeDomainsResult describeDomainResult = cloudSearch
-                .describeDomains(new DescribeDomainsRequest()
-                                         .withDomainNames(testDomainName));
+        DescribeDomainsResponse describeDomainResult = cloudSearch
+                .describeDomains(DescribeDomainsRequest.builder()
+                                                       .domainNames(testDomainName).build());
 
         POLICY = POLICY.replaceAll("ARN", describeDomainResult
-                .getDomainStatusList().get(0).getARN());
+                .domainStatusList().get(0).arn());
         cloudSearch
-                .updateServiceAccessPolicies(new UpdateServiceAccessPoliciesRequest()
-                                                     .withDomainName(testDomainName).withAccessPolicies(
-                                POLICY));
-        DescribeServiceAccessPoliciesResult accessPolicyResult = cloudSearch
-                .describeServiceAccessPolicies(new DescribeServiceAccessPoliciesRequest()
-                                                       .withDomainName(testDomainName));
-        accessPoliciesStatus = accessPolicyResult.getAccessPolicies();
+                .updateServiceAccessPolicies(UpdateServiceAccessPoliciesRequest.builder()
+                                                                               .domainName(testDomainName).accessPolicies(
+                                POLICY).build());
+        DescribeServiceAccessPoliciesResponse accessPolicyResult = cloudSearch
+                .describeServiceAccessPolicies(DescribeServiceAccessPoliciesRequest.builder()
+                                                                                   .domainName(testDomainName).build());
+        accessPoliciesStatus = accessPolicyResult.accessPolicies();
 
         assertNotNull(accessPoliciesStatus);
         assertTrue(yesterday.getTime().before(
-                accessPoliciesStatus.getStatus().getCreationDate()));
+                accessPoliciesStatus.status().creationDate()));
         assertTrue(yesterday.getTime().before(
-                accessPoliciesStatus.getStatus().getUpdateDate()));
-        assertTrue(accessPoliciesStatus.getOptions().length() > 0);
-        assertNotNull(accessPoliciesStatus.getStatus().getState());
+                accessPoliciesStatus.status().updateDate()));
+        assertTrue(accessPoliciesStatus.options().length() > 0);
+        assertNotNull(accessPoliciesStatus.status().state());
 
     }
 
@@ -243,29 +243,27 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
     public void testIndexFields() {
 
         String indexFieldName = null;
-        DescribeIndexFieldsRequest describeIndexFieldRequest = new DescribeIndexFieldsRequest()
-                .withDomainName(testDomainName);
+        DescribeIndexFieldsRequest describeIndexFieldRequest = DescribeIndexFieldsRequest.builder()
+                                                                                         .domainName(testDomainName).build();
 
-        DescribeIndexFieldsResult result = cloudSearch
-                .describeIndexFields(describeIndexFieldRequest);
+        DescribeIndexFieldsResponse result = cloudSearch.describeIndexFields(describeIndexFieldRequest);
 
-        assertTrue(result.getIndexFields().size() == 0);
+        assertTrue(result.indexFields().size() == 0);
 
         IndexField field = null;
-        DefineIndexFieldRequest defineIndexFieldRequest = new DefineIndexFieldRequest()
-                .withDomainName(testDomainName);
+        DefineIndexFieldRequest.Builder defineIndexFieldRequest = DefineIndexFieldRequest.builder()
+                                                                                         .domainName(testDomainName);
         for (IndexFieldType type : IndexFieldType.values()) {
             indexFieldName = type.toString();
             indexFieldName = indexFieldName.replaceAll("-", "");
-            field = new IndexField().withIndexFieldType(type)
-                                    .withIndexFieldName(indexFieldName + "indexfield");
-            defineIndexFieldRequest.withIndexField(field);
-            cloudSearch.defineIndexField(defineIndexFieldRequest);
+            field = IndexField.builder().indexFieldType(type)
+                              .indexFieldName(indexFieldName + "indexfield").build();
+            defineIndexFieldRequest.indexField(field);
+            cloudSearch.defineIndexField(defineIndexFieldRequest.build());
         }
 
-        result = cloudSearch.describeIndexFields(describeIndexFieldRequest
-                                                         .withDeployed(false));
-        List<IndexFieldStatus> indexFieldStatusList = result.getIndexFields();
+        result = cloudSearch.describeIndexFields(describeIndexFieldRequest.toBuilder().deployed(false).build());
+        List<IndexFieldStatus> indexFieldStatusList = result.indexFields();
         assertTrue(indexFieldStatusList.size() == IndexFieldType.values().length);
     }
 
@@ -276,30 +274,30 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
      */
     @Test
     public void testExpressions() {
-        DescribeExpressionsRequest describeExpressionRequest = new DescribeExpressionsRequest()
-                .withDomainName(testDomainName);
+        DescribeExpressionsRequest describeExpressionRequest = DescribeExpressionsRequest.builder()
+                                                                                         .domainName(testDomainName).build();
 
-        DescribeExpressionsResult describeExpressionResult = cloudSearch
+        DescribeExpressionsResponse describeExpressionResult = cloudSearch
                 .describeExpressions(describeExpressionRequest);
 
-        assertTrue(describeExpressionResult.getExpressions().size() == 0);
+        assertTrue(describeExpressionResult.expressions().size() == 0);
 
-        Expression expression = new Expression().withExpressionName(
-                testExpressionName).withExpressionValue("1");
-        cloudSearch.defineExpression(new DefineExpressionRequest()
-                                             .withDomainName(testDomainName).withExpression(expression));
+        Expression expression = Expression.builder().expressionName(
+                testExpressionName).expressionValue("1").build();
+        cloudSearch.defineExpression(DefineExpressionRequest.builder()
+                                                            .domainName(testDomainName).expression(expression).build());
 
         describeExpressionResult = cloudSearch
                 .describeExpressions(describeExpressionRequest);
         List<ExpressionStatus> expressionStatus = describeExpressionResult
-                .getExpressions();
+                .expressions();
         assertTrue(expressionStatus.size() == 1);
 
-        Expression expressionRetrieved = expressionStatus.get(0).getOptions();
-        assertEquals(expression.getExpressionName(),
-                     expressionRetrieved.getExpressionName());
-        assertEquals(expression.getExpressionValue(),
-                     expressionRetrieved.getExpressionValue());
+        Expression expressionRetrieved = expressionStatus.get(0).options();
+        assertEquals(expression.expressionName(),
+                     expressionRetrieved.expressionName());
+        assertEquals(expression.expressionValue(),
+                     expressionRetrieved.expressionValue());
     }
 
     /**
@@ -311,50 +309,56 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
      */
     @Test
     public void testSuggestors() {
-        DescribeSuggestersRequest describeSuggesterRequest = new DescribeSuggestersRequest()
-                .withDomainName(testDomainName);
-        DescribeSuggestersResult describeSuggesterResult = cloudSearch
+        DescribeSuggestersRequest describeSuggesterRequest = DescribeSuggestersRequest.builder()
+                                                                                      .domainName(testDomainName).build();
+        DescribeSuggestersResponse describeSuggesterResult = cloudSearch
                 .describeSuggesters(describeSuggesterRequest);
 
-        assertTrue(describeSuggesterResult.getSuggesters().size() == 0);
+        assertTrue(describeSuggesterResult.suggesters().size() == 0);
 
-        DefineIndexFieldRequest defineIndexFieldRequest = new DefineIndexFieldRequest()
-                .withDomainName(testDomainName)
-                .withIndexField(
-                        new IndexField()
-                                .withIndexFieldName(testIndexName)
-                                .withIndexFieldType(IndexFieldType.Text)
-                                .withTextOptions(
-                                        new TextOptions()
-                                                .withAnalysisScheme("_en_default_")));
+        DefineIndexFieldRequest defineIndexFieldRequest = DefineIndexFieldRequest.builder()
+                                                                                 .domainName(testDomainName)
+                                                                                 .indexField(
+                                                                                         IndexField.builder()
+                                                                                                   .indexFieldName(testIndexName)
+                                                                                                   .indexFieldType(
+                                                                                                           IndexFieldType.Text)
+                                                                                                   .textOptions(
+                                                                                                           TextOptions.builder()
+                                                                                                                      .analysisScheme(
+                                                                                                                              "_en_default_")
+                                                                                                                      .build())
+                                                                                                   .build()).build();
         cloudSearch.defineIndexField(defineIndexFieldRequest);
 
-        DocumentSuggesterOptions suggesterOptions = new DocumentSuggesterOptions()
-                .withSourceField(testIndexName).withSortExpression("1");
-        Suggester suggester = new Suggester().withSuggesterName(
-                testSuggesterName).withDocumentSuggesterOptions(
-                suggesterOptions);
-        DefineSuggesterRequest defineSuggesterRequest = new DefineSuggesterRequest()
-                .withDomainName(testDomainName).withSuggester(suggester);
-        DefineSuggesterResult defineSuggesterResult = cloudSearch
+        DocumentSuggesterOptions suggesterOptions = DocumentSuggesterOptions.builder()
+                                                                            .sourceField(testIndexName).sortExpression("1")
+                                                                            .build();
+        Suggester suggester = Suggester.builder().suggesterName(
+                testSuggesterName).documentSuggesterOptions(
+                suggesterOptions).build();
+        DefineSuggesterRequest defineSuggesterRequest = DefineSuggesterRequest.builder()
+                                                                              .domainName(testDomainName).suggester(suggester)
+                                                                              .build();
+        DefineSuggesterResponse defineSuggesterResult = cloudSearch
                 .defineSuggester(defineSuggesterRequest);
-        SuggesterStatus status = defineSuggesterResult.getSuggester();
+        SuggesterStatus status = defineSuggesterResult.suggester();
         assertNotNull(status);
-        assertNotNull(status.getOptions());
-        assertEquals(status.getOptions().getSuggesterName(), testSuggesterName);
+        assertNotNull(status.options());
+        assertEquals(status.options().suggesterName(), testSuggesterName);
 
         describeSuggesterResult = cloudSearch
                 .describeSuggesters(describeSuggesterRequest);
-        assertTrue(describeSuggesterResult.getSuggesters().size() == 1);
+        assertTrue(describeSuggesterResult.suggesters().size() == 1);
 
-        cloudSearch.buildSuggesters(new BuildSuggestersRequest()
-                                            .withDomainName(testDomainName));
-        DescribeDomainsResult describeDomainsResult = cloudSearch
-                .describeDomains(new DescribeDomainsRequest()
-                                         .withDomainNames(testDomainName));
-        DomainStatus domainStatus = describeDomainsResult.getDomainStatusList()
+        cloudSearch.buildSuggesters(BuildSuggestersRequest.builder()
+                                                          .domainName(testDomainName).build());
+        DescribeDomainsResponse describeDomainsResult = cloudSearch
+                .describeDomains(DescribeDomainsRequest.builder()
+                                                       .domainNames(testDomainName).build());
+        DomainStatus domainStatus = describeDomainsResult.domainStatusList()
                                                          .get(0);
-        assertTrue(domainStatus.getProcessing());
+        assertTrue(domainStatus.processing());
     }
 
     /**
@@ -368,47 +372,51 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
      */
     @Test
     public void testAnalysisSchemes() {
-        DescribeAnalysisSchemesRequest describeAnalysisSchemesRequest = new DescribeAnalysisSchemesRequest()
-                .withDomainName(testDomainName);
-        DescribeAnalysisSchemesResult describeAnalysisSchemesResult = cloudSearch
+        DescribeAnalysisSchemesRequest describeAnalysisSchemesRequest = DescribeAnalysisSchemesRequest.builder()
+                                                                                                      .domainName(testDomainName)
+                                                                                                      .build();
+        DescribeAnalysisSchemesResponse describeAnalysisSchemesResult = cloudSearch
                 .describeAnalysisSchemes(describeAnalysisSchemesRequest);
-        assertTrue(describeAnalysisSchemesResult.getAnalysisSchemes().size() == 0);
+        assertTrue(describeAnalysisSchemesResult.analysisSchemes().size() == 0);
 
-        AnalysisScheme analysisScheme = new AnalysisScheme()
-                .withAnalysisSchemeName(testAnalysisSchemeName)
-                .withAnalysisSchemeLanguage(AnalysisSchemeLanguage.Ar);
-        cloudSearch.defineAnalysisScheme(new DefineAnalysisSchemeRequest()
-                                                 .withDomainName(testDomainName).withAnalysisScheme(
-                        analysisScheme));
+        AnalysisScheme analysisScheme = AnalysisScheme.builder()
+                                                      .analysisSchemeName(testAnalysisSchemeName)
+                                                      .analysisSchemeLanguage(AnalysisSchemeLanguage.Ar).build();
+        cloudSearch.defineAnalysisScheme(DefineAnalysisSchemeRequest.builder()
+                                                                    .domainName(testDomainName).analysisScheme(
+                        analysisScheme).build());
 
-        IndexField indexField = new IndexField().withIndexFieldName(
-                testIndexName).withIndexFieldType(IndexFieldType.Text);
-        indexField.setTextOptions(new TextOptions()
-                                          .withAnalysisScheme(testAnalysisSchemeName));
+        ;
 
-        DefineIndexFieldRequest defineIndexFieldRequest = new DefineIndexFieldRequest()
-                .withDomainName(testDomainName).withIndexField(indexField);
+        DefineIndexFieldRequest defineIndexFieldRequest =
+                DefineIndexFieldRequest.builder()
+                                       .domainName(testDomainName)
+                                       .indexField(IndexField.builder()
+                                                             .indexFieldName(testIndexName)
+                                                             .indexFieldType(IndexFieldType.Text)
+                                                             .textOptions(TextOptions.builder()
+                                                                                     .analysisScheme(testAnalysisSchemeName)
+                                                                                     .build()).build()).build();
         cloudSearch.defineIndexField(defineIndexFieldRequest);
 
-        describeAnalysisSchemesResult = cloudSearch
-                .describeAnalysisSchemes(describeAnalysisSchemesRequest);
-        assertTrue(describeAnalysisSchemesResult.getAnalysisSchemes().size() == 1);
+        describeAnalysisSchemesResult = cloudSearch.describeAnalysisSchemes(describeAnalysisSchemesRequest);
+        assertTrue(describeAnalysisSchemesResult.analysisSchemes().size() == 1);
 
         AnalysisSchemeStatus schemeStatus = describeAnalysisSchemesResult
-                .getAnalysisSchemes().get(0);
-        assertEquals(schemeStatus.getOptions().getAnalysisSchemeName(),
+                .analysisSchemes().get(0);
+        assertEquals(schemeStatus.options().analysisSchemeName(),
                      testAnalysisSchemeName);
-        assertEquals(schemeStatus.getOptions().getAnalysisSchemeLanguage(),
+        assertEquals(schemeStatus.options().analysisSchemeLanguage(),
                      AnalysisSchemeLanguage.Ar.toString());
 
-        DescribeIndexFieldsResult describeIndexFieldsResult = cloudSearch
-                .describeIndexFields(new DescribeIndexFieldsRequest()
-                                             .withDomainName(testDomainName).withFieldNames(
-                                testIndexName));
-        IndexFieldStatus status = describeIndexFieldsResult.getIndexFields()
+        DescribeIndexFieldsResponse describeIndexFieldsResult = cloudSearch
+                .describeIndexFields(DescribeIndexFieldsRequest.builder()
+                                                               .domainName(testDomainName).fieldNames(
+                                testIndexName).build());
+        IndexFieldStatus status = describeIndexFieldsResult.indexFields()
                                                            .get(0);
-        TextOptions textOptions = status.getOptions().getTextOptions();
-        assertEquals(textOptions.getAnalysisScheme(), testAnalysisSchemeName);
+        TextOptions textOptions = status.options().textOptions();
+        assertEquals(textOptions.analysisScheme(), testAnalysisSchemeName);
 
     }
 
@@ -418,26 +426,25 @@ public class CloudSearchv2IntegrationTest extends AwsIntegrationTestBase {
      */
     @Test
     public void testScalingParameters() {
-        ScalingParameters scalingParameters = new ScalingParameters()
-                .withDesiredInstanceType(PartitionInstanceType.SearchM1Small)
-                .withDesiredReplicationCount(5)
-                .withDesiredPartitionCount(5);
-        cloudSearch
-                .updateScalingParameters(new UpdateScalingParametersRequest()
-                                                 .withDomainName(testDomainName).withScalingParameters(
-                                scalingParameters));
+        ScalingParameters scalingParameters = ScalingParameters.builder()
+                                                               .desiredInstanceType(PartitionInstanceType.SearchM1Small)
+                                                               .desiredReplicationCount(5)
+                                                               .desiredPartitionCount(5).build();
+        cloudSearch.updateScalingParameters(UpdateScalingParametersRequest.builder()
+                                                                          .domainName(testDomainName)
+                                                                          .scalingParameters(scalingParameters).build());
 
-        DescribeScalingParametersResult describeScalingParametersResult = cloudSearch
-                .describeScalingParameters(new DescribeScalingParametersRequest()
-                                                   .withDomainName(testDomainName));
+        DescribeScalingParametersResponse describeScalingParametersResult = cloudSearch
+                .describeScalingParameters(DescribeScalingParametersRequest.builder()
+                                                                           .domainName(testDomainName).build());
         ScalingParameters retrievedScalingParameters = describeScalingParametersResult
-                .getScalingParameters().getOptions();
-        assertEquals(retrievedScalingParameters.getDesiredInstanceType(),
-                     scalingParameters.getDesiredInstanceType());
-        assertEquals(retrievedScalingParameters.getDesiredReplicationCount(),
-                     scalingParameters.getDesiredReplicationCount());
-        assertEquals(retrievedScalingParameters.getDesiredPartitionCount(),
-                     scalingParameters.getDesiredPartitionCount());
+                .scalingParameters().options();
+        assertEquals(retrievedScalingParameters.desiredInstanceType(),
+                     scalingParameters.desiredInstanceType());
+        assertEquals(retrievedScalingParameters.desiredReplicationCount(),
+                     scalingParameters.desiredReplicationCount());
+        assertEquals(retrievedScalingParameters.desiredPartitionCount(),
+                     scalingParameters.desiredPartitionCount());
     }
 
 }

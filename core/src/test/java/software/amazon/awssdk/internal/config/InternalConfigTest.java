@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.util.ClassLoaderHelper;
 
 public class InternalConfigTest {
@@ -73,13 +73,13 @@ public class InternalConfigTest {
     private void testAllRegions(String serviceName, String signerType) {
 
         assertSignerType(DEFAULT_SIGNER_TYPE, serviceName, null);
-        for (Regions region : Regions.values()) {
+        for (Region region : Region.REGIONS) {
 
-            if (region == Regions.CN_NORTH_1) {
+            if (region == Region.CN_NORTH_1) {
                 signerType = DEFAULT_SIGNER_TYPE;
             }
 
-            assertSignerType(signerType, serviceName, region.getName());
+            assertSignerType(signerType, serviceName, region.value());
         }
     }
 
@@ -91,9 +91,9 @@ public class InternalConfigTest {
         final String serviceName = "s3";
         assertSignerType(S3V4_SIGNER_TYPE, serviceName, null);
 
-        for (Regions region : Regions.values()) {
+        for (Region region : Region.REGIONS) {
             assertSignerType(S3V4_SIGNER_TYPE, serviceName,
-                             region.getName());
+                             region.value());
         }
         assertSignerType(S3V4_SIGNER_TYPE, serviceName, NEW_REGION);
     }
@@ -156,10 +156,10 @@ public class InternalConfigTest {
     public void testCognitoAssertions() {
         assertSignerType("AWS4SignerType", "cognito-identity", null);
         assertSignerType("AWS4SignerType", "cognito-identity",
-                         Regions.US_EAST_1.getName());
+                         Region.US_EAST_1.value());
         assertSignerType("AWS4SignerType", "cognito-sync", null);
         assertSignerType("AWS4SignerType", "cognito-sync",
-                         Regions.US_EAST_1.getName());
+                         Region.US_EAST_1.value());
     }
 
     @Test

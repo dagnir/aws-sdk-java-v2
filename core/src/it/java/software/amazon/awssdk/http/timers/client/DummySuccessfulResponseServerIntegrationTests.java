@@ -19,6 +19,7 @@ import static software.amazon.awssdk.internal.http.request.RequestHandlerTestUti
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.CLIENT_EXECUTION_TIMEOUT;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.SLOW_REQUEST_HANDLER_TIMEOUT;
 import static software.amazon.awssdk.internal.http.timers.TimeoutTestConstants.TEST_TIMEOUT;
+import static utils.HttpTestUtils.builderWithDefaultClient;
 
 import java.util.List;
 import org.junit.Test;
@@ -27,7 +28,6 @@ import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
-import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.internal.http.request.SlowRequestHandler;
@@ -48,10 +48,9 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowResponseHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = AmazonHttpClient.builder()
+        httpClient = builderWithDefaultClient()
                                      .clientConfiguration(
                                              new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
-                                     .sdkHttpClient(ApacheSdkHttpClientFactory.builder().build().createHttpClient())
                                      .build();
         requestBuilder().execute(new UnresponsiveResponseHandler());
     }
@@ -59,10 +58,9 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowAfterResponseRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = AmazonHttpClient.builder()
+        httpClient = builderWithDefaultClient()
                                      .clientConfiguration(
                                              new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
-                                     .sdkHttpClient(ApacheSdkHttpClientFactory.builder().build().createHttpClient())
                                      .build();
 
         List<RequestHandler2> requestHandlers = buildRequestHandlerList(
@@ -74,10 +72,9 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
     @Test(timeout = TEST_TIMEOUT, expected = ClientExecutionTimeoutException.class)
     public void clientExecutionTimeoutEnabled_SlowBeforeRequestRequestHandler_ThrowsClientExecutionTimeoutException()
             throws Exception {
-        httpClient = AmazonHttpClient.builder()
+        httpClient = builderWithDefaultClient()
                                      .clientConfiguration(
                                              new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
-                                     .sdkHttpClient(ApacheSdkHttpClientFactory.builder().build().createHttpClient())
                                      .build();
 
         List<RequestHandler2> requestHandlers = buildRequestHandlerList(

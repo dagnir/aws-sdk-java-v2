@@ -42,7 +42,7 @@ public class CalendarSetUnmarshaller extends SsUnmarshaller {
     public Object unmarshall(AttributeValue value) {
         Set<Calendar> result = new HashSet<Calendar>();
 
-        for (String s : value.getSS()) {
+        for (String s : value.ss()) {
             Calendar cal = GregorianCalendar.getInstance();
             cal.setTime(DateUtils.parseIso8601Date(s));
             result.add(cal);

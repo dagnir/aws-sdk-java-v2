@@ -22,12 +22,12 @@ import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.services.simpledb.model.Attribute;
-import software.amazon.awssdk.services.simpledb.model.GetAttributesResult;
+import software.amazon.awssdk.services.simpledb.model.GetAttributesResponse;
 
 public class GetAttributesResultUnmarshallerTest {
 
     /**
-     * Test method for GetAttributesResultUnmarshaller
+     * Test method for GetAttributesResponseUnmarshaller
      */
     @Test
     public final void testUnmarshall() throws Exception {
@@ -35,15 +35,15 @@ public class GetAttributesResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("GetAttributesResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        GetAttributesResult result = new GetAttributesResultUnmarshaller()
+        GetAttributesResponse result = new GetAttributesResponseUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
-        assertTrue(!result.getAttributes().isEmpty());
-        assertTrue(result.getAttributes().size() == 2);
-        assertTrue(((Attribute) result.getAttributes().get(0)).getName().equals("Color"));
-        assertTrue(((Attribute) result.getAttributes().get(0)).getValue().equals("Blue"));
-        assertTrue(((Attribute) result.getAttributes().get(1)).getName().equals("Price"));
-        assertTrue(((Attribute) result.getAttributes().get(1)).getValue().equals("$2.50"));
+        assertTrue(!result.attributes().isEmpty());
+        assertTrue(result.attributes().size() == 2);
+        assertTrue(((Attribute) result.attributes().get(0)).name().equals("Color"));
+        assertTrue(((Attribute) result.attributes().get(0)).value().equals("Blue"));
+        assertTrue(((Attribute) result.attributes().get(1)).name().equals("Price"));
+        assertTrue(((Attribute) result.attributes().get(1)).value().equals("$2.50"));
     }
 
 }

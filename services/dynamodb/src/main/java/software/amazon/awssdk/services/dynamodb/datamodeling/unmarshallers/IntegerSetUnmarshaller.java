@@ -38,7 +38,7 @@ public class IntegerSetUnmarshaller extends NsUnmarshaller {
     @Override
     public Object unmarshall(AttributeValue value) {
         Set<Integer> result = new HashSet<Integer>();
-        for (String s : value.getNS()) {
+        for (String s : value.ns()) {
             result.add(Integer.valueOf(s));
         }
         return result;
