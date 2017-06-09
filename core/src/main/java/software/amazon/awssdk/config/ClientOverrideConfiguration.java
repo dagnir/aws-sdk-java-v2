@@ -58,12 +58,12 @@ public class ClientOverrideConfiguration
         this.requestMetricCollector = builder.requestMetricCollector;
         this.retryPolicy = builder.retryPolicy;
         this.requestListeners = Collections.unmodifiableList(new ArrayList<>(builder.requestListeners));
-        this.advancedOptions = new AttributeMap(builder.advancedOptions);
+        this.advancedOptions = builder.advancedOptions.build();
     }
 
     @Override
     public Builder toBuilder() {
-        return new DefaultClientOverrideConfigurationBuilder().advancedOptions(advancedOptions)
+        return new DefaultClientOverrideConfigurationBuilder().advancedOptions(advancedOptions.toBuilder())
                                                               .httpRequestTimeout(httpRequestTimeout)
                                                               .totalExecutionTimeout(totalExecutionTimeout)
                                                               .additionalHttpHeaders(additionalHttpHeaders)
@@ -313,7 +313,7 @@ public class ClientOverrideConfiguration
         private RequestMetricCollector requestMetricCollector;
         private RetryPolicy retryPolicy;
         private List<RequestHandler2> requestListeners = new ArrayList<>();
-        private AttributeMap advancedOptions = new AttributeMap();
+        private AttributeMap.Builder advancedOptions = AttributeMap.builder();
 
         @Override
         public Builder httpRequestTimeout(Duration httpRequestTimeout) {
@@ -407,12 +407,12 @@ public class ClientOverrideConfiguration
 
         @Override
         public Builder advancedOptions(Map<AdvancedClientOption<?>, ?> advancedOptions) {
-            this.advancedOptions = new AttributeMap(advancedOptions);
+            this.advancedOptions.putAll(advancedOptions);
             return this;
         }
 
-        private Builder advancedOptions(AttributeMap advancedOptions) {
-            this.advancedOptions = new AttributeMap(advancedOptions);
+        private Builder advancedOptions(AttributeMap.Builder attributeMap) {
+            this.advancedOptions = attributeMap;
             return this;
         }
 

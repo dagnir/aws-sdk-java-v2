@@ -38,7 +38,6 @@ import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -47,6 +46,7 @@ import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
+import software.amazon.awssdk.utils.AttributeMap;
 import software.amazon.awssdk.utils.Validate;
 
 /**
@@ -455,7 +455,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
 
         @Override
         public SdkHttpClient sdkHttpClient() {
-            return new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty());
+            return new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(AttributeMap.empty());
         }
     }
 

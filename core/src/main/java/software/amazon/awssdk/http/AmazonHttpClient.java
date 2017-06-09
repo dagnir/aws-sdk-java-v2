@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.http;
 
-import static software.amazon.awssdk.utils.Validate.notNull;
 import static software.amazon.awssdk.utils.Validate.paramNotNull;
 
 import org.apache.commons.logging.Log;

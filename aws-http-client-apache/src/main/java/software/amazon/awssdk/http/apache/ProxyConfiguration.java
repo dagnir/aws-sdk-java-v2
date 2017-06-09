@@ -28,8 +28,6 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  * Configuration that defines how to communicate via an HTTP proxy.
- *
- * <p>All implementations of this interface must be immutable and thread safe.</p>
  */
 @ReviewBeforeRelease("Review which options are required and which are optional.")
 public final class ProxyConfiguration implements ToCopyableBuilder<ProxyConfiguration.Builder, ProxyConfiguration> {
@@ -40,7 +38,7 @@ public final class ProxyConfiguration implements ToCopyableBuilder<ProxyConfigur
     private final String ntlmDomain;
     private final String ntlmWorkstation;
     private final Set<String> nonProxyHosts;
-    private final boolean preemptiveBasicAuthenticationEnabled;
+    private final Boolean preemptiveBasicAuthenticationEnabled;
 
     /**
      * Initialize this configuration. Private to require use of {@link #builder()}.
@@ -52,8 +50,8 @@ public final class ProxyConfiguration implements ToCopyableBuilder<ProxyConfigur
         this.ntlmDomain = builder.ntlmDomain;
         this.ntlmWorkstation = builder.ntlmWorkstation;
         this.nonProxyHosts = Collections.unmodifiableSet(new HashSet<>(builder.nonProxyHosts));
-        this.preemptiveBasicAuthenticationEnabled =
-                builder.preemptiveBasicAuthenticationEnabled == null ? false : builder.preemptiveBasicAuthenticationEnabled;
+        this.preemptiveBasicAuthenticationEnabled = builder.preemptiveBasicAuthenticationEnabled == null ? Boolean.FALSE :
+                builder.preemptiveBasicAuthenticationEnabled;
     }
 
     /**

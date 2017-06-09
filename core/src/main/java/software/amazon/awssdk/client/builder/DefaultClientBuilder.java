@@ -36,7 +36,6 @@ import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
@@ -46,6 +45,7 @@ import software.amazon.awssdk.regions.ServiceMetadata;
 import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.util.EndpointUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * An SDK-internal implementation of the methods in {@link ClientBuilder}, {@link AsyncClientBuilder} and
@@ -131,8 +131,8 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      *
      * @return The service defaults that should be applied.
      */
-    protected SdkHttpConfigurationOptions serviceSpecificHttpConfig() {
-        return SdkHttpConfigurationOptions.empty();
+    protected AttributeMap serviceSpecificHttpConfig() {
+        return AttributeMap.empty();
     }
 
     /**

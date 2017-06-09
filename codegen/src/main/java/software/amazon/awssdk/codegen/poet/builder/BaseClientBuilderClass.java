@@ -34,8 +34,8 @@ import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.ServiceBuilderConfigurationDefaults;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.utils.AttributeMap;
 
 public class BaseClientBuilderClass implements ClassSpec {
     private final IntermediateModel model;
@@ -99,7 +99,7 @@ public class BaseClientBuilderClass implements ClassSpec {
         return MethodSpec.methodBuilder("serviceSpecificHttpConfig")
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
-                         .returns(SdkHttpConfigurationOptions.class)
+                         .returns(AttributeMap.class)
                          .addCode("return $L;", model.getCustomizationConfig().getServiceSpecificHttpConfig())
                          .build();
     }

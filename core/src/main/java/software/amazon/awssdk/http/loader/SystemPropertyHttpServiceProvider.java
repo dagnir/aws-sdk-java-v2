@@ -18,17 +18,17 @@ package software.amazon.awssdk.http.loader;
 import java.util.Optional;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.http.SdkHttpService;
-import software.amazon.awssdk.utils.JavaSystemSetting;
+import software.amazon.awssdk.utils.SdkSystemSetting;
 
 /**
- * Attempts to load the default implementation from the system property {@link JavaSystemSetting#HTTP_SERVICE_IMPL}. The property
+ * Attempts to load the default implementation from the system property {@link SdkSystemSetting#HTTP_SERVICE_IMPL}. The property
  * value should be the fully qualified class name of the factory to use.
  */
 class SystemPropertyHttpServiceProvider implements SdkHttpServiceProvider {
 
     @Override
     public Optional<SdkHttpService> loadService() {
-        return JavaSystemSetting.HTTP_SERVICE_IMPL
+        return SdkSystemSetting.HTTP_SERVICE_IMPL
                 .getStringValue()
                 .map(this::createServiceFromProperty);
     }
@@ -40,7 +40,7 @@ class SystemPropertyHttpServiceProvider implements SdkHttpServiceProvider {
             throw new SdkClientException(String.format(
                     "Unable to load the HTTP factory implementation from the %s system property. " +
                     "Ensure the class '%s' is present on the classpath and has a no-arg constructor",
-                    JavaSystemSetting.HTTP_SERVICE_IMPL.property(), httpImplFqcn), e);
+                    SdkSystemSetting.HTTP_SERVICE_IMPL.property(), httpImplFqcn), e);
         }
     }
 

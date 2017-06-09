@@ -23,7 +23,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.apache.internal.ApacheHttpRequestConfig;
 import software.amazon.awssdk.http.apache.internal.Defaults;
 import software.amazon.awssdk.http.apache.internal.SdkHttpRequestExecutor;
@@ -34,6 +33,7 @@ import software.amazon.awssdk.http.apache.internal.impl.ApacheConnectionManagerF
 import software.amazon.awssdk.http.apache.internal.impl.ApacheSdkClient;
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
 @SdkInternalApi
 class ApacheHttpClientFactory {
@@ -43,13 +43,13 @@ class ApacheHttpClientFactory {
     private final ApacheConnectionManagerFactory cmFactory = new ApacheConnectionManagerFactory();
 
     public SdkHttpClient create(ApacheSdkHttpClientFactory configuration,
-                                SdkHttpConfigurationOptions resolvedOptions,
+                                AttributeMap resolvedOptions,
                                 ApacheHttpRequestConfig requestConfig) {
         return new ApacheHttpClient(createClient(configuration, resolvedOptions), requestConfig, resolvedOptions);
     }
 
     private ConnectionManagerAwareHttpClient createClient(ApacheSdkHttpClientFactory configuration,
-                                                          SdkHttpConfigurationOptions standardOptions) {
+                                                          AttributeMap standardOptions) {
         final HttpClientBuilder builder = HttpClients.custom();
         // Note that it is important we register the original connection manager with the
         // IdleConnectionReaper as it's required for the successful deregistration of managers

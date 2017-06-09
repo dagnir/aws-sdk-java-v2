@@ -33,7 +33,6 @@ import software.amazon.awssdk.auth.SignerAsRequestSigner;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.opensdk.config.ConnectionConfiguration;
@@ -50,6 +49,7 @@ import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.util.VersionInfoUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Base class for all Open SDK client builders.
@@ -280,7 +280,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
         @Override
         @ReviewBeforeRelease("Revisit when we integrate APIG back")
         public SdkHttpClient sdkHttpClient() {
-            return new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty());
+            return new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(AttributeMap.empty());
         }
     }
 

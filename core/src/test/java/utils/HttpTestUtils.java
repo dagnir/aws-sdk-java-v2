@@ -16,14 +16,16 @@
 package utils;
 
 import software.amazon.awssdk.http.AmazonHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
+import software.amazon.awssdk.utils.AttributeMap;
 
 public class HttpTestUtils {
 
     public static AmazonHttpClient.Builder builderWithDefaultClient() {
-        return AmazonHttpClient.builder()
-                               .sdkHttpClient(new DefaultSdkHttpClientFactory()
-                                                      .createHttpClientWithDefaults(SdkHttpConfigurationOptions.empty()));
+        return AmazonHttpClient
+                .builder()
+                .sdkHttpClient(new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(
+                        AttributeMap.empty().merge(SdkHttpConfigurationOption.GLOBAL_HTTP_DEFAULTS)));
     }
 }

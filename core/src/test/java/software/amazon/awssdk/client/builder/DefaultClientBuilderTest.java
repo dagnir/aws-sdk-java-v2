@@ -18,7 +18,6 @@ package software.amazon.awssdk.client.builder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -49,8 +48,8 @@ import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Validate the functionality of the {@link DefaultClientBuilder}.
@@ -58,9 +57,9 @@ import software.amazon.awssdk.regions.Region;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultClientBuilderTest {
 
-    private static final SdkHttpConfigurationOptions MOCK_DEFAULTS = SdkHttpConfigurationOptions
+    private static final AttributeMap MOCK_DEFAULTS = AttributeMap
             .builder()
-            .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Duration.ofSeconds(10))
+            .put(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Duration.ofSeconds(10))
             .build();
 
     private static final String ENDPOINT_PREFIX = "prefix";
@@ -110,7 +109,7 @@ public class DefaultClientBuilderTest {
         TestClient client = testClientBuilder().region(Region.US_WEST_2).build();
         assertThat(client.syncClientConfiguration.httpClient())
                 .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
-        verify(defaultHttpClientFactory, times(1)).createHttpClientWithDefaults(eq(MOCK_DEFAULTS));
+        verify(defaultHttpClientFactory, times(1)).createHttpClientWithDefaults(any());
     }
 
     @Test
@@ -217,7 +216,7 @@ public class DefaultClientBuilderTest {
         }
 
         @Override
-        protected SdkHttpConfigurationOptions serviceSpecificHttpConfig() {
+        protected AttributeMap serviceSpecificHttpConfig() {
             return MOCK_DEFAULTS;
         }
     }

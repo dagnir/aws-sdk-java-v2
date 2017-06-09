@@ -18,14 +18,14 @@ package software.amazon.awssdk.services.swf;
 import java.time.Duration;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
+import software.amazon.awssdk.utils.AttributeMap;
 
 @SdkInternalApi
 class SwfHttpConfigurationOptions {
 
-    static final SdkHttpConfigurationOptions OPTIONS = SdkHttpConfigurationOptions
+    static final AttributeMap OPTIONS = AttributeMap
             .builder()
-            .option(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Duration.ofMillis(90_000))
-            .option(SdkHttpConfigurationOption.MAX_CONNECTIONS, 1000)
+            .put(SdkHttpConfigurationOption.SOCKET_TIMEOUT, Duration.ofMillis(90_000))
+            .put(SdkHttpConfigurationOption.MAX_CONNECTIONS, 1000)
             .build();
 }

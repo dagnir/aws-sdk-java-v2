@@ -8,8 +8,8 @@ import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.client.builder.DefaultClientBuilder;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.ServiceBuilderConfigurationDefaults;
-import software.amazon.awssdk.http.SdkHttpConfigurationOptions;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.utils.AttributeMap;
 
 @Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
@@ -35,7 +35,7 @@ public abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuild
     }
 
     @Override
-    protected final SdkHttpConfigurationOptions serviceSpecificHttpConfig() {
+    protected final AttributeMap serviceSpecificHttpConfig() {
         return MyServiceHttpConfig.CONFIG;
     }
 }
