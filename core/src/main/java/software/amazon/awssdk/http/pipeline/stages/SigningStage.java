@@ -51,7 +51,7 @@ public class SigningStage implements RequestToRequestPipeline {
      * Sign the request if the signer if provided and credentials are present.
      */
     private void signRequest(Request<?> request, RequestExecutionContext context) {
-        final AwsCredentials credentials = context.credentialsProvider().getCredentialsOrThrow();
+        final AwsCredentials credentials = context.credentialsProvider().getCredentials();
         Signer signer = newSigner(request, context);
         if (shouldSign(signer, credentials)) {
             context.awsRequestMetrics().startEvent(AwsRequestMetrics.Field.RequestSigningTime);

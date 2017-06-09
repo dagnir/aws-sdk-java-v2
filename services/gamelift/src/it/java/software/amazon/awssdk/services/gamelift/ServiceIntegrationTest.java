@@ -22,10 +22,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.gamelift.model.Alias;
 import software.amazon.awssdk.services.gamelift.model.CreateAliasRequest;
-import software.amazon.awssdk.services.gamelift.model.CreateAliasResult;
+import software.amazon.awssdk.services.gamelift.model.CreateAliasResponse;
 import software.amazon.awssdk.services.gamelift.model.DeleteAliasRequest;
 import software.amazon.awssdk.services.gamelift.model.DescribeAliasRequest;
-import software.amazon.awssdk.services.gamelift.model.DescribeAliasResult;
+import software.amazon.awssdk.services.gamelift.model.DescribeAliasResponse;
 import software.amazon.awssdk.services.gamelift.model.RoutingStrategy;
 import software.amazon.awssdk.services.gamelift.model.RoutingStrategyType;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
@@ -53,7 +53,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         String aliasName = "alias-foo";
         String fleetId = "fleet-foo";
 
-        CreateAliasResult createAliasResult = gameLift
+        CreateAliasResponse createAliasResult = gameLift
                 .createAlias(CreateAliasRequest.builder()
                                                .name(aliasName)
                                                .routingStrategy(RoutingStrategy.builder()
@@ -70,7 +70,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
         Assert.assertEquals(strategy.type(), RoutingStrategyType.SIMPLE.toString());
         Assert.assertEquals(strategy.fleetId(), fleetId);
 
-        DescribeAliasResult describeAliasResult = gameLift
+        DescribeAliasResponse describeAliasResult = gameLift
                 .describeAlias(DescribeAliasRequest.builder().aliasId(aliasId).build());
         Assert.assertNotNull(describeAliasResult);
         Alias describedAlias = describeAliasResult.alias();

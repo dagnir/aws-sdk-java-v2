@@ -317,7 +317,7 @@ public class DynamoDbMapperConfig {
      * @return This if the overrides are same or null, or a new merged config.
      */
     final DynamoDbMapperConfig merge(final DynamoDbMapperConfig overrides) {
-        return overrides == null || this == overrides ? this : builder().merge(this).merge(overrides).build();
+        return overrides == null || this.equals(overrides) ? this : builder().merge(this).merge(overrides).build();
     }
 
     public BatchLoadRetryStrategy batchLoadRetryStrategy() {
@@ -1165,20 +1165,20 @@ public class DynamoDbMapperConfig {
         public static final DefaultBatchLoadRetryStrategy INSTANCE = new DefaultBatchLoadRetryStrategy();
 
         private static final int MAX_RETRIES = 5;
-        private static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3;
+        private static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3L;
         private final DynamoDbMapperConfig config = builder().withBatchLoadRetryStrategy(this).build();
 
         @Override
         public long getDelayBeforeNextRetry(final BatchLoadContext batchLoadContext) {
             Map<String, KeysAndAttributes> requestedKeys = batchLoadContext.batchGetItemRequest().requestItems();
-            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResult()
+            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResponse()
                                                                              .unprocessedKeys();
 
             long delay = 0;
             //Exponential backoff only when all keys are unprocessed
             if (unprocessedKeys != null && requestedKeys != null && unprocessedKeys.size() == requestedKeys.size()) {
                 Random random = new SecureRandom();
-                long scaleFactor = 500 + random.nextInt(100);
+                long scaleFactor = 500L + random.nextInt(100);
                 int retriesAttempted = batchLoadContext.getRetriesAttempted();
                 delay = (long) (Math.pow(2, retriesAttempted) * scaleFactor);
                 delay = Math.min(delay, MAX_BACKOFF_IN_MILLISECONDS);
@@ -1188,7 +1188,7 @@ public class DynamoDbMapperConfig {
 
         @Override
         public boolean shouldRetry(BatchLoadContext batchLoadContext) {
-            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResult().unprocessedKeys();
+            Map<String, KeysAndAttributes> unprocessedKeys = batchLoadContext.batchGetItemResponse().unprocessedKeys();
             return unprocessedKeys != null && unprocessedKeys.size() > 0 && batchLoadContext.getRetriesAttempted() < MAX_RETRIES;
         }
 
@@ -1205,7 +1205,7 @@ public class DynamoDbMapperConfig {
     public static class DefaultBatchWriteRetryStrategy implements BatchWriteRetryStrategy {
         public static final DefaultBatchWriteRetryStrategy INSTANCE = new DefaultBatchWriteRetryStrategy();
 
-        private static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3;
+        private static final long MAX_BACKOFF_IN_MILLISECONDS = 1_000 * 3L;
         private static final int DEFAULT_MAX_RETRY = -1;
 
         private final int maxRetry;
@@ -1238,7 +1238,7 @@ public class DynamoDbMapperConfig {
             }
 
             Random random = new SecureRandom();
-            long scaleFactor = 1000 + random.nextInt(200);
+            long scaleFactor = 1_000L + random.nextInt(200);
             long delay = (long) (Math.pow(2, retriesAttempted) * scaleFactor);
             return Math.min(delay, MAX_BACKOFF_IN_MILLISECONDS);
         }

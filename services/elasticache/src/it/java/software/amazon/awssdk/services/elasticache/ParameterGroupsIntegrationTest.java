@@ -27,17 +27,17 @@ import software.amazon.awssdk.services.elasticache.model.CacheParameterGroup;
 import software.amazon.awssdk.services.elasticache.model.CreateCacheParameterGroupRequest;
 import software.amazon.awssdk.services.elasticache.model.DeleteCacheParameterGroupRequest;
 import software.amazon.awssdk.services.elasticache.model.DescribeCacheParameterGroupsRequest;
-import software.amazon.awssdk.services.elasticache.model.DescribeCacheParameterGroupsResult;
+import software.amazon.awssdk.services.elasticache.model.DescribeCacheParameterGroupsResponse;
 import software.amazon.awssdk.services.elasticache.model.DescribeCacheParametersRequest;
-import software.amazon.awssdk.services.elasticache.model.DescribeCacheParametersResult;
+import software.amazon.awssdk.services.elasticache.model.DescribeCacheParametersResponse;
 import software.amazon.awssdk.services.elasticache.model.DescribeEngineDefaultParametersRequest;
 import software.amazon.awssdk.services.elasticache.model.EngineDefaults;
 import software.amazon.awssdk.services.elasticache.model.ModifyCacheParameterGroupRequest;
-import software.amazon.awssdk.services.elasticache.model.ModifyCacheParameterGroupResult;
+import software.amazon.awssdk.services.elasticache.model.ModifyCacheParameterGroupResponse;
 import software.amazon.awssdk.services.elasticache.model.Parameter;
 import software.amazon.awssdk.services.elasticache.model.ParameterNameValue;
 import software.amazon.awssdk.services.elasticache.model.ResetCacheParameterGroupRequest;
-import software.amazon.awssdk.services.elasticache.model.ResetCacheParameterGroupResult;
+import software.amazon.awssdk.services.elasticache.model.ResetCacheParameterGroupResponse;
 
 public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBase {
 
@@ -91,7 +91,7 @@ public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBa
 
 
         // Describe Cache Parameters
-        DescribeCacheParametersResult describeCacheParameters =
+        DescribeCacheParametersResponse describeCacheParameters =
                 elasticache.describeCacheParameters(
                         DescribeCacheParametersRequest.builder().cacheParameterGroupName(cacheParameterGroupName).build());
         assertTrue(describeCacheParameters.cacheNodeTypeSpecificParameters().size() > 0);
@@ -107,7 +107,7 @@ public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBa
         // Modify Cache Parameter Group
         List<ParameterNameValue> paramsToModify = new ArrayList<ParameterNameValue>();
         paramsToModify.add(ParameterNameValue.builder().parameterName("max_item_size").parameterValue("100000").build());
-        ModifyCacheParameterGroupResult modifyCacheParameterGroup = elasticache
+        ModifyCacheParameterGroupResponse modifyCacheParameterGroup = elasticache
                 .modifyCacheParameterGroup(
                         ModifyCacheParameterGroupRequest.builder().cacheParameterGroupName(cacheParameterGroupName)
                                                         .parameterNameValues(paramsToModify).build());
@@ -117,7 +117,7 @@ public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBa
         // Reset Cache Parameter Group
         List<ParameterNameValue> paramsToReset = new ArrayList<ParameterNameValue>();
         paramsToReset.add(ParameterNameValue.builder().parameterName("binding_protocol").build());
-        ResetCacheParameterGroupResult resetCacheParameterGroup =
+        ResetCacheParameterGroupResponse resetCacheParameterGroup =
                 elasticache.resetCacheParameterGroup(
                         ResetCacheParameterGroupRequest.builder().cacheParameterGroupName(cacheParameterGroupName)
                                                        .parameterNameValues(paramsToReset).build());
@@ -125,7 +125,7 @@ public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBa
 
 
         // Describe Cache Parameter Groups
-        DescribeCacheParameterGroupsResult describeCacheParameterGroups =
+        DescribeCacheParameterGroupsResponse describeCacheParameterGroups =
                 elasticache.describeCacheParameterGroups(
                         DescribeCacheParameterGroupsRequest.builder().cacheParameterGroupName(cacheParameterGroupName).build());
         assertEquals(1, describeCacheParameterGroups.cacheParameterGroups().size());

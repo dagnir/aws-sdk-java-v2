@@ -34,11 +34,11 @@ import org.junit.Test;
 import software.amazon.awssdk.services.sqs.buffered.SqsBufferedAsyncClient;
 import software.amazon.awssdk.services.sqs.buffered.QueueBufferConfig;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
-import software.amazon.awssdk.services.sqs.model.CreateQueueResult;
+import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 /**
@@ -84,7 +84,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
         logger.setLevel(Level.ERROR);
         ExecutorService exec = Executors.newCachedThreadPool();
 
-        CreateQueueResult createRes = buffSqs.createQueue(CreateQueueRequest.builder().queueName(queueName).build()).join();
+        CreateQueueResponse createRes = buffSqs.createQueue(CreateQueueRequest.builder().queueName(queueName).build()).join();
 
         AtomicBoolean keepGoing = new AtomicBoolean(true);
         List<Future<?>> allFutures = new LinkedList<Future<?>>();
@@ -263,7 +263,7 @@ public class BufferedSqsPerfIntegrationTest extends IntegrationTestBase {
                 ReceiveMessageRequest recReq = ReceiveMessageRequest.builder()
                         .queueUrl(url)
                         .build();
-                ReceiveMessageResult recRes = sqs.receiveMessage(recReq).join();
+                ReceiveMessageResponse recRes = sqs.receiveMessage(recReq).join();
                 recCount.addAndGet(recRes.messages().size());
                 int listSize = 0;
                 for (Message m : recRes.messages()) {

@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.codepipeline.model.CreateCustomActionType
 import software.amazon.awssdk.services.codepipeline.model.DeleteCustomActionTypeRequest;
 import software.amazon.awssdk.services.codepipeline.model.InvalidNextTokenException;
 import software.amazon.awssdk.services.codepipeline.model.ListActionTypesRequest;
-import software.amazon.awssdk.services.codepipeline.model.ListActionTypesResult;
+import software.amazon.awssdk.services.codepipeline.model.ListActionTypesResponse;
 import software.amazon.awssdk.services.codepipeline.model.ListPipelinesRequest;
 import software.amazon.awssdk.test.AwsTestBase;
 
@@ -99,7 +99,7 @@ public class AwsCodePipelineClientIntegrationTest extends AwsTestBase {
                 .inputArtifactDetails(artifactDetails)
                 .outputArtifactDetails(artifactDetails)
                 .build());
-        final ListActionTypesResult actionTypes = client.listActionTypes(ListActionTypesRequest.builder().build());
+        final ListActionTypesResponse actionTypes = client.listActionTypes(ListActionTypesRequest.builder().build());
         assertTrue(containsActionTypeId(actionTypes.actionTypes(), actionTypeId));
         client.deleteCustomActionType(DeleteCustomActionTypeRequest.builder()
                 .category(actionTypeId.category())

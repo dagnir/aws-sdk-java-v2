@@ -30,7 +30,7 @@ import software.amazon.awssdk.auth.policy.actions.SQSActions;
 import software.amazon.awssdk.auth.policy.conditions.ConditionFactory;
 import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;
-import software.amazon.awssdk.services.sns.model.SubscribeResult;
+import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sqs.SQSClient;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
@@ -207,7 +207,7 @@ public class Topics {
         newAttrs.put(QueueAttributeName.Policy.toString(), policy.toJson());
         sqs.setQueueAttributes(SetQueueAttributesRequest.builder().queueUrl(sqsQueueUrl).attributes(newAttrs).build());
 
-        SubscribeResult subscribeResult = sns.subscribe(SubscribeRequest.builder()
+        SubscribeResponse subscribeResult = sns.subscribe(SubscribeRequest.builder()
                 .topicArn(snsTopicArn).protocol("sqs")
                 .endpoint(sqsQueueArn)
                 .build());

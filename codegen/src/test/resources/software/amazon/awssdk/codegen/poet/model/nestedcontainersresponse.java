@@ -13,15 +13,15 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetadata> implements
-        ToCopyableBuilder<NestedContainersResult.Builder, NestedContainersResult> {
+public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMetadata> implements
+        ToCopyableBuilder<NestedContainersResponse.Builder, NestedContainersResponse> {
     private final List<List<String>> listOfListOfStrings;
 
     private final List<List<List<String>>> listOfListOfListOfStrings;
 
     private final Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 
-    private NestedContainersResult(BeanStyleBuilder builder) {
+    private NestedContainersResponse(BeanStyleBuilder builder) {
         this.listOfListOfStrings = builder.listOfListOfStrings;
         this.listOfListOfListOfStrings = builder.listOfListOfListOfStrings;
         this.mapOfStringToListOfListOfStrings = builder.mapOfStringToListOfListOfStrings;
@@ -82,10 +82,10 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof NestedContainersResult)) {
+        if (!(obj instanceof NestedContainersResponse)) {
             return false;
         }
-        NestedContainersResult other = (NestedContainersResult) obj;
+        NestedContainersResponse other = (NestedContainersResponse) obj;
         if (other.listOfListOfStrings() == null ^ this.listOfListOfStrings() == null) {
             return false;
         }
@@ -126,7 +126,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         return sb.toString();
     }
 
-    public interface Builder extends CopyableBuilder<Builder, NestedContainersResult> {
+    public interface Builder extends CopyableBuilder<Builder, NestedContainersResponse> {
         /**
          *
          * @param listOfListOfStrings
@@ -152,8 +152,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
          * @param listOfListOfListOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder listOfListOfListOfStrings(
-                Collection<? extends Collection<? extends Collection<String>>> listOfListOfListOfStrings);
+        Builder listOfListOfListOfStrings(Collection<? extends Collection<? extends Collection<String>>> listOfListOfListOfStrings);
 
         /**
          *
@@ -187,7 +186,7 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         private BeanStyleBuilder() {
         }
 
-        private BeanStyleBuilder(NestedContainersResult model) {
+        private BeanStyleBuilder(NestedContainersResponse model) {
             setListOfListOfStrings(model.listOfListOfStrings);
             setListOfListOfListOfStrings(model.listOfListOfListOfStrings);
             setMapOfStringToListOfListOfStrings(model.mapOfStringToListOfListOfStrings);
@@ -262,20 +261,18 @@ public class NestedContainersResult extends AmazonWebServiceResult<ResponseMetad
         @Override
         public final Builder mapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings) {
-            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier
-                    .copy(mapOfStringToListOfListOfStrings);
+            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier.copy(mapOfStringToListOfListOfStrings);
             return this;
         }
 
         public final void setMapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings) {
-            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier
-                    .copy(mapOfStringToListOfListOfStrings);
+            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier.copy(mapOfStringToListOfListOfStrings);
         }
 
         @Override
-        public NestedContainersResult build() {
-            return new NestedContainersResult(this);
+        public NestedContainersResponse build() {
+            return new NestedContainersResponse(this);
         }
     }
 }

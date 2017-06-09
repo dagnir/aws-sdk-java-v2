@@ -37,17 +37,17 @@ import software.amazon.awssdk.services.simpledb.model.BatchDeleteAttributesReque
 import software.amazon.awssdk.services.simpledb.model.BatchPutAttributesRequest;
 import software.amazon.awssdk.services.simpledb.model.DeleteAttributesRequest;
 import software.amazon.awssdk.services.simpledb.model.DomainMetadataRequest;
-import software.amazon.awssdk.services.simpledb.model.DomainMetadataResult;
+import software.amazon.awssdk.services.simpledb.model.DomainMetadataResponse;
 import software.amazon.awssdk.services.simpledb.model.GetAttributesRequest;
-import software.amazon.awssdk.services.simpledb.model.GetAttributesResult;
+import software.amazon.awssdk.services.simpledb.model.GetAttributesResponse;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;
-import software.amazon.awssdk.services.simpledb.model.ListDomainsResult;
+import software.amazon.awssdk.services.simpledb.model.ListDomainsResponse;
 import software.amazon.awssdk.services.simpledb.model.NoSuchDomainException;
 import software.amazon.awssdk.services.simpledb.model.PutAttributesRequest;
 import software.amazon.awssdk.services.simpledb.model.ReplaceableAttribute;
 import software.amazon.awssdk.services.simpledb.model.ReplaceableItem;
 import software.amazon.awssdk.services.simpledb.model.SelectRequest;
-import software.amazon.awssdk.services.simpledb.model.SelectResult;
+import software.amazon.awssdk.services.simpledb.model.SelectResponse;
 import software.amazon.awssdk.services.simpledb.model.UpdateCondition;
 
 /**
@@ -228,7 +228,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
      * domain we previously created in this test.
      */
     private void gotestListDomains() {
-        ListDomainsResult listDomainsResult = sdb.listDomains(ListDomainsRequest.builder().build());
+        ListDomainsResponse listDomainsResult = sdb.listDomains(ListDomainsRequest.builder().build());
         List<String> domainNames = listDomainsResult.domainNames();
         assertTrue(domainNames.contains(domainName));
     }
@@ -291,7 +291,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         SelectRequest request = SelectRequest.builder()
                 .selectExpression("select * from `" + domainName + "`")
                 .build();
-        SelectResult selectResult = sdb.select(request);
+        SelectResponse selectResult = sdb.select(request);
         assertNull(selectResult.nextToken());
         assertItemsPresent(ITEM_LIST, selectResult.items());
         assertItemsPresent(newReplaceableItemList(new ReplaceableItem[] {FOO_ITEM}), selectResult.items());
@@ -312,7 +312,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
         DomainMetadataRequest request = DomainMetadataRequest.builder()
                 .domainName(domainName)
                 .build();
-        DomainMetadataResult domainMetadataResult = sdb.domainMetadata(request);
+        DomainMetadataResponse domainMetadataResult = sdb.domainMetadata(request);
 
         int expectedItemCount = 0;
         int expectedAttributeValueCount = 0;
@@ -344,7 +344,7 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
                                                  (FOO_ITEM.attributes().get(1)).name()})
                 .build();
 
-        GetAttributesResult attributesResult = sdb.getAttributes(request);
+        GetAttributesResponse attributesResult = sdb.getAttributes(request);
 
         List<Attribute> attributes = attributesResult.attributes();
         Map<String, String> attributeValuesByName = convertAttributesToMap(attributes);

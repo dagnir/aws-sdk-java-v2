@@ -40,7 +40,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 
@@ -72,7 +72,7 @@ public class MapperQueryExpressionTest {
             Class<T> clazz, DynamoDbQueryExpression<T> queryExpression,
             String expectedErrorMessage) {
         try {
-            Mockito.when(mockClient.query(any())).thenReturn(QueryResult.builder().items(new ArrayList<>()).build());
+            Mockito.when(mockClient.query(any())).thenReturn(QueryResponse.builder().items(new ArrayList<>()).build());
 
             mapper.queryPage(clazz, queryExpression, DynamoDbMapperConfig.DEFAULT);
             if (expectedErrorMessage != null) {

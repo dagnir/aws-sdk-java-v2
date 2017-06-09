@@ -80,18 +80,18 @@ public abstract class DynamoDBTableResource implements TestResource {
 
     /**
      * Compares the Projection parameter included in the CreateTableRequest,
-     * with the one returned from DescribeTableResult.
+     * with the one returned from DescribeTableResponse.
      */
-    static boolean equalProjections(Projection fromCreateTableRequest, Projection fromDescribeTableResult) {
-        if (fromCreateTableRequest == null || fromDescribeTableResult == null) {
+    static boolean equalProjections(Projection fromCreateTableRequest, Projection fromDescribeTableResponse) {
+        if (fromCreateTableRequest == null || fromDescribeTableResponse == null) {
             throw new IllegalStateException("The projection parameter should never be null.");
         }
 
         return fromCreateTableRequest.projectionType().equals(
-                fromDescribeTableResult.projectionType())
+                fromDescribeTableResponse.projectionType())
                && UnorderedCollectionComparator.equalUnorderedCollections(
                 fromCreateTableRequest.nonKeyAttributes(),
-                fromDescribeTableResult.nonKeyAttributes());
+                fromDescribeTableResponse.nonKeyAttributes());
     }
 
     protected abstract DynamoDBClient getClient();

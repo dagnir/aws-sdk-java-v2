@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeResult;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import software.amazon.awssdk.services.lambda.model.LogType;
 import software.amazon.awssdk.util.StringUtils;
 import software.amazon.awssdk.utils.Base64Utils;
@@ -211,8 +211,8 @@ public final class LambdaInvokerFactory {
 
             LambdaFunction annotation = validateInterfaceMethod(method, args);
             InvokeRequest invokeRequest = buildInvokeRequest(method, annotation, args == null ? null : args[0]);
-            InvokeResult invokeResult = awsLambda.invoke(invokeRequest).get();
-            return processInvokeResult(method, invokeResult);
+            InvokeResponse invokeResult = awsLambda.invoke(invokeRequest).get();
+            return processInvokeResponse(method, invokeResult);
         }
 
         /**
@@ -287,7 +287,7 @@ public final class LambdaInvokerFactory {
          * into a corresponding {@code Exception} type, otherwise parse the result payload into a
          * Java object suitable for returning from this method.
          */
-        private Object processInvokeResult(Method method, InvokeResult invokeResult) throws Throwable {
+        private Object processInvokeResponse(Method method, InvokeResponse invokeResult) throws Throwable {
 
             if (invokeResult.logResult() != null && log.isInfoEnabled()) {
                 try {
@@ -313,13 +313,13 @@ public final class LambdaInvokerFactory {
 
         /**
          * Reads a Java object suitable for returning from the given method from the payload of the
-         * given {@code InvokeResult} (or returns {@code null} if the method has no return value or
+         * given {@code InvokeResponse} (or returns {@code null} if the method has no return value or
          * the response contains no payload).
          *
          * @throws LambdaSerializationException
          *             on error deserializing
          */
-        private Object getObjectFromPayload(Method method, InvokeResult invokeResult) {
+        private Object getObjectFromPayload(Method method, InvokeResponse invokeResult) {
 
             try {
 
@@ -339,7 +339,7 @@ public final class LambdaInvokerFactory {
          * @return Exception to throw back to the caller. May either be a custom exception declared in the interface, a generic
          *     exception unmarshalled from the payload, or a very generic exception if we can't unmarshall the payload.
          */
-        private Throwable getExceptionFromPayload(Method method, InvokeResult invokeResult) {
+        private Throwable getExceptionFromPayload(Method method, InvokeResponse invokeResult) {
             try {
                 LambdaFunctionException error = getObjectFromPayload(LambdaFunctionException.class, invokeResult.payload());
                 error.setFunctionError(invokeResult.functionError());

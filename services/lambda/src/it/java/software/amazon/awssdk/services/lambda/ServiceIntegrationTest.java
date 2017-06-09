@@ -29,26 +29,26 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequest;
-import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResult;
+import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
-import software.amazon.awssdk.services.lambda.model.CreateFunctionResult;
+import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.FunctionCode;
 import software.amazon.awssdk.services.lambda.model.FunctionConfiguration;
 import software.amazon.awssdk.services.lambda.model.GetEventSourceMappingRequest;
-import software.amazon.awssdk.services.lambda.model.GetEventSourceMappingResult;
+import software.amazon.awssdk.services.lambda.model.GetEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.GetFunctionConfigurationRequest;
-import software.amazon.awssdk.services.lambda.model.GetFunctionConfigurationResult;
+import software.amazon.awssdk.services.lambda.model.GetFunctionConfigurationResponse;
 import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
-import software.amazon.awssdk.services.lambda.model.GetFunctionResult;
+import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
 import software.amazon.awssdk.services.lambda.model.InvokeAsyncRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeAsyncResult;
+import software.amazon.awssdk.services.lambda.model.InvokeAsyncResponse;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeResult;
+import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
-import software.amazon.awssdk.services.lambda.model.ListFunctionsResult;
+import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.LogType;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.test.retry.RetryRule;
@@ -67,7 +67,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         IntegrationTestBase.createKinesisStream();
     }
 
-    private static void checkValid_CreateFunctionResult(CreateFunctionResult result) {
+    private static void checkValid_CreateFunctionResponse(CreateFunctionResponse result) {
 
         Assert.assertNotNull(result);
 
@@ -83,7 +83,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertNotNull(result.timeout());
     }
 
-    private static void checkValid_GetFunctionConfigurationResult(GetFunctionConfigurationResult result) {
+    private static void checkValid_GetFunctionConfigurationResponse(GetFunctionConfigurationResponse result) {
 
         Assert.assertNotNull(result);
 
@@ -99,7 +99,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertNotNull(result.timeout());
     }
 
-    private static void checkValid_GetFunctionResult(GetFunctionResult result) {
+    private static void checkValid_GetFunctionResponse(GetFunctionResponse result) {
         Assert.assertNotNull(result);
 
         Assert.assertNotNull(result.code());
@@ -126,7 +126,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertNotNull(config.timeout());
     }
 
-    private static void checkValid_CreateEventSourceMappingResult(CreateEventSourceMappingResult result) {
+    private static void checkValid_CreateEventSourceMappingResult(CreateEventSourceMappingResponse result) {
 
         Assert.assertNotNull(result);
 
@@ -151,13 +151,13 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
             functionZip.close();
         }
 
-        CreateFunctionResult result = lambda.createFunction(CreateFunctionRequest.builder()
+        CreateFunctionResponse result = lambda.createFunction(CreateFunctionRequest.builder()
                 .description("My cloud function").functionName(FUNCTION_NAME)
                 .code(FunctionCode.builder().zipFile(ByteBuffer.wrap(functionBits)).build())
                 .handler("helloworld.handler").memorySize(128).runtime(Runtime.Nodejs43).timeout(10)
                 .role(lambdaServiceRoleArn).build()).join();
 
-        checkValid_CreateFunctionResult(result);
+        checkValid_CreateFunctionResponse(result);
     }
 
     @After
@@ -169,28 +169,28 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     public void testFunctionOperations() throws IOException {
 
         // Get function
-        GetFunctionResult getFunc = lambda.getFunction(GetFunctionRequest.builder().functionName(FUNCTION_NAME).build()).join();
-        checkValid_GetFunctionResult(getFunc);
+        GetFunctionResponse getFunc = lambda.getFunction(GetFunctionRequest.builder().functionName(FUNCTION_NAME).build()).join();
+        checkValid_GetFunctionResponse(getFunc);
 
         // Get function configuration
-        GetFunctionConfigurationResult getConfig = lambda
+        GetFunctionConfigurationResponse getConfig = lambda
                 .getFunctionConfiguration(GetFunctionConfigurationRequest.builder().functionName(FUNCTION_NAME).build()).join();
-        checkValid_GetFunctionConfigurationResult(getConfig);
+        checkValid_GetFunctionConfigurationResponse(getConfig);
 
         // List functions
-        ListFunctionsResult listFunc = lambda.listFunctions(ListFunctionsRequest.builder().build()).join();
+        ListFunctionsResponse listFunc = lambda.listFunctions(ListFunctionsRequest.builder().build()).join();
         Assert.assertFalse(listFunc.functions().isEmpty());
         for (FunctionConfiguration funcConfig : listFunc.functions()) {
             checkValid_FunctionConfiguration(funcConfig);
         }
 
         // Invoke the function
-        InvokeAsyncResult invokeAsyncResult = lambda.invokeAsync(InvokeAsyncRequest.builder().functionName(
+        InvokeAsyncResponse invokeAsyncResult = lambda.invokeAsync(InvokeAsyncRequest.builder().functionName(
                 FUNCTION_NAME).invokeArgs(new ByteArrayInputStream("{}".getBytes())).build()).join();
 
         Assert.assertEquals(202, invokeAsyncResult.status().intValue());
 
-        InvokeResult invokeResult = lambda.invoke(InvokeRequest.builder().functionName(FUNCTION_NAME)
+        InvokeResponse invokeResult = lambda.invoke(InvokeRequest.builder().functionName(FUNCTION_NAME)
                 .invocationType(InvocationType.Event).payload(ByteBuffer.wrap("{}".getBytes())).build()).join();
 
         Assert.assertEquals(202, invokeResult.statusCode().intValue());
@@ -212,7 +212,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     public void testEventSourceOperations() {
 
         // AddEventSourceResult
-        CreateEventSourceMappingResult addResult = lambda
+        CreateEventSourceMappingResponse addResult = lambda
                 .createEventSourceMapping(CreateEventSourceMappingRequest.builder().functionName(FUNCTION_NAME)
                         .eventSourceArn(streamArn).startingPosition("TRIM_HORIZON").batchSize(100).build()).join();
         checkValid_CreateEventSourceMappingResult(addResult);
@@ -220,7 +220,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         String eventSourceUUID = addResult.uuid();
 
         // GetEventSource
-        GetEventSourceMappingResult getResult = lambda.getEventSourceMapping(GetEventSourceMappingRequest.builder()
+        GetEventSourceMappingResponse getResult = lambda.getEventSourceMapping(GetEventSourceMappingRequest.builder()
                 .uuid(eventSourceUUID).build()).join();
 
         // RemoveEventSource

@@ -116,8 +116,8 @@ class EC2CredentialsProvider implements AwsCredentialsProvider, AutoCloseable {
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
-        return Optional.ofNullable(credentialsCache.get());
+    public AwsCredentials getCredentials() {
+        return credentialsCache.get();
     }
 
     @Override

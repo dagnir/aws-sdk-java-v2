@@ -27,7 +27,7 @@ import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.services.dynamodb.DynamoDBClient;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 public class ParallelScanTask {
 
@@ -42,12 +42,12 @@ public class ParallelScanTask {
      * Cache all the future tasks, so that we can extract the exception when
      * we see failed segment scan.
      */
-    private final List<Future<ScanResult>> segmentScanFutureTasks;
+    private final List<Future<ScanResponse>> segmentScanFutureTasks;
 
     /**
-     * Cache all the most recent ScanResult on each segment.
+     * Cache all the most recent ScanResponse on each segment.
      */
-    private final List<ScanResult> segmentScanResults;
+    private final List<ScanResponse> segmentScanResponses;
 
     /**
      * The current state of the scan on each segment.
@@ -76,8 +76,8 @@ public class ParallelScanTask {
 
         // Create synchronized views of the list to guarantee any changes are visible across all threads.
         segmentScanFutureTasks = Collections
-                .synchronizedList(new ArrayList<Future<ScanResult>>(totalSegments));
-        segmentScanResults = Collections.synchronizedList(new ArrayList<ScanResult>(totalSegments));
+                .synchronizedList(new ArrayList<Future<ScanResponse>>(totalSegments));
+        segmentScanResponses = Collections.synchronizedList(new ArrayList<ScanResponse>(totalSegments));
         segmentScanstates = Collections
                 .synchronizedList(new ArrayList<SegmentScanstate>(totalSegments));
 
@@ -101,7 +101,7 @@ public class ParallelScanTask {
         }
     }
 
-    public List<ScanResult> nextBatchOfScanResults() throws SdkClientException {
+    public List<ScanResponse> nextBatchOfScanResponses() throws SdkClientException {
         /**
          * Kick-off all the parallel scan tasks.
          */
@@ -121,7 +121,7 @@ public class ParallelScanTask {
             /**
              *  Keep the lock on segmentScanstates until all the cached results are marshaled and returned.
              */
-            return marshalParallelScanResults();
+            return marshalParallelScanResponses();
         }
 
     }
@@ -142,7 +142,7 @@ public class ParallelScanTask {
                 /**
                  * Skip any failed or completed segment, and clear the corresponding cached result.
                  */
-                segmentScanResults.set(currentSegment, null);
+                segmentScanResponses.set(currentSegment, null);
                 continue;
             } else {
                 /**
@@ -153,7 +153,7 @@ public class ParallelScanTask {
                     segmentScanstates.set(currentSegment, SegmentScanstate.Scanning);
                     segmentScanstates.notifyAll();
                 }
-                Future<ScanResult> futureTask = executorService.submit(() -> {
+                Future<ScanResponse> futureTask = executorService.submit(() -> {
                     try {
                         if (currentSegmentState == SegmentScanstate.HasNextPage) {
                             return scanNextPageOfSegment(currentSegment, true);
@@ -177,8 +177,8 @@ public class ParallelScanTask {
         }
     }
 
-    private List<ScanResult> marshalParallelScanResults() {
-        List<ScanResult> scanResults = new LinkedList<ScanResult>();
+    private List<ScanResponse> marshalParallelScanResponses() {
+        List<ScanResponse> scanResults = new LinkedList<ScanResponse>();
         for (int segment = 0; segment < totalSegments; segment++) {
             SegmentScanstate currentSegmentState = segmentScanstates.get(segment);
             /**
@@ -202,9 +202,9 @@ public class ParallelScanTask {
             } else if (currentSegmentState == SegmentScanstate.HasNextPage ||
                        currentSegmentState == SegmentScanstate.SegmentScanCompleted) {
                 /**
-                 * Get the ScanResult from cache if the segment scan has finished.
+                 * Get the ScanResponse from cache if the segment scan has finished.
                  */
-                ScanResult scanResult = segmentScanResults.get(segment);
+                ScanResponse scanResult = segmentScanResponses.get(segment);
                 scanResults.add(scanResult);
             } else if (currentSegmentState == SegmentScanstate.Waiting
                        || currentSegmentState == SegmentScanstate.Scanning) {
@@ -215,21 +215,21 @@ public class ParallelScanTask {
         return scanResults;
     }
 
-    private ScanResult scanNextPageOfSegment(int currentSegment, boolean checkLastEvaluatedKey) {
+    private ScanResponse scanNextPageOfSegment(int currentSegment, boolean checkLastEvaluatedKey) {
         ScanRequest segmentScanRequest = parallelScanRequests.get(currentSegment);
         if (checkLastEvaluatedKey) {
-            ScanResult lastScanResult = segmentScanResults.get(currentSegment);
+            ScanResponse lastScanResult = segmentScanResponses.get(currentSegment);
             segmentScanRequest = segmentScanRequest.toBuilder().exclusiveStartKey(lastScanResult.lastEvaluatedKey()).build();
         } else {
             segmentScanRequest = segmentScanRequest.toBuilder().exclusiveStartKey(null).build();
         }
-        ScanResult scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(segmentScanRequest));
+        ScanResponse scanResult = dynamo.scan(DynamoDbMapper.applyUserAgent(segmentScanRequest));
 
         /**
-         * Cache the scan result in segmentScanResults.
+         * Cache the scan result in segmentScanResponses.
          * We should never try to get these scan results by calling get() on the cached future tasks.
          */
-        segmentScanResults.set(currentSegment, scanResult);
+        segmentScanResponses.set(currentSegment, scanResult);
 
         /**
          * Update the state and notify any waiting thread.
@@ -248,7 +248,7 @@ public class ParallelScanTask {
     private void initSegmentScanstates() {
         for (int segment = 0; segment < totalSegments; segment++) {
             segmentScanFutureTasks.add(null);
-            segmentScanResults.add(null);
+            segmentScanResponses.add(null);
             segmentScanstates.add(SegmentScanstate.Waiting);
         }
     }

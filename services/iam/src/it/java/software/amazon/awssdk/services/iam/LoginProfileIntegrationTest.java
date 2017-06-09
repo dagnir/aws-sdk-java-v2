@@ -21,11 +21,11 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.iam.model.CreateLoginProfileRequest;
-import software.amazon.awssdk.services.iam.model.CreateLoginProfileResult;
+import software.amazon.awssdk.services.iam.model.CreateLoginProfileResponse;
 import software.amazon.awssdk.services.iam.model.DeleteLoginProfileRequest;
 import software.amazon.awssdk.services.iam.model.EntityAlreadyExistsException;
 import software.amazon.awssdk.services.iam.model.GetLoginProfileRequest;
-import software.amazon.awssdk.services.iam.model.GetLoginProfileResult;
+import software.amazon.awssdk.services.iam.model.GetLoginProfileResponse;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 
 /**
@@ -52,7 +52,7 @@ public class LoginProfileIntegrationTest extends IntegrationTestBase {
         String password = IAMUtil.uniqueName();
 
         try {
-            CreateLoginProfileResult createRes = iam
+            CreateLoginProfileResponse createRes = iam
                     .createLoginProfile(CreateLoginProfileRequest.builder()
                                                                  .userName(username).password(password).build());
 
@@ -60,7 +60,7 @@ public class LoginProfileIntegrationTest extends IntegrationTestBase {
 
             assertEquals(username, createRes.loginProfile().userName());
 
-            GetLoginProfileResult res = iam
+            GetLoginProfileResponse res = iam
                     .getLoginProfile(GetLoginProfileRequest.builder()
                                                            .userName(username).build());
 

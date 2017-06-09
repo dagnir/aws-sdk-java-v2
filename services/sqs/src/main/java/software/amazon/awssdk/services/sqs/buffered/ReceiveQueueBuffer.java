@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchReq
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 /**
  * The ReceiveQueueBuffer class is responsible for dequeueing of messages from a single SQS queue.
@@ -104,9 +104,9 @@ public class ReceiveQueueBuffer {
      *
      * @return never null
      */
-    public QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult>
+    public QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResponse>
             receiveMessageAsync(ReceiveMessageRequest rq,
-                                QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult> callback) {
+                                QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResponse> callback) {
         if (shutDown) {
             throw new AmazonClientException("The client has been shut down.");
         }
@@ -116,7 +116,7 @@ public class ReceiveQueueBuffer {
         if (rq.maxNumberOfMessages() != null) {
             numMessages = rq.maxNumberOfMessages();
         }
-        QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult> toReturn = issueFuture(numMessages, callback);
+        QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResponse> toReturn = issueFuture(numMessages, callback);
 
         // attempt to satisfy it right away...
         satisfyFuturesFromBuffer();
@@ -134,7 +134,7 @@ public class ReceiveQueueBuffer {
      * @return never null
      */
     private ReceiveMessageFuture issueFuture(int size,
-                                             QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult> callback) {
+                                             QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResponse> callback) {
         synchronized (futures) {
             ReceiveMessageFuture theFuture = new ReceiveMessageFuture(callback, size);
             futures.addLast(theFuture);
@@ -173,7 +173,7 @@ public class ReceiveQueueBuffer {
      */
     private void fufillFuture(ReceiveMessageFuture future) {
         ReceiveMessageBatchTask task = finishedTasks.getFirst();
-        ReceiveMessageResult.Builder resultBuilder = ReceiveMessageResult.builder();
+        ReceiveMessageResponse.Builder resultBuilder = ReceiveMessageResponse.builder();
         LinkedList<Message> messages = new LinkedList<Message>();
         Exception exception = task.getException();
         int numRetrieved = 0;
@@ -357,11 +357,11 @@ public class ReceiveQueueBuffer {
         boolean test(T t);
     }
 
-    private class ReceiveMessageFuture extends QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResult> {
+    private class ReceiveMessageFuture extends QueueBufferFuture<ReceiveMessageRequest, ReceiveMessageResponse> {
         /* how many messages did the request ask for. */
         private int requestedSize;
 
-        ReceiveMessageFuture(QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResult> cb, int paramSize) {
+        ReceiveMessageFuture(QueueBufferCallback<ReceiveMessageRequest, ReceiveMessageResponse> cb, int paramSize) {
             super(cb);
             requestedSize = paramSize;
         }

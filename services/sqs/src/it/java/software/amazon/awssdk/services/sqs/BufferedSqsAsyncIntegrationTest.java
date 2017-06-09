@@ -45,9 +45,9 @@ import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-import software.amazon.awssdk.services.sqs.model.SendMessageResult;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
 /**
  * Tests async send/receive/delete operation on the Buffered client. Creates a bunch of messages on
@@ -80,7 +80,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testAsyncOperations() throws Exception {
-        List<Future<SendMessageResult>> sendResults = new LinkedList<Future<SendMessageResult>>();
+        List<Future<SendMessageResponse>> sendResults = new LinkedList<Future<SendMessageResponse>>();
         Set<String> messages = generateTestMessages(sendResults);
 
         waitForFutures(sendResults);
@@ -114,7 +114,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
     /**
      * Sends several test messages to SQS and returns a set of all message bodies sent
      */
-    private Set<String> generateTestMessages(List<Future<SendMessageResult>> sendResults) {
+    private Set<String> generateTestMessages(List<Future<SendMessageResponse>> sendResults) {
         Set<String> messages = Collections.synchronizedSet(new HashSet<String>());
         for (int i = 0; i < NUM_MESSAGES; i++) {
             String body = "test message " + i + "_" + System.currentTimeMillis();
@@ -177,7 +177,7 @@ public class BufferedSqsAsyncIntegrationTest extends IntegrationTestBase {
             ReceiveMessageRequest recRequest = ReceiveMessageRequest.builder().maxNumberOfMessages(1).queueUrl(url)
                                                                           .messageAttributeNames("All")
                     .build();
-            Future<ReceiveMessageResult> future = buffSqs.receiveMessage(recRequest);
+            Future<ReceiveMessageResponse> future = buffSqs.receiveMessage(recRequest);
             List<Message> messages = future.get().messages();
             return messages;
         }

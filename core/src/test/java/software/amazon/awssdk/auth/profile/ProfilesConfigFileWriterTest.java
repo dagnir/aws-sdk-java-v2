@@ -57,7 +57,7 @@ public class ProfilesConfigFileWriterTest {
 
     private static void assertEqualProfiles(Profile expected, Profile actual) {
         assertEquals(expected.getProfileName(), actual.getProfileName());
-        assertEqualCredentials(expected.getCredentials().orElse(null), actual.getCredentials().orElse(null));
+        assertEqualCredentials(expected.getCredentials(), actual.getCredentials());
     }
 
     private static void assertEqualCredentials(AwsCredentials expected, AwsCredentials actual) {

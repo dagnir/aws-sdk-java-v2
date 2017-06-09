@@ -46,7 +46,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -303,7 +302,6 @@ import software.amazon.awssdk.utils.Base16;
 import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.utils.IoUtils;
-import software.amazon.awssdk.utils.OptionalUtils;
 
 /**
  * <p>
@@ -3141,7 +3139,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             // delegate directly to it.
             AwsCredentials credentials =
                     CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
-                                   .getCredentialsOrThrow();
+                                   .getCredentials();
             ((Presigner) signer).presignRequest(request, credentials, req.getExpiration());
         } else {
             // Otherwise use the default presigning method, which is hardcoded
@@ -3878,7 +3876,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
 
         new S3QueryStringSigner(methodName.toString(), resourcePath, expiration)
                 .sign(request, CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
-                                              .getCredentialsOrThrow());
+                                              .getCredentials());
 
         // The Amazon S3 DevPay token header is a special exception and can be safely moved
         // from the request's headers into the query string to ensure that it travels along
@@ -4995,11 +4993,17 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      * If the {@link DefaultCredentialsProvider} cannot find any credentials, fall back to anonymous access.
      */
     private static class S3CredentialsProvider extends DefaultCredentialsProvider {
-        private static final AwsCredentials ANONYMOUS_CREDENTIALS = new AnonymousCredentialsProvider().getCredentialsOrThrow();
+        private static final AwsCredentials ANONYMOUS_CREDENTIALS = new AnonymousCredentialsProvider().getCredentials();
 
         @Override
-        public Optional<AwsCredentials> getCredentials() {
-            return OptionalUtils.firstPresent(super.getCredentials(), () -> Optional.of(ANONYMOUS_CREDENTIALS));
+        public AwsCredentials getCredentials() {
+            try {
+                return super.getCredentials();
+            } catch (RuntimeException e) {
+                log.debug("Unable to load credentials from the default credentials provider. "
+                          + "Falling back to anonymous access.", e);
+                return ANONYMOUS_CREDENTIALS;
+            }
         }
 
         @Override

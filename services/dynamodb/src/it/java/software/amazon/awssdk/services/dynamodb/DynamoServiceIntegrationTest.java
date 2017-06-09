@@ -38,30 +38,30 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.DeleteRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DeleteTableResult;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.UpdateItemResult;
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 import utils.resources.RequiredResources;
 import utils.resources.RequiredResources.RequiredResource;
@@ -223,7 +223,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
     @Test
     public void testServiceOperations() throws Exception {
         // Describe all tables
-        ListTablesResult describeTablesResult = dynamo.listTables(ListTablesRequest.builder().build());
+        ListTablesResponse describeTablesResult = dynamo.listTables(ListTablesRequest.builder().build());
 
         // Describe our new table
         DescribeTableRequest describeTablesRequest = DescribeTableRequest.builder().tableName(tableName).build();
@@ -255,10 +255,10 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
 
         PutItemRequest putItemRequest = PutItemRequest.builder().tableName(tableName).item(item).returnValues(ReturnValue.ALL_OLD.toString()).build();
 
-        PutItemResult putItemResult = dynamo.putItem(putItemRequest);
+        PutItemResponse putItemResult = dynamo.putItem(putItemRequest);
 
         // Get our new item
-        GetItemResult itemResult = dynamo.getItem(GetItemRequest.builder().tableName(tableName).key(mapKey(HASH_KEY_NAME,
+        GetItemResponse itemResult = dynamo.getItem(GetItemRequest.builder().tableName(tableName).key(mapKey(HASH_KEY_NAME,
                                                                                              AttributeValue.builder().s("bar").build()))
                                                              .consistentRead(true).build());
         assertNotNull(itemResult.item().get("S").ss());
@@ -343,7 +343,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
                 mapKey(HASH_KEY_NAME, AttributeValue.builder().s("bar").build())).attributeUpdates(
                 itemUpdates).returnValues("ALL_NEW").build();
 
-        UpdateItemResult updateItemResult = dynamo.updateItem(updateItemRequest);
+        UpdateItemResponse updateItemResult = dynamo.updateItem(updateItemRequest);
 
         assertEquals("¢", updateItemResult.attributes().get("1").s());
         assertEquals(1, updateItemResult.attributes().get("foos").ss().size());
@@ -384,7 +384,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         // Get an item that doesn't exist.
         GetItemRequest itemsRequest = GetItemRequest.builder().tableName(tableName).key(mapKey(HASH_KEY_NAME, AttributeValue.builder().s("3").build()))
                 .consistentRead(true).build();
-        GetItemResult itemsResult = dynamo.getItem(itemsRequest);
+        GetItemResponse itemsResult = dynamo.getItem(itemsRequest);
         assertNull(itemsResult.item());
 
         // Get an item that doesn't have any attributes,
@@ -396,7 +396,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
 
         // Scan data
         ScanRequest scanRequest = ScanRequest.builder().tableName(tableName).attributesToGet(HASH_KEY_NAME).build();
-        ScanResult scanResult = dynamo.scan(scanRequest);
+        ScanResponse scanResult = dynamo.scan(scanRequest);
         assertTrue(scanResult.count() > 0);
         assertTrue(scanResult.scannedCount() > 0);
 
@@ -426,7 +426,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
                         .build())
                 .build());
         requestItems.put(tableName, writeRequests);
-        BatchWriteItemResult batchWriteItem = dynamo.batchWriteItem(BatchWriteItemRequest.builder().requestItems(requestItems).build());
+        BatchWriteItemResponse batchWriteItem = dynamo.batchWriteItem(BatchWriteItemRequest.builder().requestItems(requestItems).build());
         //        assertNotNull(batchWriteItem.itemCollectionMetrics());
         //        assertEquals(1, batchWriteItem.itemCollectionMetrics().size());
         //        assertEquals(tableName, batchWriteItem.itemCollectionMetrics().entrySet().iterator().next().get);
@@ -440,10 +440,10 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
                 .key(mapKey(HASH_KEY_NAME, AttributeValue.builder().s("jeep").build()))
                 .returnValues(ReturnValue.ALL_OLD.toString())
                 .build();
-        DeleteItemResult deleteItemResult = dynamo.deleteItem(deleteItemRequest);
+        DeleteItemResponse deleteItemResult = dynamo.deleteItem(deleteItemRequest);
 
         // Delete our table
-        DeleteTableResult deleteTable = dynamo.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
+        DeleteTableResponse deleteTable = dynamo.deleteTable(DeleteTableRequest.builder().tableName(tableName).build());
 
     }
 

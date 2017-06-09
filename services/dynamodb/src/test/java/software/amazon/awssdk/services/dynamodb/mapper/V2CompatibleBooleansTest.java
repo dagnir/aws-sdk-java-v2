@@ -44,9 +44,9 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper;
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbNativeBoolean;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.UpdateItemResult;
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse;
 import software.amazon.awssdk.util.ImmutableMapParameter;
 
 /**
@@ -88,7 +88,7 @@ public class V2CompatibleBooleansTest {
         v1Mapper = buildMapper(ConversionSchemas.V1);
         v2Mapper = buildMapper(ConversionSchemas.V2);
         // Just stub dummy response for all save related tests
-        when(ddb.updateItem(any(UpdateItemRequest.class))).thenReturn(UpdateItemResult.builder().build());
+        when(ddb.updateItem(any(UpdateItemRequest.class))).thenReturn(UpdateItemResponse.builder().build());
     }
 
     private DynamoDbMapper buildMapper(ConversionSchema schema) {
@@ -317,17 +317,17 @@ public class V2CompatibleBooleansTest {
      * @param attributeValue Attribute value to return in result (in addition to hash key)
      */
     private void stubGetItemRequest(String attributeName, AttributeValue attributeValue) {
-        when(ddb.getItem(any(GetItemRequest.class))).thenReturn(createGetItemResult(attributeName, attributeValue));
+        when(ddb.getItem(any(GetItemRequest.class))).thenReturn(createGetItemResponse(attributeName, attributeValue));
     }
 
     /**
-     * Create a {@link GetItemResult} with the hash key value ({@value #HASH_KEY} and the additional attribute.
+     * Create a {@link GetItemResponse} with the hash key value ({@value #HASH_KEY} and the additional attribute.
      *
-     * @param attributeName  Additional attribute to include in created {@link GetItemResult}.
+     * @param attributeName  Additional attribute to include in created {@link GetItemResponse}.
      * @param attributeValue Value of additional attribute.
      */
-    private GetItemResult createGetItemResult(String attributeName, AttributeValue attributeValue) {
-        return GetItemResult.builder().item(
+    private GetItemResponse createGetItemResponse(String attributeName, AttributeValue attributeValue) {
+        return GetItemResponse.builder().item(
                 ImmutableMapParameter.of("hashKey", AttributeValue.builder().s(HASH_KEY).build(),
                         attributeName, attributeValue)).build();
     }

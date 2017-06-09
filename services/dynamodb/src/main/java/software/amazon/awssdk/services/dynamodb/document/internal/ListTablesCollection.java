@@ -21,9 +21,9 @@ import software.amazon.awssdk.services.dynamodb.document.Table;
 import software.amazon.awssdk.services.dynamodb.document.TableCollection;
 import software.amazon.awssdk.services.dynamodb.document.spec.ListTablesSpec;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
-class ListTablesCollection extends TableCollection<ListTablesResult> {
+class ListTablesCollection extends TableCollection<ListTablesResponse> {
 
     private final DynamoDBClient client;
     private final ListTablesSpec spec;
@@ -36,7 +36,7 @@ class ListTablesCollection extends TableCollection<ListTablesResult> {
     }
 
     @Override
-    public Page<Table, ListTablesResult> firstPage() {
+    public Page<Table, ListTablesResponse> firstPage() {
         ListTablesRequest request = spec.getRequest()
                 .toBuilder()
                 .exclusiveStartTableName(startKey)
@@ -45,7 +45,7 @@ class ListTablesCollection extends TableCollection<ListTablesResult> {
                     spec.maxPageSize()))
                 .build();
         spec.setRequest(request);
-        ListTablesResult result = client.listTables(request);
+        ListTablesResponse result = client.listTables(request);
         setLastLowLevelResult(result);
         return new ListTablesPage(client, spec, request, 0, result);
     }

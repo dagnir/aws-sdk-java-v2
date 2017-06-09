@@ -24,14 +24,14 @@ public class StaticCredentialsProviderTest {
     public void getAwsCredentials_ReturnsSameCredentials() throws Exception {
         final AwsCredentials credentials = new AwsCredentials("akid", "skid");
         final AwsCredentials actualCredentials =
-                new StaticCredentialsProvider(credentials).getCredentialsOrThrow();
+                new StaticCredentialsProvider(credentials).getCredentials();
         assertEquals(credentials, actualCredentials);
     }
 
     @Test
     public void getSessionAwsCredentials_ReturnsSameCredentials() throws Exception {
         final AwsSessionCredentials credentials = new AwsSessionCredentials("akid", "skid", "token");
-        final AwsCredentials actualCredentials = new StaticCredentialsProvider(credentials).getCredentialsOrThrow();
+        final AwsCredentials actualCredentials = new StaticCredentialsProvider(credentials).getCredentials();
         assertEquals(credentials, actualCredentials);
     }
 

@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.auth.profile.internal;
 
-import java.util.Optional;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
@@ -48,7 +47,7 @@ public class ProfileAssumeRoleCredentialsProvider implements AwsCredentialsProvi
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         return assumeRoleCredentialsProvider.getCredentials();
     }
 
@@ -71,14 +70,14 @@ public class ProfileAssumeRoleCredentialsProvider implements AwsCredentialsProvi
                                                        profile.getProfileName(), profile.getRoleSourceProfile()));
         }
 
-        return new ProfileStaticCredentialsProvider(sourceProfile).getCredentials().map(credentials -> {
-            final String roleSessionName = (this.profile.getRoleSessionName() == null) ?
-                                           "aws-sdk-java-" + System.currentTimeMillis() : this.profile.getRoleSessionName();
-            RoleInfo roleInfo = new RoleInfo().withRoleArn(this.profile.getRoleArn())
-                                              .withRoleSessionName(roleSessionName)
-                                              .withExternalId(this.profile.getRoleExternalId())
-                                              .withLongLivedCredentials(credentials);
-            return profileCredentialsService.getAssumeRoleCredentialsProvider(roleInfo);
-        }).orElseThrow(() -> new IllegalStateException("Unexpected missing credentials from static provider."));
+        AwsCredentials credentials = new ProfileStaticCredentialsProvider(sourceProfile).getCredentials();
+
+        final String roleSessionName = (this.profile.getRoleSessionName() == null) ?
+                                       "aws-sdk-java-" + System.currentTimeMillis() : this.profile.getRoleSessionName();
+        RoleInfo roleInfo = new RoleInfo().withRoleArn(this.profile.getRoleArn())
+                                          .withRoleSessionName(roleSessionName)
+                                          .withExternalId(this.profile.getRoleExternalId())
+                                          .withLongLivedCredentials(credentials);
+        return profileCredentialsService.getAssumeRoleCredentialsProvider(roleInfo);
     }
 }

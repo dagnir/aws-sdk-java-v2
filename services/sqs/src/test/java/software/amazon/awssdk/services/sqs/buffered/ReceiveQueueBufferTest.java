@@ -17,11 +17,11 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
-import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResult;
+import software.amazon.awssdk.services.sqs.model.GetQueueAttributesResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageResult;
+import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 public class ReceiveQueueBufferTest {
 
@@ -105,7 +105,7 @@ public class ReceiveQueueBufferTest {
 
     private void expectGetQueueAttributes(Map<String, String> queueAttributes) {
         expect(mockSqs.getQueueAttributes(isA(GetQueueAttributesRequest.class))).andStubReturn(
-                CompletableFuture.completedFuture(GetQueueAttributesResult.builder().attributes(queueAttributes).build()));
+                CompletableFuture.completedFuture(GetQueueAttributesResponse.builder().attributes(queueAttributes).build()));
     }
 
     private void expectReceiveMessages(Message... messages) {
@@ -127,7 +127,7 @@ public class ReceiveQueueBufferTest {
             if (sleepSeconds > 0) {
                 Thread.sleep(TimeUnit.SECONDS.toMillis(sleepSeconds));
             }
-            return CompletableFuture.completedFuture(ReceiveMessageResult.builder().messages(asArray(messages)).build());
+            return CompletableFuture.completedFuture(ReceiveMessageResponse.builder().messages(asArray(messages)).build());
         });
     }
 

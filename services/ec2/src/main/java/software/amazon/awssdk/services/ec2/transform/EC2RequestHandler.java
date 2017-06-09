@@ -23,17 +23,17 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.AbstractRequestHandler;
 import software.amazon.awssdk.metrics.spi.TimingInfo;
-import software.amazon.awssdk.services.ec2.model.DescribeInstancesResult;
-import software.amazon.awssdk.services.ec2.model.DescribeSpotInstanceRequestsResult;
+import software.amazon.awssdk.services.ec2.model.DescribeInstancesResponse;
+import software.amazon.awssdk.services.ec2.model.DescribeSpotInstanceRequestsResponse;
 import software.amazon.awssdk.services.ec2.model.GroupIdentifier;
 import software.amazon.awssdk.services.ec2.model.ImportKeyPairRequest;
 import software.amazon.awssdk.services.ec2.model.LaunchSpecification;
 import software.amazon.awssdk.services.ec2.model.ModifyReservedInstancesRequest;
 import software.amazon.awssdk.services.ec2.model.RequestSpotInstancesRequest;
-import software.amazon.awssdk.services.ec2.model.RequestSpotInstancesResult;
+import software.amazon.awssdk.services.ec2.model.RequestSpotInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.Reservation;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
-import software.amazon.awssdk.services.ec2.model.RunInstancesResult;
+import software.amazon.awssdk.services.ec2.model.RunInstancesResponse;
 import software.amazon.awssdk.services.ec2.model.SpotInstanceRequest;
 import software.amazon.awssdk.util.ImmutableObjectUtils;
 import software.amazon.awssdk.utils.Base64Utils;
@@ -105,25 +105,25 @@ public class EC2RequestHandler extends AbstractRequestHandler {
          * security group names by explicitly populating it from the full list
          * of security group info.
          */
-        if (response instanceof DescribeSpotInstanceRequestsResult) {
-            DescribeSpotInstanceRequestsResult result = (DescribeSpotInstanceRequestsResult) response;
+        if (response instanceof DescribeSpotInstanceRequestsResponse) {
+            DescribeSpotInstanceRequestsResponse result = (DescribeSpotInstanceRequestsResponse) response;
             for (SpotInstanceRequest spotInstanceRequest : result.spotInstanceRequests()) {
                 LaunchSpecification launchSpecification = spotInstanceRequest.launchSpecification();
                 populateLaunchSpecificationSecurityGroupNames(launchSpecification);
             }
-        } else if (response instanceof RequestSpotInstancesResult) {
-            RequestSpotInstancesResult result = (RequestSpotInstancesResult) response;
+        } else if (response instanceof RequestSpotInstancesResponse) {
+            RequestSpotInstancesResponse result = (RequestSpotInstancesResponse) response;
             for (SpotInstanceRequest spotInstanceRequest : result.spotInstanceRequests()) {
                 LaunchSpecification launchSpecification = spotInstanceRequest.launchSpecification();
                 populateLaunchSpecificationSecurityGroupNames(launchSpecification);
             }
-        } else if (response instanceof DescribeInstancesResult) {
-            DescribeInstancesResult result = (DescribeInstancesResult) response;
+        } else if (response instanceof DescribeInstancesResponse) {
+            DescribeInstancesResponse result = (DescribeInstancesResponse) response;
             for (Reservation reservation : result.reservations()) {
                 populateReservationSecurityGroupNames(reservation);
             }
-        } else if (response instanceof RunInstancesResult) {
-            RunInstancesResult result = (RunInstancesResult) response;
+        } else if (response instanceof RunInstancesResponse) {
+            RunInstancesResponse result = (RunInstancesResponse) response;
             populateReservationSecurityGroupNames(result.reservation());
         }
     }

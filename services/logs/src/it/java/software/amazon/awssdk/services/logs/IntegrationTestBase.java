@@ -20,11 +20,11 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogGroupsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersResult;
+import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeMetricFiltersResponse;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogGroup;
 import software.amazon.awssdk.services.cloudwatchlogs.model.LogStream;
 import software.amazon.awssdk.services.cloudwatchlogs.model.MetricFilter;
@@ -59,7 +59,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         String nextToken = null;
 
         do {
-            DescribeLogGroupsResult result = awsLogs
+            DescribeLogGroupsResponse result = awsLogs
                     .describeLogGroups(DescribeLogGroupsRequest.builder().nextToken(nextToken).build());
 
             for (LogGroup group : result.logGroups()) {
@@ -83,7 +83,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         String nextToken = null;
 
         do {
-            DescribeLogStreamsResult result = awsLogs
+            DescribeLogStreamsResponse result = awsLogs
                     .describeLogStreams(DescribeLogStreamsRequest.builder()
                                                                  .logGroupName(logGroupName)
                                                                  .nextToken(nextToken)
@@ -110,7 +110,7 @@ public abstract class IntegrationTestBase extends AwsIntegrationTestBase {
         String nextToken = null;
 
         do {
-            DescribeMetricFiltersResult result = awsLogs
+            DescribeMetricFiltersResponse result = awsLogs
                     .describeMetricFilters(DescribeMetricFiltersRequest.builder()
                                                                        .logGroupName(logGroupName)
                                                                        .nextToken(nextToken)

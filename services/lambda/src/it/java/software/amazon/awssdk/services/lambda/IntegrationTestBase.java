@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreateRoleRequest;
-import software.amazon.awssdk.services.iam.model.CreateRoleResult;
+import software.amazon.awssdk.services.iam.model.CreateRoleResponse;
 import software.amazon.awssdk.services.iam.model.DeletePolicyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
 import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
@@ -113,7 +113,7 @@ public class IntegrationTestBase extends AwsTestBase {
                 .region(Region.AWS_GLOBAL)
                 .build();
 
-        CreateRoleResult result = iam.createRole(CreateRoleRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME)
+        CreateRoleResponse result = iam.createRole(CreateRoleRequest.builder().roleName(LAMBDA_SERVICE_ROLE_NAME)
                                                                         .assumeRolePolicyDocument(LAMBDA_ASSUME_ROLE_POLICY).build());
 
         lambdaServiceRoleArn = result.role().arn();

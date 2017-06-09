@@ -18,13 +18,12 @@ package software.amazon.awssdk.services.cloudfront;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Optional;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionRequest;
-import software.amazon.awssdk.services.cloudfront.model.GetDistributionResult;
 import software.amazon.awssdk.services.s3.AmazonS3;
+import software.amazon.awssdk.services.cloudfront.model.GetDistributionResponse;
 import software.amazon.awssdk.services.s3.AmazonS3Client;
 import software.amazon.awssdk.services.s3.model.ObjectListing;
 import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
@@ -71,7 +70,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
         int timeoutInMinutes = 20;
         long startTime = System.currentTimeMillis();
         while (true) {
-            GetDistributionResult getDistributionResult = cloudfront.getDistribution(GetDistributionRequest.builder()
+            GetDistributionResponse getDistributionResult = cloudfront.getDistribution(GetDistributionRequest.builder()
                                                                                                            .id(distributionId)
                                                                                                            .build());
             String status = getDistributionResult.distribution().status();

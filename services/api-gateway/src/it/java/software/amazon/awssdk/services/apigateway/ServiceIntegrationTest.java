@@ -21,27 +21,27 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.apigateway.model.CreateApiKeyRequest;
-import software.amazon.awssdk.services.apigateway.model.CreateApiKeyResult;
+import software.amazon.awssdk.services.apigateway.model.CreateApiKeyResponse;
 import software.amazon.awssdk.services.apigateway.model.CreateResourceRequest;
-import software.amazon.awssdk.services.apigateway.model.CreateResourceResult;
+import software.amazon.awssdk.services.apigateway.model.CreateResourceResponse;
 import software.amazon.awssdk.services.apigateway.model.CreateRestApiRequest;
-import software.amazon.awssdk.services.apigateway.model.CreateRestApiResult;
+import software.amazon.awssdk.services.apigateway.model.CreateRestApiResponse;
 import software.amazon.awssdk.services.apigateway.model.DeleteRestApiRequest;
 import software.amazon.awssdk.services.apigateway.model.GetApiKeyRequest;
-import software.amazon.awssdk.services.apigateway.model.GetApiKeyResult;
+import software.amazon.awssdk.services.apigateway.model.GetApiKeyResponse;
 import software.amazon.awssdk.services.apigateway.model.GetResourceRequest;
-import software.amazon.awssdk.services.apigateway.model.GetResourceResult;
+import software.amazon.awssdk.services.apigateway.model.GetResourceResponse;
 import software.amazon.awssdk.services.apigateway.model.GetResourcesRequest;
-import software.amazon.awssdk.services.apigateway.model.GetResourcesResult;
+import software.amazon.awssdk.services.apigateway.model.GetResourcesResponse;
 import software.amazon.awssdk.services.apigateway.model.GetRestApiRequest;
-import software.amazon.awssdk.services.apigateway.model.GetRestApiResult;
+import software.amazon.awssdk.services.apigateway.model.GetRestApiResponse;
 import software.amazon.awssdk.services.apigateway.model.IntegrationType;
 import software.amazon.awssdk.services.apigateway.model.Op;
 import software.amazon.awssdk.services.apigateway.model.PatchOperation;
 import software.amazon.awssdk.services.apigateway.model.PutIntegrationRequest;
-import software.amazon.awssdk.services.apigateway.model.PutIntegrationResult;
+import software.amazon.awssdk.services.apigateway.model.PutIntegrationResponse;
 import software.amazon.awssdk.services.apigateway.model.PutMethodRequest;
-import software.amazon.awssdk.services.apigateway.model.PutMethodResult;
+import software.amazon.awssdk.services.apigateway.model.PutMethodResponse;
 import software.amazon.awssdk.services.apigateway.model.Resource;
 import software.amazon.awssdk.services.apigateway.model.UpdateApiKeyRequest;
 import software.amazon.awssdk.services.apigateway.model.UpdateResourceRequest;
@@ -57,7 +57,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @BeforeClass
     public static void createRestApi() {
-        CreateRestApiResult createRestApiResult = apiGateway.createRestApi(
+        CreateRestApiResponse createRestApiResult = apiGateway.createRestApi(
                 CreateRestApiRequest.builder().name(NAME)
                                           .description(DESCRIPTION).build());
 
@@ -86,7 +86,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         apiGateway.updateRestApi(UpdateRestApiRequest.builder().restApiId(restApiId)
                                                            .patchOperations(patch).build());
 
-        GetRestApiResult getRestApiResult = apiGateway
+        GetRestApiResponse getRestApiResult = apiGateway
                 .getRestApi(GetRestApiRequest.builder().restApiId(restApiId).build());
 
         Assert.assertNotNull(getRestApiResult);
@@ -100,7 +100,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testCreateUpdateRetrieveApiKey() {
-        CreateApiKeyResult createApiKeyResult = apiGateway
+        CreateApiKeyResponse createApiKeyResult = apiGateway
                 .createApiKey(CreateApiKeyRequest.builder().name(NAME)
                                                        .description(DESCRIPTION).build());
 
@@ -122,7 +122,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         apiGateway.updateApiKey(UpdateApiKeyRequest.builder().apiKey(apiKeyId)
                                                          .patchOperations(patch).build());
 
-        GetApiKeyResult getApiKeyResult = apiGateway
+        GetApiKeyResponse getApiKeyResult = apiGateway
                 .getApiKey(GetApiKeyRequest.builder().apiKey(apiKeyId).build());
 
         Assert.assertNotNull(getApiKeyResult);
@@ -140,7 +140,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testResourceOperations() {
-        GetResourcesResult resourcesResult = apiGateway
+        GetResourcesResponse resourcesResult = apiGateway
                 .getResources(GetResourcesRequest.builder()
                                       .restApiId(restApiId).build());
         List<Resource> resources = resourcesResult.items();
@@ -150,7 +150,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(rootResource.path(), "/");
         String rootResourceId = rootResource.id();
 
-        CreateResourceResult createResourceResult = apiGateway
+        CreateResourceResponse createResourceResult = apiGateway
                 .createResource(CreateResourceRequest.builder()
                                         .restApiId(restApiId)
                                         .pathPart("fooPath")
@@ -170,7 +170,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
                                           .resourceId(createResourceResult.id())
                                           .patchOperations(patch).build());
 
-        GetResourceResult getResourceResult = apiGateway
+        GetResourceResponse getResourceResult = apiGateway
                 .getResource(GetResourceRequest.builder()
                                      .restApiId(restApiId)
                                      .resourceId(createResourceResult.id()).build());
@@ -182,7 +182,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(getResourceResult.pathPart(), "updatedPath");
         Assert.assertEquals(getResourceResult.parentId(), rootResourceId);
 
-        PutMethodResult putMethodResult = apiGateway
+        PutMethodResponse putMethodResult = apiGateway
                 .putMethod(PutMethodRequest.builder().restApiId(restApiId)
                                                  .resourceId(createResourceResult.id())
                                                  .authorizationType("AWS_IAM").httpMethod("PUT").build());
@@ -193,7 +193,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(putMethodResult.authorizationType(), "AWS_IAM");
         Assert.assertEquals(putMethodResult.httpMethod(), "PUT");
 
-        PutIntegrationResult putIntegrationResult = apiGateway
+        PutIntegrationResponse putIntegrationResult = apiGateway
                 .putIntegration(PutIntegrationRequest.builder()
                                         .restApiId(restApiId)
                                         .resourceId(createResourceResult.id())

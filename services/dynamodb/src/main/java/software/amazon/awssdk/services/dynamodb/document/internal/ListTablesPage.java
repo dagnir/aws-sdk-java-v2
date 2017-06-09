@@ -24,9 +24,9 @@ import software.amazon.awssdk.services.dynamodb.document.Page;
 import software.amazon.awssdk.services.dynamodb.document.Table;
 import software.amazon.awssdk.services.dynamodb.document.spec.ListTablesSpec;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 
-class ListTablesPage extends Page<Table, ListTablesResult> {
+class ListTablesPage extends Page<Table, ListTablesResponse> {
     private final DynamoDBClient client;
     private final ListTablesSpec spec;
     private ListTablesRequest request;
@@ -38,7 +38,7 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
             ListTablesSpec spec,
             ListTablesRequest request,
             int index,
-            ListTablesResult result) {
+            ListTablesResponse result) {
         super(Collections.unmodifiableList(
                 toTableList(client, result.tableNames())),
               result);
@@ -85,7 +85,7 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
     }
 
     @Override
-    public Page<Table, ListTablesResult> nextPage() {
+    public Page<Table, ListTablesResponse> nextPage() {
         if (lastEvaluatedKey == null) {
             throw new NoSuchElementException("No more pages");
         }
@@ -98,7 +98,7 @@ class ListTablesPage extends Page<Table, ListTablesResult> {
             request = request.toBuilder().limit(nextLimit).build();
         }
         request = request.toBuilder().exclusiveStartTableName(lastEvaluatedKey).build();
-        ListTablesResult result = client.listTables(request);
+        ListTablesResponse result = client.listTables(request);
         final int nextIndex = index + this.size();
         return new ListTablesPage(client, spec, request, nextIndex, result);
     }

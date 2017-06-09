@@ -48,7 +48,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfi
 import software.amazon.awssdk.services.dynamodb.mapper.NumberSetAttributeClass;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.pojos.RangeKeyClass;
 
@@ -189,11 +189,11 @@ public class BatchLoadIntegrationTest extends DynamoDBMapperIntegrationTestBase 
         NumberSetAttributeClass obj = getUniqueNumericObject();
         objs.add(obj);
         DynamoDBClient mockClient = mock(DynamoDBClient.class);
-        when(mockClient.batchGetItem(any())).thenAnswer(new Answer<BatchGetItemResult>() {
+        when(mockClient.batchGetItem(any())).thenAnswer(new Answer<BatchGetItemResponse>() {
             @Override
-            public BatchGetItemResult answer(InvocationOnMock invocation) throws Throwable {
+            public BatchGetItemResponse answer(InvocationOnMock invocation) throws Throwable {
                 Thread.sleep(3000);
-                BatchGetItemResult result = BatchGetItemResult.builder()
+                BatchGetItemResponse result = BatchGetItemResponse.builder()
                         .responses(new HashMap<>())
                         .unprocessedKeys(((BatchGetItemRequest) invocation.getArguments()[0]).requestItems())
                         .build();

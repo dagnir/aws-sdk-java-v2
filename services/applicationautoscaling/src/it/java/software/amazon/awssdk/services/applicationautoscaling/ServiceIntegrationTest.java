@@ -20,7 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.applicationautoscaling.model.DescribeScalingPoliciesRequest;
-import software.amazon.awssdk.services.applicationautoscaling.model.DescribeScalingPoliciesResult;
+import software.amazon.awssdk.services.applicationautoscaling.model.DescribeScalingPoliciesResponse;
 import software.amazon.awssdk.services.applicationautoscaling.model.ServiceNamespace;
 import software.amazon.awssdk.test.AwsIntegrationTestBase;
 
@@ -37,7 +37,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
 
     @Test
     public void testScalingPolicy() {
-        DescribeScalingPoliciesResult res = autoscaling.describeScalingPolicies(DescribeScalingPoliciesRequest.builder()
+        DescribeScalingPoliciesResponse res = autoscaling.describeScalingPolicies(DescribeScalingPoliciesRequest.builder()
                 .serviceNamespace(ServiceNamespace.Ecs).build());
         Assert.assertNotNull(res);
         Assert.assertNotNull(res.scalingPolicies());

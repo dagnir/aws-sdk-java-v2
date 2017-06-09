@@ -7,9 +7,9 @@ import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 @Generated("software.amazon.awssdk:codegen")
-public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<ResponseMetadata> implements
-        ToCopyableBuilder<OperationWithNoInputOrOutputResult.Builder, OperationWithNoInputOrOutputResult> {
-    private OperationWithNoInputOrOutputResult(BeanStyleBuilder builder) {
+public class OperationWithNoInputOrOutputResponse extends AmazonWebServiceResult<ResponseMetadata> implements
+        ToCopyableBuilder<OperationWithNoInputOrOutputResponse.Builder, OperationWithNoInputOrOutputResponse> {
+    private OperationWithNoInputOrOutputResponse(BeanStyleBuilder builder) {
     }
 
     @Override
@@ -39,7 +39,7 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<R
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof OperationWithNoInputOrOutputResult)) {
+        if (!(obj instanceof OperationWithNoInputOrOutputResponse)) {
             return false;
         }
         return true;
@@ -53,19 +53,19 @@ public class OperationWithNoInputOrOutputResult extends AmazonWebServiceResult<R
         return sb.toString();
     }
 
-    public interface Builder extends CopyableBuilder<Builder, OperationWithNoInputOrOutputResult> {
+    public interface Builder extends CopyableBuilder<Builder, OperationWithNoInputOrOutputResponse> {
     }
 
     private static final class BeanStyleBuilder implements Builder {
         private BeanStyleBuilder() {
         }
 
-        private BeanStyleBuilder(OperationWithNoInputOrOutputResult model) {
+        private BeanStyleBuilder(OperationWithNoInputOrOutputResponse model) {
         }
 
         @Override
-        public OperationWithNoInputOrOutputResult build() {
-            return new OperationWithNoInputOrOutputResult(this);
+        public OperationWithNoInputOrOutputResponse build() {
+            return new OperationWithNoInputOrOutputResponse(this);
         }
     }
 }

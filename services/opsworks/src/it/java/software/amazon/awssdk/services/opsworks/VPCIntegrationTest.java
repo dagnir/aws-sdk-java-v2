@@ -44,7 +44,7 @@ import software.amazon.awssdk.services.opsworks.model.DeleteLayerRequest;
 import software.amazon.awssdk.services.opsworks.model.DeleteStackRequest;
 import software.amazon.awssdk.services.opsworks.model.DescribeInstancesRequest;
 import software.amazon.awssdk.services.opsworks.model.DescribeStackSummaryRequest;
-import software.amazon.awssdk.services.opsworks.model.DescribeStackSummaryResult;
+import software.amazon.awssdk.services.opsworks.model.DescribeStackSummaryResponse;
 import software.amazon.awssdk.services.opsworks.model.DescribeStacksRequest;
 import software.amazon.awssdk.services.opsworks.model.Instance;
 import software.amazon.awssdk.services.opsworks.model.Stack;
@@ -146,7 +146,7 @@ public class VPCIntegrationTest extends IntegrationTestBase {
 
             assertEquals(subId, instance.subnetId());
 
-            DescribeStackSummaryResult describeStackSummaryResult =
+            DescribeStackSummaryResponse describeStackSummaryResult =
                     opsWorks.describeStackSummary(DescribeStackSummaryRequest.builder().stackId(stackId).build());
 
             assertEquals(stackId, describeStackSummaryResult.stackSummary().stackId());

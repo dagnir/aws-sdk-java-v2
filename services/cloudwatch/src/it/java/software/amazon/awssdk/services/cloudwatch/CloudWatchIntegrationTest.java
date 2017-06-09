@@ -34,19 +34,19 @@ import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.services.cloudwatch.model.Datapoint;
 import software.amazon.awssdk.services.cloudwatch.model.DeleteAlarmsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmHistoryRequest;
-import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmHistoryResult;
+import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmHistoryResponse;
 import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsForMetricRequest;
-import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsForMetricResult;
+import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsForMetricResponse;
 import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsRequest;
-import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsResult;
+import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsResponse;
 import software.amazon.awssdk.services.cloudwatch.model.Dimension;
 import software.amazon.awssdk.services.cloudwatch.model.DisableAlarmActionsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.EnableAlarmActionsRequest;
 import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsRequest;
-import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsResult;
+import software.amazon.awssdk.services.cloudwatch.model.GetMetricStatisticsResponse;
 import software.amazon.awssdk.services.cloudwatch.model.HistoryItemType;
 import software.amazon.awssdk.services.cloudwatch.model.ListMetricsRequest;
-import software.amazon.awssdk.services.cloudwatch.model.ListMetricsResult;
+import software.amazon.awssdk.services.cloudwatch.model.ListMetricsResponse;
 import software.amazon.awssdk.services.cloudwatch.model.Metric;
 import software.amazon.awssdk.services.cloudwatch.model.MetricAlarm;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
@@ -81,7 +81,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
     @AfterClass
     public static void cleanupAlarms() {
         if (cloudwatch != null) {
-            DescribeAlarmsResult describeResult = cloudwatch.describeAlarms(DescribeAlarmsRequest.builder().build());
+            DescribeAlarmsResponse describeResult = cloudwatch.describeAlarms(DescribeAlarmsRequest.builder().build());
             Collection<String> toDelete = new LinkedList<String>();
             for (MetricAlarm alarm : describeResult.metricAlarms()) {
                 if (alarm.metricName().startsWith(CloudWatchIntegrationTest.class.getName())) {
@@ -127,7 +127,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
                 .statistics("Average", "Maximum", "Minimum", "Sum")
                 .endTime(new Date())
                 .build();
-        GetMetricStatisticsResult result = cloudwatch
+        GetMetricStatisticsResponse result = cloudwatch
                 .getMetricStatistics(getRequest);
 
         assertNotNull(result.label());
@@ -143,7 +143,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
             assertEquals(datum.unit(), datapoint.unit());
         }
 
-        ListMetricsResult listResult = cloudwatch.listMetrics(ListMetricsRequest.builder().build());
+        ListMetricsResponse listResult = cloudwatch.listMetrics(ListMetricsRequest.builder().build());
 
         boolean seenDimensions = false;
         assertTrue(listResult.metrics().size() > 0);
@@ -217,7 +217,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
                 "manual").build();
         cloudwatch.setAlarmState(setAlarmStateRequest);
 
-        DescribeAlarmsForMetricResult describeResult = cloudwatch
+        DescribeAlarmsForMetricResponse describeResult = cloudwatch
                 .describeAlarmsForMetric(DescribeAlarmsForMetricRequest.builder()
                                                  .dimensions(rq1.dimensions()).metricName(
                                 metricName).namespace(rq1.namespace()).build());
@@ -237,7 +237,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
         DescribeAlarmHistoryRequest alarmHistoryRequest = DescribeAlarmHistoryRequest.builder()
                 .alarmName(rq1.alarmName()).historyItemType(HistoryItemType.StateUpdate)
                 .build();
-        DescribeAlarmHistoryResult historyResult = cloudwatch
+        DescribeAlarmHistoryResponse historyResult = cloudwatch
                 .describeAlarmHistory(alarmHistoryRequest);
         assertEquals(1, historyResult.alarmHistoryItems().size());
     }
@@ -262,7 +262,7 @@ public class CloudWatchIntegrationTest extends AwsIntegrationTestBase {
                 .alarmNames(rq1.alarmName(), rq2.alarmName()).build();
         cloudwatch.disableAlarmActions(disable);
 
-        DescribeAlarmsForMetricResult describeResult = cloudwatch
+        DescribeAlarmsForMetricResponse describeResult = cloudwatch
                 .describeAlarmsForMetric(DescribeAlarmsForMetricRequest.builder()
                                                  .dimensions(rq1.dimensions()).metricName(
                                 metricName).namespace(rq1.namespace()).build());

@@ -31,10 +31,10 @@ import software.amazon.awssdk.services.dynamodb.document.spec.BatchWriteItemSpec
 import software.amazon.awssdk.services.dynamodb.document.spec.ListTablesSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.CreateTableResult;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
-import software.amazon.awssdk.services.dynamodb.model.ListTablesResult;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
@@ -67,7 +67,7 @@ public class DynamoDb implements ListTablesApi, BatchGetItemApi,
      * underlying service client will use all the default client configurations,
      * including the default credentials provider chain. See
      * {@link DynamoDBClient#DynamoDBClient()} for more information.
-     * <p>
+     * <p>BatchWriteRetryStrategyTest
      * If you need more control over the client configuration, use
      * {@link DynamoDb#DynamoDb(DynamoDBClient)} instead.
      *
@@ -90,7 +90,7 @@ public class DynamoDb implements ListTablesApi, BatchGetItemApi,
      * Creates the specified table in DynamoDB.
      */
     public Table createTable(CreateTableRequest req) {
-        CreateTableResult result = client.createTable(req);
+        CreateTableResponse result = client.createTable(req);
         return new Table(client, req.tableName(),
                          result.tableDescription());
     }
@@ -111,29 +111,29 @@ public class DynamoDb implements ListTablesApi, BatchGetItemApi,
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables() {
+    public TableCollection<ListTablesResponse> listTables() {
         return listTablesDelegate.listTables();
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName) {
+    public TableCollection<ListTablesResponse> listTables(String exclusiveStartTableName) {
         return listTablesDelegate.listTables(exclusiveStartTableName);
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(String exclusiveStartTableName,
+    public TableCollection<ListTablesResponse> listTables(String exclusiveStartTableName,
                                                         int maxResultSize) {
         return listTablesDelegate.listTables(exclusiveStartTableName,
                                              maxResultSize);
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(int maxResultSize) {
+    public TableCollection<ListTablesResponse> listTables(int maxResultSize) {
         return listTablesDelegate.listTables(maxResultSize);
     }
 
     @Override
-    public TableCollection<ListTablesResult> listTables(ListTablesSpec spec) {
+    public TableCollection<ListTablesResponse> listTables(ListTablesSpec spec) {
         return listTablesDelegate.listTables(spec);
     }
 

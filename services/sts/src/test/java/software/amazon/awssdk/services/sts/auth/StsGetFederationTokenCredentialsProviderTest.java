@@ -19,22 +19,22 @@ import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.auth.StsGetFederationTokenCredentialsProvider.Builder;
 import software.amazon.awssdk.services.sts.model.Credentials;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenRequest;
-import software.amazon.awssdk.services.sts.model.GetFederationTokenResult;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 
 /**
  * Validate the functionality of {@link StsGetFederationTokenCredentialsProvider}.
  * Inherits tests from {@link StsCredentialsProviderTestBase}.
  */
 public class StsGetFederationTokenCredentialsProviderTest
-        extends StsCredentialsProviderTestBase<GetFederationTokenRequest, GetFederationTokenResult> {
+        extends StsCredentialsProviderTestBase<GetFederationTokenRequest, GetFederationTokenResponse> {
     @Override
     protected GetFederationTokenRequest getRequest() {
         return GetFederationTokenRequest.builder().build();
     }
 
     @Override
-    protected GetFederationTokenResult getResponse(Credentials credentials) {
-        return GetFederationTokenResult.builder().credentials(credentials).build();
+    protected GetFederationTokenResponse getResponse(Credentials credentials) {
+        return GetFederationTokenResponse.builder().credentials(credentials).build();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class StsGetFederationTokenCredentialsProviderTest
     }
 
     @Override
-    protected GetFederationTokenResult callClient(STSClient client, GetFederationTokenRequest request) {
+    protected GetFederationTokenResponse callClient(STSClient client, GetFederationTokenRequest request) {
         return client.getFederationToken(request);
     }
 }

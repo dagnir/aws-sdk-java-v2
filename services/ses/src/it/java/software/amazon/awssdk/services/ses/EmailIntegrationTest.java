@@ -37,11 +37,11 @@ import software.amazon.awssdk.services.ses.model.Content;
 import software.amazon.awssdk.services.ses.model.DeleteIdentityRequest;
 import software.amazon.awssdk.services.ses.model.Destination;
 import software.amazon.awssdk.services.ses.model.GetIdentityDkimAttributesRequest;
-import software.amazon.awssdk.services.ses.model.GetIdentityDkimAttributesResult;
+import software.amazon.awssdk.services.ses.model.GetIdentityDkimAttributesResponse;
 import software.amazon.awssdk.services.ses.model.GetIdentityVerificationAttributesRequest;
-import software.amazon.awssdk.services.ses.model.GetIdentityVerificationAttributesResult;
+import software.amazon.awssdk.services.ses.model.GetIdentityVerificationAttributesResponse;
 import software.amazon.awssdk.services.ses.model.GetSendQuotaRequest;
-import software.amazon.awssdk.services.ses.model.GetSendQuotaResult;
+import software.amazon.awssdk.services.ses.model.GetSendQuotaResponse;
 import software.amazon.awssdk.services.ses.model.IdentityDkimAttributes;
 import software.amazon.awssdk.services.ses.model.IdentityType;
 import software.amazon.awssdk.services.ses.model.IdentityVerificationAttributes;
@@ -52,7 +52,7 @@ import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 import software.amazon.awssdk.services.ses.model.SetIdentityDkimEnabledRequest;
 import software.amazon.awssdk.services.ses.model.VerificationStatus;
 import software.amazon.awssdk.services.ses.model.VerifyDomainDkimRequest;
-import software.amazon.awssdk.services.ses.model.VerifyDomainDkimResult;
+import software.amazon.awssdk.services.ses.model.VerifyDomainDkimResponse;
 import software.amazon.awssdk.services.ses.model.VerifyDomainIdentityRequest;
 import software.amazon.awssdk.services.ses.model.VerifyEmailIdentityRequest;
 
@@ -78,7 +78,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void getSendQuota_ReturnsNonZeroQuotas() {
-        GetSendQuotaResult result = email.getSendQuota(GetSendQuotaRequest.builder().build());
+        GetSendQuotaResponse result = email.getSendQuota(GetSendQuotaRequest.builder().build());
         assertThat(result.max24HourSend(), greaterThan(0.0));
         assertThat(result.maxSendRate(), greaterThan(0.0));
     }
@@ -125,7 +125,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void getIdentityVerificationAttributes_ForNonVerifiedEmail_ReturnsPendingVerificatonStatus() {
-        GetIdentityVerificationAttributesResult result = email
+        GetIdentityVerificationAttributesResponse result = email
                 .getIdentityVerificationAttributes(GetIdentityVerificationAttributesRequest.builder().identities(EMAIL).build());
         IdentityVerificationAttributes identityVerificationAttributes = result.verificationAttributes().get(EMAIL);
         assertEquals(VerificationStatus.Pending.toString(), identityVerificationAttributes.verificationStatus());
@@ -135,7 +135,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void getIdentityVerificationAttributes_ForNonVerifiedDomain_ReturnsPendingVerificatonStatus() {
-        GetIdentityVerificationAttributesResult result = email
+        GetIdentityVerificationAttributesResponse result = email
                 .getIdentityVerificationAttributes(GetIdentityVerificationAttributesRequest.builder()
                                                            .identities(DOMAIN).build());
         IdentityVerificationAttributes identityVerificationAttributes = result.verificationAttributes().get(DOMAIN);
@@ -148,7 +148,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
         String testDomain = "java-integ-test-dkim-" + System.currentTimeMillis() + ".com";
         try {
             email.verifyDomainIdentity(VerifyDomainIdentityRequest.builder().domain(testDomain).build());
-            GetIdentityDkimAttributesResult result = email
+            GetIdentityDkimAttributesResponse result = email
                     .getIdentityDkimAttributes(GetIdentityDkimAttributesRequest.builder().identities(testDomain).build());
             assertTrue(result.dkimAttributes().size() == 1);
 
@@ -158,7 +158,7 @@ public class EmailIntegrationTest extends IntegrationTestBase {
             assertEquals(VerificationStatus.NotStarted.toString(), attributes.dkimVerificationStatus());
             assertThat(attributes.dkimTokens(), hasSize(0));
 
-            VerifyDomainDkimResult dkim = email.verifyDomainDkim(VerifyDomainDkimRequest.builder().domain(testDomain).build());
+            VerifyDomainDkimResponse dkim = email.verifyDomainDkim(VerifyDomainDkimRequest.builder().domain(testDomain).build());
             Thread.sleep(5 * 1000);
 
             result = email.getIdentityDkimAttributes(GetIdentityDkimAttributesRequest.builder().identities(testDomain).build());

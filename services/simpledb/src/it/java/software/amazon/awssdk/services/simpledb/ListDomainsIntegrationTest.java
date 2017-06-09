@@ -24,7 +24,7 @@ import java.util.List;
 import org.junit.Test;
 import software.amazon.awssdk.services.simpledb.model.InvalidParameterValueException;
 import software.amazon.awssdk.services.simpledb.model.ListDomainsRequest;
-import software.amazon.awssdk.services.simpledb.model.ListDomainsResult;
+import software.amazon.awssdk.services.simpledb.model.ListDomainsResponse;
 
 /**
  * Integration tests for the SimpleDB ListDomains operation. This test currently requires at least
@@ -46,7 +46,7 @@ public class ListDomainsIntegrationTest extends IntegrationTestBase {
                 .maxNumberOfDomains(new Integer(1))
                 .build();
 
-        ListDomainsResult listDomains = sdb.listDomains(request);
+        ListDomainsResponse listDomains = sdb.listDomains(request);
         assertNotNull(listDomains);
 
         if (listDomains.domainNames().size() < 2) {
@@ -73,7 +73,7 @@ public class ListDomainsIntegrationTest extends IntegrationTestBase {
                 .maxNumberOfDomains(new Integer(1))
                 .build();
 
-        ListDomainsResult listDomainsResult = sdb.listDomains(request);
+        ListDomainsResponse listDomainsResult = sdb.listDomains(request);
 
         if (listDomainsResult.domainNames().size() < 2) {
             System.err.println("Unable to run " + this.getClass().getName()

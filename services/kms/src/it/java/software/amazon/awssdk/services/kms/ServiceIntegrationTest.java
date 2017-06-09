@@ -19,17 +19,17 @@ import junit.framework.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.services.kms.model.CreateAliasRequest;
 import software.amazon.awssdk.services.kms.model.CreateKeyRequest;
-import software.amazon.awssdk.services.kms.model.CreateKeyResult;
+import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.DescribeKeyRequest;
-import software.amazon.awssdk.services.kms.model.DescribeKeyResult;
+import software.amazon.awssdk.services.kms.model.DescribeKeyResponse;
 import software.amazon.awssdk.services.kms.model.DisableKeyRequest;
 import software.amazon.awssdk.services.kms.model.EnableKeyRequest;
 import software.amazon.awssdk.services.kms.model.GetKeyPolicyRequest;
-import software.amazon.awssdk.services.kms.model.GetKeyPolicyResult;
+import software.amazon.awssdk.services.kms.model.GetKeyPolicyResponse;
 import software.amazon.awssdk.services.kms.model.KeyMetadata;
 import software.amazon.awssdk.services.kms.model.KeyUsageType;
 import software.amazon.awssdk.services.kms.model.ListKeysRequest;
-import software.amazon.awssdk.services.kms.model.ListKeysResult;
+import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 
@@ -49,7 +49,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
     public void testKeyOperations() {
 
         // CreateKey
-        CreateKeyResult createKeyResult = kms.createKey(CreateKeyRequest.builder()
+        CreateKeyResponse createKeyResult = kms.createKey(CreateKeyRequest.builder()
                                                                         .description("My KMS Key")
                                                                         .keyUsage(KeyUsageType.ENCRYPT_DECRYPT)
                                                                         .build());
@@ -58,7 +58,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         final String keyId = createKeyResult.keyMetadata().keyId();
 
         // DescribeKey
-        DescribeKeyResult describeKeyResult = kms.describeKey(DescribeKeyRequest.builder().keyId(keyId).build());
+        DescribeKeyResponse describeKeyResult = kms.describeKey(DescribeKeyRequest.builder().keyId(keyId).build());
         checkValid_KeyMetadata(describeKeyResult.keyMetadata());
 
         // Enable/DisableKey
@@ -66,7 +66,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         kms.disableKey(DisableKeyRequest.builder().keyId(keyId).build());
 
         // ListKeys
-        ListKeysResult listKeysResult = kms.listKeys(ListKeysRequest.builder().build());
+        ListKeysResponse listKeysResult = kms.listKeys(ListKeysRequest.builder().build());
         Assert.assertFalse(listKeysResult.keys().isEmpty());
 
         // CreateAlias
@@ -75,7 +75,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
                                           .targetKeyId(keyId)
                                           .build());
 
-        GetKeyPolicyResult getKeyPolicyResult = kms.getKeyPolicy(GetKeyPolicyRequest.builder()
+        GetKeyPolicyResponse getKeyPolicyResult = kms.getKeyPolicy(GetKeyPolicyRequest.builder()
                                                                                     .keyId(keyId)
                                                                                     .policyName("default")
                                                                                     .build());

@@ -26,7 +26,7 @@ import software.amazon.awssdk.auth.policy.Statement;
 import software.amazon.awssdk.auth.policy.actions.SnsActions;
 import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.GetTopicAttributesRequest;
-import software.amazon.awssdk.services.sns.model.GetTopicAttributesResult;
+import software.amazon.awssdk.services.sns.model.GetTopicAttributesResponse;
 import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 
 public class BucketNotificationTestUtils {
@@ -58,7 +58,7 @@ public class BucketNotificationTestUtils {
     }
 
     private static Policy getSnsPolicy(SNSClient sns, String topicArn) {
-        GetTopicAttributesResult getTopicAttributesResult = sns.getTopicAttributes(GetTopicAttributesRequest.builder()
+        GetTopicAttributesResponse getTopicAttributesResult = sns.getTopicAttributes(GetTopicAttributesRequest.builder()
                 .topicArn(topicArn).build());
         String policyString = getTopicAttributesResult.attributes().get("Policy");
         return policyString == null ? new Policy() : Policy.fromJson(policyString);

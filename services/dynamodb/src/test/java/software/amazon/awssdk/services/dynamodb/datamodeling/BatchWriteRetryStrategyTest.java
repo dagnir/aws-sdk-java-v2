@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapperConfi
 import software.amazon.awssdk.services.dynamodb.datamodeling.DynamoDbMapper.FailedBatch;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
@@ -128,15 +128,15 @@ public class BatchWriteRetryStrategyTest {
                 failedBatch.getException());
     }
 
-    private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemSuccess() {
+    private IExpectationSetters<BatchWriteItemResponse> expectBatchWriteItemSuccess() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(BatchWriteItemResult.builder()
+                .andReturn(BatchWriteItemResponse.builder()
                         .unprocessedItems(Collections.<String, List<WriteRequest>>emptyMap()).build());
     }
 
-    private IExpectationSetters<BatchWriteItemResult> expectBatchWriteItemReturnUnprocessedItems() {
+    private IExpectationSetters<BatchWriteItemResponse> expectBatchWriteItemReturnUnprocessedItems() {
         return expect(ddbMock.batchWriteItem(isA(BatchWriteItemRequest.class)))
-                .andReturn(BatchWriteItemResult.builder()
+                .andReturn(BatchWriteItemResponse.builder()
                                 .unprocessedItems(unprocessedItems).build());
     }
 

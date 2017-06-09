@@ -23,7 +23,7 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.services.ses.model.ListVerifiedEmailAddressesRequest;
-import software.amazon.awssdk.services.ses.model.ListVerifiedEmailAddressesResult;
+import software.amazon.awssdk.services.ses.model.ListVerifiedEmailAddressesResponse;
 import software.amazon.awssdk.services.ses.model.VerifyEmailAddressRequest;
 import software.amazon.awssdk.test.AwsTestBase;
 
@@ -57,7 +57,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     }
 
     protected static void sendVerificationEmail() {
-        ListVerifiedEmailAddressesResult verifiedEmails =
+        ListVerifiedEmailAddressesResponse verifiedEmails =
                 email.listVerifiedEmailAddresses(ListVerifiedEmailAddressesRequest.builder().build());
         for (String email : verifiedEmails.verifiedEmailAddresses()) {
             if (email.equals(DESTINATION)) {

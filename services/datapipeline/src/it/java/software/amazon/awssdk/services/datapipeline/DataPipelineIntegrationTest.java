@@ -26,24 +26,24 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.services.datapipeline.model.ActivatePipelineRequest;
-import software.amazon.awssdk.services.datapipeline.model.ActivatePipelineResult;
+import software.amazon.awssdk.services.datapipeline.model.ActivatePipelineResponse;
 import software.amazon.awssdk.services.datapipeline.model.CreatePipelineRequest;
-import software.amazon.awssdk.services.datapipeline.model.CreatePipelineResult;
+import software.amazon.awssdk.services.datapipeline.model.CreatePipelineResponse;
 import software.amazon.awssdk.services.datapipeline.model.DeletePipelineRequest;
 import software.amazon.awssdk.services.datapipeline.model.DescribeObjectsRequest;
-import software.amazon.awssdk.services.datapipeline.model.DescribeObjectsResult;
+import software.amazon.awssdk.services.datapipeline.model.DescribeObjectsResponse;
 import software.amazon.awssdk.services.datapipeline.model.DescribePipelinesRequest;
-import software.amazon.awssdk.services.datapipeline.model.DescribePipelinesResult;
+import software.amazon.awssdk.services.datapipeline.model.DescribePipelinesResponse;
 import software.amazon.awssdk.services.datapipeline.model.Field;
 import software.amazon.awssdk.services.datapipeline.model.GetPipelineDefinitionRequest;
-import software.amazon.awssdk.services.datapipeline.model.GetPipelineDefinitionResult;
+import software.amazon.awssdk.services.datapipeline.model.GetPipelineDefinitionResponse;
 import software.amazon.awssdk.services.datapipeline.model.ListPipelinesRequest;
-import software.amazon.awssdk.services.datapipeline.model.ListPipelinesResult;
+import software.amazon.awssdk.services.datapipeline.model.ListPipelinesResponse;
 import software.amazon.awssdk.services.datapipeline.model.PipelineObject;
 import software.amazon.awssdk.services.datapipeline.model.PutPipelineDefinitionRequest;
-import software.amazon.awssdk.services.datapipeline.model.PutPipelineDefinitionResult;
+import software.amazon.awssdk.services.datapipeline.model.PutPipelineDefinitionResponse;
 import software.amazon.awssdk.services.datapipeline.model.ValidatePipelineDefinitionRequest;
-import software.amazon.awssdk.services.datapipeline.model.ValidatePipelineDefinitionResult;
+import software.amazon.awssdk.services.datapipeline.model.ValidatePipelineDefinitionResponse;
 
 public class DataPipelineIntegrationTest extends IntegrationTestBase {
 
@@ -69,7 +69,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
     @Test
     public void testPipelineOperations() throws InterruptedException {
         // Create a pipeline.
-        CreatePipelineResult createPipelineResult = dataPipeline.createPipeline(
+        CreatePipelineResponse createPipelineResult = dataPipeline.createPipeline(
                 CreatePipelineRequest.builder()
                         .name(PIPELINE_NAME)
                         .uniqueId(PIPELINE_ID)
@@ -89,7 +89,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
                         .build())
                 .build();
 
-        ValidatePipelineDefinitionResult validatePipelineDefinitionResult =
+        ValidatePipelineDefinitionResponse validatePipelineDefinitionResult =
                 dataPipeline.validatePipelineDefinition(ValidatePipelineDefinitionRequest.builder()
                         .pipelineId(pipelineId)
                         .pipelineObjects(pipelineObject)
@@ -124,7 +124,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(0, validatePipelineDefinitionResult.validationWarnings().size());
 
         // Put pipeline definition.
-        PutPipelineDefinitionResult putPipelineDefinitionResult =
+        PutPipelineDefinitionResponse putPipelineDefinitionResult =
                 dataPipeline.putPipelineDefinition(PutPipelineDefinitionRequest.builder()
                         .pipelineId(pipelineId)
                         .pipelineObjects(pipelineObject)
@@ -136,7 +136,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
         assertEquals(0, putPipelineDefinitionResult.validationWarnings().size());
 
         // Get pipeline definition.
-        GetPipelineDefinitionResult pipelineDefinitionResult =
+        GetPipelineDefinitionResponse pipelineDefinitionResult =
                 dataPipeline.getPipelineDefinition(GetPipelineDefinitionRequest.builder().pipelineId(pipelineId).build());
         assertEquals(1, pipelineDefinitionResult.pipelineObjects().size());
         assertEquals(OBJECT_ID, pipelineDefinitionResult.pipelineObjects().get(0).id());
@@ -146,12 +146,12 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
                                               .contains(Field.builder().key(VALID_KEY).stringValue(FIELD_VALUE).build()));
 
         // Activate a pipeline.
-        ActivatePipelineResult activatePipelineResult =
+        ActivatePipelineResponse activatePipelineResult =
                 dataPipeline.activatePipeline(ActivatePipelineRequest.builder().pipelineId(pipelineId).build());
         assertNotNull(activatePipelineResult);
 
         // List pipeline.
-        ListPipelinesResult listPipelinesResult = dataPipeline.listPipelines(ListPipelinesRequest.builder().build());
+        ListPipelinesResponse listPipelinesResult = dataPipeline.listPipelines(ListPipelinesRequest.builder().build());
         assertTrue(listPipelinesResult.pipelineIdList().size() > 0);
         assertNotNull(pipelineId, listPipelinesResult.pipelineIdList().get(0).id());
         assertNotNull(PIPELINE_NAME, listPipelinesResult.pipelineIdList().get(0).name());
@@ -159,7 +159,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
         Thread.sleep(1000 * 5);
 
         // Describe objects.
-        DescribeObjectsResult describeObjectsResult =
+        DescribeObjectsResponse describeObjectsResult =
                 dataPipeline.describeObjects(DescribeObjectsRequest.builder().pipelineId(pipelineId).objectIds(OBJECT_ID).build());
         assertEquals(1, describeObjectsResult.pipelineObjects().size());
         assertEquals(OBJECT_ID, describeObjectsResult.pipelineObjects().get(0).id());
@@ -170,7 +170,7 @@ public class DataPipelineIntegrationTest extends IntegrationTestBase {
                                         .contains(Field.builder().key("@pipelineId").stringValue(pipelineId).build()));
 
         // Describe a pipeline.
-        DescribePipelinesResult describepipelinesResult =
+        DescribePipelinesResponse describepipelinesResult =
                 dataPipeline.describePipelines(DescribePipelinesRequest.builder().pipelineIds(pipelineId).build());
         assertEquals(1, describepipelinesResult.pipelineDescriptionList().size());
         assertEquals(PIPELINE_NAME, describepipelinesResult.pipelineDescriptionList().get(0).name());

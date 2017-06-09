@@ -57,7 +57,7 @@ public abstract class AwsTestBase {
     public static void setUpCredentials() {
         if (credentials == null) {
             try {
-                credentials = CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
+                credentials = CREDENTIALS_PROVIDER_CHAIN.getCredentials();
             } catch (Exception ignored) {
                 // Ignored.
             }

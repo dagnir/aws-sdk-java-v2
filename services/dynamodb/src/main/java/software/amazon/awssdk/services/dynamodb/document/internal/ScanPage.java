@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.document.ScanOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.ScanSpec;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 
 class ScanPage extends Page<Item, ScanOutcome> {
 
@@ -53,7 +53,7 @@ class ScanPage extends Page<Item, ScanOutcome> {
         this.index = index;
 
         final Integer max = spec.maxResultSize();
-        final ScanResult result = outcome.scanResult();
+        final ScanResponse result = outcome.scanResult();
         final List<?> ilist = result.items();
         final int size = ilist == null ? 0 : ilist.size();
         if (max != null && (index + size) > max) {
@@ -97,7 +97,7 @@ class ScanPage extends Page<Item, ScanOutcome> {
         }
         request = request.toBuilder().exclusiveStartKey(lastEvaluatedKey).build();
         // fire off request to the server side
-        ScanResult result = client.scan(request);
+        ScanResponse result = client.scan(request);
         final int nextIndex = index + this.size();
         return new ScanPage(client, spec, request, nextIndex,
                             new ScanOutcome(result));

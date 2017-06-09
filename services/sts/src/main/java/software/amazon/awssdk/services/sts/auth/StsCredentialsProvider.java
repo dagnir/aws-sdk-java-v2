@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.sts.auth;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
 import java.util.function.Function;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -74,8 +73,8 @@ abstract class StsCredentialsProvider implements AwsCredentialsProvider, AutoClo
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
-        return Optional.ofNullable(sessionCache.get().getSessionCredentials());
+    public AwsCredentials getCredentials() {
+        return sessionCache.get().getSessionCredentials();
     }
 
     @Override

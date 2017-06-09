@@ -18,7 +18,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResult;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
@@ -48,7 +48,7 @@ public class TT0035900619IntegrationTest {
 
     public static TableDescription waitForActiveTable(String tableName)
             throws InterruptedException {
-        DescribeTableResult result = client.describeTable(DescribeTableRequest.builder().tableName(tableName).build());
+        DescribeTableResponse result = client.describeTable(DescribeTableRequest.builder().tableName(tableName).build());
         TableDescription desc = result.table();
         String status = desc.tableStatus();
         for (;; status = desc.tableStatus()) {
@@ -135,7 +135,7 @@ public class TT0035900619IntegrationTest {
 
     protected static AwsCredentials awsTestCredentials() {
         try {
-            return AwsIntegrationTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentialsOrThrow();
+            return AwsIntegrationTestBase.CREDENTIALS_PROVIDER_CHAIN.getCredentials();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -18,7 +18,6 @@ package software.amazon.awssdk.auth;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.internal.EC2CredentialsUtils;
@@ -58,7 +57,7 @@ public class InstanceProfileCredentialsProvider implements AwsCredentialsProvide
     }
 
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         return credentialsFetcher.getCredentials();
     }
 

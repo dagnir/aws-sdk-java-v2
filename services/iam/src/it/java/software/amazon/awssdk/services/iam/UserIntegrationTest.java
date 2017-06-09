@@ -21,13 +21,13 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.services.iam.model.CreateUserRequest;
-import software.amazon.awssdk.services.iam.model.CreateUserResult;
+import software.amazon.awssdk.services.iam.model.CreateUserResponse;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
 import software.amazon.awssdk.services.iam.model.EntityAlreadyExistsException;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
-import software.amazon.awssdk.services.iam.model.GetUserResult;
+import software.amazon.awssdk.services.iam.model.GetUserResponse;
 import software.amazon.awssdk.services.iam.model.ListUsersRequest;
-import software.amazon.awssdk.services.iam.model.ListUsersResult;
+import software.amazon.awssdk.services.iam.model.ListUsersResponse;
 import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 import software.amazon.awssdk.services.iam.model.UpdateUserRequest;
 import software.amazon.awssdk.services.iam.model.User;
@@ -53,9 +53,9 @@ public class UserIntegrationTest extends IntegrationTestBase {
         try {
             CreateUserRequest request = CreateUserRequest.builder().userName(
                     username).path(IAMUtil.TEST_PATH).build();
-            CreateUserResult result = iam.createUser(request);
+            CreateUserResponse result = iam.createUser(request);
             assertEquals(username, result.user().userName());
-            GetUserResult getUserResult = iam.getUser(GetUserRequest.builder()
+            GetUserResponse getUserResult = iam.getUser(GetUserRequest.builder()
                                                                     .userName(username).build());
             assertEquals(username, getUserResult.user().userName());
         } finally {
@@ -69,7 +69,7 @@ public class UserIntegrationTest extends IntegrationTestBase {
         String username2 = IAMUtil.createTestUser();
         String username3 = IAMUtil.createTestUser();
         try {
-            ListUsersResult Result = iam.listUsers(ListUsersRequest.builder()
+            ListUsersResponse Result = iam.listUsers(ListUsersRequest.builder()
                                                                    .pathPrefix(IAMUtil.TEST_PATH).build());
 
             assertEquals(3, Result.users().size());
@@ -99,7 +99,7 @@ public class UserIntegrationTest extends IntegrationTestBase {
         try {
             iam.createUser(CreateUserRequest.builder().path(path).userName(
                     username).build());
-            GetUserResult Result = iam.getUser(GetUserRequest.builder()
+            GetUserResponse Result = iam.getUser(GetUserRequest.builder()
                                                              .userName(username).build());
             assertEquals(username, Result.user().userName());
             assertEquals(path, Result.user().path());
@@ -128,7 +128,7 @@ public class UserIntegrationTest extends IntegrationTestBase {
             iam.createUser(CreateUserRequest.builder().userName(username4)
                                             .path(pathA).build());
 
-            ListUsersResult Result = iam.listUsers(ListUsersRequest.builder()
+            ListUsersResponse Result = iam.listUsers(ListUsersRequest.builder()
                                                                    .pathPrefix(pathA).build());
 
             assertEquals(3, Result.users().size());
@@ -191,7 +191,7 @@ public class UserIntegrationTest extends IntegrationTestBase {
         String username4 = IAMUtil.createTestUser();
 
         try {
-            ListUsersResult Result = iam.listUsers(ListUsersRequest.builder()
+            ListUsersResponse Result = iam.listUsers(ListUsersRequest.builder()
                                                                    .maxItems(2).pathPrefix(IAMUtil.TEST_PATH).build());
 
             assertEquals(2, Result.users().size());
@@ -254,7 +254,7 @@ public class UserIntegrationTest extends IntegrationTestBase {
             iam.createUser(CreateUserRequest.builder().userName(username)
                                             .path(firstPath).build());
 
-            GetUserResult Result = iam.getUser(GetUserRequest.builder()
+            GetUserResponse Result = iam.getUser(GetUserRequest.builder()
                                                              .userName(username).build());
             assertEquals(firstPath, Result.user().path());
 
@@ -280,7 +280,7 @@ public class UserIntegrationTest extends IntegrationTestBase {
         iam.createUser(CreateUserRequest.builder().userName(username).path(
                 IAMUtil.TEST_PATH).build());
 
-        GetUserResult Result = iam.getUser(GetUserRequest.builder()
+        GetUserResponse Result = iam.getUser(GetUserRequest.builder()
                                                          .userName(username).build());
         assertEquals(username, Result.user().userName());
 

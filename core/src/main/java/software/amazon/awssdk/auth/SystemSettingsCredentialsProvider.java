@@ -19,6 +19,7 @@ import static software.amazon.awssdk.utils.StringUtils.trim;
 
 import java.util.Optional;
 import software.amazon.awssdk.AwsSystemSetting;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.utils.StringUtils;
 import software.amazon.awssdk.utils.SystemSetting;
@@ -37,17 +38,29 @@ import software.amazon.awssdk.utils.SystemSetting;
 @SdkInternalApi
 abstract class SystemSettingsCredentialsProvider implements AwsCredentialsProvider {
     @Override
-    public Optional<AwsCredentials> getCredentials() {
+    public AwsCredentials getCredentials() {
         String accessKey = trim(loadSetting(AwsSystemSetting.AWS_ACCESS_KEY_ID).orElse(null));
         String secretKey = trim(loadSetting(AwsSystemSetting.AWS_SECRET_ACCESS_KEY).orElse(null));
         String sessionToken = trim(loadSetting(AwsSystemSetting.AWS_SESSION_TOKEN).orElse(null));
 
-        if (StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey)) {
-            return Optional.empty();
+        if (StringUtils.isEmpty(accessKey)) {
+            throw new SdkClientException(
+                    String.format("Unable to load credentials from system settings. Access key must be specified either via "
+                                  + "environment variable (%s) or system property (%s).",
+                                  AwsSystemSetting.AWS_ACCESS_KEY_ID.environmentVariable(),
+                                  AwsSystemSetting.AWS_ACCESS_KEY_ID.property()));
         }
 
-        return Optional.of(sessionToken == null ? new AwsCredentials(accessKey, secretKey)
-                                                : new AwsSessionCredentials(accessKey, secretKey, sessionToken));
+        if (StringUtils.isEmpty(secretKey)) {
+            throw new SdkClientException(
+                    String.format("Unable to load credentials from system settings. Secret key must be specified either via "
+                                  + "environment variable (%s) or system property (%s).",
+                                  AwsSystemSetting.AWS_SECRET_ACCESS_KEY.environmentVariable(),
+                                  AwsSystemSetting.AWS_SECRET_ACCESS_KEY.property()));
+        }
+
+        return sessionToken == null ? new AwsCredentials(accessKey, secretKey)
+                                    : new AwsSessionCredentials(accessKey, secretKey, sessionToken);
     }
 
     @Override

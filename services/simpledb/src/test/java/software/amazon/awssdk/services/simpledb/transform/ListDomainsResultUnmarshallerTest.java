@@ -21,12 +21,12 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.services.simpledb.model.ListDomainsResult;
+import software.amazon.awssdk.services.simpledb.model.ListDomainsResponse;
 
 public class ListDomainsResultUnmarshallerTest {
 
     /**
-     * Test method for ListDomainsResultUnmarshaller
+     * Test method for ListDomainsResponseUnmarshaller
      */
     @Test
     public final void testUnmarshall() throws Exception {
@@ -34,7 +34,7 @@ public class ListDomainsResultUnmarshallerTest {
         XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(DomainMetadataResultUnmarshallerTest.class
                                                                                   .getResourceAsStream("ListDomainsResponse.xml"));
         StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader);
-        ListDomainsResult result = new ListDomainsResultUnmarshaller()
+        ListDomainsResponse result = new ListDomainsResponseUnmarshaller()
                 .unmarshall(unmarshallerContext);
 
         assertTrue(!result.domainNames().isEmpty());

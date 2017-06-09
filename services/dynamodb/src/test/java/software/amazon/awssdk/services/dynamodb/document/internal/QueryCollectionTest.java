@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.dynamodb.document.QueryOutcome;
 import software.amazon.awssdk.services.dynamodb.document.spec.QuerySpec;
 import software.amazon.awssdk.services.dynamodb.model.Capacity;
 import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 public class QueryCollectionTest {
     private static final Random rand = new Random();
@@ -36,7 +36,7 @@ public class QueryCollectionTest {
     @Test
     public void testEmptyResult() {
         QueryCollection col = new QueryCollection(null, new QuerySpec());
-        col.setLastLowLevelResult(new QueryOutcome(QueryResult.builder().build()));
+        col.setLastLowLevelResult(new QueryOutcome(QueryResponse.builder().build()));
         assertTrue(0 == col.getTotalCount());
         assertTrue(0 == col.getTotalScannedCount());
         assertNull(col.getTotalConsumedCapacity());
@@ -45,7 +45,7 @@ public class QueryCollectionTest {
     @Test
     public void setLastLowLevelResult() {
         QueryCollection col = new QueryCollection(null, new QuerySpec());
-        QueryResult result = QueryResult.builder()
+        QueryResponse result = QueryResponse.builder()
                 .count(rand.nextInt())
                 .scannedCount(rand.nextInt()).build();
 
@@ -99,7 +99,7 @@ public class QueryCollectionTest {
         assertTrue(lsi.get("lsi2").capacityUnits() * 2 == lsiTotal.get("lsi2").capacityUnits());
 
         // A different one
-        QueryResult result3 = QueryResult.builder()
+        QueryResponse result3 = QueryResponse.builder()
                 .count(rand.nextInt())
                 .scannedCount(rand.nextInt())
                 .build();
@@ -142,7 +142,7 @@ public class QueryCollectionTest {
         assertTrue(lsi3.get("lsi3").capacityUnits() == lsiTotal.get("lsi3").capacityUnits());
 
         // An empty one
-        QueryResult result4 = QueryResult.builder().build();
+        QueryResponse result4 = QueryResponse.builder().build();
         ConsumedCapacity consumedCapacity4 = ConsumedCapacity.builder().build();
         result4 = result4.toBuilder().consumedCapacity(consumedCapacity4).build();
         col.setLastLowLevelResult(new QueryOutcome(result4));

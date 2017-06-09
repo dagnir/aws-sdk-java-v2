@@ -49,9 +49,9 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResult;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalCheckFailedException;
 import software.amazon.awssdk.services.dynamodb.model.ConditionalOperator;
@@ -61,21 +61,21 @@ import software.amazon.awssdk.services.dynamodb.model.DeleteRequest;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResult;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.PutItemResult;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResult;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
-import software.amazon.awssdk.services.dynamodb.model.ScanResult;
+import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.Select;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.UpdateItemResult;
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 import software.amazon.awssdk.util.VersionInfoUtils;
 
@@ -191,7 +191,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
      * The max back off time for batch get. The configuration for batch write
      * has been moved to DynamoDBMapperConfig
      */
-    protected static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3;
+    protected static final long MAX_BACKOFF_IN_MILLISECONDS = 1000 * 3L;
     /** The max number of items allowed in a BatchWrite request. */
     protected static final int MAX_ITEMS_PER_BATCH = 25;
     /**
@@ -820,7 +820,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         GetItemRequest rq = rqBuilder.build()
                 .withRequestMetricCollector(config.getRequestMetricCollector());
 
-        GetItemResult item = db.getItem(applyUserAgent(rq));
+        GetItemResponse item = db.getItem(applyUserAgent(rq));
         Map<String, AttributeValue> itemAttributes = item.item();
         if (itemAttributes == null) {
             return null;
@@ -999,11 +999,11 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
                 @Override
                 protected void executeLowLevelRequest() {
-                    UpdateItemResult updateItemResult = doUpdateItem();
+                    UpdateItemResponse updateItemResult = doUpdateItem();
 
                     // The UpdateItem request is specified to return ALL_NEW
                     // attributes of the affected item. So if the returned
-                    // UpdateItemResult does not include any ReturnedAttributes,
+                    // UpdateItemResponse does not include any ReturnedAttributes,
                     // it indicates the UpdateItem failed silently (e.g. the
                     // key-only-put nightmare -
                     // https://forums.aws.amazon.com/thread.jspa?threadID=86798&tstart=25),
@@ -1236,7 +1236,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
             Map<String, List<WriteRequest>> batch,
             BatchWriteRetryStrategy batchWriteRetryStrategy) {
 
-        BatchWriteItemResult result;
+        BatchWriteItemResponse result = null;
         int retries = 0;
         int maxRetries = batchWriteRetryStrategy
                 .maxRetryOnUnprocessedItems(Collections
@@ -1350,7 +1350,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
             final Map<String, List<Object>> resultSet,
             final DynamoDbMapperConfig config) {
 
-        BatchGetItemResult batchGetItemResult = null;
+        BatchGetItemResponse batchGetItemResponse = null;
         BatchGetItemRequest batchGetItemRequest = BatchGetItemRequest.builder()
                 .requestItems(requestItems)
                 .build();
@@ -1362,23 +1362,23 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         int retries = 0;
 
         do {
-            if (batchGetItemResult != null) {
+            if (batchGetItemResponse != null) {
                 retries++;
                 batchLoadContext.setRetriesAttempted(retries);
-                if (!isNullOrEmpty(batchGetItemResult.unprocessedKeys())) {
+                if (!isNullOrEmpty(batchGetItemResponse.unprocessedKeys())) {
                     pause(batchLoadStrategy.getDelayBeforeNextRetry(batchLoadContext));
                     batchGetItemRequest = batchGetItemRequest.toBuilder()
-                            .requestItems(batchGetItemResult.unprocessedKeys())
+                            .requestItems(batchGetItemResponse.unprocessedKeys())
                             .build();
                     batchLoadContext.setBatchGetItemRequest(batchGetItemRequest);
                 }
             }
 
-            batchGetItemResult = db.batchGetItem(
+            batchGetItemResponse = db.batchGetItem(
                     applyBatchOperationUserAgent(batchGetItemRequest)
                             .withRequestMetricCollector(config.getRequestMetricCollector()));
 
-            Map<String, List<Map<String, AttributeValue>>> responses = batchGetItemResult.responses();
+            Map<String, List<Map<String, AttributeValue>>> responses = batchGetItemResponse.responses();
             for (Map.Entry<String, List<Map<String, AttributeValue>>> entries : responses.entrySet()) {
                 String tableName = entries.getKey();
                 List<Map<String, AttributeValue>> items = entries.getValue();
@@ -1394,15 +1394,15 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
                 resultSet.put(tableName, objects);
             }
 
-            batchLoadContext.setBatchGetItemResult(batchGetItemResult);
+            batchLoadContext.setBatchGetItemResponse(batchGetItemResponse);
 
             // the number of unprocessed keys and  Batch Load Strategy will drive the number of retries
         } while (batchLoadStrategy.shouldRetry(batchLoadContext));
 
-        if (!isNullOrEmpty(batchGetItemResult.unprocessedKeys())) {
-            throw new BatchGetItemException("The BatchGetItemResult has unprocessed keys after max retry attempts. Catch the " +
+        if (!isNullOrEmpty(batchGetItemResponse.unprocessedKeys())) {
+            throw new BatchGetItemException("The BatchGetItemResponse has unprocessed keys after max retry attempts. Catch the " +
                                             "BatchGetItemException to get the list of unprocessed keys.",
-                                            batchGetItemResult.unprocessedKeys(), resultSet);
+                                            batchGetItemResponse.unprocessedKeys(), resultSet);
         }
     }
 
@@ -1414,7 +1414,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         ScanRequest scanRequest = createScanRequestFromExpression(clazz, scanExpression, config);
 
-        ScanResult scanResult = db.scan(applyUserAgent(scanRequest));
+        ScanResponse scanResult = db.scan(applyUserAgent(scanRequest));
         return new PaginatedScanList<>(this, clazz, db, scanRequest, scanResult, config.getPaginationLoadingStrategy(), config);
     }
 
@@ -1441,7 +1441,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         ScanRequest scanRequest = createScanRequestFromExpression(clazz, scanExpression, config);
 
-        ScanResult scanResult = db.scan(applyUserAgent(scanRequest));
+        ScanResponse scanResult = db.scan(applyUserAgent(scanRequest));
         ScanResultPage<T> result = new ScanResultPage<T>();
         List<AttributeTransformer.Parameters<T>> parameters =
                 toParameters(scanResult.items(), clazz, scanRequest.tableName(), config);
@@ -1463,7 +1463,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         QueryRequest queryRequest = createQueryRequestFromExpression(clazz, queryExpression, config);
 
-        QueryResult queryResult = db.query(applyUserAgent(queryRequest));
+        QueryResponse queryResult = db.query(applyUserAgent(queryRequest));
         return new PaginatedQueryList<T>(this, clazz, db, queryRequest, queryResult,
                                          config.getPaginationLoadingStrategy(), config);
     }
@@ -1476,7 +1476,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         QueryRequest queryRequest = createQueryRequestFromExpression(clazz, queryExpression, config);
 
-        QueryResult queryResult = db.query(applyUserAgent(queryRequest));
+        QueryResponse queryResult = db.query(applyUserAgent(queryRequest));
         QueryResultPage<T> result = new QueryResultPage<T>();
         List<AttributeTransformer.Parameters<T>> parameters =
                 toParameters(queryResult.items(), clazz, queryRequest.tableName(), config);
@@ -1499,7 +1499,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         // Count scans can also be truncated for large datasets
         int count = 0;
-        ScanResult scanResult;
+        ScanResponse scanResult;
         do {
             scanResult = db.scan(applyUserAgent(scanRequest));
             count += scanResult.count();
@@ -1518,7 +1518,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
 
         // Count queries can also be truncated for large datasets
         int count = 0;
-        QueryResult queryResult;
+        QueryResponse queryResult;
         do {
             queryResult = db.query(applyUserAgent(queryRequest));
             count += queryResult.count();
@@ -2129,7 +2129,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
          * of the new version of the item after the update. The handler will use
          * the returned attributes to detect silent failure on the server-side.
          */
-        protected UpdateItemResult doUpdateItem() {
+        protected UpdateItemResponse doUpdateItem() {
             UpdateItemRequest req = UpdateItemRequest.builder()
                     .tableName(getTableName())
                     .key(getPrimaryKeyAttributeValues())
@@ -2159,7 +2159,7 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
          *          that we used to handle by the keyOnlyPut(...) hack.
          * </ul>
          */
-        protected PutItemResult doPutItem() {
+        protected PutItemResponse doPutItem() {
             Map<String, AttributeValue> attributeValues = convertToItem(getAttributeValueUpdates());
 
             attributeValues = transformAttributes(

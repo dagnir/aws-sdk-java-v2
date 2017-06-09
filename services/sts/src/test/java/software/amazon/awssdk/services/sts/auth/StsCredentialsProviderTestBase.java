@@ -82,7 +82,7 @@ public abstract class StsCredentialsProviderTestBase<RequestT, ResponseT> {
 
         try (StsCredentialsProvider credentialsProvider = createCredentialsProviderBuilder(request).stsClient(stsClient).build()) {
             for(int i = 0; i < numTimesInvokeCredentialsProvider; ++i) {
-                AwsSessionCredentials providedCredentials = (AwsSessionCredentials) credentialsProvider.getCredentialsOrThrow();
+                AwsSessionCredentials providedCredentials = (AwsSessionCredentials) credentialsProvider.getCredentials();
                 assertThat(providedCredentials.accessKeyId()).isEqualTo("a");
                 assertThat(providedCredentials.secretAccessKey()).isEqualTo("b");
                 assertThat(providedCredentials.sessionToken()).isEqualTo("c");
