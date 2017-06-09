@@ -15,9 +15,6 @@
 
 package software.amazon.awssdk.http;
 
-import java.net.InetAddress;
-import java.security.SecureRandom;
-
 /**
  * Settings to configure HTTP client implementation with.
  */
@@ -29,44 +26,8 @@ public interface SdkHttpClientSettings {
 
     int getMaxConnections();
 
-    InetAddress getLocalAddress();
-
-    String getProxyHost();
-
-    int getProxyPort();
-
-    String getProxyUsername();
-
-    String getProxyPassword();
-
-    String getNonProxyHosts();
-
-    boolean useReaper();
-
-    boolean useGzip();
-
     int getSocketTimeout();
 
-    int[] getSocketBufferSize();
-
-    boolean useTcpKeepAlive();
-
-    SecureRandom getSecureRandom();
-
     int getConnectionTimeout();
-
-    int getConnectionPoolRequestTimeout();
-
-    long getConnectionPoolTtl();
-
-    long getMaxIdleConnectionTime();
-
-    String getProxyWorkstation();
-
-    String getProxyDomain();
-
-    boolean isPreemptiveBasicProxyAuth();
-
-    boolean isUseExpectContinue();
 
 }

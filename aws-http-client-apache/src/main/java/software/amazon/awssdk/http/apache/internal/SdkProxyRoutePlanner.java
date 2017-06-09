@@ -17,13 +17,13 @@ package software.amazon.awssdk.http.apache.internal;
 
 import static software.amazon.awssdk.utils.StringUtils.lowerCase;
 
+import java.util.Set;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.impl.conn.DefaultRoutePlanner;
 import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.protocol.HttpContext;
-import software.amazon.awssdk.utils.StringUtils;
 
 /**
  * SdkProxyRoutePlanner delegates a Proxy Route Planner from the settings instead of the
@@ -31,26 +31,17 @@ import software.amazon.awssdk.utils.StringUtils;
  * filter the hosts who matches nonProxyHosts pattern.
  */
 public class SdkProxyRoutePlanner extends DefaultRoutePlanner {
-    private HttpHost proxy;
-    private String[] hostPatterns;
 
-    public SdkProxyRoutePlanner(String proxyHost, int proxyPort, String nonProxyHosts) {
+    private HttpHost proxy;
+    private Set<String> hostPatterns;
+
+    public SdkProxyRoutePlanner(String proxyHost, int proxyPort, Set<String> nonProxyHosts) {
         super(DefaultSchemePortResolver.INSTANCE);
         proxy = new HttpHost(proxyHost, proxyPort);
-        parseNonProxyHosts(nonProxyHosts);
+        this.hostPatterns = nonProxyHosts;
     }
 
-    private void parseNonProxyHosts(String nonProxyHosts) {
-        if (!StringUtils.isEmpty(nonProxyHosts)) {
-            String[] hosts = nonProxyHosts.split("\\|");
-            hostPatterns = new String[hosts.length];
-            for (int i = 0; i < hosts.length; ++i) {
-                hostPatterns[i] = lowerCase(hosts[i]).replace("*", ".*?");
-            }
-        }
-    }
-
-    boolean doesTargetMatchNonProxyHosts(HttpHost target) {
+    private boolean doesTargetMatchNonProxyHosts(HttpHost target) {
         if (hostPatterns == null) {
             return false;
         }

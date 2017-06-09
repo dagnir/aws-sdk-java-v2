@@ -9,6 +9,7 @@ import software.amazon.awssdk.client.builder.DefaultClientBuilder;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.ServiceBuilderConfigurationDefaults;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.utils.AttributeMap;
 
 @Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
@@ -22,8 +23,8 @@ public abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuild
     @Override
     protected final ClientConfigurationDefaults serviceDefaults() {
         return ServiceBuilderConfigurationDefaults.builder().defaultSignerProvider(this::defaultSignerProvider)
-                                                  .addHandler1Path("/software/amazon/awssdk/services/json/request.handlers")
-                                                  .addHandler2Path("/software/amazon/awssdk/services/json/request.handler2s").build();
+                .addHandler1Path("/software/amazon/awssdk/services/json/request.handlers")
+                .addHandler2Path("/software/amazon/awssdk/services/json/request.handler2s").build();
     }
 
     private SignerProvider defaultSignerProvider() {
@@ -31,5 +32,10 @@ public abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuild
         signer.setServiceName("json-service");
         signer.setRegionName(signingRegion().value());
         return new StaticSignerProvider(signer);
+    }
+
+    @Override
+    protected final AttributeMap serviceSpecificHttpConfig() {
+        return MyServiceHttpConfig.CONFIG;
     }
 }

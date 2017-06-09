@@ -18,43 +18,52 @@ package software.amazon.awssdk.http.apache;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static software.amazon.awssdk.utils.Validate.notNull;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.pool.ConnPoolControl;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpClientSettings;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
+import software.amazon.awssdk.http.apache.internal.ApacheHttpRequestConfig;
 import software.amazon.awssdk.http.apache.internal.impl.ApacheHttpRequestFactory;
 import software.amazon.awssdk.http.apache.internal.impl.ConnectionManagerAwareHttpClient;
 import software.amazon.awssdk.http.apache.internal.utils.ApacheUtils;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
-import software.amazon.awssdk.utils.Validate;
+import software.amazon.awssdk.utils.AttributeMap;
 
-public class ApacheHttpClient implements SdkHttpClient {
+@SdkInternalApi
+class ApacheHttpClient implements SdkHttpClient {
 
     private final ApacheHttpRequestFactory apacheHttpRequestFactory = new ApacheHttpRequestFactory();
     private final ConnectionManagerAwareHttpClient httpClient;
-    private final SdkHttpClientSettings httpClientSettings;
+    private final ApacheHttpRequestConfig requestConfig;
+    private final AttributeMap resolvedOptions;
 
-    ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient, SdkHttpClientSettings httpClientSettings) {
-        this.httpClient = Validate.notNull(httpClient, "httpClient must not be null.");
-        this.httpClientSettings = Validate.notNull(httpClientSettings, "httpClientSettings must not be null.");
+    ApacheHttpClient(ConnectionManagerAwareHttpClient httpClient,
+                     ApacheHttpRequestConfig requestConfig,
+                     AttributeMap resolvedOptions) {
+        this.httpClient = notNull(httpClient, "httpClient must not be null.");
+        this.requestConfig = notNull(requestConfig, "requestConfig must not be null.");
+        this.resolvedOptions = notNull(resolvedOptions, "resolvedOptions must not be null");
     }
 
     @Override
     public AbortableCallable<SdkHttpFullResponse> prepareRequest(SdkHttpFullRequest request, SdkRequestContext context) {
-        final HttpRequestBase apacheRequest = toApacheRequest(request, httpClientSettings);
+        final HttpRequestBase apacheRequest = toApacheRequest(request);
         return new AbortableCallable<SdkHttpFullResponse>() {
             @Override
             public SdkHttpFullResponse call() throws Exception {
@@ -68,6 +77,16 @@ public class ApacheHttpClient implements SdkHttpClient {
         };
     }
 
+    @Override
+    public <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key) {
+        return Optional.ofNullable(resolvedOptions.get(key));
+    }
+
+    @Override
+    public void close() {
+        httpClient.getHttpClientConnectionManager().shutdown();
+    }
+
     private SdkHttpFullResponse execute(SdkRequestContext context, HttpRequestBase apacheRequest) throws IOException {
         final AwsRequestMetrics awsRequestMetrics = context.metrics();
         captureConnectionPoolMetrics(awsRequestMetrics);
@@ -75,7 +94,8 @@ public class ApacheHttpClient implements SdkHttpClient {
         Map<String, Object> metricsContext = new HashMap<>();
         metricsContext.put(AwsRequestMetrics.class.getSimpleName(), awsRequestMetrics);
 
-        final HttpClientContext localRequestContext = ApacheUtils.newClientContext(httpClientSettings, metricsContext);
+        final HttpClientContext localRequestContext = ApacheUtils
+                .newClientContext(requestConfig.proxyConfiguration(), metricsContext);
         try {
             awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpRequestTime);
             final HttpResponse httpResponse = httpClient.execute(apacheRequest, localRequestContext);
@@ -98,13 +118,8 @@ public class ApacheHttpClient implements SdkHttpClient {
 
     }
 
-    private HttpRequestBase toApacheRequest(SdkHttpFullRequest request, SdkHttpClientSettings options) {
-        return apacheHttpRequestFactory.create(request, options);
-    }
-
-    @Override
-    public void close() {
-        httpClient.getHttpClientConnectionManager().shutdown();
+    private HttpRequestBase toApacheRequest(SdkHttpFullRequest request) {
+        return apacheHttpRequestFactory.create(request, requestConfig);
     }
 
     /**
@@ -120,8 +135,7 @@ public class ApacheHttpClient implements SdkHttpClient {
                                   .statusCode(apacheHttpResponse.getStatusLine().getStatusCode())
                                   .statusText(apacheHttpResponse.getStatusLine().getReasonPhrase())
                                   .content(apacheHttpResponse.getEntity() != null
-                                           ? apacheHttpResponse.getEntity().getContent()
-                                           : null)
+                                                   ? apacheHttpResponse.getEntity().getContent() : null)
                                   .headers(transformHeaders(apacheHttpResponse))
                                   .build();
 
@@ -129,6 +143,6 @@ public class ApacheHttpClient implements SdkHttpClient {
 
     private Map<String, List<String>> transformHeaders(HttpResponse apacheHttpResponse) {
         return Stream.of(apacheHttpResponse.getAllHeaders())
-                .collect(groupingBy(Header::getName, mapping(Header::getValue, toList())));
+                     .collect(groupingBy(Header::getName, mapping(Header::getValue, toList())));
     }
 }

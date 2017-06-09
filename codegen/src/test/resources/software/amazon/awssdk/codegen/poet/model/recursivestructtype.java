@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.RecursiveStructTypeMarshaller;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class RecursiveStructType implements ToCopyableBuilder<RecursiveStructType.Builder, RecursiveStructType>, StructuredPojo {
+public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<RecursiveStructType.Builder, RecursiveStructType> {
     private final String noRecurse;
 
     private final RecursiveStructType recursiveStruct;

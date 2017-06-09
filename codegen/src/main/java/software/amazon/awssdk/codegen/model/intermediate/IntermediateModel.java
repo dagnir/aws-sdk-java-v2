@@ -112,17 +112,6 @@ public final class IntermediateModel {
     }
 
     /**
-     * LegacyClientConfigurationFactory to use when producing default client configuration for the
-     * client.
-     */
-    public String getClientConfigFactory() {
-        if (customizationConfig.getCustomClientConfigFactory() == null) {
-            return DEFAULT_CLIENT_CONFIG_FACTORY;
-        }
-        return customizationConfig.getCustomClientConfigFactory();
-    }
-
-    /**
      * @return Exception unmarshaller implementation to use. Currently only needed by XML based
      *     protocols.
      */

@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.utils.Validate.paramNotNull;
+
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.SdkGlobalTime;
@@ -28,7 +30,7 @@ import software.amazon.awssdk.util.CapacityManager;
  * software.amazon.awssdk.http.pipeline.RequestPipeline} implementations by
  * {@link software.amazon.awssdk.http.pipeline.RequestPipelineBuilder}.
  */
-public class HttpClientDependencies {
+public class HttpClientDependencies implements AutoCloseable {
 
     private final LegacyClientConfiguration config;
     private final RetryPolicy retryPolicy;
@@ -44,12 +46,12 @@ public class HttpClientDependencies {
     private volatile int timeOffset = SdkGlobalTime.getGlobalTimeOffset();
 
     private HttpClientDependencies(Builder builder) {
-        this.config = builder.config;
-        this.retryPolicy = builder.retryPolicy;
+        this.config = paramNotNull(builder.config, "Configuration");
+        this.retryPolicy = paramNotNull(builder.retryPolicy, "RetryPolicy");
         this.httpClientSettings = builder.httpClientSettings;
-        this.retryCapacity = builder.retryCapacity;
-        this.sdkHttpClient = builder.sdkHttpClient;
-        this.clientExecutionTimer = builder.clientExecutionTimer;
+        this.retryCapacity = paramNotNull(builder.retryCapacity, "CapacityManager");
+        this.sdkHttpClient = paramNotNull(builder.sdkHttpClient, "SdkHttpClient");
+        this.clientExecutionTimer = paramNotNull(builder.clientExecutionTimer, "ClientExecutionTimer");
     }
 
     /**
@@ -120,6 +122,11 @@ public class HttpClientDependencies {
         SdkGlobalTime.setGlobalTimeOffset(timeOffset);
     }
 
+    @Override
+    public void close() throws Exception {
+        this.clientExecutionTimer.close();
+        this.sdkHttpClient.close();
+    }
 
     /**
      * Builder for {@link HttpClientDependencies}.

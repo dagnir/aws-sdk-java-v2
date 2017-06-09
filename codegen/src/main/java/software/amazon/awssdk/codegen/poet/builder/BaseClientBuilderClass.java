@@ -35,6 +35,7 @@ import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.ServiceBuilderConfigurationDefaults;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
+import software.amazon.awssdk.utils.AttributeMap;
 
 public class BaseClientBuilderClass implements ClassSpec {
     private final IntermediateModel model;
@@ -51,17 +52,21 @@ public class BaseClientBuilderClass implements ClassSpec {
 
     @Override
     public TypeSpec poetSpec() {
-        return PoetUtils.createClassBuilder(builderClassName)
-                        .addModifiers(Modifier.ABSTRACT)
-                        .addAnnotation(SdkInternalApi.class)
-                        .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", builderInterfaceName, "B", "C"))
-                        .addTypeVariable(TypeVariableName.get("C"))
-                        .superclass(PoetUtils.createParameterizedTypeName(DefaultClientBuilder.class, "B", "C"))
-                        .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"))
-                        .addMethod(serviceEndpointPrefixMethod())
-                        .addMethod(serviceDefaultsMethod())
-                        .addMethod(defaultSignerProviderMethod())
-                        .build();
+        final TypeSpec.Builder builder =
+                PoetUtils.createClassBuilder(builderClassName)
+                         .addModifiers(Modifier.ABSTRACT)
+                         .addAnnotation(SdkInternalApi.class)
+                         .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", builderInterfaceName, "B", "C"))
+                         .addTypeVariable(TypeVariableName.get("C"))
+                         .superclass(PoetUtils.createParameterizedTypeName(DefaultClientBuilder.class, "B", "C"))
+                         .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"))
+                         .addMethod(serviceEndpointPrefixMethod())
+                         .addMethod(serviceDefaultsMethod())
+                         .addMethod(defaultSignerProviderMethod());
+        if (model.getCustomizationConfig().getServiceSpecificHttpConfig() != null) {
+            builder.addMethod(serviceSpecificHttpConfigMethod());
+        }
+        return builder.build();
     }
 
     private MethodSpec serviceEndpointPrefixMethod() {
@@ -90,6 +95,15 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .build();
     }
 
+    private MethodSpec serviceSpecificHttpConfigMethod() {
+        return MethodSpec.methodBuilder("serviceSpecificHttpConfig")
+                         .addAnnotation(Override.class)
+                         .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
+                         .returns(AttributeMap.class)
+                         .addCode("return $L;", model.getCustomizationConfig().getServiceSpecificHttpConfig())
+                         .build();
+    }
+
     private MethodSpec defaultSignerProviderMethod() {
         return MethodSpec.methodBuilder("defaultSignerProvider")
                          .returns(SignerProvider.class)
@@ -101,9 +115,12 @@ public class BaseClientBuilderClass implements ClassSpec {
     private CodeBlock signerDefinitionMethodBody() {
         AuthType authType = model.getMetadata().getAuthType();
         switch (authType) {
-            case V4: return v4SignerDefinitionMethodBody();
-            case V2: return v2SignerDefinitionMethodBody();
-            default: throw new UnsupportedOperationException("Unsupported signer type: " + authType);
+            case V4:
+                return v4SignerDefinitionMethodBody();
+            case V2:
+                return v2SignerDefinitionMethodBody();
+            default:
+                throw new UnsupportedOperationException("Unsupported signer type: " + authType);
         }
     }
 

@@ -28,7 +28,7 @@ import software.amazon.awssdk.http.AbortableCallable;
 public class ClientExecutionAbortTaskImpl implements ClientExecutionAbortTask {
 
     private final Thread thread;
-    private boolean hasTaskExecuted;
+    private volatile boolean hasTaskExecuted;
     private volatile AbortableCallable<?> currentRequest;
 
     public ClientExecutionAbortTaskImpl(Thread thread) {

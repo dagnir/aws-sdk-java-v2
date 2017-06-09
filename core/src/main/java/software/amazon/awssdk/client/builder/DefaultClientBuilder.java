@@ -16,11 +16,13 @@
 package software.amazon.awssdk.client.builder;
 
 import static software.amazon.awssdk.config.AdvancedClientOption.ENABLE_DEFAULT_REGION_DETECTION;
+import static software.amazon.awssdk.utils.Validate.notNull;
 
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.config.ClientOverrideConfiguration;
@@ -30,18 +32,29 @@ import software.amazon.awssdk.config.MutableClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.GlobalClientConfigurationDefaults;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
+import software.amazon.awssdk.http.AbortableCallable;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpClientFactory;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
+import software.amazon.awssdk.http.SdkRequestContext;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.ServiceMetadata;
 import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.util.EndpointUtils;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * An SDK-internal implementation of the methods in {@link ClientBuilder}, {@link AsyncClientBuilder} and
- * {@link SyncClientBuilder}. This implements all methods required by those interfaces, allowing service-specific builders to just
+ * {@link SyncClientBuilder}. This implements all methods required by those interfaces, allowing service-specific builders to
+ * just
  * implement the configuration they wish to add.
  *
- * <p>By implementing both the sync and async interface's methods, service-specific builders can share code between their sync and
+ * <p>By implementing both the sync and async interface's methods, service-specific builders can share code between their sync
+ * and
  * async variants without needing one to extend the other. Note: This only defines the methods in the sync and async builder
  * interfaces. It does not implement the interfaces themselves. This is because the sync and async client builder interfaces both
  * require a type-constrained parameter for use in fluent chaining, and a generic type parameter conflict is introduced into the
@@ -57,11 +70,24 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         implements ClientBuilder<B, C> {
     private static final String DEFAULT_ENDPOINT_PROTOCOL = "https";
     private static final AwsRegionProvider DEFAULT_REGION_PROVIDER = new DefaultAwsRegionProviderChain();
+    private static final SdkHttpClientFactory DEFAULT_HTTP_CLIENT_FACTORY = new DefaultSdkHttpClientFactory();
+
+    private final SdkHttpClientFactory defaultHttpClientFactory;
 
     private MutableClientConfiguration mutableClientConfiguration = new MutableClientConfiguration();
 
     private Region region;
     private ExecutorProvider asyncExecutorProvider;
+    private ClientHttpConfiguration httpConfiguration = ClientHttpConfiguration.builder().build();
+
+    protected DefaultClientBuilder() {
+        this(DEFAULT_HTTP_CLIENT_FACTORY);
+    }
+
+    @SdkTestInternalApi
+    protected DefaultClientBuilder(SdkHttpClientFactory defaultHttpClientFactory) {
+        this.defaultHttpClientFactory = defaultHttpClientFactory;
+    }
 
     /**
      * Build a client using the current state of this builder. This is marked final in order to allow this class to add standard
@@ -95,7 +121,18 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
      * @return The service defaults that should be applied.
      */
     protected ClientConfigurationDefaults serviceDefaults() {
-        return new ClientConfigurationDefaults() {};
+        return new ClientConfigurationDefaults() {
+        };
+    }
+
+    /**
+     * An optional hook that can be overridden by service client builders to supply service-specific defaults for HTTP related
+     * configuraton.
+     *
+     * @return The service defaults that should be applied.
+     */
+    protected AttributeMap serviceSpecificHttpConfig() {
+        return AttributeMap.empty();
     }
 
     /**
@@ -110,10 +147,10 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     /**
      * Return a sync client configuration object, populated with the following chain of priorities.
      * <ol>
-     *     <li>Customer Configuration</li>
-     *     <li>Builder-Specific Default Configuration</li>
-     *     <li>Service-Specific Default Configuration</li>
-     *     <li>Global Default Configuration</li>
+     * <li>Customer Configuration</li>
+     * <li>Builder-Specific Default Configuration</li>
+     * <li>Service-Specific Default Configuration</li>
+     * <li>Global Default Configuration</li>
      * </ol>
      */
     protected final ImmutableSyncClientConfiguration syncClientConfiguration() {
@@ -121,16 +158,29 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         builderDefaults().applySyncDefaults(configuration);
         serviceDefaults().applySyncDefaults(configuration);
         new GlobalClientConfigurationDefaults().applySyncDefaults(configuration);
+        applySdkHttpClient(configuration);
         return new ImmutableSyncClientConfiguration(configuration);
+    }
+
+    private void applySdkHttpClient(MutableClientConfiguration config) {
+        config.httpClient(resolveSdkHttpClient());
+    }
+
+    private SdkHttpClient resolveSdkHttpClient() {
+        return httpConfiguration
+                .toEither()
+                .map(e -> e.map(NonManagedSdkHttpClient::new,
+                    factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
+                .orElseGet(() -> defaultHttpClientFactory.createHttpClientWithDefaults(serviceSpecificHttpConfig()));
     }
 
     /**
      * Return an async client configuration object, populated with the following chain of priorities.
      * <ol>
-     *     <li>Customer Configuration</li>
-     *     <li>Builder-Specific Default Configuration</li>
-     *     <li>Service-Specific Default Configuration</li>
-     *     <li>Global Default Configuration</li>
+     * <li>Customer Configuration</li>
+     * <li>Builder-Specific Default Configuration</li>
+     * <li>Service-Specific Default Configuration</li>
+     * <li>Global Default Configuration</li>
      * </ol>
      */
     protected final ImmutableAsyncClientConfiguration asyncClientConfiguration() {
@@ -138,6 +188,8 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         builderDefaults().applyAsyncDefaults(configuration);
         serviceDefaults().applyAsyncDefaults(configuration);
         new GlobalClientConfigurationDefaults().applyAsyncDefaults(configuration);
+        // TODO resolve async client
+        applySdkHttpClient(configuration);
         return new ImmutableAsyncClientConfiguration(configuration);
     }
 
@@ -263,6 +315,16 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     }
 
     @Override
+    public final B httpConfiguration(ClientHttpConfiguration httpConfiguration) {
+        this.httpConfiguration = httpConfiguration;
+        return thisBuilder();
+    }
+
+    public final void setHttpConfiguration(ClientHttpConfiguration httpConfiguration) {
+        this.httpConfiguration = httpConfiguration;
+    }
+
+    @Override
     public final B credentialsProvider(AwsCredentialsProvider credentialsProvider) {
         mutableClientConfiguration.credentialsProvider(credentialsProvider);
         return thisBuilder();
@@ -278,5 +340,35 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     @SuppressWarnings("unchecked")
     protected final B thisBuilder() {
         return (B) this;
+    }
+
+    /**
+     * Wrapper around {@link SdkHttpClient} to prevent it from being closed. Used when the customer provides
+     * an already built client in which case they are responsible for the lifecycle of it.
+     */
+    @SdkTestInternalApi
+    static class NonManagedSdkHttpClient implements SdkHttpClient {
+
+        private final SdkHttpClient delegate;
+
+        private NonManagedSdkHttpClient(SdkHttpClient delegate) {
+            this.delegate = notNull(delegate, "SdkHttpClient must not be null");
+        }
+
+        @Override
+        public AbortableCallable<SdkHttpFullResponse> prepareRequest(SdkHttpFullRequest request,
+                                                                     SdkRequestContext requestContext) {
+            return delegate.prepareRequest(request, requestContext);
+        }
+
+        @Override
+        public <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key) {
+            return delegate.getConfigurationValue(key);
+        }
+
+        @Override
+        public void close() throws Exception {
+            // Do nothing, this client is managed by the customer.
+        }
     }
 }

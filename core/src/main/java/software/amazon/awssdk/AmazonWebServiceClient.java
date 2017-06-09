@@ -169,11 +169,12 @@ public abstract class AmazonWebServiceClient {
         this.clientConfiguration = clientParams.getClientConfiguration();
         requestHandler2s = clientParams.getRequestHandlers();
         client = AmazonHttpClient.builder()
-                .clientConfiguration(clientConfiguration)
-                .requestMetricCollector(clientParams.getRequestMetricCollector())
-                .useBrowserCompatibleHostNameVerifier(!useStrictHostNameVerification())
-                .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
-                .build();
+                                 .sdkHttpClient(clientParams.sdkHttpClient())
+                                 .clientConfiguration(clientConfiguration)
+                                 .requestMetricCollector(clientParams.getRequestMetricCollector())
+                                 .useBrowserCompatibleHostNameVerifier(!useStrictHostNameVerification())
+                                 .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
+                                 .build();
     }
 
     /**

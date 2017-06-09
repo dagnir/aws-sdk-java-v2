@@ -63,13 +63,6 @@ public class CustomizationConfig {
      */
     private String customExceptionUnmarshallerImpl;
     /**
-     * Fully qualified class name of the client configuration factory to use when producing client
-     * configurations for this client.  This factory is called when an explicit ClientConfiguration
-     * is not provided in the service client's constructor. <p> Example:
-     * "software.amazon.awssdk.services.dynamodbv2.AmazonDynamoDBLegacyClientConfigurationFactory" </p>
-     */
-    private String customClientConfigFactory;
-    /**
      * The name of the custom class returned by the client method getCacheResponseMetadata.
      * Currently it's only set for SimpleDB ("SimpleDBResponseMetadata")
      */
@@ -191,6 +184,15 @@ public class CustomizationConfig {
      */
     private String shareModelsWith;
 
+    /**
+     * Expression to return a service specific instance of {@link software.amazon.awssdk.http.SdkHttpConfigurationOptions}. If
+     * present, the client builder will override the hook to return service specific HTTP config and inject this expression into
+     * that method. At some point we may want to have a more data driven way to declare these settings but right now we don't
+     * have any requirements to necessitate that and referencing handwritten code is simpler. See SWF customization.config
+     * for an example.
+     */
+    private String serviceSpecificHttpConfig;
+
     private CustomizationConfig() {
     }
 
@@ -225,14 +227,6 @@ public class CustomizationConfig {
 
     public void setCustomExceptionUnmarshallerImpl(String customExceptionUnmarshallerImpl) {
         this.customExceptionUnmarshallerImpl = customExceptionUnmarshallerImpl;
-    }
-
-    public String getCustomClientConfigFactory() {
-        return customClientConfigFactory;
-    }
-
-    public void setCustomClientConfigFactory(String customClientConfigFactory) {
-        this.customClientConfigFactory = customClientConfigFactory;
     }
 
     public String getCustomResponseMetadataClassName() {
@@ -492,5 +486,13 @@ public class CustomizationConfig {
 
     public void setShareModelsWith(String shareModelsWith) {
         this.shareModelsWith = shareModelsWith;
+    }
+
+    public String getServiceSpecificHttpConfig() {
+        return serviceSpecificHttpConfig;
+    }
+
+    public void setServiceSpecificHttpConfig(String serviceSpecificHttpConfig) {
+        this.serviceSpecificHttpConfig = serviceSpecificHttpConfig;
     }
 }

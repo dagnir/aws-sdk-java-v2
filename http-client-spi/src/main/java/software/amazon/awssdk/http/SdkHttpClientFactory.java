@@ -15,18 +15,22 @@
 
 package software.amazon.awssdk.http;
 
+import software.amazon.awssdk.utils.AttributeMap;
+
 /**
- * Factory for {@link SdkHttpClient} instances.
+ * Interface for creating an {@link SdkHttpClient} with service specific defaults applied.
  *
- * <p>Implementations MUST be thread safe</p>
+ * <p>Implementations must be thread safe.</p>
  */
 public interface SdkHttpClientFactory {
 
     /**
-     * Create a new instance of {@link SdkHttpClient} per the implementation.
+     * Create an {@link SdkHttpClient} with service specific defaults applied. Applying service defaults is optional
+     * and some options may not be supported by a particular implementation.
      *
-     * @param httpSettings Client settings provided by the runtime.
-     * @return New {@link SdkHttpClient} instance.
+     * @param serviceDefaults Service specific defaults. Keys will be one of the constants defined in
+     *                        {@link SdkHttpConfigurationOption}.
+     * @return Created client
      */
-    SdkHttpClient create(SdkHttpClientSettings httpSettings);
+    SdkHttpClient createHttpClientWithDefaults(AttributeMap serviceDefaults);
 }

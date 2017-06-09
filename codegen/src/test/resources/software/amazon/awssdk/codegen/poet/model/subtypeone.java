@@ -2,16 +2,16 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.SubTypeOneMarshaller;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class SubTypeOne implements ToCopyableBuilder<SubTypeOne.Builder, SubTypeOne>, StructuredPojo {
+public class SubTypeOne implements StructuredPojo, ToCopyableBuilder<SubTypeOne.Builder, SubTypeOne> {
     private final String subTypeOneMember;
 
     private SubTypeOne(BeanStyleBuilder builder) {

@@ -18,6 +18,7 @@ package software.amazon.awssdk.http;
 import static org.junit.Assert.fail;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import org.apache.http.HttpHost;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -27,6 +28,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.LegacyClientConfiguration;
+import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 
 /**
@@ -38,21 +40,24 @@ import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
  */
 public class AmazonHttpClientSslHandshakeTimeoutIntegrationTest extends UnresponsiveMockServerTestBase {
 
-    private static final int CLIENT_SOCKET_TO = 1 * 1000;
+    private static final Duration CLIENT_SOCKET_TO = Duration.ofSeconds(1);
 
     @Test(timeout = 60 * 1000)
     public void testSslHandshakeTimeout() {
         AmazonHttpClient httpClient = AmazonHttpClient.builder()
-                .clientConfiguration(new LegacyClientConfiguration()
-                                             .withSocketTimeout(CLIENT_SOCKET_TO).withMaxErrorRetry(0))
-                .build();
+                                                      .sdkHttpClient(ApacheSdkHttpClientFactory.builder()
+                                                                                               .socketTimeout(CLIENT_SOCKET_TO)
+                                                                                               .build()
+                                                                                               .createHttpClient())
+                                                      .clientConfiguration(new LegacyClientConfiguration().withMaxErrorRetry(0))
+                                                      .build();
 
         System.out.println("Sending request to localhost...");
 
         try {
             httpClient.requestExecutionBuilder()
-                    .request(new EmptyHttpRequest(server.getHttpsEndpoint(), HttpMethodName.GET))
-                    .execute();
+                      .request(new EmptyHttpRequest(server.getHttpsEndpoint(), HttpMethodName.GET))
+                      .execute();
             fail("Client-side socket read timeout is expected!");
 
         } catch (AmazonClientException e) {

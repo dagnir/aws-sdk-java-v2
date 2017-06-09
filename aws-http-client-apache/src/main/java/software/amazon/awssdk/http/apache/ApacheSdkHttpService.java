@@ -13,18 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.builder;
+package software.amazon.awssdk.http.apache;
+
+import software.amazon.awssdk.http.SdkHttpClientFactory;
+import software.amazon.awssdk.http.SdkHttpService;
 
 /**
- * A special type of {@link SdkBuilder} that can be used when the built type implements {@link ToCopyableBuilder}.
+ * Service binding for the Apache implementation.
  */
-public interface CopyableBuilder<B extends CopyableBuilder<B, T>, T extends ToCopyableBuilder<B, T>> extends SdkBuilder<B, T> {
-    /**
-     * A shallow copy of this object created by building an immutable T and then transforming it back to a builder.
-     *
-     * @return a copy of this object
-     */
-    default B copy() {
-        return build().toBuilder();
+public class ApacheSdkHttpService implements SdkHttpService {
+
+    @Override
+    public SdkHttpClientFactory createHttpClientFactory() {
+        return ApacheSdkHttpClientFactory.builder().build();
     }
 }

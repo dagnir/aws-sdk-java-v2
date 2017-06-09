@@ -7,8 +7,8 @@ import java.util.Map;
 import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonWebServiceResult;
 import software.amazon.awssdk.ResponseMetadata;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  */

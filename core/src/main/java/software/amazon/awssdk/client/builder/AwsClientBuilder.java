@@ -27,6 +27,7 @@ import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -36,6 +37,8 @@ import software.amazon.awssdk.auth.SignerFactory;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
@@ -43,6 +46,7 @@ import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
+import software.amazon.awssdk.utils.AttributeMap;
 import software.amazon.awssdk.utils.Validate;
 
 /**
@@ -53,6 +57,7 @@ import software.amazon.awssdk.utils.Validate;
  */
 @NotThreadSafe
 @SdkProtectedApi
+@ReviewBeforeRelease("Remove when S3 is migrated to new builder pattern")
 public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeToBuildT> {
 
     /**
@@ -446,6 +451,11 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         @Override
         public ExecutorService getExecutor() {
             throw new UnsupportedOperationException("ExecutorService is not used for sync client.");
+        }
+
+        @Override
+        public SdkHttpClient sdkHttpClient() {
+            return new DefaultSdkHttpClientFactory().createHttpClientWithDefaults(AttributeMap.empty());
         }
     }
 

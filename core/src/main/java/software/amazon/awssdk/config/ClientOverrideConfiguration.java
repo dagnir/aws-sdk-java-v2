@@ -22,13 +22,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.utils.AttributeMap;
 import software.amazon.awssdk.utils.CollectionUtils;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  * Configuration values for which the client already provides sensible defaults. All values are optional, and not specifying them
@@ -58,12 +58,12 @@ public class ClientOverrideConfiguration
         this.requestMetricCollector = builder.requestMetricCollector;
         this.retryPolicy = builder.retryPolicy;
         this.requestListeners = Collections.unmodifiableList(new ArrayList<>(builder.requestListeners));
-        this.advancedOptions = new AttributeMap(builder.advancedOptions);
+        this.advancedOptions = builder.advancedOptions.build();
     }
 
     @Override
     public Builder toBuilder() {
-        return new DefaultClientOverrideConfigurationBuilder().advancedOptions(advancedOptions)
+        return new DefaultClientOverrideConfigurationBuilder().advancedOptions(advancedOptions.toBuilder())
                                                               .httpRequestTimeout(httpRequestTimeout)
                                                               .totalExecutionTimeout(totalExecutionTimeout)
                                                               .additionalHttpHeaders(additionalHttpHeaders)
@@ -313,7 +313,7 @@ public class ClientOverrideConfiguration
         private RequestMetricCollector requestMetricCollector;
         private RetryPolicy retryPolicy;
         private List<RequestHandler2> requestListeners = new ArrayList<>();
-        private AttributeMap advancedOptions = new AttributeMap();
+        private AttributeMap.Builder advancedOptions = AttributeMap.builder();
 
         @Override
         public Builder httpRequestTimeout(Duration httpRequestTimeout) {
@@ -407,12 +407,12 @@ public class ClientOverrideConfiguration
 
         @Override
         public Builder advancedOptions(Map<AdvancedClientOption<?>, ?> advancedOptions) {
-            this.advancedOptions = new AttributeMap(advancedOptions);
+            this.advancedOptions.putAll(advancedOptions);
             return this;
         }
 
-        private Builder advancedOptions(AttributeMap advancedOptions) {
-            this.advancedOptions = new AttributeMap(advancedOptions);
+        private Builder advancedOptions(AttributeMap.Builder attributeMap) {
+            this.advancedOptions = attributeMap;
             return this;
         }
 

@@ -23,6 +23,7 @@ import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.utils.Validate;
 
 /**
@@ -33,6 +34,7 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
     private final ClientOverrideConfiguration overrideConfiguration;
     private final AwsCredentialsProvider credentialsProvider;
     private final URI endpoint;
+    private final SdkHttpClient sdkHttpClient;
     private final LegacyClientConfiguration legacyConfiguration;
 
     /**
@@ -42,6 +44,7 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
         this.overrideConfiguration = configuration.overrideConfiguration();
         this.credentialsProvider = configuration.credentialsProvider();
         this.endpoint = configuration.endpoint();
+        this.sdkHttpClient = configuration.httpClient();
 
         validate();
 
@@ -88,6 +91,11 @@ public abstract class ImmutableClientConfiguration implements ClientConfiguratio
     @Override
     public URI endpoint() {
         return endpoint;
+    }
+
+    @Override
+    public SdkHttpClient httpClient() {
+        return sdkHttpClient;
     }
 
     /**

@@ -32,7 +32,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import software.amazon.awssdk.http.SdkHttpClientSettings;
+import software.amazon.awssdk.http.apache.ProxyConfiguration;
 
 public class ApacheUtils {
 
@@ -69,9 +69,8 @@ public class ApacheUtils {
     /**
      * Returns a new HttpClientContext used for request execution.
      */
-    public static HttpClientContext newClientContext(SdkHttpClientSettings settings,
-                                                     Map<String, ? extends Object>
-                                                             attributes) {
+    public static HttpClientContext newClientContext(ProxyConfiguration proxyConfiguration,
+                                                     Map<String, ?> attributes) {
         final HttpClientContext clientContext = new HttpClientContext();
 
         if (attributes != null && !attributes.isEmpty()) {
@@ -80,7 +79,7 @@ public class ApacheUtils {
             }
         }
 
-        addPreemptiveAuthenticationProxy(clientContext, settings);
+        addPreemptiveAuthenticationProxy(clientContext, proxyConfiguration);
         return clientContext;
 
     }
@@ -88,36 +87,35 @@ public class ApacheUtils {
     /**
      * Returns a new Credentials Provider for use with proxy authentication.
      */
-    public static CredentialsProvider newProxyCredentialsProvider(SdkHttpClientSettings settings) {
+    public static CredentialsProvider newProxyCredentialsProvider(ProxyConfiguration proxyConfiguration) {
         final CredentialsProvider provider = new BasicCredentialsProvider();
-        provider.setCredentials(newAuthScope(settings), newNtCredentials(settings));
+        provider.setCredentials(newAuthScope(proxyConfiguration), newNtCredentials(proxyConfiguration));
         return provider;
     }
 
     /**
      * Returns a new instance of NTCredentials used for proxy authentication.
      */
-    private static Credentials newNtCredentials(SdkHttpClientSettings settings) {
-        return new NTCredentials(settings.getProxyUsername(),
-                                 settings.getProxyPassword(),
-                                 settings.getProxyWorkstation(),
-                                 settings.getProxyDomain());
+    private static Credentials newNtCredentials(ProxyConfiguration proxyConfiguration) {
+        return new NTCredentials(proxyConfiguration.username(),
+                                 proxyConfiguration.password(),
+                                 proxyConfiguration.ntlmWorkstation(),
+                                 proxyConfiguration.ntlmDomain());
     }
 
     /**
      * Returns a new instance of AuthScope used for proxy authentication.
      */
-    private static AuthScope newAuthScope(SdkHttpClientSettings settings) {
-        return new AuthScope(settings.getProxyHost(), settings.getProxyPort());
+    private static AuthScope newAuthScope(ProxyConfiguration proxyConfiguration) {
+        return new AuthScope(proxyConfiguration.endpoint().getHost(), proxyConfiguration.endpoint().getPort());
     }
 
     private static void addPreemptiveAuthenticationProxy(HttpClientContext clientContext,
-                                                         SdkHttpClientSettings settings) {
+                                                         ProxyConfiguration proxyConfiguration) {
 
-        if (settings.isPreemptiveBasicProxyAuth()) {
-            HttpHost targetHost = new HttpHost(settings.getProxyHost(), settings
-                    .getProxyPort());
-            final CredentialsProvider credsProvider = newProxyCredentialsProvider(settings);
+        if (proxyConfiguration.preemptiveBasicAuthenticationEnabled()) {
+            HttpHost targetHost = new HttpHost(proxyConfiguration.endpoint().getHost(), proxyConfiguration.endpoint().getPort());
+            final CredentialsProvider credsProvider = newProxyCredentialsProvider(proxyConfiguration);
             // Create AuthCache instance
             AuthCache authCache = new BasicAuthCache();
             // Generate BASIC scheme object and add it to the local auth cache

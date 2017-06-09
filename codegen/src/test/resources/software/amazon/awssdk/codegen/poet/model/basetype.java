@@ -2,16 +2,16 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.builder.CopyableBuilder;
-import software.amazon.awssdk.builder.ToCopyableBuilder;
 import software.amazon.awssdk.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.BaseTypeMarshaller;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class BaseType implements ToCopyableBuilder<BaseType.Builder, BaseType>, StructuredPojo {
+public class BaseType implements StructuredPojo, ToCopyableBuilder<BaseType.Builder, BaseType> {
     private final String baseMember;
 
     private BaseType(BeanStyleBuilder builder) {

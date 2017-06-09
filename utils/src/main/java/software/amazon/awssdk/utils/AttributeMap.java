@@ -17,12 +17,15 @@ package software.amazon.awssdk.utils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  * A map from {@code AttributeMap.Key<T>} to {@code T} that ensures the values stored with a key matches the type associated with
- * the key. This does not implement {@link Map} because it has more strict typing requirements, but a {@link Map} can be converted
+ * the key. This does not implement {@link Map} because it has more strict typing requirements, but a {@link Map} can be
+ * converted
  * to an {code AttributeMap} via the type-unsafe {@link AttributeMap} method.
  *
  * This can be used for storing configuration values ({@code OptionKey.LOG_LEVEL} to {@code Boolean.TRUE}), attaching
@@ -30,57 +33,52 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
  * use-cases.
  */
 @SdkProtectedApi
-public final class AttributeMap {
-    private final Map<Key<?>, Object> configuration;
+@Immutable
+public final class AttributeMap implements ToCopyableBuilder<AttributeMap.Builder, AttributeMap> {
 
-    /**
-     * Create an empty set of attributes.
-     */
-    public AttributeMap() {
-        this.configuration = new HashMap<>();
-    }
+    private final Map<Key<?>, Object> attributes;
 
-    /**
-     * Create a copy of the provided attribute map.
-     */
-    public AttributeMap(AttributeMap attributeMap) {
-        this.configuration = new HashMap<>(attributeMap.configuration);
-    }
-
-    /**
-     * Create an attribute map from the provided java map. This is not type safe, and will throw an exception during creation if
-     * a value in the map is not of the correct type for its key.
-     */
-    public AttributeMap(Map<? extends Key<?>, ?> javaMap) {
-        this.configuration = javaMap.entrySet().stream()
-                                    .peek(e -> e.getKey().validateValue(e.getValue()))
-                                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    private AttributeMap(Map<? extends Key<?>, ?> attributes) {
+        this.attributes = new HashMap<>(attributes);
     }
 
     /**
      * Return true if the provided key is configured in this map. Useful for differentiating between whether the provided key was
      * not configured in the map or if it is configured, but its value is null.
      */
-    public boolean containsKey(Key<?> typedKey) {
-        return configuration.containsKey(typedKey);
+    public <T> boolean containsKey(Key<T> typedKey) {
+        return attributes.containsKey(typedKey);
     }
 
     /**
-     * Add a mapping between the provided key and value.
-     */
-    public <T> AttributeMap put(Key<T> key, T value) {
-        Validate.notNull(key, "Key to set must not be null.");
-        configuration.put(key, value);
-        return this;
-    }
-
-    /**
-     * Get the value associated with the provided key from this map. This will return null if the value is not set or if the value
+     * Get the value associated with the provided key from this map. This will return null if the value is not set or if the
+     * value
      * stored is null. These cases can be disambiguated using {@link #containsKey(Key)}.
      */
     public <T> T get(Key<T> key) {
         Validate.notNull(key, "Key to retrieve must not be null.");
-        return key.convertValue(configuration.get(key));
+        return key.convertValue(attributes.get(key));
+    }
+
+    /**
+     * Merges two AttributeMaps into one. This object is given higher precedence then the attributes passed in as a parameter.
+     *
+     * @param lowerPrecedence Options to merge into 'this' AttributeMap object. Any attribute already specified in 'this' object
+     *                        will be left as is since it has higher precedence.
+     * @return New options with values merged.
+     */
+    public AttributeMap merge(AttributeMap lowerPrecedence) {
+        Map<Key<?>, Object> copiedConfiguration = new HashMap<>(attributes);
+        lowerPrecedence.attributes.forEach(copiedConfiguration::putIfAbsent);
+        return new AttributeMap(copiedConfiguration);
+    }
+
+    public static AttributeMap empty() {
+        return builder().build();
+    }
+
+    public AttributeMap copy() {
+        return toBuilder().build();
     }
 
     /**
@@ -88,6 +86,7 @@ public final class AttributeMap {
      * example, a {@code ClientOption<T>} may extend this to define options that can be stored in an {@link AttributeMap}.
      */
     public abstract static class Key<T> {
+
         private final Class<T> valueClass;
 
         /**
@@ -119,17 +118,60 @@ public final class AttributeMap {
 
     @Override
     public String toString() {
-        return configuration.toString();
+        return attributes.toString();
     }
 
     @Override
     public int hashCode() {
-        return configuration.hashCode();
+        return attributes.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof AttributeMap &&
-               configuration.equals(((AttributeMap) obj).configuration);
+        return obj instanceof AttributeMap && attributes.equals(((AttributeMap) obj).attributes);
     }
+
+    @Override
+    public Builder toBuilder() {
+        return builder().putAll(attributes);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder implements CopyableBuilder<Builder, AttributeMap> {
+
+        private final Map<Key<?>, Object> configuration = new HashMap<>();
+
+        private Builder() {
+        }
+
+        /**
+         * Add a mapping between the provided key and value.
+         */
+        public <T> Builder put(Key<T> key, T value) {
+            Validate.notNull(key, "Key to set must not be null.");
+            configuration.put(key, value);
+            return this;
+        }
+
+        /**
+         * Adds all the attributes from the map provided. This is not type safe, and will throw an exception during creation if
+         * a value in the map is not of the correct type for its key.
+         */
+        public Builder putAll(Map<? extends Key<?>, ?> attributes) {
+            attributes.forEach((key, value) -> {
+                key.validateValue(value);
+                configuration.put(key, value);
+            });
+            return this;
+        }
+
+        @Override
+        public AttributeMap build() {
+            return new AttributeMap(configuration);
+        }
+    }
+
 }
