@@ -160,7 +160,6 @@ public abstract class AmazonWebServiceClient {
         client = AmazonHttpClient.builder()
                 .clientConfiguration(clientConfiguration)
                 .requestMetricCollector(requestMetricCollector)
-                .useBrowserCompatibleHostNameVerifier(disableStrictHostNameVerification)
                 .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
                 .build();
     }
@@ -172,7 +171,6 @@ public abstract class AmazonWebServiceClient {
                                  .sdkHttpClient(clientParams.sdkHttpClient())
                                  .clientConfiguration(clientConfiguration)
                                  .requestMetricCollector(clientParams.getRequestMetricCollector())
-                                 .useBrowserCompatibleHostNameVerifier(!useStrictHostNameVerification())
                                  .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData())
                                  .build();
     }

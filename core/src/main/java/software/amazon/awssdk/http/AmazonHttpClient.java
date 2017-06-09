@@ -56,7 +56,6 @@ import software.amazon.awssdk.http.pipeline.stages.TimerExceptionHandlingStage;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.internal.http.response.AwsErrorResponseHandler;
 import software.amazon.awssdk.internal.http.response.AwsResponseHandlerAdapter;
-import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -297,7 +296,6 @@ public class AmazonHttpClient implements AutoCloseable {
         private LegacyClientConfiguration clientConfig;
         private RetryPolicy retryPolicy;
         private RequestMetricCollector requestMetricCollector;
-        private boolean useBrowserCompatibleHostNameVerifier;
         private boolean calculateCrc32FromCompressedData;
         private SdkHttpClient sdkHttpClient;
 
@@ -319,11 +317,6 @@ public class AmazonHttpClient implements AutoCloseable {
             return this;
         }
 
-        public Builder useBrowserCompatibleHostNameVerifier(boolean useBrowserCompatibleHostNameVerifier) {
-            this.useBrowserCompatibleHostNameVerifier = useBrowserCompatibleHostNameVerifier;
-            return this;
-        }
-
         public Builder calculateCrc32FromCompressedData(boolean calculateCrc32FromCompressedData) {
             this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
             return this;
@@ -335,14 +328,12 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         public AmazonHttpClient build() {
-            HttpClientSettings httpClientSettings = HttpClientSettings
-                    .adapt(clientConfig, useBrowserCompatibleHostNameVerifier, calculateCrc32FromCompressedData);
             return new AmazonHttpClient(HttpClientDependencies.builder()
                                                               .clientExecutionTimer(new ClientExecutionTimer())
                                                               .config(clientConfig)
                                                               .retryCapacity(createCapacityManager())
-                                                              .httpClientSettings(httpClientSettings)
                                                               .retryPolicy(resolveRetryPolicy())
+                                                              .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData)
                                                               .sdkHttpClient(sdkHttpClient)
                                                               .build(),
                                         requestMetricCollector);

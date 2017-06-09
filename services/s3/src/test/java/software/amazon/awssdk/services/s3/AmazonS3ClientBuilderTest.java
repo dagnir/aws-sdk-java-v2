@@ -35,7 +35,6 @@ public class AmazonS3ClientBuilderTest {
     public void setup() {
         mockClientFactory = new MockClientFactory();
         builder = new AmazonS3ClientBuilder(mockClientFactory,
-                                            new AmazonS3LegacyClientConfigurationFactory(),
                                             new FindNothingAwsRegionProvider());
         builder.withRegion(Region.US_WEST_2);
     }

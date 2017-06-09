@@ -21,21 +21,20 @@ import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponseAdapter;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
-import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 
 /**
  * Adapt our new {@link SdkHttpFullResponse} representation, to the legacy {@link HttpResponse} representation.
  */
 public class HttpResponseAdaptingStage implements RequestPipeline<SdkHttpFullResponse, HttpResponse> {
 
-    private final HttpClientSettings httpClientSettings;
+    private final boolean calculateCrc32FromCompressedData;
 
     public HttpResponseAdaptingStage(HttpClientDependencies dependencies) {
-        this.httpClientSettings = dependencies.httpClientSettings();
+        this.calculateCrc32FromCompressedData = dependencies.calculateCrc32FromCompressedData();
     }
 
     @Override
     public HttpResponse execute(SdkHttpFullResponse input, RequestExecutionContext context) throws Exception {
-        return SdkHttpResponseAdapter.adapt(httpClientSettings, context.request(), input);
+        return SdkHttpResponseAdapter.adapt(calculateCrc32FromCompressedData, context.request(), input);
     }
 }

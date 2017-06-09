@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.http.conn.ConnectTimeoutException;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -67,7 +66,6 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
      * Different services may have custom client configuration factories to vend defaults
      * tailored for that service.
      */
-    private final LegacyClientConfigurationFactory clientConfigFactory;
     private AwsCredentialsProvider iamCredentials;
     private String endpoint;
     private String apiKey;
@@ -75,8 +73,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
     private RetryPolicy retryPolicy;
     private RequestSignerRegistry signerRegistry = new RequestSignerRegistry();
 
-    protected SdkSyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
-        this.clientConfigFactory = clientConfigFactory;
+    protected SdkSyncClientBuilder() {
     }
 
     protected void setApiKey(String apiKey) {
@@ -239,7 +236,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
 
         private LegacyClientConfiguration resolveClientConfiguration() {
             LegacyClientConfiguration config = ClientConfigurationAdapter
-                    .adapt(apiGatewayClientConfiguration, clientConfigFactory.getConfig());
+                    .adapt(apiGatewayClientConfiguration, new LegacyClientConfiguration());
 
             if (apiKey != null) {
                 config.addHeader("x-api-key", apiKey);

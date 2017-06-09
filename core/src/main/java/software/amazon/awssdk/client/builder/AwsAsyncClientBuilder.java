@@ -17,7 +17,7 @@ package software.amazon.awssdk.client.builder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
+import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
@@ -35,14 +35,14 @@ public abstract class AwsAsyncClientBuilder<SubclassT extends AwsAsyncClientBuil
         extends AwsClientBuilder<SubclassT, TypeToBuildT> {
     private ExecutorFactory executorFactory;
 
-    protected AwsAsyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
-        super(clientConfigFactory);
+    protected AwsAsyncClientBuilder() {
+        super();
     }
 
     @SdkTestInternalApi
-    protected AwsAsyncClientBuilder(LegacyClientConfigurationFactory clientConfigFactory,
-                                    AwsRegionProvider regionProvider) {
-        super(clientConfigFactory, regionProvider);
+    protected AwsAsyncClientBuilder(
+            AwsRegionProvider regionProvider) {
+        super(regionProvider);
     }
 
 
@@ -84,7 +84,7 @@ public abstract class AwsAsyncClientBuilder<SubclassT extends AwsAsyncClientBuil
 
     /**
      * @return An instance of AwsAsyncClientParams that has all params to be used in the async
-     *     client constructor.
+     * client constructor.
      */
     protected final AwsAsyncClientParams getAsyncClientParams() {
         return new AsyncBuilderParams(executorFactory);
@@ -111,7 +111,7 @@ public abstract class AwsAsyncClientBuilder<SubclassT extends AwsAsyncClientBuil
          * @return Default async Executor to use if none is explicitly provided by user.
          */
         private ExecutorService defaultExecutor() {
-            return Executors.newFixedThreadPool(getClientConfiguration().getMaxConnections());
+            return Executors.newFixedThreadPool(LegacyClientConfiguration.DEFAULT_MAX_CONNECTIONS);
         }
     }
 

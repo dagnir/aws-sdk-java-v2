@@ -42,17 +42,6 @@ public class LegacyClientConfigurationTest {
             RetryPolicy.BackoffStrategy.NO_DELAY, 1000, false);
 
     @Test
-    public void testNonProxyHostsSetting() throws Exception {
-        // test ClientConfiguration setting
-        LegacyClientConfiguration config;
-        config = new LegacyClientConfiguration().withNonProxyHosts("foo.com");
-        assertEquals("foo.com", config.getNonProxyHosts());
-
-        config.setProtocol(Protocol.HTTP);
-        assertEquals("foo.com", config.getNonProxyHosts());
-    }
-
-    @Test
     public void testHeadersDeepCopyInConstructor() {
         String key1 = "key1";
         String value1 = "value1";

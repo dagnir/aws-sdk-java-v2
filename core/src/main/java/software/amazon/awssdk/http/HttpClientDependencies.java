@@ -20,7 +20,6 @@ import static software.amazon.awssdk.utils.Validate.paramNotNull;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.SdkGlobalTime;
-import software.amazon.awssdk.internal.http.settings.HttpClientSettings;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.util.CapacityManager;
@@ -34,10 +33,10 @@ public class HttpClientDependencies implements AutoCloseable {
 
     private final LegacyClientConfiguration config;
     private final RetryPolicy retryPolicy;
-    private final HttpClientSettings httpClientSettings;
     private final CapacityManager retryCapacity;
     private final SdkHttpClient sdkHttpClient;
     private final ClientExecutionTimer clientExecutionTimer;
+    private final boolean calculateCrc32FromCompressedData;
 
     /**
      * Time offset may be mutated by {@link software.amazon.awssdk.http.pipeline.RequestPipeline} implementations
@@ -48,10 +47,10 @@ public class HttpClientDependencies implements AutoCloseable {
     private HttpClientDependencies(Builder builder) {
         this.config = paramNotNull(builder.config, "Configuration");
         this.retryPolicy = paramNotNull(builder.retryPolicy, "RetryPolicy");
-        this.httpClientSettings = builder.httpClientSettings;
         this.retryCapacity = paramNotNull(builder.retryCapacity, "CapacityManager");
         this.sdkHttpClient = paramNotNull(builder.sdkHttpClient, "SdkHttpClient");
         this.clientExecutionTimer = paramNotNull(builder.clientExecutionTimer, "ClientExecutionTimer");
+        this.calculateCrc32FromCompressedData = builder.calculateCrc32FromCompressedData;
     }
 
     /**
@@ -83,16 +82,6 @@ public class HttpClientDependencies implements AutoCloseable {
     }
 
     /**
-     * Returns adapted {@link HttpClientSettings} from {@link LegacyClientConfiguration} and
-     * static settings from specific services.
-     *
-     * @return {@link HttpClientSettings}
-     */
-    public HttpClientSettings httpClientSettings() {
-        return httpClientSettings;
-    }
-
-    /**
      * @return SdkHttpClient implementation to make an HTTP request.
      */
     public SdkHttpClient sdkHttpClient() {
@@ -104,6 +93,14 @@ public class HttpClientDependencies implements AutoCloseable {
      */
     public ClientExecutionTimer clientExecutionTimer() {
         return clientExecutionTimer;
+    }
+
+    /**
+     * @return True if the SDK should calculate the CRC32 checksum from the compressed HTTP content, false if it
+     * should calculate it from the uncompressed content. Currently, only DynamoDB sets this flag to true.
+     */
+    public boolean calculateCrc32FromCompressedData() {
+        return calculateCrc32FromCompressedData;
     }
 
     /**
@@ -135,10 +132,10 @@ public class HttpClientDependencies implements AutoCloseable {
 
         private LegacyClientConfiguration config;
         private RetryPolicy retryPolicy;
-        private HttpClientSettings httpClientSettings;
         private CapacityManager retryCapacity;
         private SdkHttpClient sdkHttpClient;
         private ClientExecutionTimer clientExecutionTimer;
+        private boolean calculateCrc32FromCompressedData;
 
         public Builder config(LegacyClientConfiguration config) {
             this.config = config;
@@ -147,11 +144,6 @@ public class HttpClientDependencies implements AutoCloseable {
 
         public Builder retryPolicy(RetryPolicy retryPolicy) {
             this.retryPolicy = retryPolicy;
-            return this;
-        }
-
-        public Builder httpClientSettings(HttpClientSettings httpClientSettings) {
-            this.httpClientSettings = httpClientSettings;
             return this;
         }
 
@@ -172,6 +164,12 @@ public class HttpClientDependencies implements AutoCloseable {
 
         public HttpClientDependencies build() {
             return new HttpClientDependencies(this);
+        }
+
+        public Builder calculateCrc32FromCompressedData(
+                boolean calculateCrc32FromCompressedData) {
+            this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
+            return this;
         }
     }
 }

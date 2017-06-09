@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.LegacyClientConfigurationFactory;
-import software.amazon.awssdk.PredefinedLegacyClientConfigurations;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
@@ -67,13 +65,6 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     private static final AwsRegionProvider DEFAULT_REGION_PROVIDER = new DefaultAwsRegionProviderChain();
 
     /**
-     * Different services may have custom client configuration factories to vend defaults tailored
-     * for that service. If no explicit client configuration is provided to the builder the default
-     * factory for the service is used.
-     */
-    private final LegacyClientConfigurationFactory clientConfigFactory;
-
-    /**
      * {@link AwsRegionProvider} to use when no explicit region or endpointConfiguration is configured.
      * This is currently not exposed for customization by customers.
      */
@@ -86,14 +77,12 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     private List<RequestHandler2> requestHandlers;
     private EndpointConfiguration endpointConfiguration;
 
-    protected AwsClientBuilder(LegacyClientConfigurationFactory clientConfigFactory) {
-        this(clientConfigFactory, DEFAULT_REGION_PROVIDER);
+    protected AwsClientBuilder() {
+        this(DEFAULT_REGION_PROVIDER);
     }
 
     @SdkTestInternalApi
-    protected AwsClientBuilder(LegacyClientConfigurationFactory clientConfigFactory,
-                               AwsRegionProvider regionProvider) {
-        this.clientConfigFactory = clientConfigFactory;
+    protected AwsClientBuilder(AwsRegionProvider regionProvider) {
         this.regionProvider = regionProvider;
     }
 
@@ -169,7 +158,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * ClientConfiguration's copy constructor to avoid mutation.
      */
     private LegacyClientConfiguration resolveClientConfiguration() {
-        return (clientConfig == null) ? clientConfigFactory.getConfig() :
+        return (clientConfig == null) ? new LegacyClientConfiguration() :
                 new LegacyClientConfiguration(clientConfig);
     }
 
