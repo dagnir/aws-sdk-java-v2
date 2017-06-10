@@ -16,6 +16,7 @@
 package software.amazon.awssdk.http.async;
 
 import java.nio.ByteBuffer;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 /**
  * A object that allows writing data to an open socket.
@@ -43,6 +44,14 @@ public interface SdkRequestChannel {
      * @param data - the data to write
      */
     void write(ByteBuffer data);
+
+    /**
+     * Queries whether channel is writable so caller can backoff appropriately.
+     *
+     * @return True if the channel is ready to accept more data, false if not.
+     */
+    @ReviewBeforeRelease("Revisit backpressure strategy and assess if this is still needed")
+    boolean isWriteable();
 
     /**
      * Signify that all data has been written and this request is complete.

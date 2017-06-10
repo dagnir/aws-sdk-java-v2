@@ -64,7 +64,7 @@ public final class NettySdkHttpClientFactory
      * @return Created client.
      */
     public SdkAsyncHttpClient createHttpClient() {
-        return new NettyNioAsyncHttpClient(this, AttributeMap.empty());
+        return createHttpClientWithDefaults(AttributeMap.empty());
     }
 
     @Override

@@ -151,13 +151,6 @@ public class NettyNioAsyncHttpClientIntegrationTest {
         verify(1, getRequestedFor(urlMatching("/")));
     }
 
-
-    private static AttributeMap createSettings() {
-        return AttributeMap.builder()
-                           .put(SdkHttpConfigurationOption.USE_STRICT_HOSTNAME_VERIFICATION, Boolean.FALSE)
-                           .build();
-    }
-
     private SdkHttpRequestProvider createProvider(SdkHttpRequest request, String body) {
         Stream<ByteBuffer> chunks = splitStringBySize(body).stream()
                                                            .map(chunk -> ByteBuffer.wrap(chunk.getBytes(UTF_8)));
