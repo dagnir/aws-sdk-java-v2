@@ -19,13 +19,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
@@ -170,15 +169,13 @@ public class SdkHttpUtils {
             return null;
         }
 
-        final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-
-        for (Entry<String, List<String>> entry : requestParams.entrySet()) {
-            String parameterName = entry.getKey();
-            for (String value : entry.getValue()) {
-                nameValuePairs
-                        .add(new BasicNameValuePair(parameterName, value));
-            }
-        }
+        final List<NameValuePair> nameValuePairs = requestParams
+            .entrySet()
+            .stream()
+            .flatMap(e -> e.getValue()
+                           .stream()
+                           .map(v -> new BasicNameValuePair(e.getKey(), v)))
+            .collect(Collectors.toList());
 
         return URLEncodedUtils.format(nameValuePairs, DEFAULT_ENCODING);
     }
