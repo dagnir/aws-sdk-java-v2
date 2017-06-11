@@ -13,13 +13,16 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http.async;
-
-import software.amazon.awssdk.http.Abortable;
+package software.amazon.awssdk.http;
 
 /**
- * Runnable that can be aborted.
+ * An Abortable task.
  */
-public interface AbortableRunnable extends Runnable, Abortable {
+public interface Abortable {
 
+    /**
+     * Aborts the execution of the task. Multiple calls to abort or calling abort an already aborted task
+     * should return without error.
+     */
+    void abort();
 }

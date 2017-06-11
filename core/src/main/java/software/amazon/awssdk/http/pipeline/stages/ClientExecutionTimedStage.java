@@ -18,6 +18,7 @@ package software.amazon.awssdk.http.pipeline.stages;
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.LegacyClientConfiguration;

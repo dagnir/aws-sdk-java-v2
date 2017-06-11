@@ -15,12 +15,10 @@
 
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.http.pipeline.RequestPipelineBuilder.async;
 import static software.amazon.awssdk.utils.Validate.paramNotNull;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceResponse;
+import java.util.concurrent.CompletableFuture;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
@@ -28,35 +26,27 @@ import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
-import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 import software.amazon.awssdk.http.pipeline.RequestPipelineBuilder;
-import software.amazon.awssdk.http.pipeline.stages.AfterCallbackStage;
 import software.amazon.awssdk.http.pipeline.stages.ApplyTransactionIdStage;
 import software.amazon.awssdk.http.pipeline.stages.ApplyUserAgentStage;
+import software.amazon.awssdk.http.pipeline.stages.AsyncRetryableStage;
 import software.amazon.awssdk.http.pipeline.stages.BeforeRequestHandlersStage;
 import software.amazon.awssdk.http.pipeline.stages.BeforeUnmarshallingCallbackStage;
-import software.amazon.awssdk.http.pipeline.stages.ClientExecutionTimedStage;
-import software.amazon.awssdk.http.pipeline.stages.ExceptionReportingStage;
 import software.amazon.awssdk.http.pipeline.stages.HandleResponseStage;
 import software.amazon.awssdk.http.pipeline.stages.HttpResponseAdaptingStage;
 import software.amazon.awssdk.http.pipeline.stages.InstrumentHttpResponseContentStage;
-import software.amazon.awssdk.http.pipeline.stages.LastResetInputStreamStage;
-import software.amazon.awssdk.http.pipeline.stages.MakeHttpRequestStage;
+import software.amazon.awssdk.http.pipeline.stages.MakeAsyncHttpRequestStage;
 import software.amazon.awssdk.http.pipeline.stages.MergeCustomHeadersStage;
 import software.amazon.awssdk.http.pipeline.stages.MergeCustomQueryParamsStage;
 import software.amazon.awssdk.http.pipeline.stages.MoveParametersToBodyStage;
 import software.amazon.awssdk.http.pipeline.stages.ReportRequestContentLengthStage;
-import software.amazon.awssdk.http.pipeline.stages.RetryableStage;
 import software.amazon.awssdk.http.pipeline.stages.SigningStage;
-import software.amazon.awssdk.http.pipeline.stages.TimerExceptionHandlingStage;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.internal.http.response.AwsErrorResponseHandler;
-import software.amazon.awssdk.internal.http.response.AwsResponseHandlerAdapter;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -66,19 +56,7 @@ import software.amazon.awssdk.util.CapacityManager;
 
 @ThreadSafe
 @SdkProtectedApi
-public class AmazonHttpClient implements AutoCloseable {
-
-    public static final String HEADER_USER_AGENT = "User-Agent";
-
-    public static final String HEADER_SDK_TRANSACTION_ID = "amz-sdk-invocation-id";
-
-    /**
-     * Logger providing detailed information on requests/responses. Users can enable this logger to
-     * get access to AWS request IDs for responses, individual requests and parameters sent to AWS,
-     * etc.
-     */
-    @SdkInternalApi
-    public static final Log REQUEST_LOG = LogFactory.getLog("software.amazon.awssdk.request");
+public class AmazonAsyncHttpClient implements AutoCloseable {
 
     /**
      * When throttled retries are enabled, each retry attempt will consume this much capacity.
@@ -87,11 +65,6 @@ public class AmazonHttpClient implements AutoCloseable {
      * pool.
      */
     public static final int THROTTLED_RETRY_COST = 5;
-
-    /**
-     * Used for testing via failure injection.
-     */
-    static UnreliableTestConfig unreliableTestConfig;
 
     /**
      * When throttled retries are enabled, this is the total number of subsequent failed retries
@@ -110,24 +83,13 @@ public class AmazonHttpClient implements AutoCloseable {
 
     private final HttpClientDependencies httpClientDependencies;
 
-    private AmazonHttpClient(HttpClientDependencies httpClientDependencies, RequestMetricCollector requestMetricCollector) {
+    private AmazonAsyncHttpClient(HttpClientDependencies httpClientDependencies, RequestMetricCollector requestMetricCollector) {
         this.httpClientDependencies = paramNotNull(httpClientDependencies, "HttpClientDependencies");
         this.requestMetricCollector = requestMetricCollector;
     }
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * Used to configure the test conditions for injecting intermittent failures to the content
-     * input stream.
-     *
-     * @param config unreliable test configuration for failure injection; or null to disable such
-     *               test.
-     */
-    static void configUnreliableTestConditions(UnreliableTestConfig config) {
-        unreliableTestConfig = config;
     }
 
     /**
@@ -138,7 +100,8 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     @Override
     public void close() throws Exception {
-        httpClientDependencies.close();;
+        httpClientDependencies.close();
+        ;
     }
 
     /**
@@ -183,34 +146,6 @@ public class AmazonHttpClient implements AutoCloseable {
         if (Thread.interrupted()) {
             throw new SdkInterruptedException(response);
         }
-    }
-
-    /**
-     * Executes the request and returns the result.
-     *
-     * @param request              The AmazonWebServices request to send to the remote server
-     * @param responseHandler      A response handler to accept a successful response from the
-     *                             remote server
-     * @param errorResponseHandler A response handler to accept an unsuccessful response from the
-     *                             remote server
-     * @param executionContext     Additional information about the context of this web service
-     *                             call
-     * @deprecated Use {@link #requestExecutionBuilder()} to configure and execute a HTTP request.
-     */
-    @Deprecated
-    public <T> Response<T> execute(Request<?> request,
-                                   HttpResponseHandler<AmazonWebServiceResponse<T>> responseHandler,
-                                   HttpResponseHandler<AmazonServiceException> errorResponseHandler,
-                                   ExecutionContext executionContext) {
-        HttpResponseHandler<T> adaptedRespHandler = new AwsResponseHandlerAdapter<>(
-                getNonNullResponseHandler(responseHandler),
-                executionContext.getAwsRequestMetrics());
-        return requestExecutionBuilder()
-                .request(request)
-                .requestConfig(new AmazonWebServiceRequestAdapter(request.getOriginalRequest()))
-                .errorResponseHandler(new AwsErrorResponseHandler(errorResponseHandler, executionContext.getAwsRequestMetrics()))
-                .executionContext(executionContext)
-                .execute(adaptedRespHandler);
     }
 
     /**
@@ -281,14 +216,14 @@ public class AmazonHttpClient implements AutoCloseable {
          * @param <OutputT>       Result type
          * @return Unmarshalled result type.
          */
-        <OutputT> Response<OutputT> execute(HttpResponseHandler<OutputT> responseHandler);
+        <OutputT> CompletableFuture<Response<OutputT>> execute(HttpResponseHandler<OutputT> responseHandler);
 
         /**
          * Executes the request with the given configuration; not handling response.
          *
          * @return Void response
          */
-        Response<Void> execute();
+        CompletableFuture<Response<Void>> execute();
 
     }
 
@@ -298,7 +233,7 @@ public class AmazonHttpClient implements AutoCloseable {
         private RetryPolicy retryPolicy;
         private RequestMetricCollector requestMetricCollector;
         private boolean calculateCrc32FromCompressedData;
-        private SdkHttpClient sdkHttpClient;
+        private SdkAsyncHttpClient sdkAsyncHttpClient;
 
         private Builder() {
         }
@@ -323,22 +258,22 @@ public class AmazonHttpClient implements AutoCloseable {
             return this;
         }
 
-        public Builder sdkHttpClient(SdkHttpClient sdkHttpClient) {
-            this.sdkHttpClient = sdkHttpClient;
+        public Builder sdkAsyncHttpClient(SdkAsyncHttpClient sdkAsyncHttpClient) {
+            this.sdkAsyncHttpClient = sdkAsyncHttpClient;
             return this;
         }
 
-        public AmazonHttpClient build() {
-            return new AmazonHttpClient(
+        public AmazonAsyncHttpClient build() {
+            return new AmazonAsyncHttpClient(
                     HttpClientDependencies.builder()
                                           .clientExecutionTimer(new ClientExecutionTimer())
                                           .config(clientConfig)
                                           .retryCapacity(createCapacityManager())
                                           .retryPolicy(resolveRetryPolicy())
                                           .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData)
-                                          .sdkHttpClient(sdkHttpClient)
+                                          .sdkAsyncHttpClient(sdkAsyncHttpClient)
                                           .build(),
-                                        requestMetricCollector);
+                    requestMetricCollector);
         }
 
         private CapacityManager createCapacityManager() {
@@ -400,7 +335,7 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         @Override
-        public <OutputT> Response<OutputT> execute(HttpResponseHandler<OutputT> responseHandler) {
+        public <OutputT> CompletableFuture<Response<OutputT>> execute(HttpResponseHandler<OutputT> responseHandler) {
             try {
                 return RequestPipelineBuilder
                         .first(BeforeRequestHandlersStage::new)
@@ -412,19 +347,15 @@ public class AmazonHttpClient implements AutoCloseable {
                         .then(ReportRequestContentLengthStage::new)
                         .then(RequestPipelineBuilder
                                       .first(SigningStage::new)
-                                      .then(MakeHttpRequestStage::new)
-                                      .then(HttpResponseAdaptingStage::new)
-                                      .then(InstrumentHttpResponseContentStage::new)
-                                      .then(BeforeUnmarshallingCallbackStage::new)
-                                      .then(() -> new HandleResponseStage<>(getNonNullResponseHandler(responseHandler),
-                                                                            getNonNullResponseHandler(errorResponseHandler)))
-                                      .wrap(ExceptionReportingStage::new)
-                                      .wrap(TimerExceptionHandlingStage::new)
-                                      .wrap(RetryableStage::new)::build)
-                        .wrap(LastResetInputStreamStage::new)
-                        .wrap(StreamManagingStage::new)
-                        .wrap(AfterCallbackStage::new)
-                        .wrap(ClientExecutionTimedStage::new)
+                                      .then(MakeAsyncHttpRequestStage::new)
+                                      .then(async(HttpResponseAdaptingStage::new))
+                                      .then(async(InstrumentHttpResponseContentStage::new))
+                                      .then(async(BeforeUnmarshallingCallbackStage::new))
+                                      .then(async(() -> new HandleResponseStage<>(getNonNullResponseHandler(responseHandler),
+                                                                                  getNonNullResponseHandler(
+                                                                                          errorResponseHandler))))
+                                      .wrap(AsyncRetryableStage::new)
+                                      ::build)
                         .build(httpClientDependencies)
                         .execute(request, createRequestExecutionDependencies());
             } catch (RuntimeException e) {
@@ -435,7 +366,7 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         @Override
-        public Response<Void> execute() {
+        public CompletableFuture<Response<Void>> execute() {
             return execute(null);
         }
 

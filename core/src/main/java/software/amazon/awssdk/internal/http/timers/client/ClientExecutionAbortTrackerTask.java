@@ -16,6 +16,7 @@
 package software.amazon.awssdk.internal.http.timers.client;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.Abortable;
 import software.amazon.awssdk.http.AbortableCallable;
 
 @SdkInternalApi
@@ -24,7 +25,7 @@ public interface ClientExecutionAbortTrackerTask {
     /**
      * Client execution timer task needs to abort the current running HTTP request when executed.
      */
-    void setCurrentHttpRequest(AbortableCallable<?> newRequest);
+    void setCurrentHttpRequest(Abortable newRequest);
 
     /**
      * @return True if client execution has been aborted by the timer task. False otherwise

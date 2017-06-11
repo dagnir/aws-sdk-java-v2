@@ -61,7 +61,7 @@ final class SdkNettyHttpRequestChannel implements SdkRequestChannel {
 
     @Override
     public void complete() {
-        channel.writeAndFlush(new DefaultHttpContent(new EmptyByteBuf(channel.alloc())))
+        channel.writeAndFlush(new DefaultLastHttpContent(new EmptyByteBuf(channel.alloc())))
                .addListener(this::handleFailure);
     }
 

@@ -18,15 +18,10 @@ package software.amazon.awssdk.http;
 import java.util.concurrent.Callable;
 
 /**
- * Task that can be aborted.
+ * Callable task that can be aborted.
  *
  * @param <T> Return type of task. May be {@link Void}.
  */
-public interface AbortableCallable<T> extends Callable<T> {
+public interface AbortableCallable<T> extends Callable<T>, Abortable {
 
-    /**
-     * Aborts the execution of the task. Multiple calls to abort or calling abort an already aborted callable
-     * should return without error.
-     */
-    void abort();
 }

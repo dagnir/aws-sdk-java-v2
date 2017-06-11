@@ -20,6 +20,7 @@ import static software.amazon.awssdk.utils.Validate.paramNotNull;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.SdkGlobalTime;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.util.CapacityManager;
@@ -35,6 +36,8 @@ public class HttpClientDependencies implements AutoCloseable {
     private final RetryPolicy retryPolicy;
     private final CapacityManager retryCapacity;
     private final SdkHttpClient sdkHttpClient;
+    // todo
+    private final SdkAsyncHttpClient sdkAsyncHttpClient;
     private final ClientExecutionTimer clientExecutionTimer;
     private final boolean calculateCrc32FromCompressedData;
 
@@ -48,7 +51,9 @@ public class HttpClientDependencies implements AutoCloseable {
         this.config = paramNotNull(builder.config, "Configuration");
         this.retryPolicy = paramNotNull(builder.retryPolicy, "RetryPolicy");
         this.retryCapacity = paramNotNull(builder.retryCapacity, "CapacityManager");
-        this.sdkHttpClient = paramNotNull(builder.sdkHttpClient, "SdkHttpClient");
+        // TODO validate not null
+        this.sdkHttpClient = builder.sdkHttpClient;
+        this.sdkAsyncHttpClient =builder.sdkAsyncHttpClient;
         this.clientExecutionTimer = paramNotNull(builder.clientExecutionTimer, "ClientExecutionTimer");
         this.calculateCrc32FromCompressedData = builder.calculateCrc32FromCompressedData;
     }
@@ -86,6 +91,13 @@ public class HttpClientDependencies implements AutoCloseable {
      */
     public SdkHttpClient sdkHttpClient() {
         return sdkHttpClient;
+    }
+
+    /**
+     * @return SdkAsyncHttpClient implementation to make an HTTP request.
+     */
+    public SdkAsyncHttpClient sdkAsyncHttpClient() {
+        return sdkAsyncHttpClient;
     }
 
     /**
@@ -134,6 +146,7 @@ public class HttpClientDependencies implements AutoCloseable {
         private RetryPolicy retryPolicy;
         private CapacityManager retryCapacity;
         private SdkHttpClient sdkHttpClient;
+        private SdkAsyncHttpClient sdkAsyncHttpClient;
         private ClientExecutionTimer clientExecutionTimer;
         private boolean calculateCrc32FromCompressedData;
 
@@ -154,6 +167,11 @@ public class HttpClientDependencies implements AutoCloseable {
 
         public Builder sdkHttpClient(SdkHttpClient sdkHttpClient) {
             this.sdkHttpClient = sdkHttpClient;
+            return this;
+        }
+
+        public Builder sdkAsyncHttpClient(SdkAsyncHttpClient sdkAsyncHttpClient) {
+            this.sdkAsyncHttpClient = sdkAsyncHttpClient;
             return this;
         }
 
