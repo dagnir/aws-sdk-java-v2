@@ -173,6 +173,7 @@
           "Name": "my-internal-load-balancer",
           "Scheme": "internal",
           "SecurityGroups": [
+
           ],
           "Subnets": [
             "subnet-b7d581c0",

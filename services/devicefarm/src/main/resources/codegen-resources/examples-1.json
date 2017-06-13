@@ -8,6 +8,7 @@
           "description": "My Android devices",
           "projectArn": "arn:aws:devicefarm:us-west-2:123456789101:project:EXAMPLE-GUID-123-456",
           "rules": [
+
           ]
         },
         "output": {
@@ -35,7 +36,7 @@
         "output": {
           "project": {
             "name": "MyProject",
-            "arn": "arn:aws:devicefarm:us-west-2:183774035805:project:5e01a8c7-c861-4c0a-b1d5-12345EXAMPLE",
+            "arn": "arn:aws:devicefarm:us-west-2:123456789101:project:5e01a8c7-c861-4c0a-b1d5-12345EXAMPLE",
             "created": "1472660939.152"
           }
         },
@@ -89,10 +90,10 @@
           "upload": {
             "name": "MyAppiumPythonUpload",
             "type": "APPIUM_PYTHON_TEST_PACKAGE",
-            "arn": "arn:aws:devicefarm:us-west-2:183774035805:upload:5e01a8c7-c861-4c0a-b1d5-5ec6e6c6dd23/b5340a65-3da7-4da6-a26e-12345EXAMPLE",
+            "arn": "arn:aws:devicefarm:us-west-2:123456789101:upload:5e01a8c7-c861-4c0a-b1d5-5ec6e6c6dd23/b5340a65-3da7-4da6-a26e-12345EXAMPLE",
             "created": "1472661404.186",
             "status": "INITIALIZED",
-            "url": "https://prod-us-west-2-uploads.s3-us-west-2.amazonaws.com/arn%3Aaws%3Adevicefarm%3Aus-west-2%3A183774035805%3Aproject%3A5e01a8c7-c861-4c0a-b1d5-12345EXAMPLE/uploads/arn%3Aaws%3Adevicefarm%3Aus-west-2%3A183774035805%3Aupload%3A5e01a8c7-c861-4c0a-b1d5-5ec6e6c6dd23/b5340a65-3da7-4da6-a26e-12345EXAMPLE/MyAppiumPythonUpload?AWSAccessKeyId=1234567891011EXAMPLE&Expires=1472747804&Signature=1234567891011EXAMPLE"
+            "url": "https://prod-us-west-2-uploads.s3-us-west-2.amazonaws.com/arn%3Aaws%3Adevicefarm%3Aus-west-2%3A123456789101%3Aproject%3A5e01a8c7-c861-4c0a-b1d5-12345EXAMPLE/uploads/arn%3Aaws%3Adevicefarm%3Aus-west-2%3A123456789101%3Aupload%3A5e01a8c7-c861-4c0a-b1d5-5ec6e6c6dd23/b5340a65-3da7-4da6-a26e-12345EXAMPLE/MyAppiumPythonUpload?AWSAccessKeyId=1234567891011EXAMPLE&Expires=1472747804&Signature=1234567891011EXAMPLE"
           }
         },
         "comments": {
@@ -295,8 +296,10 @@
         },
         "output": {
           "compatibleDevices": [
+
           ],
           "incompatibleDevices": [
+
           ]
         },
         "comments": {
@@ -837,12 +840,12 @@
           "projects": [
             {
               "name": "My Test Project",
-              "arn": "arn:aws:devicefarm:us-west-2:183774035805:project:7ad300ed-8183-41a7-bf94-12345EXAMPLE",
+              "arn": "arn:aws:devicefarm:us-west-2:123456789101:project:7ad300ed-8183-41a7-bf94-12345EXAMPLE",
               "created": "1453163262.105"
             },
             {
               "name": "Hello World",
-              "arn": "arn:aws:devicefarm:us-west-2:183774035805:project:d6b087d9-56db-4e44-b9ec-12345EXAMPLE",
+              "arn": "arn:aws:devicefarm:us-west-2:123456789101:project:d6b087d9-56db-4e44-b9ec-12345EXAMPLE",
               "created": "1470350112.439"
             }
           ]
@@ -867,6 +870,7 @@
         },
         "output": {
           "remoteAccessSessions": [
+
           ]
         },
         "comments": {
@@ -939,6 +943,7 @@
         },
         "output": {
           "samples": [
+
           ]
         },
         "comments": {
@@ -962,6 +967,7 @@
         },
         "output": {
           "suites": [
+
           ]
         },
         "comments": {
@@ -985,6 +991,7 @@
         },
         "output": {
           "tests": [
+
           ]
         },
         "comments": {
@@ -1031,6 +1038,7 @@
         },
         "output": {
           "uploads": [
+
           ]
         },
         "comments": {
@@ -1209,12 +1217,12 @@
       {
         "input": {
           "name": "NewName",
-          "arn": "arn:aws:devicefarm:us-west-2:183774035805:project:8f75187d-101e-4625-accc-12345EXAMPLE"
+          "arn": "arn:aws:devicefarm:us-west-2:123456789101:project:8f75187d-101e-4625-accc-12345EXAMPLE"
         },
         "output": {
           "project": {
             "name": "NewName",
-            "arn": "arn:aws:devicefarm:us-west-2:183774035805:project:8f75187d-101e-4625-accc-12345EXAMPLE",
+            "arn": "arn:aws:devicefarm:us-west-2:123456789101:project:8f75187d-101e-4625-accc-12345EXAMPLE",
             "created": "1448400709.927"
           }
         },

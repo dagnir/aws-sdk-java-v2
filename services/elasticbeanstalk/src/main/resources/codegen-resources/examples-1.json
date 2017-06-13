@@ -47,6 +47,7 @@
           "Application": {
             "ApplicationName": "my-app",
             "ConfigurationTemplates": [
+
             ],
             "DateCreated": "2015-02-12T18:32:21.181Z",
             "DateUpdated": "2015-02-12T18:32:21.181Z",
@@ -301,6 +302,7 @@
             {
               "ApplicationName": "ruby",
               "ConfigurationTemplates": [
+
               ],
               "DateCreated": "2015-08-13T21:05:44.376Z",
               "DateUpdated": "2015-08-13T21:05:44.376Z",
@@ -311,6 +313,7 @@
             {
               "ApplicationName": "pythonsample",
               "ConfigurationTemplates": [
+
               ],
               "DateCreated": "2015-08-13T19:05:43.637Z",
               "DateUpdated": "2015-08-13T19:05:43.637Z",
@@ -322,6 +325,7 @@
             {
               "ApplicationName": "nodejs-example",
               "ConfigurationTemplates": [
+
               ],
               "DateCreated": "2015-08-06T17:50:02.486Z",
               "DateUpdated": "2015-08-06T17:50:02.486Z",
@@ -470,6 +474,7 @@
             }
           },
           "Causes": [
+
           ],
           "Color": "Green",
           "EnvironmentName": "my-env",
@@ -526,8 +531,10 @@
               }
             ],
             "Queues": [
+
             ],
             "Triggers": [
+
             ]
           }
         },
@@ -666,6 +673,7 @@
                 }
               },
               "Causes": [
+
               ],
               "Color": "Green",
               "HealthStatus": "Ok",
@@ -892,6 +900,7 @@
           "Application": {
             "ApplicationName": "my-app",
             "ConfigurationTemplates": [
+
             ],
             "DateCreated": "2015-08-13T19:15:50.449Z",
             "DateUpdated": "2015-08-20T22:34:56.195Z",
@@ -1082,6 +1091,7 @@
         },
         "output": {
           "Messages": [
+
           ]
         },
         "comments": {

@@ -67,8 +67,10 @@
             ],
             "desiredCount": 10,
             "events": [
+
             ],
             "loadBalancers": [
+
             ],
             "pendingCount": 0,
             "runningCount": 0,
@@ -124,6 +126,7 @@
             ],
             "desiredCount": 10,
             "events": [
+
             ],
             "loadBalancers": [
               {
@@ -233,6 +236,7 @@
             }
           ],
           "failures": [
+
           ]
         },
         "comments": {
@@ -325,6 +329,7 @@
             }
           ],
           "failures": [
+
           ]
         },
         "comments": {
@@ -347,6 +352,7 @@
         },
         "output": {
           "failures": [
+
           ],
           "services": [
             {
@@ -377,6 +383,7 @@
                 }
               ],
               "loadBalancers": [
+
               ],
               "pendingCount": 0,
               "runningCount": 0,
@@ -411,6 +418,7 @@
                 "name": "wordpress",
                 "cpu": 10,
                 "environment": [
+
                 ],
                 "essential": true,
                 "image": "wordpress",
@@ -419,6 +427,7 @@
                 ],
                 "memory": 500,
                 "mountPoints": [
+
                 ],
                 "portMappings": [
                   {
@@ -427,6 +436,7 @@
                   }
                 ],
                 "volumesFrom": [
+
                 ]
               },
               {
@@ -442,10 +452,13 @@
                 "image": "mysql",
                 "memory": 500,
                 "mountPoints": [
+
                 ],
                 "portMappings": [
+
                 ],
                 "volumesFrom": [
+
                 ]
               }
             ],
@@ -453,6 +466,7 @@
             "revision": 8,
             "taskDefinitionArn": "arn:aws:ecs:us-east-1:<aws_account_id>:task-definition/hello_world:8",
             "volumes": [
+
             ]
           }
         },
@@ -476,6 +490,7 @@
         },
         "output": {
           "failures": [
+
           ],
           "tasks": [
             {
@@ -736,6 +751,7 @@
           "family": "sleep360",
           "taskRoleArn": "",
           "volumes": [
+
           ]
         },
         "output": {
@@ -749,15 +765,19 @@
                 ],
                 "cpu": 10,
                 "environment": [
+
                 ],
                 "essential": true,
                 "image": "busybox",
                 "memory": 10,
                 "mountPoints": [
+
                 ],
                 "portMappings": [
+
                 ],
                 "volumesFrom": [
+
                 ]
               }
             ],
@@ -765,6 +785,7 @@
             "revision": 1,
             "taskDefinitionArn": "arn:aws:ecs:us-east-1:<aws_account_id>:task-definition/sleep360:19",
             "volumes": [
+
             ]
           }
         },
