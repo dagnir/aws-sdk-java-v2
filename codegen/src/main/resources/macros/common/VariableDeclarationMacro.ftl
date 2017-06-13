@@ -7,12 +7,6 @@
     @Deprecated
     </#if>
     private ${variable.variableDeclarationType} ${variable.variableName};
-    <#if member.http?has_content && member.http.isStreaming>
-    <#if member.c2jShape != "BlobStream">
-    private java.io.InputStream ${variable.variableName}InputStream;
-    </#if>
-    private java.io.File ${variable.variableName}File;
-    </#if>
 </#list>
 </#if>
 </#macro>
