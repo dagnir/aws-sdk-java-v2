@@ -195,8 +195,13 @@ abstract class AddShapes {
                                                                               allC2jShapes);
 
         final String payload = parentShape.getPayload();
+
+        boolean shapeIsStreaming = allC2jShapes.get(c2jMemberDefinition.getShape()).isStreaming();
+        boolean memberIsStreaming = c2jMemberDefinition.isStreaming();
+        boolean payloadIsStreaming = shapeIsStreaming || memberIsStreaming;
+
         httpMapping.withPayload(payload != null && payload.equals(c2jMemberName))
-                .withStreaming(allC2jShapes.get(c2jMemberDefinition.getShape()).isStreaming());
+                .withStreaming(payloadIsStreaming);
 
         memberModel.setHttp(httpMapping);
 

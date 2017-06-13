@@ -87,6 +87,14 @@ public class CustomizationConfig {
      */
     private boolean requiredParamValidationEnabled;
     /**
+     * True if the service allows client specified configuration.
+     */
+    private String serviceSpecificClientConfigClass;
+    /**
+     * True if the service has a custom endpoint builder.
+     */
+    private String serviceSpecificEndpointBuilderClass;
+    /**
      * Specify additional constructor forms for a given model class.
      */
     private Map<String, ConstructorFormsWrapper> additionalShapeConstructors;
@@ -349,6 +357,22 @@ public class CustomizationConfig {
 
     public void setRequiredParamValidationEnabled(boolean requiredParamValidationEnabled) {
         this.requiredParamValidationEnabled = requiredParamValidationEnabled;
+    }
+
+    public String getServiceSpecificClientConfigClass() {
+        return serviceSpecificClientConfigClass;
+    }
+
+    public void setServiceSpecificClientConfigClass(String serviceSpecificClientConfig) {
+        this.serviceSpecificClientConfigClass = serviceSpecificClientConfig;
+    }
+
+    public String getServiceSpecificEndpointBuilderClass() {
+        return serviceSpecificEndpointBuilderClass;
+    }
+
+    public void setServiceSpecificEndpointBuilderClass(String serviceSpecificEndpointBuilderClass) {
+        this.serviceSpecificEndpointBuilderClass = serviceSpecificEndpointBuilderClass;
     }
 
     /**

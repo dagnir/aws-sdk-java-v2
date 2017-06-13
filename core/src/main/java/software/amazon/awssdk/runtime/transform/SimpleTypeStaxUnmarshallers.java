@@ -255,4 +255,16 @@ public class SimpleTypeStaxUnmarshallers {
             return (shortString == null) ? null : Short.valueOf(shortString);
         }
     }
+
+    public static class ObjectUnmarshaller implements Unmarshaller<Object, StaxUnmarshallerContext> {
+        private static final ObjectUnmarshaller INSTANCE = new ObjectUnmarshaller();
+
+        public static ObjectUnmarshaller getInstance() {
+            return INSTANCE;
+        }
+
+        public Object unmarshall(StaxUnmarshallerContext unmarshallerContext) throws Exception {
+            return unmarshallerContext.readText();
+        }
+    }
 }

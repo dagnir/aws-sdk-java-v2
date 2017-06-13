@@ -116,7 +116,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
     }
 
     @Override
-    public CodeBlock executionHandler(OperationModel opModel) {
+    public CodeBlock executionHandler(OperationModel opModel, IntermediateModel model) {
         ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
         ClassName marshaller = poetExtensions.getRequestTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");

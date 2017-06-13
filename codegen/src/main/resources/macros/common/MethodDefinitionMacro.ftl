@@ -147,6 +147,53 @@
 
 <#else>
 
+    <#if member.http?has_content && member.http.isStreaming && shapeName?ends_with("Request")>
+
+    <#if member.getterModel.returnType != "java.io.InputStream">
+    ${setterDoc}
+    ${deprecated}
+    <@AdditionalAnnotationsForAccessors.content shape.type member/>
+    public void ${setterMethodName}(java.io.InputStream ${setter.variableName}) {
+        this.${variableName}InputStream = ${setter.variableName};
+    }
+
+    ${getterDoc}
+    ${deprecated}
+    <@AdditionalAnnotationsForAccessors.content shape.type member/>
+    public java.io.InputStream ${getterMethodName}InputStream() {
+        return this.${variableName}InputStream;
+    }
+
+    ${fluentDoc}
+    ${deprecated}
+    public ${shapeName} ${fluentSetterMethodName}(java.io.InputStream ${setter.variableName}) {
+        ${setterMethodName}(${setter.variableName});
+        return this;
+    }
+    </#if>
+
+    ${setterDoc}
+    ${deprecated}
+    <@AdditionalAnnotationsForAccessors.content shape.type member/>
+    public void ${setterMethodName}(java.io.File ${setter.variableName}) {
+        this.${variableName}File = ${setter.variableName};
+    }
+
+    ${getterDoc}
+    ${deprecated}
+    <@AdditionalAnnotationsForAccessors.content shape.type member/>
+    public java.io.File ${getterMethodName}File() {
+        return this.${variableName}File;
+    }
+
+    ${fluentDoc}
+    ${deprecated}
+    public ${shapeName} ${fluentSetterMethodName}(java.io.File ${setter.variableName}) {
+        ${setterMethodName}(${setter.variableName});
+        return this;
+    }
+    </#if>
+
     ${setterDoc}
     ${deprecated}
     <@AdditionalAnnotationsForAccessors.content shape.type member/>

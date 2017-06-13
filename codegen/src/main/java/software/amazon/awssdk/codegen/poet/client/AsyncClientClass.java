@@ -32,11 +32,13 @@ import software.amazon.awssdk.codegen.poet.PoetUtils;
 public final class AsyncClientClass extends AsyncClientInterface {
     private final PoetExtensions poetExtensions;
     private final ClassName className;
+    private final String basePackage;
 
     public AsyncClientClass(GeneratorTaskParams dependencies) {
         super(dependencies.getModel());
         this.poetExtensions = dependencies.getPoetExtensions();
         this.className = poetExtensions.getClientClass(model.getMetadata().getAsyncClient());
+        this.basePackage = dependencies.getModel().getMetadata().getFullClientPackageName();
     }
 
     @Override
@@ -47,9 +49,14 @@ public final class AsyncClientClass extends AsyncClientInterface {
                                         .addSuperinterface(interfaceClass)
                                         .addField(syncInterface, "syncClient", Modifier.PRIVATE, Modifier.FINAL)
                                         .addField(ExecutorService.class, "executor", Modifier.PRIVATE, Modifier.FINAL)
-                                        .addMethod(createConstructor())
-                                        .addMethods(operations())
-                                        .addMethod(closeMethod());
+                                        .addMethod(createConstructor());
+
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            classBuilder.addMethod(constructorWithAdvancedConfiguration());
+        }
+
+        classBuilder.addMethods(operations())
+                    .addMethod(closeMethod());
 
         return classBuilder.build();
     }
@@ -77,9 +84,33 @@ public final class AsyncClientClass extends AsyncClientInterface {
 
     private MethodSpec createConstructor() {
         ClassName syncClient = poetExtensions.getClientClass(model.getMetadata().getSyncClient());
+
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            return MethodSpec.constructorBuilder()
+                         .addParameter(AwsAsyncClientParams.class, "asyncClientParams")
+                         .addStatement("this($N, null)", "asyncClientParams")
+                         .build();
+        }
+
         return MethodSpec.constructorBuilder()
                          .addParameter(AwsAsyncClientParams.class, "asyncClientParams")
                          .addStatement("this.$N = new $T($N)", "syncClient", syncClient, "asyncClientParams")
+                         .addStatement("this.$N = $N", "executor", "asyncClientParams.getExecutor()")
+                         .build();
+    }
+
+    private MethodSpec constructorWithAdvancedConfiguration() {
+        ClassName advancedConfiguration = ClassName.get(basePackage,
+                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+        ClassName syncClient = poetExtensions.getClientClass(model.getMetadata().getSyncClient());
+        return MethodSpec.constructorBuilder()
+                         .addParameter(AwsAsyncClientParams.class, "asyncClientParams")
+                         .addParameter(advancedConfiguration, "advancedConfiguration")
+                         .addStatement("this.$N = new $T($N, $N)",
+                                       "syncClient",
+                                       syncClient,
+                                       "asyncClientParams",
+                                       "advancedConfiguration")
                          .addStatement("this.$N = $N", "executor", "asyncClientParams.getExecutor()")
                          .build();
     }

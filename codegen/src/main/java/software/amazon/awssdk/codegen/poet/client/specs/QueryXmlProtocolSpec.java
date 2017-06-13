@@ -112,16 +112,15 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
     }
 
     @Override
-    public CodeBlock executionHandler(OperationModel opModel) {
+    public CodeBlock executionHandler(OperationModel opModel, IntermediateModel model) {
         ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
         ClassName marshaller = poetExtensions.getTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
-        return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>()" +
+        CodeBlock.Builder builder = CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>()" +
                                        ".withMarshaller(new $T())" +
                                        ".withResponseHandler($N)" +
                                        ".withErrorResponseHandler($N)" +
-                                       ".withInput($L))" +
-                                       ".getResult();",
+                                       ".withInput($L)",
                                        ClientExecutionParams.class,
                                        requestType,
                                        AmazonWebServiceResponse.class,
@@ -129,8 +128,16 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
                                        marshaller,
                                        "responseHandler",
                                        "errorResponseHandler",
-                                       opModel.getInput().getVariableName())
-                .build();
+                                       opModel.getInput().getVariableName());
+
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            builder.add(".withServiceAdvancedConfiguration($N))", "advancedConfiguration");
+        } else {
+            builder.add(")");
+        }
+
+        builder.add(".getResult();");
+        return builder.build();
     }
 
     @Override

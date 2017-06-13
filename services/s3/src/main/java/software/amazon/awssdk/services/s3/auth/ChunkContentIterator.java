@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.auth;
+package software.amazon.awssdk.services.s3.auth;
 
 class ChunkContentIterator {
 
@@ -35,6 +35,7 @@ class ChunkContentIterator {
         if (!hasNext()) {
             return -1;
         }
+
         int remaingBytesNum = signedChunk.length - pos;
         int bytesToRead = Math.min(remaingBytesNum, length);
         System.arraycopy(signedChunk, pos, output, offset, bytesToRead);

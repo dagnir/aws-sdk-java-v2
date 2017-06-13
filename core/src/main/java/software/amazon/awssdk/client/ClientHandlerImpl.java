@@ -27,6 +27,7 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
@@ -87,6 +88,8 @@ public class ClientHandlerImpl extends ClientHandler {
             try {
                 request = executionParams.getMarshaller().marshall(tryBeforeMarshalling(inputT));
                 request.setAwsRequestMetrics(awsRequestMetrics);
+                request.addHandlerContext(HandlerContextKey.SERVICE_ADVANCED_CONFIG,
+                                          executionParams.getServiceAdvancedConfiguration());
             } finally {
                 awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RequestMarshallTime);
             }

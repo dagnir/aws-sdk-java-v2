@@ -1,4 +1,5 @@
 <#macro content customConfig shapeName getterFunctionPrefix shapes>
+<#if shapes[shapeName]??>
 <#local shape = shapes[shapeName]/>
 
 <#if shape.members?has_content>
@@ -97,5 +98,6 @@
 </#if>
 </#if>
 </#list>
+</#if>
 </#if>
 </#macro>

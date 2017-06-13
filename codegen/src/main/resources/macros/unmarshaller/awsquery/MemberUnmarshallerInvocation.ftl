@@ -7,7 +7,7 @@
 
 <#if memberModel.list>
     <#if memberModel.http.flattened>
-        <#local listMemberPath = memberModel.listModel.memberLocationName!memberModel.name />
+        <#local listMemberPath = memberModel.listModel.memberLocationName!memberModel.http.unmarshallLocationName!memberModel.name />
     <#else>
         <#local listMemberPath = unmarshallerLocationName + "/" + memberModel.listModel.memberLocationName!"member" />
     </#if>

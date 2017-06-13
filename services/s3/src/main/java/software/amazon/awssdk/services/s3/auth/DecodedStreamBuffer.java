@@ -13,14 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.auth;
+package software.amazon.awssdk.services.s3.auth;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.SdkClientException;
 
 class DecodedStreamBuffer {
-    private static final Log LOG = LogFactory.getLog(DecodedStreamBuffer.class);
+    private static final Log log = LogFactory.getLog(DecodedStreamBuffer.class);
 
     private byte[] bufferArray;
     private int maxBufferSize;
@@ -36,10 +36,10 @@ class DecodedStreamBuffer {
     public void buffer(byte read) {
         pos = -1;
         if (byteBuffered >= maxBufferSize) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Buffer size " + maxBufferSize
-                          + " has been exceeded and the input stream "
-                          + "will not be repeatable. Freeing buffer memory");
+            if (log.isDebugEnabled()) {
+                log.debug("Buffer size " + maxBufferSize
+                        + " has been exceeded and the input stream "
+                        + "will not be repeatable. Freeing buffer memory");
             }
             bufferSizeOverflow = true;
         } else {
@@ -50,10 +50,10 @@ class DecodedStreamBuffer {
     public void buffer(byte[] src, int srcPos, int length) {
         pos = -1;
         if (byteBuffered + length > maxBufferSize) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Buffer size " + maxBufferSize
-                          + " has been exceeded and the input stream "
-                          + "will not be repeatable. Freeing buffer memory");
+            if (log.isDebugEnabled()) {
+                log.debug("Buffer size " + maxBufferSize
+                        + " has been exceeded and the input stream "
+                        + "will not be repeatable. Freeing buffer memory");
             }
             bufferSizeOverflow = true;
         } else {
@@ -74,7 +74,7 @@ class DecodedStreamBuffer {
         if (bufferSizeOverflow) {
             throw new SdkClientException(
                     "The input stream is not repeatable since the buffer size "
-                    + maxBufferSize + " has been exceeded.");
+                            + maxBufferSize + " has been exceeded.");
         }
         pos = 0;
     }

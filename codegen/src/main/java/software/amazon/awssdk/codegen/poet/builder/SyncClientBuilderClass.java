@@ -24,8 +24,12 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.config.ImmutableClientConfiguration;
+import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 
 public class SyncClientBuilderClass implements ClassSpec {
+    private final String basePackage;
+    private final IntermediateModel model;
     private final ClassName clientInterfaceName;
     private final ClassName clientClassName;
     private final ClassName builderInterfaceName;
@@ -33,7 +37,8 @@ public class SyncClientBuilderClass implements ClassSpec {
     private final ClassName builderBaseClassName;
 
     public SyncClientBuilderClass(IntermediateModel model) {
-        String basePackage = model.getMetadata().getFullClientPackageName();
+        this.model = model;
+        this.basePackage = model.getMetadata().getFullClientPackageName();
         this.clientInterfaceName = ClassName.get(basePackage, model.getMetadata().getSyncInterface());
         this.clientClassName = ClassName.get(basePackage, model.getMetadata().getSyncClient());
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getSyncBuilderInterface());
@@ -43,22 +48,53 @@ public class SyncClientBuilderClass implements ClassSpec {
 
     @Override
     public TypeSpec poetSpec() {
-        return PoetUtils.createClassBuilder(builderClassName)
-                        .addAnnotation(SdkInternalApi.class)
-                        .addModifiers(Modifier.FINAL)
-                        .superclass(ParameterizedTypeName.get(builderBaseClassName, builderInterfaceName, clientInterfaceName))
-                        .addSuperinterface(builderInterfaceName)
-                        .addMethod(buildClientMethod())
-                        .build();
+        TypeSpec.Builder builder =
+                PoetUtils.createClassBuilder(builderClassName)
+                         .addAnnotation(SdkInternalApi.class)
+                         .addModifiers(Modifier.FINAL)
+                         .superclass(ParameterizedTypeName.get(builderBaseClassName, builderInterfaceName, clientInterfaceName))
+                         .addSuperinterface(builderInterfaceName)
+                         .addMethod(buildClientMethod());
+
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            builder.addMethod(buildServiceClientMethod());
+        }
+
+        return builder.build();
     }
 
     private MethodSpec buildClientMethod() {
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            return MethodSpec.methodBuilder("buildClient")
+                             .addAnnotation(Override.class)
+                             .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
+                             .returns(clientInterfaceName)
+                             .addCode("return buildServiceClient(super.syncClientConfiguration(), advancedConfiguration());")
+                             .build();
+        }
+
         return MethodSpec.methodBuilder("buildClient")
+                             .addAnnotation(Override.class)
+                             .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
+                             .returns(clientInterfaceName)
+                             .addCode("return new $T(super.syncClientConfiguration().asLegacySyncClientParams());",
+                                      clientClassName)
+                             .build();
+    }
+
+    private MethodSpec buildServiceClientMethod() {
+        ClassName advancedConfiguration = ClassName.get(basePackage,
+                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+        return MethodSpec.methodBuilder("buildServiceClient")
                          .addAnnotation(Override.class)
                          .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
                          .returns(clientInterfaceName)
-                         .addCode("return new $T(super.syncClientConfiguration().asLegacySyncClientParams());",
-                                  clientClassName)
+                         .addParameter(ImmutableClientConfiguration.class, "clientConfiguration")
+                         .addParameter(advancedConfiguration, "advancedConfiguration")
+                         .addStatement("$T syncClientConfiguration = ($T) clientConfiguration",
+                                 ImmutableSyncClientConfiguration.class, ImmutableSyncClientConfiguration.class)
+                         .addStatement("return new $T(syncClientConfiguration().asLegacySyncClientParams(), " +
+                                         "advancedConfiguration)", clientClassName)
                          .build();
     }
 

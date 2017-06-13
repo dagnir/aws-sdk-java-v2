@@ -36,7 +36,7 @@ public interface ProtocolSpec {
 
     CodeBlock errorResponseHandler(OperationModel opModel);
 
-    CodeBlock executionHandler(OperationModel opModel);
+    CodeBlock executionHandler(OperationModel opModel, IntermediateModel model);
 
     default Class<? extends ClientHandler> getClientHandlerClass() {
         return SdkClientHandler.class;

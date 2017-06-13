@@ -24,8 +24,12 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
+import software.amazon.awssdk.config.ImmutableClientConfiguration;
 
 public class AsyncClientBuilderClass implements ClassSpec {
+    private final String basePackage;
+    private final IntermediateModel model;
     private final ClassName clientInterfaceName;
     private final ClassName clientClassName;
     private final ClassName builderInterfaceName;
@@ -33,7 +37,8 @@ public class AsyncClientBuilderClass implements ClassSpec {
     private final ClassName builderBaseClassName;
 
     public AsyncClientBuilderClass(IntermediateModel model) {
-        String basePackage = model.getMetadata().getFullClientPackageName();
+        this.basePackage = model.getMetadata().getFullClientPackageName();
+        this.model = model;
         this.clientInterfaceName = ClassName.get(basePackage, model.getMetadata().getAsyncInterface());
         this.clientClassName = ClassName.get(basePackage, model.getMetadata().getAsyncClient());
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getAsyncBuilderInterface());
@@ -43,13 +48,19 @@ public class AsyncClientBuilderClass implements ClassSpec {
 
     @Override
     public TypeSpec poetSpec() {
-        return PoetUtils.createClassBuilder(builderClassName)
-                        .addAnnotation(SdkInternalApi.class)
-                        .addModifiers(Modifier.FINAL)
-                        .superclass(ParameterizedTypeName.get(builderBaseClassName, builderInterfaceName, clientInterfaceName))
-                        .addSuperinterface(builderInterfaceName)
-                        .addMethod(buildClientMethod())
-                        .build();
+        TypeSpec.Builder builder =
+                PoetUtils.createClassBuilder(builderClassName)
+                         .addAnnotation(SdkInternalApi.class)
+                         .addModifiers(Modifier.FINAL)
+                         .superclass(ParameterizedTypeName.get(builderBaseClassName, builderInterfaceName, clientInterfaceName))
+                         .addSuperinterface(builderInterfaceName)
+                         .addMethod(buildClientMethod());
+
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            builder.addMethod(buildServiceClientMethod());
+        }
+
+        return builder.build();
     }
 
     private MethodSpec buildClientMethod() {
@@ -59,6 +70,22 @@ public class AsyncClientBuilderClass implements ClassSpec {
                          .returns(clientInterfaceName)
                          .addCode("return new $T(super.asyncClientConfiguration().asLegacyAsyncClientParams());",
                                   clientClassName)
+                         .build();
+    }
+
+    private MethodSpec buildServiceClientMethod() {
+        ClassName advancedConfiguration = ClassName.get(basePackage,
+                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+        return MethodSpec.methodBuilder("buildServiceClient")
+                         .addAnnotation(Override.class)
+                         .addModifiers(Modifier.PROTECTED, Modifier.FINAL)
+                         .returns(clientInterfaceName)
+                         .addParameter(ImmutableClientConfiguration.class, "clientConfiguration")
+                         .addParameter(advancedConfiguration, "advancedConfiguration")
+                         .addStatement("$T asyncClientConfiguration = ($T) clientConfiguration",
+                                 ImmutableAsyncClientConfiguration.class, ImmutableAsyncClientConfiguration.class)
+                         .addStatement("return new $T(asyncClientConfiguration().asLegacyAsyncClientParams(), " +
+                                         "advancedConfiguration)", clientClassName)
                          .build();
     }
 

@@ -23,8 +23,16 @@ import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.*;
 @Generated("software.amazon.awssdk:aws-java-sdk-code-generator")
 public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shapeName}, StaxUnmarshallerContext> {
 
+<#assign hasPayload = false>
+
 <#if shape.members?has_content>
 <#list shape.members as memberModel>
+    <#-- If any member unmarshalls as payload we want to XML unmarshall. Otherwise, response won't contain xml -->
+    <#if memberModel.http?has_content>
+        <#if memberModel.http.marshallLocation == "PAYLOAD">
+            <#assign hasPayload = true>
+        </#if>
+    </#if>
     <#if memberModel.map>
         <@MapEntryUnmarshallerMacro.content memberModel />
     </#if>
@@ -83,6 +91,8 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
     </#list>
 </#if>
 
+<#-- If any member unmarshalls as payload we want to XML unmarshall. Otherwise, response won't contain xml -->
+<#if hasPayload>
 <#list shape.members as memberModel>
     <#if memberModel.map>
         java.util.Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = null;
@@ -132,6 +142,11 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
                 }
             }
         }
+</#if>
+        <#-- If any member unmarshalls as payload we want to XML unmarshall. Otherwise, response won't contain xml -->
+        <#if !hasPayload>
+        return ${shape.variable.variableName}.build();
+        </#if>
     }
 
     private static ${shape.shapeName}Unmarshaller INSTANCE;
