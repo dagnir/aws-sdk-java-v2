@@ -49,7 +49,7 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
 
         String getSourceRegion();
 
-        SdkHttpFullRequest marshall();
+        SdkHttpFullRequest.Builder marshall();
     }
 
     private final Class<T> requestClassToPreSign;
@@ -89,31 +89,27 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
 
         String destinationRegion = AwsHostNameUtils.parseRegion(request.getEndpoint().getHost(), SERVICE_NAME);
 
+        SdkHttpFullRequest requestToPresign =
+                presignableRequest.marshall()
+                                  .removeQueryParameter(PARAM_SOURCE_REGION)
+                                  .queryParameter(PARAM_DESTINATION_REGION, destinationRegion)
+                                  .httpMethod(SdkHttpMethod.GET)
+                                  .endpoint(createEndpoint(sourceRegion, SERVICE_NAME))
+                                  .build();
+
         AwsCredentials credentials = request.handlerContext(AwsHandlerKeys.AWS_CREDENTIALS);
-        final String presignedUrl = generatePresignedUrl(presignableRequest, sourceRegion, destinationRegion, credentials);
+
+        requestToPresign = presignRequest(requestToPresign, credentials, sourceRegion);
+
+        final String presignedUrl = generateUrl(requestToPresign);
+
         presignableRequest.setPreSignedUrl(presignedUrl);
 
         return request.toBuilder()
                       .queryParameter(PARAM_PRESIGNED_URL, presignedUrl)
+                      // Remove the unmodeled params to stop them getting onto the wire
                       .removeQueryParameter(PARAM_SOURCE_REGION)
-                      .endpoint(createEndpoint(sourceRegion, SERVICE_NAME))
-                      .httpMethod(SdkHttpMethod.GET)
                       .build();
-    }
-
-    private String generatePresignedUrl(PresignableRequest presignableRequest, String sourceRegion,
-                                        String destinationRegion, AwsCredentials credentials) {
-        SdkHttpFullRequest presignedRequest = presignRequest(
-                getRequestToPresign(presignableRequest, destinationRegion), credentials, sourceRegion);
-        return generateUrl(presignedRequest);
-    }
-
-    private SdkHttpFullRequest getRequestToPresign(PresignableRequest presignableRequest, String destinationRegion) {
-        return presignableRequest.marshall()
-                                 .toBuilder()
-                                 .removeQueryParameter(PARAM_SOURCE_REGION)
-                                 .queryParameter(PARAM_DESTINATION_REGION, destinationRegion)
-                                 .build();
     }
 
     protected abstract PresignableRequest adaptRequest(T originalRequest);
@@ -146,7 +142,8 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
 
     private String generateUrl(SdkHttpFullRequest request) {
         URI endpoint = request.getEndpoint();
-        String uri = SdkHttpUtils.appendUri(endpoint.toString(), request.getResourcePath(), true);
+        String uri = SdkHttpUtils.appendUri(endpoint.toString(),
+                                            request.getResourcePath(), true);
         String encodedParams = SdkHttpUtils.encodeParameters(request);
 
         if (!StringUtils.isEmpty(encodedParams)) {
@@ -156,4 +153,7 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
         return uri;
 
     }
+
 }
+
+

@@ -51,8 +51,9 @@ public class CopyDbSnapshotPresignHandler extends PresignRequestHandler<CopyDBSn
             }
 
             @Override
-            public SdkHttpFullRequest marshall() {
-                return SdkHttpFullRequestAdapter.toSdkRequest(new CopyDBSnapshotRequestMarshaller().marshall(originalRequest));
+            public SdkHttpFullRequest.Builder marshall() {
+                return SdkHttpFullRequestAdapter.toMutableSdkRequest(
+                        new CopyDBSnapshotRequestMarshaller().marshall(originalRequest));
             }
         };
     }

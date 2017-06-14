@@ -43,8 +43,8 @@ public class CreateDbInstanceReadReplicaPresignHandler extends PresignRequestHan
             }
 
             @Override
-            public SdkHttpFullRequest marshall() {
-                return SdkHttpFullRequestAdapter.toSdkRequest(
+            public SdkHttpFullRequest.Builder marshall() {
+                return SdkHttpFullRequestAdapter.toMutableSdkRequest(
                         new CreateDBInstanceReadReplicaRequestMarshaller().marshall(originalRequest));
             }
         };

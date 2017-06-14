@@ -31,6 +31,10 @@ import software.amazon.awssdk.handlers.AwsHandlerKeys;
 public class SdkHttpFullRequestAdapter {
 
     public static SdkHttpFullRequest toSdkRequest(Request<?> request) {
+        return toMutableSdkRequest(request).build();
+    }
+
+    public static SdkHttpFullRequest.Builder toMutableSdkRequest(Request<?> request) {
         return DefaultSdkHttpFullRequest
                 .builder()
                 .content(request.getContent())
@@ -40,8 +44,7 @@ public class SdkHttpFullRequestAdapter {
                 .endpoint(request.getEndpoint())
                 .resourcePath(request.getResourcePath())
                 // TODO find a better place to set this
-                .handlerContext(AwsHandlerKeys.SERVICE_NAME, request.getServiceName())
-                .build();
+                .handlerContext(AwsHandlerKeys.SERVICE_NAME, request.getServiceName());
     }
 
     private static Map<String, List<String>> adaptHeaders(Map<String, String> headers) {

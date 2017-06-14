@@ -29,6 +29,7 @@ import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
+import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
@@ -132,9 +133,9 @@ public class PresignRequestHandlerTest {
     public void testSourceRegionRemovedFromOriginalRequest() throws URISyntaxException {
         SdkHttpFullRequest marshalled = marshallRequest(makeTestRequest());
 
-        presignHandler.beforeRequest(marshalled);
+        SdkHttpFullRequest actual = presignHandler.beforeRequest(marshalled);
 
-        assertFalse(marshalled.getParameters().containsKey("SourceRegion"));
+        assertFalse(actual.getParameters().containsKey("SourceRegion"));
     }
 
     private SdkHttpFullRequest marshallRequest(CopyDBSnapshotRequest request) throws URISyntaxException {
@@ -144,6 +145,7 @@ public class PresignRequestHandlerTest {
                                            .withRegion(DESTINATION_REGION)
                                            .getServiceEndpoint())
                          .handlerContext(AwsHandlerKeys.AWS_CREDENTIALS, CREDENTIALS)
+                         .handlerContext(AwsHandlerKeys.REQUEST_CONFIG, new AmazonWebServiceRequestAdapter(request))
                          .build();
     }
 
