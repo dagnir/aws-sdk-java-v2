@@ -34,29 +34,38 @@ import static org.junit.Assert.fail;
 import java.util.Iterator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
-import software.amazon.awssdk.services.s3.model.GetObjectMetadataRequest;
-import software.amazon.awssdk.services.s3.model.ObjectListing;
-import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import utils.test.util.DynamoDBIntegrationTestBase;
 
 public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
     public static final String WEST_BUCKET = "java-dynamo-s3-integ-test-west-" + System.currentTimeMillis();
     public static final String EAST_BUCKET = "java-dynamo-s3-integ-test-east-" + System.currentTimeMillis();
 
-    protected static AmazonS3Client s3East;
-    protected static AmazonS3Client s3West;
+    protected static S3Client s3East;
+    protected static S3Client s3West;
 
     @BeforeClass
     public static void setUp() throws Exception {
         DynamoDBIntegrationTestBase.setUp();
-        s3East = new AmazonS3Client(credentials);
-        s3East.setRegion(Region.US_EAST_1);
-        s3West = new AmazonS3Client(credentials);
-        s3West.setRegion(Region.US_WEST_2);
+        s3East = S3Client.builder()
+                         .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                         .region(Region.US_EAST_1)
+                         .build();
+
+        s3West = S3Client.builder()
+                         .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                         .region(Region.US_WEST_2)
+                         .build();
 
         createBucket(s3East, EAST_BUCKET);
         createBucket(s3West, WEST_BUCKET);
@@ -74,24 +83,32 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
      * @param s3         The AmazonS3 client to use.
      * @param bucketName The bucket to empty and delete.
      */
-    protected static void deleteBucketAndAllContents(AmazonS3 s3, String bucketName) {
-        ObjectListing objectListing = s3.listObjects(bucketName);
+    protected static void deleteBucketAndAllContents(S3Client s3, String bucketName) {
+        ListObjectsResponse response = s3.listObjects(ListObjectsRequest.builder()
+                                                                        .bucket(bucketName)
+                                                                        .build());
 
         while (true) {
-            for (Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
-                S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
-                s3.deleteObject(bucketName, objectSummary.getKey());
+            for (Iterator<?> iterator = response.contents().iterator(); iterator.hasNext(); ) {
+                S3Object objectSummary = (S3Object) iterator.next();
+                s3.deleteObject(DeleteObjectRequest.builder()
+                                                   .bucket(bucketName)
+                                                   .key(objectSummary.key())
+                                                   .build());
             }
 
-            if (objectListing.isTruncated()) {
-                objectListing = s3.listNextBatchOfObjects(objectListing);
+            if (response.isTruncated()) {
+                response = s3.listObjects(ListObjectsRequest.builder()
+                                                            .marker(response.nextMarker())
+                                                            .bucket(bucketName)
+                                                            .build());
             } else {
                 break;
             }
         }
         ;
 
-        s3.deleteBucket(bucketName);
+        s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
     }
 
     /**
@@ -100,22 +117,15 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
      * @param s3         The AmazonS# client to use.
      * @param bucketName The name of the bucket to create.
      */
-    protected static void createBucket(AmazonS3 s3, String bucketName) throws InterruptedException {
-        try {
-            s3.createBucket(bucketName);
-        } catch (AmazonS3Exception e) {
-            if (!e.getErrorCode().equals("BucketAlreadyOwnedByYou")) {
-                throw e;
-            }
-        }
+    protected static void createBucket(S3Client s3, String bucketName) throws InterruptedException {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket(bucketName)
+                                           .createBucketConfiguration(CreateBucketConfiguration.builder()
+                                                                                               .locationConstraint("us-east-1")
+                                                                                               .build())
+                                           .build());
 
-        int poll = 0;
-        while (!s3.doesBucketExist(bucketName) && poll++ < 60) {
-            Thread.sleep(1000);
-        }
-        if (poll >= 60 * 5) {
-            maxPollTimeExceeded();
-        }
+        Thread.sleep(1000);
     }
 
     protected static void maxPollTimeExceeded() {
@@ -131,17 +141,17 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
      * @param key        The key under which the object is stored in the specified
      *                   bucket.
      */
-    protected void assertObjectDoesntExist(AmazonS3 s3, String bucketName, String key) throws Exception {
+    protected void assertObjectDoesntExist(S3Client s3, String bucketName, String key) throws Exception {
         long timeoutTime = System.currentTimeMillis() + 10000;
 
         while (true) {
             try {
-                s3.getObjectMetadata(new GetObjectMetadataRequest(bucketName, key));
+                s3.getObject(GetObjectRequest.builder().bucket(bucketName).key(key).build());
                 Thread.sleep(1000);
                 if (System.currentTimeMillis() > timeoutTime) {
                     fail("object " + bucketName + "/" + key + " still exists");
                 }
-            } catch (AmazonS3Exception ase) {
+            } catch (AmazonServiceException ase) {
                 /*
                  * We expect a 404 indicating that the object version we requested
                  * doesn't exist. If we get anything other than that, then we want
@@ -164,14 +174,14 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
      * @param key        The key under which the object is stored in the specified
      *                   bucket.
      */
-    protected void assertObjectExists(AmazonS3 s3, String bucketName, String key) throws Exception {
+    protected void assertObjectExists(S3Client s3, String bucketName, String key) throws Exception {
         long timeoutTime = System.currentTimeMillis() + 10000;
 
         while (true) {
             try {
-                s3.getObjectMetadata(new GetObjectMetadataRequest(bucketName, key));
+                s3.getObject(GetObjectRequest.builder().bucket(bucketName).key(key).build());
                 return; // exists!
-            } catch (AmazonS3Exception ase) {
+            } catch (AmazonServiceException ase) {
                 /*
                  * We expect a 404 indicating that the object version we requested
                  * doesn't exist. If we get anything other than that, then we want

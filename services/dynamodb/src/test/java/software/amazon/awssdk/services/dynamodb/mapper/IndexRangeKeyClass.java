@@ -83,7 +83,7 @@ public class IndexRangeKeyClass {
     @DynamoDbIndexRangeKey(
             localSecondaryIndexNames = {"index_foo_copy", "index_bar_copy"}
     )
-    public Double getMultipleIndexRangeKey() {
+    public Double multipleIndexRangeKey() {
         return multipleIndexRangeKey;
     }
 

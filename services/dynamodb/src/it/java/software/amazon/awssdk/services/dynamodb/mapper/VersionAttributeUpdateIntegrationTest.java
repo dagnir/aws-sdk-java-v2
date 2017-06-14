@@ -531,23 +531,23 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
 
     public static final class IntegerVersionField extends VersionFieldBaseClass {
 
-        private Integer notCalledVersion;
+        private Integer getNotCalledVersion;
 
         // Making sure that we can substitute attribute names as necessary
         @DynamoDbVersionAttribute(attributeName = "version")
         public Integer getNotCalledVersion() {
-            return notCalledVersion;
+            return getNotCalledVersion;
         }
 
-        public void setNotCalledVersion(Integer notCalledVersion) {
-            this.notCalledVersion = notCalledVersion;
+        public void setNotCalledVersion(Integer getNotCalledVersion) {
+            this.getNotCalledVersion = getNotCalledVersion;
         }
 
         @Override
         public int hashCode() {
             final int prime = 31;
             int result = super.hashCode();
-            result = prime * result + ((notCalledVersion == null) ? 0 : notCalledVersion.hashCode());
+            result = prime * result + ((getNotCalledVersion == null) ? 0 : getNotCalledVersion.hashCode());
             return result;
         }
 
@@ -563,11 +563,11 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
                 return false;
             }
             IntegerVersionField other = (IntegerVersionField) obj;
-            if (notCalledVersion == null) {
-                if (other.notCalledVersion != null) {
+            if (getNotCalledVersion == null) {
+                if (other.getNotCalledVersion != null) {
                     return false;
                 }
-            } else if (!notCalledVersion.equals(other.notCalledVersion)) {
+            } else if (!getNotCalledVersion.equals(other.getNotCalledVersion)) {
                 return false;
             }
             return true;

@@ -159,7 +159,7 @@ public class JsonIntegrationTest extends AwsTestBase {
             this.id = id;
         }
 
-        public List<Map<String, ChildClass>> getListOfMaps() {
+        public List<Map<String, ChildClass>> listOfMaps() {
             return listOfMaps;
         }
 
@@ -167,7 +167,7 @@ public class JsonIntegrationTest extends AwsTestBase {
             this.listOfMaps = listOfMaps;
         }
 
-        public Map<String, List<ChildClass>> getMapOfLists() {
+        public Map<String, List<ChildClass>> mapOfLists() {
             return mapOfLists;
         }
 
@@ -224,7 +224,7 @@ public class JsonIntegrationTest extends AwsTestBase {
             this.otherChildren = otherChildren;
         }
 
-        public Map<String, ChildClass> getNamedChildren() {
+        public Map<String, ChildClass> namedChildren() {
             return namedChildren;
         }
 

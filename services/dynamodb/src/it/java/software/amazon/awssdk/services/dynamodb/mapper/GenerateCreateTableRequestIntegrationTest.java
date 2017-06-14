@@ -156,7 +156,6 @@ public class GenerateCreateTableRequestIntegrationTest extends DynamoDBTestBase 
         CreateTableRequest request = mapper.generateCreateTableRequest(MapperQueryExpressionTest.HashRangeClass.class);
         String createdTableName = appendCurrentTimeToTableName(request);
         testedTableName.add(createdTableName);
-        setProvisionedThroughput(request, DEFAULT_CAPACITY);
 
         TableDescription createdTableDescription = dynamo.createTable(request).tableDescription();
 

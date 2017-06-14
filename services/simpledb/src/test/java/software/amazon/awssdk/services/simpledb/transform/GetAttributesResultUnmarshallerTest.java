@@ -23,6 +23,7 @@ import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.GetAttributesResponse;
+import software.amazon.awssdk.util.json.Jackson;
 
 public class GetAttributesResultUnmarshallerTest {
 

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.ServiceSpecificConfig;
+import software.amazon.awssdk.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.ThreadSafe;
@@ -26,7 +26,7 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 @Immutable
 @ThreadSafe
 public final class S3AdvancedConfiguration implements
-                                           ServiceSpecificConfig,
+                                           ServiceAdvancedConfiguration,
                                            ToCopyableBuilder<S3AdvancedConfiguration.Builder, S3AdvancedConfiguration> {
 
     /**

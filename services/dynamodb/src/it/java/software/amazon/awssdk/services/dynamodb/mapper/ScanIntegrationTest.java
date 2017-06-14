@@ -108,7 +108,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
         }
 
         int totalCount = util.count(SimpleClass.class, scanExpression);
@@ -166,7 +166,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
             allDataAppearance.put(next.getId(), true);
         }
         assertFalse(allDataAppearance.values().contains(false));
@@ -245,7 +245,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
             assertTrue(seen.add(next));
         }
 
@@ -261,7 +261,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             count++;
             SimpleClass next = iterator.next();
             assertNotNull(next.getExtraData());
-            assertNotNull(next.getValue());
+            assertNotNull(next.value());
             assertTrue(seen.add(next));
         }
 
@@ -295,7 +295,7 @@ public class ScanIntegrationTest extends DynamoDBMapperIntegrationTestBase {
             this.id = id;
         }
 
-        public String getValue() {
+        public String value() {
             return value;
         }
 

@@ -45,94 +45,94 @@ public interface Headers {
     /** Prefix for general Amazon headers: x-amz- */
     String AMAZON_PREFIX = "x-amz-";
 
-    /** S3's canned ACL header: x-amz-acl. */
+    /** S3's canned ACL header: x-amz-acl */
     String S3_CANNED_ACL = "x-amz-acl";
 
-    /** Amazon's alternative date header: x-amz-date. */
+    /** Amazon's alternative date header: x-amz-date */
     String S3_ALTERNATE_DATE = "x-amz-date";
 
     /** Prefix for S3 user metadata: x-amz-meta- */
     String S3_USER_METADATA_PREFIX = "x-amz-meta-";
 
-    /** S3's version ID header. */
+    /** S3's version ID header */
     String S3_VERSION_ID = "x-amz-version-id";
 
-    /** S3's Multi-Factor Authentication header. */
+    /** S3's Multi-Factor Authentication header */
     String S3_MFA = "x-amz-mfa";
 
-    /** S3 response header for a request's AWS request ID. */
+    /** S3 response header for a request's AWS request ID */
     String REQUEST_ID = "x-amz-request-id";
 
-    /** S3 response header for a request's extended debugging ID. */
+    /** S3 response header for a request's extended debugging ID */
     String EXTENDED_REQUEST_ID = "x-amz-id-2";
 
     /** S3 response header in response from accelerate endpoint. */
     String CLOUD_FRONT_ID = "X-Amz-Cf-Id";
 
-    /** S3 request header indicating how to handle metadata when copying an object. */
+    /** S3 request header indicating how to handle metadata when copying an object */
     String METADATA_DIRECTIVE = "x-amz-metadata-directive";
 
-    /** DevPay token header. */
+    /** DevPay token header */
     String SECURITY_TOKEN = "x-amz-security-token";
 
-    /** Header describing what class of storage a user wants. */
+    /** Header describing what class of storage a user wants */
     String STORAGE_CLASS = "x-amz-storage-class";
 
-    /** Header for optional server-side encryption algorithm. */
+    /** Header for optional server-side encryption algorithm */
     String SERVER_SIDE_ENCRYPTION = "x-amz-server-side-encryption";
 
-    /** Header for the encryption algorithm used when encrypting the object with customer-provided keys. */
+    /** Header for the encryption algorithm used when encrypting the object with customer-provided keys */
     String SERVER_SIDE_ENCRYPTION_CUSTOMER_ALGORITHM = "x-amz-server-side-encryption-customer-algorithm";
 
-    /** Header for the customer-provided key for server-side encryption. */
+    /** Header for the customer-provided key for server-side encryption */
     String SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY = "x-amz-server-side-encryption-customer-key";
 
-    /** Header for the MD5 digest of the customer-provided key for server-side encryption. */
+    /** Header for the MD5 digest of the customer-provided key for server-side encryption */
     String SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5 = "x-amz-server-side-encryption-customer-key-MD5";
 
-    /** Header for the encryption algorithm used when encrypting the object with customer-provided keys. */
+    /** Header for the encryption algorithm used when encrypting the object with customer-provided keys */
     String COPY_SOURCE_SERVER_SIDE_ENCRYPTION_CUSTOMER_ALGORITHM = "x-amz-copy-source-server-side-encryption-customer-algorithm";
 
-    /** Header for the customer-provided key for server-side encryption. */
+    /** Header for the customer-provided key for server-side encryption */
     String COPY_SOURCE_SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY = "x-amz-copy-source-server-side-encryption-customer-key";
 
-    /** Header for the MD5 digest of the customer-provided key for server-side encryption. */
+    /** Header for the MD5 digest of the customer-provided key for server-side encryption */
     String COPY_SOURCE_SERVER_SIDE_ENCRYPTION_CUSTOMER_KEY_MD5 = "x-amz-copy-source-server-side-encryption-customer-key-MD5";
 
-    /** Header for optional object expiration. */
+    /** Header for optional object expiration */
     String EXPIRATION = "x-amz-expiration";
 
-    /** Header for optional object expiration. */
+    /** Header for optional object expiration */
     String EXPIRES = "Expires";
 
-    /** ETag matching constraint header for the copy object request. */
+    /** ETag matching constraint header for the copy object request */
     String COPY_SOURCE_IF_MATCH = "x-amz-copy-source-if-match";
 
-    /** ETag non-matching constraint header for the copy object request. */
+    /** ETag non-matching constraint header for the copy object request */
     String COPY_SOURCE_IF_NO_MATCH = "x-amz-copy-source-if-none-match";
 
-    /** Unmodified since constraint header for the copy object request. */
+    /** Unmodified since constraint header for the copy object request */
     String COPY_SOURCE_IF_UNMODIFIED_SINCE = "x-amz-copy-source-if-unmodified-since";
 
-    /** Modified since constraint header for the copy object request. */
+    /** Modified since constraint header for the copy object request */
     String COPY_SOURCE_IF_MODIFIED_SINCE = "x-amz-copy-source-if-modified-since";
 
-    /** Range header for the get object request. */
+    /** Range header for the get object request */
     String RANGE = "Range";
 
-    /**Range header for the copy part request. */
+    /**Range header for the copy part request */
     String COPY_PART_RANGE = "x-amz-copy-source-range";
 
-    /** Modified since constraint header for the get object request. */
+    /** Modified since constraint header for the get object request */
     String GET_OBJECT_IF_MODIFIED_SINCE = "If-Modified-Since";
 
-    /** Unmodified since constraint header for the get object request. */
+    /** Unmodified since constraint header for the get object request */
     String GET_OBJECT_IF_UNMODIFIED_SINCE = "If-Unmodified-Since";
 
-    /** ETag matching constraint header for the get object request. */
+    /** ETag matching constraint header for the get object request */
     String GET_OBJECT_IF_MATCH = "If-Match";
 
-    /** ETag non-matching constraint header for the get object request. */
+    /** ETag non-matching constraint header for the get object request */
     String GET_OBJECT_IF_NONE_MATCH = "If-None-Match";
 
     /**
@@ -150,25 +150,25 @@ public interface Headers {
      */
     String CRYPTO_KEY_V2 = "x-amz-key-v2";
 
-    /** Initialization vector (IV) header that is used in the symmetric and envelope encryption mechanisms. */
+    /** Initialization vector (IV) header that is used in the symmetric and envelope encryption mechanisms */
     String CRYPTO_IV = "x-amz-iv";
 
-    /** JSON-encoded description of encryption materials used during encryption. */
+    /** JSON-encoded description of encryption materials used during encryption */
     String MATERIALS_DESCRIPTION = "x-amz-matdesc";
 
-    /** Instruction file header to be placed in the metadata of instruction files. */
+    /** Instruction file header to be placed in the metadata of instruction files */
     String CRYPTO_INSTRUCTION_FILE = "x-amz-crypto-instr-file";
 
-    /** Header for the original, unencrypted size of an encrypted object. */
+    /** Header for the original, unencrypted size of an encrypted object */
     String UNENCRYPTED_CONTENT_LENGTH = "x-amz-unencrypted-content-length";
 
-    /** Header for the optional original unencrypted Content MD5 of an encrypted object. */
+    /** Header for the optional original unencrypted Content MD5 of an encrypted object */
     String UNENCRYPTED_CONTENT_MD5 = "x-amz-unencrypted-content-md5";
 
-    /** Header for optional redirect location of an object. */
+    /** Header for optional redirect location of an object */
     String REDIRECT_LOCATION = "x-amz-website-redirect-location";
 
-    /** Header for the optional restore information of an object. */
+    /** Header for the optional restore information of an object */
     String RESTORE = "x-amz-restore";
 
     /**
@@ -205,7 +205,7 @@ public interface Headers {
     /** Header for the replication status of an Amazon S3 Object.*/
     String OBJECT_REPLICATION_STATUS = "x-amz-replication-status";
 
-    /** Region where the request is being served. */
+    /** Region where the request is being served */
     String S3_SERVING_REGION = "x-amz-region";
 
     /** Region where the bucket is located. This header is returned only in HEAD bucket and ListObjects response. */
@@ -220,10 +220,10 @@ public interface Headers {
     /** S3 response header for a multipart object containing the number of parts in the object. */
     String S3_PARTS_COUNT = "x-amz-mp-parts-count";
 
-    /** S3 request header for PUT object with a tag set. */
+    /** S3 request header for PUT object with a tag set */
     String S3_TAGGING = "x-amz-tagging";
 
-    /** S3 response header the number of tags on an object. */
+    /** S3 response header the number of tags on an object */
     String S3_TAGGING_COUNT = "x-amz-tagging-count";
 
     String TAGGING_DIRECTIVE = "x-amz-tagging-directive";

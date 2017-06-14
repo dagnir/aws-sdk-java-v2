@@ -181,7 +181,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
         NonSetCollectionType obj = new NonSetCollectionType();
         obj.setKey("" + startKey++);
         obj.setBadlyMapped(new ArrayList<String>());
-        obj.getBadlyMapped().add("abc");
+        obj.badlyMapped().add("abc");
         mapper.save(obj);
     }
 
@@ -464,7 +464,7 @@ public class ExceptionHandlingIntegrationTest extends DynamoDBMapperIntegrationT
             this.key = key;
         }
 
-        public List<String> getBadlyMapped() {
+        public List<String> badlyMapped() {
             return badlyMapped;
         }
 

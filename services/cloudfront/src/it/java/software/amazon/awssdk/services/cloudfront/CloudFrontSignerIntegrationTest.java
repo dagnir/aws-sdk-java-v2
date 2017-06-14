@@ -155,4 +155,9 @@ public class CloudFrontSignerIntegrationTest {
         }
     }
 
+    @Test
+    public void test() {
+
+    }
+
 }

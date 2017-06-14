@@ -38,8 +38,7 @@ public class EndpointAddressRequestHandler extends RequestHandler2 {
     public void beforeRequest(Request<?> request) {
 
         S3AdvancedConfiguration advancedConfiguration =
-                    (S3AdvancedConfiguration) request.getHandlerContext(HandlerContextKey.SERVICE_SPECIFIC_CONFIG);
-
+                    (S3AdvancedConfiguration) request.getHandlerContext(HandlerContextKey.SERVICE_ADVANCED_CONFIG);
 
         if (advancedConfiguration == null || !advancedConfiguration.pathStyleAccessEnabled()) {
             try {

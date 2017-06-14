@@ -246,7 +246,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
             this.nestedType = nestedType;
         }
 
-        public String getStringValue() {
+        public String stringValue() {
             return stringValue;
         }
 
@@ -262,7 +262,7 @@ public class ComplexTypeIntegrationTest extends DynamoDBMapperIntegrationTestBas
             this.intValue = intValue;
         }
 
-        public ComplexNestedType getNestedType() {
+        public ComplexNestedType nestedType() {
             return nestedType;
         }
 

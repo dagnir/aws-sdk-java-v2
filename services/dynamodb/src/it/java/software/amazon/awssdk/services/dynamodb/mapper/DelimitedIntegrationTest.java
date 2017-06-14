@@ -73,7 +73,7 @@ public class DelimitedIntegrationTest extends AbstractKeyAndValIntegrationTestCa
         assertNotNull(after);
         assertNull(after.getAreaCode());
         assertEquals(object.getVal().getExchange(), after.getExchange());
-        assertEquals(object.getVal().getSubscriber(), after.getSubscriber());
+        assertEquals(object.getVal().subscriber(), after.subscriber());
     }
 
     /**

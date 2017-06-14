@@ -31,8 +31,9 @@ import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
 import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.DataSetType;
 import software.amazon.awssdk.services.marketplacecommerceanalytics.model.GenerateDataSetRequest;
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.sns.SNSClient;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.DeleteTopicRequest;
@@ -53,7 +54,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     private static final String BUCKET_NAME = "java-sdk-integ-mp-commerce-" + System.currentTimeMillis();
 
     private MarketplaceCommerceAnalyticsClient client;
-    private AmazonS3 s3;
+    private S3Client s3;
     private SNSClient sns;
     private IAMClient iam;
 
@@ -68,9 +69,9 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     }
 
     private void setupClients() {
-        s3 = AmazonS3Client.builder()
-                           .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                           .build();
+        s3 = S3Client.builder()
+                     .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                     .build();
 
         client = MarketplaceCommerceAnalyticsClient.builder()
                                                    .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
@@ -83,7 +84,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     }
 
     private void setupResources() throws IOException, Exception {
-        s3.createBucket(BUCKET_NAME);
+        s3.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
         topicArn = sns.createTopic(CreateTopicRequest.builder().name(TOPIC_NAME).build()).topicArn();
         policyArn = createPolicy();
         roleArn = createRole();
@@ -121,7 +122,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
             e.printStackTrace();
         }
         try {
-            s3.deleteBucket(BUCKET_NAME);
+            s3.deleteBucket(DeleteBucketRequest.builder().bucket(BUCKET_NAME).build());
         } catch (Exception e) {
             e.printStackTrace();
         }

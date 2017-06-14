@@ -118,22 +118,22 @@ public class SimpleNumericAttributesIntegrationTest extends DynamoDBMapperIntegr
             assertEquals(x.getKey(), attr.get(KEY_NAME).s());
 
             // Convert all numbers to the most inclusive type for easy comparison
-            assertEquals(x.getBigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).n()));
-            assertEquals(new BigDecimal(x.getBigIntegerAttribute()), new BigDecimal(attr.get(BIG_INTEGER_ATTRIBUTE).n()));
+            assertEquals(x.bigDecimalAttribute(), new BigDecimal(attr.get(BIG_DECIMAL_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.bigIntegerAttribute()), new BigDecimal(attr.get(BIG_INTEGER_ATTRIBUTE).n()));
             assertEquals(new BigDecimal(x.getFloatAttribute()), new BigDecimal(attr.get(FLOAT_ATTRIBUTE).n()));
             assertEquals(new BigDecimal(x.getFloatObjectAttribute()), new BigDecimal(attr.get(FLOAT_OBJECT_ATTRIBUTE).n()));
             assertEquals(new BigDecimal(x.getDoubleAttribute()), new BigDecimal(attr.get(DOUBLE_ATTRIBUTE).n()));
             assertEquals(new BigDecimal(x.getDoubleObjectAttribute()), new BigDecimal(attr.get(DOUBLE_OBJECT_ATTRIBUTE).n()));
             assertEquals(new BigDecimal(x.getIntAttribute()), new BigDecimal(attr.get(INT_ATTRIBUTE).n()));
             assertEquals(new BigDecimal(x.getIntegerAttribute()), new BigDecimal(attr.get(INTEGER_ATTRIBUTE).n()));
-            assertEquals(new BigDecimal(x.getLongAttribute()), new BigDecimal(attr.get(LONG_ATTRIBUTE).n()));
-            assertEquals(new BigDecimal(x.getLongObjectAttribute()), new BigDecimal(attr.get(LONG_OBJECT_ATTRIBUTE).n()));
-            assertEquals(new BigDecimal(x.getByteAttribute()), new BigDecimal(attr.get(BYTE_ATTRIBUTE).n()));
-            assertEquals(new BigDecimal(x.getByteObjectAttribute()), new BigDecimal(attr.get(BYTE_OBJECT_ATTRIBUTE).n()));
-            assertEquals(new BigDecimal(x.getShortAttribute()), new BigDecimal(attr.get(SHORT_ATTRIBUTE).n()));
-            assertEquals(new BigDecimal(x.getShortObjectAttribute()), new BigDecimal(attr.get(SHORT_OBJECT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.longAttribute()), new BigDecimal(attr.get(LONG_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.longObjectAttribute()), new BigDecimal(attr.get(LONG_OBJECT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.byteAttribute()), new BigDecimal(attr.get(BYTE_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.byteObjectAttribute()), new BigDecimal(attr.get(BYTE_OBJECT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.shortAttribute()), new BigDecimal(attr.get(SHORT_ATTRIBUTE).n()));
+            assertEquals(new BigDecimal(x.shortObjectAttribute()), new BigDecimal(attr.get(SHORT_OBJECT_ATTRIBUTE).n()));
             assertEquals(x.isBooleanAttribute(), attr.get(BOOLEAN_ATTRIBUTE).n().equals("1"));
-            assertEquals(x.getBooleanObjectAttribute(), attr.get(BOOLEAN_OBJECT_ATTRIBUTE).n().equals("1"));
+            assertEquals(x.booleanObjectAttribute(), attr.get(BOOLEAN_OBJECT_ATTRIBUTE).n().equals("1"));
         }
 
         // Test loading an object that doesn't exist

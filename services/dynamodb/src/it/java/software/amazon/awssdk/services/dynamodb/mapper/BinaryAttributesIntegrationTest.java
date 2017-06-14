@@ -44,8 +44,8 @@ import software.amazon.awssdk.services.dynamodb.pojos.BinaryAttributeByteBufferC
  */
 public class BinaryAttributesIntegrationTest extends DynamoDBMapperIntegrationTestBase {
 
-    private static final String BINARY_ATTRIBUTE = "binaryAttribute";
-    private static final String BINARY_SET_ATTRIBUTE = "binarySetAttribute";
+    private static final String BINARY_ATTRIBUTE = "getBinaryAttribute";
+    private static final String BINARY_SET_ATTRIBUTE = "getBinarySetAttribute";
     private static final List<Map<String, AttributeValue>> ATTRIBUTES = new LinkedList<Map<String, AttributeValue>>();
     private static final int CONTENT_LENGTH = 512;
 

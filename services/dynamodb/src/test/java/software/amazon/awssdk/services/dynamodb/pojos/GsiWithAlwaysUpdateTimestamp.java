@@ -53,7 +53,7 @@ public class GsiWithAlwaysUpdateTimestamp {
         return this;
     }
 
-    public Long getLastModifiedDate() {
+    public Long lastModifiedDate() {
         return lastModifiedDate;
     }
 

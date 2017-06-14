@@ -111,7 +111,7 @@ public class NumberAttributeClass {
         this.floatObjectAttribute = floatObjectAttribute;
     }
 
-    public BigDecimal getBigDecimalAttribute() {
+    public BigDecimal bigDecimalAttribute() {
         return bigDecimalAttribute;
     }
 
@@ -119,7 +119,7 @@ public class NumberAttributeClass {
         this.bigDecimalAttribute = bigDecimalAttribute;
     }
 
-    public BigInteger getBigIntegerAttribute() {
+    public BigInteger bigIntegerAttribute() {
         return bigIntegerAttribute;
     }
 
@@ -127,7 +127,7 @@ public class NumberAttributeClass {
         this.bigIntegerAttribute = bigIntegerAttribute;
     }
 
-    public long getLongAttribute() {
+    public long longAttribute() {
         return longAttribute;
     }
 
@@ -135,7 +135,7 @@ public class NumberAttributeClass {
         this.longAttribute = longAttribute;
     }
 
-    public Long getLongObjectAttribute() {
+    public Long longObjectAttribute() {
         return longObjectAttribute;
     }
 
@@ -143,7 +143,7 @@ public class NumberAttributeClass {
         this.longObjectAttribute = longObjectAttribute;
     }
 
-    public byte getByteAttribute() {
+    public byte byteAttribute() {
         return byteAttribute;
     }
 
@@ -151,7 +151,7 @@ public class NumberAttributeClass {
         this.byteAttribute = byteAttribute;
     }
 
-    public Byte getByteObjectAttribute() {
+    public Byte byteObjectAttribute() {
         return byteObjectAttribute;
     }
 
@@ -175,7 +175,7 @@ public class NumberAttributeClass {
         this.calendarAttribute = calendarAttribute;
     }
 
-    public Boolean getBooleanObjectAttribute() {
+    public Boolean booleanObjectAttribute() {
         return booleanObjectAttribute;
     }
 
@@ -200,7 +200,7 @@ public class NumberAttributeClass {
         this.ignored = ignored;
     }
 
-    public short getShortAttribute() {
+    public short shortAttribute() {
         return shortAttribute;
     }
 
@@ -208,7 +208,7 @@ public class NumberAttributeClass {
         this.shortAttribute = shortAttribute;
     }
 
-    public Short getShortObjectAttribute() {
+    public Short shortObjectAttribute() {
         return shortObjectAttribute;
     }
 
