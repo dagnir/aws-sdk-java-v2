@@ -17,10 +17,12 @@ package software.amazon.awssdk.handlers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import org.junit.Before;
@@ -32,15 +34,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 @RunWith(Enclosed.class)
 public class StackedRequestHandlerTest {
 
     /**
-     * Tests a {@link StackedRequestHandler} with no {@link RequestHandler2}'s added. Mainly tests
+     * Tests a {@link StackedRequestHandler} with no {@link RequestHandler}'s added. Mainly tests
      * that things don't blow up as nothing should happen when no request handlers are added
      */
     public static class NoRequestHandlers {
@@ -48,7 +50,7 @@ public class StackedRequestHandlerTest {
         private StackedRequestHandler stackedRequestHandler;
 
         @Mock
-        private Request<?> request;
+        private SdkHttpFullRequest request;
 
         private Response<?> response;
 
@@ -89,7 +91,7 @@ public class StackedRequestHandlerTest {
     }
 
     /**
-     * Tests a {@link StackedRequestHandler} with a single {@link RequestHandler2} added. Tests that
+     * Tests a {@link StackedRequestHandler} with a single {@link RequestHandler} added. Tests that
      * only that request handler is delegated to.
      */
     public static class SingleRequestHandler {
@@ -97,10 +99,10 @@ public class StackedRequestHandlerTest {
         private StackedRequestHandler stackedRequestHandler;
 
         @Mock
-        private RequestHandler2 only;
+        private RequestHandler only;
 
         @Mock
-        private Request<?> request;
+        private SdkHttpFullRequest request;
 
         private Response<?> response;
 
@@ -148,7 +150,7 @@ public class StackedRequestHandlerTest {
     }
 
     /**
-     * Tests a {@link StackedRequestHandler} with multiple {@link RequestHandler2} added. Before
+     * Tests a {@link StackedRequestHandler} with multiple {@link RequestHandler} added. Before
      * hooks should be executed in normal order (i.e. first, second, then third in respect to what
      * order they were added to the {@link StackedRequestHandler}) and after hooks should be
      * executed in reverse order (i.e. third, second, first)
@@ -158,16 +160,16 @@ public class StackedRequestHandlerTest {
         private StackedRequestHandler stackedRequestHandler;
 
         @Mock
-        private RequestHandler2 first;
+        private RequestHandler first;
 
         @Mock
-        private RequestHandler2 second;
+        private RequestHandler second;
 
         @Mock
-        private RequestHandler2 third;
+        private RequestHandler third;
 
         @Mock
-        private Request<?> request;
+        private SdkHttpFullRequest request;
 
         private Response<?> response;
 
@@ -192,7 +194,7 @@ public class StackedRequestHandlerTest {
         /**
          * The beforeMarshalling step is a bit different. It's expected to take the potentially
          * modified {@link AmazonWebServiceRequest} returned by
-         * {@link RequestHandler2#beforeMarshalling(AmazonWebServiceRequest)} and forward that
+         * {@link RequestHandler#beforeMarshalling(AmazonWebServiceRequest)} and forward that
          * result as input to the next request handler in the chain. This tests makes sure that each
          * request handler forwards the appropriate the result to the next in the chain and that the
          * end result is what's returned by the last request handler in the chain
@@ -218,6 +220,9 @@ public class StackedRequestHandlerTest {
 
         @Test
         public void beforeRequest_CalledInOrder() {
+            when(first.beforeRequest(any())).thenReturn(request);
+            when(second.beforeRequest(any())).thenReturn(request);
+            when(third.beforeRequest(any())).thenReturn(request);
             stackedRequestHandler.beforeRequest(request);
 
             InOrder inOrder = inOrder(first, second, third);

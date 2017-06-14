@@ -16,9 +16,9 @@
 package software.amazon.awssdk.http.pipeline.stages;
 
 import java.io.IOException;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.http.pipeline.RequestToResponsePipeline;
 
@@ -29,13 +29,13 @@ import software.amazon.awssdk.http.pipeline.RequestToResponsePipeline;
  */
 public class TimerExceptionHandlingStage<OutputT> implements RequestToResponsePipeline<OutputT> {
 
-    private final RequestPipeline<Request<?>, Response<OutputT>> requestPipeline;
+    private final RequestPipeline<SdkHttpFullRequest, Response<OutputT>> requestPipeline;
 
-    public TimerExceptionHandlingStage(RequestPipeline<Request<?>, Response<OutputT>> requestPipeline) {
+    public TimerExceptionHandlingStage(RequestPipeline<SdkHttpFullRequest, Response<OutputT>> requestPipeline) {
         this.requestPipeline = requestPipeline;
     }
 
-    public Response<OutputT> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public Response<OutputT> execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         try {
             return requestPipeline.execute(request, context);
         } catch (IOException ioe) {

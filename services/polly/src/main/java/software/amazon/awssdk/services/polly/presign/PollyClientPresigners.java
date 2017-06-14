@@ -19,14 +19,14 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import org.joda.time.DateTime;
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.Request;
+import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.SdkClock;
 import software.amazon.awssdk.auth.presign.PresignerFacade;
 import software.amazon.awssdk.auth.presign.PresignerParams;
-import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.http.DefaultSdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.services.polly.model.SynthesizeSpeechRequest;
 
 /**
@@ -52,47 +52,40 @@ public final class PollyClientPresigners {
      * {@value #SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} from generation time.
      */
     public URL getPresignedSynthesizeSpeechUrl(SynthesizeSpeechPresignRequest synthesizeSpeechPresignRequest) {
-        Request<?> request = newRequest(synthesizeSpeechPresignRequest.getSigningCredentials());
-        request.setEndpoint(endpoint);
-        request.setResourcePath("/v1/speech");
-        request.setHttpMethod(HttpMethodName.GET);
+        SdkHttpFullRequest.Builder request = DefaultSdkHttpFullRequest.builder()
+                .endpoint(endpoint)
+                .resourcePath("/v1/speech")
+                .httpMethod(SdkHttpMethod.GET);
         marshallIntoRequest(synthesizeSpeechPresignRequest, request);
         Date expirationDate = synthesizeSpeechPresignRequest.getExpirationDate() == null ?
                               getDefaultExpirationDate() : synthesizeSpeechPresignRequest.getExpirationDate();
-        return presignerFacade.presign(request, expirationDate);
+        return presignerFacade.presign(request.build(), RequestConfig.NO_OP, expirationDate);
     }
 
-    private void marshallIntoRequest(SynthesizeSpeechPresignRequest synthesizeSpeechRequest, Request<?> request) {
+    private void marshallIntoRequest(SynthesizeSpeechPresignRequest synthesizeSpeechRequest, SdkHttpFullRequest.Builder request) {
         if (synthesizeSpeechRequest.getText() != null) {
-            request.addParameter("Text", synthesizeSpeechRequest.getText());
+            request.queryParameter("Text", synthesizeSpeechRequest.getText());
         }
 
         if (synthesizeSpeechRequest.getTextType() != null) {
-            request.addParameter("TextType", synthesizeSpeechRequest.getTextType());
+            request.queryParameter("TextType", synthesizeSpeechRequest.getTextType());
         }
 
         if (synthesizeSpeechRequest.getVoiceId() != null) {
-            request.addParameter("VoiceId", synthesizeSpeechRequest.getVoiceId());
+            request.queryParameter("VoiceId", synthesizeSpeechRequest.getVoiceId());
         }
 
         if (synthesizeSpeechRequest.getSampleRate() != null) {
-            request.addParameter("SampleRate", synthesizeSpeechRequest.getSampleRate());
+            request.queryParameter("SampleRate", synthesizeSpeechRequest.getSampleRate());
         }
 
         if (synthesizeSpeechRequest.getOutputFormat() != null) {
-            request.addParameter("OutputFormat", synthesizeSpeechRequest.getOutputFormat());
+            request.queryParameter("OutputFormat", synthesizeSpeechRequest.getOutputFormat());
         }
 
         if (synthesizeSpeechRequest.getLexiconNames() != null) {
-            for (String lexiconName : synthesizeSpeechRequest.getLexiconNames()) {
-                request.addParameter("LexiconNames", lexiconName);
-            }
+            request.queryParameter("LexiconNames", synthesizeSpeechRequest.getLexiconNames());
         }
-    }
-
-    private Request<?> newRequest(AwsCredentialsProvider credentials) {
-        return new DefaultRequest(new PresignerFacade.PresigningRequest().withRequestCredentialsProvider(credentials),
-                                  "AmazonPolly");
     }
 
     private Date getDefaultExpirationDate() {

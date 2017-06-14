@@ -19,14 +19,14 @@ import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_CONTENT
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.ReadLimitInfo;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.AwsChunkedEncodingInputStream;
 import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
@@ -39,7 +39,9 @@ import software.amazon.awssdk.utils.BinaryUtils;
 public class AwsS3V4Signer extends Aws4Signer {
     private static final String CONTENT_SHA_256 = "STREAMING-AWS4-HMAC-SHA256-PAYLOAD";
 
-    /** Sent to S3 in lieu of a payload hash when unsigned payloads are enabled. */
+    /**
+     * Sent to S3 in lieu of a payload hash when unsigned payloads are enabled.
+     */
     private static final String UNSIGNED_PAYLOAD = "UNSIGNED-PAYLOAD";
 
     /**
@@ -55,17 +57,15 @@ public class AwsS3V4Signer extends Aws4Signer {
      * method will wrap the stream by SdkBufferedInputStream if it is not
      * mark-supported.
      */
-    static long getContentLength(SignableRequest<?> request) throws IOException {
+    static long getContentLength(SdkHttpFullRequest.Builder request) throws IOException {
         final InputStream content = request.getContent();
         if (!content.markSupported()) {
             throw new IllegalStateException("Bug: request input stream must have been made mark-and-resettable at this point");
         }
-        ReadLimitInfo info = request.getReadLimitInfo();
-        final int readLimit = info.getReadLimit();
         long contentLength = 0;
         byte[] tmp = new byte[4096];
         int read;
-        content.mark(readLimit);
+        content.mark(getReadLimit(request));
         while ((read = content.read(tmp)) != -1) {
             contentLength += read;
         }
@@ -81,7 +81,7 @@ public class AwsS3V4Signer extends Aws4Signer {
      * If necessary, creates a chunk-encoding wrapper on the request payload.
      */
     @Override
-    protected void processRequestPayload(SignableRequest<?> request, byte[] signature,
+    protected void processRequestPayload(SdkHttpFullRequest.Builder request, byte[] signature,
                                          byte[] signingKey, Aws4SignerRequestParams signerRequestParams) {
         if (useChunkEncoding(request)) {
             AwsChunkedEncodingInputStream chunkEncodededStream = new AwsChunkedEncodingInputStream(
@@ -89,12 +89,12 @@ public class AwsS3V4Signer extends Aws4Signer {
                     signerRequestParams.getFormattedSigningDateTime(),
                     signerRequestParams.getScope(),
                     BinaryUtils.toHex(signature), this);
-            request.setContent(chunkEncodededStream);
+            request.content(chunkEncodededStream);
         }
     }
 
     @Override
-    protected String calculateContentHashPresign(SignableRequest<?> request) {
+    protected String calculateContentHashPresign(SdkHttpFullRequest.Builder request) {
         return "UNSIGNED-PAYLOAD";
     }
 
@@ -104,15 +104,15 @@ public class AwsS3V4Signer extends Aws4Signer {
      * method which calculates the hash of the whole content for signing.
      */
     @Override
-    protected String calculateContentHash(SignableRequest<?> request) {
+    protected String calculateContentHash(SdkHttpFullRequest.Builder request) {
         // To be consistent with other service clients using sig-v4,
         // we just set the header as "required", and AWS4Signer.sign() will be
         // notified to pick up the header value returned by this method.
-        request.addHeader(X_AMZ_CONTENT_SHA256, "required");
+        request.header(X_AMZ_CONTENT_SHA256, "required");
 
         if (isPayloadSigningEnabled(request)) {
             if (useChunkEncoding(request)) {
-                final String contentLength = request.getHeaders().get(Headers.CONTENT_LENGTH);
+                final String contentLength = request.getFirstHeaderValue(Headers.CONTENT_LENGTH).orElse(null);
                 final long originalContentLength;
                 if (contentLength != null) {
                     originalContentLength = Long.parseLong(contentLength);
@@ -133,11 +133,11 @@ public class AwsS3V4Signer extends Aws4Signer {
                                 "Cannot get the content-length of the request content.", e);
                     }
                 }
-                request.addHeader("x-amz-decoded-content-length",
-                                  Long.toString(originalContentLength));
+                request.header("x-amz-decoded-content-length",
+                               Long.toString(originalContentLength));
                 // Make sure "Content-Length" header is not empty so that HttpClient
                 // won't cache the stream again to recover Content-Length
-                request.addHeader(Headers.CONTENT_LENGTH, Long.toString(
+                request.header(Headers.CONTENT_LENGTH, Long.toString(
                         AwsChunkedEncodingInputStream
                                 .calculateStreamContentLength(originalContentLength)));
                 return CONTENT_SHA_256;
@@ -152,50 +152,39 @@ public class AwsS3V4Signer extends Aws4Signer {
     /**
      * Determine whether to use aws-chunked for signing.
      */
-    private boolean useChunkEncoding(SignableRequest<?> request) {
+    private boolean useChunkEncoding(SdkHttpRequest request) {
+        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
         // If chunked encoding is explicitly disabled through client options return right here.
         // Chunked encoding only makes sense to do when the payload is signed
         if (!isPayloadSigningEnabled(request) || isChunkedEncodingDisabled(request)) {
             return false;
         }
-        if (request.getOriginalRequestObject() instanceof PutObjectRequest
-            || request.getOriginalRequestObject() instanceof UploadPartRequest) {
-            return true;
-        }
-        return false;
+        return originalRequest instanceof PutObjectRequest || originalRequest instanceof UploadPartRequest;
     }
 
     /**
      * @return True if chunked encoding has been explicitly disabled per the request. False
-     *         otherwise.
+     * otherwise.
      */
-    private boolean isChunkedEncodingDisabled(SignableRequest<?> signableRequest) {
-        if (signableRequest instanceof Request) {
-            Request<?> request = (Request<?>) signableRequest;
-            Boolean isChunkedEncodingDisabled = request
-                    .getHandlerContext(S3HandlerContextKeys.IS_CHUNKED_ENCODING_DISABLED);
-            return isChunkedEncodingDisabled != null && isChunkedEncodingDisabled;
-        }
-        return false;
+    private boolean isChunkedEncodingDisabled(SdkHttpRequest request) {
+        Boolean isChunkedEncodingDisabled = request
+                .handlerContext(S3HandlerContextKeys.IS_CHUNKED_ENCODING_DISABLED);
+        return isChunkedEncodingDisabled != null && isChunkedEncodingDisabled;
     }
 
     /**
      * @return True if payload signing is explicitly enabled.
      */
-    private boolean isPayloadSigningEnabled(SignableRequest<?> signableRequest) {
+    private boolean isPayloadSigningEnabled(SdkHttpRequest request) {
         /**
          * If we aren't using https we should always sign the payload.
          */
-        if (!signableRequest.getEndpoint().getScheme().equals("https")) {
+        if (!request.getEndpoint().getScheme().equals("https")) {
             return true;
         }
 
-        if (signableRequest instanceof Request) {
-            Request<?> request = (Request<?>) signableRequest;
-            Boolean isPayloadSigningEnabled = request
-                    .getHandlerContext(S3HandlerContextKeys.IS_PAYLOAD_SIGNING_ENABLED);
-            return isPayloadSigningEnabled != null && isPayloadSigningEnabled;
-        }
-        return false;
+        Boolean isPayloadSigningEnabled = request
+                .handlerContext(S3HandlerContextKeys.IS_PAYLOAD_SIGNING_ENABLED);
+        return isPayloadSigningEnabled != null && isPayloadSigningEnabled;
     }
 }

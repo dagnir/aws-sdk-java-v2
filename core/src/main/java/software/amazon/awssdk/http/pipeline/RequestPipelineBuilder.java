@@ -101,8 +101,8 @@ public class RequestPipelineBuilder<InputT, OutputT> {
      */
     @SuppressWarnings("unchecked")
     public static <InputT, OutputT>
-    Function<HttpClientDependencies, RequestPipeline<CompletableFuture<InputT>, CompletableFuture<OutputT>>>
-    async(Function<HttpClientDependencies, RequestPipeline<InputT, OutputT>> pipelineFactory) {
+            Function<HttpClientDependencies, RequestPipeline<CompletableFuture<InputT>, CompletableFuture<OutputT>>>
+            async(Function<HttpClientDependencies, RequestPipeline<InputT, OutputT>> pipelineFactory) {
         return httpClientDependencies -> new AsyncRequestPipelineWrapper(pipelineFactory.apply(httpClientDependencies));
     }
 
@@ -112,8 +112,8 @@ public class RequestPipelineBuilder<InputT, OutputT> {
      * @see #async(Supplier)
      */
     public static <InputT, OutputT>
-    Function<HttpClientDependencies, RequestPipeline<CompletableFuture<InputT>, CompletableFuture<OutputT>>>
-    async(Supplier<RequestPipeline<InputT, OutputT>> pipelineFactory) {
+            Function<HttpClientDependencies, RequestPipeline<CompletableFuture<InputT>, CompletableFuture<OutputT>>>
+            async(Supplier<RequestPipeline<InputT, OutputT>> pipelineFactory) {
         return async(toFunction(pipelineFactory));
     }
 

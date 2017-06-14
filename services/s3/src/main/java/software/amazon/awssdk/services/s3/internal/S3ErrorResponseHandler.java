@@ -28,9 +28,9 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.services.s3.Headers;
 import software.amazon.awssdk.services.s3.model.AmazonS3Exception;
 import software.amazon.awssdk.utils.IoUtils;
@@ -63,8 +63,6 @@ public class S3ErrorResponseHandler implements
         return exception;
     }
 
-    ;
-
     private AmazonServiceException createException(HttpResponse httpResponse) throws
                                                                               XMLStreamException {
         final InputStream is = httpResponse.getContent();
@@ -74,12 +72,11 @@ public class S3ErrorResponseHandler implements
          * a HEAD request, we don't receive a body, so we'll have to just return
          * what we can.
          */
-        if (is == null
-            || httpResponse.getRequest().getHttpMethod() == HttpMethodName.HEAD) {
+        if (is == null || httpResponse.getRequest().getHttpMethod() == SdkHttpMethod.HEAD) {
             return createExceptionFromHeaders(httpResponse, null);
         }
 
-        String content = null;
+        String content;
         try {
             content = IoUtils.toString(is);
         } catch (IOException ioe) {
@@ -204,7 +201,7 @@ public class S3ErrorResponseHandler implements
         return false;
     }
 
-    private static enum S3ErrorTags {
+    private enum S3ErrorTags {
         Error, Message, Code, RequestId, HostId
     }
 }

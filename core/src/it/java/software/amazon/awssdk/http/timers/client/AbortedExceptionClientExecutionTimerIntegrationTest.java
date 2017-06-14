@@ -16,7 +16,6 @@
 package software.amazon.awssdk.http.timers.client;
 
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -38,7 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
@@ -113,7 +112,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockSer
                                                                      .content(mockContent)
                                                                      .build());
         interruptCurrentThreadAfterDelay(1000);
-        List<RequestHandler2> requestHandlers = RequestHandlerTestUtils
+        List<RequestHandler> requestHandlers = RequestHandlerTestUtils
                 .buildRequestHandlerList(new SlowRequestHandler().withAfterResponseWaitInSeconds(10));
         try {
             requestBuilder()
@@ -131,7 +130,7 @@ public class AbortedExceptionClientExecutionTimerIntegrationTest extends MockSer
         return httpClient.requestExecutionBuilder().request(newGetRequest());
     }
 
-    private ExecutionContext withHandlers(List<RequestHandler2> requestHandlers) {
-        return ExecutionContext.builder().withRequestHandler2s(requestHandlers).build();
+    private ExecutionContext withHandlers(List<RequestHandler> requestHandlers) {
+        return ExecutionContext.builder().withRequestHandlers(requestHandlers).build();
     }
 }

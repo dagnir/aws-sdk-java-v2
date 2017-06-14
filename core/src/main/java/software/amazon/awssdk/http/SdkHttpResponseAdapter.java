@@ -20,7 +20,6 @@ import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 
 /**
@@ -31,7 +30,7 @@ import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 public class SdkHttpResponseAdapter {
 
     public static HttpResponse adapt(boolean calculateCrc32FromCompressedData,
-                                     Request<?> request,
+                                     SdkHttpFullRequest request,
                                      SdkHttpFullResponse awsHttpResponse) {
         final HttpResponse httpResponse = new HttpResponse(request);
         httpResponse.setStatusCode(awsHttpResponse.getStatusCode());

@@ -13,18 +13,14 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.logs.internal;
+package software.amazon.awssdk.http.pipeline;
 
-import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
-public class AcceptJsonRequestHandler extends RequestHandler {
-
-    @Override
-    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
-        return request.toBuilder()
-                      .header("Accept", "application/json")
-                      .build();
-    }
-
+/**
+ * Pipeline stage that takes in a mutable {@link SdkHttpFullRequest.Builder} and returns the same builder. Useful
+ * for long chains of mutating stages where going to and from builder each stage is inefficient.
+ */
+public interface MutableRequestToRequestPipeline
+        extends RequestPipeline<SdkHttpFullRequest.Builder, SdkHttpFullRequest.Builder> {
 }

@@ -27,10 +27,11 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
@@ -48,7 +49,7 @@ public class ClientHandlerImpl extends ClientHandler {
     private final AwsCredentialsProvider awsCredentialsProvider;
     private final SignerProvider signerProvider;
     private final URI endpoint;
-    private final List<RequestHandler2> requestHandler2s;
+    private final List<RequestHandler> requestHandlers;
     private final RequestMetricCollector clientLevelMetricCollector;
     private final AmazonHttpClient client;
 
@@ -56,7 +57,7 @@ public class ClientHandlerImpl extends ClientHandler {
         this.signerProvider = handlerParams.getClientParams().getSignerProvider();
         this.endpoint = handlerParams.getClientParams().getEndpoint();
         this.awsCredentialsProvider = handlerParams.getClientParams().getCredentialsProvider();
-        this.requestHandler2s = handlerParams.getClientParams().getRequestHandlers();
+        this.requestHandlers = handlerParams.getClientParams().getRequestHandlers();
         this.clientLevelMetricCollector = handlerParams.getClientParams().getRequestMetricCollector();
         this.client = buildHttpClient(handlerParams);
     }
@@ -116,7 +117,7 @@ public class ClientHandlerImpl extends ClientHandler {
     private ExecutionContext createExecutionContext(RequestConfig requestConfig) {
         boolean isMetricsEnabled = isRequestMetricsEnabled(requestConfig);
         return ExecutionContext.builder()
-                .withRequestHandler2s(requestHandler2s)
+                .withRequestHandlers(requestHandlers)
                 .withUseRequestMetrics(isMetricsEnabled)
                 .withSignerProvider(signerProvider)
                 .build();
@@ -175,7 +176,7 @@ public class ClientHandlerImpl extends ClientHandler {
     @SuppressWarnings("unchecked")
     protected final <T extends AmazonWebServiceRequest> T beforeMarshalling(T request) {
         T local = request;
-        for (RequestHandler2 handler : requestHandler2s) {
+        for (RequestHandler handler : requestHandlers) {
             local = (T) handler.beforeMarshalling(local);
         }
         return local;
@@ -209,7 +210,7 @@ public class ClientHandlerImpl extends ClientHandler {
                                                          HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
         request.setEndpoint(endpoint);
         return client.requestExecutionBuilder()
-                .request(request)
+                .request(SdkHttpFullRequestAdapter.toSdkRequest(request))
                 .requestConfig(requestConfig)
                 .executionContext(executionContext)
                 .errorResponseHandler(errorResponseHandler)

@@ -25,17 +25,16 @@ import static org.mockito.Mockito.when;
 
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
-import java.util.zip.CRC32;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.config.ClientOverrideConfiguration;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListTablesResponse;
@@ -47,11 +46,11 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
     private static DynamoDBClient ddb;
 
-    private RequestHandler2 mockRequestHandler;
+    private RequestHandler mockRequestHandler;
 
     @Before
     public void setupFixture() {
-        mockRequestHandler = spy(new RequestHandler2() {
+        mockRequestHandler = spy(new RequestHandler() {
         });
         ddb = DynamoDBClient.builder()
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
@@ -69,9 +68,9 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
         ddb.listTables(ListTablesRequest.builder().build());
 
         verify(mockRequestHandler).beforeMarshalling(any(AmazonWebServiceRequest.class));
-        verify(mockRequestHandler).beforeRequest(any(Request.class));
-        verify(mockRequestHandler).beforeUnmarshalling(any(Request.class), any(HttpResponse.class));
-        verify(mockRequestHandler).afterResponse(any(Request.class), any(Response.class));
+        verify(mockRequestHandler).beforeRequest(any(SdkHttpFullRequest.class));
+        verify(mockRequestHandler).beforeUnmarshalling(any(SdkHttpFullRequest.class), any(HttpResponse.class));
+        verify(mockRequestHandler).afterResponse(any(SdkHttpFullRequest.class), any(Response.class));
     }
 
     @Test
@@ -97,8 +96,8 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
 
         // Before callbacks should always be called
         verify(mockRequestHandler).beforeMarshalling(any(AmazonWebServiceRequest.class));
-        verify(mockRequestHandler).beforeRequest(any(Request.class));
-        verify(mockRequestHandler).afterError(any(Request.class), any(Response.class), any(Exception.class));
+        verify(mockRequestHandler).beforeRequest(any(SdkHttpFullRequest.class));
+        verify(mockRequestHandler).afterError(any(SdkHttpFullRequest.class), any(Response.class), any(Exception.class));
     }
 
     /**
@@ -109,9 +108,9 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
     public void beforeUnmarshalling_ModificationsToHttpResponse_AreReflectedInUnmarshalling() {
         final String injectedTableName = "SomeInjectedTableName";
         DynamoDBClient ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
-        RequestHandler2 requestHandler = new RequestHandler2() {
+        RequestHandler requestHandler = new RequestHandler() {
             @Override
-            public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
+            public HttpResponse beforeUnmarshalling(SdkHttpFullRequest request, HttpResponse origHttpResponse) {
                 final HttpResponse newHttpResponse = new HttpResponse(origHttpResponse.getRequest());
                 // TODO we should be careful about letting customers replace the content in V2. We either need
                 // to hang on to the original to ensure it's properly closed or just not let them modify it.
@@ -128,12 +127,6 @@ public class RequestHandlerIntegrationTest extends AwsIntegrationTestBase {
                 // Replacing the content requires updating the checksum and content length
                 newHttpResponse.addHeader("Content-Length", String.valueOf(newContent.length()));
                 return newHttpResponse;
-            }
-
-            private long getCrc32Checksum(String newContent) {
-                final CRC32 crc32 = new CRC32();
-                crc32.update(newContent.getBytes());
-                return crc32.getValue();
             }
         };
         ddb = DynamoDBClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)

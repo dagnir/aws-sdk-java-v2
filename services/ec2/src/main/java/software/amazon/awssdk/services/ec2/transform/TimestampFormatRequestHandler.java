@@ -15,14 +15,15 @@
 
 package software.amazon.awssdk.services.ec2.transform;
 
-import java.util.Arrays;
+import static java.util.Collections.singletonList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.ec2.model.DescribeSpotFleetRequestHistoryRequest;
 import software.amazon.awssdk.services.ec2.model.RequestSpotFleetRequest;
 
@@ -31,26 +32,25 @@ import software.amazon.awssdk.services.ec2.model.RequestSpotFleetRequest;
  * RequestSpotFleet and DescribeSpotFleetRequestHistory, which don't expect
  * timestamps to be so precise.
  */
-public final class TimestampFormatRequestHandler extends RequestHandler2 {
+public final class TimestampFormatRequestHandler extends RequestHandler {
 
     private static final Pattern PATTERN = Pattern.compile("\\.\\d\\d\\dZ");
 
     private static final String START_TIME = "StartTime";
     private static final String VALID_FROM = "SpotFleetRequestConfig.ValidFrom";
-    private static final String VALID_UNTIL =
-            "SpotFleetRequestConfig.ValidUntil";
+    private static final String VALID_UNTIL = "SpotFleetRequestConfig.ValidUntil";
 
     @Override
-    public void beforeRequest(Request<?> request) {
-        AmazonWebServiceRequest original = request.getOriginalRequest();
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        Object original = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
         if (original instanceof DescribeSpotFleetRequestHistoryRequest) {
-
             Map<String, List<String>> params = request.getParameters();
             List<String> startTime = params.get(START_TIME);
 
             if (startTime != null && !startTime.isEmpty()) {
-                params.put(START_TIME,
-                           Arrays.asList(sanitize(startTime.get(0))));
+                return request.toBuilder()
+                              .queryParameter(START_TIME, singletonList(sanitize(startTime.get(0))))
+                              .build();
             }
 
         } else if (original instanceof RequestSpotFleetRequest) {
@@ -60,16 +60,18 @@ public final class TimestampFormatRequestHandler extends RequestHandler2 {
             List<String> validFrom = params.get(VALID_FROM);
             List<String> validUntil = params.get(VALID_UNTIL);
 
-            if (validFrom != null && !validFrom.isEmpty()) {
-                params.put(VALID_FROM,
-                           Arrays.asList(sanitize(validFrom.get(0))));
-            }
-            if (validUntil != null && !validUntil.isEmpty()) {
-                params.put(VALID_UNTIL,
-                           Arrays.asList(sanitize(validUntil.get(0))));
-            }
+            return request.toBuilder().apply(builder -> {
+                if (validFrom != null && !validFrom.isEmpty()) {
+                    builder.queryParameter(VALID_FROM, singletonList(sanitize(validFrom.get(0))));
+                }
+                if (validUntil != null && !validUntil.isEmpty()) {
+                    builder.queryParameter(VALID_UNTIL, singletonList(sanitize(validUntil.get(0))));
+                }
+                return builder;
+            }).build();
 
         }
+        return request;
     }
 
     private String sanitize(String input) {
@@ -77,12 +79,12 @@ public final class TimestampFormatRequestHandler extends RequestHandler2 {
     }
 
     @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
+    public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
     }
 
     @Override
     public void afterError(
-            Request<?> request,
+            SdkHttpFullRequest request,
             Response<?> response,
             Exception e) {
     }

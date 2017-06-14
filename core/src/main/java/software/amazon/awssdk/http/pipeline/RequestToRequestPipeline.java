@@ -15,7 +15,10 @@
 
 package software.amazon.awssdk.http.pipeline;
 
-import software.amazon.awssdk.Request;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
-public interface RequestToRequestPipeline extends RequestPipeline<Request<?>, Request<?>> {
+/**
+ * Pipeline stage that is a transformation on an immutable {@link SdkHttpFullRequest}.
+ */
+public interface RequestToRequestPipeline extends RequestPipeline<SdkHttpFullRequest, SdkHttpFullRequest> {
 }

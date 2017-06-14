@@ -18,9 +18,9 @@ package software.amazon.awssdk.http.pipeline.stages;
 import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.http.pipeline.RequestToResponsePipeline;
 
@@ -34,14 +34,14 @@ public class LastResetInputStreamStage<OutputT> implements RequestToResponsePipe
 
     private static final Log log = LogFactory.getLog(LastResetInputStreamStage.class);
 
-    private final RequestPipeline<Request<?>, Response<OutputT>> wrapped;
+    private final RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped;
 
-    public LastResetInputStreamStage(RequestPipeline<Request<?>, Response<OutputT>> wrapped) {
+    public LastResetInputStreamStage(RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped) {
         this.wrapped = wrapped;
     }
 
     @Override
-    public Response<OutputT> execute(Request<?> input, RequestExecutionContext context) throws Exception {
+    public Response<OutputT> execute(SdkHttpFullRequest input, RequestExecutionContext context) throws Exception {
         try {
             return wrapped.execute(input, context);
         } catch (RuntimeException e) {
@@ -62,7 +62,7 @@ public class LastResetInputStreamStage<OutputT> implements RequestToResponsePipe
      * @param t the failure
      * @return the failure as given
      */
-    private <T extends Throwable> T lastReset(Request<?> request, final T t) {
+    private <T extends Throwable> T lastReset(SdkHttpFullRequest request, final T t) {
         try {
             InputStream content = request.getContent();
             if (content != null && content.markSupported()) {

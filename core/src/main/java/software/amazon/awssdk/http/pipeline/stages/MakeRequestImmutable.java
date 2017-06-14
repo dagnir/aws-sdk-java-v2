@@ -13,18 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.services.logs.internal;
+package software.amazon.awssdk.http.pipeline.stages;
 
-import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.pipeline.RequestPipeline;
 
-public class AcceptJsonRequestHandler extends RequestHandler {
-
+public class MakeRequestImmutable implements RequestPipeline<SdkHttpFullRequest.Builder, SdkHttpFullRequest> {
     @Override
-    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
-        return request.toBuilder()
-                      .header("Accept", "application/json")
-                      .build();
+    public SdkHttpFullRequest execute(SdkHttpFullRequest.Builder input, RequestExecutionContext context) throws Exception {
+        return input.build();
     }
-
 }

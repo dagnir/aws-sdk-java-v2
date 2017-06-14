@@ -20,7 +20,7 @@ import java.util.List;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicyAdapter;
@@ -40,7 +40,7 @@ public abstract class AwsSyncClientParams {
 
     public abstract RequestMetricCollector getRequestMetricCollector();
 
-    public abstract List<RequestHandler2> getRequestHandlers();
+    public abstract List<RequestHandler> getRequestHandlers();
 
     public abstract SdkHttpClient sdkHttpClient();
 

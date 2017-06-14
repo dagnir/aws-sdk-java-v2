@@ -16,7 +16,6 @@
 package software.amazon.awssdk.auth;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -28,15 +27,18 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.ReadLimitInfo;
+import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SdkGlobalTime;
-import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.event.ProgressInputStream;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.runtime.io.SdkDigestInputStream;
 import software.amazon.awssdk.util.SdkHttpUtils;
 import software.amazon.awssdk.utils.Base64Utils;
@@ -105,8 +107,8 @@ public abstract class AbstractAwsSigner implements Signer {
      * Computes an RFC 2104-compliant HMAC signature for an array of bytes and
      * returns the result as a Base64 encoded string.
      */
-    protected String signAndBase64Encode(byte[] data, String key,
-                                         SigningAlgorithm algorithm) throws SdkClientException {
+    private String signAndBase64Encode(byte[] data, String key,
+                                       SigningAlgorithm algorithm) throws SdkClientException {
         try {
             byte[] signature = sign(data, key.getBytes(StandardCharsets.UTF_8), algorithm);
             return Base64Utils.encodeAsString(signature);
@@ -155,13 +157,9 @@ public abstract class AbstractAwsSigner implements Signer {
      * Hashes the string contents (assumed to be UTF-8) using the SHA-256
      * algorithm.
      *
-     * @param text
-     *            The string to hash.
-     *
+     * @param text The string to hash.
      * @return The hashed bytes from the specified string.
-     *
-     * @throws SdkClientException
-     *             If the hash cannot be computed.
+     * @throws SdkClientException If the hash cannot be computed.
      */
     public byte[] hash(String text) throws SdkClientException {
         return AbstractAwsSigner.doHash(text);
@@ -188,13 +186,9 @@ public abstract class AbstractAwsSigner implements Signer {
     /**
      * Hashes the binary data using the SHA-256 algorithm.
      *
-     * @param data
-     *            The binary data to hash.
-     *
+     * @param data The binary data to hash.
      * @return The hashed bytes from the specified data.
-     *
-     * @throws SdkClientException
-     *             If the hash cannot be computed.
+     * @throws SdkClientException If the hash cannot be computed.
      */
     public byte[] hash(byte[] data) throws SdkClientException {
         try {
@@ -216,9 +210,7 @@ public abstract class AbstractAwsSigner implements Signer {
      * string parameters, then URI encoding both the key and value and then
      * joining them, in order, separating key value pairs with an '&'.
      *
-     * @param parameters
-     *            The query string parameters to be canonicalized.
-     *
+     * @param parameters The query string parameters to be canonicalized.
      * @return A canonicalized form for the specified query string parameters.
      */
     protected String getCanonicalizedQueryString(Map<String, List<String>> parameters) {
@@ -258,75 +250,23 @@ public abstract class AbstractAwsSigner implements Signer {
         return result.toString();
     }
 
-    /**
-     * Returns the request's payload as a String.
-     *
-     * @param request
-     *            The request
-     * @return The data from the request's payload, as a string.
-     */
-    protected String getRequestPayload(SignableRequest<?> request) {
-        return newString(getBinaryRequestPayload(request));
+    protected static int getReadLimit(SdkHttpRequest request) {
+        return Optional.ofNullable(request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG))
+                       .flatMap(c -> Optional.ofNullable(c.getRequestClientOptions()))
+                       .map(RequestClientOptions::getReadLimit)
+                       .orElse(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE);
     }
 
-    /**
-     * Returns the request's payload contents as a String, without processing
-     * any query string params (i.e. no form encoding for query params).
-     *
-     * @param request
-     *            The request
-     * @return the request's payload contents as a String, not including any
-     *         form encoding of query string params.
-     */
-    protected String getRequestPayloadWithoutQueryParams(SignableRequest<?> request) {
-        return newString(getBinaryRequestPayload(request));
-    }
-
-    /**
-     * Returns the request's payload contents as binary data, without processing
-     * any query string params (i.e. no form encoding for query params).
-     *
-     * @param request
-     *            The request
-     * @return The request's payload contents as binary data, not including any
-     *         form encoding of query string params.
-     */
-    protected byte[] getBinaryRequestPayload(SignableRequest<?> request) {
-        InputStream content = getBinaryRequestPayloadStream(request);
-
+    protected InputStream getBinaryRequestPayloadStream(InputStream wrapped) {
         try {
-            ReadLimitInfo info = request.getReadLimitInfo();
-            content.mark(info == null ? -1 : info.getReadLimit());
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024 * 5];
-            while (true) {
-                int bytesRead = content.read(buffer);
-                if (bytesRead == -1) {
-                    break;
-                }
-
-                byteArrayOutputStream.write(buffer, 0, bytesRead);
-            }
-
-            byteArrayOutputStream.close();
-            content.reset();
-
-            return byteArrayOutputStream.toByteArray();
-        } catch (Exception e) {
-            throw new SdkClientException("Unable to read request payload to sign request: " + e.getMessage(), e);
-        }
-    }
-
-    protected InputStream getBinaryRequestPayloadStream(SignableRequest<?> request) {
-        try {
-            InputStream is = request.getContentUnwrapped();
-            if (is == null) {
+            InputStream unwrapped = getContentUnwrapped(wrapped);
+            if (unwrapped == null) {
                 return new ByteArrayInputStream(new byte[0]);
             }
-            if (!is.markSupported()) {
+            if (!unwrapped.markSupported()) {
                 throw new SdkClientException("Unable to read request payload to sign request.");
             }
-            return is;
+            return unwrapped;
         } catch (AmazonClientException e) {
             throw e;
         } catch (Exception e) {
@@ -334,8 +274,17 @@ public abstract class AbstractAwsSigner implements Signer {
         }
     }
 
-    protected String getCanonicalizedResourcePath(String resourcePath) {
-        return getCanonicalizedResourcePath(resourcePath, true);
+    private InputStream getContentUnwrapped(InputStream is) {
+        if (is == null) {
+            return null;
+        }
+        // We want to disable the progress reporting when the stream is
+        // consumed for signing purpose.
+        while (is instanceof ProgressInputStream) {
+            ProgressInputStream pris = (ProgressInputStream) is;
+            is = pris.getWrappedInputStream();
+        }
+        return is;
     }
 
     protected String getCanonicalizedResourcePath(String resourcePath, boolean urlEncode) {
@@ -390,46 +339,23 @@ public abstract class AbstractAwsSigner implements Signer {
     }
 
     /**
-     * Safely converts a UTF-8 encoded byte array into a String.
-     *
-     * @param bytes UTF-8 encoded binary character data.
-     *
-     * @return The converted String object.
-     */
-    protected String newString(byte[] bytes) {
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
-
-    /**
      * Returns the current time minus the given offset in seconds.
      * The intent is to adjust the current time in the running JVM to the
      * corresponding wall clock time at AWS for request signing purposes.
      *
-     * @param offsetInSeconds
-     *            offset in seconds
+     * @param offsetInSeconds offset in seconds
      */
     protected Date getSignatureDate(int offsetInSeconds) {
         return new Date(System.currentTimeMillis() - (1000L * offsetInSeconds));
     }
 
     /**
-     * Returns the time offset in seconds.
-     */
-    @Deprecated
-    protected int getTimeOffset(SignableRequest<?> request) {
-        final int globleOffset = SdkGlobalTime.getGlobalTimeOffset();
-        return globleOffset == 0 ? request.getTimeOffset() : globleOffset;
-    }
-
-    /**
      * Adds session credentials to the request given.
      *
-     * @param request
-     *            The request to add session credentials information to
-     * @param credentials
-     *            The session credentials to add to the request
+     * @param mutableRequest The request to add session credentials information to
+     * @param credentials    The session credentials to add to the request
      */
-    protected abstract void addSessionCredentials(SignableRequest<?> request,
+    protected abstract void addSessionCredentials(SdkHttpFullRequest.Builder mutableRequest,
                                                   AwsSessionCredentials credentials);
 
 }

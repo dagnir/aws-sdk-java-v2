@@ -24,7 +24,6 @@ import software.amazon.awssdk.internal.config.SignerConfig;
 public final class SignerFactory {
 
     private static final String QUERY_STRING_SIGNER = "QueryStringSignerType";
-    private static final String VERSION_THREE_SIGNER = "AWS3SignerType";
     private static final String VERSION_FOUR_SIGNER = "AWS4SignerType";
     private static final String NO_OP_SIGNER = "NoOpSignerType";
 
@@ -34,7 +33,6 @@ public final class SignerFactory {
     static {
         // Register the standard signer types.
         SIGNERS.put(QUERY_STRING_SIGNER, QueryStringSigner.class);
-        SIGNERS.put(VERSION_THREE_SIGNER, Aws3Signer.class);
         SIGNERS.put(VERSION_FOUR_SIGNER, Aws4Signer.class);
         SIGNERS.put(NO_OP_SIGNER, NoOpSigner.class);
     }

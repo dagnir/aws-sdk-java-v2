@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.util.Date;
-
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
 /**

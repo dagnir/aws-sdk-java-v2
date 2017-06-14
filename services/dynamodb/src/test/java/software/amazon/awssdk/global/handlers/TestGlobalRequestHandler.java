@@ -16,9 +16,9 @@
 package software.amazon.awssdk.global.handlers;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 
-public class TestGlobalRequestHandler extends RequestHandler2 {
+public class TestGlobalRequestHandler extends RequestHandler {
 
     private static boolean wasCalled = false;
 

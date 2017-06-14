@@ -136,11 +136,12 @@ public class HandleResponseStage<OutputT> implements RequestPipeline<HttpRespons
      */
     private void closeInputStreamIfNeeded(HttpResponse httpResponse,
                                           boolean didRequestFail) throws IOException {
-        final Optional<InputStream> inputStreamOptional = Optional.ofNullable(httpResponse)
-                // If no content no need to close
-                .map(HttpResponse::getContent)
-                // Always close on failed requests. Close on successful unless streaming operation.
-                .filter(i -> didRequestFail || !successResponseHandler.needsConnectionLeftOpen());
+        final Optional<InputStream> inputStreamOptional =
+                Optional.ofNullable(httpResponse)
+                        // If no content no need to close
+                        .map(HttpResponse::getContent)
+                        // Always close on failed requests. Close on successful unless streaming operation.
+                        .filter(i -> didRequestFail || !successResponseHandler.needsConnectionLeftOpen());
         if (inputStreamOptional.isPresent()) {
             inputStreamOptional.get().close();
         }

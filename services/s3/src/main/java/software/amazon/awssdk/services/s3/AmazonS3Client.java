@@ -80,7 +80,6 @@ import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressInputStream;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.handlers.HandlerChainFactory;
-import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.http.HttpResponseHandler;
@@ -119,10 +118,8 @@ import software.amazon.awssdk.services.s3.internal.ResponseHeaderHandlerChain;
 import software.amazon.awssdk.services.s3.internal.S3ErrorResponseHandler;
 import software.amazon.awssdk.services.s3.internal.S3MetadataResponseHandler;
 import software.amazon.awssdk.services.s3.internal.S3ObjectResponseHandler;
-import software.amazon.awssdk.services.s3.internal.S3QueryStringSigner;
 import software.amazon.awssdk.services.s3.internal.S3RequestEndpointResolver;
 import software.amazon.awssdk.services.s3.internal.S3RequesterChargedHeaderHandler;
-import software.amazon.awssdk.services.s3.internal.S3Signer;
 import software.amazon.awssdk.services.s3.internal.S3StringResponseHandler;
 import software.amazon.awssdk.services.s3.internal.S3VersionHeaderHandler;
 import software.amazon.awssdk.services.s3.internal.S3XmlResponseHandler;
@@ -354,7 +351,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         AwsSdkMetrics.addAll(Arrays.asList(S3ServiceMetric.values()));
 
         // Register S3-specific signers.
-        SignerFactory.registerSigner(S3_SIGNER, S3Signer.class);
         SignerFactory.registerSigner(S3_V4_SIGNER, AwsS3V4Signer.class);
     }
 
@@ -970,11 +966,9 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         setEndpoint(Constants.S3_HOSTNAME);
 
         HandlerChainFactory chainFactory = new HandlerChainFactory();
-        requestHandler2s.addAll(chainFactory.newRequestHandlerChain(
-                "/software/amazon/awssdk/services/s3/request.handlers"));
-        requestHandler2s.addAll(chainFactory.newRequestHandler2Chain(
+        requestHandlers.addAll(chainFactory.newRequestHandlerChain(
                 "/software/amazon/awssdk/services/s3/request.handler2s"));
-        requestHandler2s.addAll(chainFactory.getGlobalHandlers());
+        requestHandlers.addAll(chainFactory.getGlobalHandlers());
     }
 
     /**
@@ -3138,7 +3132,8 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             AwsCredentials credentials =
                     CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
                                    .getCredentials();
-            ((Presigner) signer).presignRequest(request, credentials, req.getExpiration());
+            // TODO
+            //            ((Presigner) signer).presignRequest(request, credentials, req.getExpiration());
         } else {
             // Otherwise use the default presigning method, which is hardcoded
             // to use QueryStringSigner.
@@ -3756,7 +3751,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
                     resolveRequestEndpoint(request, bucketName, key, endpoint);
                     return updateSigV4SignerWithRegion((AwsS3V4Signer) signer, region);
                 } else if (request.getOriginalRequest() instanceof GeneratePresignedUrlRequest) {
-                    return createSigV2Signer(request, bucketName, key);
+                    return updateSigV4SignerWithRegion((AwsS3V4Signer) signer, "us-east-1");
                 } else if (isAdditionalHeadRequestToFindRegion) {
                     return updateSigV4SignerWithRegion((AwsS3V4Signer) signer, "us-east-1");
                 }
@@ -3768,24 +3763,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             }
         }
 
-        if (signer instanceof S3Signer) {
-            // The old S3Signer needs a method and path passed to its
-            // constructor; if that's what we should use, getSigner()
-            // will return a dummy instance and we need to create a
-            // new one with the appropriate values for this request.
-            return createSigV2Signer(request, bucketName, key);
-        }
-
         return signer;
-    }
-
-    private S3Signer createSigV2Signer(final Request<?> request,
-                                       final String bucketName,
-                                       final String key) {
-        String resourcePath = "/" +
-                              ((bucketName != null) ? bucketName + "/" : "") +
-                              ((key != null) ? key : "");
-        return new S3Signer(request.getHttpMethod().toString(), resourcePath);
     }
 
     private AwsS3V4Signer updateSigV4SignerWithRegion(final AwsS3V4Signer v4Signer, String region) {
@@ -3857,41 +3835,45 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
      */
     protected <T> void presignRequest(Request<T> request, HttpMethod methodName,
                                       String bucketName, String key, Date expiration, String subResource) {
-        // Run any additional request handlers if present
-        beforeRequest(request);
-
-        String resourcePath = "/" +
-                              ((bucketName != null) ? bucketName + "/" : "") +
-                              ((key != null) ? SdkHttpUtils.urlEncode(key, true) : "") +
-                              ((subResource != null) ? "?" + subResource : "");
-
-        // Make sure the resource-path for signing does not contain
-        // any consecutive "/"s.
-        // Note that we should also follow the same rule to escape
-        // consecutive "/"s when generating the presigned URL.
-        // See ServiceUtils#convertRequestToUrl(...)
-        resourcePath = resourcePath.replaceAll("(?<=/)/", "%2F");
-
-        new S3QueryStringSigner(methodName.toString(), resourcePath, expiration)
-                .sign(request, CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
-                                              .getCredentials());
-
-        // The Amazon S3 DevPay token header is a special exception and can be safely moved
-        // from the request's headers into the query string to ensure that it travels along
-        // with the pre-signed URL when it's sent back to Amazon S3.
-        if (request.getHeaders().containsKey(Headers.SECURITY_TOKEN)) {
-            String value = request.getHeaders().get(Headers.SECURITY_TOKEN);
-            request.addParameter(Headers.SECURITY_TOKEN, value);
-            request.getHeaders().remove(Headers.SECURITY_TOKEN);
-        }
+        //        // Run any additional request handlers if present
+        //        beforeRequest(request);
+        //
+        //        String resourcePath = "/" +
+        //                              ((bucketName != null) ? bucketName + "/" : "") +
+        //                              ((key != null) ? SdkHttpUtils.urlEncode(key, true) : "") +
+        //                              ((subResource != null) ? "?" + subResource : "");
+        //
+        //        // Make sure the resource-path for signing does not contain
+        //        // any consecutive "/"s.
+        //        // Note that we should also follow the same rule to escape
+        //        // consecutive "/"s when generating the presigned URL.
+        //        // See ServiceUtils#convertRequestToUrl(...)
+        //        resourcePath = resourcePath.replaceAll("(?<=/)/", "%2F");
+        //
+        //        AwsS3V4Signer signer =new AwsS3V4Signer();
+        //        signer.setServiceName(S3_SERVICE_NAME);
+        //        signer.setRegionName(getSignerRegion());
+        //        signer.sign(request,
+        //                    CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), awsCredentialsProvider)
+        //                                              .getCredentials());
+        //
+        //        // The Amazon S3 DevPay token header is a special exception and can be safely moved
+        //        // from the request's headers into the query string to ensure that it travels along
+        //        // with the pre-signed URL when it's sent back to Amazon S3.
+        //        if (request.getHeaders().containsKey(Headers.SECURITY_TOKEN)) {
+        //            String value = request.getHeaders().get(Headers.SECURITY_TOKEN);
+        //            request.addParameter(Headers.SECURITY_TOKEN, value);
+        //            request.getHeaders().remove(Headers.SECURITY_TOKEN);
+        //        }
     }
 
     private <T> void beforeRequest(Request<T> request) {
-        if (requestHandler2s != null) {
-            for (RequestHandler2 requestHandler2 : requestHandler2s) {
-                requestHandler2.beforeRequest(request);
-            }
-        }
+        // TODO
+        //        if (requestHandlers != null) {
+        //            for (RequestHandler2 requestHandler2 : requestHandlers) {
+        //                requestHandler2.beforeRequest(request);
+        //            }
+        //        }
     }
 
     /**

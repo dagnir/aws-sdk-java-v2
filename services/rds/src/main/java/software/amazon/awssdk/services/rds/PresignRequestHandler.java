@@ -16,29 +16,29 @@
 package software.amazon.awssdk.services.rds;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Date;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Protocol;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 /**
- * Abstract pre-sign handler that follows the pre-signing scheme outlined in the 'RDS Presigned URL for Cross-Region Copying' SEP.
+ * Abstract pre-sign handler that follows the pre-signing scheme outlined in the 'RDS Presigned URL for Cross-Region Copying'
+ * SEP.
  *
  * @param <T> The request type.
  */
-abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends RequestHandler2 {
+abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends RequestHandler {
     private static final String SERVICE_NAME = "rds";
     private static final String PARAM_SOURCE_REGION = "SourceRegion";
     private static final String PARAM_DESTINATION_REGION = "DestinationRegion";
@@ -47,11 +47,9 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
     protected interface PresignableRequest {
         void setPreSignedUrl(String preSignedUrl);
 
-        String getPreSignedUrl();
-
         String getSourceRegion();
 
-        Request<?> marshall();
+        SdkHttpFullRequest marshall();
     }
 
     private final Class<T> requestClassToPreSign;
@@ -72,51 +70,57 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
     }
 
     @Override
-    public void beforeRequest(Request<?> request) {
-        if (!requestClassToPreSign.isInstance(request.getOriginalRequest())) {
-            return;
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
+        if (!requestClassToPreSign.isInstance(originalRequest)) {
+            return request;
         }
 
         if (request.getParameters().containsKey(PARAM_PRESIGNED_URL)) {
-            return;
+            return request;
         }
 
-        PresignableRequest presignableRequest = adaptRequest(requestClassToPreSign.cast(
-                request.getOriginalRequest()));
+        PresignableRequest presignableRequest = adaptRequest(requestClassToPreSign.cast(originalRequest));
 
         String sourceRegion = presignableRequest.getSourceRegion();
         if (sourceRegion == null) {
-            return;
+            return request;
         }
 
-        String destinationRegion = AwsHostNameUtils.parseRegion(request.getEndpoint().getHost(),
-                SERVICE_NAME);
+        String destinationRegion = AwsHostNameUtils.parseRegion(request.getEndpoint().getHost(), SERVICE_NAME);
 
-        Request<?> requestToPresign = presignableRequest.marshall();
-        requestToPresign.getParameters().remove(PARAM_SOURCE_REGION);
-        requestToPresign.getParameters().put(PARAM_DESTINATION_REGION, Arrays.asList(destinationRegion));
-        requestToPresign.setEndpoint(createEndpoint(sourceRegion, SERVICE_NAME));
-        requestToPresign.setHttpMethod(HttpMethodName.GET);
-
-        AwsCredentials credentials = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS);
-
-        requestToPresign = presignRequest(requestToPresign, credentials, sourceRegion);
-
-        final String presignedUrl = generateUrl(requestToPresign);
-
+        AwsCredentials credentials = request.handlerContext(AwsHandlerKeys.AWS_CREDENTIALS);
+        final String presignedUrl = generatePresignedUrl(presignableRequest, sourceRegion, destinationRegion, credentials);
         presignableRequest.setPreSignedUrl(presignedUrl);
 
-        request.addParameter(PARAM_PRESIGNED_URL, presignedUrl);
-        // Remove the unmodeled params to stop them getting onto the wire
-        request.getParameters().remove(PARAM_SOURCE_REGION);
+        return request.toBuilder()
+                      .queryParameter(PARAM_PRESIGNED_URL, presignedUrl)
+                      .removeQueryParameter(PARAM_SOURCE_REGION)
+                      .endpoint(createEndpoint(sourceRegion, SERVICE_NAME))
+                      .httpMethod(SdkHttpMethod.GET)
+                      .build();
+    }
+
+    private String generatePresignedUrl(PresignableRequest presignableRequest, String sourceRegion,
+                                        String destinationRegion, AwsCredentials credentials) {
+        SdkHttpFullRequest presignedRequest = presignRequest(
+                getRequestToPresign(presignableRequest, destinationRegion), credentials, sourceRegion);
+        return generateUrl(presignedRequest);
+    }
+
+    private SdkHttpFullRequest getRequestToPresign(PresignableRequest presignableRequest, String destinationRegion) {
+        return presignableRequest.marshall()
+                                 .toBuilder()
+                                 .removeQueryParameter(PARAM_SOURCE_REGION)
+                                 .queryParameter(PARAM_DESTINATION_REGION, destinationRegion)
+                                 .build();
     }
 
     protected abstract PresignableRequest adaptRequest(T originalRequest);
 
-    private Request<?> presignRequest(Request<?> request, AwsCredentials credentials, String signingRegion) {
+    private SdkHttpFullRequest presignRequest(SdkHttpFullRequest request, AwsCredentials credentials, String signingRegion) {
         Aws4Signer signer = createNewSignerWithRegion(signingRegion);
-        signer.presignRequest(request, credentials, null);
-        return request;
+        return signer.presignRequest(request, credentials, null);
     }
 
     private Aws4Signer createNewSignerWithRegion(String signingRegion) {
@@ -132,7 +136,7 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
 
         if (region == null) {
             throw new AmazonClientException("{" + serviceName + ", " + regionName + "} was not "
-                    + "found in region metadata. Update to latest version of SDK and try again.");
+                                            + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
         return new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
@@ -140,30 +144,16 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
                 .getServiceEndpoint();
     }
 
-    private String generateUrl(Request<?> request) {
+    private String generateUrl(SdkHttpFullRequest request) {
         URI endpoint = request.getEndpoint();
-        String uri = SdkHttpUtils.appendUri(endpoint.toString(),
-                request.getResourcePath(), true);
+        String uri = SdkHttpUtils.appendUri(endpoint.toString(), request.getResourcePath(), true);
         String encodedParams = SdkHttpUtils.encodeParameters(request);
 
-        if (encodedParams != null && !encodedParams.isEmpty()) {
+        if (!StringUtils.isEmpty(encodedParams)) {
             uri += "?" + encodedParams;
         }
 
         return uri;
 
-    }
-
-    /** Returns the endpoint as a URI. */
-    private static URI toUri(String endpoint) throws IllegalArgumentException {
-        if (!endpoint.contains("://")) {
-            endpoint = Protocol.HTTPS + "://" + endpoint;
-        }
-
-        try {
-            return new URI(endpoint);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 }

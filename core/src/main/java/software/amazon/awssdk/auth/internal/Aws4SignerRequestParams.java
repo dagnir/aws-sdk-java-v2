@@ -16,7 +16,8 @@
 package software.amazon.awssdk.auth.internal;
 
 import java.util.Date;
-import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.util.AwsHostNameUtils;
 
 /**
@@ -27,7 +28,7 @@ public final class Aws4SignerRequestParams {
     /**
      * The request for which the signature needs to be computed.
      */
-    private final SignableRequest<?> request;
+    private final SdkHttpRequest request;
 
     /**
      * The datetime in milliseconds for which the signature needs to be
@@ -69,7 +70,7 @@ public final class Aws4SignerRequestParams {
      * Generates an instance of AWS4signerRequestParams that holds the
      * parameters used for computing a AWS 4 signature for a request.
      */
-    public Aws4SignerRequestParams(SignableRequest<?> request,
+    public Aws4SignerRequestParams(SdkHttpRequest request,
                                    Date signingDateOverride, String regionNameOverride,
                                    String serviceName, String signingAlgorithm) {
         if (request == null) {
@@ -86,10 +87,9 @@ public final class Aws4SignerRequestParams {
                 .formatDateStamp(signingDateTimeMilli);
         this.serviceName = serviceName;
         this.regionName = regionNameOverride != null ? regionNameOverride
-                                                     : AwsHostNameUtils.parseRegionName(request.getEndpoint()
-                                                                                               .getHost(), this.serviceName);
-        this.scope = generateScope(request, formattedSigningDate, this.serviceName,
-                                   regionName);
+                : AwsHostNameUtils.parseRegionName(request.getEndpoint()
+                                                          .getHost(), this.serviceName);
+        this.scope = generateScope(formattedSigningDate, this.serviceName, regionName);
         this.formattedSigningDateTime = Aws4SignerUtils
                 .formatTimestamp(signingDateTimeMilli);
         this.signingAlgorithm = signingAlgorithm;
@@ -98,25 +98,27 @@ public final class Aws4SignerRequestParams {
     /**
      * Returns the signing date from the request.
      */
-    private final long getSigningDate(SignableRequest<?> request) {
-        return System.currentTimeMillis() - request.getTimeOffset() * 1000L;
+    private long getSigningDate(SdkHttpRequest request) {
+        if (request.handlerContext(AwsHandlerKeys.TIME_OFFSET) == null) {
+            return System.currentTimeMillis();
+        } else {
+            return System.currentTimeMillis() - request.handlerContext(AwsHandlerKeys.TIME_OFFSET) * 1000L;
+        }
     }
 
     /**
      * Returns the scope to be used for the signing.
      */
-    private String generateScope(SignableRequest<?> request, String dateStamp,
-                                 String serviceName, String regionName) {
-        final StringBuilder scopeBuilder = new StringBuilder();
-        return scopeBuilder.append(dateStamp).append("/").append(regionName)
-                           .append("/").append(serviceName).append("/")
-                           .append(SignerConstants.AWS4_TERMINATOR).toString();
+    private String generateScope(String dateStamp, String serviceName, String regionName) {
+        return new StringBuilder().append(dateStamp).append("/").append(regionName)
+                                  .append("/").append(serviceName).append("/")
+                                  .append(SignerConstants.AWS4_TERMINATOR).toString();
     }
 
     /**
      * Returns the request for which the signing needs to be done.
      */
-    public SignableRequest<?> getRequest() {
+    public SdkHttpRequest getRequest() {
         return request;
     }
 

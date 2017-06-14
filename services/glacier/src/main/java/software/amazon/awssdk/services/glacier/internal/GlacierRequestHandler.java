@@ -15,57 +15,56 @@
 
 package software.amazon.awssdk.services.glacier.internal;
 
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.glacier.model.DescribeJobRequest;
 import software.amazon.awssdk.services.glacier.model.GetJobOutputRequest;
-import software.amazon.awssdk.services.glacier.model.UploadArchiveRequest;
 import software.amazon.awssdk.services.glacier.model.UploadMultipartPartRequest;
 
-public class GlacierRequestHandler extends AbstractRequestHandler {
+public class GlacierRequestHandler extends RequestHandler {
 
     @Override
-    public void beforeRequest(Request<?> request) {
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
+        return request.toBuilder()
+                      .apply(b -> beforeRequest(originalRequest, b))
+                      .build();
+    }
 
-        request.addHeader("x-amz-glacier-version", "2012-06-01");
+    private SdkHttpFullRequest.Builder beforeRequest(Object originalRequest, SdkHttpFullRequest.Builder mutableRequest) {
+        mutableRequest.header("x-amz-glacier-version", "2012-06-01");
 
         //  "x-amz-content-sha256" header is required for sig v4 for some streaming operations
-        request.addHeader("x-amz-content-sha256", "required");
+        mutableRequest.header("x-amz-content-sha256", "required");
 
-        if (request.getOriginalRequest() instanceof UploadArchiveRequest) {
-            String contentLength = request.getHeaders().remove("x-amz-content-length");
-            if (contentLength != null) {
-                request.getHeaders().put("Content-Length", contentLength);
-            }
-        } else if (request.getOriginalRequest() instanceof UploadMultipartPartRequest) {
-            String range = request.getHeaders().get("Content-Range");
+        if (originalRequest instanceof UploadMultipartPartRequest) {
+            mutableRequest.getFirstHeaderValue("Content-Range").ifPresent(range -> mutableRequest
+                    .header("Content-Length", Long.toString(parseContentLengthFromRange(range))));
 
-            if (range.startsWith("bytes=")) {
-                range = range.substring(6);
-            }
-            if (range.startsWith("bytes ")) {
-                range = range.substring(6);
-            }
-
-            if (range != null) {
-                String start = range.substring(0, range.indexOf('-'));
-                String end = range.substring(range.indexOf('-') + 1);
-
-                if (end.contains("/")) {
-                    end = end.substring(0, end.indexOf("/"));
-                }
-
-                long contentLength = Long.parseLong(end) - Long.parseLong(start) + 1;
-                request.getHeaders().put("Content-Length", Long.toString(contentLength));
-            }
-        } else if (request.getOriginalRequest() instanceof GetJobOutputRequest ||
-                   request.getOriginalRequest() instanceof DescribeJobRequest) {
-            String resourcePath = request.getResourcePath();
+        } else if (originalRequest instanceof GetJobOutputRequest || originalRequest instanceof DescribeJobRequest) {
+            String resourcePath = mutableRequest.getResourcePath();
             if (resourcePath != null) {
                 String newResourcePath = resourcePath.replace("{jobType}", "archive-retrievals");
-                request.setResourcePath(newResourcePath);
+                mutableRequest.resourcePath(newResourcePath);
             }
         }
+        return mutableRequest;
+    }
+
+    private long parseContentLengthFromRange(String range) {
+        if (range.startsWith("bytes=") || range.startsWith("bytes ")) {
+            range = range.substring(6);
+        }
+
+        String start = range.substring(0, range.indexOf('-'));
+        String end = range.substring(range.indexOf('-') + 1);
+
+        if (end.contains("/")) {
+            end = end.substring(0, end.indexOf("/"));
+        }
+
+        return Long.parseLong(end) - Long.parseLong(start) + 1;
     }
 
 }

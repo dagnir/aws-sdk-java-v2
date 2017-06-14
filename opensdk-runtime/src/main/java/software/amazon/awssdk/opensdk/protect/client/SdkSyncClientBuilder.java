@@ -30,7 +30,7 @@ import software.amazon.awssdk.auth.RequestSigner;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerAsRequestSigner;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -251,7 +251,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
         }
 
         @Override
-        public List<RequestHandler2> getRequestHandlers() {
+        public List<RequestHandler> getRequestHandlers() {
             return Collections.emptyList();
         }
 

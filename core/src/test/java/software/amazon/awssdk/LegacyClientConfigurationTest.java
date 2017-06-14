@@ -17,7 +17,6 @@ package software.amazon.awssdk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 import java.lang.reflect.Field;

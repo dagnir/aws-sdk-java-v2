@@ -17,13 +17,13 @@ package software.amazon.awssdk.internal.http.request;
 
 import java.util.ArrayList;
 import java.util.List;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 
 public class RequestHandlerTestUtils {
 
-    public static List<RequestHandler2> buildRequestHandlerList(RequestHandler2... requestHandlers) {
-        List<RequestHandler2> requestHandlerList = new ArrayList<RequestHandler2>();
-        for (RequestHandler2 requestHandler : requestHandlers) {
+    public static List<RequestHandler> buildRequestHandlerList(RequestHandler... requestHandlers) {
+        List<RequestHandler> requestHandlerList = new ArrayList<RequestHandler>();
+        for (RequestHandler requestHandler : requestHandlers) {
             requestHandlerList.add(requestHandler);
         }
         return requestHandlerList;

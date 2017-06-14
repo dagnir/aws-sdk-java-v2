@@ -53,7 +53,7 @@ public class HttpClientDependencies implements AutoCloseable {
         this.retryCapacity = paramNotNull(builder.retryCapacity, "CapacityManager");
         // TODO validate not null
         this.sdkHttpClient = builder.sdkHttpClient;
-        this.sdkAsyncHttpClient =builder.sdkAsyncHttpClient;
+        this.sdkAsyncHttpClient = builder.sdkAsyncHttpClient;
         this.clientExecutionTimer = paramNotNull(builder.clientExecutionTimer, "ClientExecutionTimer");
         this.calculateCrc32FromCompressedData = builder.calculateCrc32FromCompressedData;
     }

@@ -17,7 +17,6 @@ package software.amazon.awssdk.runtime.transform;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 

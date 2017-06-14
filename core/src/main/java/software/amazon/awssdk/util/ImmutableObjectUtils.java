@@ -16,7 +16,6 @@
 package software.amazon.awssdk.util;
 
 import java.util.Arrays;
-
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 @ReviewBeforeRelease("Remove before GA")

@@ -25,13 +25,12 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.CompletableFuture;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpClientDependencies;
-import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkHttpResponse;
@@ -43,11 +42,13 @@ import software.amazon.awssdk.http.async.SdkRequestChannel;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.utils.IoUtils;
+import software.amazon.awssdk.utils.Pair;
 
 /**
  * Delegate to the HTTP implementation to make an HTTP request and receive the response.
  */
-public class MakeAsyncHttpRequestStage implements RequestPipeline<Request<?>, CompletableFuture<SdkHttpFullResponse>> {
+public class MakeAsyncHttpRequestStage
+        implements RequestPipeline<SdkHttpFullRequest, CompletableFuture<Pair<SdkHttpFullRequest, SdkHttpFullResponse>>> {
 
     private final SdkAsyncHttpClient sdkAsyncHttpClient;
 
@@ -58,15 +59,18 @@ public class MakeAsyncHttpRequestStage implements RequestPipeline<Request<?>, Co
     /**
      * Returns the response from executing one httpClientSettings request; or null for retry.
      */
-    public CompletableFuture<SdkHttpFullResponse> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public CompletableFuture<Pair<SdkHttpFullRequest, SdkHttpFullResponse>> execute(SdkHttpFullRequest request,
+                                                                                    RequestExecutionContext context) throws
+                                                                                                                     Exception {
         AmazonHttpClient.checkInterrupted();
         final ProgressListener listener = context.requestConfig().getProgressListener();
 
         publishProgress(listener, ProgressEventType.HTTP_REQUEST_STARTED_EVENT);
-        return executeHttpRequest(request, context, listener);
+        return executeHttpRequest(request, context, listener)
+                .thenApply(resp -> new Pair<>(request, resp));
     }
 
-    private CompletableFuture<SdkHttpFullResponse> executeHttpRequest(Request<?> request,
+    private CompletableFuture<SdkHttpFullResponse> executeHttpRequest(SdkHttpFullRequest request,
                                                                       RequestExecutionContext context,
                                                                       ProgressListener listener) throws Exception {
         CompletableFuture<SdkHttpFullResponse> future = new CompletableFuture<>();
@@ -81,11 +85,11 @@ public class MakeAsyncHttpRequestStage implements RequestPipeline<Request<?>, Co
 
     private static class SimpleRequestProvider implements SdkHttpRequestProvider {
 
-        private final Request<?> request;
+        private final SdkHttpFullRequest request;
         private final AwsRequestMetrics metrics;
         private final CompletableFuture<SdkHttpFullResponse> future;
 
-        private SimpleRequestProvider(Request<?> request,
+        private SimpleRequestProvider(SdkHttpFullRequest request,
                                       AwsRequestMetrics metrics,
                                       CompletableFuture<SdkHttpFullResponse> future) {
             this.request = request;
@@ -95,8 +99,7 @@ public class MakeAsyncHttpRequestStage implements RequestPipeline<Request<?>, Co
 
         @Override
         public SdkHttpRequest request() {
-            return new SdkHttpFullRequestAdapter(request);
-
+            return request;
         }
 
         @Override

@@ -15,23 +15,29 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
-import software.amazon.awssdk.http.pipeline.RequestPipeline;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
 import software.amazon.awssdk.utils.CollectionUtils;
 
 /**
  * Merge customer supplied query params into the marshalled request.
  */
-public class MergeCustomQueryParamsStage implements RequestPipeline<Request<?>, Request<?>> {
+public class MergeCustomQueryParamsStage implements MutableRequestToRequestPipeline {
 
     @Override
-    public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
-        Map<String, List<String>> existingParams = request.getParameters();
+    public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest.Builder request, RequestExecutionContext context)
+            throws Exception {
+        return request.queryParameters(mergeParams(request, context));
+    }
+
+    private Map<String, List<String>> mergeParams(SdkHttpFullRequest.Builder request, RequestExecutionContext context) {
+        Map<String, List<String>> merged = new LinkedHashMap<>(request.getParameters().size());
         context.requestConfig().getCustomQueryParameters()
-                .forEach((key, val) -> existingParams.put(key, CollectionUtils.mergeLists(existingParams.get(key), val)));
-        return request;
+               .forEach((key, val) -> merged.put(key, CollectionUtils.mergeLists(merged.get(key), val)));
+        return merged;
     }
 }

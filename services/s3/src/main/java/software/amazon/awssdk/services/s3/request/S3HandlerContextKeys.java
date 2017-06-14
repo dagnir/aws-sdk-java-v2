@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.s3.request;
 
-import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.http.HandlerContextKey;
 import software.amazon.awssdk.services.s3.S3ClientOptions;
 import software.amazon.awssdk.services.s3.internal.AwsS3V4Signer;
 
@@ -28,15 +28,15 @@ public class S3HandlerContextKeys {
      * Context provided to {@link AwsS3V4Signer} to determine whether chunked encoding should be used
      * or not. Derived from the value set in {@link S3ClientOptions}
      */
-    public static final HandlerContextKey<Boolean> IS_CHUNKED_ENCODING_DISABLED = new HandlerContextKey<Boolean>(
-            "IsChunkedEncodingDisabled");
+    public static final HandlerContextKey<Boolean> IS_CHUNKED_ENCODING_DISABLED =
+            new HandlerContextKey<>(Boolean.class, "IsChunkedEncodingDisabled");
 
     /**
      * Context provided to {@link AwsS3V4Signer} to determine whether payloads should be signed.  If enabled,
      * payload hash will be computed when constructing the request.  This does incur a performance penalty.
      * Derived from the value set in {@link S3ClientOptions}
      */
-    public static final HandlerContextKey<Boolean> IS_PAYLOAD_SIGNING_ENABLED = new HandlerContextKey<Boolean>(
-            "IsPayloadSigningEnabled");
+    public static final HandlerContextKey<Boolean> IS_PAYLOAD_SIGNING_ENABLED =
+            new HandlerContextKey<>(Boolean.class, "IsPayloadSigningEnabled");
 
 }

@@ -24,7 +24,7 @@ import static utils.HttpTestUtils.builderWithDefaultClient;
 import java.util.List;
 import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
@@ -63,7 +63,7 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
                                              new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
                                      .build();
 
-        List<RequestHandler2> requestHandlers = buildRequestHandlerList(
+        List<RequestHandler> requestHandlers = buildRequestHandlerList(
                 new SlowRequestHandler().withAfterResponseWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
 
         requestBuilder().executionContext(withHandlers(requestHandlers)).execute(new DummyResponseHandler());
@@ -77,7 +77,7 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
                                              new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
                                      .build();
 
-        List<RequestHandler2> requestHandlers = buildRequestHandlerList(
+        List<RequestHandler> requestHandlers = buildRequestHandlerList(
                 new SlowRequestHandler().withBeforeRequestWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
 
         requestBuilder().executionContext(withHandlers(requestHandlers)).execute(new DummyResponseHandler());
@@ -87,8 +87,8 @@ public class DummySuccessfulResponseServerIntegrationTests extends MockServerTes
         return httpClient.requestExecutionBuilder().request(newGetRequest());
     }
 
-    private ExecutionContext withHandlers(List<RequestHandler2> requestHandlers) {
-        return ExecutionContext.builder().withRequestHandler2s(requestHandlers).build();
+    private ExecutionContext withHandlers(List<RequestHandler> requestHandlers) {
+        return ExecutionContext.builder().withRequestHandlers(requestHandlers).build();
     }
 
 }

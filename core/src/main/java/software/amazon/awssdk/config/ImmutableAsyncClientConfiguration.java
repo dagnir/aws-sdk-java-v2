@@ -23,7 +23,7 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -79,7 +79,7 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
             }
 
             @Override
-            public List<RequestHandler2> getRequestHandlers() {
+            public List<RequestHandler> getRequestHandlers() {
                 return overrideConfiguration().requestListeners();
             }
 

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
@@ -43,24 +42,26 @@ import software.amazon.awssdk.util.UnreliableFilterInputStream;
  *
  * @param <OutputT> Type of unmarshalled response
  */
-public class StreamManagingStage<OutputT> implements RequestPipeline<Request<?>, Response<OutputT>> {
+public class StreamManagingStage<OutputT> implements RequestPipeline<SdkHttpFullRequest, Response<OutputT>> {
 
     private static final Log log = LogFactory.getLog(StreamManagingStage.class);
 
-    private final RequestPipeline<Request<?>, Response<OutputT>> wrapped;
+    private final RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped;
 
-    public StreamManagingStage(RequestPipeline<Request<?>, Response<OutputT>> wrapped) {
+    public StreamManagingStage(RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped) {
         this.wrapped = wrapped;
     }
 
     @Override
-    public Response<OutputT> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public Response<OutputT> execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         final InputStream toBeClosed = createManagedStream(request, context.requestConfig());
-        request.setContent(nonCloseableInputStream(toBeClosed));
         try {
             ProgressListener listener = context.requestConfig().getProgressListener();
             publishProgress(listener, ProgressEventType.CLIENT_REQUEST_STARTED_EVENT);
-            Response<OutputT> response = wrapped.execute(request, context);
+            Response<OutputT> response = wrapped.execute(
+                    request.toBuilder()
+                           .content(nonCloseableInputStream(toBeClosed))
+                           .build(), context);
             publishProgress(listener, ProgressEventType.CLIENT_REQUEST_SUCCESS_EVENT);
             context.awsRequestMetrics().getTimingInfo().endTiming();
             return response;
@@ -87,7 +88,7 @@ public class StreamManagingStage<OutputT> implements RequestPipeline<Request<?>,
      *
      * @return Modified input stream to use for the remainder of the execution.
      */
-    private InputStream createManagedStream(Request<?> request, RequestConfig requestConfig) {
+    private InputStream createManagedStream(SdkHttpFullRequest request, RequestConfig requestConfig) {
         if (request.getContent() == null) {
             return null;
         }

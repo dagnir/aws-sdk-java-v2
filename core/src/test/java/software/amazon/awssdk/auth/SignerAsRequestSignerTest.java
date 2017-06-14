@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SignerAsRequestSignerTest {
@@ -34,7 +34,8 @@ public class SignerAsRequestSignerTest {
 
     @Mock AwsCredentials credentials;
 
-    @Mock SignableRequest request;
+    @Mock
+    SdkHttpFullRequest request;
 
     @InjectMocks SignerAsRequestSigner sut;
 

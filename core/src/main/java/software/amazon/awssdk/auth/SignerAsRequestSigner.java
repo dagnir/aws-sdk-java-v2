@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
  * An adapter class that allows a {@link Signer} to implement the
@@ -38,10 +38,10 @@ public final class SignerAsRequestSigner implements RequestSigner {
     }
 
     /**
-     * @see RequestSigner#sign(SignableRequest)
+     * @see RequestSigner#sign(SdkHttpFullRequest)
      */
     @Override
-    public void sign(SignableRequest<?> request) {
-        signer.sign(request, credentialsProvider.getCredentials());
+    public SdkHttpFullRequest sign(SdkHttpFullRequest request) {
+        return signer.sign(request, credentialsProvider.getCredentials());
     }
 }

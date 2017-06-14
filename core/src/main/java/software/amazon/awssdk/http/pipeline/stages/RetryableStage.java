@@ -15,21 +15,16 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
+import static java.util.Collections.singletonList;
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 import static software.amazon.awssdk.http.AmazonHttpClient.THROTTLED_RETRY_COST;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.UnaryOperator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.Response;
@@ -37,9 +32,11 @@ import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.http.pipeline.RequestToResponsePipeline;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
@@ -58,43 +55,27 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
 
     private static final Log log = LogFactory.getLog(RetryableStage.class);
 
-    private final RequestPipeline<Request<?>, Response<OutputT>> requestPipeline;
+    private final RequestPipeline<SdkHttpFullRequest, Response<OutputT>> requestPipeline;
 
     private final HttpClientDependencies dependencies;
     private final CapacityManager retryCapacity;
     private final RetryPolicy retryPolicy;
 
     public RetryableStage(HttpClientDependencies dependencies,
-                          RequestPipeline<Request<?>, Response<OutputT>> requestPipeline) {
+                          RequestPipeline<SdkHttpFullRequest, Response<OutputT>> requestPipeline) {
         this.dependencies = dependencies;
         this.retryCapacity = dependencies.retryCapacity();
         this.retryPolicy = dependencies.retryPolicy();
         this.requestPipeline = requestPipeline;
     }
 
-    public Response<OutputT> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public Response<OutputT> execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         // add the service endpoint to the logs. You can infer service name from service endpoint
         context.awsRequestMetrics()
-                .addPropertyWith(AwsRequestMetrics.Field.RequestType, context.requestConfig().getRequestType())
-                .addPropertyWith(AwsRequestMetrics.Field.ServiceName, request.getServiceName())
-                .addPropertyWith(AwsRequestMetrics.Field.ServiceEndpoint, request.getEndpoint());
+               .addPropertyWith(AwsRequestMetrics.Field.RequestType, context.requestConfig().getRequestType())
+               .addPropertyWith(AwsRequestMetrics.Field.ServiceName, request.handlerContext(AwsHandlerKeys.SERVICE_NAME))
+               .addPropertyWith(AwsRequestMetrics.Field.ServiceEndpoint, request.getEndpoint());
         return new RetryExecutor(request, context).execute();
-    }
-
-    /**
-     * Restore request to original params before retrying.
-     */
-    private static UnaryOperator<Request<?>> restoreRequest(Request<?> request) {
-        // Snapshot the request properties in a closure so we can restore it on a retry
-        final Map<String, List<String>> originalParameters = new LinkedHashMap<>(request.getParameters());
-        final Map<String, String> originalHeaders = new HashMap<>(request.getHeaders());
-        final InputStream originalContent = request.getContent();
-        return r -> {
-            r.setParameters(originalParameters);
-            r.setHeaders(originalHeaders);
-            r.setContent(originalContent);
-            return r;
-        };
     }
 
     /**
@@ -137,7 +118,7 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
      */
     private class RetryExecutor {
 
-        private final UnaryOperator<Request<?>> requestRestorer;
+        private final SdkHttpFullRequest request;
         private final RequestExecutionContext context;
         private final ProgressListener progressListener;
         private final AwsRequestMetrics awsRequestMetrics;
@@ -148,11 +129,11 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
         private long lastBackoffDelay;
         private boolean retryCapacityConsumed;
 
-        private RetryExecutor(Request<?> request, RequestExecutionContext context) {
+        private RetryExecutor(SdkHttpFullRequest request, RequestExecutionContext context) {
+            this.request = request;
             this.context = context;
             this.progressListener = context.requestConfig().getProgressListener();
             this.awsRequestMetrics = context.awsRequestMetrics();
-            this.requestRestorer = restoreRequest(request);
             this.retriedException = Optional.empty();
         }
 
@@ -192,8 +173,6 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
         }
 
         private Response<OutputT> doExecute() throws Exception {
-            final Request<?> request = requestRestorer.apply(context.request());
-
             if (isRetry()) {
                 resetRequestInputStream(request.getContent());
                 pauseBeforeRetry();
@@ -228,7 +207,6 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
             if (RetryUtils.isClockSkewError(exception)) {
                 int clockSkew = parseClockSkewOffset(response.getHttpResponse());
                 dependencies.updateTimeOffset(clockSkew);
-                context.request().setTimeOffset(clockSkew);
             }
             return exception;
         }
@@ -284,12 +262,13 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
             }
 
             this.retryPolicyContext = RetryPolicyContext.builder()
-                    .request(context.request())
-                    .originalRequest(context.requestConfig().getOriginalRequest())
-                    .exception(exception)
-                    .retriesAttempted(retriesAttempted)
-                    .httpStatusCode(httpResponse == null ? null : httpResponse.getStatusCode())
-                    .build();
+                                                        .request(request)
+                                                        .originalRequest(context.requestConfig().getOriginalRequest())
+                                                        .exception(exception)
+                                                        .retriesAttempted(retriesAttempted)
+                                                        .httpStatusCode(
+                                                                httpResponse == null ? null : httpResponse.getStatusCode())
+                                                        .build();
             // Finally, pass all the context information to the RetryCondition and let it decide whether it should be retried.
             if (!retryPolicy.shouldRetry(retryPolicyContext)) {
                 // If the retry policy fails we immediately return consumed capacity to the pool.
@@ -336,13 +315,15 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
          *
          * @return Request with retry info header added.
          */
-        private Request<?> addRetryInfoHeader(Request<?> request) throws Exception {
+        private SdkHttpFullRequest addRetryInfoHeader(SdkHttpFullRequest request) throws Exception {
             int availableRetryCapacity = retryCapacity.availableCapacity();
-            request.addHeader(HEADER_SDK_RETRY_INFO, String.format("%s/%s/%s",
-                                                                   requestCount - 1,
-                                                                   lastBackoffDelay,
-                                                                   availableRetryCapacity >= 0 ? availableRetryCapacity : ""));
-            return request;
+            return request.toBuilder()
+                          .header(HEADER_SDK_RETRY_INFO,
+                                  singletonList(String.format("%s/%s/%s",
+                                                              requestCount - 1,
+                                                              lastBackoffDelay,
+                                                              availableRetryCapacity >= 0 ? availableRetryCapacity : "")))
+                          .build();
         }
 
     }

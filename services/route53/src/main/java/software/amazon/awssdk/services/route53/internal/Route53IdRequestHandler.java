@@ -16,9 +16,9 @@
 package software.amazon.awssdk.services.route53.internal;
 
 import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.route53.model.AliasTarget;
 import software.amazon.awssdk.services.route53.model.ChangeInfo;
 import software.amazon.awssdk.services.route53.model.ChangeResourceRecordSetsResponse;
@@ -46,11 +46,11 @@ import software.amazon.awssdk.util.ImmutableObjectUtils;
  * cannot be included, otherwise requests fail. This handler removes those
  * partial resource path elements from IDs returned by Route 53.
  */
-public class Route53IdRequestHandler extends RequestHandler2 {
+public class Route53IdRequestHandler extends RequestHandler {
 
 
     @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
+    public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
         Object obj = ((AmazonWebServiceResponse) response.getAwsResponse()).getResult();
         if (obj instanceof ChangeResourceRecordSetsResponse) {
             ChangeResourceRecordSetsResponse result = (ChangeResourceRecordSetsResponse) obj;

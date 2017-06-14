@@ -17,7 +17,6 @@ package software.amazon.awssdk.internal.http.timers.client;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.Abortable;
-import software.amazon.awssdk.http.AbortableCallable;
 
 @SdkInternalApi
 public interface ClientExecutionAbortTrackerTask {

@@ -31,7 +31,7 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -44,7 +44,7 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 @SuppressWarnings("deprecation") // Intentional use of deprecated class
 public class ImmutableClientConfigurationTest {
     private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
-    private static final RequestHandler2 REQUEST_HANDLER = new RequestHandler2() {
+    private static final RequestHandler REQUEST_HANDLER = new RequestHandler() {
     };
     private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private static final URI ENDPOINT = URI.create("https://www.example.com");
@@ -79,7 +79,7 @@ public class ImmutableClientConfigurationTest {
         }
 
         @Override
-        public List<RequestHandler2> getRequestHandlers() {
+        public List<RequestHandler> getRequestHandlers() {
             return Collections.singletonList(REQUEST_HANDLER);
         }
 
@@ -116,7 +116,7 @@ public class ImmutableClientConfigurationTest {
         }
 
         @Override
-        public List<RequestHandler2> getRequestHandlers() {
+        public List<RequestHandler> getRequestHandlers() {
             return Collections.singletonList(REQUEST_HANDLER);
         }
 

@@ -16,16 +16,16 @@
 package software.amazon.awssdk.runtime.auth;
 
 import java.net.URI;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 @SdkProtectedApi
 public class SignerProviderContext {
 
     private final URI uri;
     private final boolean isRedirect;
-    private final Request<?> request;
+    private final SdkHttpFullRequest request;
     private final RequestConfig requestConfig;
 
     private SignerProviderContext(Builder builder) {
@@ -47,7 +47,7 @@ public class SignerProviderContext {
         return isRedirect;
     }
 
-    public Request<?> getRequest() {
+    public SdkHttpFullRequest getRequest() {
         return request;
     }
 
@@ -59,7 +59,7 @@ public class SignerProviderContext {
 
         private URI uri;
         private boolean isRedirect;
-        private Request<?> request;
+        private SdkHttpFullRequest request;
         private RequestConfig requestConfig;
 
         private Builder() {
@@ -75,7 +75,7 @@ public class SignerProviderContext {
             return this;
         }
 
-        public Builder withRequest(final Request<?> request) {
+        public Builder withRequest(final SdkHttpFullRequest request) {
             this.request = request;
             return this;
         }

@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.http;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -34,10 +33,6 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.handlers.HandlerContextKey;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AmazonHttpClientTest {
@@ -138,27 +133,6 @@ public class AmazonHttpClientTest {
 
         Assert.assertTrue(userAgent.startsWith(prefix));
         Assert.assertTrue(userAgent.endsWith(suffix));
-    }
-
-    @Test
-    public void testCredentialsSetInRequestContext() throws Exception {
-        final AwsCredentials credentials = new AwsCredentials("foo", "bar");
-
-        AwsCredentialsProvider credentialsProvider = new StaticCredentialsProvider(credentials);
-
-        ExecutionContext executionContext = new ExecutionContext();
-        executionContext.setCredentialsProvider(credentialsProvider);
-
-        Request<?> request = new DefaultRequest<>("fooservice");
-
-        HttpResponseHandler<?> handler = mock(HttpResponseHandler.class);
-
-        client.requestExecutionBuilder()
-                .request(request)
-                .executionContext(executionContext)
-                .execute(handler);
-
-        assertEquals(credentials, request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS));
     }
 
     private void stubSuccessfulResponse() throws Exception {

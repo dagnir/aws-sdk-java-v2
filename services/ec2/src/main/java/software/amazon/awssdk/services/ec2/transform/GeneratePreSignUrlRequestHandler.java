@@ -18,32 +18,30 @@ package software.amazon.awssdk.services.ec2.transform;
 import java.net.URI;
 import java.net.URISyntaxException;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Protocol;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.Aws4Signer;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.ServiceMetadata;
 import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.CopySnapshotRequest;
 import software.amazon.awssdk.util.AwsHostNameUtils;
-import software.amazon.awssdk.util.ImmutableObjectUtils;
 import software.amazon.awssdk.util.SdkHttpUtils;
-import software.amazon.awssdk.util.StringUtils;
 
 /**
  * RequestHandler that generates a pre-signed URL for copying encrypted
  * snapshots
  */
-public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
+public class GeneratePreSignUrlRequestHandler extends RequestHandler {
 
     @Override
-    public void beforeRequest(Request<?> request) {
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
 
-        AmazonWebServiceRequest originalRequest = request.getOriginalRequest();
+        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
 
         if (originalRequest instanceof CopySnapshotRequest) {
 
@@ -51,7 +49,7 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
 
             // Return if presigned url is already specified by the user.
             if (originalCopySnapshotRequest.presignedUrl() != null) {
-                return;
+                return request;
             }
 
             String serviceName = "ec2";
@@ -71,55 +69,52 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
             URI endPointDestination = request.getEndpoint();
             String destinationRegion = originalCopySnapshotRequest
                                                .destinationRegion() != null ? originalCopySnapshotRequest
-                                               .destinationRegion() : AwsHostNameUtils
-                                               .parseRegionName(endPointDestination.getHost(), serviceName);
+                    .destinationRegion() : AwsHostNameUtils
+                    .parseRegionName(endPointDestination.getHost(), serviceName);
 
             URI endPointSource = createEndpoint(sourceRegion, serviceName);
 
-            Request<CopySnapshotRequest> requestForPresigning = generateRequestForPresigning(
-                    sourceSnapshotId, sourceRegion, destinationRegion);
-
-            requestForPresigning.setEndpoint(endPointSource);
-            requestForPresigning.setHttpMethod(HttpMethodName.GET);
+            SdkHttpFullRequest requestForPresigning = generateRequestForPresigning(
+                    sourceSnapshotId, sourceRegion, destinationRegion)
+                    .toBuilder()
+                    .endpoint(endPointSource)
+                    .httpMethod(SdkHttpMethod.GET)
+                    .build();
 
             Aws4Signer signer = new Aws4Signer();
             signer.setServiceName(serviceName);
 
-            signer.presignRequest(requestForPresigning, request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS), null);
+            final SdkHttpFullRequest presignedRequest = signer
+                    .presignRequest(requestForPresigning, request.handlerContext(AwsHandlerKeys.AWS_CREDENTIALS), null);
 
-            ImmutableObjectUtils.setObjectMember(originalCopySnapshotRequest, "presignedUrl", generateUrl(requestForPresigning));
-            ImmutableObjectUtils.setObjectMember(originalCopySnapshotRequest, "destinationRegion", destinationRegion);
-
-            request.addParameter("DestinationRegion", StringUtils
-                    .fromString(originalCopySnapshotRequest
-                                        .destinationRegion()));
-            request.addParameter("PresignedUrl", StringUtils
-                    .fromString(originalCopySnapshotRequest.presignedUrl()));
-
-
+            return request.toBuilder()
+                          .queryParameter("DestinationRegion", destinationRegion)
+                          .queryParameter("PresignedUrl", generateUrl(presignedRequest))
+                          .build();
         }
+
+        return request;
 
     }
 
     /**
      * Generates a Request object for the pre-signed URL.
      */
-    private Request<CopySnapshotRequest> generateRequestForPresigning(
-            String sourceSnapshotId, String sourceRegion,
-            String destinationRegion) {
+    private SdkHttpFullRequest generateRequestForPresigning(String sourceSnapshotId,
+                                                            String sourceRegion,
+                                                            String destinationRegion) {
 
         CopySnapshotRequest copySnapshotRequest = CopySnapshotRequest.builder()
-                .sourceSnapshotId(sourceSnapshotId)
-                .sourceRegion(sourceRegion)
-                .destinationRegion(destinationRegion)
-                .build();
+                                                                     .sourceSnapshotId(sourceSnapshotId)
+                                                                     .sourceRegion(sourceRegion)
+                                                                     .destinationRegion(destinationRegion)
+                                                                     .build();
 
-        return new CopySnapshotRequestMarshaller()
-                .marshall(copySnapshotRequest);
+        return SdkHttpFullRequestAdapter.toSdkRequest(new CopySnapshotRequestMarshaller().marshall(copySnapshotRequest));
 
     }
 
-    private String generateUrl(Request<?> request) {
+    private String generateUrl(SdkHttpFullRequest request) {
 
         URI endpoint = request.getEndpoint();
         String uri = SdkHttpUtils.appendUri(endpoint.toString(),
@@ -146,7 +141,9 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler2 {
         return ServiceMetadata.of(EC2Client.SERVICE_NAME).endpointFor(region);
     }
 
-    /** Returns the endpoint as a URI. */
+    /**
+     * Returns the endpoint as a URI.
+     */
     private URI toUri(String endpoint) throws IllegalArgumentException {
 
         if (endpoint.contains("://") == false) {

@@ -16,8 +16,9 @@
 package software.amazon.awssdk.services.rds;
 
 import java.util.Date;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
 import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
 import software.amazon.awssdk.util.ImmutableObjectUtils;
@@ -45,18 +46,13 @@ public class CopyDbSnapshotPresignHandler extends PresignRequestHandler<CopyDBSn
             }
 
             @Override
-            public String getPreSignedUrl() {
-                return originalRequest.preSignedUrl();
-            }
-
-            @Override
             public String getSourceRegion() {
                 return originalRequest.sourceRegion();
             }
 
             @Override
-            public Request<?> marshall() {
-                return new CopyDBSnapshotRequestMarshaller().marshall(originalRequest);
+            public SdkHttpFullRequest marshall() {
+                return SdkHttpFullRequestAdapter.toSdkRequest(new CopyDBSnapshotRequestMarshaller().marshall(originalRequest));
             }
         };
     }

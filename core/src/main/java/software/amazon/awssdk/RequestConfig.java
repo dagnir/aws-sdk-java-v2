@@ -20,7 +20,7 @@ import java.util.Map;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 
@@ -65,7 +65,7 @@ public abstract class RequestConfig {
 
     /**
      * @return The original request object. May be delivered to various strategies or hooks for
-     *     extra context. I.E. {@link RequestHandler2} or {@link
+     *     extra context. I.E. {@link RequestHandler} or {@link
      * RetryPolicy}.
      */
     public abstract Object getOriginalRequest();

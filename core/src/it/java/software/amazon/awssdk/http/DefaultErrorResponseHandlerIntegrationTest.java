@@ -35,7 +35,6 @@ import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.util.LogCaptor;
-import utils.HttpTestUtils;
 import utils.http.WireMockTestBase;
 
 public class DefaultErrorResponseHandlerIntegrationTest extends WireMockTestBase {

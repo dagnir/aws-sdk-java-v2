@@ -18,7 +18,6 @@ package software.amazon.awssdk.http;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkPublicApi;
 
 /**
@@ -28,7 +27,7 @@ import software.amazon.awssdk.annotation.SdkPublicApi;
 @SdkPublicApi
 public class HttpResponse {
 
-    private final Request<?> request;
+    private final SdkHttpFullRequest request;
 
     private String statusText;
     private int statusCode;
@@ -40,7 +39,7 @@ public class HttpResponse {
      *
      * @param request The associated request that generated this response.
      */
-    public HttpResponse(Request<?> request) {
+    public HttpResponse(SdkHttpFullRequest request) {
         this.request = request;
     }
 
@@ -49,7 +48,7 @@ public class HttpResponse {
      *
      * @return The original request associated with this response.
      */
-    public Request<?> getRequest() {
+    public SdkHttpFullRequest getRequest() {
         return request;
     }
 

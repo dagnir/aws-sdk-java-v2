@@ -28,13 +28,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
-import software.amazon.awssdk.SignableRequest;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.RequestSigner;
 import software.amazon.awssdk.auth.Signer;
+import software.amazon.awssdk.http.DefaultSdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.opensdk.BaseRequest;
 import software.amazon.awssdk.opensdk.protect.auth.RequestSignerAware;
 import software.amazon.awssdk.opensdk.protect.auth.RequestSignerNotFoundException;
@@ -51,7 +50,7 @@ public class RequestSignerSignerProviderTest {
     private RequestSigner requestSigner;
 
     @Mock
-    private SignableRequest<?> request;
+    private SdkHttpFullRequest request;
 
     @Mock
     private AwsCredentials credentials;
@@ -91,7 +90,7 @@ public class RequestSignerSignerProviderTest {
 
     private SignerProviderContext requestContextWithRequest(BaseRequest originalRequest) {
         SignerProviderContext context = mock(SignerProviderContext.class);
-        Request<RequestSignerAwareRequest> request = new DefaultRequest<>("fooservice");
+        SdkHttpFullRequest request = DefaultSdkHttpFullRequest.builder().build();
         doReturn(request).when(context).getRequest();
         when(requestConfig.getOriginalRequest()).thenReturn(originalRequest);
         when(context.getRequestConfig()).thenReturn(requestConfig);

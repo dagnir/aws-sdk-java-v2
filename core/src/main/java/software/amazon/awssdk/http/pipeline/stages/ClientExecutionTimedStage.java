@@ -18,7 +18,6 @@ package software.amazon.awssdk.http.pipeline.stages;
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import software.amazon.awssdk.AbortedException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.LegacyClientConfiguration;
@@ -29,6 +28,7 @@ import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
@@ -40,19 +40,19 @@ import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
  */
 public class ClientExecutionTimedStage<OutputT> implements RequestToResponsePipeline<OutputT> {
 
-    private final RequestPipeline<Request<?>, Response<OutputT>> wrapped;
+    private final RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped;
     private final ClientExecutionTimer clientExecutionTimer;
     private final LegacyClientConfiguration config;
 
     public ClientExecutionTimedStage(HttpClientDependencies dependencies,
-                                     RequestPipeline<Request<?>, Response<OutputT>> wrapped) {
+                                     RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped) {
         this.wrapped = wrapped;
         this.clientExecutionTimer = dependencies.clientExecutionTimer();
         this.config = dependencies.config();
     }
 
     @Override
-    public Response<OutputT> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public Response<OutputT> execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         try {
             return executeWithTimer(request, context);
         } catch (InterruptedException ie) {
@@ -67,7 +67,7 @@ public class ClientExecutionTimedStage<OutputT> implements RequestToResponsePipe
      * that the client execution task is canceled before the InterruptedExecption is handled by
      * {@link #wrapped#execute(Request)} so the interrupt status doesn't leak out to the callers code
      */
-    private Response<OutputT> executeWithTimer(Request<?> request, RequestExecutionContext context) throws Exception {
+    private Response<OutputT> executeWithTimer(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         try {
             context.setClientExecutionTrackerTask(
                     clientExecutionTimer.startTimer(getClientExecutionTimeout(context.requestConfig())));

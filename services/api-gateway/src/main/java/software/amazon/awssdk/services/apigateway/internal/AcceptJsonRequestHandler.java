@@ -15,25 +15,27 @@
 
 package software.amazon.awssdk.services.apigateway.internal;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
-public final class AcceptJsonRequestHandler extends RequestHandler2 {
+public final class AcceptJsonRequestHandler extends RequestHandler {
 
     @Override
-    public void beforeRequest(Request<?> request) {
-        request.addHeader("Accept", "application/json");
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        return request.toBuilder()
+                      .header("Accept", "application/json")
+                      .build();
     }
 
     @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
+    public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
         // No-op.
     }
 
     @Override
     public void afterError(
-            Request<?> request,
+            SdkHttpFullRequest request,
             Response<?> response,
             Exception e) {
 

@@ -30,7 +30,6 @@ import software.amazon.awssdk.auth.SignerFactory;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.handlers.RequestHandler;
-import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
@@ -83,7 +82,7 @@ public abstract class AmazonWebServiceClient {
     /**
      * Optional request handlers for additional request processing.
      */
-    protected final List<RequestHandler2> requestHandler2s;
+    protected final List<RequestHandler> requestHandlers;
     /**
      * The service endpoint to which this client will send requests.
      * <p>
@@ -156,7 +155,7 @@ public abstract class AmazonWebServiceClient {
                                      RequestMetricCollector requestMetricCollector,
                                      boolean disableStrictHostNameVerification) {
         this.clientConfiguration = clientConfiguration;
-        requestHandler2s = new CopyOnWriteArrayList<>();
+        requestHandlers = new CopyOnWriteArrayList<>();
         client = AmazonHttpClient.builder()
                 .clientConfiguration(clientConfiguration)
                 .requestMetricCollector(requestMetricCollector)
@@ -166,7 +165,7 @@ public abstract class AmazonWebServiceClient {
 
     protected AmazonWebServiceClient(AwsSyncClientParams clientParams) {
         this.clientConfiguration = clientParams.getClientConfiguration();
-        requestHandler2s = clientParams.getRequestHandlers();
+        requestHandlers = clientParams.getRequestHandlers();
         client = AmazonHttpClient.builder()
                                  .sdkHttpClient(clientParams.sdkHttpClient())
                                  .clientConfiguration(clientConfiguration)
@@ -368,57 +367,6 @@ public abstract class AmazonWebServiceClient {
     }
 
     /**
-     * Appends a request handler to the list of registered handlers that are run
-     * as part of a request's lifecycle.
-     *
-     * @param requestHandler The new handler to add to the current list of request
-     *                       handlers.
-     * @deprecated by {@link #addRequestHandler(RequestHandler2)}.
-     */
-    @Deprecated
-    public void addRequestHandler(RequestHandler requestHandler) {
-        checkMutability();
-        requestHandler2s.add(RequestHandler2.adapt(requestHandler));
-    }
-
-    /**
-     * Appends a request handler to the list of registered handlers that are run
-     * as part of a request's lifecycle.
-     *
-     * @param requestHandler2 The new handler to add to the current list of request
-     *                        handlers.
-     * @deprecated use {@link AwsClientBuilder#withRequestHandlers(RequestHandler2...)}
-     */
-    @Deprecated
-    public void addRequestHandler(RequestHandler2 requestHandler2) {
-        checkMutability();
-        requestHandler2s.add(requestHandler2);
-    }
-
-    /**
-     * Removes a request handler from the list of registered handlers that are run
-     * as part of a request's lifecycle.
-     *
-     * @param requestHandler The handler to remove from the current list of request
-     *                       handlers.
-     * @deprecated use {@link AwsClientBuilder#withRequestHandlers(RequestHandler2...)}
-     */
-    @Deprecated
-    public void removeRequestHandler(RequestHandler requestHandler) {
-        checkMutability();
-        requestHandler2s.remove(RequestHandler2.adapt(requestHandler));
-    }
-
-    /**
-     * @deprecated use {@link AwsClientBuilder#withRequestHandlers(RequestHandler2...)}
-     */
-    @Deprecated
-    public void removeRequestHandler(RequestHandler2 requestHandler2) {
-        checkMutability();
-        requestHandler2s.remove(requestHandler2);
-    }
-
-    /**
      * Runs the {@code beforeMarshalling} method of any
      * {@code RequestHandler2}s associated with this client.
      *
@@ -430,7 +378,7 @@ public abstract class AmazonWebServiceClient {
             T request) {
 
         T local = request;
-        for (RequestHandler2 handler : requestHandler2s) {
+        for (RequestHandler handler : requestHandlers) {
             local = (T) handler.beforeMarshalling(local);
         }
         return local;
@@ -444,7 +392,7 @@ public abstract class AmazonWebServiceClient {
                                                       SignerProvider signerProvider) {
         boolean isMetricsEnabled = isRequestMetricsEnabled(req);
         return ExecutionContext.builder()
-                .withRequestHandler2s(requestHandler2s)
+                .withRequestHandlers(requestHandlers)
                 .withUseRequestMetrics(isMetricsEnabled)
                 .withAwsClient(this)
                 .withSignerProvider(signerProvider).build();

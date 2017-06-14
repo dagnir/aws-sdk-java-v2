@@ -16,10 +16,8 @@
 package software.amazon.awssdk.protocol.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
-
 import java.util.List;
 import java.util.Map;
-
 import software.amazon.awssdk.internal.http.ErrorCodeParser;
 import software.amazon.awssdk.internal.http.JsonErrorCodeParser;
 import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;

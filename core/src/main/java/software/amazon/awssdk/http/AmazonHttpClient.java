@@ -33,11 +33,11 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.exception.SdkInterruptedException;
-import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 import software.amazon.awssdk.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.http.pipeline.stages.AfterCallbackStage;
 import software.amazon.awssdk.http.pipeline.stages.ApplyTransactionIdStage;
 import software.amazon.awssdk.http.pipeline.stages.ApplyUserAgentStage;
+import software.amazon.awssdk.http.pipeline.stages.AttachRequestConfigStage;
 import software.amazon.awssdk.http.pipeline.stages.BeforeRequestHandlersStage;
 import software.amazon.awssdk.http.pipeline.stages.BeforeUnmarshallingCallbackStage;
 import software.amazon.awssdk.http.pipeline.stages.ClientExecutionTimedStage;
@@ -47,6 +47,8 @@ import software.amazon.awssdk.http.pipeline.stages.HttpResponseAdaptingStage;
 import software.amazon.awssdk.http.pipeline.stages.InstrumentHttpResponseContentStage;
 import software.amazon.awssdk.http.pipeline.stages.LastResetInputStreamStage;
 import software.amazon.awssdk.http.pipeline.stages.MakeHttpRequestStage;
+import software.amazon.awssdk.http.pipeline.stages.MakeRequestImmutable;
+import software.amazon.awssdk.http.pipeline.stages.MakeRequestMutable;
 import software.amazon.awssdk.http.pipeline.stages.MergeCustomHeadersStage;
 import software.amazon.awssdk.http.pipeline.stages.MergeCustomQueryParamsStage;
 import software.amazon.awssdk.http.pipeline.stages.MoveParametersToBodyStage;
@@ -138,7 +140,7 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     @Override
     public void close() throws Exception {
-        httpClientDependencies.close();;
+        httpClientDependencies.close();
     }
 
     /**
@@ -245,8 +247,18 @@ public class AmazonHttpClient implements AutoCloseable {
          *
          * @param request Request object
          * @return This builder for method chaining.
+         * @deprecated by {@link #request(SdkHttpFullRequest)}.
          */
+        @Deprecated
         RequestExecutionBuilder request(Request<?> request);
+
+        /**
+         * Fluent setter for {@link SdkHttpFullRequest}
+         *
+         * @param request Request object
+         * @return This builder for method chaining.
+         */
+        RequestExecutionBuilder request(SdkHttpFullRequest request);
 
         /**
          * Fluent setter for the error response handler
@@ -338,7 +350,7 @@ public class AmazonHttpClient implements AutoCloseable {
                                           .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData)
                                           .sdkHttpClient(sdkHttpClient)
                                           .build(),
-                                        requestMetricCollector);
+                    requestMetricCollector);
         }
 
         private CapacityManager createCapacityManager() {
@@ -368,13 +380,19 @@ public class AmazonHttpClient implements AutoCloseable {
 
     private class RequestExecutionBuilderImpl implements RequestExecutionBuilder {
 
-        private Request<?> request;
+        private SdkHttpFullRequest request;
         private RequestConfig requestConfig;
         private HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
         private ExecutionContext executionContext = new ExecutionContext();
 
         @Override
         public RequestExecutionBuilder request(Request<?> request) {
+            this.request = SdkHttpFullRequestAdapter.toSdkRequest(request);
+            return this;
+        }
+
+        @Override
+        public RequestExecutionBuilder request(SdkHttpFullRequest request) {
             this.request = request;
             return this;
         }
@@ -403,12 +421,17 @@ public class AmazonHttpClient implements AutoCloseable {
         public <OutputT> Response<OutputT> execute(HttpResponseHandler<OutputT> responseHandler) {
             try {
                 return RequestPipelineBuilder
-                        .first(BeforeRequestHandlersStage::new)
+                        .first(AttachRequestConfigStage::new)
+                        .then(BeforeRequestHandlersStage::new)
+                        // Start of mutating request
+                        .then(MakeRequestMutable::new)
                         .then(ApplyTransactionIdStage::new)
                         .then(ApplyUserAgentStage::new)
                         .then(MergeCustomHeadersStage::new)
                         .then(MergeCustomQueryParamsStage::new)
                         .then(MoveParametersToBodyStage::new)
+                        .then(MakeRequestImmutable::new)
+                        // End of mutating request
                         .then(ReportRequestContentLengthStage::new)
                         .then(RequestPipelineBuilder
                                       .first(SigningStage::new)
@@ -441,14 +464,9 @@ public class AmazonHttpClient implements AutoCloseable {
 
         private RequestExecutionContext createRequestExecutionDependencies() {
             return RequestExecutionContext.builder()
-                                          .request(request)
-                                          .requestConfig(resolveRequestConfig())
+                                          .requestConfig(requestConfig == null ? RequestConfig.NO_OP : requestConfig)
                                           .executionContext(executionContext)
                                           .build();
-        }
-
-        private RequestConfig resolveRequestConfig() {
-            return requestConfig != null ? requestConfig : new AmazonWebServiceRequestAdapter(request.getOriginalRequest());
         }
 
     }

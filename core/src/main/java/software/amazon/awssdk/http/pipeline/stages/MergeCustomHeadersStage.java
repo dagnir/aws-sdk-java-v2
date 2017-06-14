@@ -15,16 +15,20 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.http.HttpClientDependencies;
-import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
 
 /**
  * Merge customer supplied headers into the marshalled request.
  */
-public class MergeCustomHeadersStage implements RequestToRequestPipeline {
+public class MergeCustomHeadersStage implements MutableRequestToRequestPipeline {
 
     private final LegacyClientConfiguration config;
 
@@ -33,9 +37,16 @@ public class MergeCustomHeadersStage implements RequestToRequestPipeline {
     }
 
     @Override
-    public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
-        request.getHeaders().putAll(config.getHeaders());
-        request.getHeaders().putAll(context.requestConfig().getCustomRequestHeaders());
-        return request;
+    public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest.Builder request, RequestExecutionContext context)
+            throws Exception {
+        return request.headers(adaptHeaders(config.getHeaders()))
+                      .headers(adaptHeaders(context.requestConfig().getCustomRequestHeaders()));
+    }
+
+    // TODO change these representations
+    private Map<String, List<String>> adaptHeaders(Map<String, String> toConvert) {
+        Map<String, List<String>> adapted = new HashMap<>(toConvert.size());
+        toConvert.forEach((k, v) -> adapted.put(k, Collections.singletonList(v)));
+        return adapted;
     }
 }

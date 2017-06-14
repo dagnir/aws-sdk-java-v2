@@ -20,14 +20,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.util.ValidationUtils;
 
 /**
- * Composite {@link RequestHandler2} to execute a chain of {@link RequestHandler2} implementations
+ * Composite {@link RequestHandler} to execute a chain of {@link RequestHandler} implementations
  * in stack order. That is if you have request handlers R1, R2, R3 the order of execution is as
  * follows
  *
@@ -55,54 +55,56 @@ import software.amazon.awssdk.util.ValidationUtils;
 @ThreadSafe
 public class StackedRequestHandler implements IRequestHandler2 {
 
-    private final List<RequestHandler2> inOrderRequestHandlers;
-    private final List<RequestHandler2> reverseOrderRequestHandlers;
+    private final List<RequestHandler> inOrderRequestHandlers;
+    private final List<RequestHandler> reverseOrderRequestHandlers;
 
-    public StackedRequestHandler(RequestHandler2... requestHandlers) {
+    public StackedRequestHandler(RequestHandler... requestHandlers) {
         this(Arrays.asList(ValidationUtils.assertNotNull(requestHandlers, "requestHandlers")));
     }
 
-    public StackedRequestHandler(List<RequestHandler2> requestHandlers) {
+    public StackedRequestHandler(List<RequestHandler> requestHandlers) {
         this.inOrderRequestHandlers = ValidationUtils.assertNotNull(requestHandlers, "requestHandlers");
-        this.reverseOrderRequestHandlers = new ArrayList<RequestHandler2>(requestHandlers);
+        this.reverseOrderRequestHandlers = new ArrayList<>(requestHandlers);
         Collections.reverse(reverseOrderRequestHandlers);
     }
 
     @Override
     public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest origRequest) {
         AmazonWebServiceRequest toReturn = origRequest;
-        for (RequestHandler2 handler : inOrderRequestHandlers) {
+        for (RequestHandler handler : inOrderRequestHandlers) {
             toReturn = handler.beforeMarshalling(toReturn);
         }
         return toReturn;
     }
 
     @Override
-    public void beforeRequest(Request<?> request) {
-        for (RequestHandler2 handler : inOrderRequestHandlers) {
-            handler.beforeRequest(request);
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        SdkHttpFullRequest toReturn = request;
+        for (RequestHandler handler : inOrderRequestHandlers) {
+            toReturn = handler.beforeRequest(toReturn);
         }
+        return toReturn;
     }
 
     @Override
-    public HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse origHttpResponse) {
+    public HttpResponse beforeUnmarshalling(SdkHttpFullRequest request, HttpResponse origHttpResponse) {
         HttpResponse toReturn = origHttpResponse;
-        for (RequestHandler2 handler : reverseOrderRequestHandlers) {
+        for (RequestHandler handler : reverseOrderRequestHandlers) {
             toReturn = handler.beforeUnmarshalling(request, toReturn);
         }
         return toReturn;
     }
 
     @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
-        for (RequestHandler2 handler : reverseOrderRequestHandlers) {
+    public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
+        for (RequestHandler handler : reverseOrderRequestHandlers) {
             handler.afterResponse(request, response);
         }
     }
 
     @Override
-    public void afterError(Request<?> request, Response<?> response, Exception e) {
-        for (RequestHandler2 handler : reverseOrderRequestHandlers) {
+    public void afterError(SdkHttpFullRequest request, Response<?> response, Exception e) {
+        for (RequestHandler handler : reverseOrderRequestHandlers) {
             handler.afterError(request, response, e);
         }
     }

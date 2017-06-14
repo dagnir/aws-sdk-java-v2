@@ -25,19 +25,24 @@ import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.event.ProgressInputStream;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
+import software.amazon.awssdk.utils.Pair;
 
 /**
  * Instrument the response content so that it reports events to the {@link ProgressListener}.
  */
-public class InstrumentHttpResponseContentStage implements RequestPipeline<HttpResponse, HttpResponse> {
+public class InstrumentHttpResponseContentStage
+        implements RequestPipeline<Pair<SdkHttpFullRequest, HttpResponse>, Pair<SdkHttpFullRequest, HttpResponse>> {
 
     private static final Log log = LogFactory.getLog(InstrumentHttpResponseContentStage.class);
 
     @Override
-    public HttpResponse execute(HttpResponse httpResponse, RequestExecutionContext context) throws Exception {
+    public Pair<SdkHttpFullRequest, HttpResponse> execute(Pair<SdkHttpFullRequest, HttpResponse> input,
+                                                          RequestExecutionContext context) throws Exception {
         ProgressListener listener = context.requestConfig().getProgressListener();
-        InputStream is = httpResponse.getContent();
+        HttpResponse httpResponse = input.right();
+        InputStream is = input.right().getContent();
         if (is != null) {
             httpResponse.setContent(ProgressInputStream.inputStreamForResponse(is, listener));
         }
@@ -48,6 +53,6 @@ public class InstrumentHttpResponseContentStage implements RequestPipeline<HttpR
         } catch (NumberFormatException e) {
             log.warn("Cannot parse the Content-Length header of the response.");
         }
-        return httpResponse;
+        return input;
     }
 }

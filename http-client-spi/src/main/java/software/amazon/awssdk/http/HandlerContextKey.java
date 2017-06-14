@@ -13,13 +13,12 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.handlers;
+package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * A type safe key used for setting and retrieving context in a {@link Request} object.
+ * A type safe key used for setting and retrieving context in a {@link software.amazon.awssdk.http.SdkHttpFullRequest} object.
  *
  * <pre class="brush: java">
  *     final HandlerContextKey&lt;String&gt; METRICS_KEY = new HandlerContextKey("METRICS_KEY");
@@ -41,13 +40,12 @@ import software.amazon.awssdk.auth.AwsCredentials;
  *      }
  * </pre>
  */
-public class HandlerContextKey<T> {
-    /** The key under which the request credentials are set. */
-    public static final HandlerContextKey<AwsCredentials> AWS_CREDENTIALS = new HandlerContextKey<>("AWSCredentials");
+public class HandlerContextKey<T> extends AttributeMap.Key<T> {
 
     private final String name;
 
-    public HandlerContextKey(String name) {
+    public HandlerContextKey(Class<T> clzz, String name) {
+        super(clzz);
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
