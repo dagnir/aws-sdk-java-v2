@@ -20,7 +20,6 @@ import static software.amazon.awssdk.utils.Validate.validState;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
@@ -31,7 +30,6 @@ import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.services.s3.auth.AwsChunkedEncodingInputStream;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
-import software.amazon.awssdk.services.s3.request.S3HandlerContextKeys;
 import software.amazon.awssdk.utils.BinaryUtils;
 
 /**
@@ -44,6 +42,12 @@ public class AwsS3V4Signer extends Aws4Signer {
      * Sent to S3 in lieu of a payload hash when unsigned payloads are enabled
      */
     private static final String UNSIGNED_PAYLOAD = "UNSIGNED-PAYLOAD";
+
+    private static final String CONTENT_LENGTH = "Content-Length";
+
+    private Boolean disableChunkedEncoding;
+
+    private Boolean enablePayloadSigning;
 
     /**
      * Don't double-url-encode path elements; S3 expects path elements to be encoded only once in
@@ -88,7 +92,7 @@ public class AwsS3V4Signer extends Aws4Signer {
 
         if (isPayloadSigningEnabled(request)) {
             if (useChunkEncoding(request)) {
-                final String contentLength = request.getHeaders().get(Headers.CONTENT_LENGTH);
+                final String contentLength = request.getHeaders().get(CONTENT_LENGTH);
                 final long originalContentLength;
                 if (contentLength != null) {
                     originalContentLength = Long.parseLong(contentLength);
@@ -113,7 +117,7 @@ public class AwsS3V4Signer extends Aws4Signer {
                         Long.toString(originalContentLength));
                 // Make sure "Content-Length" header is not empty so that HttpClient
                 // won't cache the stream again to recover Content-Length
-                request.addHeader(Headers.CONTENT_LENGTH, Long.toString(
+                request.addHeader(CONTENT_LENGTH, Long.toString(
                         AwsChunkedEncodingInputStream
                                 .calculateStreamContentLength(originalContentLength)));
                 return CONTENT_SHA_256;
@@ -148,8 +152,7 @@ public class AwsS3V4Signer extends Aws4Signer {
     private boolean isChunkedEncodingDisabled(SignableRequest<?> signableRequest) {
         if (signableRequest instanceof Request) {
             Request<?> request = (Request<?>) signableRequest;
-            Boolean isChunkedEncodingDisabled = request
-                    .getHandlerContext(S3HandlerContextKeys.IS_CHUNKED_ENCODING_DISABLED);
+            Boolean isChunkedEncodingDisabled = disableChunkedEncoding;
             return isChunkedEncodingDisabled != null && isChunkedEncodingDisabled;
         }
         return false;
@@ -168,8 +171,7 @@ public class AwsS3V4Signer extends Aws4Signer {
 
         if (signableRequest instanceof Request) {
             Request<?> request = (Request<?>) signableRequest;
-            Boolean isPayloadSigningEnabled = request
-                    .getHandlerContext(S3HandlerContextKeys.IS_PAYLOAD_SIGNING_ENABLED);
+            Boolean isPayloadSigningEnabled = enablePayloadSigning;
             return isPayloadSigningEnabled != null && isPayloadSigningEnabled;
         }
         return false;
@@ -199,5 +201,13 @@ public class AwsS3V4Signer extends Aws4Signer {
             throw new ResetException("Failed to reset the input stream", ex);
         }
         return contentLength;
+    }
+
+    public void setDisableChunkedEncoding(boolean disableChunkedEncoding) {
+        this.disableChunkedEncoding = disableChunkedEncoding;
+    }
+
+    public void setEnablePayloadSigning(boolean enablePayloadSigning) {
+        this.enablePayloadSigning = enablePayloadSigning;
     }
 }

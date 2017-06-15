@@ -47,13 +47,13 @@ public class BaseClientBuilderInterface implements ClassSpec {
                         .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"));
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
-            builder.addMethod(advancedConfiguration());
+            builder.addMethod(advancedConfigurationMethod());
         }
 
         return builder.build();
     }
 
-    private MethodSpec advancedConfiguration() {
+    private MethodSpec advancedConfigurationMethod() {
         ClassName advancedConfiguration = ClassName.get(basePackage,
                 model.getCustomizationConfig().getServiceSpecificClientConfigClass());
         return MethodSpec.methodBuilder("advancedConfiguration")

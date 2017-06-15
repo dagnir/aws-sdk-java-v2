@@ -59,23 +59,12 @@ public class StandardErrorUnmarshaller extends AbstractErrorUnmarshaller<Node> {
     public AmazonServiceException unmarshall(Node in) throws Exception {
         XPath xpath = xpath();
         String errorCode = parseErrorCode(in, xpath);
-        String errorType = asString("ErrorResponse/Error/Type", in, xpath);
-        String requestId = asString("ErrorResponse/RequestId", in, xpath);
-        String message = asString("ErrorResponse/Error/Message", in, xpath);
 
-        AmazonServiceException ase = newException(message);
-        ase.setErrorCode(errorCode);
-        ase.setRequestId(requestId);
-
-        if (errorType == null) {
-            ase.setErrorType(AmazonServiceException.ErrorType.Unknown);
-        } else if (errorType.equalsIgnoreCase("Receiver")) {
-            ase.setErrorType(AmazonServiceException.ErrorType.Service);
-        } else if (errorType.equalsIgnoreCase("Sender")) {
-            ase.setErrorType(AmazonServiceException.ErrorType.Client);
+        if (errorCode != null) {
+            return standardErrorPathException(errorCode, in, xpath);
         }
 
-        return ase;
+        return s3ErrorPathException(in, xpath);
     }
 
     /**
@@ -108,6 +97,39 @@ public class StandardErrorUnmarshaller extends AbstractErrorUnmarshaller<Node> {
      */
     public String getErrorPropertyPath(String property) {
         return "ErrorResponse/Error/" + property;
+    }
+
+    public AmazonServiceException standardErrorPathException(String errorCode, Node in, XPath xpath) throws Exception {
+
+        String errorType = asString("ErrorResponse/Error/Type", in, xpath);
+        String requestId = asString("ErrorResponse/RequestId", in, xpath);
+        String message = asString("ErrorResponse/Error/Message", in, xpath);
+
+        AmazonServiceException ase = newException(message);
+        ase.setErrorCode(errorCode);
+        ase.setRequestId(requestId);
+
+        if (errorType == null) {
+            ase.setErrorType(AmazonServiceException.ErrorType.Unknown);
+        } else if (errorType.equalsIgnoreCase("Receiver")) {
+            ase.setErrorType(AmazonServiceException.ErrorType.Service);
+        } else if (errorType.equalsIgnoreCase("Sender")) {
+            ase.setErrorType(AmazonServiceException.ErrorType.Client);
+        }
+
+        return ase;
+    }
+
+    public AmazonServiceException s3ErrorPathException(Node in, XPath xpath) throws Exception {
+        String errorCode = asString("Error/Code", in, xpath);
+        String requestId = asString("Error/RequestId", in, xpath);
+        String message = asString("Error/Message", in, xpath);
+
+        AmazonServiceException ase = newException(message);
+        ase.setErrorCode(errorCode);
+        ase.setRequestId(requestId);
+
+        return ase;
     }
 
 }
