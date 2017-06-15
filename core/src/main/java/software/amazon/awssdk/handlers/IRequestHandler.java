@@ -28,7 +28,7 @@ import software.amazon.awssdk.http.SdkHttpFullRequest;
  * request handler.
  */
 @SdkInternalApi
-public interface IRequestHandler2 {
+public interface IRequestHandler {
 
     /**
      * Runs any additional processing logic on the specified request object before it is marshaled

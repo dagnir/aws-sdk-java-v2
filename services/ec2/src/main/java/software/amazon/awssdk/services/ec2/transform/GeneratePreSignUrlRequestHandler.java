@@ -110,7 +110,7 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler {
                                                                      .destinationRegion(destinationRegion)
                                                                      .build();
 
-        return SdkHttpFullRequestAdapter.toSdkRequest(new CopySnapshotRequestMarshaller().marshall(copySnapshotRequest));
+        return SdkHttpFullRequestAdapter.toHttpFullRequest(new CopySnapshotRequestMarshaller().marshall(copySnapshotRequest));
 
     }
 

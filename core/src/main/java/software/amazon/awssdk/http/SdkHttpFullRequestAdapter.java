@@ -30,11 +30,11 @@ import software.amazon.awssdk.handlers.AwsHandlerKeys;
  */
 public class SdkHttpFullRequestAdapter {
 
-    public static SdkHttpFullRequest toSdkRequest(Request<?> request) {
-        return toMutableSdkRequest(request).build();
+    public static SdkHttpFullRequest toHttpFullRequest(Request<?> request) {
+        return toMutableHttpFullRequest(request).build();
     }
 
-    public static SdkHttpFullRequest.Builder toMutableSdkRequest(Request<?> request) {
+    public static SdkHttpFullRequest.Builder toMutableHttpFullRequest(Request<?> request) {
         return DefaultSdkHttpFullRequest
                 .builder()
                 .content(request.getContent())

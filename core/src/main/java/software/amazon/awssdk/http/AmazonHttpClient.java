@@ -387,7 +387,7 @@ public class AmazonHttpClient implements AutoCloseable {
 
         @Override
         public RequestExecutionBuilder request(Request<?> request) {
-            this.request = SdkHttpFullRequestAdapter.toSdkRequest(request);
+            this.request = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
             return this;
         }
 

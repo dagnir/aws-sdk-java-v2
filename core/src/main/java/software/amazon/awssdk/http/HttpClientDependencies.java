@@ -36,7 +36,7 @@ public class HttpClientDependencies implements AutoCloseable {
     private final RetryPolicy retryPolicy;
     private final CapacityManager retryCapacity;
     private final SdkHttpClient sdkHttpClient;
-    // todo
+    // Do we want seperate dependencies for sync/async or just have an Either or something
     private final SdkAsyncHttpClient sdkAsyncHttpClient;
     private final ClientExecutionTimer clientExecutionTimer;
     private final boolean calculateCrc32FromCompressedData;

@@ -17,11 +17,7 @@ package software.amazon.awssdk.auth;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
 import java.util.TimeZone;
-import java.util.TreeMap;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -49,7 +45,7 @@ public class QueryStringSigner extends AbstractAwsSigner {
      */
     public SdkHttpFullRequest sign(SdkHttpFullRequest request, AwsCredentials credentials)
             throws SdkClientException {
-        return sign(request.toBuilder(), SignatureVersion.V2, SigningAlgorithm.HmacSHA256, credentials).build();
+        return sign(request.toBuilder(), SigningAlgorithm.HmacSHA256, credentials).build();
     }
 
     /**
@@ -57,12 +53,11 @@ public class QueryStringSigner extends AbstractAwsSigner {
      *
      * AWSAccessKeyId SignatureVersion SignatureMethod Timestamp Signature
      *
-     * @param mutableRequest   request to be signed.
-     * @param version   signature version. "2" is recommended.
-     * @param algorithm signature algorithm. "HmacSHA256" is recommended.
+     * @param mutableRequest request to be signed.
+     * @param algorithm      signature algorithm. "HmacSHA256" is recommended.
      */
-    private SdkHttpFullRequest.Builder sign(SdkHttpFullRequest.Builder mutableRequest, SignatureVersion version,
-                                   SigningAlgorithm algorithm, AwsCredentials credentials)
+    private SdkHttpFullRequest.Builder sign(SdkHttpFullRequest.Builder mutableRequest,
+                                            SigningAlgorithm algorithm, AwsCredentials credentials)
             throws SdkClientException {
         // annonymous credentials, don't sign
         if (CredentialUtils.isAnonymous(credentials)) {
@@ -71,7 +66,7 @@ public class QueryStringSigner extends AbstractAwsSigner {
 
         AwsCredentials sanitizedCredentials = sanitizeCredentials(credentials);
         mutableRequest.queryParameter("AWSAccessKeyId", sanitizedCredentials.accessKeyId());
-        mutableRequest.queryParameter("SignatureVersion", version.toString());
+        mutableRequest.queryParameter("SignatureVersion", "2");
 
         int timeOffset = mutableRequest.handlerContext(AwsHandlerKeys.TIME_OFFSET) == null ? 0 :
                 mutableRequest.handlerContext(AwsHandlerKeys.TIME_OFFSET);
@@ -81,40 +76,13 @@ public class QueryStringSigner extends AbstractAwsSigner {
             addSessionCredentials(mutableRequest, (AwsSessionCredentials) sanitizedCredentials);
         }
 
-        String stringToSign;
-        if (version.equals(SignatureVersion.V1)) {
-            stringToSign = calculateStringToSignV1(mutableRequest.getParameters());
-        } else if (version.equals(SignatureVersion.V2)) {
-            mutableRequest.queryParameter("SignatureMethod", algorithm.toString());
-            stringToSign = calculateStringToSignV2(mutableRequest);
-        } else {
-            throw new SdkClientException("Invalid Signature Version specified");
-        }
+        mutableRequest.queryParameter("SignatureMethod", algorithm.toString());
+        String stringToSign = calculateStringToSignV2(mutableRequest);
 
         String signatureValue = signAndBase64Encode(stringToSign,
                                                     sanitizedCredentials.secretAccessKey(), algorithm);
         mutableRequest.queryParameter("Signature", signatureValue);
         return mutableRequest;
-    }
-
-    /**
-     * Calculates string to sign for signature version 1.
-     *
-     * @param parameters request parameters
-     * @return String to sign
-     */
-    private String calculateStringToSignV1(Map<String, List<String>> parameters) {
-        StringBuilder data = new StringBuilder();
-        SortedMap<String, List<String>> sorted = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        sorted.putAll(parameters);
-
-        for (Map.Entry<String, List<String>> entry : sorted.entrySet()) {
-            for (String value : entry.getValue()) {
-                data.append(entry.getKey()).append(value);
-            }
-        }
-
-        return data.toString();
     }
 
     /**
@@ -126,13 +94,13 @@ public class QueryStringSigner extends AbstractAwsSigner {
      */
     private String calculateStringToSignV2(SdkHttpRequest request) throws SdkClientException {
         return new StringBuilder().append("POST")
-                                  .append("\n")
-                                  .append(getCanonicalizedEndpoint(request.getEndpoint()))
-                                  .append("\n")
-                                  .append(getCanonicalizedResourcePath(request))
-                                  .append("\n")
-                                  .append(getCanonicalizedQueryString(request.getParameters()))
-                                  .toString();
+                .append("\n")
+                .append(getCanonicalizedEndpoint(request.getEndpoint()))
+                .append("\n")
+                .append(getCanonicalizedResourcePath(request))
+                .append("\n")
+                .append(getCanonicalizedQueryString(request.getParameters()))
+                .toString();
     }
 
     private String getCanonicalizedResourcePath(SdkHttpRequest request) {

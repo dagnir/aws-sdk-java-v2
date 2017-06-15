@@ -16,21 +16,16 @@
 package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.metrics.spi.TimingInfo;
 
 /**
- * Interface for addition request handling in clients. A request handler is executed on a request
- * object <b>before</b> it is sent to the client runtime to be executed.
- * Note {@link TimingInfo} is accessible via {@link Request#getAwsRequestMetrics()} and hence is
- * omitted from the interface to reduce duplication by design.
- * <p>
+ * Interface that allows hooking into the lifecycle of a request and in certain cases, modifying
+ * the outbound request or inbound response.
  * TODO: This shouldn't be coupled to AWS-specific concepts
  */
-public abstract class RequestHandler implements IRequestHandler2 {
+public abstract class RequestHandler implements IRequestHandler {
 
     @Override
     public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {

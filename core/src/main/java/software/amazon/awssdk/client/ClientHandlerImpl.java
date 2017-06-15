@@ -174,7 +174,7 @@ public class ClientHandlerImpl extends ClientHandler {
      * @return The (possibly different) request to marshall
      */
     @SuppressWarnings("unchecked")
-    protected final <T extends AmazonWebServiceRequest> T beforeMarshalling(T request) {
+    private <T extends AmazonWebServiceRequest> T beforeMarshalling(T request) {
         T local = request;
         for (RequestHandler handler : requestHandlers) {
             local = (T) handler.beforeMarshalling(local);
@@ -210,7 +210,7 @@ public class ClientHandlerImpl extends ClientHandler {
                                                          HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
         request.setEndpoint(endpoint);
         return client.requestExecutionBuilder()
-                .request(SdkHttpFullRequestAdapter.toSdkRequest(request))
+                .request(SdkHttpFullRequestAdapter.toHttpFullRequest(request))
                 .requestConfig(requestConfig)
                 .executionContext(executionContext)
                 .errorResponseHandler(errorResponseHandler)

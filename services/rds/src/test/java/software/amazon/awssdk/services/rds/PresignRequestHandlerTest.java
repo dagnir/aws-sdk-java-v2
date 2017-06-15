@@ -139,7 +139,7 @@ public class PresignRequestHandlerTest {
     }
 
     private SdkHttpFullRequest marshallRequest(CopyDBSnapshotRequest request) throws URISyntaxException {
-        SdkHttpFullRequest marshalled = SdkHttpFullRequestAdapter.toSdkRequest(marshaller.marshall(request));
+        SdkHttpFullRequest marshalled = SdkHttpFullRequestAdapter.toHttpFullRequest(marshaller.marshall(request));
         return marshalled.toBuilder()
                          .endpoint(new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
                                            .withRegion(DESTINATION_REGION)

@@ -16,6 +16,7 @@
 package software.amazon.awssdk.auth.internal;
 
 import java.util.Date;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.util.AwsHostNameUtils;
@@ -86,13 +87,17 @@ public final class Aws4SignerRequestParams {
         this.formattedSigningDate = Aws4SignerUtils
                 .formatDateStamp(signingDateTimeMilli);
         this.serviceName = serviceName;
-        this.regionName = regionNameOverride != null ? regionNameOverride
-                : AwsHostNameUtils.parseRegionName(request.getEndpoint()
-                                                          .getHost(), this.serviceName);
+        this.regionName = parseRegion(request, regionNameOverride);
         this.scope = generateScope(formattedSigningDate, this.serviceName, regionName);
-        this.formattedSigningDateTime = Aws4SignerUtils
-                .formatTimestamp(signingDateTimeMilli);
+        this.formattedSigningDateTime = Aws4SignerUtils.formatTimestamp(signingDateTimeMilli);
         this.signingAlgorithm = signingAlgorithm;
+    }
+
+    @ReviewBeforeRelease("Specify region when creating signer rather then parsing from endpoint.")
+    private String parseRegion(SdkHttpRequest request, String regionNameOverride) {
+        return regionNameOverride != null ? regionNameOverride
+                : AwsHostNameUtils.parseRegionName(request.getEndpoint()
+                                                           .getHost(), this.serviceName);
     }
 
     /**
