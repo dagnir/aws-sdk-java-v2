@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.query.transform.InvalidInputExceptionUnma
 import software.amazon.awssdk.services.query.waiters.QueryClientWaiters;
 
 @Generated("software.amazon.awssdk:codegen")
-public class DefaultQueryClient implements QueryClient {
+class DefaultQueryClient implements QueryClient {
     private final ClientHandler clientHandler;
 
     private final List<Unmarshaller<AmazonServiceException, Node>> exceptionUnmarshallers;
