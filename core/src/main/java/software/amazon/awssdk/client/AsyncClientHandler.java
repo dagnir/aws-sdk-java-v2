@@ -15,24 +15,23 @@
 
 package software.amazon.awssdk.client;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CompletableFuture;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 
 /**
- * Provides access to all params needed in a asynchronous AWS service client constructor. Abstract
- * to allow additions to the params while maintaining backwards compatibility.
+ * Client interface to invoke an API.
  */
 @SdkProtectedApi
-public abstract class AwsAsyncClientParams extends AwsSyncClientParams {
+public abstract class AsyncClientHandler implements AutoCloseable {
 
-    public abstract ExecutorService getExecutor();
-
-    private final SdkAsyncHttpClient asyncHttpClient = NettySdkHttpClientFactory.builder().build().createHttpClient();
-
-    public SdkAsyncHttpClient getAsyncHttpClient() {
-        return asyncHttpClient;
-    }
-
+    /**
+     * Execute's a web service request. Handles marshalling and unmarshalling of data and making the
+     * underlying HTTP call(s).
+     *
+     * @param executionParams Parameters specific to this invocation of an API.
+     * @param <InputT>        Input POJO type
+     * @param <OutputT>       Output POJO type
+     * @return Unmarshalled output POJO type.
+     */
+    public abstract <InputT, OutputT> CompletableFuture<OutputT> execute(ClientExecutionParams<InputT, OutputT> executionParams);
 }

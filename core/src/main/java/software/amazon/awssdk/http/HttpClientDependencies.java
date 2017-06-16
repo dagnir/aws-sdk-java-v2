@@ -134,7 +134,13 @@ public class HttpClientDependencies implements AutoCloseable {
     @Override
     public void close() throws Exception {
         this.clientExecutionTimer.close();
-        this.sdkHttpClient.close();
+        // TODO close which one is present
+        if (this.sdkAsyncHttpClient != null) {
+            this.sdkAsyncHttpClient.close();
+        }
+        if (this.sdkHttpClient != null) {
+            this.sdkHttpClient.close();
+        }
     }
 
     /**

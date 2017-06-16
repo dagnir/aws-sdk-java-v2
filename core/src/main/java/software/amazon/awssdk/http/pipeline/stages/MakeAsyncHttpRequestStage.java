@@ -25,6 +25,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.CompletableFuture;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
@@ -32,15 +34,12 @@ import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
-import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
-import software.amazon.awssdk.http.async.SdkRequestChannel;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
-import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.utils.IoUtils;
 import software.amazon.awssdk.utils.Pair;
 
@@ -74,7 +73,11 @@ public class MakeAsyncHttpRequestStage
                                                                       RequestExecutionContext context,
                                                                       ProgressListener listener) throws Exception {
         CompletableFuture<SdkHttpFullResponse> future = new CompletableFuture<>();
-        sdkAsyncHttpClient.prepareRequest(new SimpleRequestProvider(request, context.awsRequestMetrics(), future),
+        SdkHttpRequestProvider requestProvider = createRequestProvider(request, context);
+        sdkAsyncHttpClient.prepareRequest(request, SdkRequestContext.builder()
+                                                                    .metrics(context.awsRequestMetrics())
+                                                                    .build(),
+                                          requestProvider,
                                           new SimpleResponseHandler(future, listener))
                           .run();
 
@@ -83,44 +86,41 @@ public class MakeAsyncHttpRequestStage
         return future;
     }
 
+    private SdkHttpRequestProvider createRequestProvider(SdkHttpFullRequest request, RequestExecutionContext context)
+            throws IOException {
+        return context.requestProvider() != null ? context.requestProvider()
+                : new SimpleRequestProvider(request);
+    }
+
     private static class SimpleRequestProvider implements SdkHttpRequestProvider {
 
-        private final SdkHttpFullRequest request;
-        private final AwsRequestMetrics metrics;
-        private final CompletableFuture<SdkHttpFullResponse> future;
+        private final ByteBuffer content;
+        private final int length;
 
-        private SimpleRequestProvider(SdkHttpFullRequest request,
-                                      AwsRequestMetrics metrics,
-                                      CompletableFuture<SdkHttpFullResponse> future) {
-            this.request = request;
-            this.metrics = metrics;
-            this.future = future;
+        private SimpleRequestProvider(SdkHttpFullRequest request) throws IOException {
+            this.content = ByteBuffer.wrap(IoUtils.toByteArray(request.getContent()));
+            this.length = content.limit();
         }
 
         @Override
-        public SdkHttpRequest request() {
-            return request;
+        public long contentLength() {
+            return length;
         }
 
         @Override
-        public SdkRequestContext context() {
-            return SdkRequestContext.builder()
-                                    .metrics(metrics)
-                                    .build();
-        }
+        public void subscribe(Subscriber<? super ByteBuffer> s) {
 
-        @Override
-        public void readyForData(SdkRequestChannel channel) {
-            try {
-                channel.writeAndComplete(ByteBuffer.wrap(IoUtils.toByteArray(request.getContent())));
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
+            s.onSubscribe(new Subscription() {
+                @Override
+                public void request(long n) {
+                    s.onNext(content);
+                    s.onComplete();
+                }
 
-        @Override
-        public void exceptionOccurred(Throwable exception) {
-            future.completeExceptionally(exception);
+                @Override
+                public void cancel() {
+                }
+            });
         }
     }
 

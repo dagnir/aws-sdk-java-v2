@@ -20,6 +20,7 @@ import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.runtime.transform.Marshaller;
 
@@ -34,6 +35,7 @@ import software.amazon.awssdk.runtime.transform.Marshaller;
 public class ClientExecutionParams<InputT, OutputT> {
 
     private InputT input;
+    private AsyncRequestProvider asyncRequestProvider;
     private Marshaller<Request<InputT>, InputT> marshaller;
     private HttpResponseHandler<OutputT> responseHandler;
     private HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
@@ -84,6 +86,16 @@ public class ClientExecutionParams<InputT, OutputT> {
 
     public ClientExecutionParams<InputT, OutputT> withRequestConfig(RequestConfig requestConfig) {
         this.requestConfig = requestConfig;
+        return this;
+    }
+
+    public AsyncRequestProvider asyncRequestProvider() {
+        return asyncRequestProvider;
+    }
+
+    public ClientExecutionParams<InputT, OutputT> asyncRequestProvider(
+            AsyncRequestProvider asyncRequestProvider) {
+        this.asyncRequestProvider = asyncRequestProvider;
         return this;
     }
 }

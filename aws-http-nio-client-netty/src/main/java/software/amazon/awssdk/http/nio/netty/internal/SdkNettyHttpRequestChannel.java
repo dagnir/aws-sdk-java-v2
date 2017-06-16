@@ -43,20 +43,9 @@ final class SdkNettyHttpRequestChannel implements SdkRequestChannel {
     }
 
     @Override
-    public void writeAndComplete(ByteBuffer data) {
-        channel.writeAndFlush(new DefaultLastHttpContent(toByteBuf(channel.alloc(), data)))
-               .addListener(this::handleFailure);
-    }
-
-    @Override
     public void write(ByteBuffer data) {
         channel.writeAndFlush(new DefaultHttpContent(toByteBuf(channel.alloc(), data)))
                .addListener(this::handleFailure);
-    }
-
-    @Override
-    public boolean isWriteable() {
-        return channel.isWritable();
     }
 
     @Override

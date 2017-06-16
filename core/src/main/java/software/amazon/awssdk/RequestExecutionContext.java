@@ -25,6 +25,7 @@ import software.amazon.awssdk.auth.MetricsReportingCredentialsProvider;
 import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
+import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -36,6 +37,7 @@ import software.amazon.awssdk.utils.Validate;
  */
 public final class RequestExecutionContext {
 
+    private final SdkHttpRequestProvider requestProvider;
     private final RequestConfig requestConfig;
     private final AwsRequestMetrics awsRequestMetrics;
     private final AwsCredentialsProvider credentialsProvider;
@@ -45,6 +47,7 @@ public final class RequestExecutionContext {
     private ClientExecutionAbortTrackerTask clientExecutionTrackerTask;
 
     private RequestExecutionContext(Builder builder) {
+        this.requestProvider = builder.requestProvider;
         this.requestConfig = notNull(builder.requestConfig, "RequestConfig must not be null");
         this.requestHandlers = builder.resolveRequestHandlers();
         this.awsRequestMetrics = builder.executionContext.getAwsRequestMetrics();
@@ -61,6 +64,10 @@ public final class RequestExecutionContext {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    public SdkHttpRequestProvider requestProvider() {
+        return requestProvider;
     }
 
     /**
@@ -118,8 +125,14 @@ public final class RequestExecutionContext {
      */
     public static final class Builder {
 
+        private SdkHttpRequestProvider requestProvider;
         private RequestConfig requestConfig;
         private ExecutionContext executionContext;
+
+        public Builder requestProvider(SdkHttpRequestProvider requestProvider) {
+            this.requestProvider = requestProvider;
+            return this;
+        }
 
         public Builder requestConfig(RequestConfig requestConfig) {
             this.requestConfig = requestConfig;

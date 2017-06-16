@@ -44,6 +44,7 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.AbortableRunnable;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
@@ -90,7 +91,6 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                 .channel(NioSocketChannel.class)
                                 .option(ChannelOption.WRITE_BUFFER_WATER_MARK, WATER_MARK)
                                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, serviceDefaults.getConnectionTimeout())
-                                .option(ChannelOption.SO_TIMEOUT, serviceDefaults.getSocketTimeout())
                                 .remoteAddress(addressFor(key));
                 SslContext sslContext = sslContext(key.getScheme());
                 return new FixedChannelPool(bootstrap,
@@ -100,11 +100,12 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
     }
 
     @Override
-    public AbortableRunnable prepareRequest(SdkHttpRequestProvider requestProvider,
+    public AbortableRunnable prepareRequest(SdkHttpRequest sdkRequest,
+                                            SdkRequestContext requestContext,
+                                            SdkHttpRequestProvider requestProvider,
                                             SdkHttpResponseHandler handler) {
-        final SdkHttpRequest sdkRequest = requestProvider.request();
         final RequestContext context = new RequestContext(pools.get(stripPath(sdkRequest.getEndpoint())),
-                                                          requestProvider,
+                                                          sdkRequest, requestProvider,
                                                           requestAdapter.adapt(sdkRequest),
                                                           handler);
         return new RunnableRequest(context);
@@ -153,6 +154,8 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
             this.serviceDefaults = serviceDefaults;
         }
 
+        @ReviewBeforeRelease("Not sure if Netty supports setting socket timeout. There's a ReadTimeoutHandler but that" +
+                             "fires if the connection is just idle which is not what we want.")
         public int getSocketTimeout() {
             return saturatedCast(serviceDefaults.get(SOCKET_TIMEOUT).toMillis());
         }

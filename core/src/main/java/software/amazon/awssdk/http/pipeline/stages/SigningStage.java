@@ -30,6 +30,7 @@ import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 /**
  * Sign the marshalled request (if applicable).
  */
+// TODO how does signing work with a request provider
 public class SigningStage implements RequestToRequestPipeline {
 
     private final HttpClientDependencies dependencies;

@@ -18,6 +18,7 @@ package software.amazon.awssdk.http.nio.netty.internal;
 import io.netty.channel.pool.ChannelPool;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.AttributeKey;
+import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 
@@ -25,15 +26,18 @@ public final class RequestContext {
     static final AttributeKey<RequestContext> REQUEST_CONTEXT_KEY = AttributeKey.newInstance("requestContext");
 
     private final ChannelPool channelPool;
+    private final SdkHttpRequest sdkRequest;
     private final SdkHttpRequestProvider requestProvider;
     private final HttpRequest nettyRequest;
     private final SdkHttpResponseHandler handler;
 
     public RequestContext(ChannelPool channelPool,
+                          SdkHttpRequest sdkRequest,
                           SdkHttpRequestProvider requestProvider,
                           HttpRequest nettyRequest,
                           SdkHttpResponseHandler handler) {
         this.channelPool = channelPool;
+        this.sdkRequest = sdkRequest;
         this.requestProvider = requestProvider;
         this.nettyRequest = nettyRequest;
         this.handler = handler;
@@ -45,6 +49,10 @@ public final class RequestContext {
 
     ChannelPool channelPool() {
         return channelPool;
+    }
+
+    SdkHttpRequest sdkRequest() {
+        return this.sdkRequest;
     }
 
     SdkHttpRequestProvider sdkRequestProvider() {
