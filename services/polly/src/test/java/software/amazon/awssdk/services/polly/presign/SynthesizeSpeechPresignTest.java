@@ -45,7 +45,8 @@ public class SynthesizeSpeechPresignTest {
 
     // Note, $jacocoData is to account for the coverage tool doing some byte code manipulation.
     private static final List<String> ACKNOWLEDGED_FIELDS = Arrays.asList("lexiconNames", "outputFormat", "sampleRate",
-                                                                          "text", "textType", "voiceId", "$jacocoData");
+                                                                          "text", "textType", "voiceId", "$jacocoData",
+                                                                          "speechMarkTypes");
 
     private static final Date SIGNER_DATE = getFixedDate();
 

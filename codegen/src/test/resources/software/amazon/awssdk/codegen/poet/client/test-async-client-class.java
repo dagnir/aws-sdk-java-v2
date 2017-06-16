@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.json.model.APostOperationWithOutputReques
 import software.amazon.awssdk.services.json.model.APostOperationWithOutputResponse;
 
 @Generated("software.amazon.awssdk:codegen")
-public class DefaultJsonAsyncClient implements JsonAsyncClient {
+class DefaultJsonAsyncClient implements JsonAsyncClient {
     private final JsonClient syncClient;
 
     private final ExecutorService executor;

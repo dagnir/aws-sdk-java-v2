@@ -20,7 +20,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 
 @Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
-public final class DefaultJsonAsyncClientBuilder extends DefaultJsonBaseClientBuilder<JsonAsyncClientBuilder, JsonAsyncClient>
+final class DefaultJsonAsyncClientBuilder extends DefaultJsonBaseClientBuilder<JsonAsyncClientBuilder, JsonAsyncClient>
     implements JsonAsyncClientBuilder {
     @Override
     protected final JsonAsyncClient buildClient() {
