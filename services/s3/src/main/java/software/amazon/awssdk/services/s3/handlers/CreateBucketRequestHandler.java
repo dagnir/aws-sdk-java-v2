@@ -12,6 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package software.amazon.awssdk.services.s3.handlers;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
@@ -38,7 +39,7 @@ public class CreateBucketRequestHandler extends RequestHandler2 {
      * name is not valid, an {@link IllegalArgumentException} is thrown. See
      * {@link BucketUtils#isValidS3BucketName(String, boolean)} for additional
      * details.
-     * @param bucketName
+     * @param bucketName Name of the bucket
      */
     private void validateBucketNameIsS3Compatible(String bucketName) {
         BucketUtils.isValidS3BucketName(bucketName, true);

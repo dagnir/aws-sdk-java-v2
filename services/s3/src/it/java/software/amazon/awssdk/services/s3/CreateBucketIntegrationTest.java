@@ -14,5 +14,69 @@
  */
 package software.amazon.awssdk.services.s3;
 
-public class CreateBucketIntegrationtest {
+import org.junit.Test;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+
+public class CreateBucketIntegrationTest extends S3IntegrationTestBase {
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameIsLessThan3Characters() {
+        s3.createBucket(CreateBucketRequest.builder().bucket("s3").build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameIsGreaterThan63Characters() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket("wajb5vwtlkhx4ow1t9e6l39rdy7amxxyttryfdw4y4nwomxervpti82lphi5plm8")
+                                           .build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameIsIpAddress() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket("127.0.0.1")
+                                           .build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameContainsUpperCaseCharacters() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket("UPPERCASE")
+                                           .build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameContainsWhiteSpace() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket("white space")
+                                           .build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameBeginsWithPeriod() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket(".period")
+                                           .build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameContainsAdjacentPeriods() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket("..period")
+                                           .build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameBeginsWithADash() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket("-dash")
+                                           .build());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createBucket_ThrowsIllegalArgumentException_WhenBucketNameHasDashAdjacentAPeriod() {
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket("-.dashperiod")
+                                           .build());
+    }
 }

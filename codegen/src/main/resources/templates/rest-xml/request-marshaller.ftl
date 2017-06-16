@@ -51,6 +51,19 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
         request.setHttpMethod(HttpMethodName.${httpVerb});
 
         <@MarshalHeaderMembersMacro.content shape shape.variable.variableName/>
+
+        <#list shape.members as member>
+            <#if member.map && member.http.location?? && member.http.location == "headers">
+            ${shape.variable.variableName}.${member.variable.variableName}().entrySet().forEach(e -> {
+                if (e.getKey().startsWith("${member.http.marshallLocationName}")) {
+                    request.addHeader(e.getKey(), e.getValue());
+                } else {
+                    request.addHeader("${member.http.marshallLocationName}" + e.getKey(), e.getValue());
+                }
+            });
+            </#if>
+        </#list>
+
         <@UriMemberMarshallerMacro.content shape shape.variable.variableName/>
         <@QueryStringMemberMarshallerMacro.content shape shape.variable.variableName/>
 
