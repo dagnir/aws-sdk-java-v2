@@ -16,7 +16,6 @@
 package software.amazon.awssdk.codegen.poet.client;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -48,12 +47,9 @@ public class AsyncClientInterface implements ClassSpec {
     public TypeSpec poetSpec() {
         return PoetUtils.createInterfaceBuilder(className)
                         .addSuperinterface(AutoCloseable.class)
-                        .addField(FieldSpec.builder(String.class, "ENDPOINT_PREFIX")
-                                           .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                                           .initializer("$S", model.getMetadata().getEndpointPrefix())
-                                           .build())
                         .addMethods(operations())
-                        .addMethod(builderMethod())
+                        .addMethod(builder())
+                        .addMethod(create())
                         .build();
     }
 
@@ -86,7 +82,7 @@ public class AsyncClientInterface implements ClassSpec {
                          .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata())), opModel);
     }
 
-    private MethodSpec builderMethod() {
+    private MethodSpec builder() {
         ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilder());
         ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilderInterface());
         return MethodSpec.methodBuilder("builder")
@@ -94,6 +90,14 @@ public class AsyncClientInterface implements ClassSpec {
                          .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                          .addStatement("return new $T()", builderClass)
                          .build();
+    }
+
+    private MethodSpec create() {
+        return MethodSpec.methodBuilder("create")
+                .returns(className)
+                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                .addStatement("return builder().build()")
+                .build();
     }
 
     private static class BuilderModelBag {

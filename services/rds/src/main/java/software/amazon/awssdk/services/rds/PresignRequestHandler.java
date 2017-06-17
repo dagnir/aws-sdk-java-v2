@@ -135,7 +135,7 @@ abstract class PresignRequestHandler<T extends AmazonWebServiceRequest> extends 
                     + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
-        return new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
+        return new DefaultServiceEndpointBuilder(SERVICE_NAME, Protocol.HTTPS.toString())
                 .withRegion(region)
                 .getServiceEndpoint();
     }
