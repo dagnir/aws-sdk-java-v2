@@ -43,19 +43,15 @@ public final class SyncClientInterface implements ClassSpec {
     @Override
     public TypeSpec poetSpec() {
         Builder classBuilder = PoetUtils.createInterfaceBuilder(className)
-                .addField(FieldSpec.builder(String.class, "ENDPOINT_PREFIX")
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                        .initializer("$S", model.getMetadata().getEndpointPrefix())
-                        .build())
                 .addField(FieldSpec.builder(String.class, "SERVICE_NAME")
-                                  .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                                  .initializer("$S", model.getMetadata().getSigningName())
-                                  .build())
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                        .initializer("$S", model.getMetadata().getSigningName())
+                        .build())
+                .addSuperinterface(AutoCloseable.class)
                 .addMethods(operations())
                 .addMethod(builder())
                 .addMethod(create())
-                .addMethod(serviceMetadata())
-                .addSuperinterface(AutoCloseable.class);
+                .addMethod(serviceMetadata());
 
         if (model.getHasWaiters()) {
             classBuilder.addMethod(waiters());
