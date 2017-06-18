@@ -27,20 +27,15 @@ import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
-import software.amazon.awssdk.http.exception.SdkInterruptedException;
+import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.http.pipeline.stages.ApplyTransactionIdStage;
 import software.amazon.awssdk.http.pipeline.stages.ApplyUserAgentStage;
 import software.amazon.awssdk.http.pipeline.stages.AsyncRetryableStage;
 import software.amazon.awssdk.http.pipeline.stages.BeforeRequestHandlersStage;
-import software.amazon.awssdk.http.pipeline.stages.BeforeUnmarshallingCallbackStage;
-import software.amazon.awssdk.http.pipeline.stages.HandleResponseStage;
-import software.amazon.awssdk.http.pipeline.stages.HttpResponseAdaptingStage;
-import software.amazon.awssdk.http.pipeline.stages.InstrumentHttpResponseContentStage;
 import software.amazon.awssdk.http.pipeline.stages.MakeAsyncHttpRequestStage;
 import software.amazon.awssdk.http.pipeline.stages.MakeRequestImmutable;
 import software.amazon.awssdk.http.pipeline.stages.MakeRequestMutable;
@@ -50,6 +45,7 @@ import software.amazon.awssdk.http.pipeline.stages.MoveParametersToBodyStage;
 import software.amazon.awssdk.http.pipeline.stages.ReportRequestContentLengthStage;
 import software.amazon.awssdk.http.pipeline.stages.SetContentLengthStage;
 import software.amazon.awssdk.http.pipeline.stages.SigningStage;
+import software.amazon.awssdk.http.pipeline.stages.UnwrapResponseContainer;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -60,20 +56,6 @@ import software.amazon.awssdk.util.CapacityManager;
 @ThreadSafe
 @SdkProtectedApi
 public class AmazonAsyncHttpClient implements AutoCloseable {
-
-    /**
-     * When throttled retries are enabled, each retry attempt will consume this much capacity.
-     * Successful retry attempts will release this capacity back to the pool while failed retries
-     * will not.  Successful initial (non-retry) requests will always release 1 capacity unit to the
-     * pool.
-     */
-    public static final int THROTTLED_RETRY_COST = 5;
-
-    /**
-     * When throttled retries are enabled, this is the total number of subsequent failed retries
-     * that may be attempted before retry capacity is fully drained.
-     */
-    private static final int THROTTLED_RETRIES = 100;
 
     /**
      * A request metric collector used specifically for this httpClientSettings client; or null if
@@ -104,15 +86,6 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
     @Override
     public void close() throws Exception {
         httpClientDependencies.close();
-        ;
-    }
-
-    /**
-     * Package protected for unit-testing.
-     */
-    @SdkTestInternalApi
-    public ClientExecutionTimer getClientExecutionTimer() {
-        return this.httpClientDependencies.clientExecutionTimer();
     }
 
     /**
@@ -121,49 +94,6 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
      */
     public RequestMetricCollector getRequestMetricCollector() {
         return requestMetricCollector;
-    }
-
-    /**
-     * Check if the thread has been interrupted. If so throw an {@link InterruptedException}.
-     * Long running tasks should be periodically checked if the current thread has been
-     * interrupted and handle it appropriately
-     *
-     * @throws InterruptedException If thread has been interrupted
-     */
-    // TODO address
-    public static void checkInterrupted() throws InterruptedException {
-        checkInterrupted(null);
-    }
-
-    /**
-     * Check if the thread has been interrupted. If so throw an {@link InterruptedException}.
-     * Long running tasks should be periodically checked if the current thread has been
-     * interrupted and handle it appropriately
-     *
-     * @param response Response to be closed before returning control to the caller to avoid
-     *                 leaking the connection.
-     * @throws InterruptedException If thread has been interrupted
-     */
-    // TODO address
-    public static void checkInterrupted(Response<?> response) throws InterruptedException {
-        if (Thread.interrupted()) {
-            throw new SdkInterruptedException(response);
-        }
-    }
-
-    /**
-     * Ensures the response handler is not null. If it is this method returns a dummy response
-     * handler.
-     *
-     * @return Either original response handler or dummy response handler.
-     */
-    private <T> HttpResponseHandler<T> getNonNullResponseHandler(
-            HttpResponseHandler<T> responseHandler) {
-        if (responseHandler != null) {
-            return responseHandler;
-        } else {
-            return new NoOpResponseHandler<>();
-        }
     }
 
     /**
@@ -201,7 +131,7 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
          * @return This builder for method chaining.
          */
         RequestExecutionBuilder errorResponseHandler(
-                HttpResponseHandler<? extends SdkBaseException> errorResponseHandler);
+                SdkHttpResponseHandler<? extends SdkBaseException> errorResponseHandler);
 
         /**
          * Fluent setter for the execution context
@@ -227,7 +157,7 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
          * @param <OutputT>       Result type
          * @return Unmarshalled result type.
          */
-        <OutputT> CompletableFuture<Response<OutputT>> execute(HttpResponseHandler<OutputT> responseHandler);
+        <OutputT> CompletableFuture<OutputT> execute(SdkHttpResponseHandler<OutputT> responseHandler);
 
         /**
          * Executes the request with the given configuration; not handling response.
@@ -291,7 +221,7 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
             // When enabled, total retry capacity is computed based on retry cost
             // and desired number of retries.
             int throttledRetryMaxCapacity = clientConfig.useThrottledRetries()
-                    ? THROTTLED_RETRY_COST * THROTTLED_RETRIES : -1;
+                    ? AmazonHttpClient.THROTTLED_RETRY_COST * AmazonHttpClient.THROTTLED_RETRIES : -1;
             return new CapacityManager(throttledRetryMaxCapacity);
         }
 
@@ -300,24 +230,12 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
         }
     }
 
-    private static class NoOpResponseHandler<T> implements HttpResponseHandler<T> {
-        @Override
-        public T handle(HttpResponse response) throws Exception {
-            return null;
-        }
-
-        @Override
-        public boolean needsConnectionLeftOpen() {
-            return false;
-        }
-    }
-
     private class RequestExecutionBuilderImpl implements RequestExecutionBuilder {
 
         private SdkHttpRequestProvider requestProvider;
         private SdkHttpFullRequest request;
         private RequestConfig requestConfig;
-        private HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
+        private SdkHttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
         private ExecutionContext executionContext = new ExecutionContext();
 
         @Override
@@ -334,7 +252,7 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
 
         @Override
         public RequestExecutionBuilder errorResponseHandler(
-                HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
+                SdkHttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
             this.errorResponseHandler = errorResponseHandler;
             return this;
         }
@@ -353,7 +271,7 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
         }
 
         @Override
-        public <OutputT> CompletableFuture<Response<OutputT>> execute(HttpResponseHandler<OutputT> responseHandler) {
+        public <OutputT> CompletableFuture<OutputT> execute(SdkHttpResponseHandler<OutputT> responseHandler) {
             try {
                 return RequestPipelineBuilder
                         .first(BeforeRequestHandlersStage::new)
@@ -368,15 +286,11 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
                         .then(ReportRequestContentLengthStage::new)
                         .then(RequestPipelineBuilder
                                       .first(SigningStage::new)
-                                      .then(MakeAsyncHttpRequestStage::new)
-                                      .then(async(HttpResponseAdaptingStage::new))
-                                      .then(async(InstrumentHttpResponseContentStage::new))
-                                      .then(async(BeforeUnmarshallingCallbackStage::new))
-                                      .then(async(() -> new HandleResponseStage<>(getNonNullResponseHandler(responseHandler),
-                                                                                  getNonNullResponseHandler(
-                                                                                          errorResponseHandler))))
+                                      .then(d -> new MakeAsyncHttpRequestStage<>(responseHandler, errorResponseHandler, d))
+                                      // TODO BeforeUnmarshallingStage
                                       .wrap(AsyncRetryableStage::new)
                                       ::build)
+                        .then(async(() -> new UnwrapResponseContainer<>()))
                         .build(httpClientDependencies)
                         .execute(request, createRequestExecutionDependencies());
             } catch (RuntimeException e) {

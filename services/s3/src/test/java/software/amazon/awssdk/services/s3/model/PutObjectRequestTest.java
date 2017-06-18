@@ -32,7 +32,6 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestClientOptions.Marker;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.event.ProgressEvent;
 import software.amazon.awssdk.event.ProgressListener;
@@ -160,7 +159,7 @@ public class PutObjectRequestTest {
                                                               "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override
-            public void collectMetrics(Request<?> request, Response<?> response) {
+            public void collectMetrics(Request<?> request) {
             }
         };
 

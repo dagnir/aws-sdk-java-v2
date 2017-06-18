@@ -17,68 +17,70 @@ package software.amazon.awssdk.http.pipeline.stages;
 
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.CompletableFuture;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import org.reactivestreams.Publisher;
 import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.Response;
+import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpClientDependencies;
+import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.HttpStatusCodes;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkHttpResponseAdapter;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
-import software.amazon.awssdk.utils.IoUtils;
-import software.amazon.awssdk.utils.Pair;
 
 /**
  * Delegate to the HTTP implementation to make an HTTP request and receive the response.
  */
-public class MakeAsyncHttpRequestStage
-        implements RequestPipeline<SdkHttpFullRequest, CompletableFuture<Pair<SdkHttpFullRequest, SdkHttpFullResponse>>> {
+public class MakeAsyncHttpRequestStage<OutputT>
+        implements RequestPipeline<SdkHttpFullRequest, CompletableFuture<Response<OutputT>>> {
 
     private final SdkAsyncHttpClient sdkAsyncHttpClient;
+    private final SdkHttpResponseHandler<OutputT> responseHandler;
+    private final SdkHttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
 
-    public MakeAsyncHttpRequestStage(HttpClientDependencies dependencies) {
+    public MakeAsyncHttpRequestStage(SdkHttpResponseHandler<OutputT> responseHandler,
+                                     SdkHttpResponseHandler<? extends SdkBaseException> errorResponseHandler,
+                                     HttpClientDependencies dependencies) {
+        this.responseHandler = responseHandler;
+        this.errorResponseHandler = errorResponseHandler;
         this.sdkAsyncHttpClient = dependencies.sdkAsyncHttpClient();
     }
 
     /**
      * Returns the response from executing one httpClientSettings request; or null for retry.
      */
-    public CompletableFuture<Pair<SdkHttpFullRequest, SdkHttpFullResponse>> execute(SdkHttpFullRequest request,
-                                                                                    RequestExecutionContext context) throws
-                                                                                                                     Exception {
+    public CompletableFuture<Response<OutputT>> execute(SdkHttpFullRequest request,
+                                                        RequestExecutionContext context) throws Exception {
+
         AmazonHttpClient.checkInterrupted();
         final ProgressListener listener = context.requestConfig().getProgressListener();
 
         publishProgress(listener, ProgressEventType.HTTP_REQUEST_STARTED_EVENT);
-        return executeHttpRequest(request, context, listener)
-                .thenApply(resp -> new Pair<>(request, resp));
+        return executeHttpRequest(request, context, listener);
     }
 
-    private CompletableFuture<SdkHttpFullResponse> executeHttpRequest(SdkHttpFullRequest request,
-                                                                      RequestExecutionContext context,
-                                                                      ProgressListener listener) throws Exception {
-        CompletableFuture<SdkHttpFullResponse> future = new CompletableFuture<>();
-        SdkHttpRequestProvider requestProvider = createRequestProvider(request, context);
+    private CompletableFuture<Response<OutputT>> executeHttpRequest(SdkHttpFullRequest request,
+                                                                    RequestExecutionContext context,
+                                                                    ProgressListener listener) throws Exception {
+        CompletableFuture<Response<OutputT>> future = new CompletableFuture<>();
+
+        SdkHttpResponseHandler<Response<OutputT>> handler = new ResponseHandler(request, future, listener);
+
         sdkAsyncHttpClient.prepareRequest(request, SdkRequestContext.builder()
                                                                     .metrics(context.awsRequestMetrics())
                                                                     .build(),
-                                          requestProvider,
-                                          new SimpleResponseHandler(future, listener))
+                                          context.requestProvider(),
+                                          handler)
                           .run();
 
         // TODO client execution timer
@@ -86,88 +88,79 @@ public class MakeAsyncHttpRequestStage
         return future;
     }
 
-    private SdkHttpRequestProvider createRequestProvider(SdkHttpFullRequest request, RequestExecutionContext context)
-            throws IOException {
-        return context.requestProvider() != null ? context.requestProvider()
-                : new SimpleRequestProvider(request);
-    }
+    /**
+     * Detects whether the response succeeded or failed and delegates to appropriate response handler.
+     */
+    private class ResponseHandler implements SdkHttpResponseHandler<Response<OutputT>> {
 
-    private static class SimpleRequestProvider implements SdkHttpRequestProvider {
-
-        private final ByteBuffer content;
-        private final int length;
-
-        private SimpleRequestProvider(SdkHttpFullRequest request) throws IOException {
-            this.content = ByteBuffer.wrap(IoUtils.toByteArray(request.getContent()));
-            this.length = content.limit();
-        }
-
-        @Override
-        public long contentLength() {
-            return length;
-        }
-
-        @Override
-        public void subscribe(Subscriber<? super ByteBuffer> s) {
-
-            s.onSubscribe(new Subscription() {
-                @Override
-                public void request(long n) {
-                    s.onNext(content);
-                    s.onComplete();
-                }
-
-                @Override
-                public void cancel() {
-                }
-            });
-        }
-    }
-
-    private static class SimpleResponseHandler implements SdkHttpResponseHandler {
-
-        private final SdkHttpFullResponse.Builder fullResponse = SdkHttpFullResponse.builder();
-        private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        private final WritableByteChannel channel = Channels.newChannel(baos);
-        private final CompletableFuture<SdkHttpFullResponse> future;
         private final ProgressListener listener;
+        private final SdkHttpFullRequest request;
+        private final CompletableFuture<Response<OutputT>> future;
 
-        private SimpleResponseHandler(CompletableFuture<SdkHttpFullResponse> future, ProgressListener listener) {
-            this.future = future;
+        private volatile SdkHttpResponse response;
+        private volatile boolean isSuccess = false;
+
+        /**
+         * @param request  Request being made
+         * @param future   Future to notify when response has been handled.
+         * @param listener Listener to report HTTP end event.
+         */
+        private ResponseHandler(SdkHttpFullRequest request,
+                                CompletableFuture<Response<OutputT>> future,
+                                ProgressListener listener) {
             this.listener = listener;
+            this.request = request;
+            this.future = future;
         }
 
         @Override
         public void headersReceived(SdkHttpResponse response) {
-            fullResponse.headers(response.getHeaders());
-            fullResponse.statusCode(response.getStatusCode());
-            fullResponse.statusText(response.getStatusText());
+            if (isSuccessful(response.getStatusCode())) {
+                isSuccess = true;
+                responseHandler.headersReceived(response);
+            } else {
+                errorResponseHandler.headersReceived(response);
+            }
+            this.response = response;
         }
 
         @Override
-        public void bodyPartReceived(ByteBuffer part) {
-            try {
-                channel.write(part);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
+        public void onStream(Publisher<ByteBuffer> publisher) {
+            if (isSuccess) {
+                // TODO handle exception as non retryable
+                responseHandler.onStream(publisher);
+            } else {
+                errorResponseHandler.onStream(publisher);
             }
         }
 
         @Override
         public void exceptionOccurred(Throwable throwable) {
+            responseHandler.exceptionOccurred(throwable);
             future.completeExceptionally(throwable);
         }
 
         @Override
-        public void complete() {
-            try {
-                channel.close();
-                fullResponse.content(new ByteArrayInputStream(baos.toByteArray()));
-                future.complete(fullResponse.build());
-                publishProgress(listener, ProgressEventType.HTTP_REQUEST_COMPLETED_EVENT);
-            } catch (IOException e) {
-                future.completeExceptionally(e);
-                throw new UncheckedIOException(e);
+        public Response<OutputT> complete() {
+            publishProgress(listener, ProgressEventType.HTTP_REQUEST_COMPLETED_EVENT);
+            final HttpResponse httpResponse = SdkHttpResponseAdapter.adapt(false, request, (SdkHttpFullResponse) response);
+            Response<OutputT> toReturn = handleResponse(httpResponse);
+            future.complete(toReturn);
+            return toReturn;
+        }
+
+        /**
+         * If we get back any 2xx status code, then we know we should treat the service call as successful.
+         */
+        private boolean isSuccessful(int statusCode) {
+            return statusCode / 100 == HttpStatusCodes.OK / 100;
+        }
+
+        private Response<OutputT> handleResponse(HttpResponse httpResponse) {
+            if (isSuccess) {
+                return Response.fromSuccess(responseHandler.complete(), httpResponse);
+            } else {
+                return Response.fromFailure(errorResponseHandler.complete(), httpResponse);
             }
         }
     }

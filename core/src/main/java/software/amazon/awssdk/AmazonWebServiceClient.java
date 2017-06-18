@@ -503,11 +503,8 @@ public abstract class AmazonWebServiceClient {
      * Convenient method to end the client execution without logging the
      * awsRequestMetrics.
      */
-    protected final void endClientExecution(
-            AwsRequestMetrics awsRequestMetrics, Request<?> request,
-            Response<?> response) {
-        this.endClientExecution(awsRequestMetrics, request, response,
-                !LOGGING_AWS_REQUEST_METRIC);
+    protected final void endClientExecution(AwsRequestMetrics awsRequestMetrics, Request<?> request) {
+        this.endClientExecution(awsRequestMetrics, request, null, !LOGGING_AWS_REQUEST_METRIC);
     }
 
     /**
@@ -526,7 +523,7 @@ public abstract class AmazonWebServiceClient {
             awsRequestMetrics.getTimingInfo().endTiming();
             RequestMetricCollector c = findRequestMetricCollector(
                     request.getOriginalRequest().getRequestMetricCollector());
-            c.collectMetrics(request, response);
+            c.collectMetrics(request);
             awsRequestMetrics.log();
         }
     }

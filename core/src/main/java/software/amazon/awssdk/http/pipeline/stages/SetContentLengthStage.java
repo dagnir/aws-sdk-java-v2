@@ -17,6 +17,7 @@ package software.amazon.awssdk.http.pipeline.stages;
 
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
 
 /**
@@ -28,9 +29,17 @@ public class SetContentLengthStage implements MutableRequestToRequestPipeline {
     @Override
     public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest.Builder request, RequestExecutionContext context)
             throws Exception {
-        if (context.requestProvider() != null && !request.getFirstHeaderValue("Content-Length").isPresent()) {
+        if (shouldSetContentLength(request, context)) {
             return request.header("Content-Length", String.valueOf(context.requestProvider().contentLength()));
         }
         return request;
+    }
+
+    private boolean shouldSetContentLength(SdkHttpFullRequest.Builder request, RequestExecutionContext context) {
+        return context.requestProvider() != null
+               && !request.getFirstHeaderValue("Content-Length").isPresent()
+               // Can cause issues with signing if content length is present for these method
+               && request.getHttpMethod() != SdkHttpMethod.GET
+               && request.getHttpMethod() != SdkHttpMethod.HEAD;
     }
 }

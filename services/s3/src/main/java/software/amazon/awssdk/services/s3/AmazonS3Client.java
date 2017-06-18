@@ -64,7 +64,6 @@ import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
@@ -4124,7 +4123,6 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
         // We can incrementally make it more elaborate should the need arise
         // for individual method.
         awsRequestMetrics.startEvent(Field.ClientExecuteTime);
-        Response<X> response = null;
         try {
             request.setTimeOffset(timeOffset);
             /*
@@ -4149,9 +4147,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             executionContext.setCredentialsProvider(CredentialUtils.getCredentialsProvider(request.getOriginalRequest(),
                                                                                            awsCredentialsProvider));
 
-            response = client.execute(request, responseHandler, errorResponseHandler, executionContext);
-
-            return response.getAwsResponse();
+            return client.execute(request, responseHandler, errorResponseHandler, executionContext);
         } catch (ResetException ex) {
             ex.setExtraInfo("If the request involves an input stream, the maximum stream buffer size can be configured via " +
                             "request.getRequestClientOptions().setReadLimit(int)");
@@ -4175,7 +4171,7 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             }
             throw ase;
         } finally {
-            endClientExecution(awsRequestMetrics, request, response);
+            endClientExecution(awsRequestMetrics, request);
         }
     }
 

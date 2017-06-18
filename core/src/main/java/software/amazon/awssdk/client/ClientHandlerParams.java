@@ -17,7 +17,6 @@ package software.amazon.awssdk.client;
 
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
-import software.amazon.awssdk.client.builder.AwsAsyncClientBuilder;
 
 /**
  * Client level parameters for the {@link ClientHandler} implementation.

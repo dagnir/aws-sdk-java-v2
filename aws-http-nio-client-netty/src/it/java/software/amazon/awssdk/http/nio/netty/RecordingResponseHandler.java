@@ -20,10 +20,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import org.reactivestreams.Publisher;
 import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
+import software.amazon.awssdk.http.async.SimpleSubscriber;
 
-public final class RecordingResponseHandler implements SdkHttpResponseHandler {
+public final class RecordingResponseHandler implements SdkHttpResponseHandler<Void> {
 
     List<SdkHttpResponse> responses = new ArrayList<>();
     private StringBuilder bodyParts = new StringBuilder();
@@ -35,10 +37,12 @@ public final class RecordingResponseHandler implements SdkHttpResponseHandler {
     }
 
     @Override
-    public void bodyPartReceived(ByteBuffer part) {
-        byte[] b = new byte[part.remaining()];
-        part.duplicate().get(b);
-        bodyParts.append(new String(b, StandardCharsets.UTF_8));
+    public void onStream(Publisher<ByteBuffer> publisher) {
+        publisher.subscribe(new SimpleSubscriber(byteBuffer -> {
+            byte[] b = new byte[byteBuffer.remaining()];
+            byteBuffer.duplicate().get(b);
+            bodyParts.append(new String(b, StandardCharsets.UTF_8));
+        }));
     }
 
     @Override
@@ -47,8 +51,9 @@ public final class RecordingResponseHandler implements SdkHttpResponseHandler {
     }
 
     @Override
-    public void complete() {
+    public Void complete() {
         completeFuture.complete(null);
+        return null;
     }
 
     String fullResponseAsString() {

@@ -99,7 +99,7 @@ public class AmazonWebServiceRequestTest {
                                                               "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override
-            public void collectMetrics(Request<?> request, Response<?> response) {
+            public void collectMetrics(Request<?> request) {
             }
         };
 

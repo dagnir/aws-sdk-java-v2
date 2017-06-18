@@ -27,9 +27,9 @@ import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 @SdkProtectedApi
 public abstract class AwsAsyncClientParams extends AwsSyncClientParams {
 
-    public abstract ExecutorService getExecutor();
-
     private final SdkAsyncHttpClient asyncHttpClient = NettySdkHttpClientFactory.builder().build().createHttpClient();
+
+    public abstract ExecutorService getExecutor();
 
     public SdkAsyncHttpClient getAsyncHttpClient() {
         return asyncHttpClient;

@@ -15,8 +15,10 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
-import static software.amazon.awssdk.http.nio.netty.internal.RequestContext.REQUEST_CONTEXT_KEY;
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKeys.PUBLISHER_KEY;
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKeys.REQUEST_CONTEXT_KEY;
 
+import com.typesafe.netty.HandlerPublisher;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.concurrent.Future;
@@ -43,10 +45,8 @@ public final class RunnableRequest implements AbortableRunnable {
             if (channelFuture.isSuccess()) {
                 channel = channelFuture.getNow();
                 channel.attr(REQUEST_CONTEXT_KEY).set(context);
-                final NettyHttpContentSubscriber subscriber = new NettyHttpContentSubscriber(channel);
-                final Subscriber<ByteBuffer> adaptedubscriber = subscriber.adapt();
-                channel.pipeline().addLast(subscriber);
-                makeRequest(context.nettyRequest(), adaptedubscriber);
+                Subscriber<ByteBuffer> adaptedSubscriber = addBackpressureHandlers();
+                makeRequest(context.nettyRequest(), adaptedSubscriber);
             } else {
                 handleFailure(() -> "Failed to create connection to " + endpoint(), channelFuture.cause());
             }
@@ -60,6 +60,20 @@ public final class RunnableRequest implements AbortableRunnable {
         }
     }
 
+    /**
+     * Add handlers to enforce backpressure using the reactive pull model.
+     *
+     * @return Subscriber of outbound request data.
+     */
+    private Subscriber<ByteBuffer> addBackpressureHandlers() {
+        final NettyHttpContentSubscriber httpContentSubscriber = new NettyHttpContentSubscriber(channel);
+        final Subscriber<ByteBuffer> byteBufferSubscriber = httpContentSubscriber.adapt();
+        HandlerPublisher<ByteBuffer> publisher = new CompletingHandlerPublisher(channel.eventLoop(), context.handler());
+        channel.pipeline().addLast(publisher, httpContentSubscriber);
+        channel.attr(PUBLISHER_KEY).set(publisher);
+        return byteBufferSubscriber;
+    }
+
     private void makeRequest(HttpRequest request, Subscriber<ByteBuffer> subscriber) {
         log.debug(() -> "Writing request: " + request);
         channel.write(request).addListener(wireCall -> {
@@ -67,6 +81,7 @@ public final class RunnableRequest implements AbortableRunnable {
                 handleFailure(() -> "Failed to make request to " + endpoint(), wireCall.cause());
             }
         });
+        // Subscribe to the request Publisher to start requesting data to send
         context.sdkRequestProvider().subscribe(subscriber);
     }
 

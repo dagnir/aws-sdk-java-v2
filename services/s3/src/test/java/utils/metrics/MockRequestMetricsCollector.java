@@ -18,7 +18,6 @@ package utils.metrics;
 import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
@@ -33,7 +32,7 @@ public class MockRequestMetricsCollector extends RequestMetricCollector {
     private final List<AwsRequestMetrics> metrics = new ArrayList<AwsRequestMetrics>();
 
     @Override
-    public void collectMetrics(Request<?> request, Response<?> response) {
+    public void collectMetrics(Request<?> request) {
         metrics.add(request.getAwsRequestMetrics());
     }
 

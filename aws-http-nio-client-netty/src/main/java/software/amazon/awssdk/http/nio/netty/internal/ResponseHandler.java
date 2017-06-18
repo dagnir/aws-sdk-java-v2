@@ -17,8 +17,10 @@ package software.amazon.awssdk.http.nio.netty.internal;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
-import static software.amazon.awssdk.http.nio.netty.internal.RequestContext.REQUEST_CONTEXT_KEY;
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKeys.PUBLISHER_KEY;
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKeys.REQUEST_CONTEXT_KEY;
 
+import com.typesafe.netty.HandlerPublisher;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,6 +29,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +45,7 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelContext, HttpObject msg) throws Exception {
         RequestContext requestContext = channelContext.channel().attr(REQUEST_CONTEXT_KEY).get();
+        final HandlerPublisher<ByteBuffer> publisher = channelContext.channel().attr(PUBLISHER_KEY).get();
 
         if (msg instanceof HttpResponse) {
             HttpResponse response = (HttpResponse) msg;
@@ -51,19 +55,30 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
                                                              .statusText(response.status().reasonPhrase())
                                                              .build();
             requestContext.handler().headersReceived(sdkResponse);
+            // TODO call this only on first HttpContent message?
+            requestContext.handler().onStream(publisher);
         }
 
         if (msg instanceof HttpContent) {
             HttpContent content = (HttpContent) msg;
-            boolean last = msg instanceof LastHttpContent;
-            //TODO: Figure out how to implement backpressure
-            requestContext.handler().bodyPartReceived(content.content().nioBuffer());
-
-            if (last) {
+            if (content.content().readableBytes() > 0) {
+                channelContext.fireChannelRead(content.content().nioBuffer());
+            }
+            if (msg instanceof LastHttpContent) {
+                channelContext.pipeline().remove(publisher);
                 requestContext.channelPool().release(channelContext.channel());
-                requestContext.handler().complete();
             }
         }
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.read();
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.read();
     }
 
     @Override
@@ -76,10 +91,8 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
     }
 
     private static Map<String, List<String>> fromNettyHeaders(HttpHeaders headers) {
-        return headers.entries()
-                      .stream()
+        return headers.entries().stream()
                       .collect(groupingBy(Map.Entry::getKey,
-                                          mapping(Map.Entry::getValue,
-                                                  Collectors.toList())));
+                                          mapping(Map.Entry::getValue, Collectors.toList())));
     }
 }

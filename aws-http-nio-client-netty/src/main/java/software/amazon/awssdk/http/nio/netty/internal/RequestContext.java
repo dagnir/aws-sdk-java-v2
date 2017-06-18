@@ -17,13 +17,11 @@ package software.amazon.awssdk.http.nio.netty.internal;
 
 import io.netty.channel.pool.ChannelPool;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.util.AttributeKey;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 
 public final class RequestContext {
-    static final AttributeKey<RequestContext> REQUEST_CONTEXT_KEY = AttributeKey.newInstance("requestContext");
 
     private final ChannelPool channelPool;
     private final SdkHttpRequest sdkRequest;

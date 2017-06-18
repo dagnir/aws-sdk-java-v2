@@ -56,6 +56,7 @@ import software.amazon.awssdk.http.pipeline.stages.ReportRequestContentLengthSta
 import software.amazon.awssdk.http.pipeline.stages.RetryableStage;
 import software.amazon.awssdk.http.pipeline.stages.SigningStage;
 import software.amazon.awssdk.http.pipeline.stages.TimerExceptionHandlingStage;
+import software.amazon.awssdk.http.pipeline.stages.UnwrapResponseContainer;
 import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.internal.http.response.AwsErrorResponseHandler;
 import software.amazon.awssdk.internal.http.response.AwsResponseHandlerAdapter;
@@ -99,7 +100,7 @@ public class AmazonHttpClient implements AutoCloseable {
      * When throttled retries are enabled, this is the total number of subsequent failed retries
      * that may be attempted before retry capacity is fully drained.
      */
-    private static final int THROTTLED_RETRIES = 100;
+    static final int THROTTLED_RETRIES = 100;
 
     /**
      * A request metric collector used specifically for this httpClientSettings client; or null if
@@ -200,7 +201,7 @@ public class AmazonHttpClient implements AutoCloseable {
      * @deprecated Use {@link #requestExecutionBuilder()} to configure and execute a HTTP request.
      */
     @Deprecated
-    public <T> Response<T> execute(Request<?> request,
+    public <T> T execute(Request<?> request,
                                    HttpResponseHandler<AmazonWebServiceResponse<T>> responseHandler,
                                    HttpResponseHandler<AmazonServiceException> errorResponseHandler,
                                    ExecutionContext executionContext) {
@@ -293,14 +294,12 @@ public class AmazonHttpClient implements AutoCloseable {
          * @param <OutputT>       Result type
          * @return Unmarshalled result type.
          */
-        <OutputT> Response<OutputT> execute(HttpResponseHandler<OutputT> responseHandler);
+        <OutputT> OutputT execute(HttpResponseHandler<OutputT> responseHandler);
 
         /**
          * Executes the request with the given configuration; not handling response.
-         *
-         * @return Void response
          */
-        Response<Void> execute();
+        void execute();
 
     }
 
@@ -418,7 +417,7 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         @Override
-        public <OutputT> Response<OutputT> execute(HttpResponseHandler<OutputT> responseHandler) {
+        public <OutputT> OutputT execute(HttpResponseHandler<OutputT> responseHandler) {
             try {
                 return RequestPipelineBuilder
                         .first(AttachRequestConfigStage::new)
@@ -448,6 +447,7 @@ public class AmazonHttpClient implements AutoCloseable {
                         .wrap(StreamManagingStage::new)
                         .wrap(AfterCallbackStage::new)
                         .wrap(ClientExecutionTimedStage::new)
+                        .then(() -> new UnwrapResponseContainer<>())
                         .build(httpClientDependencies)
                         .execute(request, createRequestExecutionDependencies());
             } catch (RuntimeException e) {
@@ -458,8 +458,8 @@ public class AmazonHttpClient implements AutoCloseable {
         }
 
         @Override
-        public Response<Void> execute() {
-            return execute(null);
+        public void execute() {
+            execute(null);
         }
 
         private RequestExecutionContext createRequestExecutionDependencies() {

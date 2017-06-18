@@ -19,7 +19,6 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -51,9 +50,9 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
      * necessary statistics and uploaded to Amazon CloudWatch.
      */
     @Override
-    public void collectMetrics(Request<?> request, Response<?> response) {
+    public void collectMetrics(Request<?> request) {
         try {
-            collectMetrics0(request, response);
+            collectMetrics0(request);
         } catch (Exception ex) { // defensive code
             if (log.isDebugEnabled()) {
                 log.debug("Ignoring unexpected failure", ex);
@@ -61,7 +60,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
         }
     }
 
-    private void collectMetrics0(Request<?> request, Response<?> response) {
+    private void collectMetrics0(Request<?> request) {
         AwsRequestMetrics arm = request.getAwsRequestMetrics();
         if (arm == null || !arm.isEnabled()) {
             return;
@@ -71,7 +70,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
                 continue;
             }
             PredefinedMetricTransformer transformer = getTransformer();
-            for (MetricDatum datum : transformer.toMetricData(type, request, response)) {
+            for (MetricDatum datum : transformer.toMetricData(type, request)) {
                 try {
                     if (!addMetricsToQueue(datum)) {
                         if (log.isDebugEnabled()) {
