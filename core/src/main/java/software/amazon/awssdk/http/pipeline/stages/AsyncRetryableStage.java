@@ -59,7 +59,7 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
     private static final Log log = LogFactory.getLog(AsyncRetryableStage.class);
 
     private final RequestPipeline<SdkHttpFullRequest, CompletableFuture<Response<OutputT>>> requestPipeline;
-    // TODO how many threads do we need. can customer configure this?
+    // TODO how many threads do we need. can customer configure this? Also need to shut this down somewhere
     private final ScheduledExecutorService retrySubmitter = Executors.newScheduledThreadPool(1);
 
     private final HttpClientDependencies dependencies;

@@ -33,7 +33,7 @@ public interface RequestMetricTransformer {
     /**
      * A convenient instance of a no-op request metric transformer.
      */
-    RequestMetricTransformer NONE = (requestMetric, request) -> null;
+    RequestMetricTransformer NONE = (requestMetric, request, response) -> null;
 
     /**
      * Returns a list of metric datum for the metrics collected for the given
@@ -45,7 +45,7 @@ public interface RequestMetricTransformer {
      *
      * @param metricType the predefined metric type
      */
-    List<MetricDatum> toMetricData(MetricType metricType, Request<?> request);
+    List<MetricDatum> toMetricData(MetricType metricType, Request<?> request, Object response);
 
     /**
      * Common utilities for implementing this SPI.

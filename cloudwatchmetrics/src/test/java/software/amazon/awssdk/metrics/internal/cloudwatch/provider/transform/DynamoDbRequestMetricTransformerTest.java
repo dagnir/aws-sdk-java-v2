@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.Test;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.metrics.internal.cloudwatch.transform.DynamoDbRequestMetricTransformer;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
 import software.amazon.awssdk.services.dynamodb.metrics.DynamoDbRequestMetric;
@@ -27,9 +26,8 @@ public class DynamoDbRequestMetricTransformerTest {
         DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
         PutItemRequest pi_req = PutItemRequest.builder().build();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
-        PutItemResponse pi_res = PutItemResponse.builder().build();
-        Response<PutItemResponse> res = new Response<PutItemResponse>(pi_res, null);
-        List<MetricDatum> list = t.toMetricData(DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, res);
+        PutItemResponse response = PutItemResponse.builder().build();
+        List<MetricDatum> list = t.toMetricData(DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, response);
         assertTrue(list.size() == 0);
     }
 
@@ -38,15 +36,13 @@ public class DynamoDbRequestMetricTransformerTest {
         DynamoDbRequestMetricTransformer t = new DynamoDbRequestMetricTransformer();
         PutItemRequest pi_req = PutItemRequest.builder().build();
         Request<PutItemRequest> req = new DefaultRequest<PutItemRequest>(pi_req, "test");
-        PutItemResponse pi_res = PutItemResponse.builder()
-                .consumedCapacity(ConsumedCapacity.builder()
-                        .capacityUnits(1.0)
-                        .tableName("testTable")
-                        .build())
-                .build();
-        Response<PutItemResponse> res = new Response<PutItemResponse>(pi_res, null);
-        List<MetricDatum> list = t.toMetricData(
-                DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, res);
+        PutItemResponse response = PutItemResponse.builder()
+                                                  .consumedCapacity(ConsumedCapacity.builder()
+                                                                                    .capacityUnits(1.0)
+                                                                                    .tableName("testTable")
+                                                                                    .build())
+                                                  .build();
+        List<MetricDatum> list = t.toMetricData(DynamoDbRequestMetric.DynamoDBConsumedCapacity, req, response);
         assertTrue(list.size() == 1);
     }
 }

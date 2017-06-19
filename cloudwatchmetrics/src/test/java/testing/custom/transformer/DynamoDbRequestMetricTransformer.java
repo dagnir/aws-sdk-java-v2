@@ -16,7 +16,6 @@ package testing.custom.transformer;
 
 import java.util.List;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.RequestMetricTransformer;
 import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
@@ -26,8 +25,7 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
  */
 public class DynamoDbRequestMetricTransformer implements RequestMetricTransformer {
     @Override
-    public List<MetricDatum> toMetricData(MetricType metricType,
-                                          Request<?> request, Response<?> response) {
+    public List<MetricDatum> toMetricData(MetricType metricType, Request<?> request, Object response) {
         return null;
     }
 }

@@ -1,38 +1,39 @@
-/*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 package software.amazon.awssdk.services.json;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
+import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.client.AsyncClientHandler;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
+import software.amazon.awssdk.client.ClientExecutionParams;
+import software.amazon.awssdk.client.ClientHandlerParams;
+import software.amazon.awssdk.client.SdkAsyncClientHandler;
+import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.protocol.json.JsonClientMetadata;
+import software.amazon.awssdk.protocol.json.JsonErrorResponseMetadata;
+import software.amazon.awssdk.protocol.json.JsonErrorShapeMetadata;
+import software.amazon.awssdk.protocol.json.JsonOperationMetadata;
+import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
 import software.amazon.awssdk.services.json.model.APostOperationRequest;
 import software.amazon.awssdk.services.json.model.APostOperationResponse;
 import software.amazon.awssdk.services.json.model.APostOperationWithOutputRequest;
 import software.amazon.awssdk.services.json.model.APostOperationWithOutputResponse;
+import software.amazon.awssdk.services.json.model.InvalidInputException;
+import software.amazon.awssdk.services.json.transform.APostOperationRequestMarshaller;
+import software.amazon.awssdk.services.json.transform.APostOperationResponseUnmarshaller;
+import software.amazon.awssdk.services.json.transform.APostOperationWithOutputRequestMarshaller;
+import software.amazon.awssdk.services.json.transform.APostOperationWithOutputResponseUnmarshaller;
 
 @Generated("software.amazon.awssdk:codegen")
 public class DefaultJsonAsyncClient implements JsonAsyncClient {
-    private final JsonClient syncClient;
+    private final AsyncClientHandler clientHandler;
 
-    private final ExecutorService executor;
+    private final SdkJsonProtocolFactory protocolFactory;
 
-    DefaultJsonAsyncClient(AwsAsyncClientParams asyncClientParams) {
-        this.syncClient = new DefaultJsonClient(asyncClientParams);
-        this.executor = asyncClientParams.getExecutor();
+    protected DefaultJsonAsyncClient(AwsAsyncClientParams clientParams) {
+        this.clientHandler = new SdkAsyncClientHandler(new ClientHandlerParams().withAsyncClientParams(clientParams)
+                                                                                .withClientParams(clientParams).withCalculateCrc32FromCompressedDataEnabled(false));
+        this.protocolFactory = init();
     }
 
     /**
@@ -48,7 +49,16 @@ public class DefaultJsonAsyncClient implements JsonAsyncClient {
      */
     @Override
     public CompletableFuture<APostOperationResponse> aPostOperation(APostOperationRequest aPostOperationRequest) {
-        return CompletableFuture.supplyAsync(() -> syncClient.aPostOperation(aPostOperationRequest), executor);
+
+        HttpResponseHandler<APostOperationResponse> responseHandler = protocolFactory.createResponseHandler(
+                new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
+                new APostOperationResponseUnmarshaller());
+
+        HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
+
+        return clientHandler.execute(new ClientExecutionParams<APostOperationRequest, APostOperationResponse>()
+                                             .withMarshaller(new APostOperationRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
+                                             .withErrorResponseHandler(errorResponseHandler).withInput(aPostOperationRequest));
     }
 
     /**
@@ -64,13 +74,37 @@ public class DefaultJsonAsyncClient implements JsonAsyncClient {
      */
     @Override
     public CompletableFuture<APostOperationWithOutputResponse> aPostOperationWithOutput(
-        APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
-        return CompletableFuture
-            .supplyAsync(() -> syncClient.aPostOperationWithOutput(aPostOperationWithOutputRequest), executor);
+            APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
+
+        HttpResponseHandler<APostOperationWithOutputResponse> responseHandler = protocolFactory.createResponseHandler(
+                new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
+                new APostOperationWithOutputResponseUnmarshaller());
+
+        HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
+
+        return clientHandler
+                .execute(new ClientExecutionParams<APostOperationWithOutputRequest, APostOperationWithOutputResponse>()
+                                 .withMarshaller(new APostOperationWithOutputRequestMarshaller(protocolFactory))
+                                 .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                 .withInput(aPostOperationWithOutputRequest));
     }
 
     @Override
     public void close() throws Exception {
-        syncClient.close();
+        clientHandler.close();
+    }
+
+    private software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory init() {
+        return new SdkJsonProtocolFactory(new JsonClientMetadata()
+                                                  .withProtocolVersion("1.1")
+                                                  .withSupportsCbor(false)
+                                                  .withSupportsIon(false)
+                                                  .withBaseServiceExceptionClass(software.amazon.awssdk.services.json.model.JsonException.class)
+                                                  .addErrorMetadata(
+                                                          new JsonErrorShapeMetadata().withErrorCode("InvalidInput").withModeledClass(InvalidInputException.class)));
+    }
+
+    private HttpResponseHandler<AmazonServiceException> createErrorResponseHandler() {
+        return protocolFactory.createErrorResponseHandler(new JsonErrorResponseMetadata());
     }
 }

@@ -159,7 +159,7 @@ public class PutObjectRequestTest {
                                                               "accessid");
         final RequestMetricCollector collector = new RequestMetricCollector() {
             @Override
-            public void collectMetrics(Request<?> request) {
+            public void collectMetrics(Request<?> request, Object response) {
             }
         };
 

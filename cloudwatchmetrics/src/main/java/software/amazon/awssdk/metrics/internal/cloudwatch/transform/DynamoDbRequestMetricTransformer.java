@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AwsMetricTransformerFactory;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.Dimensions;
@@ -46,8 +45,7 @@ import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
 @ThreadSafe
 public class DynamoDbRequestMetricTransformer implements RequestMetricTransformer {
     @Override
-    public List<MetricDatum> toMetricData(MetricType metricType,
-                                          Request<?> request, Response<?> response) {
+    public List<MetricDatum> toMetricData(MetricType metricType, Request<?> request, Object response) {
         try {
             return toMetricData0(metricType, request, response);
         } catch (SecurityException | NoSuchMethodException | IllegalAccessException e) {
@@ -60,11 +58,7 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
         return null;
     }
 
-    private List<MetricDatum> toMetricData0(MetricType metricType,
-                                            Request<?> req, Response<?> response) throws SecurityException,
-                                                                                         NoSuchMethodException,
-                                                                                         IllegalAccessException,
-                                                                                         InvocationTargetException {
+    private List<MetricDatum> toMetricData0(MetricType metricType, Request<?> req, Object response) throws Exception {
         if (!(metricType instanceof DynamoDbRequestMetric)) {
             return null;
         }
@@ -75,9 +69,8 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                 if (response == null) {
                     return Collections.emptyList();
                 }
-                Object awsResponse = response.getAwsResponse();
-                Method method = awsResponse.getClass().getMethod("consumedCapacity");
-                Object value = method.invoke(awsResponse);
+                Method method = response.getClass().getMethod("consumedCapacity");
+                Object value = method.invoke(response);
                 if (!(value instanceof ConsumedCapacity)) {
                     return Collections.emptyList();
                 }
@@ -89,25 +82,25 @@ public class DynamoDbRequestMetricTransformer implements RequestMetricTransforme
                 String tableName = consumedCapacity.tableName();
                 List<Dimension> dims = new ArrayList<Dimension>();
                 dims.add(Dimension.builder()
-                        .name(Dimensions.MetricType.name())
-                        .value(metricType.name())
-                        .build());
+                                  .name(Dimensions.MetricType.name())
+                                  .value(metricType.name())
+                                  .build());
                 // request type specific
                 dims.add(Dimension.builder()
-                        .name(Dimensions.RequestType.name())
-                        .value(requestType(req))
-                        .build());
+                                  .name(Dimensions.RequestType.name())
+                                  .value(requestType(req))
+                                  .build());
                 // table specific
                 dims.add(Dimension.builder()
-                        .name(DynamoDBDimensions.TableName.name())
-                        .value(tableName)
-                        .build());
+                                  .name(DynamoDBDimensions.TableName.name())
+                                  .value(tableName)
+                                  .build());
                 MetricDatum datum = MetricDatum.builder()
-                        .metricName(req.getServiceName())
-                        .dimensions(dims)
-                        .unit(StandardUnit.Count)
-                        .value(units)
-                        .build();
+                                               .metricName(req.getServiceName())
+                                               .dimensions(dims)
+                                               .unit(StandardUnit.Count)
+                                               .value(units)
+                                               .build();
                 return Collections.singletonList(datum);
             default:
                 return Collections.emptyList();

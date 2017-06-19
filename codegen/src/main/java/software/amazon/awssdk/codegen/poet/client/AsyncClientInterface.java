@@ -21,15 +21,20 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
+import software.amazon.awssdk.async.AsyncRequestProvider;
+import software.amazon.awssdk.async.AsyncResponseHandler;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 
 public class AsyncClientInterface implements ClassSpec {
+
+    public static final TypeVariableName STREAMING_TYPE_VARIABLE = TypeVariableName.get("ReturnT");
 
     protected final IntermediateModel model;
     protected final ClassName className;
@@ -76,14 +81,39 @@ public class AsyncClientInterface implements ClassSpec {
     }
 
     private BuilderModelBag operationSignatureAndJavaDoc(OperationModel opModel) {
-        ClassName returnTypeClass = ClassName.get(modelPackage, opModel.getReturnType().getReturnType());
-        TypeName returnType = ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), returnTypeClass);
+        ClassName responsePojoType = ClassName.get(modelPackage, opModel.getReturnType().getReturnType());
         ClassName requestType = ClassName.get(modelPackage, opModel.getInput().getVariableType());
 
-        return new BuilderModelBag(MethodSpec.methodBuilder(opModel.getMethodName())
-                         .returns(returnType)
-                         .addParameter(requestType, opModel.getInput().getVariableName())
-                         .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata())), opModel);
+        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(opModel.getMethodName())
+                                                     .returns(getAsyncReturnType(opModel, responsePojoType))
+                                                     .addParameter(requestType, opModel.getInput().getVariableName())
+                                                     .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata()));
+
+        if (opModel.hasStreamingInput()) {
+            methodBuilder.addParameter(ClassName.get(AsyncRequestProvider.class), "requestProvider");
+        }
+        if (opModel.hasStreamingOutput()) {
+            methodBuilder.addTypeVariable(STREAMING_TYPE_VARIABLE);
+            final ParameterizedTypeName asyncResponseHandlerType = ParameterizedTypeName
+                    .get(ClassName.get(AsyncResponseHandler.class), responsePojoType, STREAMING_TYPE_VARIABLE);
+            methodBuilder.addParameter(asyncResponseHandlerType, "asyncResponseHandler");
+        }
+        return new BuilderModelBag(methodBuilder, opModel);
+    }
+
+    /**
+     * Get the return {@link TypeName} of an async method. Depends on whether it's streaming or not.
+     *
+     * @param opModel          Operation to get return type for.
+     * @param responsePojoType Type of Response POJO.
+     * @return Return type of the operation method.
+     */
+    private TypeName getAsyncReturnType(OperationModel opModel, ClassName responsePojoType) {
+        if (opModel.hasStreamingOutput()) {
+            return ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), STREAMING_TYPE_VARIABLE);
+        } else {
+            return ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), responsePojoType);
+        }
     }
 
     private MethodSpec builderMethod() {

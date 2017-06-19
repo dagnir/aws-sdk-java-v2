@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AwsMetricTransformerFactory;
@@ -62,7 +61,7 @@ public class PredefinedMetricTransformer {
      *
      * @param metricType the request metric type
      */
-    public List<MetricDatum> toMetricData(MetricType metricType, Request<?> request) {
+    public List<MetricDatum> toMetricData(MetricType metricType, Request<?> request, Object response) {
         if (metricType instanceof Field) {
             // Predefined metrics across all AWS http clients
             Field predefined = (Field) metricType;
@@ -98,7 +97,7 @@ public class PredefinedMetricTransformer {
         // Predefined metrics for specific service clients
         for (AwsMetricTransformerFactory aws : AwsMetricTransformerFactory.values()) {
             if (metricType.name().startsWith(aws.name())) {
-                List<MetricDatum> metricData = aws.getRequestMetricTransformer().toMetricData(metricType, request);
+                List<MetricDatum> metricData = aws.getRequestMetricTransformer().toMetricData(metricType, request, response);
                 if (metricData != null) {
                     return metricData;
                 }

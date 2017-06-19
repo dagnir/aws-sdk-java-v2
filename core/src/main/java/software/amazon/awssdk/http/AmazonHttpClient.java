@@ -202,9 +202,9 @@ public class AmazonHttpClient implements AutoCloseable {
      */
     @Deprecated
     public <T> T execute(Request<?> request,
-                                   HttpResponseHandler<AmazonWebServiceResponse<T>> responseHandler,
-                                   HttpResponseHandler<AmazonServiceException> errorResponseHandler,
-                                   ExecutionContext executionContext) {
+                         HttpResponseHandler<AmazonWebServiceResponse<T>> responseHandler,
+                         HttpResponseHandler<AmazonServiceException> errorResponseHandler,
+                         ExecutionContext executionContext) {
         HttpResponseHandler<T> adaptedRespHandler = new AwsResponseHandlerAdapter<>(
                 getNonNullResponseHandler(responseHandler),
                 executionContext.getAwsRequestMetrics());
@@ -420,7 +420,7 @@ public class AmazonHttpClient implements AutoCloseable {
         public <OutputT> OutputT execute(HttpResponseHandler<OutputT> responseHandler) {
             try {
                 return RequestPipelineBuilder
-                        .first(AttachRequestConfigStage::new)
+                        .first(AttachRequestConfigStage::new) // TODO Remove this after merge with generated s3 client
                         .then(BeforeRequestHandlersStage::new)
                         // Start of mutating request
                         .then(MakeRequestMutable::new)

@@ -18,6 +18,7 @@ package software.amazon.awssdk.async;
 import java.nio.ByteBuffer;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 /**
  * Interface to allow non-blocking streaming of request content. This follows the reactive streams pattern where
@@ -39,6 +40,7 @@ import org.reactivestreams.Subscriber;
  *
  * @see FileAsyncRequestProvider
  */
+@ReviewBeforeRelease("This is exactly the same of SdkHttpRequestProvider. Can we just have one?")
 public interface AsyncRequestProvider extends Publisher<ByteBuffer> {
 
     /**

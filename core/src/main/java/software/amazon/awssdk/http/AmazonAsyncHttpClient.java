@@ -43,7 +43,6 @@ import software.amazon.awssdk.http.pipeline.stages.MergeCustomHeadersStage;
 import software.amazon.awssdk.http.pipeline.stages.MergeCustomQueryParamsStage;
 import software.amazon.awssdk.http.pipeline.stages.MoveParametersToBodyStage;
 import software.amazon.awssdk.http.pipeline.stages.ReportRequestContentLengthStage;
-import software.amazon.awssdk.http.pipeline.stages.SetContentLengthStage;
 import software.amazon.awssdk.http.pipeline.stages.SigningStage;
 import software.amazon.awssdk.http.pipeline.stages.UnwrapResponseContainer;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
@@ -281,7 +280,6 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
                         .then(MergeCustomHeadersStage::new)
                         .then(MergeCustomQueryParamsStage::new)
                         .then(MoveParametersToBodyStage::new)
-                        .then(SetContentLengthStage::new)
                         .then(MakeRequestImmutable::new)
                         .then(ReportRequestContentLengthStage::new)
                         .then(RequestPipelineBuilder

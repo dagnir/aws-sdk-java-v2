@@ -32,7 +32,7 @@ public class MockRequestMetricsCollector extends RequestMetricCollector {
     private final List<AwsRequestMetrics> metrics = new ArrayList<AwsRequestMetrics>();
 
     @Override
-    public void collectMetrics(Request<?> request) {
+    public void collectMetrics(Request<?> request, Object response) {
         metrics.add(request.getAwsRequestMetrics());
     }
 

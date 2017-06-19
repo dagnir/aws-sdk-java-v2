@@ -290,4 +290,12 @@ public class OperationModel extends DocumentationModel {
     public void setHasBlobMemberAsPayload(boolean hasBlobMemberAsPayload) {
         this.hasBlobMemberAsPayload = hasBlobMemberAsPayload;
     }
+
+    public boolean hasStreamingInput() {
+        return inputShape != null && inputShape.isHasStreamingMember();
+    }
+
+    public boolean hasStreamingOutput() {
+        return outputShape != null && outputShape.isHasStreamingMember();
+    }
 }

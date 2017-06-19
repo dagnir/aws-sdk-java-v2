@@ -53,7 +53,7 @@ public class PredefinedMetricTransformerTest {
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetricsFullSupport();
         mockRequestMetrics.incrementCounter(Field.Exception);
         mockRequest.setAwsRequestMetrics(mockRequestMetrics);
-        List<MetricDatum> list = pmt.counterMetricOf(Field.Exception, mockRequest, null, EXCLUDE_REQUEST_TYPE);
+        List<MetricDatum> list = pmt.counterMetricOf(Field.Exception, mockRequest, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
         assertEquals("TestServiceName", datum.metricName());
@@ -61,7 +61,7 @@ public class PredefinedMetricTransformerTest {
         assertTrue(datum.value() == 1.0);
         // Test count of 2 exceptions
         mockRequestMetrics.incrementCounter(Field.Exception);
-        list = pmt.counterMetricOf(Field.Exception, mockRequest, null, EXCLUDE_REQUEST_TYPE);
+        list = pmt.counterMetricOf(Field.Exception, mockRequest, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         datum = list.get(0);
         assertTrue(datum.value() == 2.0);
@@ -75,7 +75,7 @@ public class PredefinedMetricTransformerTest {
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetricsFullSupport();
         mockRequestMetrics.incrementCounter(Field.ThrottleException);
         mockRequest.setAwsRequestMetrics(mockRequestMetrics);
-        List<MetricDatum> list = pmt.counterMetricOf(Field.ThrottleException, mockRequest, null, EXCLUDE_REQUEST_TYPE);
+        List<MetricDatum> list = pmt.counterMetricOf(Field.ThrottleException, mockRequest, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
         assertEquals("TestServiceName", datum.metricName());
@@ -83,7 +83,7 @@ public class PredefinedMetricTransformerTest {
         assertTrue(datum.value() == 1.0);
         // Test count of 2 exceptions
         mockRequestMetrics.incrementCounter(Field.ThrottleException);
-        list = pmt.counterMetricOf(Field.ThrottleException, mockRequest, null, EXCLUDE_REQUEST_TYPE);
+        list = pmt.counterMetricOf(Field.ThrottleException, mockRequest, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         datum = list.get(0);
         assertTrue(datum.value() == 2.0);
@@ -95,7 +95,7 @@ public class PredefinedMetricTransformerTest {
         DefaultRequest<?> mockRequest = new DefaultRequest<Object>("TestServiceName");
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetricsFullSupport();
         mockRequest.setAwsRequestMetrics(mockRequestMetrics);
-        List<MetricDatum> list = pmt.counterMetricOf(Field.Exception, mockRequest, null, EXCLUDE_REQUEST_TYPE);
+        List<MetricDatum> list = pmt.counterMetricOf(Field.Exception, mockRequest, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 0);
     }
 
@@ -107,7 +107,7 @@ public class PredefinedMetricTransformerTest {
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetrics();
         mockRequestMetrics.incrementCounter(Field.Exception);
         mockRequest.setAwsRequestMetrics(mockRequestMetrics);
-        List<MetricDatum> list = pmt.counterMetricOf(Field.Exception, mockRequest, null, EXCLUDE_REQUEST_TYPE);
+        List<MetricDatum> list = pmt.counterMetricOf(Field.Exception, mockRequest, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 0);
     }
 
@@ -120,7 +120,7 @@ public class PredefinedMetricTransformerTest {
         AwsRequestMetrics mockRequestMetrics = new AwsRequestMetricsFullSupport();
         mockRequestMetrics.incrementCounter(Field.Exception);
         mockRequest.setAwsRequestMetrics(mockRequestMetrics);
-        List<MetricDatum> metricData = pmt.counterMetricOf(Field.Exception, mockRequest, null, INCLUDE_REQUEST_TYPE);
+        List<MetricDatum> metricData = pmt.counterMetricOf(Field.Exception, mockRequest, INCLUDE_REQUEST_TYPE);
         assertTrue(metricData.size() == 2);
         final MetricDatum firstDatum = metricData.get(0);
         assertEquals("TestServiceName", firstDatum.metricName());
@@ -171,7 +171,7 @@ public class PredefinedMetricTransformerTest {
         Thread.sleep(100);
         mockRequestMetrics.endEvent(Field.HttpRequestTime);
         mockRequest.setAwsRequestMetrics(mockRequestMetrics);
-        List<MetricDatum> list = pmt.latencyMetricOf(Field.HttpRequestTime, mockRequest, null, INCLUDE_REQUEST_TYPE);
+        List<MetricDatum> list = pmt.latencyMetricOf(Field.HttpRequestTime, mockRequest, INCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
         assertEquals("TestServiceName", datum.metricName());
@@ -180,7 +180,7 @@ public class PredefinedMetricTransformerTest {
         List<Dimension> dims = datum.dimensions();
         assertTrue(dims.size() == 2);
         // exclude request dimension
-        list = pmt.latencyMetricOf(Field.HttpRequestTime, mockRequest, null, EXCLUDE_REQUEST_TYPE);
+        list = pmt.latencyMetricOf(Field.HttpRequestTime, mockRequest, EXCLUDE_REQUEST_TYPE);
         assertTrue(list.size() == 1);
         datum = list.get(0);
         assertEquals("TestServiceName", datum.metricName());
@@ -203,7 +203,7 @@ public class PredefinedMetricTransformerTest {
         final long endNano = mockRequestMetrics.getTimingInfo().getEndTimeNano();
         final double expectedDuration = TimingInfo.durationMilliOf(startNano, endNano);
         mockRequest.setAwsRequestMetrics(mockRequestMetrics);
-        List<MetricDatum> list = pmt.latencyOfClientExecuteTime(mockRequest, null);
+        List<MetricDatum> list = pmt.latencyOfClientExecuteTime(mockRequest);
         assertTrue(list.size() == 1);
         MetricDatum datum = list.get(0);
         assertEquals("TestServiceName", datum.metricName());

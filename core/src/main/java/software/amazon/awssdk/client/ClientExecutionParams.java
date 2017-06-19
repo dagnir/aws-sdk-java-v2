@@ -19,6 +19,7 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.http.HttpResponseHandler;
@@ -33,6 +34,7 @@ import software.amazon.awssdk.runtime.transform.Marshaller;
  */
 @SdkProtectedApi
 @NotThreadSafe
+@ReviewBeforeRelease("Using old style withers/getters")
 public class ClientExecutionParams<InputT, OutputT> {
 
     private InputT input;
@@ -101,11 +103,11 @@ public class ClientExecutionParams<InputT, OutputT> {
         return this;
     }
 
-    public AsyncRequestProvider asyncRequestProvider() {
+    public AsyncRequestProvider getAsyncRequestProvider() {
         return asyncRequestProvider;
     }
 
-    public ClientExecutionParams<InputT, OutputT> asyncRequestProvider(
+    public ClientExecutionParams<InputT, OutputT> withAsyncRequestProvider(
             AsyncRequestProvider asyncRequestProvider) {
         this.asyncRequestProvider = asyncRequestProvider;
         return this;

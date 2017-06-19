@@ -104,7 +104,7 @@ public class SdkJsonProtocolFactory {
 
         return new UnmarshallingAsyncResponseHandler<>(
                 asyncResponseHandler,
-                sdkHttpResponse -> unmarshall(responseUnmarshaller, (SdkHttpFullResponse) sdkHttpResponse));
+            sdkHttpResponse -> unmarshall(responseUnmarshaller, (SdkHttpFullResponse) sdkHttpResponse));
     }
 
     private <ResponseT> ResponseT unmarshall(Unmarshaller<ResponseT, JsonUnmarshallerContext> responseUnmarshaller,

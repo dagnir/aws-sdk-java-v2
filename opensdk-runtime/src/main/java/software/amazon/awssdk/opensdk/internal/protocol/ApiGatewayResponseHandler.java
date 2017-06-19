@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.opensdk.internal.protocol;
 
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.SdkHttpMetadata;
@@ -25,15 +24,15 @@ import software.amazon.awssdk.opensdk.SdkResponseMetadata;
 public class ApiGatewayResponseHandler<T extends BaseResult> implements
                                                              HttpResponseHandler<T> {
 
-    private final HttpResponseHandler<AmazonWebServiceResponse<T>> delegate;
+    private final HttpResponseHandler<T> delegate;
 
-    public ApiGatewayResponseHandler(HttpResponseHandler<AmazonWebServiceResponse<T>> delegate) {
+    public ApiGatewayResponseHandler(HttpResponseHandler<T> delegate) {
         this.delegate = delegate;
     }
 
     @Override
     public T handle(HttpResponse httpResponse) throws Exception {
-        T result = delegate.handle(httpResponse).getResult();
+        T result = delegate.handle(httpResponse);
         result.sdkResponseMetadata(new SdkResponseMetadata(SdkHttpMetadata.from(httpResponse)));
         return result;
     }

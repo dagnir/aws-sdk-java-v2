@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.route53;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.handlers.RequestHandler;
@@ -107,8 +106,6 @@ public class Route53RequestHandlerTest {
     }
 
     private void afterResponse(RequestHandler requestHandler, Object responseObject) {
-        AmazonWebServiceResponse<Object> resp = new AmazonWebServiceResponse<>();
-        resp.setResult(responseObject);
-        requestHandler.afterResponse(null, new Response<>(resp, null));
+        requestHandler.afterResponse(null, new Response<>(responseObject, null));
     }
 }

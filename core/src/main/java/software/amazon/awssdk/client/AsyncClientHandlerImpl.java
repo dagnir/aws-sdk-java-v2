@@ -29,7 +29,9 @@ import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
+import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AmazonAsyncHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
@@ -40,7 +42,6 @@ import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponseAdapter;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
-import software.amazon.awssdk.http.async.SimpleRequestProvider;
 import software.amazon.awssdk.http.async.SyncResponseHandlerAdapter;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -101,14 +102,18 @@ public class AsyncClientHandlerImpl extends AsyncClientHandler {
             request.setAwsRequestMetrics(awsRequestMetrics);
             request.setEndpoint(endpoint);
         } catch (Exception e) {
-            endClientExecution(awsRequestMetrics, executionParams.getRequestConfig(), null);
+            endClientExecution(awsRequestMetrics, executionParams.getRequestConfig(), null, null);
             throw e;
         } finally {
             awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RequestMarshallTime);
         }
 
-        SdkHttpFullRequest marshalled = SdkHttpFullRequestAdapter.toHttpFullRequest(request);
-        SdkHttpRequestProvider requestProvider = resolveAsyncRequestProvider(marshalled, executionParams);
+        SdkHttpFullRequest marshalled =
+                SdkHttpFullRequestAdapter.toMutableHttpFullRequest(request)
+                                         .handlerContext(AwsHandlerKeys.REQUEST_CONFIG, executionParams.getRequestConfig())
+                                         .build();
+        SdkHttpRequestProvider requestProvider = executionParams.getAsyncRequestProvider() != null ?
+                adaptAsyncRequestProvider(executionParams.getAsyncRequestProvider()) : null;
 
         Function<SdkHttpFullResponse, HttpResponse> responseAdapter
                 = r -> SdkHttpResponseAdapter.adapt(calculateCrc32FromCompressedData, marshalled, r);
@@ -128,7 +133,7 @@ public class AsyncClientHandlerImpl extends AsyncClientHandler {
                             throw Throwables.failure(err);
                         }
                     } finally {
-                        endClientExecution(awsRequestMetrics, executionParams.getRequestConfig(), request);
+                        endClientExecution(awsRequestMetrics, executionParams.getRequestConfig(), request, resp);
                     }
                 });
     }
@@ -139,35 +144,27 @@ public class AsyncClientHandlerImpl extends AsyncClientHandler {
     }
 
     /**
-     * Resolves the async request provider. If this is a streaming input operation then
-     * an implementation of {@link software.amazon.awssdk.async.AsyncRequestProvider} will
-     * be adapted to an {@link SdkHttpRequestProvider}. If it's a non-streaming operation
-     * then this returns a simple provider that provides all of the marshalled data at once.
+     * When an operation has a streaming input, the customer must supply an {@link AsyncRequestProvider} to
+     * provide the request content in a non-blocking manner. This adapts that interface to the
+     * {@link SdkHttpRequestProvider} which the HTTP client SPI expects.
      *
-     * @param marshalled      Marshalled request object.
-     * @param executionParams Request level params.
+     * @param asyncRequestProvider Customer supplied request provider.
      * @return Request provider to send to the HTTP layer.
      */
-    private SdkHttpRequestProvider resolveAsyncRequestProvider(
-            SdkHttpFullRequest marshalled,
-            ClientExecutionParams<?, ?> executionParams) {
-        if (executionParams.asyncRequestProvider() != null) {
-            return new SdkHttpRequestProvider() {
+    private SdkHttpRequestProvider adaptAsyncRequestProvider(AsyncRequestProvider asyncRequestProvider) {
+        return new SdkHttpRequestProvider() {
 
-                @Override
-                public long contentLength() {
-                    return executionParams.asyncRequestProvider().contentLength();
-                }
+            @Override
+            public long contentLength() {
+                return asyncRequestProvider.contentLength();
+            }
 
-                @Override
-                public void subscribe(Subscriber<? super ByteBuffer> s) {
-                    executionParams.asyncRequestProvider().subscribe(s);
-                }
+            @Override
+            public void subscribe(Subscriber<? super ByteBuffer> s) {
+                asyncRequestProvider.subscribe(s);
+            }
 
-            };
-        } else {
-            return new SimpleRequestProvider(marshalled);
-        }
+        };
     }
 
     /**
@@ -309,12 +306,13 @@ public class AsyncClientHandlerImpl extends AsyncClientHandler {
      */
     private void endClientExecution(AwsRequestMetrics awsRequestMetrics,
                                     RequestConfig requestConfig,
-                                    Request<?> request) {
+                                    Request<?> request,
+                                    Object response) {
         if (request != null) {
             awsRequestMetrics.endEvent(AwsRequestMetrics.Field.ClientExecuteTime);
             awsRequestMetrics.getTimingInfo().endTiming();
             RequestMetricCollector metricCollector = findRequestMetricCollector(requestConfig);
-            metricCollector.collectMetrics(request);
+            metricCollector.collectMetrics(request, response);
             awsRequestMetrics.log();
         }
     }

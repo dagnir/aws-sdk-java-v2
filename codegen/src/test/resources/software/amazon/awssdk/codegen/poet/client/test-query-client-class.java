@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Generated;
 import org.w3c.dom.Node;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.client.ClientHandler;
@@ -53,9 +52,9 @@ public class DefaultQueryClient implements QueryClient {
         DefaultErrorResponseHandler errorResponseHandler = new DefaultErrorResponseHandler(exceptionUnmarshallers);
 
         return clientHandler.execute(
-                new ClientExecutionParams<APostOperationRequest, AmazonWebServiceResponse<APostOperationResponse>>()
+                new ClientExecutionParams<APostOperationRequest, APostOperationResponse>()
                         .withMarshaller(new APostOperationRequestMarshaller()).withResponseHandler(responseHandler)
-                        .withErrorResponseHandler(errorResponseHandler).withInput(aPostOperationRequest)).getResult();
+                        .withErrorResponseHandler(errorResponseHandler).withInput(aPostOperationRequest));
     }
 
     @Override
@@ -69,10 +68,10 @@ public class DefaultQueryClient implements QueryClient {
 
         return clientHandler
                 .execute(
-                        new ClientExecutionParams<APostOperationWithOutputRequest, AmazonWebServiceResponse<APostOperationWithOutputResponse>>()
+                        new ClientExecutionParams<APostOperationWithOutputRequest, APostOperationWithOutputResponse>()
                                 .withMarshaller(new APostOperationWithOutputRequestMarshaller())
                                 .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                                .withInput(aPostOperationWithOutputRequest)).getResult();
+                                .withInput(aPostOperationWithOutputRequest));
     }
 
     private List<Unmarshaller<AmazonServiceException, Node>> init() {

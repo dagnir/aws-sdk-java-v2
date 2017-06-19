@@ -27,7 +27,7 @@ public abstract class RequestMetricCollector {
     /** A convenient instance of a no-op request metric collector. */
     public static final RequestMetricCollector NONE = new RequestMetricCollector() {
         @Override
-        public void collectMetrics(Request<?> request) {
+        public void collectMetrics(Request<?> request, Object response) {
         }
 
         @Override
@@ -41,7 +41,7 @@ public abstract class RequestMetricCollector {
      *
      * @see Request#getAwsRequestMetrics()
      */
-    public abstract void collectMetrics(Request<?> request);
+    public abstract void collectMetrics(Request<?> request, Object response);
 
     public boolean isEnabled() {
         return true;

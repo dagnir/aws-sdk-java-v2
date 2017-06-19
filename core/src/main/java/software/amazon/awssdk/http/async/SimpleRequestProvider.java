@@ -20,6 +20,7 @@ import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 import java.nio.ByteBuffer;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.utils.IoUtils;
 
@@ -29,12 +30,22 @@ import software.amazon.awssdk.utils.IoUtils;
  */
 public class SimpleRequestProvider implements SdkHttpRequestProvider {
 
-    private final ByteBuffer content;
+    private final byte[] content;
     private final int length;
 
     public SimpleRequestProvider(SdkHttpFullRequest request) {
-        this.content = ByteBuffer.wrap(invokeSafely(() -> IoUtils.toByteArray(request.getContent())));
-        this.length = content.limit();
+        if (request.getContent() != null) {
+            request.getContent().mark(getReadLimit(request));
+            this.content = invokeSafely(() -> IoUtils.toByteArray(request.getContent()));
+            invokeSafely(() -> request.getContent().reset());
+        } else {
+            this.content = new byte[0];
+        }
+        this.length = content.length;
+    }
+
+    private int getReadLimit(SdkHttpFullRequest request) {
+        return request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getRequestClientOptions().getReadLimit();
     }
 
     @Override
@@ -47,7 +58,7 @@ public class SimpleRequestProvider implements SdkHttpRequestProvider {
         s.onSubscribe(new Subscription() {
             @Override
             public void request(long n) {
-                s.onNext(content);
+                s.onNext(ByteBuffer.wrap(content));
                 s.onComplete();
             }
 

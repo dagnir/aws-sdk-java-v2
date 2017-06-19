@@ -26,10 +26,12 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -79,6 +81,7 @@ public class ClientHandlerImpl extends ClientHandler {
         AwsRequestMetrics awsRequestMetrics = executionContext.getAwsRequestMetrics();
         awsRequestMetrics.startEvent(AwsRequestMetrics.Field.ClientExecuteTime);
         Request<InputT> request = null;
+        OutputT response = null;
 
         try {
             awsRequestMetrics.startEvent(AwsRequestMetrics.Field.RequestMarshallTime);
@@ -89,13 +92,19 @@ public class ClientHandlerImpl extends ClientHandler {
                 awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RequestMarshallTime);
             }
 
-            return invoke(request,
+            SdkHttpFullRequest marshalled =
+                    SdkHttpFullRequestAdapter.toMutableHttpFullRequest(request)
+                                             .handlerContext(AwsHandlerKeys.REQUEST_CONFIG, executionParams.getRequestConfig())
+                                             .endpoint(endpoint)
+                                             .build();
+            response = invoke(marshalled,
                           executionParams.getRequestConfig(),
                           executionContext,
                           executionParams.getResponseHandler(),
                           executionParams.getErrorResponseHandler());
+            return response;
         } finally {
-            endClientExecution(awsRequestMetrics, executionParams.getRequestConfig(), request);
+            endClientExecution(awsRequestMetrics, executionParams.getRequestConfig(), request, response);
         }
     }
 
@@ -176,7 +185,7 @@ public class ClientHandlerImpl extends ClientHandler {
      * Normal invoke with authentication. Credentials are required and may be overriden at the
      * request level.
      **/
-    private <OutputT, InputT> OutputT invoke(Request<InputT> request,
+    private <OutputT> OutputT invoke(SdkHttpFullRequest request,
                                              RequestConfig requestConfig,
                                              ExecutionContext executionContext,
                                              HttpResponseHandler<OutputT> responseHandler,
@@ -193,14 +202,13 @@ public class ClientHandlerImpl extends ClientHandler {
      * Invoke the request using the http client. Assumes credentials (or lack thereof) have been
      * configured in the ExecutionContext beforehand.
      **/
-    private <OutputT, InputT> OutputT doInvoke(Request<InputT> request,
+    private <OutputT> OutputT doInvoke(SdkHttpFullRequest request,
                                                RequestConfig requestConfig,
                                                ExecutionContext executionContext,
                                                HttpResponseHandler<OutputT> responseHandler,
                                                HttpResponseHandler<? extends SdkBaseException> errorResponseHandler) {
-        request.setEndpoint(endpoint);
         return client.requestExecutionBuilder()
-                     .request(SdkHttpFullRequestAdapter.toHttpFullRequest(request))
+                     .request(request)
                      .requestConfig(requestConfig)
                      .executionContext(executionContext)
                      .errorResponseHandler(errorResponseHandler)
@@ -212,12 +220,13 @@ public class ClientHandlerImpl extends ClientHandler {
      */
     private void endClientExecution(AwsRequestMetrics awsRequestMetrics,
                                     RequestConfig requestConfig,
-                                    Request<?> request) {
+                                    Request<?> request,
+                                    Object response) {
         if (request != null) {
             awsRequestMetrics.endEvent(AwsRequestMetrics.Field.ClientExecuteTime);
             awsRequestMetrics.getTimingInfo().endTiming();
             RequestMetricCollector metricCollector = findRequestMetricCollector(requestConfig);
-            metricCollector.collectMetrics(request);
+            metricCollector.collectMetrics(request, response);
             awsRequestMetrics.log();
         }
     }

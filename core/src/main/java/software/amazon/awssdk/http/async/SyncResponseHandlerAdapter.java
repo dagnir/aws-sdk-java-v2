@@ -39,7 +39,7 @@ import software.amazon.awssdk.utils.BinaryUtils;
 public class SyncResponseHandlerAdapter<T> implements SdkHttpResponseHandler<T> {
 
     private final HttpResponseHandler<T> responseHandler;
-    private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private ByteArrayOutputStream baos;
     private final Function<SdkHttpFullResponse, HttpResponse> httpResponseAdapter;
     private HttpResponse httpResponse;
 
@@ -56,6 +56,7 @@ public class SyncResponseHandlerAdapter<T> implements SdkHttpResponseHandler<T> 
 
     @Override
     public void onStream(Publisher<ByteBuffer> publisher) {
+        baos = new ByteArrayOutputStream();
         publisher.subscribe(new SimpleSubscriber(b -> {
             try {
                 baos.write(BinaryUtils.copyBytesFrom(b));

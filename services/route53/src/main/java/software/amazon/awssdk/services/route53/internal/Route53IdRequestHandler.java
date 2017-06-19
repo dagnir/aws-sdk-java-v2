@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.services.route53.internal;
 
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -51,7 +50,7 @@ public class Route53IdRequestHandler extends RequestHandler {
 
     @Override
     public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
-        Object obj = ((AmazonWebServiceResponse) response.getAwsResponse()).getResult();
+        Object obj = response.getAwsResponse();
         if (obj instanceof ChangeResourceRecordSetsResponse) {
             ChangeResourceRecordSetsResponse result = (ChangeResourceRecordSetsResponse) obj;
             removePrefix(result.changeInfo());

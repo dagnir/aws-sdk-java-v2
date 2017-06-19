@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.opensdk.BaseResult;
@@ -36,14 +35,14 @@ import utils.http.HttpResponseBuilder;
 public class ApiGatewayResponseHandlerTest {
 
     @Mock
-    private HttpResponseHandler<AmazonWebServiceResponse<MockResult>> mockResponseHandler;
+    private HttpResponseHandler<MockResult> mockResponseHandler;
 
     private ApiGatewayResponseHandler<MockResult> responseHandler;
 
     @Before
     public void setup() throws Exception {
         responseHandler = new ApiGatewayResponseHandler<>(mockResponseHandler);
-        when(mockResponseHandler.handle(any())).thenReturn(aMockResult());
+        when(mockResponseHandler.handle(any())).thenReturn(new MockResult());
     }
 
     @Test
@@ -102,12 +101,6 @@ public class ApiGatewayResponseHandlerTest {
         responseHandler.needsConnectionLeftOpen();
 
         verify(mockResponseHandler).needsConnectionLeftOpen();
-    }
-
-    private static AmazonWebServiceResponse<MockResult> aMockResult() {
-        AmazonWebServiceResponse<MockResult> mockResult = new AmazonWebServiceResponse<>();
-        mockResult.setResult(new MockResult());
-        return mockResult;
     }
 
     private static void assertContainsHeader(SdkResponseMetadata responseMetadata,

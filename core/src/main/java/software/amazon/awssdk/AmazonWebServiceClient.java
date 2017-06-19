@@ -523,7 +523,7 @@ public abstract class AmazonWebServiceClient {
             awsRequestMetrics.getTimingInfo().endTiming();
             RequestMetricCollector c = findRequestMetricCollector(
                     request.getOriginalRequest().getRequestMetricCollector());
-            c.collectMetrics(request);
+            c.collectMetrics(request, response.getAwsResponse());
             awsRequestMetrics.log();
         }
     }

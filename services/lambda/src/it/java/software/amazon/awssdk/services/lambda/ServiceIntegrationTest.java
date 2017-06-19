@@ -15,13 +15,11 @@
 
 package software.amazon.awssdk.services.lambda;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,8 +41,6 @@ import software.amazon.awssdk.services.lambda.model.GetFunctionConfigurationResp
 import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
-import software.amazon.awssdk.services.lambda.model.InvokeAsyncRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeAsyncResponse;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
@@ -52,8 +48,8 @@ import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.LogType;
 import software.amazon.awssdk.services.lambda.model.Runtime;
 import software.amazon.awssdk.test.retry.RetryRule;
-import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.Base64Utils;
 
 public class ServiceIntegrationTest extends IntegrationTestBase {
 
@@ -185,11 +181,6 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         }
 
         // Invoke the function
-        InvokeAsyncResponse invokeAsyncResult = lambda.invokeAsync(InvokeAsyncRequest.builder().functionName(
-                FUNCTION_NAME).invokeArgs(new ByteArrayInputStream("{}".getBytes())).build()).join();
-
-        Assert.assertEquals(202, invokeAsyncResult.status().intValue());
-
         InvokeResponse invokeResult = lambda.invoke(InvokeRequest.builder().functionName(FUNCTION_NAME)
                 .invocationType(InvocationType.Event).payload(ByteBuffer.wrap("{}".getBytes())).build()).join();
 

@@ -50,9 +50,9 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
      * necessary statistics and uploaded to Amazon CloudWatch.
      */
     @Override
-    public void collectMetrics(Request<?> request) {
+    public void collectMetrics(Request<?> request, Object response) {
         try {
-            collectMetrics0(request);
+            collectMetrics0(request, response);
         } catch (Exception ex) { // defensive code
             if (log.isDebugEnabled()) {
                 log.debug("Ignoring unexpected failure", ex);
@@ -60,7 +60,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
         }
     }
 
-    private void collectMetrics0(Request<?> request) {
+    private void collectMetrics0(Request<?> request, Object response) {
         AwsRequestMetrics arm = request.getAwsRequestMetrics();
         if (arm == null || !arm.isEnabled()) {
             return;
@@ -70,7 +70,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
                 continue;
             }
             PredefinedMetricTransformer transformer = getTransformer();
-            for (MetricDatum datum : transformer.toMetricData(type, request)) {
+            for (MetricDatum datum : transformer.toMetricData(type, request, response)) {
                 try {
                     if (!addMetricsToQueue(datum)) {
                         if (log.isDebugEnabled()) {
