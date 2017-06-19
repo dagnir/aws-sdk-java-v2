@@ -29,6 +29,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectTaggingRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectTaggingRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectTaggingResponse;
 import software.amazon.awssdk.services.s3.model.PutBucketVersioningRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.Tag;
@@ -82,11 +83,18 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
         String key = makeNewKey();
         s3.putObject(PutObjectRequest.builder().bucket(BUCKET).key(key).tagging(S3TaggingUtil.toQueryString(tags)).build());
 
+        GetObjectTaggingResponse response = s3.getObjectTagging(GetObjectTaggingRequest.builder()
+                                                                                            .bucket(BUCKET)
+                                                                                            .key(key)
+                                                                                            .build());
+
         assertThat(tags.tagSet().size()).isEqualTo(s3.getObjectTagging(GetObjectTaggingRequest.builder()
                                                                                             .bucket(BUCKET)
                                                                                             .key(key)
                                                                                             .build())
                                                    .tagSet().size());
+
+        System.out.println("Hi");
     }
 
     @Test
@@ -113,8 +121,9 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void putObjectTagging_Succeeds_WithUrlEncodedTags() {
+        BasicConfigurator.configure();
         List<Tag> tagSet = new ArrayList<>();
-        tagSet.add(Tag.builder().key("foo").value("bar baz").build());
+        tagSet.add(Tag.builder().key("foo").value("bar @baz").build());
         tagSet.add(Tag.builder().key("foo bar").value("baz").build());
         tagSet.add(Tag.builder().key("foo/bar").value("baz").build());
 
