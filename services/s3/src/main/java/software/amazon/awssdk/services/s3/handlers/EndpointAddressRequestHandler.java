@@ -76,7 +76,7 @@ public class EndpointAddressRequestHandler extends RequestHandler2 {
         // Prepend bucket to endpoint
         URI endpoint = invokeSafely(() -> new URI(
                 request.getEndpoint().getScheme(), // Existing scheme
-                request.getEndpoint().getHost().replaceFirst("s3.", bucketName + "." + "s3-"), // replace "s3." with "bucket.s3."
+                request.getEndpoint().getHost().replaceFirst("s3", bucketName + "." + "s3"), // replace "s3" with "bucket.s3"
                 null,
                 null));
 

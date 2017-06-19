@@ -141,7 +141,7 @@ public final class S3AdvancedConfiguration implements
          *
          * @see S3AdvancedConfiguration#dualstackEnabled().
          */
-        Builder dualstackEnabled(boolean dualstackEnabled);
+        Builder dualstackEnabled(Boolean dualstackEnabled);
 
         /**
          * Option to enable using the accelerate enedpoint when accessing S3. Accelerate
@@ -150,7 +150,7 @@ public final class S3AdvancedConfiguration implements
          *
          * @see S3AdvancedConfiguration#accelerateModeEnabled().
          */
-        Builder accelerateModeEnabled(boolean accelerateModeEnabled);
+        Builder accelerateModeEnabled(Boolean accelerateModeEnabled);
 
         /**
          * Option to enable using path style access for accessing S3 objects
@@ -159,7 +159,7 @@ public final class S3AdvancedConfiguration implements
          *
          * @see S3AdvancedConfiguration#pathStyleAccessEnabled().
          */
-        Builder pathStyleAccessEnabled(boolean pathStyleAccessEnabled);
+        Builder pathStyleAccessEnabled(Boolean pathStyleAccessEnabled);
     }
 
     private static final class DefaultS3AdvancedConfigurationBuilder implements Builder {
@@ -168,16 +168,16 @@ public final class S3AdvancedConfiguration implements
         private Boolean accelerateModeEnabled;
         private Boolean pathStyleAccessEnabled;
 
-        public Builder dualstackEnabled(boolean dualstackEnabled) {
+        public Builder dualstackEnabled(Boolean dualstackEnabled) {
             this.dualstackEnabled = dualstackEnabled;
             return this;
         }
 
-        public void setDualstackEnabled(boolean dualstackEnabled) {
+        public void setDualstackEnabled(Boolean dualstackEnabled) {
             dualstackEnabled(dualstackEnabled);
         }
 
-        public Builder accelerateModeEnabled(boolean accelerateModeEnabled) {
+        public Builder accelerateModeEnabled(Boolean accelerateModeEnabled) {
             this.accelerateModeEnabled = accelerateModeEnabled;
             return this;
         }
@@ -186,7 +186,7 @@ public final class S3AdvancedConfiguration implements
             accelerateModeEnabled(accelerateModeEnabled);
         }
 
-        public Builder pathStyleAccessEnabled(boolean pathStyleAccessEnabled) {
+        public Builder pathStyleAccessEnabled(Boolean pathStyleAccessEnabled) {
             this.pathStyleAccessEnabled = pathStyleAccessEnabled;
             return this;
         }
