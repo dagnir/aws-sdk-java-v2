@@ -16,7 +16,7 @@
 package software.amazon.awssdk.config.defaults;
 
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
@@ -60,7 +60,7 @@ public abstract class ClientConfigurationDefaults {
     public final void applyAsyncDefaults(MutableClientConfiguration config) {
         applyDefaultValues(config);
 
-        config.asyncExecutorService(applyDefault(config.asyncExecutorService(), () -> getAsyncExecutorDefault(50)));
+        config.asyncExecutorService(applyDefault(config.asyncExecutorService(), this::getAsyncExecutorDefault));
     }
 
     /**
@@ -97,10 +97,8 @@ public abstract class ClientConfigurationDefaults {
 
     /**
      * Optionally overridden by the child class to return a default executor service.
-     *
-     * @param maxConnections The currently configured max connections. This may be null if it hasn't yet been configured.
      */
-    protected ExecutorService getAsyncExecutorDefault(Integer maxConnections) {
+    protected ScheduledExecutorService getAsyncExecutorDefault() {
         return null;
     }
 

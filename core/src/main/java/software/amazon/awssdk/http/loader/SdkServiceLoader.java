@@ -23,6 +23,8 @@ import java.util.ServiceLoader;
  */
 class SdkServiceLoader {
 
+    public static final SdkServiceLoader INSTANCE = new SdkServiceLoader();
+
     public <T> Iterator<T> loadServices(Class<T> clzz) {
         return ServiceLoader.load(clzz).iterator();
     }

@@ -21,11 +21,18 @@ package software.amazon.awssdk.utils;
 public enum SdkSystemSetting implements SystemSetting {
 
     /**
-     * Explicitly identify the default HTTP implementation the SDK will use. Useful
+     * Explicitly identify the default synchronous HTTP implementation the SDK will use. Useful
      * when there are multiple implementations on the classpath or as a performance optimization
      * since implementation discovery requires classpath scanning.
      */
-    HTTP_SERVICE_IMPL("software.amazon.awssdk.http.service.impl");
+    SYNC_HTTP_SERVICE_IMPL("software.amazon.awssdk.http.service.impl"),
+
+    /**
+     * Explicitly identify the default Async HTTP implementation the SDK will use. Useful
+     * when there are multiple implementations on the classpath or as a performance optimization
+     * since implementation discovery requires classpath scanning.
+     */
+    ASYNC_HTTP_SERVICE_IMPL("software.amazon.awssdk.http.async.service.impl");
 
     private final String systemProperty;
 

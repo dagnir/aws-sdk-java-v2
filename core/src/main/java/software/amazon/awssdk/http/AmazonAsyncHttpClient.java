@@ -19,6 +19,7 @@ import static software.amazon.awssdk.http.pipeline.RequestPipelineBuilder.async;
 import static software.amazon.awssdk.utils.Validate.paramNotNull;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
@@ -174,6 +175,7 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
         private RequestMetricCollector requestMetricCollector;
         private boolean calculateCrc32FromCompressedData;
         private SdkAsyncHttpClient sdkAsyncHttpClient;
+        private ScheduledExecutorService executorService;
 
         private Builder() {
         }
@@ -203,6 +205,11 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
             return this;
         }
 
+        public Builder asyncExecutor(ScheduledExecutorService executorService) {
+            this.executorService = executorService;
+            return this;
+        }
+
         public AmazonAsyncHttpClient build() {
             return new AmazonAsyncHttpClient(
                     HttpClientDependencies.builder()
@@ -212,6 +219,7 @@ public class AmazonAsyncHttpClient implements AutoCloseable {
                                           .retryPolicy(resolveRetryPolicy())
                                           .calculateCrc32FromCompressedData(calculateCrc32FromCompressedData)
                                           .sdkAsyncHttpClient(sdkAsyncHttpClient)
+                                          .asyncExecutorService(executorService)
                                           .build(),
                     requestMetricCollector);
         }

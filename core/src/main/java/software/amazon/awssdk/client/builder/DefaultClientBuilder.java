@@ -16,11 +16,11 @@
 package software.amazon.awssdk.client.builder;
 
 import static software.amazon.awssdk.config.AdvancedClientOption.ENABLE_DEFAULT_REGION_DETECTION;
-import static software.amazon.awssdk.utils.Validate.notNull;
+import static software.amazon.awssdk.utils.Validate.paramNotNull;
 
 import java.net.URI;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
@@ -38,7 +38,14 @@ import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
+import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkRequestContext;
+import software.amazon.awssdk.http.async.AbortableRunnable;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClientFactory;
+import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
+import software.amazon.awssdk.http.loader.DefaultSdkAsyncHttpClientFactory;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.ServiceMetadata;
@@ -71,22 +78,27 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     private static final String DEFAULT_ENDPOINT_PROTOCOL = "https";
     private static final AwsRegionProvider DEFAULT_REGION_PROVIDER = new DefaultAwsRegionProviderChain();
     private static final SdkHttpClientFactory DEFAULT_HTTP_CLIENT_FACTORY = new DefaultSdkHttpClientFactory();
+    private static final SdkAsyncHttpClientFactory DEFAULT_ASYNC_HTTP_CLIENT_FACTORY = new DefaultSdkAsyncHttpClientFactory();
 
     private final SdkHttpClientFactory defaultHttpClientFactory;
+    private final SdkAsyncHttpClientFactory defaultAsyncHttpClientFactory;
 
     private MutableClientConfiguration mutableClientConfiguration = new MutableClientConfiguration();
 
     private Region region;
     private ExecutorProvider asyncExecutorProvider;
     private ClientHttpConfiguration httpConfiguration = ClientHttpConfiguration.builder().build();
+    private ClientAsyncHttpConfiguration asyncHttpConfiguration = ClientAsyncHttpConfiguration.builder().build();
 
     protected DefaultClientBuilder() {
-        this(DEFAULT_HTTP_CLIENT_FACTORY);
+        this(DEFAULT_HTTP_CLIENT_FACTORY, DEFAULT_ASYNC_HTTP_CLIENT_FACTORY);
     }
 
     @SdkTestInternalApi
-    protected DefaultClientBuilder(SdkHttpClientFactory defaultHttpClientFactory) {
+    protected DefaultClientBuilder(SdkHttpClientFactory defaultHttpClientFactory,
+                                   SdkAsyncHttpClientFactory defaultAsyncHttpClientFactory) {
         this.defaultHttpClientFactory = defaultHttpClientFactory;
+        this.defaultAsyncHttpClientFactory = defaultAsyncHttpClientFactory;
     }
 
     /**
@@ -174,6 +186,18 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
                 .orElseGet(() -> defaultHttpClientFactory.createHttpClientWithDefaults(serviceSpecificHttpConfig()));
     }
 
+    private void applySdkAsyncHttpClient(MutableClientConfiguration config) {
+        config.asyncHttpClient(resolveSdkAsyncHttpClient());
+    }
+
+    private SdkAsyncHttpClient resolveSdkAsyncHttpClient() {
+        return asyncHttpConfiguration
+                .toEither()
+                .map(e -> e.map(NonManagedSdkAsyncHttpClient::new,
+                    factory -> factory.createHttpClientWithDefaults(serviceSpecificHttpConfig())))
+                .orElseGet(() -> defaultAsyncHttpClientFactory.createHttpClientWithDefaults(serviceSpecificHttpConfig()));
+    }
+
     /**
      * Return an async client configuration object, populated with the following chain of priorities.
      * <ol>
@@ -188,8 +212,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         builderDefaults().applyAsyncDefaults(configuration);
         serviceDefaults().applyAsyncDefaults(configuration);
         new GlobalClientConfigurationDefaults().applyAsyncDefaults(configuration);
-        // TODO resolve async client
-        applySdkHttpClient(configuration);
+        applySdkAsyncHttpClient(configuration);
         return new ImmutableAsyncClientConfiguration(configuration);
     }
 
@@ -219,7 +242,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
              * Create the async executor service that should be used for async client executions.
              */
             @Override
-            protected ExecutorService getAsyncExecutorDefault(Integer maxConnections) {
+            protected ScheduledExecutorService getAsyncExecutorDefault() {
                 return Optional.ofNullable(asyncExecutorProvider).map(ExecutorProvider::get).orElse(null);
             }
 
@@ -314,7 +337,6 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         overrideConfiguration(overrideConfiguration);
     }
 
-    @Override
     public final B httpConfiguration(ClientHttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
         return thisBuilder();
@@ -322,6 +344,15 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
 
     public final void setHttpConfiguration(ClientHttpConfiguration httpConfiguration) {
         this.httpConfiguration = httpConfiguration;
+    }
+
+    public final B asyncHttpConfiguration(ClientAsyncHttpConfiguration asyncHttpConfiguration) {
+        this.asyncHttpConfiguration = asyncHttpConfiguration;
+        return thisBuilder();
+    }
+
+    public final void setAsyncHttpConfiguration(ClientAsyncHttpConfiguration asyncHttpConfiguration) {
+        this.asyncHttpConfiguration = asyncHttpConfiguration;
     }
 
     @Override
@@ -352,7 +383,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
         private final SdkHttpClient delegate;
 
         private NonManagedSdkHttpClient(SdkHttpClient delegate) {
-            this.delegate = notNull(delegate, "SdkHttpClient must not be null");
+            this.delegate = paramNotNull(delegate, "SdkHttpClient");
         }
 
         @Override
@@ -371,4 +402,35 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
             // Do nothing, this client is managed by the customer.
         }
     }
+
+    /**
+     * Wrapper around {@link SdkAsyncHttpClient} to prevent it from being closed. Used when the customer provides
+     * an already built client in which case they are responsible for the lifecycle of it.
+     */
+    @SdkTestInternalApi
+    static class NonManagedSdkAsyncHttpClient implements SdkAsyncHttpClient {
+
+        private final SdkAsyncHttpClient delegate;
+
+        NonManagedSdkAsyncHttpClient(SdkAsyncHttpClient delegate) {
+            this.delegate = paramNotNull(delegate, "SdkAsyncHttpClient");
+        }
+
+        @Override
+        public AbortableRunnable prepareRequest(SdkHttpRequest request, SdkRequestContext context,
+                                                SdkHttpRequestProvider requestProvider, SdkHttpResponseHandler handler) {
+            return delegate.prepareRequest(request, context, requestProvider, handler);
+        }
+
+        @Override
+        public <T> Optional<T> getConfigurationValue(SdkHttpConfigurationOption<T> key) {
+            return delegate.getConfigurationValue(key);
+        }
+
+        @Override
+        public void close() throws Exception {
+            // Do nothing, this client is managed by the customer.
+        }
+    }
+
 }

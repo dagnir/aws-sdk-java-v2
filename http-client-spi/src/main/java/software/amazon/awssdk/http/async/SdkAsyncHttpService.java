@@ -13,28 +13,28 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http;
+package software.amazon.awssdk.http.async;
 
 import software.amazon.awssdk.annotation.ThreadSafe;
 
 /**
- * Service Provider interface for HTTP implementations. The core uses {@link java.util.ServiceLoader} to find appropriate
+ * Service Provider interface for Async HTTP implementations. The core uses {@link java.util.ServiceLoader} to find appropriate
  * HTTP implementations on the classpath. HTTP implementations that wish to be discovered by the default HTTP provider chain
  * should implement this interface and declare that implementation as a service in the
- * META-INF/service/software.amazon.awssdk.http.SdkHttpService resource. See
+ * META-INF/service/software.amazon.awssdk.http.async.SdkAsyncHttpService resource. See
  * <a href="https://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html>Service Loader</a> for more
  * information.
  *
  * <p>
- * This interface is simply a factory for {@link SdkHttpClientFactory}. Implementations must be thread safe.
+ * This interface is simply a factory for {@link SdkAsyncHttpClientFactory}. Implementations must be thread safe.
  * </p>
  */
 @ThreadSafe
-public interface SdkHttpService {
+public interface SdkAsyncHttpService {
 
     /**
-     * @return An {@link SdkHttpClientFactory} capable of creating {@link SdkHttpClient} instances. This factory should be thread
-     * safe.
+     * @return An {@link SdkAsyncHttpClientFactory} capable of creating {@link SdkAsyncHttpClient} instances. This factory should
+     * be thread safe.
      */
-    SdkHttpClientFactory createHttpClientFactory();
+    SdkAsyncHttpClientFactory createAsyncHttpClientFactory();
 }

@@ -27,4 +27,12 @@ package software.amazon.awssdk.client.builder;
 public interface SyncClientBuilder<B extends SyncClientBuilder<B, C>, C>
         extends ClientBuilder<B, C> {
 
+    /**
+     * Configures the HTTP client used by the service client. Either a client factory may be provided (in which case
+     * the SDK will merge any service specific configuration on top of customer supplied configuration) or provide an already
+     * constructed instance of {@link software.amazon.awssdk.http.SdkHttpClient}. Note that if an {@link
+     * software.amazon.awssdk.http.SdkHttpClient} is provided then it is up to the caller to close it when they are finished with
+     * it, the SDK will only close HTTP clients that it creates.
+     */
+    B httpConfiguration(ClientHttpConfiguration httpConfiguration);
 }

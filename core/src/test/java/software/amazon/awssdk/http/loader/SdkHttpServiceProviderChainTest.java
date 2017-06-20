@@ -30,30 +30,30 @@ public class SdkHttpServiceProviderChainTest {
 
     @Test(expected = NullPointerException.class)
     public void nullProviders_ThrowsException() {
-        new SdkHttpServiceProviderChain(null);
+        new SdkHttpServiceProviderChain<>(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void emptyProviders_ThrowsException() {
-        new SdkHttpServiceProviderChain();
+        new SdkHttpServiceProviderChain<>();
     }
 
     @Test
     public void allProvidersReturnEmpty_ReturnsEmptyOptional() {
-        SdkHttpServiceProvider delegateOne = mock(SdkHttpServiceProvider.class);
-        SdkHttpServiceProvider delegateTwo = mock(SdkHttpServiceProvider.class);
+        SdkHttpServiceProvider<SdkHttpService> delegateOne = mock(SdkHttpServiceProvider.class);
+        SdkHttpServiceProvider<SdkHttpService> delegateTwo = mock(SdkHttpServiceProvider.class);
         when(delegateOne.loadService()).thenReturn(Optional.empty());
         when(delegateTwo.loadService()).thenReturn(Optional.empty());
-        final Optional<SdkHttpService> actual = new SdkHttpServiceProviderChain(delegateOne, delegateTwo).loadService();
+        final Optional<SdkHttpService> actual = new SdkHttpServiceProviderChain<>(delegateOne, delegateTwo).loadService();
         assertThat(actual).isEmpty();
     }
 
     @Test
     public void firstProviderReturnsNonEmpty_DoesNotCallSecondProvider() {
-        SdkHttpServiceProvider delegateOne = mock(SdkHttpServiceProvider.class);
-        SdkHttpServiceProvider delegateTwo = mock(SdkHttpServiceProvider.class);
+        SdkHttpServiceProvider<SdkHttpService> delegateOne = mock(SdkHttpServiceProvider.class);
+        SdkHttpServiceProvider<SdkHttpService> delegateTwo = mock(SdkHttpServiceProvider.class);
         when(delegateOne.loadService()).thenReturn(Optional.of(mock(SdkHttpService.class)));
-        final Optional<SdkHttpService> actual = new SdkHttpServiceProviderChain(delegateOne, delegateTwo).loadService();
+        final Optional<SdkHttpService> actual = new SdkHttpServiceProviderChain<>(delegateOne, delegateTwo).loadService();
         assertThat(actual).isPresent();
         verify(delegateTwo, never()).loadService();
     }

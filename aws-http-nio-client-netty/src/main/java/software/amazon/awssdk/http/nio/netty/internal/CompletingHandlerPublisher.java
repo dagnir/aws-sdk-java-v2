@@ -26,7 +26,7 @@ import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
  * Extends {@link HandlerPublisher} to call complete on an {@link SdkHttpResponseHandler} once all the data has been sent to the
  * {@link Subscriber} and {@link Subscriber#onComplete()} has been called.
  */
-public class CompletingHandlerPublisher extends HandlerPublisher<ByteBuffer> {
+class CompletingHandlerPublisher extends HandlerPublisher<ByteBuffer> {
 
     private final SdkHttpResponseHandler responseHandler;
 
@@ -39,7 +39,7 @@ public class CompletingHandlerPublisher extends HandlerPublisher<ByteBuffer> {
      * @param executor        The executor to execute asynchronous events from the subscriber on.
      * @param responseHandler Response handler to invoke callbacks on.
      */
-    public CompletingHandlerPublisher(EventExecutor executor, SdkHttpResponseHandler responseHandler) {
+    CompletingHandlerPublisher(EventExecutor executor, SdkHttpResponseHandler responseHandler) {
         super(executor, ByteBuffer.class);
         this.responseHandler = responseHandler;
     }

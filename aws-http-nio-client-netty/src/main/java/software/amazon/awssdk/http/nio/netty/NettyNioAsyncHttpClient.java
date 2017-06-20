@@ -24,10 +24,8 @@ import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 import static software.amazon.awssdk.utils.NumericUtils.saturatedCast;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.WriteBufferWaterMark;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.pool.AbstractChannelPoolMap;
 import io.netty.channel.pool.ChannelPool;
@@ -58,15 +56,6 @@ import software.amazon.awssdk.utils.AttributeMap;
 @SdkInternalApi
 final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
-    private static final int LOW_WATER_MARK = 8 * 1024;
-    private static final int HIGH_WATER_MARK = 32 * 1024;
-    /**
-     * Water mark determines whether {@link Channel#isWritable()} returns true or false. Can be polled by writer to determine
-     * whether to back off or not
-     */
-    @ReviewBeforeRelease("Revisit watermarks when backpressure strategy is decided.")
-    private static final WriteBufferWaterMark WATER_MARK = new WriteBufferWaterMark(LOW_WATER_MARK, HIGH_WATER_MARK);
-
     private final EventLoopGroup group = new NioEventLoopGroup();
     private final RequestAdapter requestAdapter = new RequestAdapter();
     private final ChannelPoolMap<URI, ChannelPool> pools;
@@ -89,7 +78,6 @@ final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                         new Bootstrap()
                                 .group(group)
                                 .channel(NioSocketChannel.class)
-                                .option(ChannelOption.WRITE_BUFFER_WATER_MARK, WATER_MARK)
                                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, serviceDefaults.getConnectionTimeout())
                                 .remoteAddress(addressFor(key));
                 SslContext sslContext = sslContext(key.getScheme());

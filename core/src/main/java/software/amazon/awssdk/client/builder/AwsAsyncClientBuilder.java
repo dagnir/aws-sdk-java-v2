@@ -17,6 +17,7 @@ package software.amazon.awssdk.client.builder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
@@ -95,15 +96,14 @@ public abstract class AwsAsyncClientBuilder<SubclassT extends AwsAsyncClientBuil
      */
     protected class AsyncBuilderParams extends SyncBuilderParams {
 
-        private final ExecutorService executorService;
+        private final ScheduledExecutorService executorService;
 
         protected AsyncBuilderParams(ExecutorFactory executorFactory) {
-            this.executorService =
-                    (executorFactory == null) ? defaultExecutor() : executorFactory.newExecutor();
+            this.executorService = Executors.newScheduledThreadPool(5);
         }
 
         @Override
-        public ExecutorService getExecutor() {
+        public ScheduledExecutorService getExecutor() {
             return this.executorService;
         }
 

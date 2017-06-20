@@ -18,13 +18,13 @@ package software.amazon.awssdk.http.pipeline.stages;
 import static java.util.Collections.singletonList;
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 import static software.amazon.awssdk.http.AmazonHttpClient.THROTTLED_RETRY_COST;
+import static software.amazon.awssdk.http.pipeline.stages.RetryableStage.HEADER_SDK_RETRY_INFO;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
@@ -54,14 +54,10 @@ import software.amazon.awssdk.util.DateUtils;
  */
 public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFullRequest, CompletableFuture<Response<OutputT>>> {
 
-    public static final String HEADER_SDK_RETRY_INFO = "amz-sdk-retry";
-
     private static final Log log = LogFactory.getLog(AsyncRetryableStage.class);
 
     private final RequestPipeline<SdkHttpFullRequest, CompletableFuture<Response<OutputT>>> requestPipeline;
-    // TODO how many threads do we need. can customer configure this? Also need to shut this down somewhere
-    private final ScheduledExecutorService retrySubmitter = Executors.newScheduledThreadPool(1);
-
+    private final ScheduledExecutorService retrySubmitter;
     private final HttpClientDependencies dependencies;
     private final CapacityManager retryCapacity;
     private final RetryPolicy retryPolicy;
@@ -69,6 +65,7 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
     public AsyncRetryableStage(HttpClientDependencies dependencies,
                                RequestPipeline<SdkHttpFullRequest, CompletableFuture<Response<OutputT>>> requestPipeline) {
         this.dependencies = dependencies;
+        this.retrySubmitter = dependencies.executorService();
         this.retryCapacity = dependencies.retryCapacity();
         this.retryPolicy = dependencies.retryPolicy();
         this.requestPipeline = requestPipeline;
@@ -184,7 +181,7 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
             lastBackoffDelay = delay;
 
             if (log.isDebugEnabled()) {
-                log.debug("Retriable error detected, " + "will retry in " + delay + "ms, attempt number: " +
+                log.debug("Retriable error detected, will retry in " + delay + "ms, attempt number: " +
                           retriesAttempted);
             }
             retrySubmitter.schedule(() -> {
@@ -320,8 +317,8 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
         }
 
         /**
-         * Add the {@value #HEADER_SDK_RETRY_INFO} header to the request. Contains metadata about request count, backoff, and
-         * retry capacity.
+         * Add the {@value RetryableStage#HEADER_SDK_RETRY_INFO} header to the request. Contains metadata about request count,
+         * backoff, and retry capacity.
          *
          * @return Request with retry info header added.
          */

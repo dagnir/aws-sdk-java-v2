@@ -15,10 +15,9 @@
 
 package software.amazon.awssdk.client;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 
 /**
  * Provides access to all params needed in a asynchronous AWS service client constructor. Abstract
@@ -27,12 +26,10 @@ import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 @SdkProtectedApi
 public abstract class AwsAsyncClientParams extends AwsSyncClientParams {
 
-    private final SdkAsyncHttpClient asyncHttpClient = NettySdkHttpClientFactory.builder().build().createHttpClient();
-
-    public abstract ExecutorService getExecutor();
+    public abstract ScheduledExecutorService getExecutor();
 
     public SdkAsyncHttpClient getAsyncHttpClient() {
-        return asyncHttpClient;
+        throw new UnsupportedOperationException("Must use new builders");
     }
 
 }

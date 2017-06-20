@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SdkClientException;
@@ -438,7 +438,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         }
 
         @Override
-        public ExecutorService getExecutor() {
+        public ScheduledExecutorService getExecutor() {
             throw new UnsupportedOperationException("ExecutorService is not used for sync client.");
         }
 

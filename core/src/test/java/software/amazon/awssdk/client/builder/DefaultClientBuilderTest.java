@@ -43,11 +43,14 @@ import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.config.ImmutableAsyncClientConfiguration;
 import software.amazon.awssdk.config.ImmutableSyncClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpClientFactory;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClientFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.utils.AttributeMap;
 
@@ -69,9 +72,13 @@ public class DefaultClientBuilderTest {
     @Mock
     private SdkHttpClientFactory defaultHttpClientFactory;
 
+    @Mock
+    private SdkAsyncHttpClientFactory defaultAsyncHttpClientFactory;
+
     @Before
     public void setup() {
         when(defaultHttpClientFactory.createHttpClientWithDefaults(any())).thenReturn(mock(SdkHttpClient.class));
+        when(defaultAsyncHttpClientFactory.createHttpClientWithDefaults(any())).thenReturn(mock(SdkAsyncHttpClient.class));
     }
 
     @Test
@@ -113,6 +120,14 @@ public class DefaultClientBuilderTest {
     }
 
     @Test
+    public void noAsyncClientProvided_DefaultAsyncHttpClientIsManagedBySdk() {
+        TestAsyncClient client = testAsyncClientBuilder().region(Region.US_WEST_2).build();
+        assertThat(client.asyncClientConfiguration.asyncHttpClient())
+                .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkAsyncHttpClient.class);
+        verify(defaultAsyncHttpClientFactory, times(1)).createHttpClientWithDefaults(any());
+    }
+
+    @Test
     public void clientFactoryProvided_ClientIsManagedBySdk() {
         TestClient client = testClientBuilder()
                 .region(Region.US_WEST_2)
@@ -129,6 +144,23 @@ public class DefaultClientBuilderTest {
     }
 
     @Test
+    public void asyncHttpClientFactoryProvided_ClientIsManagedBySdk() {
+        TestAsyncClient client = testAsyncClientBuilder()
+                .region(Region.US_WEST_2)
+                .asyncHttpConfiguration(ClientAsyncHttpConfiguration
+                                                .builder()
+                                                .httpClientFactory(serviceDefaults -> {
+                                                    assertThat(serviceDefaults).isEqualTo(MOCK_DEFAULTS);
+                                                    return mock(SdkAsyncHttpClient.class);
+                                                })
+                                                .build())
+                .build();
+        assertThat(client.asyncClientConfiguration.asyncHttpClient())
+                .isNotInstanceOf(DefaultClientBuilder.NonManagedSdkAsyncHttpClient.class);
+        verify(defaultAsyncHttpClientFactory, never()).createHttpClientWithDefaults(any());
+    }
+
+    @Test
     public void explicitClientProvided_ClientIsNotManagedBySdk() {
         TestClient client = testClientBuilder()
                 .region(Region.US_WEST_2)
@@ -139,6 +171,20 @@ public class DefaultClientBuilderTest {
         assertThat(client.syncClientConfiguration.httpClient())
                 .isInstanceOf(DefaultClientBuilder.NonManagedSdkHttpClient.class);
         verify(defaultHttpClientFactory, never()).createHttpClientWithDefaults(any());
+    }
+
+    @Test
+    public void explicitAsyncHttpClientProvided_ClientIsNotManagedBySdk() {
+        TestAsyncClient client = testAsyncClientBuilder()
+                .region(Region.US_WEST_2)
+                .asyncHttpConfiguration(ClientAsyncHttpConfiguration
+                                                .builder()
+                                                .httpClient(mock(SdkAsyncHttpClient.class))
+                                                .build())
+                .build();
+        assertThat(client.asyncClientConfiguration.asyncHttpClient())
+                .isInstanceOf(DefaultClientBuilder.NonManagedSdkAsyncHttpClient.class);
+        verify(defaultAsyncHttpClientFactory, never()).createHttpClientWithDefaults(any());
     }
 
     @Test
@@ -175,6 +221,17 @@ public class DefaultClientBuilderTest {
                                       .overrideConfiguration(overrideConfig);
     }
 
+    private ClientBuilder<TestAsyncClientBuilder, TestAsyncClient> testAsyncClientBuilder() {
+        ClientOverrideConfiguration overrideConfig =
+                ClientOverrideConfiguration.builder()
+                                           .advancedOption(SIGNER_PROVIDER, TEST_SIGNER_PROVIDER)
+                                           .advancedOption(ENABLE_DEFAULT_REGION_DETECTION, false)
+                                           .build();
+
+        return new TestAsyncClientBuilder().credentialsProvider(new AnonymousCredentialsProvider())
+                                           .overrideConfiguration(overrideConfig);
+    }
+
     private static class TestClient {
         private final ImmutableSyncClientConfiguration syncClientConfiguration;
         private final Region signingRegion;
@@ -190,13 +247,55 @@ public class DefaultClientBuilderTest {
             implements ClientBuilder<TestClientBuilder, TestClient> {
 
         public TestClientBuilder() {
-            super(defaultHttpClientFactory);
+            super(defaultHttpClientFactory, null);
         }
 
         @Override
         protected TestClient buildClient() {
             return new TestClient(super.syncClientConfiguration(),
                                   super.signingRegion());
+        }
+
+        @Override
+        protected String serviceEndpointPrefix() {
+            return ENDPOINT_PREFIX;
+        }
+
+        @Override
+        protected ClientConfigurationDefaults serviceDefaults() {
+            return new ClientConfigurationDefaults() {
+                @Override
+                protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
+                    ClientOverrideConfiguration config = builder.build();
+                    builder.advancedOption(SIGNER_PROVIDER, applyDefault(config.advancedOption(SIGNER_PROVIDER), () -> null));
+                }
+            };
+        }
+
+        @Override
+        protected AttributeMap serviceSpecificHttpConfig() {
+            return MOCK_DEFAULTS;
+        }
+    }
+
+    private static class TestAsyncClient {
+        private final ImmutableAsyncClientConfiguration asyncClientConfiguration;
+
+        private TestAsyncClient(ImmutableAsyncClientConfiguration asyncClientConfiguration) {
+            this.asyncClientConfiguration = asyncClientConfiguration;
+        }
+    }
+
+    private class TestAsyncClientBuilder extends DefaultClientBuilder<TestAsyncClientBuilder, TestAsyncClient>
+            implements ClientBuilder<TestAsyncClientBuilder, TestAsyncClient> {
+
+        public TestAsyncClientBuilder() {
+            super(defaultHttpClientFactory, defaultAsyncHttpClientFactory);
+        }
+
+        @Override
+        protected TestAsyncClient buildClient() {
+            return new TestAsyncClient(super.asyncClientConfiguration());
         }
 
         @Override

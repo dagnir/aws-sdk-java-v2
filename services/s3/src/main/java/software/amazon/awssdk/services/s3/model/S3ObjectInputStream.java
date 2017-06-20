@@ -17,8 +17,6 @@ package software.amazon.awssdk.services.s3.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.EofSensorInputStream;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.MetricFilterInputStream;
 import software.amazon.awssdk.runtime.MetricAware;

@@ -17,27 +17,28 @@ package software.amazon.awssdk.http.loader;
 
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpClientFactory;
-import software.amazon.awssdk.http.SdkHttpService;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClientFactory;
+import software.amazon.awssdk.http.async.SdkAsyncHttpService;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Utility to load the default HTTP client factory and create an instance of {@link SdkHttpClient}.
  */
-public final class DefaultSdkHttpClientFactory implements SdkHttpClientFactory {
+public final class DefaultSdkAsyncHttpClientFactory implements SdkAsyncHttpClientFactory {
 
-    private static final SdkHttpServiceProvider<SdkHttpService> DEFAULT_CHAIN = new CachingSdkHttpServiceProvider<>(
+    private static final SdkHttpServiceProvider<SdkAsyncHttpService> DEFAULT_CHAIN = new CachingSdkHttpServiceProvider<>(
             new SdkHttpServiceProviderChain<>(
-                    SystemPropertyHttpServiceProvider.syncProvider(),
-                    ClasspathSdkHttpServiceProvider.syncProvider()
+                    SystemPropertyHttpServiceProvider.asyncProvider(),
+                    ClasspathSdkHttpServiceProvider.asyncProvider()
             ));
 
     @Override
-    public SdkHttpClient createHttpClientWithDefaults(AttributeMap serviceDefaults) {
+    public SdkAsyncHttpClient createHttpClientWithDefaults(AttributeMap serviceDefaults) {
         // TODO We create and SdkHttpClientFactory every time. Do we want to cache it instead of the service binding?
         return DEFAULT_CHAIN
                 .loadService()
-                .map(SdkHttpService::createHttpClientFactory)
+                .map(SdkAsyncHttpService::createAsyncHttpClientFactory)
                 .map(f -> f.createHttpClientWithDefaults(serviceDefaults))
                 .orElseThrow(
                     () -> new SdkClientException("Unable to load an HTTP implementation from any provider in the chain. " +

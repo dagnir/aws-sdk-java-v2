@@ -74,7 +74,9 @@ public class SyncResponseHandlerAdapter<T> implements SdkHttpResponseHandler<T> 
     public T complete() {
         try {
             // Once we've buffered all the content we can invoke the response handler
-            httpResponse.setContent(new ByteArrayInputStream(baos.toByteArray()));
+            if (baos != null) {
+                httpResponse.setContent(new ByteArrayInputStream(baos.toByteArray()));
+            }
             return responseHandler.handle(httpResponse);
         } catch (Exception e) {
             throw Throwables.failure(e);

@@ -17,6 +17,7 @@ package software.amazon.awssdk.http;
 
 import static software.amazon.awssdk.utils.Validate.paramNotNull;
 
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.SdkGlobalTime;
@@ -39,6 +40,7 @@ public class HttpClientDependencies implements AutoCloseable {
     // Do we want seperate dependencies for sync/async or just have an Either or something
     private final SdkAsyncHttpClient sdkAsyncHttpClient;
     private final ClientExecutionTimer clientExecutionTimer;
+    private final ScheduledExecutorService executorService;
     private final boolean calculateCrc32FromCompressedData;
 
     /**
@@ -55,6 +57,7 @@ public class HttpClientDependencies implements AutoCloseable {
         this.sdkHttpClient = builder.sdkHttpClient;
         this.sdkAsyncHttpClient = builder.sdkAsyncHttpClient;
         this.clientExecutionTimer = paramNotNull(builder.clientExecutionTimer, "ClientExecutionTimer");
+        this.executorService = builder.executorService;
         this.calculateCrc32FromCompressedData = builder.calculateCrc32FromCompressedData;
     }
 
@@ -107,6 +110,10 @@ public class HttpClientDependencies implements AutoCloseable {
         return clientExecutionTimer;
     }
 
+    public ScheduledExecutorService executorService() {
+        return executorService;
+    }
+
     /**
      * @return True if the SDK should calculate the CRC32 checksum from the compressed HTTP content, false if it
      * should calculate it from the uncompressed content. Currently, only DynamoDB sets this flag to true.
@@ -141,6 +148,9 @@ public class HttpClientDependencies implements AutoCloseable {
         if (this.sdkHttpClient != null) {
             this.sdkHttpClient.close();
         }
+        if (this.executorService != null) {
+            this.executorService.shutdown();
+        }
     }
 
     /**
@@ -154,6 +164,7 @@ public class HttpClientDependencies implements AutoCloseable {
         private SdkHttpClient sdkHttpClient;
         private SdkAsyncHttpClient sdkAsyncHttpClient;
         private ClientExecutionTimer clientExecutionTimer;
+        private ScheduledExecutorService executorService;
         private boolean calculateCrc32FromCompressedData;
 
         public Builder config(LegacyClientConfiguration config) {
@@ -186,14 +197,19 @@ public class HttpClientDependencies implements AutoCloseable {
             return this;
         }
 
-        public HttpClientDependencies build() {
-            return new HttpClientDependencies(this);
+        public Builder asyncExecutorService(ScheduledExecutorService executorService) {
+            this.executorService = executorService;
+            return this;
         }
 
         public Builder calculateCrc32FromCompressedData(
                 boolean calculateCrc32FromCompressedData) {
             this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
             return this;
+        }
+
+        public HttpClientDependencies build() {
+            return new HttpClientDependencies(this);
         }
     }
 }

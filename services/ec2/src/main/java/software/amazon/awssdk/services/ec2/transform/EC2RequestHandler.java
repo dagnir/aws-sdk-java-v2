@@ -15,10 +15,11 @@
 
 package software.amazon.awssdk.services.ec2.transform;
 
-import java.util.ArrayList;
+import static java.util.stream.Collectors.toList;
+
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-import org.apache.commons.codec.Charsets;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.handlers.RequestHandler;
@@ -46,7 +47,7 @@ public class EC2RequestHandler extends RequestHandler {
         if (originalRequest instanceof ImportKeyPairRequest) {
             ImportKeyPairRequest importKeyPairRequest = (ImportKeyPairRequest) originalRequest;
             String publicKeyMaterial = importKeyPairRequest.publicKeyMaterial();
-            String encodedKeyMaterial = Base64Utils.encodeAsString(publicKeyMaterial.getBytes(Charsets.UTF_8));
+            String encodedKeyMaterial = Base64Utils.encodeAsString(publicKeyMaterial.getBytes(StandardCharsets.UTF_8));
             mutableRequest.queryParameter("PublicKeyMaterial", encodedKeyMaterial);
         } else if (originalRequest instanceof RequestSpotInstancesRequest) {
             // Request -> Query string marshalling for RequestSpotInstancesRequest is a little tricky since
@@ -122,18 +123,16 @@ public class EC2RequestHandler extends RequestHandler {
     }
 
     private void populateReservationSecurityGroupNames(Reservation reservation) {
-        List<String> groupNames = new ArrayList<String>();
-        for (GroupIdentifier group : reservation.groups()) {
-            groupNames.add(group.groupName());
-        }
+        List<String> groupNames = reservation.groups().stream()
+                                             .map(GroupIdentifier::groupName)
+                                             .collect(toList());
         ImmutableObjectUtils.setObjectMember(reservation, "groupNames", groupNames);
     }
 
     private void populateLaunchSpecificationSecurityGroupNames(LaunchSpecification launchSpecification) {
-        List<String> groupNames = new ArrayList<String>();
-        for (GroupIdentifier group : launchSpecification.allSecurityGroups()) {
-            groupNames.add(group.groupName());
-        }
+        List<String> groupNames = launchSpecification.allSecurityGroups().stream()
+                                                     .map(GroupIdentifier::groupName)
+                                                     .collect(toList());
         ImmutableObjectUtils.setObjectMember(launchSpecification, "securityGroups", groupNames);
     }
 }

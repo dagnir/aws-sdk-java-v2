@@ -13,20 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.http.loader;
+package software.amazon.awssdk.http.nio.netty;
 
-import java.util.Optional;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClientFactory;
+import software.amazon.awssdk.http.async.SdkAsyncHttpService;
 
 /**
- * Interface to load an HTTP service binding from the environment/classpath.
- *
- * @param <T> Type of service binding being loaded.
+ * Service binding for the Netty default implementation. Allows SDK to pick this up automatically from the classpath.
  */
-interface SdkHttpServiceProvider<T> {
+public class NettySdkAsyncHttpService implements SdkAsyncHttpService {
 
-    /**
-     * @return Empty {@link Optional} if service can't be loaded, otherwise fulfilled {@link Optional} containing service
-     * instance.
-     */
-    Optional<T> loadService();
+    @Override
+    public SdkAsyncHttpClientFactory createAsyncHttpClientFactory() {
+        return NettySdkHttpClientFactory.builder().build();
+    }
 }

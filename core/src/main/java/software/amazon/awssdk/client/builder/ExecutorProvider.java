@@ -15,17 +15,20 @@
 
 package software.amazon.awssdk.client.builder;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 /**
- * A supplier for {@link ExecutorService} instances that should be used for async processing within the SDK. This supplier is
- * invoked each time {@link ClientBuilder#build()} is invoked, allowing for different executor services to be used with each
- * client instance.
+ * A supplier for {@link ScheduledExecutorService} instances that should be used for async processing within the SDK. This
+ * supplier is invoked each time {@link ClientBuilder#build()} is invoked, allowing for different executor services to be used
+ * with each client instance. Executors produced by the supplier are managed by the SDK and will be shutdown when the service
+ * client is closed.
  */
 @FunctionalInterface
-@ReviewBeforeRelease("We should standardize where we use 'provider', 'supplier', etc.")
-public interface ExecutorProvider extends Supplier<ExecutorService> {
+@ReviewBeforeRelease("We should standardize where we use 'provider', 'supplier', etc.\n" + "" +
+                     "Also may be worthwhile to also allow customer to provide just a ScheduledExecutorService" +
+                     "that may be shared and is managed by them.")
+public interface ExecutorProvider extends Supplier<ScheduledExecutorService> {
 
 }
