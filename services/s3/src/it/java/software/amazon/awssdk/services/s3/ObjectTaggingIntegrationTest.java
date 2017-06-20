@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,8 +92,6 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
                                                                                             .key(key)
                                                                                             .build())
                                                    .tagSet().size());
-
-        System.out.println("Hi");
     }
 
     @Test
@@ -121,7 +118,6 @@ public class ObjectTaggingIntegrationTest extends S3IntegrationTestBase {
 
     @Test
     public void putObjectTagging_Succeeds_WithUrlEncodedTags() {
-        BasicConfigurator.configure();
         List<Tag> tagSet = new ArrayList<>();
         tagSet.add(Tag.builder().key("foo").value("bar @baz").build());
         tagSet.add(Tag.builder().key("foo bar").value("baz").build());
