@@ -71,6 +71,7 @@ public class ServiceIntegrationTest extends AwsIntegrationTestBase {
     private void setupClients() {
         s3 = S3Client.builder()
                      .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                     .region(Region.US_EAST_1)
                      .build();
 
         client = MarketplaceCommerceAnalyticsClient.builder()

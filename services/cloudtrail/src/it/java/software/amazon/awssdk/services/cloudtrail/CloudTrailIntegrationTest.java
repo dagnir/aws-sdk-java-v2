@@ -36,6 +36,7 @@ import software.amazon.awssdk.services.cloudtrail.model.StopLoggingRequest;
 import software.amazon.awssdk.services.cloudtrail.model.Trail;
 import software.amazon.awssdk.services.cloudtrail.model.UpdateTrailRequest;
 import software.amazon.awssdk.services.cloudtrail.model.UpdateTrailResponse;
+import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -59,7 +60,13 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setUp() throws IOException {
         IntegrationTestBase.setUp();
-        s3.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket(BUCKET_NAME)
+                                           .createBucketConfiguration(
+                                                   CreateBucketConfiguration.builder()
+                                                                            .locationConstraint(region.value())
+                                                                            .build())
+                                           .build());
     }
 
     @AfterClass
@@ -80,6 +87,9 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         ListObjectsResponse response = s3.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
 
         while (true) {
+            if (response.contents() == null) {
+                break;
+            }
             for (Iterator<?> iterator = response.contents().iterator(); iterator
                     .hasNext(); ) {
                 S3Object objectSummary = (S3Object) iterator.next();
@@ -95,9 +105,14 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
 
         ListObjectVersionsResponse versionsResponse = s3
                 .listObjectVersions(ListObjectVersionsRequest.builder().bucket(bucketName).build());
-        for (Iterator<?> iterator = versionsResponse.versions().iterator(); iterator.hasNext(); ) {
-            ObjectVersion s = (ObjectVersion) iterator.next();
-            s3.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(s.key()).versionId(s.versionId()).build());
+        if (versionsResponse.versions() != null) {
+            for (ObjectVersion s : versionsResponse.versions()) {
+                s3.deleteObject(DeleteObjectRequest.builder()
+                                                   .bucket(bucketName)
+                                                   .key(s.key())
+                                                   .versionId(s.versionId())
+                                                   .build());
+            }
         }
 
         s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
@@ -115,10 +130,10 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         // create trail
         CreateTrailResponse createTrailResult =
                 cloudTrail.createTrail(CreateTrailRequest.builder()
-                        .name(TRAIL_NAME)
-                        .s3BucketName(BUCKET_NAME)
-                        .includeGlobalServiceEvents(true)
-                        .build());
+                                                         .name(TRAIL_NAME)
+                                                         .s3BucketName(BUCKET_NAME)
+                                                         .includeGlobalServiceEvents(true)
+                                                         .build());
 
         assertEquals(TRAIL_NAME, createTrailResult.name());
         assertEquals(BUCKET_NAME, createTrailResult.s3BucketName());
@@ -142,11 +157,11 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         // update the trail
         UpdateTrailResponse updateTrailResult =
                 cloudTrail.updateTrail(UpdateTrailRequest.builder()
-                        .name(TRAIL_NAME)
-                        .s3BucketName(BUCKET_NAME)
-                        .includeGlobalServiceEvents(false)
-                        .s3KeyPrefix("123")
-                        .build());
+                                                         .name(TRAIL_NAME)
+                                                         .s3BucketName(BUCKET_NAME)
+                                                         .includeGlobalServiceEvents(false)
+                                                         .s3KeyPrefix("123")
+                                                         .build());
 
         assertEquals(TRAIL_NAME, updateTrailResult.name());
         assertEquals(BUCKET_NAME, updateTrailResult.s3BucketName());

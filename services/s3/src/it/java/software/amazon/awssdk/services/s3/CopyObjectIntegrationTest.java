@@ -25,8 +25,6 @@ import org.junit.Test;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.utils.IoUtils;
@@ -36,40 +34,34 @@ import software.amazon.awssdk.utils.IoUtils;
  */
 public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
 
-    /** The S3 bucket created and used by these tests. */
+    /**
+     * The S3 bucket created and used by these tests.
+     */
     private static final String BUCKET_NAME = "copy-object-integ-test-" + new Date().getTime();
-    /** The key of the object being copied. */
+    /**
+     * The key of the object being copied.
+     */
     private static final String SOURCE_KEY = "source-key";
-    /** The key of the copied object. */
+    /**
+     * The key of the copied object.
+     */
     private static final String DESTINATION_KEY = "destination-key";
-    /** Length of the data uploaded to S3. */
+    /**
+     * Length of the data uploaded to S3.
+     */
     private static final long CONTENT_LENGTH = 345L;
-    /** The file of random data uploaded to S3. */
+    /**
+     * The file of random data uploaded to S3.
+     */
     private static File file;
 
-    /** Releases resources used by tests. */
+    /**
+     * Releases resources used by tests.
+     */
     @AfterClass
     public static void tearDown() {
-        try {
-            s3.deleteObject(DeleteObjectRequest.builder().bucket(BUCKET_NAME).key(SOURCE_KEY).build());
-        } catch (Exception e) {
-            // Ignored or expected.
-        }
-        try {
-            s3.deleteObject(DeleteObjectRequest.builder().bucket(BUCKET_NAME).key(DESTINATION_KEY).build());
-        } catch (Exception e) {
-            // Ignored or expected.
-        }
-        try {
-            s3.deleteBucket(DeleteBucketRequest.builder().bucket(BUCKET_NAME).build());
-        } catch (Exception e) {
-            // Ignored or expected.
-        }
-        try {
-            file.delete();
-        } catch (Exception e) {
-            // Ignored or expected.
-        }
+        deleteBucketAndAllContents(BUCKET_NAME);
+        file.delete();
     }
 
     /**

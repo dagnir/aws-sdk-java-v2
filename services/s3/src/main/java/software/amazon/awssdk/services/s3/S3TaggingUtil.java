@@ -15,10 +15,13 @@
 
 package software.amazon.awssdk.services.s3;
 
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.services.s3.model.Tagging;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
+@ReviewBeforeRelease("This is not hooked up yet. Implement customization to have PutObject tagging member" +
+                     "be a map and have the SDK handle marshalling/encoding.")
 public class S3TaggingUtil {
 
     public static String toQueryString(Tagging tagging) {

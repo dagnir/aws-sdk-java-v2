@@ -67,9 +67,6 @@ public class SyncClientClass implements ClassSpec {
                 .addField(clientParamsField());
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
-            ClassName advancedConfiguration = ClassName.get(basePackage,
-                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
-            classBuilder.addField(advancedConfiguration, "advancedConfiguration", Modifier.PRIVATE, Modifier.FINAL);
             classBuilder.addMethod(constructor());
             classBuilder.addMethod(constructorWithAdvancedConfiguration());
         } else {
@@ -155,7 +152,6 @@ public class SyncClientClass implements ClassSpec {
                                  "advancedConfiguration",
                                  model.getCustomizationConfig().isCalculateCrc32FromCompressedData())
                          .addStatement("this.clientParams = clientParams")
-                         .addStatement("this.advancedConfiguration = advancedConfiguration")
                          .addStatement("this.$N = init()", protocolSpec.protocolFactory(model).name)
                          .build();
     }

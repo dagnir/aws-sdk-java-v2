@@ -108,8 +108,9 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
     private static void setUpS3() {
         s3 = S3Client.builder()
-                .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
-                .build();
+                     .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                     .region(Region.US_EAST_1)
+                     .build();
 
         s3.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
 

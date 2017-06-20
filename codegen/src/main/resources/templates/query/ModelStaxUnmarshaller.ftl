@@ -33,7 +33,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
             <#assign hasPayload = true>
         </#if>
     </#if>
-    <#if memberModel.map && (!memberModel.http.location?? || memberModel.http.location == "headers")>
+    <#if memberModel.map>
         <@MapEntryUnmarshallerMacro.content memberModel />
     </#if>
 </#list>

@@ -270,7 +270,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         assertNull(s3BucketDestination.prefix());
     }
 
-    @Test
+    @Test(expected = S3Exception.class)
     public void setBucketAnalyticsConfiguration_fails_when_requiredfield_is_missing() throws Exception {
         String configId = "id";
         StorageClassAnalysisDataExport dataExport = StorageClassAnalysisDataExport.builder()

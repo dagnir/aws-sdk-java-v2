@@ -16,7 +16,7 @@
 package software.amazon.awssdk.services.s3;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -34,7 +34,9 @@ import java.util.Date;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
@@ -48,24 +50,34 @@ import software.amazon.awssdk.utils.IoUtils;
  * client.
  */
 public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
-    /** One hour in milliseconds for verifying that a last modified date is recent. */
+    /**
+     * One hour in milliseconds for verifying that a last modified date is recent.
+     */
     private static final long ONE_HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
 
-    /** Content length for sample keys created by these tests. */
+    /**
+     * Content length for sample keys created by these tests.
+     */
     private static final long CONTENT_LENGTH = 123;
 
     private static final String KEY_NAME_WITH_SPECIAL_CHARS = "special-chars-@$%";
     private static final int BUCKET_OBJECTS = 15;
-    /** The name of the bucket created, used, and deleted by these tests. */
+    /**
+     * The name of the bucket created, used, and deleted by these tests.
+     */
     private static String bucketName = "list-objects-integ-test-" + new Date().getTime();
-    /** List of all keys created  by these tests. */
+    /**
+     * List of all keys created  by these tests.
+     */
     private static List<String> keys = new ArrayList<>();
 
 
-    /** Releases all resources created in this test. */
+    /**
+     * Releases all resources created in this test.
+     */
     @AfterClass
     public static void tearDown() {
-//        deleteBucketAndAllContents(bucketName);
+        deleteBucketAndAllContents(bucketName);
     }
 
     /**
@@ -80,13 +92,13 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
                                                                                                .build())
                                            .build());
 
-//        NumberFormat numberFormatter = new DecimalFormat("##00");
-//        for (int i = 1; i <= BUCKET_OBJECTS; i++) {
-//            createKey("key-" + numberFormatter.format(i));
-//        }
-//        createKey("aaaaa");
-//        createKey("aaaaa/aaaaa");
-//        createKey("aaaaa/aaaaa/aaaaa");
+        NumberFormat numberFormatter = new DecimalFormat("##00");
+        for (int i = 1; i <= BUCKET_OBJECTS; i++) {
+            createKey("key-" + numberFormatter.format(i));
+        }
+        createKey("aaaaa");
+        createKey("aaaaa/aaaaa");
+        createKey("aaaaa/aaaaa/aaaaa");
         createKey(KEY_NAME_WITH_SPECIAL_CHARS);
     }
 
@@ -94,8 +106,7 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
      * Creates a test object in S3 with the specified name, using random ASCII
      * data of the default content length as defined in this test class.
      *
-     * @param key
-     *            The key under which to create the object in this test class'
+     * @param key The key under which to create the object in this test class'
      *            test bucket.
      */
     private static void createKey(String key) throws Exception {
@@ -199,9 +210,9 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
     public void testListWithMaxKeys() {
         int maxKeys = 4;
         ListObjectsV2Response result = s3.listObjectsV2(ListObjectsV2Request.builder()
-                                                                          .bucket(bucketName)
-                                                                          .maxKeys(maxKeys)
-                                                                          .build());
+                                                                            .bucket(bucketName)
+                                                                            .maxKeys(maxKeys)
+                                                                            .build());
 
         List<S3Object> objects = result.contents();
 
@@ -222,12 +233,14 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
 
         // We didn't set other request parameters, so we expect them to be empty
         assertNull(result.encodingType());
-        assertNull(result.prefix());
+        assertThat(result.prefix(), isEmptyString());
         assertNull(result.startAfter());
         assertNull(result.delimiter());
     }
 
     @Test
+    @Ignore
+    @ReviewBeforeRelease("Automatic decoding is not hooked up yet.")
     public void testListWithEncodingType() {
         String encodingType = "url";
         ListObjectsV2Response result = s3.listObjectsV2(ListObjectsV2Request.builder()
@@ -282,13 +295,14 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         assertS3ObjectSummariesAreValid(objects, false);
 
         for (int i = 0; i < firstRequestMaxKeys; i++) {
-            assertEquals(keys.get(i), ((S3Object) objects.get(i)).key());
+            assertEquals(keys.get(i), objects.get(i).key());
         }
 
         ListObjectsV2Response nextResults = s3.listObjectsV2(ListObjectsV2Request.builder()
                                                                                  .bucket(bucketName)
                                                                                  .prefix(prefix)
-                                                                                 .continuationToken(result.nextContinuationToken())
+                                                                                 .continuationToken(
+                                                                                         result.nextContinuationToken())
                                                                                  .build());
         List<S3Object> nextObjects = nextResults.contents();
 
@@ -306,10 +320,8 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
      * contain leading or trailing quotes, that the last modified date is
      * recent, etc.
      *
-     * @param objectSummaries
-     *            The list of objects to validate.
-     * @param shouldIncludeOwner
-     *            Whether owner information was requested and should be present in results.
+     * @param objectSummaries    The list of objects to validate.
+     * @param shouldIncludeOwner Whether owner information was requested and should be present in results.
      */
 
     private void assertS3ObjectSummariesAreValid(List<S3Object> objectSummaries,

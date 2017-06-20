@@ -16,6 +16,7 @@
 package software.amazon.awssdk.services.s3.handlers;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.services.s3.BucketUtils;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
@@ -23,6 +24,9 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 public class CreateBucketRequestHandler extends RequestHandler2 {
 
     @Override
+    @ReviewBeforeRelease("Automatically set location constraint to the bucket region if not provided. Also" +
+                         " perhaps remove the location constraint from the model so that is may only be" +
+                         " the current region.")
     public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {
 
         if (request instanceof CreateBucketRequest) {
