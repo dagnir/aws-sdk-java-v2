@@ -146,12 +146,13 @@ public class SyncClientClass implements ClassSpec {
                          .addParameter(AwsSyncClientParams.class, "clientParams")
                          .addParameter(advancedConfiguration, "advancedConfiguration")
                          .addStatement(
-                                 "this.$N = new $T(new $T().withClientParams($N)" +
+                                 "this.$N = new $T(new $T().withClientParams($N).withServiceAdvancedConfiguration($N)" +
                                  ".withCalculateCrc32FromCompressedDataEnabled($L))",
                                  "clientHandler",
                                  protocolSpec.getClientHandlerClass(),
                                  ClientHandlerParams.class,
                                  "clientParams",
+                                 "advancedConfiguration",
                                  model.getCustomizationConfig().isCalculateCrc32FromCompressedData())
                          .addStatement("this.clientParams = clientParams")
                          .addStatement("this.advancedConfiguration = advancedConfiguration")

@@ -33,8 +33,6 @@ import software.amazon.awssdk.test.util.RandomTempFile;
 /**
  * Base class for S3 integration tests. Loads AWS credentials from a properties
  * file and creates an S3 client for callers to use.
- *
- * @author fulghum@amazon.com
  */
 public class S3IntegrationTestBase extends AwsTestBase {
 
@@ -52,9 +50,6 @@ public class S3IntegrationTestBase extends AwsTestBase {
         s3 = S3Client.builder().region(Region.US_WEST_2).credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 
-    /*
- * Test Helper Methods
- */
     protected static File getRandomTempFile(String filename, long contentLength) throws Exception {
         if (androidRootDir == null) {
             return new RandomTempFile(filename, contentLength);

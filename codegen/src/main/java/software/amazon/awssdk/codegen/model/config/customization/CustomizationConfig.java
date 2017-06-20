@@ -87,11 +87,15 @@ public class CustomizationConfig {
      */
     private boolean requiredParamValidationEnabled;
     /**
-     * True if the service allows client specified configuration.
+     * Specifies the name of the client configuration class to use if a service
+     * has a specific advanced client configuration class. Null if the service
+     * does not have advanced configuration.
      */
     private String serviceSpecificClientConfigClass;
     /**
-     * True if the service has a custom endpoint builder.
+     * Specifies the name of the endpoint builder class to use if a service
+     * has a specific endpoint builder class. Null if the service does not have
+     * a specific endpoint builder.
      */
     private String serviceSpecificEndpointBuilderClass;
     /**

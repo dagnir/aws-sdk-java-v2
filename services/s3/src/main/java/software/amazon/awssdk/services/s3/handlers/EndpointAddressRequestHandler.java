@@ -24,6 +24,7 @@ import java.util.List;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.services.s3.BucketUtils;
 import software.amazon.awssdk.services.s3.S3AdvancedConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
@@ -48,7 +49,9 @@ public class EndpointAddressRequestHandler extends RequestHandler2 {
                     .getMethod("bucket")
                     .invoke(request.getOriginalRequest());
 
-                changeToDnsEndpoint(request, bucketName);
+                if (BucketUtils.isValidS3BucketName(bucketName, false)) {
+                    changeToDnsEndpoint(request, bucketName);
+                }
             } catch (Exception e) {
                 // Unable to convert to DNS style addressing. Fall back to continue using path style.
             }
@@ -72,7 +75,7 @@ public class EndpointAddressRequestHandler extends RequestHandler2 {
         // Prepend bucket to endpoint
         URI endpoint = invokeSafely(() -> new URI(
                 request.getEndpoint().getScheme(), // Existing scheme
-                request.getEndpoint().getHost().replaceFirst("s3.", bucketName + "." + "s3-"), // replace "s3." with "bucket.s3."
+                request.getEndpoint().getHost().replaceFirst("s3", bucketName + "." + "s3"), // replace "s3" with "bucket.s3"
                 null,
                 null));
 

@@ -17,6 +17,7 @@ package software.amazon.awssdk.services.s3;
 
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.services.s3.model.Tagging;
+import software.amazon.awssdk.util.SdkHttpUtils;
 
 public class S3TaggingUtil {
 
@@ -26,15 +27,15 @@ public class S3TaggingUtil {
         Tagging taggingClone = tagging.toBuilder().build();
 
         Tag firstTag = taggingClone.tagSet().remove(0);
-        tagBuilder.append(firstTag.key());
+        tagBuilder.append(SdkHttpUtils.urlEncode(firstTag.key(), false));
         tagBuilder.append("=");
-        tagBuilder.append(firstTag.value());
+        tagBuilder.append(SdkHttpUtils.urlEncode(firstTag.value(), false));
 
         taggingClone.tagSet().forEach(t -> {
             tagBuilder.append("&");
-            tagBuilder.append(t.key());
+            tagBuilder.append(SdkHttpUtils.urlEncode(t.key(), false));
             tagBuilder.append("=");
-            tagBuilder.append(t.value());
+            tagBuilder.append(SdkHttpUtils.urlEncode(t.value(), false));
         });
 
         return tagBuilder.toString();

@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.client;
 
+import software.amazon.awssdk.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
@@ -26,6 +27,7 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 public class ClientHandlerParams {
 
     private AwsSyncClientParams clientParams;
+    private ServiceAdvancedConfiguration serviceAdvancedConfiguration;
 
     /**
      * By default, the CRC 32 checksum is calculated based on the uncompressed data.
@@ -38,6 +40,15 @@ public class ClientHandlerParams {
 
     public ClientHandlerParams withClientParams(AwsSyncClientParams clientParams) {
         this.clientParams = clientParams;
+        return this;
+    }
+
+    public ServiceAdvancedConfiguration getServiceAdvancedConfiguration() {
+        return serviceAdvancedConfiguration;
+    }
+
+    public ClientHandlerParams withServiceAdvancedConfiguration(ServiceAdvancedConfiguration serviceAdvancecConfiguration) {
+        this.serviceAdvancedConfiguration = serviceAdvancecConfiguration;
         return this;
     }
 

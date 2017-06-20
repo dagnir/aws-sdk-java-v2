@@ -79,8 +79,8 @@ public class BaseClientBuilderClass implements ClassSpec {
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
             builder.addMethod(serviceBuilder())
-                   .addMethod(setAdvancedConfiguration())
-                   .addMethod(getAdvancedConfiguration());
+                   .addMethod(setAdvancedConfigurationMethod())
+                   .addMethod(getAdvancedConfigurationMethod());
         }
 
         if (model.getCustomizationConfig().getServiceSpecificHttpConfig() != null) {
@@ -128,7 +128,7 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .build();
     }
 
-    private MethodSpec setAdvancedConfiguration() {
+    private MethodSpec setAdvancedConfigurationMethod() {
         ClassName advancedConfiguration = ClassName.get(basePackage,
                 model.getCustomizationConfig().getServiceSpecificClientConfigClass());
         return MethodSpec.methodBuilder("advancedConfiguration")
@@ -140,7 +140,7 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .build();
     }
 
-    private MethodSpec getAdvancedConfiguration() {
+    private MethodSpec getAdvancedConfigurationMethod() {
         ClassName advancedConfiguration = ClassName.get(basePackage,
                 model.getCustomizationConfig().getServiceSpecificClientConfigClass());
         return MethodSpec.methodBuilder("advancedConfiguration")
