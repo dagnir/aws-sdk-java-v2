@@ -42,7 +42,7 @@ import software.amazon.awssdk.services.json.transform.APostOperationWithOutputRe
 import software.amazon.awssdk.services.json.transform.APostOperationWithOutputResponseUnmarshaller;
 
 @Generated("software.amazon.awssdk:codegen")
-public class DefaultJsonClient implements JsonClient {
+class DefaultJsonClient implements JsonClient {
     private final ClientHandler clientHandler;
 
     private final SdkJsonProtocolFactory protocolFactory;

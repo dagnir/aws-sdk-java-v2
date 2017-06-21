@@ -88,6 +88,12 @@ public final class PollyClientPresigners {
                 request.addParameter("LexiconNames", lexiconName);
             }
         }
+
+        if (synthesizeSpeechRequest.getSpeechMarkTypes() != null) {
+            for (String speechMarkType : synthesizeSpeechRequest.getSpeechMarkTypes()) {
+                request.addParameter("SpeechMarkTypes", speechMarkType);
+            }
+        }
     }
 
     private Request<?> newRequest(AwsCredentialsProvider credentials) {
