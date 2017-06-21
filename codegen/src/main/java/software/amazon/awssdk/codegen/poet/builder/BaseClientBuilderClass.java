@@ -34,7 +34,6 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
-import software.amazon.awssdk.config.ImmutableClientConfiguration;
 import software.amazon.awssdk.config.defaults.ClientConfigurationDefaults;
 import software.amazon.awssdk.config.defaults.ServiceBuilderConfigurationDefaults;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -78,9 +77,9 @@ public class BaseClientBuilderClass implements ClassSpec {
         builder.addMethod(applyEndpointDefaultsMethod());
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
-            builder.addMethod(serviceBuilder())
-                   .addMethod(setAdvancedConfigurationMethod())
-                   .addMethod(getAdvancedConfigurationMethod());
+            builder.addMethod(setAdvancedConfigurationMethod())
+                   .addMethod(getAdvancedConfigurationMethod())
+                   .addMethod(beanStyleSetAdvancedConfigurationMethod());
         }
 
         if (model.getCustomizationConfig().getServiceSpecificHttpConfig() != null) {
@@ -117,20 +116,9 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .build();
     }
 
-    private MethodSpec serviceBuilder() {
-        ClassName advancedConfiguration = ClassName.get(basePackage,
-                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
-        return MethodSpec.methodBuilder("buildServiceClient")
-                         .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
-                         .returns(TypeVariableName.get("C"))
-                         .addParameter(ImmutableClientConfiguration.class, "immutableClientConfiguration")
-                         .addParameter(advancedConfiguration, "advancedConfiguration")
-                         .build();
-    }
-
     private MethodSpec setAdvancedConfigurationMethod() {
         ClassName advancedConfiguration = ClassName.get(basePackage,
-                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+                                                        model.getCustomizationConfig().getServiceSpecificClientConfigClass());
         return MethodSpec.methodBuilder("advancedConfiguration")
                          .addModifiers(Modifier.PUBLIC)
                          .returns(TypeVariableName.get("B"))
@@ -142,11 +130,21 @@ public class BaseClientBuilderClass implements ClassSpec {
 
     private MethodSpec getAdvancedConfigurationMethod() {
         ClassName advancedConfiguration = ClassName.get(basePackage,
-                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+                                                        model.getCustomizationConfig().getServiceSpecificClientConfigClass());
         return MethodSpec.methodBuilder("advancedConfiguration")
-                         .addModifiers(Modifier.PUBLIC)
+                         .addModifiers(Modifier.PROTECTED)
                          .returns(advancedConfiguration)
                          .addStatement("return advancedConfiguration")
+                         .build();
+    }
+
+    private MethodSpec beanStyleSetAdvancedConfigurationMethod() {
+        ClassName advancedConfiguration = ClassName.get(basePackage,
+                                                        model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+        return MethodSpec.methodBuilder("setAdvancedConfiguration")
+                         .addModifiers(Modifier.PUBLIC)
+                         .addParameter(advancedConfiguration, "advancedConfiguration")
+                         .addStatement("advancedConfiguration(advancedConfiguration)")
                          .build();
     }
 
@@ -160,12 +158,12 @@ public class BaseClientBuilderClass implements ClassSpec {
         }
 
         ClassName serviceEndpointBuilder = ClassName.get(basePackage,
-                model.getCustomizationConfig().getServiceSpecificEndpointBuilderClass());
+                                                         model.getCustomizationConfig().getServiceSpecificEndpointBuilderClass());
         return MethodSpec.methodBuilder("defaultEndpoint")
                          .returns(URI.class)
                          .addModifiers(Modifier.PRIVATE)
                          .addStatement("return $T.getEndpoint(advancedConfiguration, resolveRegion().get())",
-                                 serviceEndpointBuilder)
+                                       serviceEndpointBuilder)
                          .build();
     }
 
@@ -189,10 +187,14 @@ public class BaseClientBuilderClass implements ClassSpec {
     private CodeBlock signerDefinitionMethodBody() {
         AuthType authType = model.getMetadata().getAuthType();
         switch (authType) {
-            case V4: return v4SignerDefinitionMethodBody();
-            case V2: return v2SignerDefinitionMethodBody();
-            case S3: return s3SignerDefinitionMethodBody();
-            default: throw new UnsupportedOperationException("Unsupported signer type: " + authType);
+            case V4:
+                return v4SignerDefinitionMethodBody();
+            case V2:
+                return v2SignerDefinitionMethodBody();
+            case S3:
+                return s3SignerDefinitionMethodBody();
+            default:
+                throw new UnsupportedOperationException("Unsupported signer type: " + authType);
         }
     }
 

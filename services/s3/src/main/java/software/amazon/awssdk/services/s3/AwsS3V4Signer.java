@@ -21,10 +21,10 @@ import static software.amazon.awssdk.utils.Validate.validState;
 import java.io.IOException;
 import java.io.InputStream;
 import software.amazon.awssdk.ReadLimitInfo;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.ResetException;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.Aws4Signer;
 import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.services.s3.auth.AwsChunkedEncodingInputStream;
@@ -138,11 +138,8 @@ public class AwsS3V4Signer extends Aws4Signer {
         if (!isPayloadSigningEnabled(request) || isChunkedEncodingDisabled(request)) {
             return false;
         }
-        if (request.getOriginalRequestObject() instanceof PutObjectRequest
-                || request.getOriginalRequestObject() instanceof UploadPartRequest) {
-            return true;
-        }
-        return false;
+        return request.getOriginalRequestObject() instanceof PutObjectRequest
+               || request.getOriginalRequestObject() instanceof UploadPartRequest;
     }
 
     /**
@@ -150,12 +147,7 @@ public class AwsS3V4Signer extends Aws4Signer {
      * otherwise.
      */
     private boolean isChunkedEncodingDisabled(SignableRequest<?> signableRequest) {
-        if (signableRequest instanceof Request) {
-            Request<?> request = (Request<?>) signableRequest;
-            Boolean isChunkedEncodingDisabled = disableChunkedEncoding;
-            return isChunkedEncodingDisabled != null && isChunkedEncodingDisabled;
-        }
-        return false;
+        return disableChunkedEncoding != null && disableChunkedEncoding;
     }
 
     /**
@@ -169,12 +161,7 @@ public class AwsS3V4Signer extends Aws4Signer {
             return true;
         }
 
-        if (signableRequest instanceof Request) {
-            Request<?> request = (Request<?>) signableRequest;
-            Boolean isPayloadSigningEnabled = enablePayloadSigning;
-            return isPayloadSigningEnabled != null && isPayloadSigningEnabled;
-        }
-        return false;
+        return enablePayloadSigning != null && enablePayloadSigning;
     }
 
     /**
@@ -182,7 +169,7 @@ public class AwsS3V4Signer extends Aws4Signer {
      * method will wrap the stream by SdkBufferedInputStream if it is not
      * mark-supported.
      */
-    static long getContentLength(SignableRequest<?> request) throws IOException {
+    private static long getContentLength(SignableRequest<?> request) throws IOException {
         final InputStream content = request.getContent();
         validState(content.markSupported(), "Request input stream must have been made mark-and-resettable");
 
@@ -203,10 +190,12 @@ public class AwsS3V4Signer extends Aws4Signer {
         return contentLength;
     }
 
+    @ReviewBeforeRelease("Create a builder for signers and set this in it. Also currently unexercised")
     public void setDisableChunkedEncoding(boolean disableChunkedEncoding) {
         this.disableChunkedEncoding = disableChunkedEncoding;
     }
 
+    @ReviewBeforeRelease("Create a builder for signers and set this in it. Also currently unexercised.")
     public void setEnablePayloadSigning(boolean enablePayloadSigning) {
         this.enablePayloadSigning = enablePayloadSigning;
     }

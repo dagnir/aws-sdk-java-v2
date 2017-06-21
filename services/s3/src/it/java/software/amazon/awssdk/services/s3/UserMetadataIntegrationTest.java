@@ -27,18 +27,24 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.utils.IoUtils;
 
 public class UserMetadataIntegrationTest extends S3IntegrationTestBase {
 
-    /** The S3 bucket created and used by these tests. */
+    /**
+     * The S3 bucket created and used by these tests.
+     */
     private static final String BUCKET_NAME = "user-metadata-integ-test-" + new Date().getTime();
-    /** Length of the data uploaded to S3. */
+    /**
+     * Length of the data uploaded to S3.
+     */
     private static final long CONTENT_LENGTH = 345L;
-    /** The file of random data uploaded to S3. */
+    /**
+     * The file of random data uploaded to S3.
+     */
     private static File file;
 
     /**
@@ -65,17 +71,21 @@ public class UserMetadataIntegrationTest extends S3IntegrationTestBase {
     @Test
     public void putObject_PutsUserMetadata() throws Exception {
         Map<String, String> userMetadata = new HashMap<>();
-        userMetadata.put("x-amz-meta-thing1", "IAmThing1");
-        userMetadata.put("x-amz-meta-thing2", "IAmThing2");
+        userMetadata.put("thing1", "IAmThing1");
+        userMetadata.put("thing2", "IAmThing2");
 
+        final String key = "user-metadata-key";
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(BUCKET_NAME)
-                                     .key("user-metadata-key")
+                                     .key(key)
                                      .metadata(userMetadata)
                                      .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(file))))
                                      .build());
 
-        GetObjectResponse response = s3.getObject(GetObjectRequest.builder().key("user-metadata-key").bucket(BUCKET_NAME).build());
+        HeadObjectResponse response = s3.headObject(HeadObjectRequest.builder()
+                                                                     .bucket(BUCKET_NAME)
+                                                                     .key(key)
+                                                                     .build());
 
         Map<String, String> returnedMetadata = response.metadata();
 

@@ -65,7 +65,9 @@ public class AwsJavaMailTransport extends Transport {
     public static final String AWS_EMAIL_SERVICE_ENDPOINT_PROPERTY = "mail.aws.host";
     public static final String AWS_SECRET_KEY_PROPERTY = "mail.aws.password";
     public static final String AWS_ACCESS_KEY_PROPERTY = "mail.aws.user";
+
     private static final String USER_AGENT = AwsJavaMailTransport.class.getName() + "/" + VersionInfoUtils.getVersion();
+    private static final String ENDPOINT_PREFIX = "email";
 
     private SESClient emailService;
     private final String accessKey;
@@ -339,10 +341,10 @@ public class AwsJavaMailTransport extends Transport {
         }
 
         if (!isNullOrEmpty(host)) {
-            String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
+            String region = AwsHostNameUtils.parseRegion(host, ENDPOINT_PREFIX);
             builder.region(Region.of(region)).endpointOverride(URI.create(host));
         } else if (this.httpsEndpoint != null) {
-            String region = AwsHostNameUtils.parseRegion(host, SESClient.ENDPOINT_PREFIX);
+            String region = AwsHostNameUtils.parseRegion(host, ENDPOINT_PREFIX);
             builder.region(Region.of(region)).endpointOverride(URI.create(httpsEndpoint));
         }
 

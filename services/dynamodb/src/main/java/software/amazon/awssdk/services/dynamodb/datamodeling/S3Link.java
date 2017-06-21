@@ -22,9 +22,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
@@ -203,13 +205,17 @@ public class S3Link {
     }
 
     private PutObjectResponse uploadFrom0(final File source,
-                                        RequestMetricCollector requestMetricCollector) {
-        ByteBuffer byteBuffer = invokeSafely(() -> ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(source))));
-        return getAmazonS3Client().putObject(PutObjectRequest.builder()
-                                                             .bucket(bucketName())
-                                                             .key(getKey())
-                                                             .body(byteBuffer)
-                                                             .build());
+                                          RequestMetricCollector requestMetricCollector) {
+        try (FileInputStream fis = new FileInputStream(source)) {
+            ByteBuffer byteBuffer = invokeSafely(() -> ByteBuffer.wrap(IoUtils.toByteArray(fis)));
+            return getAmazonS3Client().putObject(PutObjectRequest.builder()
+                                                                 .bucket(bucketName())
+                                                                 .key(getKey())
+                                                                 .body(byteBuffer)
+                                                                 .build());
+        } catch (IOException e) {
+            throw new SdkClientException("Unable to read file", e);
+        }
     }
 
     /**
@@ -309,8 +315,8 @@ public class S3Link {
                                                                                    .key(getKey())
                                                                                    .build());
 
-        try {
-            new FileOutputStream(destination).getChannel().write(response.body());
+        try (FileOutputStream fos = new FileOutputStream(destination)) {
+            fos.getChannel().write(response.body());
         } catch (Exception e) {
             throw new RuntimeException("Unable to write to destination file", e);
         }

@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.s3;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.regions.RegionMetadata;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
@@ -26,27 +25,27 @@ public class S3ServiceEndpointBuilder {
 
     public static URI getEndpoint(S3AdvancedConfiguration advancedConfiguration, Region region) {
 
+        RegionMetadata metadata = RegionMetadata.of(region);
         if (advancedConfiguration != null && advancedConfiguration.dualstackEnabled()) {
-            return dualstackEndpoint(region);
+            return dualstackEndpoint(metadata);
         } else if (advancedConfiguration != null && advancedConfiguration.accelerateModeEnabled()) {
-            return accelerateEndpoint(advancedConfiguration);
+            return accelerateEndpoint(advancedConfiguration, metadata);
         }
 
         return new DefaultServiceEndpointBuilder("s3", "https").withRegion(region).getServiceEndpoint();
     }
 
-    private static URI dualstackEndpoint(Region region) {
-        RegionMetadata metadata = RegionMetadata.of(region);
+    private static URI dualstackEndpoint(RegionMetadata metadata) {
         String serviceEndpoint = String.format("%s.%s.%s.%s", "s3", "dualstack", metadata.getName(), metadata.getDomain());
         return toUri(serviceEndpoint);
     }
 
-    private static URI accelerateEndpoint(S3AdvancedConfiguration advancedConfiguration) {
+    private static URI accelerateEndpoint(S3AdvancedConfiguration advancedConfiguration, RegionMetadata metadata) {
         if (advancedConfiguration.dualstackEnabled()) {
-            return toUri("s3-accelerate.dualstack.amazonaws.com");
+            return toUri("s3-accelerate.dualstack." + metadata.getDomain());
         }
 
-        return toUri("s3-accelerate.amazonaws.com");
+        return toUri("s3-accelerate." + metadata.getDomain());
     }
 
     private static URI toUri(String endpoint) throws IllegalArgumentException {

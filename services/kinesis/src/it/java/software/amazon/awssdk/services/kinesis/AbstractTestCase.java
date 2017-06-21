@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.kinesis;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
@@ -50,7 +49,7 @@ public class AbstractTestCase extends AwsTestBase {
             String endpoint = properties.getProperty("kinesis.endpoint");
 
             if (endpoint != null) {
-                Region region = Region.of(AwsHostNameUtils.parseRegion(endpoint, KinesisClient.ENDPOINT_PREFIX));
+                Region region = Region.of(AwsHostNameUtils.parseRegion(endpoint, "kinesis"));
                 builder.region(region)
                        .endpointOverride(URI.create(endpoint));
             }

@@ -231,8 +231,10 @@
             "Version": "$LATEST",
             "VpcConfig": {
               "SecurityGroupIds": [
+
               ],
               "SubnetIds": [
+
               ]
             }
           }
@@ -363,6 +365,7 @@
         },
         "output": {
           "Aliases": [
+
           ],
           "NextMarker": ""
         },
@@ -385,6 +388,7 @@
         },
         "output": {
           "Functions": [
+
           ],
           "NextMarker": ""
         },
@@ -409,6 +413,7 @@
         "output": {
           "NextMarker": "",
           "Versions": [
+
           ]
         },
         "comments": {

@@ -14,7 +14,7 @@ import software.amazon.awssdk.utils.AttributeMap;
 
 @Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
-public abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuilder<B, C>, C> extends DefaultClientBuilder<B, C>
+abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuilder<B, C>, C> extends DefaultClientBuilder<B, C>
         implements ClientBuilder<B, C> {
     @Override
     protected final String serviceEndpointPrefix() {

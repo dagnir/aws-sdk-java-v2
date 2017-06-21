@@ -41,7 +41,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
@@ -146,7 +146,7 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
 
         while (true) {
             try {
-                s3.getObject(GetObjectRequest.builder().bucket(bucketName).key(key).build());
+                s3.headObject(HeadObjectRequest.builder().bucket(bucketName).key(key).build());
                 Thread.sleep(1000);
                 if (System.currentTimeMillis() > timeoutTime) {
                     fail("object " + bucketName + "/" + key + " still exists");
@@ -179,7 +179,7 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
 
         while (true) {
             try {
-                s3.getObject(GetObjectRequest.builder().bucket(bucketName).key(key).build());
+                s3.headObject(HeadObjectRequest.builder().bucket(bucketName).key(key).build());
                 return; // exists!
             } catch (AmazonServiceException ase) {
                 /*

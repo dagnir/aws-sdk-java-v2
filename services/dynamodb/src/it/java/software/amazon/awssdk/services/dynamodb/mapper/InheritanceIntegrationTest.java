@@ -170,7 +170,7 @@ public class InheritanceIntegrationTest extends DynamoDBMapperIntegrationTestBas
 
         private String subField;
 
-        public String subField() {
+        public String getSubField() {
             return subField;
         }
 

@@ -30,28 +30,28 @@ public final class S3AdvancedConfiguration implements
                                            ToCopyableBuilder<S3AdvancedConfiguration.Builder, S3AdvancedConfiguration> {
 
     /**
-     * The default setting for use of chunked encoding
+     * The default setting for use of path style addressing.
      */
-    public static final boolean DEFAULT_PATH_STYLE_ACCESS_ENABLED = false;
+    private static final boolean DEFAULT_PATH_STYLE_ACCESS_ENABLED = false;
 
     /**
      * S3 accelerate is by default not enabled
      */
-    public static final boolean DEFAULT_ACCELERATE_MODE_ENABLED = false;
+    private static final boolean DEFAULT_ACCELERATE_MODE_ENABLED = false;
 
     /**
      * S3 dualstack endpoint is by default not enabled
      */
-    public static final boolean DEFAULT_DUALSTACK_ENABLED = false;
+    private static final boolean DEFAULT_DUALSTACK_ENABLED = false;
 
     private final Boolean pathStyleAccessEnabled;
     private final Boolean accelerateModeEnabled;
     private final Boolean dualstackEnabled;
 
     private S3AdvancedConfiguration(DefaultS3AdvancedConfigurationBuilder builder) {
-        this.dualstackEnabled = builder.dualstackEnabled;
-        this.accelerateModeEnabled = builder.accelerateModeEnabled;
-        this.pathStyleAccessEnabled = builder.pathStyleAccessEnabled;
+        this.dualstackEnabled = resolveBoolean(builder.dualstackEnabled, DEFAULT_DUALSTACK_ENABLED);
+        this.accelerateModeEnabled = resolveBoolean(builder.accelerateModeEnabled, DEFAULT_ACCELERATE_MODE_ENABLED);
+        this.pathStyleAccessEnabled = resolveBoolean(builder.pathStyleAccessEnabled, DEFAULT_PATH_STYLE_ACCESS_ENABLED);
     }
 
     /**
@@ -81,7 +81,7 @@ public final class S3AdvancedConfiguration implements
      * @return True is the client should always use path-style access
      */
     public boolean pathStyleAccessEnabled() {
-        return resolvePathStyleAccessEnabled();
+        return pathStyleAccessEnabled;
     }
 
     /**
@@ -97,7 +97,7 @@ public final class S3AdvancedConfiguration implements
      * @return True if accelerate mode is enabled.
      */
     public boolean accelerateModeEnabled() {
-        return resolveAccelerateModeEnabled();
+        return accelerateModeEnabled;
     }
 
     /**
@@ -107,22 +107,18 @@ public final class S3AdvancedConfiguration implements
      * must be enabled.
      * </p>
      *
+     * <p>
+     * Dualstack endpoints are disabled by default.
+     * </p>
+     *
      * @return True if the client will use the dualstack endpoints
      */
     public boolean dualstackEnabled() {
-        return resolveDualstackEnabled();
+        return dualstackEnabled;
     }
 
-    private boolean resolveDualstackEnabled() {
-        return dualstackEnabled == null ? DEFAULT_DUALSTACK_ENABLED : dualstackEnabled;
-    }
-
-    private boolean resolveAccelerateModeEnabled() {
-        return accelerateModeEnabled == null ? DEFAULT_ACCELERATE_MODE_ENABLED : accelerateModeEnabled;
-    }
-
-    private boolean resolvePathStyleAccessEnabled() {
-        return pathStyleAccessEnabled == null ? DEFAULT_PATH_STYLE_ACCESS_ENABLED : pathStyleAccessEnabled;
+    private boolean resolveBoolean(Boolean customerSuppliedValue, boolean defaultValue) {
+        return customerSuppliedValue == null ? defaultValue : customerSuppliedValue;
     }
 
     @Override
@@ -139,6 +135,10 @@ public final class S3AdvancedConfiguration implements
          * Option to enable using the dualstack endpoints when accessing S3. Dualstack
          * should be enabled if you want to use IPv6.
          *
+         * <p>
+         * Dualstack endpoints are disabled by default.
+         * </p>
+         *
          * @see S3AdvancedConfiguration#dualstackEnabled().
          */
         Builder dualstackEnabled(Boolean dualstackEnabled);
@@ -148,6 +148,10 @@ public final class S3AdvancedConfiguration implements
          * endpoints allow faster transfer of objects by using Amazon CloudFront's
          * globally distributed edge locations.
          *
+         * <p>
+         * Accelerate mode is disabled by default.
+         * </p>
+         *
          * @see S3AdvancedConfiguration#accelerateModeEnabled().
          */
         Builder accelerateModeEnabled(Boolean accelerateModeEnabled);
@@ -156,6 +160,11 @@ public final class S3AdvancedConfiguration implements
          * Option to enable using path style access for accessing S3 objects
          * instead of DNS style access. DNS style access is preferred as it
          * will result in better load balancing when accessing S3.
+         *
+         * <p>
+         * Path style access is disabled by default. Path style may still be used for legacy
+         * buckets that are not DNS compatible.
+         * </p>
          *
          * @see S3AdvancedConfiguration#pathStyleAccessEnabled().
          */

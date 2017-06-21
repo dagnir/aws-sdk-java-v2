@@ -16,6 +16,7 @@
 package software.amazon.awssdk.services.s3.handlers;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.services.s3.BucketUtils;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
@@ -23,6 +24,9 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 public class CreateBucketRequestHandler extends RequestHandler2 {
 
     @Override
+    @ReviewBeforeRelease("Automatically set location constraint to the bucket region if not provided. Also" +
+                         " perhaps remove the location constraint from the model so that is may only be" +
+                         " the current region.")
     public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {
 
         if (request instanceof CreateBucketRequest) {
@@ -37,11 +41,11 @@ public class CreateBucketRequestHandler extends RequestHandler2 {
      * Validates that the name of the bucket being requested to be created
      * is a valid S3 bucket name according to their guidelines. If the bucket
      * name is not valid, an {@link IllegalArgumentException} is thrown. See
-     * {@link BucketUtils#isValidS3BucketName(String, boolean)} for additional
+     * {@link BucketUtils#isValidDnsBucketName(String, boolean)} for additional
      * details.
      * @param bucketName Name of the bucket
      */
     private void validateBucketNameIsS3Compatible(String bucketName) {
-        BucketUtils.isValidS3BucketName(bucketName, true);
+        BucketUtils.isValidDnsBucketName(bucketName, true);
     }
 }

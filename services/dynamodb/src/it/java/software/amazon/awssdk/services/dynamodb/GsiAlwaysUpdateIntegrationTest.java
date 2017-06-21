@@ -70,11 +70,11 @@ public class GsiAlwaysUpdateIntegrationTest extends DynamoDBMapperIntegrationTes
                 .setRangeKey(rangeKey));
         final GsiWithAlwaysUpdateTimestamp created = mapper.load(hashKey, rangeKey);
         // Have to store it since the mapper will auto update any generated values in the saved object.
-        Long createdDate = created.lastModifiedDate();
+        Long createdDate = created.getLastModifiedDate();
         // Need to wait a bit for the timestamps to actually be different
         Thread.sleep(1000);
         mapper.save(created);
         final GsiWithAlwaysUpdateTimestamp updated = mapper.load(hashKey, rangeKey);
-        assertNotEquals(createdDate, updated.lastModifiedDate());
+        assertNotEquals(createdDate, updated.getLastModifiedDate());
     }
 }

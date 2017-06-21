@@ -17,11 +17,12 @@ package software.amazon.awssdk.services.s3.handlers;
 
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-
 import java.util.Arrays;
 import java.util.List;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.handlers.HandlerContextKey;
 import software.amazon.awssdk.handlers.RequestHandler2;
 import software.amazon.awssdk.services.s3.BucketUtils;
@@ -33,23 +34,19 @@ import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 public class EndpointAddressRequestHandler extends RequestHandler2 {
 
     private static List<Class> ACCELERATE_DISABLED_OPERATIONS = Arrays.asList(
-        ListBucketsRequest.class, CreateBucketRequest.class, DeleteBucketRequest.class);
+            ListBucketsRequest.class, CreateBucketRequest.class, DeleteBucketRequest.class);
 
     @Override
     public void beforeRequest(Request<?> request) {
 
         S3AdvancedConfiguration advancedConfiguration =
-                    (S3AdvancedConfiguration) request.getHandlerContext(HandlerContextKey.SERVICE_ADVANCED_CONFIG);
+                (S3AdvancedConfiguration) request.getHandlerContext(HandlerContextKey.SERVICE_ADVANCED_CONFIG);
 
         if (advancedConfiguration == null || !advancedConfiguration.pathStyleAccessEnabled()) {
             try {
-                String bucketName = (String) request
-                    .getOriginalRequest()
-                    .getClass()
-                    .getMethod("bucket")
-                    .invoke(request.getOriginalRequest());
+                String bucketName = getBucketName(request);
 
-                if (BucketUtils.isValidS3BucketName(bucketName, false)) {
+                if (BucketUtils.isValidDnsBucketName(bucketName, false)) {
                     changeToDnsEndpoint(request, bucketName);
                 }
             } catch (Exception e) {
@@ -62,6 +59,15 @@ public class EndpointAddressRequestHandler extends RequestHandler2 {
             && ACCELERATE_DISABLED_OPERATIONS.contains(request.getOriginalRequest().getClass())) {
             removeAccelerate(request);
         }
+    }
+
+    @ReviewBeforeRelease("Remove reflection here. Have some kind of interface where we can get bucket name or pass it" +
+                         "in the handler context")
+    private String getBucketName(Request<?> request) throws IllegalAccessException, InvocationTargetException,
+                                                            NoSuchMethodException {
+        return (String) request.getOriginalRequest().getClass()
+                               .getMethod("bucket")
+                               .invoke(request.getOriginalRequest());
     }
 
     private URI removeAccelerate(Request<?> request) {

@@ -214,21 +214,21 @@ public class ConfigurationIntegrationTest extends DynamoDBMapperIntegrationTestB
     private NumberAttributeClass copy(NumberAttributeClassExtended obj) {
         NumberAttributeClass copy = new NumberAttributeClass();
         copy.setKey(obj.getKey());
-        copy.setBigDecimalAttribute(obj.bigDecimalAttribute());
-        copy.setBigIntegerAttribute(obj.bigIntegerAttribute());
-        copy.setByteAttribute(obj.byteAttribute());
-        copy.setByteObjectAttribute(obj.byteObjectAttribute());
+        copy.setBigDecimalAttribute(obj.getBigDecimalAttribute());
+        copy.setBigIntegerAttribute(obj.getBigIntegerAttribute());
+        copy.setByteAttribute(obj.getByteAttribute());
+        copy.setByteObjectAttribute(obj.getByteObjectAttribute());
         copy.setDoubleAttribute(obj.getDoubleAttribute());
         copy.setDoubleObjectAttribute(obj.getDoubleObjectAttribute());
         copy.setFloatAttribute(obj.getFloatAttribute());
         copy.setFloatObjectAttribute(obj.getFloatObjectAttribute());
         copy.setIntAttribute(obj.getIntAttribute());
         copy.setIntegerAttribute(obj.getIntegerAttribute());
-        copy.setLongAttribute(obj.longAttribute());
-        copy.setLongObjectAttribute(obj.longObjectAttribute());
+        copy.setLongAttribute(obj.getLongAttribute());
+        copy.setLongObjectAttribute(obj.getLongObjectAttribute());
         copy.setDateAttribute(obj.getDateAttribute());
         copy.setBooleanAttribute(obj.isBooleanAttribute());
-        copy.setBooleanObjectAttribute(obj.booleanObjectAttribute());
+        copy.setBooleanObjectAttribute(obj.getBooleanObjectAttribute());
         return copy;
     }
 
