@@ -46,7 +46,7 @@ public class EndpointAddressRequestHandler extends RequestHandler2 {
             try {
                 String bucketName = getBucketName(request);
 
-                if (BucketUtils.isValidS3BucketName(bucketName, false)) {
+                if (BucketUtils.isValidDnsBucketName(bucketName, false)) {
                     changeToDnsEndpoint(request, bucketName);
                 }
             } catch (Exception e) {

@@ -21,9 +21,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import org.junit.Test;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.GetAttributesResponse;
-import software.amazon.awssdk.util.json.Jackson;
 
 public class GetAttributesResultUnmarshallerTest {
 
@@ -41,10 +39,10 @@ public class GetAttributesResultUnmarshallerTest {
 
         assertTrue(!result.attributes().isEmpty());
         assertTrue(result.attributes().size() == 2);
-        assertTrue(((Attribute) result.attributes().get(0)).name().equals("Color"));
-        assertTrue(((Attribute) result.attributes().get(0)).value().equals("Blue"));
-        assertTrue(((Attribute) result.attributes().get(1)).name().equals("Price"));
-        assertTrue(((Attribute) result.attributes().get(1)).value().equals("$2.50"));
+        assertTrue(result.attributes().get(0).name().equals("Color"));
+        assertTrue(result.attributes().get(0).value().equals("Blue"));
+        assertTrue(result.attributes().get(1).name().equals("Price"));
+        assertTrue(result.attributes().get(1).value().equals("$2.50"));
     }
 
 }

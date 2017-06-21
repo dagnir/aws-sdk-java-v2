@@ -41,11 +41,11 @@ public class CreateBucketRequestHandler extends RequestHandler2 {
      * Validates that the name of the bucket being requested to be created
      * is a valid S3 bucket name according to their guidelines. If the bucket
      * name is not valid, an {@link IllegalArgumentException} is thrown. See
-     * {@link BucketUtils#isValidS3BucketName(String, boolean)} for additional
+     * {@link BucketUtils#isValidDnsBucketName(String, boolean)} for additional
      * details.
      * @param bucketName Name of the bucket
      */
     private void validateBucketNameIsS3Compatible(String bucketName) {
-        BucketUtils.isValidS3BucketName(bucketName, true);
+        BucketUtils.isValidDnsBucketName(bucketName, true);
     }
 }

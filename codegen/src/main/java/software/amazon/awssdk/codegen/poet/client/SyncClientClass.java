@@ -170,7 +170,7 @@ public class SyncClientClass implements ClassSpec {
                 .addParameter(requestType, opModel.getInput().getVariableName())
                 .addCode(protocolSpec.responseHandler(opModel))
                 .addCode(protocolSpec.errorResponseHandler(opModel))
-                .addCode(protocolSpec.executionHandler(opModel, model))
+                .addCode(protocolSpec.executionHandler(opModel))
                 .build();
     }
 

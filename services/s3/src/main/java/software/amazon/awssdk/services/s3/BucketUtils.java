@@ -42,8 +42,8 @@ public class BucketUtils {
      * @throws IllegalArgumentException If the specified bucket name doesn't follow Amazon S3's
      * guidelines.
      */
-    public static boolean isValidS3BucketName(final String bucketName,
-                                              final boolean throwOnError) {
+    public static boolean isValidDnsBucketName(final String bucketName,
+                                               final boolean throwOnError) {
 
         if (bucketName == null) {
             return exception(throwOnError, "Bucket name cannot be null");

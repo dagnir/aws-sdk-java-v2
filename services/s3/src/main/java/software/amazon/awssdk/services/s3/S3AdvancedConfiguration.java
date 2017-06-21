@@ -30,7 +30,7 @@ public final class S3AdvancedConfiguration implements
                                            ToCopyableBuilder<S3AdvancedConfiguration.Builder, S3AdvancedConfiguration> {
 
     /**
-     * The default setting for use of chunked encoding
+     * The default setting for use of path style addressing.
      */
     private static final boolean DEFAULT_PATH_STYLE_ACCESS_ENABLED = false;
 
@@ -105,6 +105,10 @@ public final class S3AdvancedConfiguration implements
      * Returns whether the client is configured to use dualstack mode for
      * accessing S3. If you want to use IPv6 when accessing S3, dualstack
      * must be enabled.
+     * </p>
+     *
+     * <p>
+     * Dualstack endpoints are disabled by default.
      * </p>
      *
      * @return True if the client will use the dualstack endpoints

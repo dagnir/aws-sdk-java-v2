@@ -117,6 +117,7 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
 
                     if (stringWriter != null) {
                         <#-- S3 requires Content-MD5 for some APIs. This sets it for all APIs -->
+                        <#-- TODO @RevivewBeforeRelease this should probably be done in a request handler -->
                         <#if metadata.serviceName == "Amazon S3">
                         if (!request.getHeaders().containsKey("Content-MD5")) {
                             request.addHeader("Content-MD5", Md5Utils.md5AsBase64(stringWriter.getBuffer().toString().getBytes(UTF8)));
