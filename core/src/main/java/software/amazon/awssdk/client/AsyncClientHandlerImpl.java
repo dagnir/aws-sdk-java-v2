@@ -83,6 +83,7 @@ public class AsyncClientHandlerImpl extends AsyncClientHandler {
                                     .retryPolicy(clientParams.getRetryPolicy())
                                     .requestMetricCollector(clientParams.getRequestMetricCollector())
                                     .calculateCrc32FromCompressedData(handlerParams.isCalculateCrc32FromCompressedDataEnabled())
+                                    .asyncExecutor(handlerParams.getAsyncClientParams().getExecutor())
                                     .sdkAsyncHttpClient(handlerParams.getAsyncClientParams().getAsyncHttpClient())
                                     .build();
     }

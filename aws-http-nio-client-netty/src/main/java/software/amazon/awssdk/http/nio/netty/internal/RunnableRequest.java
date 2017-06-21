@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKeys.HAS_CALLED_ON_STREAM;
 import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKeys.PUBLISHER_KEY;
 import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKeys.REQUEST_CONTEXT_KEY;
 
@@ -45,6 +46,7 @@ public final class RunnableRequest implements AbortableRunnable {
             if (channelFuture.isSuccess()) {
                 channel = channelFuture.getNow();
                 channel.attr(REQUEST_CONTEXT_KEY).set(context);
+                channel.attr(HAS_CALLED_ON_STREAM).set(Boolean.FALSE);
                 Subscriber<ByteBuffer> adaptedSubscriber = addBackpressureHandlers();
                 makeRequest(context.nettyRequest(), adaptedSubscriber);
             } else {

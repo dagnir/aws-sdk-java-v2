@@ -60,7 +60,7 @@ class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
         if (msg instanceof HttpContent) {
             Boolean hasCalledOnStream = channelContext.channel().attr(HAS_CALLED_ON_STREAM).get();
-            if (hasCalledOnStream != Boolean.TRUE) {
+            if (!Boolean.TRUE.equals(hasCalledOnStream)) {
                 requestContext.handler().onStream(publisher);
                 channelContext.channel().attr(HAS_CALLED_ON_STREAM).set(Boolean.TRUE);
             }
