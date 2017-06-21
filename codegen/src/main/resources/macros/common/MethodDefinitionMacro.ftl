@@ -146,7 +146,6 @@
     }
 
 <#else>
-
     ${setterDoc}
     ${deprecated}
     <@AdditionalAnnotationsForAccessors.content shape.type member/>

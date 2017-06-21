@@ -539,8 +539,8 @@ public class VersionAttributeUpdateIntegrationTest extends DynamoDBMapperIntegra
             return notCalledVersion;
         }
 
-        public void setNotCalledVersion(Integer notCalledVersion) {
-            this.notCalledVersion = notCalledVersion;
+        public void setNotCalledVersion(Integer getNotCalledVersion) {
+            this.notCalledVersion = getNotCalledVersion;
         }
 
         @Override

@@ -90,7 +90,7 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
         }
 
         try {
-            AmazonWebServiceResponse<T> awsResponse = new AmazonWebServiceResponse<T>();
+            AmazonWebServiceResponse<T> awsResponse = new AmazonWebServiceResponse<>();
             StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader, response.getHeaders());
             unmarshallerContext.registerMetadataExpression("ResponseMetadata/RequestId", 2, ResponseMetadata.AWS_REQUEST_ID);
             unmarshallerContext.registerMetadataExpression("requestId", 2, ResponseMetadata.AWS_REQUEST_ID);

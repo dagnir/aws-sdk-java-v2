@@ -19,7 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.Date;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -57,12 +59,20 @@ import software.amazon.awssdk.services.cloudfront.model.UpdateDistributionReques
 import software.amazon.awssdk.services.cloudfront.model.UpdateDistributionResponse;
 import software.amazon.awssdk.services.cloudfront.util.SignerUtils;
 import software.amazon.awssdk.services.cloudfront.util.SignerUtils.Protocol;
-import software.amazon.awssdk.services.s3.model.AccessControlList;
-import software.amazon.awssdk.services.s3.model.CanonicalGrantee;
+import software.amazon.awssdk.services.s3.model.AccessControlPolicy;
+import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.Grant;
+import software.amazon.awssdk.services.s3.model.Grantee;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.Permission;
+import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.Type;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Tests pre-signed URLs
@@ -91,11 +101,11 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
         IntegrationTestBase.setUp();
 
         CreateCloudFrontOriginAccessIdentityResponse result =
-                cloudfront.createCloudFrontOriginAccessIdentity(
-                        CreateCloudFrontOriginAccessIdentityRequest.builder().cloudFrontOriginAccessIdentityConfig(
-                                CloudFrontOriginAccessIdentityConfig.builder()
-                                                                    .comment("new access identity")
-                                                                    .callerReference(callerReference).build()).build());
+            cloudfront.createCloudFrontOriginAccessIdentity(
+                CreateCloudFrontOriginAccessIdentityRequest.builder().cloudFrontOriginAccessIdentityConfig(
+                    CloudFrontOriginAccessIdentityConfig.builder()
+                                                        .comment("new access identity")
+                                                        .callerReference(callerReference).build()).build());
 
         String s3CanonicalUserId = result.cloudFrontOriginAccessIdentity()
                                          .s3CanonicalUserId();
@@ -103,84 +113,121 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
         String accessId = result.cloudFrontOriginAccessIdentity().id();
         System.out.println("accessId=" + accessId);
 
-        s3.createBucket(bucketName);
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket(bucketName)
+                                           .createBucketConfiguration(CreateBucketConfiguration.builder()
+                                                                                               .locationConstraint("us-east-1")
+                                                                                               .build())
+                                           .build());
 
         dnsName = bucketName + ".s3.amazonaws.com";
         File content = new RandomTempFile("" + System.currentTimeMillis(),
                                           1000L);
 
-        s3.putObject(bucketName, "key", content);
-        AccessControlList acl = s3.getObjectAcl(bucketName, "key");
-        acl.grantPermission(new CanonicalGrantee(s3CanonicalUserId), Permission.Read);
-        s3.setObjectAcl(bucketName, "key", acl);
+        s3.putObject(PutObjectRequest.builder()
+                                     .bucket(bucketName)
+                                     .key("key")
+                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(content))))
+                                     .build());
+
+        s3.putObjectAcl(PutObjectAclRequest.builder()
+                                           .bucket(bucketName)
+                                           .key("key")
+                                           .acl(ObjectCannedACL.AuthenticatedRead)
+                                           .accessControlPolicy(
+                                               AccessControlPolicy.builder()
+                                                                  .grants(Grant.builder()
+                                                                               .grantee(Grantee.builder()
+                                                                                               .type(Type.CanonicalUser)
+                                                                                               .id(s3CanonicalUserId)
+                                                                                               .build())
+                                                                               .permission(Permission.READ)
+                                                                               .build())
+                                                                  .build())
+                                           .build());
 
         // create a private distribution
-        CreateDistributionRequest createDistributionRequest = CreateDistributionRequest.builder()
-            .distributionConfig(DistributionConfig.builder()
-                                    .priceClass(PriceClass.PriceClass_100)
-                                    .defaultCacheBehavior(DefaultCacheBehavior.builder()
-                                                              .minTTL(100L)
-                                                              .targetOriginId("1")
-                                                              .viewerProtocolPolicy("allow-all")
-                                                              .trustedSigners(TrustedSigners.builder()
-                                                                                  .enabled(true)
-                                                                                  .quantity(1)
-                                                                                  .items("self")
-                                                                                  .build())
-                                                              .forwardedValues(ForwardedValues.builder()
-                                                                                   .cookies(CookiePreference.builder()
-                                                                                                .forward(ItemSelection.None)
-                                                                                                .build())
-                                                                                   .queryString(true)
-                                                                                   .build())
-                                                              .build())
-                                    .aliases(Aliases.builder()
-                                                 .quantity(0)
-                                                 .build())
-                                    .logging(LoggingConfig.builder()
-                                                 .includeCookies(Boolean.FALSE)
-                                                 .enabled(false)
-                                                 .bucket(bucketName)
-                                                 .prefix("")
-                                                 .build())
-                                    .callerReference(callerReference)
-                                    .cacheBehaviors(CacheBehaviors.builder()
-                                                        .quantity(1)
-                                                        .items(CacheBehavior.builder()
-                                                                   .minTTL(100L)
-                                                                   .targetOriginId("1")
-                                                                   .viewerProtocolPolicy("allow-all")
-                                                                   .trustedSigners(TrustedSigners.builder()
-                                                                                       .enabled(true)
-                                                                                       .quantity(1)
-                                                                                       .items("self")
-                                                                                       .build())
-                                                                   .forwardedValues(ForwardedValues.builder()
-                                                                                        .cookies(CookiePreference.builder()
-                                                                                                     .forward(ItemSelection.None)
+        CreateDistributionRequest createDistributionRequest =
+            CreateDistributionRequest.builder()
+                                     .distributionConfig(
+                                         DistributionConfig.builder()
+                                                           .priceClass(PriceClass.PriceClass_100)
+                                                           .defaultCacheBehavior(
+                                                               DefaultCacheBehavior.builder()
+                                                                                   .minTTL(100L)
+                                                                                   .targetOriginId("1")
+                                                                                   .viewerProtocolPolicy("allow-all")
+                                                                                   .trustedSigners(
+                                                                                       TrustedSigners.builder()
+                                                                                                     .enabled(true)
+                                                                                                     .quantity(1)
+                                                                                                     .items("self")
                                                                                                      .build())
-                                                                                        .queryString(true)
-                                                                                        .build())
-                                                                   .pathPattern("*")
-                                                                   .build())
-                                                        .build())
-                                    .comment(DISTRIBUTION_COMMENT)
-                                    .defaultRootObject(DEFAULT_ROOT_OBJECT)
-                                    .enabled(true)
-                                    .origins(Origins.builder()
-                                                 .items(Origin.builder()
-                                                            .domainName(dnsName)
-                                                            .id("1")
-                                                            .s3OriginConfig(S3OriginConfig.builder()
-                                                                                .originAccessIdentity(
-                                                                                    "origin-access-identity/cloudfront/"
-                                                                                    + accessId)
+                                                                                   .forwardedValues(
+                                                                                       ForwardedValues.builder()
+                                                                                                      .cookies(CookiePreference.builder()
+                                                                                                                               .forward(ItemSelection.None)
+                                                                                                                               .build())
+                                                                                                      .queryString(true)
+                                                                                                      .build())
+                                                                                   .build())
+                                                           .aliases(
+                                                               Aliases.builder()
+                                                                      .quantity(0)
+                                                                      .build())
+                                                           .logging(
+                                                               LoggingConfig.builder()
+                                                                            .includeCookies(Boolean.FALSE)
+                                                                            .enabled(false)
+                                                                            .bucket(bucketName)
+                                                                            .prefix("")
+                                                                            .build())
+                                                           .callerReference(callerReference)
+                                                           .cacheBehaviors(
+                                                               CacheBehaviors.builder()
+                                                                             .quantity(1)
+                                                                             .items(
+                                                                                 CacheBehavior.builder()
+                                                                                              .minTTL(100L)
+                                                                                              .targetOriginId("1")
+                                                                                              .viewerProtocolPolicy("allow-all")
+                                                                                              .trustedSigners(
+                                                                                                  TrustedSigners.builder()
+                                                                                                                .enabled(true)
+                                                                                                                .quantity(1)
+                                                                                                                .items("self")
+                                                                                                                .build())
+                                                                                              .forwardedValues(
+                                                                                                  ForwardedValues.builder()
+                                                                                                                 .cookies(
+                                                                                                                     CookiePreference.builder()
+                                                                                                                                     .forward(ItemSelection.None)
+                                                                                                                                     .build())
+                                                                                                                 .queryString(true)
+                                                                                                                 .build())
+                                                                                              .pathPattern("*")
+                                                                                              .build())
+                                                                             .build())
+                                                           .comment(DISTRIBUTION_COMMENT)
+                                                           .defaultRootObject(DEFAULT_ROOT_OBJECT)
+                                                           .enabled(true)
+                                                           .origins(
+                                                               Origins.builder()
+                                                                      .items(
+                                                                          Origin.builder()
+                                                                                .domainName(dnsName)
+                                                                                .id("1")
+                                                                                .s3OriginConfig(
+                                                                                    S3OriginConfig.builder()
+                                                                                                  .originAccessIdentity(
+                                                                                                      "origin-access-identity/cloudfront/"
+                                                                                                      + accessId)
+                                                                                                  .build())
                                                                                 .build())
-                                                            .build())
-                                                 .quantity(1)
-                                                 .build())
-                                    .build())
-            .build();
+                                                                      .quantity(1)
+                                                                      .build())
+                                                           .build())
+                                     .build();
         CreateDistributionResponse createDistributionResult = cloudfront.createDistribution(createDistributionRequest);
 
         domainName = createDistributionResult.distribution().domainName();
@@ -195,12 +242,12 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
 
         // Disable the distribution
         GetDistributionConfigResponse distributionConfigResults =
-                cloudfront.getDistributionConfig(GetDistributionConfigRequest.builder().id(distributionId).build());
+            cloudfront.getDistributionConfig(GetDistributionConfigRequest.builder().id(distributionId).build());
         DistributionConfig distributionConfig = distributionConfigResults.distributionConfig().toBuilder().enabled(false).build();
         UpdateDistributionResponse updateDistributionResult = cloudfront
-                .updateDistribution(UpdateDistributionRequest.builder().id(distributionId)
-                                                             .ifMatch(distributionETag)
-                                                             .distributionConfig(distributionConfig).build());
+            .updateDistribution(UpdateDistributionRequest.builder().id(distributionId)
+                                                         .ifMatch(distributionETag)
+                                                         .distributionConfig(distributionConfig).build());
         distributionETag = updateDistributionResult.eTag();
 
         waitForDistributionToDeploy(distributionId);
@@ -209,41 +256,12 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
             try {
 
                 cloudfront.deleteDistribution(DeleteDistributionRequest.builder().id(distributionId).ifMatch(
-                        distributionETag).build());
+                    distributionETag).build());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         deleteBucketAndAllContents(bucketName);
-    }
-
-    /**
-     * Tests creating a pre-signed URL to access cloudfront content.
-     */
-    @Test
-    public void testPreSignedUrl() throws Exception {
-
-        File s3Object = File.createTempFile(this.getClass().getName(), "");
-        s3.getObject(new GetObjectRequest(bucketName, "key"), s3Object);
-
-        Date dateLessThan = new Date(System.currentTimeMillis() + 10 * 1000);
-        String cannedSignedURL = CloudFrontUrlSigner.getSignedUrlWithCannedPolicy(Protocol.https, domainName,
-                                                                                  new File("tst/" + PRIVATE_KEY_FILE), "key",
-                                                                                  PRIVATE_KEY_ID, dateLessThan);
-        System.err.println("cannedSignedURL_der: " + cannedSignedURL);
-
-        //        String cannedSignedURL_der = CloudFrontUrlSigner.getCannedSignedURL(Protocol.https, domainName,
-        //                new File("tst/" + PRIVATE_KEY_FILE_DER), "key", PRIVATE_KEY_ID, dateLessThan);
-        //        assertEquals(cannedSignedURL_der, cannedSignedURL);
-        //        System.err.println("cannedSignedURL_der: " + cannedSignedURL_der);
-
-        HttpClient client = new DefaultHttpClient();
-        HttpResponse response = client.execute(new HttpGet(cannedSignedURL));
-        assertEquals(200, response.getStatusLine().getStatusCode());
-
-        InputStream inputStream = response.getEntity().getContent();
-
-        assertFileEqualsStream(s3Object, inputStream);
     }
 
     @Test
@@ -254,29 +272,4 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
 
         assertEquals(403, response.getStatusLine().getStatusCode());
     }
-
-    @Test
-    public void testSignedCookie() throws Exception {
-        File s3Object = File.createTempFile(this.getClass().getName(), "");
-        s3.getObject(new GetObjectRequest(bucketName, "key"), s3Object);
-
-        Date dateLessThan = new Date(System.currentTimeMillis() + 10 * 1000);
-        CookiesForCannedPolicy cookies = CloudFrontCookieSigner.getCookiesForCannedPolicy(Protocol.https, domainName,
-                                                                                          new File("tst/" + PRIVATE_KEY_FILE),
-                                                                                          "key", PRIVATE_KEY_ID, dateLessThan);
-
-        HttpClient client = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(SignerUtils.generateResourcePath(Protocol.https, domainName, "key"));
-
-        httpGet.addHeader("Cookie", cookies.getExpires().getKey() + "=" + cookies.getExpires().getValue());
-        httpGet.addHeader("Cookie", cookies.getSignature().getKey() + "=" + cookies.getSignature().getValue());
-        httpGet.addHeader("Cookie", cookies.getKeyPairId().getKey() + "=" + cookies.getKeyPairId().getValue());
-        HttpResponse response = client.execute(httpGet);
-
-        assertEquals(200, response.getStatusLine().getStatusCode());
-
-        InputStream inputStream = response.getEntity().getContent();
-        assertFileEqualsStream(s3Object, inputStream);
-    }
-
 }

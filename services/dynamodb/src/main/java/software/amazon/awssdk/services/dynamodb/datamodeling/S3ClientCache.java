@@ -21,17 +21,17 @@ import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
+import software.amazon.awssdk.services.s3.S3AdvancedConfiguration;
+import software.amazon.awssdk.services.s3.S3Client;
 
 /**
- * A smart Map for {@link AmazonS3} objects. {@link S3ClientCache} keeps the
+ * A smart Map for {@link S3Client} objects. {@link S3ClientCache} keeps the
  * clients organized by region, and if provided {@link AwsCredentials} will
  * create clients on the fly. Otherwise it just return clients given to it with
- * {@link #useClient(AmazonS3)}.
+ * {@link #useClient(S3Client, Region)}.
  */
 public class S3ClientCache {
-    private final ConcurrentMap<String, AmazonS3> clientsByRegion = new ConcurrentHashMap<String, AmazonS3>();
+    private final ConcurrentMap<String, S3Client> clientsByRegion = new ConcurrentHashMap<String, S3Client>();
 
     private final AwsCredentialsProvider awscredentialsProvider;
 
@@ -42,13 +42,13 @@ public class S3ClientCache {
 
     /**
      * Create a client cache using the given AWSCredentialsProvider. If
-     * {@link #getClient(Region)} or {@link #getTransferManager(Region)} is
-     * called and a client has not been provided for the region, the cache will
-     * instantiate one from the provided {@link AwsCredentialsProvider}.
+     * {@link #getClient(Region)} is called and a client has not been
+     * provided for the region, the cache will instantiate one from the
+     * provided {@link AwsCredentialsProvider}.
      *
      * @param awsCredentialsProvider
      *            The credentials provider to use when creating new
-     *            {@link AmazonS3}.
+     *            {@link S3Client}.
      */
     S3ClientCache(AwsCredentialsProvider awsCredentialsProvider) {
         this.awscredentialsProvider = awsCredentialsProvider;
@@ -58,19 +58,13 @@ public class S3ClientCache {
     /**
      * Force the client cache to provide a certain client for the region which
      * that client is configured. This can be useful to provide clients with
-     * different {@link software.amazon.awssdk.services.s3.S3ClientOptions} or use a
-     * {@link software.amazon.awssdk.services.s3.AmazonS3EncryptionClient} in place of a
-     * regular client.
-     *
-     * Using a new client will also forcibly shut down any
-     * {@link TransferManager} that has been instantiated with that client, with
-     * the {@link TransferManager#shutdownNow()} method.
+     * different {@link S3AdvancedConfiguration}.
      *
      * @param client
-     *            An {@link AmazonS3} to use in the cache. Its region will
+     *            An {@link S3Client} to use in the cache. Its region will
      *            be detected automatically.
      */
-    public void useClient(AmazonS3 client, Region region) {
+    public void useClient(S3Client client, Region region) {
         clientsByRegion.put(region.value(), client);
     }
 
@@ -79,18 +73,18 @@ public class S3ClientCache {
      * unable.
      *
      * @param region
-     *            The region the returned {@link AmazonS3} will be
+     *            The region the returned {@link S3Client} will be
      *            configured to use.
      * @return A client for the given region from the cache, either instantiated
      *         automatically from the provided {@link AwsCredentials} or
-     *         provided with {@link #useClient(AmazonS3, Region)}.
+     *         provided with {@link #useClient(S3Client, Region)}.
      * @throws IllegalArgumentException
      *             When a region is requested that has not been provided to the
-     *             cache with {@link #useClient(AmazonS3, Region)}, and the cache
+     *             cache with {@link #useClient(S3Client, Region)}, and the cache
      *             has no {@link AwsCredentials} with which a client may be
      *             instantiated.
      */
-    public AmazonS3 getClient(Region region) {
+    public S3Client getClient(Region region) {
         if (region == null) {
             throw new IllegalArgumentException("S3 region must be specified");
         }
@@ -102,22 +96,22 @@ public class S3ClientCache {
      * unable.
      *
      * @param region
-     *            The region the returned {@link AmazonS3} will be
+     *            The region the returned {@link S3Client} will be
      *            configured to use.
      * @return A client for the given region from the cache, either instantiated
      *         automatically from the provided {@link AwsCredentials} or
-     *         provided with {@link #useClient(AmazonS3, Region)}.
+     *         provided with {@link #useClient(S3Client, Region)}.
      * @throws IllegalArgumentException
      *             When a region is requested that has not been provided to the
-     *             cache with {@link #useClient(AmazonS3, Region)}, and the cache
+     *             cache with {@link #useClient(S3Client, Region)}, and the cache
      *             has no {@link AwsCredentials} with which a client may be
      *             instantiated.
      */
-    public AmazonS3 getClient(String region) {
+    public S3Client getClient(String region) {
         if (region == null) {
             throw new IllegalArgumentException("S3 region must be specified");
         }
-        AmazonS3 client = clientsByRegion.get(region);
+        S3Client client = clientsByRegion.get(region);
         return client != null ? client : cacheClient(region);
     }
 
@@ -128,16 +122,15 @@ public class S3ClientCache {
      * new client with region.
      *
      * @param region
-     *            The region the returned {@link AmazonS3} will be
+     *            The region the returned {@link S3Client} will be
      *            configured to use.
-     * @return A new {@link AmazonS3} client with region set to region.
+     * @return A new {@link S3Client} client with region set to region.
      */
-    private AmazonS3 cacheClient(String region) {
+    private S3Client cacheClient(String region) {
         if (awscredentialsProvider == null) {
             throw new IllegalArgumentException("No credentials provider found to connect to S3");
         }
-        AmazonS3 client = new AmazonS3Client(awscredentialsProvider);
-        client.setRegion(Region.of(region));
+        S3Client client = S3Client.builder().credentialsProvider(awscredentialsProvider).region(Region.of(region)).build();
         clientsByRegion.put(region, client);
         return client;
     }

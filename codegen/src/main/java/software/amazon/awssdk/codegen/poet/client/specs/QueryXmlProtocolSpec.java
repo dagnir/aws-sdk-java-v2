@@ -130,7 +130,7 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
                                        "responseHandler",
                                        "errorResponseHandler",
                                        opModel.getInput().getVariableName())
-                .build();
+                        .build();
     }
 
     @Override

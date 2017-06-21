@@ -36,12 +36,17 @@ import software.amazon.awssdk.services.cloudtrail.model.StopLoggingRequest;
 import software.amazon.awssdk.services.cloudtrail.model.Trail;
 import software.amazon.awssdk.services.cloudtrail.model.UpdateTrailRequest;
 import software.amazon.awssdk.services.cloudtrail.model.UpdateTrailResponse;
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.model.ListVersionsRequest;
-import software.amazon.awssdk.services.s3.model.ObjectListing;
-import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
-import software.amazon.awssdk.services.s3.model.S3VersionSummary;
-import software.amazon.awssdk.services.s3.model.VersionListing;
+import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectVersionsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectVersionsResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.ObjectVersion;
+import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 public class CloudTrailIntegrationTest extends IntegrationTestBase {
     private static final String BUCKET_NAME =
@@ -55,12 +60,18 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
     @BeforeClass
     public static void setUp() throws IOException {
         IntegrationTestBase.setUp();
-        s3.createBucket(BUCKET_NAME);
+        s3.createBucket(CreateBucketRequest.builder()
+                                           .bucket(BUCKET_NAME)
+                                           .createBucketConfiguration(
+                                                   CreateBucketConfiguration.builder()
+                                                                            .locationConstraint(region.value())
+                                                                            .build())
+                                           .build());
     }
 
     @AfterClass
     public static void tearDown() {
-        deleteBucketAndAllContents(s3, BUCKET_NAME);
+        deleteBucketAndAllContents(BUCKET_NAME);
 
         try {
             for (Trail trail : cloudTrail.describeTrails(DescribeTrailsRequest.builder().build()).trailList()) {
@@ -71,31 +82,40 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         }
     }
 
-    public static void deleteBucketAndAllContents(AmazonS3 client, String bucketName) {
+    public static void deleteBucketAndAllContents(String bucketName) {
         System.out.println("Deleting S3 bucket: " + bucketName);
-        ObjectListing objectListing = client.listObjects(bucketName);
+        ListObjectsResponse response = s3.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
 
         while (true) {
-            for (Iterator<?> iterator = objectListing.getObjectSummaries().iterator(); iterator
+            if (response.contents() == null) {
+                break;
+            }
+            for (Iterator<?> iterator = response.contents().iterator(); iterator
                     .hasNext(); ) {
-                S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
-                client.deleteObject(bucketName, objectSummary.getKey());
+                S3Object objectSummary = (S3Object) iterator.next();
+                s3.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(objectSummary.key()).build());
             }
 
-            if (objectListing.isTruncated()) {
-                objectListing = client.listNextBatchOfObjects(objectListing);
+            if (response.isTruncated()) {
+                response = s3.listObjects(ListObjectsRequest.builder().marker(response.nextMarker()).build());
             } else {
                 break;
             }
         }
 
-        VersionListing list = client
-                .listVersions(new ListVersionsRequest().withBucketName(bucketName));
-        for (Iterator<?> iterator = list.getVersionSummaries().iterator(); iterator.hasNext(); ) {
-            S3VersionSummary s = (S3VersionSummary) iterator.next();
-            client.deleteVersion(bucketName, s.getKey(), s.getVersionId());
+        ListObjectVersionsResponse versionsResponse = s3
+                .listObjectVersions(ListObjectVersionsRequest.builder().bucket(bucketName).build());
+        if (versionsResponse.versions() != null) {
+            for (ObjectVersion s : versionsResponse.versions()) {
+                s3.deleteObject(DeleteObjectRequest.builder()
+                                                   .bucket(bucketName)
+                                                   .key(s.key())
+                                                   .versionId(s.versionId())
+                                                   .build());
+            }
         }
-        client.deleteBucket(bucketName);
+
+        s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
     }
 
     @Test
@@ -103,17 +123,17 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         String policyText = IOUtils.toString(getClass().getResourceAsStream(POLICY_FILE));
         policyText = policyText.replace("@BUCKET_NAME@", BUCKET_NAME);
         System.out.println(policyText);
-        s3.setBucketPolicy(BUCKET_NAME, policyText);
+        s3.putBucketPolicy(PutBucketPolicyRequest.builder().bucket(BUCKET_NAME).policy(policyText).build());
 
         Thread.sleep(1000 * 5);
 
         // create trail
         CreateTrailResponse createTrailResult =
                 cloudTrail.createTrail(CreateTrailRequest.builder()
-                        .name(TRAIL_NAME)
-                        .s3BucketName(BUCKET_NAME)
-                        .includeGlobalServiceEvents(true)
-                        .build());
+                                                         .name(TRAIL_NAME)
+                                                         .s3BucketName(BUCKET_NAME)
+                                                         .includeGlobalServiceEvents(true)
+                                                         .build());
 
         assertEquals(TRAIL_NAME, createTrailResult.name());
         assertEquals(BUCKET_NAME, createTrailResult.s3BucketName());
@@ -137,11 +157,11 @@ public class CloudTrailIntegrationTest extends IntegrationTestBase {
         // update the trail
         UpdateTrailResponse updateTrailResult =
                 cloudTrail.updateTrail(UpdateTrailRequest.builder()
-                        .name(TRAIL_NAME)
-                        .s3BucketName(BUCKET_NAME)
-                        .includeGlobalServiceEvents(false)
-                        .s3KeyPrefix("123")
-                        .build());
+                                                         .name(TRAIL_NAME)
+                                                         .s3BucketName(BUCKET_NAME)
+                                                         .includeGlobalServiceEvents(false)
+                                                         .s3KeyPrefix("123")
+                                                         .build());
 
         assertEquals(TRAIL_NAME, updateTrailResult.name());
         assertEquals(BUCKET_NAME, updateTrailResult.s3BucketName());

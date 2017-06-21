@@ -16,6 +16,7 @@
 package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 
 /**
@@ -44,6 +45,9 @@ import software.amazon.awssdk.auth.AwsCredentials;
 public class HandlerContextKey<T> {
     /** The key under which the request credentials are set. */
     public static final HandlerContextKey<AwsCredentials> AWS_CREDENTIALS = new HandlerContextKey<>("AWSCredentials");
+
+    public static final HandlerContextKey<ServiceAdvancedConfiguration> SERVICE_ADVANCED_CONFIG =
+            new HandlerContextKey<>("ServiceConfig");
 
     private final String name;
 

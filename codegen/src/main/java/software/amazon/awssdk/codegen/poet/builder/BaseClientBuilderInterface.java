@@ -16,28 +16,51 @@
 package software.amazon.awssdk.codegen.poet.builder;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
+
+import javax.lang.model.element.Modifier;
+
 import software.amazon.awssdk.client.builder.ClientBuilder;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 
+
 public class BaseClientBuilderInterface implements ClassSpec {
+    private final IntermediateModel model;
+    private final String basePackage;
     private final ClassName builderInterfaceName;
 
     public BaseClientBuilderInterface(IntermediateModel model) {
-        String basePackage = model.getMetadata().getFullClientPackageName();
+        this.model = model;
+        this.basePackage = model.getMetadata().getFullClientPackageName();
         this.builderInterfaceName = ClassName.get(basePackage, model.getMetadata().getBaseBuilderInterface());
     }
 
     @Override
     public TypeSpec poetSpec() {
-        return PoetUtils.createInterfaceBuilder(builderInterfaceName)
+        TypeSpec.Builder builder = PoetUtils.createInterfaceBuilder(builderInterfaceName)
                         .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", builderInterfaceName, "B", "C"))
                         .addTypeVariable(TypeVariableName.get("C"))
-                        .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"))
-                        .build();
+                        .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"));
+
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            builder.addMethod(advancedConfigurationMethod());
+        }
+
+        return builder.build();
+    }
+
+    private MethodSpec advancedConfigurationMethod() {
+        ClassName advancedConfiguration = ClassName.get(basePackage,
+                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+        return MethodSpec.methodBuilder("advancedConfiguration")
+                         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
+                         .returns(TypeVariableName.get("B"))
+                         .addParameter(advancedConfiguration, "advancedConfiguration")
+                         .build();
     }
 
     @Override

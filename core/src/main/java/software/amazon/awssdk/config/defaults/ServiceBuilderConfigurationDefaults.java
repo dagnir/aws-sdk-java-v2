@@ -17,6 +17,7 @@ package software.amazon.awssdk.config.defaults;
 
 import static software.amazon.awssdk.config.AdvancedClientOption.SIGNER_PROVIDER;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -31,11 +32,13 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 @SdkProtectedApi
 public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefaults {
     private final Supplier<SignerProvider> defaultSignerProvider;
+    private final Supplier<URI> defaultEndpoint;
     private final List<String> handler1Paths;
     private final List<String> handler2Paths;
 
     private ServiceBuilderConfigurationDefaults(Builder builder) {
         this.defaultSignerProvider = builder.defaultSignerProvider;
+        this.defaultEndpoint = builder.defaultEndpoint;
         this.handler1Paths = new ArrayList<>(builder.handler1Paths);
         this.handler2Paths = new ArrayList<>(builder.handler2Paths);
     }
@@ -54,8 +57,14 @@ public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefa
         handler2Paths.forEach(path -> chainFactory.newRequestHandler2Chain(path).forEach(builder::addRequestListener));
     }
 
+    @Override
+    protected URI getEndpointDefault() {
+        return defaultEndpoint.get();
+    }
+
     public static final class Builder {
         private Supplier<SignerProvider> defaultSignerProvider;
+        private Supplier<URI> defaultEndpoint;
         private List<String> handler1Paths = new ArrayList<>();
         private List<String> handler2Paths = new ArrayList<>();
 
@@ -63,6 +72,11 @@ public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefa
 
         public Builder defaultSignerProvider(Supplier<SignerProvider> defaultSignerProvider) {
             this.defaultSignerProvider = defaultSignerProvider;
+            return this;
+        }
+
+        public Builder defaultEndpoint(Supplier<URI> endpoint) {
+            this.defaultEndpoint = endpoint;
             return this;
         }
 
