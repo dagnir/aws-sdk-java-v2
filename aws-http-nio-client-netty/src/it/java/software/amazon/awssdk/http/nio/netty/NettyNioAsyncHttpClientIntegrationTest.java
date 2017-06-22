@@ -53,19 +53,25 @@ import java.util.stream.Stream;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
-import software.amazon.awssdk.http.async.SdkRequestChannel;
-import software.amazon.awssdk.utils.AttributeMap;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NettyNioAsyncHttpClientIntegrationTest {
 
     @Rule
     public WireMockRule mockServer = new WireMockRule(wireMockConfig().dynamicPort().dynamicHttpsPort());
+
+    @Mock
+    private SdkRequestContext requestContext;
 
     private static SdkAsyncHttpClient client = NettySdkHttpClientFactory.builder()
                                                                         .trustAllCertificates(true)
@@ -122,7 +128,7 @@ public class NettyNioAsyncHttpClientIntegrationTest {
         SdkHttpRequest request = createRequest(uri, "/echo", body, SdkHttpMethod.POST, singletonMap("reversed", "true"));
 
         RecordingResponseHandler recorder = new RecordingResponseHandler();
-        client.prepareRequest(createProvider(request, body), recorder).run();
+        client.prepareRequest(request, requestContext, createProvider(body), recorder).run();
 
         recorder.completeFuture.get(5, TimeUnit.SECONDS);
 
@@ -137,7 +143,7 @@ public class NettyNioAsyncHttpClientIntegrationTest {
         SdkHttpRequest request = createRequest(uri);
 
         RecordingResponseHandler recorder = new RecordingResponseHandler();
-        client.prepareRequest(createProvider(request, ""), recorder).run();
+        client.prepareRequest(request, requestContext, createProvider(""), recorder).run();
 
         recorder.completeFuture.get(5, TimeUnit.SECONDS);
 
@@ -151,39 +157,30 @@ public class NettyNioAsyncHttpClientIntegrationTest {
         verify(1, getRequestedFor(urlMatching("/")));
     }
 
-
-    private static AttributeMap createSettings() {
-        return AttributeMap.builder()
-                           .put(SdkHttpConfigurationOption.USE_STRICT_HOSTNAME_VERIFICATION, Boolean.FALSE)
-                           .build();
-    }
-
-    private SdkHttpRequestProvider createProvider(SdkHttpRequest request, String body) {
+    private SdkHttpRequestProvider createProvider(String body) {
         Stream<ByteBuffer> chunks = splitStringBySize(body).stream()
                                                            .map(chunk -> ByteBuffer.wrap(chunk.getBytes(UTF_8)));
         return new SdkHttpRequestProvider() {
 
-
             @Override
-            public SdkHttpRequest request() {
-                return request;
+            public long contentLength() {
+                return body.length();
             }
 
             @Override
-            public SdkRequestContext context() {
-                return mock(SdkRequestContext.class);
-            }
+            public void subscribe(Subscriber<? super ByteBuffer> s) {
+                s.onSubscribe(new Subscription() {
+                    @Override
+                    public void request(long n) {
+                        chunks.forEach(s::onNext);
+                        s.onComplete();
+                    }
 
-            @Override
-            public void readyForData(SdkRequestChannel channel) {
-                chunks.forEach(channel::write);
-                channel.complete();
-            }
+                    @Override
+                    public void cancel() {
 
-            @Override
-            public void exceptionOccurred(Throwable exception) {
-                exception.printStackTrace();
-                throw new RuntimeException(exception);
+                    }
+                });
             }
         };
     }

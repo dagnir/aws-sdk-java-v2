@@ -16,10 +16,11 @@
 package software.amazon.awssdk.config;
 
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 
 /**
  * An implementation of {@link ClientConfiguration}, {@link SyncClientConfiguration} and {@link AsyncClientConfiguration} that
@@ -36,9 +37,10 @@ public final class MutableClientConfiguration
     private AwsCredentialsProvider credentialsProvider;
     private URI endpoint;
     private SdkHttpClient sdkHttpClient;
+    private SdkAsyncHttpClient asyncHttpClient;
 
     // AsyncClientConfiguration
-    private ExecutorService asyncExecutorService;
+    private ScheduledExecutorService asyncExecutorService;
 
     @Override
     public final ClientOverrideConfiguration overrideConfiguration() {
@@ -71,11 +73,11 @@ public final class MutableClientConfiguration
     }
 
     @Override
-    public final ExecutorService asyncExecutorService() {
+    public final ScheduledExecutorService asyncExecutorService() {
         return asyncExecutorService;
     }
 
-    public final MutableClientConfiguration asyncExecutorService(ExecutorService executorService) {
+    public final MutableClientConfiguration asyncExecutorService(ScheduledExecutorService executorService) {
         this.asyncExecutorService = executorService;
         return this;
     }
@@ -87,6 +89,16 @@ public final class MutableClientConfiguration
 
     public final MutableClientConfiguration httpClient(SdkHttpClient sdkHttpClient) {
         this.sdkHttpClient = sdkHttpClient;
+        return this;
+    }
+
+    @Override
+    public SdkAsyncHttpClient asyncHttpClient() {
+        return asyncHttpClient;
+    }
+
+    public final MutableClientConfiguration asyncHttpClient(SdkAsyncHttpClient asyncHttpClient) {
+        this.asyncHttpClient = asyncHttpClient;
         return this;
     }
 

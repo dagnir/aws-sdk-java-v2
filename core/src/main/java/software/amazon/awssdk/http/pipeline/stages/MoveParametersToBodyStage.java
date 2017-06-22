@@ -15,44 +15,43 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
+import static java.util.Collections.singletonList;
 import static software.amazon.awssdk.utils.StringUtils.lowerCase;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
+import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
 @ReviewBeforeRelease("Might only need to do this for certain protocols - ie query?")
-public final class MoveParametersToBodyStage implements RequestToRequestPipeline {
+// TODO how is this going to work with streaming input posts in asyncland
+public final class MoveParametersToBodyStage implements MutableRequestToRequestPipeline {
     @Override
-    public Request<?> execute(Request<?> input, RequestExecutionContext context) {
+    public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest.Builder input, RequestExecutionContext context) {
         if (shouldPutParamsInBody(input)) {
             return putParams(input);
         }
         return input;
     }
 
-    private boolean shouldPutParamsInBody(Request<?> input) {
-        return input.getHttpMethod() == HttpMethodName.POST &&
-            input.getContent() == null &&
-            input.getParameters() != null &&
-            input.getParameters().size() > 0;
+    private boolean shouldPutParamsInBody(SdkHttpFullRequest.Builder input) {
+        return input.getHttpMethod() == SdkHttpMethod.POST &&
+               input.getContent() == null &&
+               input.getParameters() != null &&
+               input.getParameters().size() > 0;
     }
 
-    private Request<?> putParams(Request<?> input) {
+    private SdkHttpFullRequest.Builder putParams(SdkHttpFullRequest.Builder input) {
         byte[] params = SdkHttpUtils.encodeParameters(input).getBytes(StandardCharsets.UTF_8);
 
-        input.setParameters(Collections.emptyMap());
-        input.setContent(new ByteArrayInputStream(params));
-        input.addHeader("Content-Length", String.valueOf(params.length));
-        input.addHeader("Content-Type",
-                        "application/x-www-form-urlencoded; charset=" +
-                        lowerCase(StandardCharsets.UTF_8.toString()));
-        return input;
+        return input.clearQueryParameters()
+                    .content(new ByteArrayInputStream(params))
+                    .header("Content-Length", singletonList(String.valueOf(params.length)))
+                    .header("Content-Type", singletonList("application/x-www-form-urlencoded; charset=" +
+                                                          lowerCase(StandardCharsets.UTF_8.toString())));
     }
 }

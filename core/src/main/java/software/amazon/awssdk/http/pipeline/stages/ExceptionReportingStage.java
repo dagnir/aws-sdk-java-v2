@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.http.pipeline.RequestToResponsePipeline;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
@@ -29,14 +29,14 @@ import software.amazon.awssdk.retry.RetryUtils;
  */
 public class ExceptionReportingStage<OutputT> implements RequestToResponsePipeline<OutputT> {
 
-    private final RequestPipeline<Request<?>, Response<OutputT>> wrapped;
+    private final RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped;
 
-    public ExceptionReportingStage(RequestPipeline<Request<?>, Response<OutputT>> wrapped) {
+    public ExceptionReportingStage(RequestPipeline<SdkHttpFullRequest, Response<OutputT>> wrapped) {
         this.wrapped = wrapped;
     }
 
     @Override
-    public Response<OutputT> execute(Request<?> input, RequestExecutionContext context) throws Exception {
+    public Response<OutputT> execute(SdkHttpFullRequest input, RequestExecutionContext context) throws Exception {
         try {
             Response<OutputT> response = wrapped.execute(input, context);
             if (response.isFailure()) {

@@ -27,7 +27,6 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.providers.InstanceProfileRegionProvider;
 import software.amazon.awssdk.util.EC2MetadataUtilsServer;
 
 /**

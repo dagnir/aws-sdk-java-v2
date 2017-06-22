@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,18 @@ public class CollectionUtils {
     }
 
     /**
+     * Create an unmodifiable version of the provdied map of lists. Modifications of the original map will not "write through" to
+     * the unmodifiable map, but modifications of the original list will. For true immutability, ensure that the original map
+     * is first copied with {@link #deepCopyMap(Map)}, or use {@link #deepCopiedUnmodifiableMap(Map)}
+     */
+    public static <T, U> Map<T, List<U>> deepUnmodifiableLinkedMap(Map<T, ? extends List<U>> map) {
+        return unmodifiableMap(map.entrySet().stream()
+                                  .collect(toMap(Map.Entry::getKey, e -> unmodifiableList(e.getValue()),
+                                                 CollectionUtils::throwIllegalStateException,
+                                                 LinkedHashMap::new)));
+    }
+
+    /**
      * Perform a deep copy of the provided map of lists, and make the result unmodifiable. This is slightly more efficient than
      * calling {@link #deepCopyMap(Map)} followed by {@link #deepUnmodifiableMap(Map)}, because only one intermediate map copy
      * is created.
@@ -100,5 +113,12 @@ public class CollectionUtils {
     public static <T, U> Map<T, List<U>> deepCopiedUnmodifiableMap(Map<T, ? extends List<U>> map) {
         return unmodifiableMap(map.entrySet().stream()
                                   .collect(toMap(Map.Entry::getKey, e -> unmodifiableList(new ArrayList<>(e.getValue())))));
+    }
+
+    /**
+     * Dummy merger since there can't be a conflict when collecting from a map.
+     */
+    private static <T> T throwIllegalStateException(T left, T right) {
+        throw new IllegalStateException("Duplicate keys are impossible when collecting from a map");
     }
 }

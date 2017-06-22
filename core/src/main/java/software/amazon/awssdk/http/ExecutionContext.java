@@ -23,7 +23,7 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.Signer;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
@@ -39,7 +39,7 @@ import software.amazon.awssdk.util.AwsRequestMetricsFullSupport;
 @SdkProtectedApi
 public class ExecutionContext {
     private final AwsRequestMetrics awsRequestMetrics;
-    private final List<RequestHandler2> requestHandler2s;
+    private final List<RequestHandler> requestHandlers;
     private final AmazonWebServiceClient awsClient;
     private final SignerProvider signerProvider;
 
@@ -64,9 +64,9 @@ public class ExecutionContext {
     }
 
     @Deprecated
-    public ExecutionContext(List<RequestHandler2> requestHandler2s, boolean isMetricEnabled,
+    public ExecutionContext(List<RequestHandler> requestHandlers, boolean isMetricEnabled,
                             AmazonWebServiceClient awsClient) {
-        this.requestHandler2s = requestHandler2s;
+        this.requestHandlers = requestHandlers;
         awsRequestMetrics = isMetricEnabled ? new AwsRequestMetricsFullSupport() : new AwsRequestMetrics();
         this.awsClient = awsClient;
         this.signerProvider = new SignerProvider() {
@@ -78,7 +78,7 @@ public class ExecutionContext {
     }
 
     private ExecutionContext(final Builder builder) {
-        this.requestHandler2s = builder.requestHandler2s;
+        this.requestHandlers = builder.requestHandlers;
         this.awsRequestMetrics = builder.useRequestMetrics ? new AwsRequestMetricsFullSupport() : new AwsRequestMetrics();
         this.awsClient = builder.awsClient;
         this.signerProvider = builder.signerProvider;
@@ -88,8 +88,8 @@ public class ExecutionContext {
         return new ExecutionContext.Builder();
     }
 
-    public List<RequestHandler2> getRequestHandler2s() {
-        return requestHandler2s;
+    public List<RequestHandler> getRequestHandlers() {
+        return requestHandlers;
     }
 
     public AwsRequestMetrics getAwsRequestMetrics() {
@@ -183,7 +183,7 @@ public class ExecutionContext {
     public static class Builder {
 
         private boolean useRequestMetrics;
-        private List<RequestHandler2> requestHandler2s;
+        private List<RequestHandler> requestHandlers;
         private AmazonWebServiceClient awsClient;
         private SignerProvider signerProvider = new NoOpSignerProvider();
 
@@ -203,16 +203,16 @@ public class ExecutionContext {
             return this;
         }
 
-        public List<RequestHandler2> getRequestHandler2s() {
-            return requestHandler2s;
+        public List<RequestHandler> getRequestHandlers() {
+            return requestHandlers;
         }
 
-        public void setRequestHandler2s(final List<RequestHandler2> requestHandler2s) {
-            this.requestHandler2s = requestHandler2s;
+        public void setRequestHandlers(final List<RequestHandler> requestHandlers) {
+            this.requestHandlers = requestHandlers;
         }
 
-        public Builder withRequestHandler2s(final List<RequestHandler2> requestHandler2s) {
-            setRequestHandler2s(requestHandler2s);
+        public Builder withRequestHandlers(final List<RequestHandler> requestHandlers) {
+            setRequestHandlers(requestHandlers);
             return this;
         }
 

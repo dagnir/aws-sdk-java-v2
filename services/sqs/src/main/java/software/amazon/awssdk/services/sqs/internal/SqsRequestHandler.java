@@ -18,12 +18,12 @@ package software.amazon.awssdk.services.sqs.internal;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
-public class SqsRequestHandler extends AbstractRequestHandler {
+public class SqsRequestHandler extends RequestHandler {
 
-    private static final Map<String, String> NONSTANDARD_ENDPOINT_MAP = new HashMap<String, String>();
+    private static final Map<String, String> NONSTANDARD_ENDPOINT_MAP = new HashMap<>();
 
     static {
         NONSTANDARD_ENDPOINT_MAP.put("queue.amazonaws.com", "sqs.us-east-1.amazonaws.com");
@@ -38,7 +38,7 @@ public class SqsRequestHandler extends AbstractRequestHandler {
     }
 
     @Override
-    public void beforeRequest(Request<?> request) {
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
         URI endpoint = request.getEndpoint();
 
         // If the request is using a non-standard endpoint, then
@@ -46,7 +46,10 @@ public class SqsRequestHandler extends AbstractRequestHandler {
         if (NONSTANDARD_ENDPOINT_MAP.containsKey(endpoint.getHost())) {
             String newHost = NONSTANDARD_ENDPOINT_MAP.get(endpoint.getHost());
             String newEndpoint = endpoint.toString().replaceFirst(endpoint.getHost(), newHost);
-            request.setEndpoint(URI.create(newEndpoint));
+            return request.toBuilder()
+                          .endpoint(URI.create(newEndpoint))
+                          .build();
         }
+        return request;
     }
 }

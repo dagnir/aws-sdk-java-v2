@@ -20,21 +20,21 @@ import static software.amazon.awssdk.utils.Validate.notEmpty;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import software.amazon.awssdk.http.SdkHttpService;
 
 /**
  * Consults a chain of {@link SdkHttpServiceProvider} looking for one that can provide a service instance.
  */
-class SdkHttpServiceProviderChain implements SdkHttpServiceProvider {
+final class SdkHttpServiceProviderChain<T> implements SdkHttpServiceProvider<T> {
 
-    private final List<SdkHttpServiceProvider> httpProviders;
+    private final List<SdkHttpServiceProvider<T>> httpProviders;
 
-    SdkHttpServiceProviderChain(SdkHttpServiceProvider... httpProviders) {
+    @SafeVarargs
+    SdkHttpServiceProviderChain(SdkHttpServiceProvider<T>... httpProviders) {
         this.httpProviders = Arrays.asList(notEmpty(httpProviders, "httpProviders cannot be null or empty"));
     }
 
     @Override
-    public Optional<SdkHttpService> loadService() {
+    public Optional<T> loadService() {
         return httpProviders.stream()
                             .map(SdkHttpServiceProvider::loadService)
                             .filter(Optional::isPresent)

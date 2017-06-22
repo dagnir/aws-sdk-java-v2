@@ -17,9 +17,8 @@ package software.amazon.awssdk.services.machinelearning.internal;
 
 import java.util.UUID;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.services.machinelearning.model.CreateBatchPredictionRequest;
 import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromRDSRequest;
 import software.amazon.awssdk.services.machinelearning.model.CreateDataSourceFromRedshiftRequest;
@@ -31,11 +30,11 @@ import software.amazon.awssdk.services.machinelearning.model.CreateMLModelReques
  * CreateXxx API calls require a unique (for all time!) ID parameter for
  * idempotency. If the user doesn't specify one, fill in a GUID.
  */
-public class RandomIdHandler extends RequestHandler2 {
+@ReviewBeforeRelease("They should be using the idempotency trait")
+public class RandomIdHandler extends RequestHandler {
 
     @Override
-    public AmazonWebServiceRequest beforeMarshalling(
-            AmazonWebServiceRequest request) {
+    public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {
 
         if (request instanceof CreateBatchPredictionRequest) {
             CreateBatchPredictionRequest copy =
@@ -95,15 +94,4 @@ public class RandomIdHandler extends RequestHandler2 {
         return request;
     }
 
-    @Override
-    public void beforeRequest(Request<?> request) {
-    }
-
-    @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
-    }
-
-    @Override
-    public void afterError(Request<?> request, Response<?> response, Exception e) {
-    }
 }

@@ -17,9 +17,11 @@ package software.amazon.awssdk.http;
 
 import static software.amazon.awssdk.utils.Validate.paramNotNull;
 
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.SdkGlobalTime;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.retry.v2.RetryPolicy;
 import software.amazon.awssdk.util.CapacityManager;
@@ -35,7 +37,10 @@ public class HttpClientDependencies implements AutoCloseable {
     private final RetryPolicy retryPolicy;
     private final CapacityManager retryCapacity;
     private final SdkHttpClient sdkHttpClient;
+    // Do we want seperate dependencies for sync/async or just have an Either or something
+    private final SdkAsyncHttpClient sdkAsyncHttpClient;
     private final ClientExecutionTimer clientExecutionTimer;
+    private final ScheduledExecutorService executorService;
     private final boolean calculateCrc32FromCompressedData;
 
     /**
@@ -48,8 +53,11 @@ public class HttpClientDependencies implements AutoCloseable {
         this.config = paramNotNull(builder.config, "Configuration");
         this.retryPolicy = paramNotNull(builder.retryPolicy, "RetryPolicy");
         this.retryCapacity = paramNotNull(builder.retryCapacity, "CapacityManager");
-        this.sdkHttpClient = paramNotNull(builder.sdkHttpClient, "SdkHttpClient");
+        // TODO validate not null
+        this.sdkHttpClient = builder.sdkHttpClient;
+        this.sdkAsyncHttpClient = builder.sdkAsyncHttpClient;
         this.clientExecutionTimer = paramNotNull(builder.clientExecutionTimer, "ClientExecutionTimer");
+        this.executorService = builder.executorService;
         this.calculateCrc32FromCompressedData = builder.calculateCrc32FromCompressedData;
     }
 
@@ -89,10 +97,21 @@ public class HttpClientDependencies implements AutoCloseable {
     }
 
     /**
+     * @return SdkAsyncHttpClient implementation to make an HTTP request.
+     */
+    public SdkAsyncHttpClient sdkAsyncHttpClient() {
+        return sdkAsyncHttpClient;
+    }
+
+    /**
      * @return Controller for the ClientExecution timeout feature.
      */
     public ClientExecutionTimer clientExecutionTimer() {
         return clientExecutionTimer;
+    }
+
+    public ScheduledExecutorService executorService() {
+        return executorService;
     }
 
     /**
@@ -122,7 +141,16 @@ public class HttpClientDependencies implements AutoCloseable {
     @Override
     public void close() throws Exception {
         this.clientExecutionTimer.close();
-        this.sdkHttpClient.close();
+        // TODO close which one is present
+        if (this.sdkAsyncHttpClient != null) {
+            this.sdkAsyncHttpClient.close();
+        }
+        if (this.sdkHttpClient != null) {
+            this.sdkHttpClient.close();
+        }
+        if (this.executorService != null) {
+            this.executorService.shutdown();
+        }
     }
 
     /**
@@ -134,7 +162,9 @@ public class HttpClientDependencies implements AutoCloseable {
         private RetryPolicy retryPolicy;
         private CapacityManager retryCapacity;
         private SdkHttpClient sdkHttpClient;
+        private SdkAsyncHttpClient sdkAsyncHttpClient;
         private ClientExecutionTimer clientExecutionTimer;
+        private ScheduledExecutorService executorService;
         private boolean calculateCrc32FromCompressedData;
 
         public Builder config(LegacyClientConfiguration config) {
@@ -157,19 +187,29 @@ public class HttpClientDependencies implements AutoCloseable {
             return this;
         }
 
+        public Builder sdkAsyncHttpClient(SdkAsyncHttpClient sdkAsyncHttpClient) {
+            this.sdkAsyncHttpClient = sdkAsyncHttpClient;
+            return this;
+        }
+
         public Builder clientExecutionTimer(ClientExecutionTimer clientExecutionTimer) {
             this.clientExecutionTimer = clientExecutionTimer;
             return this;
         }
 
-        public HttpClientDependencies build() {
-            return new HttpClientDependencies(this);
+        public Builder asyncExecutorService(ScheduledExecutorService executorService) {
+            this.executorService = executorService;
+            return this;
         }
 
         public Builder calculateCrc32FromCompressedData(
                 boolean calculateCrc32FromCompressedData) {
             this.calculateCrc32FromCompressedData = calculateCrc32FromCompressedData;
             return this;
+        }
+
+        public HttpClientDependencies build() {
+            return new HttpClientDependencies(this);
         }
     }
 }

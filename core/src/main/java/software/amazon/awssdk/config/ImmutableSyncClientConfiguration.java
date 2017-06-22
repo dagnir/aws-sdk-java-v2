@@ -22,7 +22,7 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -33,8 +33,16 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 @SdkInternalApi
 public final class ImmutableSyncClientConfiguration extends ImmutableClientConfiguration implements SyncClientConfiguration {
 
+    private final SdkHttpClient sdkHttpClient;
+
     public ImmutableSyncClientConfiguration(SyncClientConfiguration configuration) {
         super(configuration);
+        this.sdkHttpClient = configuration.httpClient();
+    }
+
+    @Override
+    public SdkHttpClient httpClient() {
+        return sdkHttpClient;
     }
 
     /**
@@ -60,7 +68,7 @@ public final class ImmutableSyncClientConfiguration extends ImmutableClientConfi
             }
 
             @Override
-            public List<RequestHandler2> getRequestHandlers() {
+            public List<RequestHandler> getRequestHandlers() {
                 return overrideConfiguration().requestListeners();
             }
 
@@ -71,7 +79,7 @@ public final class ImmutableSyncClientConfiguration extends ImmutableClientConfi
 
             @Override
             public SdkHttpClient sdkHttpClient() {
-                return ImmutableSyncClientConfiguration.this.httpClient();
+                return httpClient();
             }
 
             @Override

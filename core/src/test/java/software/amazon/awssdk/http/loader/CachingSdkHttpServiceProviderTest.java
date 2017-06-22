@@ -33,18 +33,18 @@ import software.amazon.awssdk.http.SdkHttpService;
 public class CachingSdkHttpServiceProviderTest {
 
     @Mock
-    private SdkHttpServiceProvider delegate;
+    private SdkHttpServiceProvider<SdkHttpService> delegate;
 
-    private SdkHttpServiceProvider provider;
+    private SdkHttpServiceProvider<SdkHttpService> provider;
 
     @Before
     public void setup() {
-        provider = new CachingSdkHttpServiceProvider(delegate);
+        provider = new CachingSdkHttpServiceProvider<>(delegate);
     }
 
     @Test(expected = NullPointerException.class)
     public void nullDelegate_ThrowsException() {
-        new CachingSdkHttpServiceProvider(null);
+        new CachingSdkHttpServiceProvider<>(null);
     }
 
     @Test

@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.metrics.internal.cloudwatch.spi.AwsMetricTransformerFactory;
@@ -62,7 +61,7 @@ public class PredefinedMetricTransformer {
      *
      * @param metricType the request metric type
      */
-    public List<MetricDatum> toMetricData(MetricType metricType, Request<?> request, Response<?> response) {
+    public List<MetricDatum> toMetricData(MetricType metricType, Request<?> request, Object response) {
         if (metricType instanceof Field) {
             // Predefined metrics across all AWS http clients
             Field predefined = (Field) metricType;
@@ -71,26 +70,26 @@ public class PredefinedMetricTransformer {
                 case HttpClientPoolAvailableCount:
                 case HttpClientPoolLeasedCount:
                 case HttpClientPoolPendingCount:
-                    return metricOfCount(predefined, request, response);
+                    return metricOfCount(predefined, request);
                 case RequestCount:  // intentionally fall through to reuse the same routine as RetryCount
                 case RetryCount:
-                    return metricOfRequestOrRetryCount(predefined, request, response);
+                    return metricOfRequestOrRetryCount(predefined, request);
                 case ThrottledRetryCount: // drop through
                 case RetryCapacityConsumed:
-                    return counterMetricOf(predefined, request, response, EXCLUDE_REQUEST_TYPE);
+                    return counterMetricOf(predefined, request, EXCLUDE_REQUEST_TYPE);
                 case ResponseProcessingTime: // drop through
                 case RequestSigningTime: // drop through
-                    return latencyMetricOf(predefined, request, response, EXCLUDE_REQUEST_TYPE);
+                    return latencyMetricOf(predefined, request, EXCLUDE_REQUEST_TYPE);
                 case ClientExecuteTime:
-                    return latencyOfClientExecuteTime(request, response);
+                    return latencyOfClientExecuteTime(request);
                 case HttpClientSendRequestTime:
                 case HttpClientReceiveResponseTime:
                 case HttpRequestTime:
                 case HttpSocketReadTime:
-                    return latencyMetricOf(predefined, request, response, INCLUDE_REQUEST_TYPE);
+                    return latencyMetricOf(predefined, request, INCLUDE_REQUEST_TYPE);
                 case Exception:
                 case ThrottleException:
-                    return counterMetricOf(predefined, request, response, INCLUDE_REQUEST_TYPE);
+                    return counterMetricOf(predefined, request, INCLUDE_REQUEST_TYPE);
                 default:
                     break;
             }
@@ -98,8 +97,7 @@ public class PredefinedMetricTransformer {
         // Predefined metrics for specific service clients
         for (AwsMetricTransformerFactory aws : AwsMetricTransformerFactory.values()) {
             if (metricType.name().startsWith(aws.name())) {
-                List<MetricDatum> metricData = aws.getRequestMetricTransformer()
-                                                  .toMetricData(metricType, request, response);
+                List<MetricDatum> metricData = aws.getRequestMetricTransformer().toMetricData(metricType, request, response);
                 if (metricData != null) {
                     return metricData;
                 }
@@ -124,8 +122,7 @@ public class PredefinedMetricTransformer {
      *            must be either {@link Field#RequestCount} or
      *            {@link Field#RetryCount}; or else GIGO.
      */
-    protected List<MetricDatum> metricOfRequestOrRetryCount(
-            Field metricType, Request<?> req, Object resp) {
+    protected List<MetricDatum> metricOfRequestOrRetryCount(Field metricType, Request<?> req) {
         AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         // Always retrieve the request count even for retry which is equivalent
@@ -155,14 +152,12 @@ public class PredefinedMetricTransformer {
                             .value(metricType.name())
                             .build())
                     .unit(StandardUnit.Count)
-                    .value(Double.valueOf(count))
-                    .timestamp(endTimestamp(ti)).build())
-                    ;
+                    .value(count)
+                    .timestamp(endTimestamp(ti)).build());
         }
     }
 
-    protected List<MetricDatum> metricOfCount(
-            Field metricType, Request<?> req, Object resp) {
+    protected List<MetricDatum> metricOfCount(Field metricType, Request<?> req) {
         AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         Number counter = ti.getCounter(metricType.name());
@@ -180,10 +175,9 @@ public class PredefinedMetricTransformer {
                             .value(metricType.name())
                             .build())
                     .unit(StandardUnit.Count)
-                    .value(Double.valueOf(count))
+                    .value(count)
                     .timestamp(endTimestamp(ti))
-                    .build())
-                    ;
+                    .build());
         }
     }
 
@@ -196,8 +190,7 @@ public class PredefinedMetricTransformer {
      * @param includesRequestType
      *            true iff the "request" dimension is to be included;
      */
-    protected List<MetricDatum> latencyMetricOf(MetricType metricType,
-                                                Request<?> req, Object response, boolean includesRequestType) {
+    protected List<MetricDatum> latencyMetricOf(MetricType metricType, Request<?> req, boolean includesRequestType) {
         AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo root = m.getTimingInfo();
         final String metricName = metricType.name();
@@ -205,10 +198,10 @@ public class PredefinedMetricTransformer {
                 root.getAllSubMeasurements(metricName);
         if (subMeasures != null) {
             List<MetricDatum> result =
-                    new ArrayList<MetricDatum>(subMeasures.size());
+                    new ArrayList<>(subMeasures.size());
             for (TimingInfo sub : subMeasures) {
                 if (sub.isEndTimeKnown()) { // being defensive
-                    List<Dimension> dims = new ArrayList<Dimension>();
+                    List<Dimension> dims = new ArrayList<>();
                     dims.add(Dimension.builder()
                             .name(Dimensions.MetricType.name())
                             .value(metricName)
@@ -242,12 +235,12 @@ public class PredefinedMetricTransformer {
      * makes a more accurate measurement by taking the {@link TimingInfo} at the
      * root into account.
      */
-    protected List<MetricDatum> latencyOfClientExecuteTime(Request<?> req, Object response) {
+    protected List<MetricDatum> latencyOfClientExecuteTime(Request<?> req) {
         AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo root = m.getTimingInfo();
         final String metricName = Field.ClientExecuteTime.name();
         if (root.isEndTimeKnown()) { // being defensive
-            List<Dimension> dims = new ArrayList<Dimension>();
+            List<Dimension> dims = new ArrayList<>();
             dims.add(Dimension.builder()
                              .name(Dimensions.MetricType.name())
                              .value(metricName)
@@ -283,8 +276,7 @@ public class PredefinedMetricTransformer {
      *            true iff an additional metric datum is to be created that
      *            includes the "request" dimension
      */
-    protected List<MetricDatum> counterMetricOf(MetricType type,
-                                                Request<?> req, Object resp, boolean includesRequestType) {
+    protected List<MetricDatum> counterMetricOf(MetricType type, Request<?> req, boolean includesRequestType) {
         AwsRequestMetrics m = req.getAwsRequestMetrics();
         TimingInfo ti = m.getTimingInfo();
         final String metricName = type.name();
@@ -307,7 +299,7 @@ public class PredefinedMetricTransformer {
                 .metricName(req.getServiceName())
                 .dimensions(metricDimension)
                 .unit(StandardUnit.Count)
-                .value(Double.valueOf(count))
+                .value((double) count)
                 .timestamp(endTimestamp(ti))
                 .build();
         result.add(first);

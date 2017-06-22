@@ -23,17 +23,6 @@ import java.nio.ByteBuffer;
 public interface SdkRequestChannel {
 
     /**
-     * A convenience to signify that this is the last chunk of data in the request.
-     * <br/>No requirement to call {@link #complete()} when using this, doing so may cause an exception.
-     *
-     * @param data - the data to write to the socket
-     */
-    default void writeAndComplete(ByteBuffer data) {
-        write(data);
-        complete();
-    }
-
-    /**
      * Write data to the socket.
      * <br/>
      * This operation should not block on IO. Data should be buffered until it can be written

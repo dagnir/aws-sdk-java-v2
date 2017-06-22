@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.TestPreConditions;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.MockServerTestBase;
@@ -35,7 +35,6 @@ import software.amazon.awssdk.internal.http.request.RequestHandlerTestUtils;
 import software.amazon.awssdk.internal.http.request.SlowRequestHandler;
 import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
 import software.amazon.awssdk.internal.http.response.UnresponsiveErrorResponseHandler;
-import utils.HttpTestUtils;
 
 /**
  * Tests that use a server that returns a predetermined error response within the timeout limit
@@ -74,13 +73,13 @@ public class DummyErrorResponseServerIntegrationTests extends MockServerTestBase
                 .clientConfiguration(new LegacyClientConfiguration().withClientExecutionTimeout(CLIENT_EXECUTION_TIMEOUT))
                 .build();
 
-        List<RequestHandler2> requestHandlers = RequestHandlerTestUtils.buildRequestHandlerList(
+        List<RequestHandler> requestHandlers = RequestHandlerTestUtils.buildRequestHandlerList(
                 new SlowRequestHandler().withAfterErrorWaitInSeconds(SLOW_REQUEST_HANDLER_TIMEOUT));
 
         httpClient.requestExecutionBuilder()
                 .request(newGetRequest())
                 .errorResponseHandler(new NullErrorResponseHandler())
-                .executionContext(ExecutionContext.builder().withRequestHandler2s(requestHandlers).build())
+                .executionContext(ExecutionContext.builder().withRequestHandlers(requestHandlers).build())
                 .execute();
     }
 

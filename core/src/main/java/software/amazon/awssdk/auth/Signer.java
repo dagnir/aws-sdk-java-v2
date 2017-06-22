@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
  * A strategy for applying cryptographic signatures to a request, proving
@@ -30,5 +30,5 @@ public interface Signer {
      * @param request      The request to sign.
      * @param credentials  The credentials to sign the request with.
      */
-    public void sign(SignableRequest<?> request, AwsCredentials credentials);
+    SdkHttpFullRequest sign(SdkHttpFullRequest request, AwsCredentials credentials);
 }

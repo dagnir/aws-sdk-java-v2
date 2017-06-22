@@ -91,6 +91,10 @@ public final class FunctionalUtils {
         };
     }
 
+    public static <I, O> Function<I, O> toFunction(Supplier<O> supplier) {
+        return ignore -> supplier.get();
+    }
+
     public static <T> T invokeSafely(UnsafeSupplier<T> unsafeSupplier) {
         return safeSupplier(unsafeSupplier).get();
     }

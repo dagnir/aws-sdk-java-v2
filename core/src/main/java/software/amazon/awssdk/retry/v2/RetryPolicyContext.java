@@ -19,7 +19,8 @@ import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.http.HandlerContextKey;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
  * Contains useful information about a failed request that can be used to make retry and backoff decisions. See {@link
@@ -29,13 +30,13 @@ import software.amazon.awssdk.handlers.HandlerContextKey;
 public class RetryPolicyContext {
 
     private final Object originalRequest;
-    private final Request<?> request;
+    private final SdkHttpFullRequest request;
     private final SdkBaseException exception;
     private final int retriesAttempted;
     private final Integer httpStatusCode;
 
     private RetryPolicyContext(Object originalRequest,
-                               Request<?> request,
+                               SdkHttpFullRequest request,
                                SdkBaseException exception,
                                int retriesAttempted,
                                Integer httpStatusCode) {
@@ -62,7 +63,7 @@ public class RetryPolicyContext {
      * @return The marshalled request. See {@link Request#addHandlerContext(HandlerContextKey, Object)} for a mechanism to store
      *     request level state across invocations of the retry policy.
      */
-    public Request<?> request() {
+    public SdkHttpFullRequest request() {
         return this.request;
     }
 
@@ -98,7 +99,7 @@ public class RetryPolicyContext {
     public static class Builder {
 
         private Object originalRequest;
-        private Request<?> request;
+        private SdkHttpFullRequest request;
         private SdkBaseException exception;
         private int retriesAttempted;
         private Integer httpStatusCode;
@@ -111,7 +112,7 @@ public class RetryPolicyContext {
             return this;
         }
 
-        public Builder request(Request<?> request) {
+        public Builder request(SdkHttpFullRequest request) {
             this.request = request;
             return this;
         }

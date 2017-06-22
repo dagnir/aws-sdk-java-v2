@@ -129,6 +129,12 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <artifactId>aws-http-nio-client-netty</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <version>${awsjavasdk.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <artifactId>test-utils</artifactId>
             <groupId>software.amazon.awssdk</groupId>
             <scope>test</scope>

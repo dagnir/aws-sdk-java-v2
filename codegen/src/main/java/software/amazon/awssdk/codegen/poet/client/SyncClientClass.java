@@ -53,7 +53,7 @@ public class SyncClientClass implements ClassSpec {
         this.basePackage = model.getMetadata().getFullClientPackageName();
         this.poetExtensions = taskParams.getPoetExtensions();
         this.className = poetExtensions.getClientClass(model.getMetadata().getSyncClient());
-        this.protocolSpec = getProtocolSpecs(model.getMetadata().getProtocol());
+        this.protocolSpec = getProtocolSpecs(poetExtensions, model.getMetadata().getProtocol());
     }
 
     @Override
@@ -61,10 +61,11 @@ public class SyncClientClass implements ClassSpec {
         ClassName interfaceClass = poetExtensions.getClientClass(model.getMetadata().getSyncInterface());
 
         Builder classBuilder = PoetUtils.createClassBuilder(className)
-                .addSuperinterface(interfaceClass)
-                .addField(ClientHandler.class, "clientHandler", Modifier.PRIVATE, Modifier.FINAL)
-                .addField(protocolSpec.protocolFactory(model))
-                .addField(clientParamsField());
+                                        .addSuperinterface(interfaceClass)
+                                        .addField(ClientHandler.class, "clientHandler", Modifier.PRIVATE, Modifier.FINAL)
+                                        .addField(protocolSpec.protocolFactory(model))
+                                        .addField(clientParamsField())
+                                        .addMethods(operations());
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
             classBuilder.addMethod(constructor());
@@ -73,7 +74,6 @@ public class SyncClientClass implements ClassSpec {
             classBuilder.addMethod(constructor());
         }
 
-        classBuilder.addMethods(operations());
 
         protocolSpec.createErrorResponseHandler().ifPresent(classBuilder::addMethod);
 
@@ -83,15 +83,15 @@ public class SyncClientClass implements ClassSpec {
             ClassName waiters = poetExtensions.getWaiterClass(model.getMetadata().getSyncInterface() + "Waiters");
 
             classBuilder.addField(FieldSpec.builder(waiters, "waiters")
-                    .addModifiers(Modifier.PRIVATE, Modifier.VOLATILE)
-                    .build());
+                                           .addModifiers(Modifier.PRIVATE, Modifier.VOLATILE)
+                                           .build());
             classBuilder.addMethod(waiters());
         }
         if (model.getCustomizationConfig().getPresignersFqcn() != null) {
             classBuilder.addMethod(presigners());
         }
 
-        classBuilder.addMethod(shutdown());
+        classBuilder.addMethod(closeMethod());
 
         classBuilder.addMethods(protocolSpec.additionalMethods());
 
@@ -100,8 +100,8 @@ public class SyncClientClass implements ClassSpec {
 
     private FieldSpec clientParamsField() {
         return FieldSpec.builder(AwsSyncClientParams.class, "clientParams")
-                .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                .build();
+                        .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
+                        .build();
     }
 
     @Override
@@ -121,18 +121,20 @@ public class SyncClientClass implements ClassSpec {
         }
 
         return MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PROTECTED)
-                .addParameter(AwsSyncClientParams.class, "clientParams")
-                .addStatement(
-                        "this.$N = new $T(new $T().withClientParams($N).withCalculateCrc32FromCompressedDataEnabled($L))",
-                        "clientHandler",
-                        protocolSpec.getClientHandlerClass(),
-                        ClientHandlerParams.class,
-                        "clientParams",
-                        model.getCustomizationConfig().isCalculateCrc32FromCompressedData())
-                .addStatement("this.clientParams = clientParams")
-                .addStatement("this.$N = init()", protocolSpec.protocolFactory(model).name)
-                .build();
+                         .addModifiers(Modifier.PROTECTED)
+                         .addParameter(AwsSyncClientParams.class, "clientParams")
+                         .addStatement(
+                                 "this.$N = new $T(new $T()\n" +
+                                 ".withClientParams($N)\n" +
+                                 ".withCalculateCrc32FromCompressedDataEnabled($L))",
+                                 "clientHandler",
+                                 protocolSpec.getClientHandlerClass(),
+                                 ClientHandlerParams.class,
+                                 "clientParams",
+                                 model.getCustomizationConfig().isCalculateCrc32FromCompressedData())
+                         .addStatement("this.clientParams = clientParams")
+                         .addStatement("this.$N = init()", protocolSpec.protocolFactory(model).name)
+                         .build();
     }
 
     private MethodSpec constructorWithAdvancedConfiguration() {
@@ -164,57 +166,57 @@ public class SyncClientClass implements ClassSpec {
         ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
         return MethodSpec.methodBuilder(opModel.getMethodName())
-                .returns(returnType)
-                .addModifiers(Modifier.PUBLIC)
-                .addAnnotation(Override.class)
-                .addParameter(requestType, opModel.getInput().getVariableName())
-                .addCode(protocolSpec.responseHandler(opModel))
-                .addCode(protocolSpec.errorResponseHandler(opModel))
-                .addCode(protocolSpec.executionHandler(opModel))
-                .build();
+                         .returns(returnType)
+                         .addModifiers(Modifier.PUBLIC)
+                         .addAnnotation(Override.class)
+                         .addParameter(requestType, opModel.getInput().getVariableName())
+                         .addCode(protocolSpec.responseHandler(opModel))
+                         .addCode(protocolSpec.errorResponseHandler(opModel))
+                         .addCode(protocolSpec.executionHandler(opModel))
+                         .build();
     }
 
     private MethodSpec waiters() {
         ClassName waiters = poetExtensions.getWaiterClass(model.getMetadata().getSyncInterface() + "Waiters");
         return MethodSpec.methodBuilder("waiters")
-                .returns(waiters)
-                .addModifiers(Modifier.PUBLIC)
-                .beginControlFlow("if ($N == null)", "waiters")
-                .beginControlFlow("synchronized(this)")
-                .beginControlFlow("if ($N == null)", "waiters")
-                .addStatement("waiters = new $T(this)", waiters)
-                .endControlFlow()
-                .endControlFlow()
-                .endControlFlow()
-                .addStatement("return $N", "waiters")
-                .build();
+                         .returns(waiters)
+                         .addModifiers(Modifier.PUBLIC)
+                         .beginControlFlow("if ($N == null)", "waiters")
+                         .beginControlFlow("synchronized(this)")
+                         .beginControlFlow("if ($N == null)", "waiters")
+                         .addStatement("waiters = new $T(this)", waiters)
+                         .endControlFlow()
+                         .endControlFlow()
+                         .endControlFlow()
+                         .addStatement("return $N", "waiters")
+                         .build();
     }
 
     private MethodSpec presigners() {
         ClassName presigners = PoetUtils.classNameFromFqcn(model.getCustomizationConfig().getPresignersFqcn());
         return MethodSpec.methodBuilder("presigners")
-                .returns(presigners)
-                .addModifiers(Modifier.PUBLIC)
-                .addStatement("return new $T($T.builder()" +
-                              ".endpoint(clientParams.getEndpoint())" +
-                              ".credentialsProvider(clientParams.getCredentialsProvider())" +
-                              ".signerProvider(clientParams.getSignerProvider())" +
-                              ".build())",
-                              presigners,
-                              PresignerParams.class)
-                .build();
+                         .returns(presigners)
+                         .addModifiers(Modifier.PUBLIC)
+                         .addStatement("return new $T($T.builder()" +
+                                       ".endpoint(clientParams.getEndpoint())" +
+                                       ".credentialsProvider(clientParams.getCredentialsProvider())" +
+                                       ".signerProvider(clientParams.getSignerProvider())" +
+                                       ".build())",
+                                       presigners,
+                                       PresignerParams.class)
+                         .build();
     }
 
-    private MethodSpec shutdown() {
+    private MethodSpec closeMethod() {
         return MethodSpec.methodBuilder("close")
-                .addAnnotation(Override.class)
-                .addStatement("clientHandler.close()")
-                .addModifiers(Modifier.PUBLIC)
-                .addException(Exception.class)
-                .build();
+                         .addAnnotation(Override.class)
+                         .addStatement("clientHandler.close()")
+                         .addModifiers(Modifier.PUBLIC)
+                         .addException(Exception.class)
+                         .build();
     }
 
-    private ProtocolSpec getProtocolSpecs(Protocol protocol) {
+    static ProtocolSpec getProtocolSpecs(PoetExtensions poetExtensions, Protocol protocol) {
         switch (protocol) {
             case QUERY:
             case REST_XML:

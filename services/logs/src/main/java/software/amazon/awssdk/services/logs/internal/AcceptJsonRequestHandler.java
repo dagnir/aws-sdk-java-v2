@@ -15,14 +15,16 @@
 
 package software.amazon.awssdk.services.logs.internal;
 
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
-public class AcceptJsonRequestHandler extends AbstractRequestHandler {
+public class AcceptJsonRequestHandler extends RequestHandler {
 
     @Override
-    public void beforeRequest(Request<?> request) {
-        request.addHeader("Accept", "application/json");
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        return request.toBuilder()
+                      .header("Accept", "application/json")
+                      .build();
     }
 
 }

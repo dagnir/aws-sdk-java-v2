@@ -23,8 +23,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.ResponseMetadata;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
@@ -40,7 +40,8 @@ import software.amazon.awssdk.util.StringUtils;
  *            Indicates the type being unmarshalled by this response handler.
  */
 @SdkProtectedApi
-public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServiceResponse<T>> {
+@ReviewBeforeRelease("Metadata is currently broken. Revisit when base result types are refactored")
+public class StaxResponseHandler<T> implements HttpResponseHandler<T> {
 
     /** Shared logger for profiling information. */
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.request");
@@ -77,7 +78,7 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
     /**
      * @see HttpResponseHandler#handle(HttpResponse)
      */
-    public AmazonWebServiceResponse<T> handle(HttpResponse response) throws Exception {
+    public T handle(HttpResponse response) throws Exception {
         log.trace("Parsing service response XML");
         InputStream content = response.getContent();
         if (content == null) {
@@ -90,27 +91,12 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
         }
 
         try {
-            AmazonWebServiceResponse<T> awsResponse = new AmazonWebServiceResponse<>();
             StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader, response.getHeaders());
             unmarshallerContext.registerMetadataExpression("ResponseMetadata/RequestId", 2, ResponseMetadata.AWS_REQUEST_ID);
             unmarshallerContext.registerMetadataExpression("requestId", 2, ResponseMetadata.AWS_REQUEST_ID);
             registerAdditionalMetadataExpressions(unmarshallerContext);
 
-            T result = responseUnmarshaller.unmarshall(unmarshallerContext);
-            awsResponse.setResult(result);
-
-            Map<String, String> metadata = unmarshallerContext.getMetadata();
-            Map<String, String> responseHeaders = response.getHeaders();
-            if (responseHeaders != null) {
-                if (responseHeaders.get(X_AMZN_REQUEST_ID_HEADER) != null) {
-                    metadata.put(ResponseMetadata.AWS_REQUEST_ID,
-                                 responseHeaders.get(X_AMZN_REQUEST_ID_HEADER));
-                }
-            }
-            awsResponse.setResponseMetadata(getResponseMetadata(metadata));
-
-            log.trace("Done parsing service response");
-            return awsResponse;
+            return responseUnmarshaller.unmarshall(unmarshallerContext);
         } finally {
             try {
                 eventReader.close();

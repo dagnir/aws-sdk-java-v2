@@ -17,6 +17,7 @@ package software.amazon.awssdk.protocol;
 
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.HttpMethodName;
 
 
@@ -76,7 +77,7 @@ public class OperationInfo {
 
     /**
      * @return Display name for the service. Mainly used for the metrics system but is also available on the {@link Request}
-     *     object (to do something in a {@link software.amazon.awssdk.handlers.RequestHandler2} for example). This is usually the
+     *     object (to do something in a {@link RequestHandler} for example). This is usually the
      *     service interface name but may be customized at generation time ('AmazonDynamoDBv2' for example).
      */
     public String serviceName() {

@@ -18,27 +18,26 @@ package software.amazon.awssdk.http.loader;
 import static software.amazon.awssdk.utils.Validate.notNull;
 
 import java.util.Optional;
-import software.amazon.awssdk.http.SdkHttpService;
 
 /**
  * Decorator of {@link SdkHttpServiceProvider} to provide lazy initialized caching.
  */
-class CachingSdkHttpServiceProvider implements SdkHttpServiceProvider {
+final class CachingSdkHttpServiceProvider<T> implements SdkHttpServiceProvider<T> {
 
-    private final SdkHttpServiceProvider delegate;
+    private final SdkHttpServiceProvider<T> delegate;
 
     /**
      * We assume that the service obtained from the provider chain will always be the same (even if it's an empty optional) so
      * we cache it as a field.
      */
-    private volatile Optional<SdkHttpService> factory;
+    private volatile Optional<T> factory;
 
-    CachingSdkHttpServiceProvider(SdkHttpServiceProvider delegate) {
+    CachingSdkHttpServiceProvider(SdkHttpServiceProvider<T> delegate) {
         this.delegate = notNull(delegate, "Delegate service provider cannot be null");
     }
 
     @Override
-    public Optional<SdkHttpService> loadService() {
+    public Optional<T> loadService() {
         if (factory == null) {
             synchronized (this) {
                 if (factory == null) {

@@ -22,9 +22,10 @@ import java.util.List;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.MetricsReportingCredentialsProvider;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
+import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionAbortTrackerTask;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -36,19 +37,19 @@ import software.amazon.awssdk.utils.Validate;
  */
 public final class RequestExecutionContext {
 
-    private final Request<?> request;
+    private final SdkHttpRequestProvider requestProvider;
     private final RequestConfig requestConfig;
     private final AwsRequestMetrics awsRequestMetrics;
     private final AwsCredentialsProvider credentialsProvider;
-    private final List<RequestHandler2> requestHandler2s;
+    private final List<RequestHandler> requestHandlers;
     private final SignerProvider signerProvider;
 
     private ClientExecutionAbortTrackerTask clientExecutionTrackerTask;
 
     private RequestExecutionContext(Builder builder) {
-        this.request = notNull(builder.request, "Request must not be null");
+        this.requestProvider = builder.requestProvider;
         this.requestConfig = notNull(builder.requestConfig, "RequestConfig must not be null");
-        this.requestHandler2s = builder.resolveRequestHandlers();
+        this.requestHandlers = builder.resolveRequestHandlers();
         this.awsRequestMetrics = builder.executionContext.getAwsRequestMetrics();
         this.signerProvider = builder.executionContext.getSignerProvider();
 
@@ -65,11 +66,8 @@ public final class RequestExecutionContext {
         return new Builder();
     }
 
-    /**
-     * @return Marshalled request object.
-     */
-    public Request<?> request() {
-        return request;
+    public SdkHttpRequestProvider requestProvider() {
+        return requestProvider;
     }
 
     /**
@@ -82,8 +80,8 @@ public final class RequestExecutionContext {
     /**
      * @return Request handlers to hook into request lifecycle.
      */
-    public List<RequestHandler2> requestHandler2s() {
-        return Collections.unmodifiableList(requestHandler2s);
+    public List<RequestHandler> requestHandlers() {
+        return Collections.unmodifiableList(requestHandlers);
     }
 
     /**
@@ -127,12 +125,12 @@ public final class RequestExecutionContext {
      */
     public static final class Builder {
 
-        private Request<?> request;
+        private SdkHttpRequestProvider requestProvider;
         private RequestConfig requestConfig;
         private ExecutionContext executionContext;
 
-        public Builder request(Request<?> request) {
-            this.request = request;
+        public Builder requestProvider(SdkHttpRequestProvider requestProvider) {
+            this.requestProvider = requestProvider;
             return this;
         }
 
@@ -146,14 +144,14 @@ public final class RequestExecutionContext {
             return this;
         }
 
-        private List<RequestHandler2> resolveRequestHandlers() {
+        private List<RequestHandler> resolveRequestHandlers() {
             Validate.notNull(executionContext, "Execution context must be initialized before resolving request handlers.");
 
-            List<RequestHandler2> requestHandler2s = executionContext.getRequestHandler2s();
-            if (requestHandler2s == null) {
+            List<RequestHandler> requestHandlers = executionContext.getRequestHandlers();
+            if (requestHandlers == null) {
                 return Collections.emptyList();
             }
-            return requestHandler2s;
+            return requestHandlers;
         }
 
         public RequestExecutionContext build() {

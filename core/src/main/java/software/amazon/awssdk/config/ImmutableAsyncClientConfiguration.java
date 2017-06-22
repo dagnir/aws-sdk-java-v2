@@ -17,14 +17,15 @@ package software.amazon.awssdk.config;
 
 import java.net.URI;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 
@@ -33,11 +34,14 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
  */
 @SdkInternalApi
 public final class ImmutableAsyncClientConfiguration extends ImmutableClientConfiguration implements AsyncClientConfiguration {
-    private final ExecutorService asyncExecutor;
+
+    private final ScheduledExecutorService asyncExecutor;
+    private final SdkAsyncHttpClient asyncHttpClient;
 
     public ImmutableAsyncClientConfiguration(AsyncClientConfiguration configuration) {
         super(configuration);
         this.asyncExecutor = configuration.asyncExecutorService();
+        this.asyncHttpClient = configuration.asyncHttpClient();
 
         validate();
     }
@@ -47,8 +51,13 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
     }
 
     @Override
-    public ExecutorService asyncExecutorService() {
+    public ScheduledExecutorService asyncExecutorService() {
         return asyncExecutor;
+    }
+
+    @Override
+    public SdkAsyncHttpClient asyncHttpClient() {
+        return asyncHttpClient;
     }
 
     /**
@@ -59,7 +68,7 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
     public AwsAsyncClientParams asLegacyAsyncClientParams() {
         return new AwsAsyncClientParams() {
             @Override
-            public ExecutorService getExecutor() {
+            public ScheduledExecutorService getExecutor() {
                 return asyncExecutor;
             }
 
@@ -79,7 +88,7 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
             }
 
             @Override
-            public List<RequestHandler2> getRequestHandlers() {
+            public List<RequestHandler> getRequestHandlers() {
                 return overrideConfiguration().requestListeners();
             }
 
@@ -90,7 +99,12 @@ public final class ImmutableAsyncClientConfiguration extends ImmutableClientConf
 
             @Override
             public SdkHttpClient sdkHttpClient() {
-                return httpClient();
+                throw new UnsupportedOperationException("Sync HTTP client should not be used for async clients");
+            }
+
+            @Override
+            public SdkAsyncHttpClient getAsyncHttpClient() {
+                return asyncHttpClient();
             }
 
             @Override

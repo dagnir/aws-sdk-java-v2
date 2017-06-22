@@ -21,8 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.AmazonWebServiceResponse;
-import software.amazon.awssdk.ResponseMetadata;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
@@ -41,7 +40,8 @@ import software.amazon.awssdk.utils.IoUtils;
  * @param <T> Indicates the type being unmarshalled by this response handler.
  */
 @SdkProtectedApi
-public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServiceResponse<T>> {
+@ReviewBeforeRelease("Metadata in base result has been broken. Fix this and deal with AwsResponseHandlerAdapter")
+public class JsonResponseHandler<T> implements HttpResponseHandler<T> {
 
     /**
      * Shared logger for profiling information
@@ -91,7 +91,7 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
     /**
      * @see HttpResponseHandler#handle(HttpResponse)
      */
-    public AmazonWebServiceResponse<T> handle(HttpResponse response) throws Exception {
+    public T handle(HttpResponse response) throws Exception {
         log.trace("Parsing service response JSON");
 
         JsonParser jsonParser = null;
@@ -101,7 +101,6 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
         }
 
         try {
-            AmazonWebServiceResponse<T> awsResponse = new AmazonWebServiceResponse<T>();
             JsonUnmarshallerContext unmarshallerContext = new JsonUnmarshallerContextImpl(
                     jsonParser, simpleTypeUnmarshallers, response);
             registerAdditionalMetadataExpressions(unmarshallerContext);
@@ -114,15 +113,8 @@ public class JsonResponseHandler<T> implements HttpResponseHandler<AmazonWebServ
                 IoUtils.drainInputStream(response.getContent());
             }
 
-            awsResponse.setResult(result);
-
-            Map<String, String> metadata = unmarshallerContext.getMetadata();
-            metadata.put(ResponseMetadata.AWS_REQUEST_ID,
-                         response.getHeaders().get(X_AMZN_REQUEST_ID_HEADER));
-            awsResponse.setResponseMetadata(new ResponseMetadata(metadata));
-
             log.trace("Done parsing service response");
-            return awsResponse;
+            return result;
         } finally {
             if (shouldParsePayloadAsJson()) {
                 try {

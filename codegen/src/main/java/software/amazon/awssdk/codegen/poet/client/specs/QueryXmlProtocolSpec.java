@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 import org.w3c.dom.Node;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
@@ -113,18 +112,20 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
 
     @Override
     public CodeBlock executionHandler(OperationModel opModel) {
+        if (opModel.hasStreamingOutput()) {
+            // TODO FIXME
+            return CodeBlock.builder().addStatement("return null").build();
+        }
         ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
         ClassName marshaller = poetExtensions.getTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
-        return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T<$T>>()" +
+        return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T>()" +
                                        ".withMarshaller(new $T())" +
                                        ".withResponseHandler($N)" +
                                        ".withErrorResponseHandler($N)" +
-                                       ".withInput($L))" +
-                                       ".getResult();",
+                                       ".withInput($L));",
                                        ClientExecutionParams.class,
                                        requestType,
-                                       AmazonWebServiceResponse.class,
                                        returnType,
                                        marshaller,
                                        "responseHandler",

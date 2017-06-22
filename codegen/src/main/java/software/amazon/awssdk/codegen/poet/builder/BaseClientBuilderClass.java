@@ -100,8 +100,7 @@ public class BaseClientBuilderClass implements ClassSpec {
 
     private MethodSpec serviceDefaultsMethod() {
         String requestHandlerDirectory = Utils.packageToDirectory(model.getMetadata().getFullClientPackageName());
-        String requestHandlerPath = String.format("/%s/request.handlers", requestHandlerDirectory);
-        String requestHandler2Path = String.format("/%s/request.handler2s", requestHandlerDirectory);
+        String requestHandlerPath = String.format("/%s/request.handler2s", requestHandlerDirectory);
 
         return MethodSpec.methodBuilder("serviceDefaults")
                          .addAnnotation(Override.class)
@@ -109,10 +108,9 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .returns(ClientConfigurationDefaults.class)
                          .addCode("return $T.builder()\n", ServiceBuilderConfigurationDefaults.class)
                          .addCode("         .defaultSignerProvider(this::defaultSignerProvider)\n")
+                         .addCode("         .addRequestHandlerPath($S)\n", requestHandlerPath)
                          .addCode("         .defaultEndpoint(this::defaultEndpoint)\n")
-                         .addCode("         .addHandler1Path($S)\n", requestHandlerPath)
-                         .addCode("         .addHandler2Path($S)\n", requestHandler2Path)
-                         .addCode("         .build();\n", requestHandlerPath)
+                         .addCode("         .build();\n")
                          .build();
     }
 

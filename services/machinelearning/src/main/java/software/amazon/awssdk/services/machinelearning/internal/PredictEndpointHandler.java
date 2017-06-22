@@ -18,9 +18,9 @@ package software.amazon.awssdk.services.machinelearning.internal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.machinelearning.model.PredictRequest;
 
 /**
@@ -28,33 +28,26 @@ import software.amazon.awssdk.services.machinelearning.model.PredictRequest;
  * extracts the PredictRequest's PredictEndpoint "parameter" and swaps it in as
  * the endpoint to send the request to.
  */
-public class PredictEndpointHandler extends RequestHandler2 {
+public class PredictEndpointHandler extends RequestHandler {
 
     @Override
-    public void beforeRequest(Request<?> request) {
-        if (request.getOriginalRequest() instanceof PredictRequest) {
-            PredictRequest pr = (PredictRequest) request.getOriginalRequest();
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
+        if (originalRequest instanceof PredictRequest) {
+            PredictRequest pr = (PredictRequest) originalRequest;
             if (pr.predictEndpoint() == null) {
-                throw new AmazonClientException(
-                        "PredictRequest.PredictEndpoint is required!");
+                throw new AmazonClientException("PredictRequest.PredictEndpoint is required!");
             }
 
             try {
-
-                request.setEndpoint(new URI(pr.predictEndpoint()));
-
+                return request.toBuilder()
+                              .endpoint(new URI(pr.predictEndpoint()))
+                              .build();
             } catch (URISyntaxException e) {
-                throw new AmazonClientException(
-                        "Unable to parse PredictRequest.PredictEndpoint", e);
+                throw new AmazonClientException("Unable to parse PredictRequest.PredictEndpoint", e);
             }
         }
+        return request;
     }
 
-    @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
-    }
-
-    @Override
-    public void afterError(Request<?> request, Response<?> response, Exception e) {
-    }
 }

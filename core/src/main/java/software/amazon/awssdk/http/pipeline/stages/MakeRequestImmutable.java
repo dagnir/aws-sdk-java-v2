@@ -13,17 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.utils;
+package software.amazon.awssdk.http.pipeline.stages;
 
-public final class SizeConstants {
-    /** Kilobytes. */
-    public static final int KB = 1024;
+import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.pipeline.RequestPipeline;
 
-    /** Megabytes. */
-    public static final int MB = 1024 * KB;
-
-    /** Gigabytes. */
-    public static final long GB = 1024 * MB;
-
-    private SizeConstants() {}
+public class MakeRequestImmutable implements RequestPipeline<SdkHttpFullRequest.Builder, SdkHttpFullRequest> {
+    @Override
+    public SdkHttpFullRequest execute(SdkHttpFullRequest.Builder input, RequestExecutionContext context) throws Exception {
+        return input.build();
+    }
 }

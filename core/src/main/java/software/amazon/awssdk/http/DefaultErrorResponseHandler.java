@@ -128,10 +128,8 @@ public class DefaultErrorResponseHandler implements HttpResponseHandler<AmazonSe
     private String idString(HttpResponse errorResponse) {
         StringBuilder idString = new StringBuilder();
         try {
-            if (errorResponse.getRequest().getHeaders().containsKey(AmazonHttpClient.HEADER_SDK_TRANSACTION_ID)) {
-                idString.append("Invocation Id:")
-                        .append(errorResponse.getRequest().getHeaders().get(AmazonHttpClient.HEADER_SDK_TRANSACTION_ID));
-            }
+            errorResponse.getRequest().getFirstHeaderValue(AmazonHttpClient.HEADER_SDK_TRANSACTION_ID)
+                         .ifPresent(h -> idString.append("Invocation Id:").append(h));
             if (errorResponse.getHeaders().containsKey(X_AMZN_REQUEST_ID_HEADER)) {
                 if (idString.length() > 0) {
                     idString.append(", ");

@@ -18,7 +18,6 @@ package software.amazon.awssdk.metrics.internal.cloudwatch.spi;
 import java.util.Date;
 import java.util.List;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.metrics.spi.MetricType;
 import software.amazon.awssdk.metrics.spi.TimingInfo;
 import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
@@ -30,8 +29,11 @@ import software.amazon.awssdk.services.cloudwatch.model.MetricDatum;
  * {@link Object#hashCode()} methods are overridden as necessary.
  */
 public interface RequestMetricTransformer {
-    /** A convenient instance of a no-op request metric transformer. */
-    public static final RequestMetricTransformer NONE = (requestMetric, request, response) -> null;
+
+    /**
+     * A convenient instance of a no-op request metric transformer.
+     */
+    RequestMetricTransformer NONE = (requestMetric, request, response) -> null;
 
     /**
      * Returns a list of metric datum for the metrics collected for the given
@@ -41,19 +43,19 @@ public interface RequestMetricTransformer {
      * Note returning an empty list means the transformer recognized the metric
      * type but concluded there is no metrics to be generated for it.
      *
-     * @param metricType
-     *            the predefined metric type
+     * @param metricType the predefined metric type
      */
-    public List<MetricDatum> toMetricData(MetricType metricType,
-                                          Request<?> request, Response<?> response);
+    List<MetricDatum> toMetricData(MetricType metricType, Request<?> request, Object response);
 
-    /** Common utilities for implementing this SPI. */
-    public static enum Utils {
+    /**
+     * Common utilities for implementing this SPI.
+     */
+    enum Utils {
         ;
 
         public static long endTimeMilli(TimingInfo ti) {
             Long endTimeMilli = ti.getEndEpochTimeMilliIfKnown();
-            return endTimeMilli == null ? System.currentTimeMillis() : endTimeMilli.longValue();
+            return endTimeMilli == null ? System.currentTimeMillis() : endTimeMilli;
         }
 
         public static Date endTimestamp(TimingInfo ti) {

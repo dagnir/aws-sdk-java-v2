@@ -18,7 +18,8 @@ package software.amazon.awssdk;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.HandlerContextKey;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 
@@ -151,7 +152,7 @@ public interface Request<T> extends SignableRequest<T> {
 
     /**
      * Adds a context to the request object that is visible
-     * to all {@link software.amazon.awssdk.handlers.RequestHandler2} .
+     * to all {@link RequestHandler} .
      *
      * Note that, context added here will available only for the scope of
      * the request execution and will not be marshalled over the wire.

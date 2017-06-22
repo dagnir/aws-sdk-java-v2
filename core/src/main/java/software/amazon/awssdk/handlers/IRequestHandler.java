@@ -17,18 +17,18 @@ package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
- * Interface for {@link RequestHandler2}. Do not use this outside the core SDK. We can and will add
- * methods to this interface in the future. Extends {@link RequestHandler2} to implement a custom
+ * Interface for {@link RequestHandler}. Do not use this outside the core SDK. We can and will add
+ * methods to this interface in the future. Extends {@link RequestHandler} to implement a custom
  * request handler.
  */
 @SdkInternalApi
-public interface IRequestHandler2 {
+public interface IRequestHandler {
 
     /**
      * Runs any additional processing logic on the specified request object before it is marshaled
@@ -54,7 +54,7 @@ public interface IRequestHandler2 {
      * @param request
      *            The low level request being processed.
      */
-    void beforeRequest(Request<?> request);
+    SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request);
 
     /**
      * Runs any additional processing logic on the specified response before it's unmarshalled. This
@@ -69,7 +69,7 @@ public interface IRequestHandler2 {
      * @return {@link HttpResponse} to replace the actual response. May be a mutated version of the
      *         original or a completely new {@link HttpResponse} object
      */
-    HttpResponse beforeUnmarshalling(Request<?> request, HttpResponse httpResponse);
+    HttpResponse beforeUnmarshalling(SdkHttpFullRequest request, HttpResponse httpResponse);
 
     /**
      * Runs any additional processing logic on the specified request (after is has been executed by
@@ -80,7 +80,7 @@ public interface IRequestHandler2 {
      * @param response
      *            The response generated from the specified request.
      */
-    void afterResponse(Request<?> request, Response<?> response);
+    void afterResponse(SdkHttpFullRequest request, Response<?> response);
 
     /**
      * Runs any additional processing logic on a request after it has failed.
@@ -92,6 +92,6 @@ public interface IRequestHandler2 {
      * @param e
      *            The error that resulted from executing the request.
      */
-    void afterError(Request<?> request, Response<?> response, Exception e);
+    void afterError(SdkHttpFullRequest request, Response<?> response, Exception e);
 
 }

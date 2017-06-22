@@ -19,7 +19,6 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ThreadSafe;
 import software.amazon.awssdk.metrics.AwsSdkMetrics;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -51,7 +50,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
      * necessary statistics and uploaded to Amazon CloudWatch.
      */
     @Override
-    public void collectMetrics(Request<?> request, Response<?> response) {
+    public void collectMetrics(Request<?> request, Object response) {
         try {
             collectMetrics0(request, response);
         } catch (Exception ex) { // defensive code
@@ -61,7 +60,7 @@ public class RequestMetricCollectorSupport extends RequestMetricCollector {
         }
     }
 
-    private void collectMetrics0(Request<?> request, Response<?> response) {
+    private void collectMetrics0(Request<?> request, Object response) {
         AwsRequestMetrics arm = request.getAwsRequestMetrics();
         if (arm == null || !arm.isEnabled()) {
             return;

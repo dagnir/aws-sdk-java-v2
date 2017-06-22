@@ -23,7 +23,6 @@ import java.util.SimpleTimeZone;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import software.amazon.awssdk.log.InternalLogFactory;

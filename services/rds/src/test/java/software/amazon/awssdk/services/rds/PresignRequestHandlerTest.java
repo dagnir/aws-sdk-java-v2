@@ -17,29 +17,22 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import org.junit.Test;
 import software.amazon.awssdk.Protocol;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
+import software.amazon.awssdk.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.ServiceMetadata;
-import software.amazon.awssdk.runtime.SdkInternalList;
 import software.amazon.awssdk.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
-import software.amazon.awssdk.services.rds.model.Tag;
 import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
 
 /**
@@ -128,12 +121,9 @@ public class PresignRequestHandlerTest {
                 .sourceRegion("us-east-1")
                 .build();
         Region destination = Region.of("us-west-2");
-        Request<?> marshalled = marshallRequest(request);
-        marshalled.setEndpoint(new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
-                .withRegion(DESTINATION_REGION)
-                .getServiceEndpoint());
+        SdkHttpFullRequest marshalled = marshallRequest(request);
 
-        presignHandler.beforeRequest(marshalled);
+        final SdkHttpFullRequest presignedRequest = presignHandler.beforeRequest(marshalled);
 
         final URI presignedUrl = new URI(request.preSignedUrl());
         assertTrue(presignedUrl.toString().contains("DestinationRegion=" + destination.value()));
@@ -141,20 +131,22 @@ public class PresignRequestHandlerTest {
 
     @Test
     public void testSourceRegionRemovedFromOriginalRequest() throws URISyntaxException {
-        Request<?> marshalled = marshallRequest(makeTestRequest());
+        SdkHttpFullRequest marshalled = marshallRequest(makeTestRequest());
 
-        presignHandler.beforeRequest(marshalled);
+        SdkHttpFullRequest actual = presignHandler.beforeRequest(marshalled);
 
-        assertFalse(marshalled.getParameters().containsKey("SourceRegion"));
+        assertFalse(actual.getParameters().containsKey("SourceRegion"));
     }
 
-    private Request<?> marshallRequest(CopyDBSnapshotRequest request) throws URISyntaxException {
-        Request<?> marshalled = marshaller.marshall(request);
-        marshalled.setEndpoint(new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
-                .withRegion(DESTINATION_REGION)
-                .getServiceEndpoint());
-        marshalled.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, CREDENTIALS);
-        return marshalled;
+    private SdkHttpFullRequest marshallRequest(CopyDBSnapshotRequest request) throws URISyntaxException {
+        SdkHttpFullRequest marshalled = SdkHttpFullRequestAdapter.toHttpFullRequest(marshaller.marshall(request));
+        return marshalled.toBuilder()
+                         .endpoint(new DefaultServiceEndpointBuilder(RDSClient.SERVICE_NAME, Protocol.HTTPS.toString())
+                                           .withRegion(DESTINATION_REGION)
+                                           .getServiceEndpoint())
+                         .handlerContext(AwsHandlerKeys.AWS_CREDENTIALS, CREDENTIALS)
+                         .handlerContext(AwsHandlerKeys.REQUEST_CONFIG, new AmazonWebServiceRequestAdapter(request))
+                         .build();
     }
 
     private CopyDBSnapshotRequest makeTestRequest() {

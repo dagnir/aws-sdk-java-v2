@@ -17,6 +17,7 @@ package software.amazon.awssdk.http.nio.netty.internal;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.pool.AbstractChannelPoolHandler;
 import io.netty.handler.codec.http.HttpClientCodec;
@@ -61,5 +62,7 @@ public class ChannelPipelineInitializer extends AbstractChannelPoolHandler {
 
         p.addLast(new HttpClientCodec());
         p.addLast(handlers);
+        // Disabling auto-read is needed for backpressure to work
+        ch.config().setOption(ChannelOption.AUTO_READ, false);
     }
 }

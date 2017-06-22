@@ -15,16 +15,13 @@
 
 package software.amazon.awssdk.auth;
 
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
 import java.util.TimeZone;
-import java.util.TreeMap;
 import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.util.CredentialUtils;
 
 /**
@@ -32,7 +29,9 @@ import software.amazon.awssdk.util.CredentialUtils;
  * according to the various signature versions and hashing algorithms.
  */
 public class QueryStringSigner extends AbstractAwsSigner {
-    /** Date override for testing only. */
+    /**
+     * Date override for testing only.
+     */
     private Date overriddenDate;
 
     /**
@@ -41,14 +40,12 @@ public class QueryStringSigner extends AbstractAwsSigner {
      *
      * AWSAccessKeyId SignatureVersion SignatureMethod Timestamp Signature
      *
-     * @param request
-     *            request to be signed.
-     * @param credentials
-     *            The credentials used to use to sign the request.
+     * @param request     request to be signed.
+     * @param credentials The credentials used to use to sign the request.
      */
-    public void sign(SignableRequest<?> request, AwsCredentials credentials)
+    public SdkHttpFullRequest sign(SdkHttpFullRequest request, AwsCredentials credentials)
             throws SdkClientException {
-        sign(request, SignatureVersion.V2, SigningAlgorithm.HmacSHA256, credentials);
+        return sign(request.toBuilder(), SigningAlgorithm.HmacSHA256, credentials).build();
     }
 
     /**
@@ -56,99 +53,57 @@ public class QueryStringSigner extends AbstractAwsSigner {
      *
      * AWSAccessKeyId SignatureVersion SignatureMethod Timestamp Signature
      *
-     * @param request
-     *            request to be signed.
-     *
-     * @param version
-     *            signature version. "2" is recommended.
-     *
-     * @param algorithm
-     *            signature algorithm. "HmacSHA256" is recommended.
+     * @param mutableRequest request to be signed.
+     * @param algorithm      signature algorithm. "HmacSHA256" is recommended.
      */
-    public void sign(SignableRequest<?> request, SignatureVersion version,
-                     SigningAlgorithm algorithm, AwsCredentials credentials)
+    private SdkHttpFullRequest.Builder sign(SdkHttpFullRequest.Builder mutableRequest,
+                                            SigningAlgorithm algorithm, AwsCredentials credentials)
             throws SdkClientException {
         // annonymous credentials, don't sign
         if (CredentialUtils.isAnonymous(credentials)) {
-            return;
+            return mutableRequest;
         }
 
         AwsCredentials sanitizedCredentials = sanitizeCredentials(credentials);
-        request.addParameter("AWSAccessKeyId", sanitizedCredentials.accessKeyId());
-        request.addParameter("SignatureVersion", version.toString());
+        mutableRequest.queryParameter("AWSAccessKeyId", sanitizedCredentials.accessKeyId());
+        mutableRequest.queryParameter("SignatureVersion", "2");
 
-        int timeOffset = request.getTimeOffset();
-        request.addParameter("Timestamp", getFormattedTimestamp(timeOffset));
+        int timeOffset = mutableRequest.handlerContext(AwsHandlerKeys.TIME_OFFSET) == null ? 0 :
+                mutableRequest.handlerContext(AwsHandlerKeys.TIME_OFFSET);
+        mutableRequest.queryParameter("Timestamp", getFormattedTimestamp(timeOffset));
 
         if (sanitizedCredentials instanceof AwsSessionCredentials) {
-            addSessionCredentials(request, (AwsSessionCredentials) sanitizedCredentials);
+            addSessionCredentials(mutableRequest, (AwsSessionCredentials) sanitizedCredentials);
         }
 
-        String stringToSign = null;
-        if (version.equals(SignatureVersion.V1)) {
-            stringToSign = calculateStringToSignV1(request.getParameters());
-        } else if (version.equals(SignatureVersion.V2)) {
-            request.addParameter("SignatureMethod", algorithm.toString());
-            stringToSign = calculateStringToSignV2(request);
-        } else {
-            throw new SdkClientException("Invalid Signature Version specified");
-        }
+        mutableRequest.queryParameter("SignatureMethod", algorithm.toString());
+        String stringToSign = calculateStringToSignV2(mutableRequest);
 
         String signatureValue = signAndBase64Encode(stringToSign,
                                                     sanitizedCredentials.secretAccessKey(), algorithm);
-        request.addParameter("Signature", signatureValue);
-    }
-
-    /**
-     * Calculates string to sign for signature version 1.
-     *
-     * @param parameters
-     *            request parameters
-     *
-     * @return String to sign
-     */
-    private String calculateStringToSignV1(Map<String, List<String>> parameters) {
-        StringBuilder data = new StringBuilder();
-        SortedMap<String, List<String>> sorted =
-                new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
-        sorted.putAll(parameters);
-
-        for (Map.Entry<String, List<String>> entry : sorted.entrySet()) {
-            for (String value : entry.getValue()) {
-                data.append(entry.getKey())
-                    .append(value);
-            }
-        }
-
-        return data.toString();
+        mutableRequest.queryParameter("Signature", signatureValue);
+        return mutableRequest;
     }
 
     /**
      * Calculate string to sign for signature version 2.
      *
-     * @param request
-     *            The request being signed.
-     *
+     * @param request The request being signed.
      * @return String to sign
-     *
-     * @throws SdkClientException
-     *             If the string to sign cannot be calculated.
+     * @throws SdkClientException If the string to sign cannot be calculated.
      */
-    private String calculateStringToSignV2(SignableRequest<?> request) throws SdkClientException {
-        URI endpoint = request.getEndpoint();
-
-        StringBuilder data = new StringBuilder();
-        data.append("POST")
-            .append("\n")
-            .append(getCanonicalizedEndpoint(endpoint))
-            .append("\n")
-            .append(getCanonicalizedResourcePath(request))
-            .append("\n")
-            .append(getCanonicalizedQueryString(request.getParameters()));
-        return data.toString();
+    private String calculateStringToSignV2(SdkHttpRequest request) throws SdkClientException {
+        return new StringBuilder().append("POST")
+                .append("\n")
+                .append(getCanonicalizedEndpoint(request.getEndpoint()))
+                .append("\n")
+                .append(getCanonicalizedResourcePath(request))
+                .append("\n")
+                .append(getCanonicalizedQueryString(request.getParameters()))
+                .toString();
     }
 
-    private String getCanonicalizedResourcePath(SignableRequest<?> request) {
+    private String getCanonicalizedResourcePath(SdkHttpRequest request) {
         String resourcePath = "";
 
         if (request.getEndpoint().getPath() != null) {
@@ -193,13 +148,15 @@ public class QueryStringSigner extends AbstractAwsSigner {
         }
     }
 
-    /** For testing purposes only, to control the date used in signing. */
+    /**
+     * For testing purposes only, to control the date used in signing.
+     */
     void overrideDate(Date date) {
         this.overriddenDate = date;
     }
 
     @Override
-    protected void addSessionCredentials(SignableRequest<?> request, AwsSessionCredentials credentials) {
-        request.addParameter("SecurityToken", credentials.sessionToken());
+    protected void addSessionCredentials(SdkHttpFullRequest.Builder request, AwsSessionCredentials credentials) {
+        request.queryParameter("SecurityToken", credentials.sessionToken());
     }
 }

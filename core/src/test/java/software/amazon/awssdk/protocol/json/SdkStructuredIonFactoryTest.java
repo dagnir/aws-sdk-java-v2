@@ -19,17 +19,16 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.DefaultRequest;
+import software.amazon.awssdk.http.DefaultSdkHttpFullRequest;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
@@ -44,7 +43,6 @@ public class SdkStructuredIonFactoryTest {
     private static final String ERROR_TYPE = "InvalidParameterException";
     private static final String ERROR_MESSAGE = "foo";
 
-    private static final String NO_SERVICE_NAME = null;
     private static final String NO_CUSTOM_ERROR_CODE_FIELD_NAME = null;
 
     private static IonSystem system;
@@ -67,7 +65,7 @@ public class SdkStructuredIonFactoryTest {
         payload.writeTo(writer);
         writer.close();
 
-        HttpResponse error = new HttpResponse(new DefaultRequest(NO_SERVICE_NAME));
+        HttpResponse error = new HttpResponse(DefaultSdkHttpFullRequest.builder().build());
         error.setContent(new ByteArrayInputStream(bytes.toByteArray()));
         return error;
     }

@@ -15,11 +15,11 @@
 
 package software.amazon.awssdk.http.async;
 
-public interface AbortableRunnable extends Runnable {
+import software.amazon.awssdk.http.Abortable;
 
-    /**
-     * Aborts the execution of the task. Multiple calls to abort or calling abort an already aborted runnable
-     * should return without error.
-     */
-    void abort();
+/**
+ * Runnable that can be aborted.
+ */
+public interface AbortableRunnable extends Runnable, Abortable {
+
 }

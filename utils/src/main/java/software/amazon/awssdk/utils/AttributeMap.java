@@ -147,6 +147,11 @@ public final class AttributeMap implements ToCopyableBuilder<AttributeMap.Builde
         private Builder() {
         }
 
+        public <T> T get(Key<T> key) {
+            Validate.notNull(key, "Key to retrieve must not be null.");
+            return key.convertValue(configuration.get(key));
+        }
+
         /**
          * Add a mapping between the provided key and value.
          */

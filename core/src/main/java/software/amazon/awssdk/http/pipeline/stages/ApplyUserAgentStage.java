@@ -18,17 +18,17 @@ package software.amazon.awssdk.http.pipeline.stages;
 import static software.amazon.awssdk.http.AmazonHttpClient.HEADER_USER_AGENT;
 
 import software.amazon.awssdk.LegacyClientConfiguration;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.http.HttpClientDependencies;
-import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
 import software.amazon.awssdk.util.RuntimeHttpUtils;
 
 /**
  * Apply any custom user agent supplied, otherwise instrument the user agent with info about the SDK and environment.
  */
-public class ApplyUserAgentStage implements RequestToRequestPipeline {
+public class ApplyUserAgentStage implements MutableRequestToRequestPipeline {
 
     private final LegacyClientConfiguration config;
 
@@ -37,14 +37,14 @@ public class ApplyUserAgentStage implements RequestToRequestPipeline {
     }
 
     @Override
-    public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest.Builder request, RequestExecutionContext context)
+            throws Exception {
         RequestClientOptions opts = context.requestConfig().getRequestClientOptions();
         if (opts != null) {
-            request.addHeader(HEADER_USER_AGENT, RuntimeHttpUtils
+            return request.header(HEADER_USER_AGENT, RuntimeHttpUtils
                     .getUserAgent(config, opts.getClientMarker(RequestClientOptions.Marker.USER_AGENT)));
         } else {
-            request.addHeader(HEADER_USER_AGENT, RuntimeHttpUtils.getUserAgent(config, null));
+            return request.header(HEADER_USER_AGENT, RuntimeHttpUtils.getUserAgent(config, null));
         }
-        return request;
     }
 }

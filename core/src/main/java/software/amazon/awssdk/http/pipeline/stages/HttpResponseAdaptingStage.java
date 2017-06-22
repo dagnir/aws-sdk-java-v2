@@ -18,14 +18,17 @@ package software.amazon.awssdk.http.pipeline.stages;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponseAdapter;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
+import software.amazon.awssdk.utils.Pair;
 
 /**
  * Adapt our new {@link SdkHttpFullResponse} representation, to the legacy {@link HttpResponse} representation.
  */
-public class HttpResponseAdaptingStage implements RequestPipeline<SdkHttpFullResponse, HttpResponse> {
+public class HttpResponseAdaptingStage
+        implements RequestPipeline<Pair<SdkHttpFullRequest, SdkHttpFullResponse>, Pair<SdkHttpFullRequest, HttpResponse>> {
 
     private final boolean calculateCrc32FromCompressedData;
 
@@ -34,7 +37,10 @@ public class HttpResponseAdaptingStage implements RequestPipeline<SdkHttpFullRes
     }
 
     @Override
-    public HttpResponse execute(SdkHttpFullResponse input, RequestExecutionContext context) throws Exception {
-        return SdkHttpResponseAdapter.adapt(calculateCrc32FromCompressedData, context.request(), input);
+    public Pair<SdkHttpFullRequest, HttpResponse> execute(Pair<SdkHttpFullRequest, SdkHttpFullResponse> input,
+                                                          RequestExecutionContext context) throws Exception {
+        return new Pair<>(input.left(),
+                          SdkHttpResponseAdapter.adapt(calculateCrc32FromCompressedData, input.left(), input.right()));
     }
+
 }

@@ -16,7 +16,7 @@
 package software.amazon.awssdk.client.builder;
 
 import java.util.concurrent.ExecutorService;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * This includes required and optional override configuration required by every async client builder. An instance can be acquired
@@ -30,9 +30,23 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 public interface AsyncClientBuilder<B extends AsyncClientBuilder<B, C>, C>
         extends ClientBuilder<B, C> {
     /**
-     * Configure the executor service provider that generates {@link ExecutorService} instances for calling AWS asynchronously.
+     * Configure the executor service provider that generates {@link ScheduledExecutorService} instances to queue
+     * up async tasks in the client. This executor is used for various processes within the async client like queueing up
+     * retries, it is not used to make or process the actual HTTP request (that's handled by the Async HTTP implementation
+     * and can be configured via {@link #asyncHttpConfiguration(ClientAsyncHttpConfiguration)} as the implementation allows).
+     *
+     * <p>
      * A new {@link ExecutorService} will be created from this provider each time {@link ClientBuilder#build()} is invoked.
+     * </p>
      */
-    @ReviewBeforeRelease("When we switch to use NIO, this configuration will likely change. If not, comment it better.")
     B asyncExecutorProvider(ExecutorProvider asyncExecutorProvider);
+
+    /**
+     * Configures the HTTP client used by the service client. Either a client factory may be provided (in which case
+     * the SDK will merge any service specific configuration on top of customer supplied configuration) or provide an already
+     * constructed instance of {@link software.amazon.awssdk.http.async.SdkAsyncHttpClient}. Note that if an {@link
+     * software.amazon.awssdk.http.async.SdkAsyncHttpClient} is provided then it is up to the caller to close it when they are
+     * finished with it, the SDK will only close HTTP clients that it creates.
+     */
+    B asyncHttpConfiguration(ClientAsyncHttpConfiguration asyncHttpConfiguration);
 }

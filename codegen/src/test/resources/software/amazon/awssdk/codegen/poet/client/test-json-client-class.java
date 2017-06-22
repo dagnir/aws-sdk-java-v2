@@ -1,23 +1,7 @@
-/*
- * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License").
- * You may not use this file except in compliance with the License.
- * A copy of the License is located at
- *
- *  http://aws.amazon.com/apache2.0
- *
- * or in the "license" file accompanying this file. This file is distributed
- * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
- * express or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
 package software.amazon.awssdk.services.json;
 
 import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientExecutionParams;
@@ -59,34 +43,32 @@ class DefaultJsonClient implements JsonClient {
     @Override
     public APostOperationResponse aPostOperation(APostOperationRequest aPostOperationRequest) {
 
-        HttpResponseHandler<AmazonWebServiceResponse<APostOperationResponse>> responseHandler = protocolFactory
-            .createResponseHandler(new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
-                                   new APostOperationResponseUnmarshaller());
+        HttpResponseHandler<APostOperationResponse> responseHandler = protocolFactory.createResponseHandler(
+                new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
+                new APostOperationResponseUnmarshaller());
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
-        return clientHandler.execute(
-            new ClientExecutionParams<APostOperationRequest, AmazonWebServiceResponse<APostOperationResponse>>()
-                .withMarshaller(new APostOperationRequestMarshaller(protocolFactory))
-                .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                .withInput(aPostOperationRequest)).getResult();
+        return clientHandler.execute(new ClientExecutionParams<APostOperationRequest, APostOperationResponse>()
+                                             .withMarshaller(new APostOperationRequestMarshaller(protocolFactory)).withResponseHandler(responseHandler)
+                                             .withErrorResponseHandler(errorResponseHandler).withInput(aPostOperationRequest));
     }
 
     @Override
-    public APostOperationWithOutputResponse aPostOperationWithOutput(APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
+    public APostOperationWithOutputResponse aPostOperationWithOutput(
+            APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
 
-        HttpResponseHandler<AmazonWebServiceResponse<APostOperationWithOutputResponse>> responseHandler = protocolFactory
-            .createResponseHandler(new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
-                                   new APostOperationWithOutputResponseUnmarshaller());
+        HttpResponseHandler<APostOperationWithOutputResponse> responseHandler = protocolFactory.createResponseHandler(
+                new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
+                new APostOperationWithOutputResponseUnmarshaller());
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
         return clientHandler
-            .execute(
-                new ClientExecutionParams<APostOperationWithOutputRequest, AmazonWebServiceResponse<APostOperationWithOutputResponse>>()
-                    .withMarshaller(new APostOperationWithOutputRequestMarshaller(protocolFactory))
-                    .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
-                    .withInput(aPostOperationWithOutputRequest)).getResult();
+                .execute(new ClientExecutionParams<APostOperationWithOutputRequest, APostOperationWithOutputResponse>()
+                                 .withMarshaller(new APostOperationWithOutputRequestMarshaller(protocolFactory))
+                                 .withResponseHandler(responseHandler).withErrorResponseHandler(errorResponseHandler)
+                                 .withInput(aPostOperationWithOutputRequest));
     }
 
     private HttpResponseHandler<AmazonServiceException> createErrorResponseHandler() {
@@ -95,12 +77,12 @@ class DefaultJsonClient implements JsonClient {
 
     private software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory init() {
         return new SdkJsonProtocolFactory(new JsonClientMetadata()
-                                              .withProtocolVersion("1.1")
-                                              .withSupportsCbor(false)
-                                              .withSupportsIon(false)
-                                              .withBaseServiceExceptionClass(software.amazon.awssdk.services.json.model.JsonException.class)
-                                              .addErrorMetadata(
-                                                  new JsonErrorShapeMetadata().withErrorCode("InvalidInput").withModeledClass(InvalidInputException.class)));
+                                                  .withProtocolVersion("1.1")
+                                                  .withSupportsCbor(false)
+                                                  .withSupportsIon(false)
+                                                  .withBaseServiceExceptionClass(software.amazon.awssdk.services.json.model.JsonException.class)
+                                                  .addErrorMetadata(
+                                                          new JsonErrorShapeMetadata().withErrorCode("InvalidInput").withModeledClass(InvalidInputException.class)));
     }
 
     public AcmClientPresigners presigners() {

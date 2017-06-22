@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.event.ProgressInputStream;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.HandlerContextKey;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 import software.amazon.awssdk.util.json.Jackson;
@@ -46,7 +46,7 @@ public class DefaultRequest<T> implements Request<T> {
     private final AmazonWebServiceRequest originalRequest;
     /**
      * Context associated with a request. Mainly used to transfer
-     * information between different {@link RequestHandler2}
+     * information between different {@link RequestHandler}
      */
     private final Map<HandlerContextKey<?>, Object> handlerContext = new
             HashMap<HandlerContextKey<?>, Object>();

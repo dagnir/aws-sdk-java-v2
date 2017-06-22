@@ -13,21 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.auth;
+package software.amazon.awssdk.http.nio.netty;
 
-public enum SignatureVersion {
+import software.amazon.awssdk.http.async.SdkAsyncHttpClientFactory;
+import software.amazon.awssdk.http.async.SdkAsyncHttpService;
 
-    V1("1"), V2("2");
-
-    private String value;
-
-    private SignatureVersion(String value) {
-        this.value = value;
-    }
+/**
+ * Service binding for the Netty default implementation. Allows SDK to pick this up automatically from the classpath.
+ */
+public class NettySdkAsyncHttpService implements SdkAsyncHttpService {
 
     @Override
-    public String toString() {
-        return this.value;
+    public SdkAsyncHttpClientFactory createAsyncHttpClientFactory() {
+        return NettySdkHttpClientFactory.builder().build();
     }
-
 }

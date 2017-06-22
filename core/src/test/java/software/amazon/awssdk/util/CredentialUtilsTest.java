@@ -26,8 +26,8 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import utils.model.EmptyAmazonWebServiceRequest;
 
 public class CredentialUtilsTest {

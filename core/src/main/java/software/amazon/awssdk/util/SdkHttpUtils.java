@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import software.amazon.awssdk.SignableRequest;
+import java.util.stream.Collectors;
+import software.amazon.awssdk.http.SdkHttpRequest;
 
 public class SdkHttpUtils {
 
@@ -38,18 +39,14 @@ public class SdkHttpUtils {
     private static final Pattern ENCODED_CHARACTERS_PATTERN;
 
     static {
-        StringBuilder pattern = new StringBuilder();
-
-        pattern
-                .append(Pattern.quote("+"))
-                .append("|")
-                .append(Pattern.quote("*"))
-                .append("|")
-                .append(Pattern.quote("%7E"))
-                .append("|")
-                .append(Pattern.quote("%2F"));
-
-        ENCODED_CHARACTERS_PATTERN = Pattern.compile(pattern.toString());
+        ENCODED_CHARACTERS_PATTERN = Pattern.compile(new StringBuilder()
+                                                             .append(Pattern.quote("+"))
+                                                             .append("|")
+                                                             .append(Pattern.quote("*"))
+                                                             .append("|")
+                                                             .append(Pattern.quote("%7E"))
+                                                             .append("|")
+                                                             .append(Pattern.quote("%2F")).toString());
     }
 
     /**
@@ -60,7 +57,7 @@ public class SdkHttpUtils {
      * which should NOT be escaped).
      *
      * @param value the value to encode
-     * @param path true if the value is intended to represent a path
+     * @param path  true if the value is intended to represent a path
      * @return the encoded value
      */
     public static String urlEncode(final String value, final boolean path) {
@@ -123,9 +120,8 @@ public class SdkHttpUtils {
      * port other than 80 for HTTP URIs or any port other than 443 for HTTPS
      * URIs).
      *
-     *
      * @return True if the specified URI is using a non-standard port, otherwise
-     *         false.
+     * false.
      */
     public static boolean isUsingNonDefaultPort(URI uri) {
         String scheme = StringUtils.lowerCase(uri.getScheme());
@@ -144,17 +140,7 @@ public class SdkHttpUtils {
         return true;
     }
 
-    /**
-     * Creates an encoded query string from all the parameters in the specified
-     * request.
-     *
-     * @param request
-     *            The request containing the parameters to encode.
-     *
-     * @return empty string if no parameters were present, otherwise the encoded query
-     *         string for the parameters present in the specified request.
-     */
-    public static String encodeParameters(SignableRequest<?> request) {
+    public static String encodeParameters(SdkHttpRequest request) {
 
         final Map<String, List<String>> requestParams = request.getParameters();
 
@@ -162,14 +148,13 @@ public class SdkHttpUtils {
             return "";
         }
 
-        final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        final List<NameValuePair> nameValuePairs = new ArrayList<>();
 
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
             String parameterName = entry.getKey();
-            for (String value : entry.getValue()) {
-                nameValuePairs
-                        .add(new BasicNameValuePair(parameterName, value));
-            }
+            nameValuePairs.addAll(entry.getValue().stream()
+                                       .map(value -> new BasicNameValuePair(parameterName, value))
+                                       .collect(Collectors.toList()));
         }
 
         return UrlEncodedUtils.format(nameValuePairs, DEFAULT_ENCODING);
@@ -186,8 +171,8 @@ public class SdkHttpUtils {
     /**
      * Append the given path to the given baseUri.
      *
-     * @param baseUri The URI to append to (required, may be relative)
-     * @param path The path to append (may be null or empty).  Path should be pre-encoded.
+     * @param baseUri           The URI to append to (required, may be relative)
+     * @param path              The path to append (may be null or empty).  Path should be pre-encoded.
      * @param escapeDoubleSlash Whether double-slash in the path should be escaped to "/%2F"
      * @return The baseUri with the path appended
      */

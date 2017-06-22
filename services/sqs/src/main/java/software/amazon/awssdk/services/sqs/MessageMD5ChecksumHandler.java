@@ -28,9 +28,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.AbstractRequestHandler;
-import software.amazon.awssdk.metrics.spi.TimingInfo;
+import software.amazon.awssdk.Response;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
@@ -49,7 +50,7 @@ import software.amazon.awssdk.utils.BinaryUtils;
  * This custom request handler will verify that the message is correctly received by SQS, by
  * comparing the returned MD5 with the calculation according to the original request.
  */
-public class MessageMD5ChecksumHandler extends AbstractRequestHandler {
+public class MessageMD5ChecksumHandler extends RequestHandler {
 
     private static final int INTEGER_SIZE_IN_BYTES = 4;
     private static final byte STRING_TYPE_FIELD_INDEX = 1;
@@ -130,7 +131,7 @@ public class MessageMD5ChecksumHandler extends AbstractRequestHandler {
      */
     private static void sendMessageBatchOperationMd5Check(SendMessageBatchRequest sendMessageBatchRequest,
                                                           SendMessageBatchResponse sendMessageBatchResult) {
-        Map<String, SendMessageBatchRequestEntry> idToRequestEntryMap = new HashMap<String, SendMessageBatchRequestEntry>();
+        Map<String, SendMessageBatchRequestEntry> idToRequestEntryMap = new HashMap<>();
         if (sendMessageBatchRequest.entries() != null) {
             for (SendMessageBatchRequestEntry entry : sendMessageBatchRequest.entries()) {
                 idToRequestEntryMap.put(entry.id(), entry);
@@ -190,10 +191,10 @@ public class MessageMD5ChecksumHandler extends AbstractRequestHandler {
         if (log.isDebugEnabled()) {
             log.debug("Message attribtues: " + messageAttributes);
         }
-        List<String> sortedAttributeNames = new ArrayList<String>(messageAttributes.keySet());
+        List<String> sortedAttributeNames = new ArrayList<>(messageAttributes.keySet());
         Collections.sort(sortedAttributeNames);
 
-        MessageDigest md5Digest = null;
+        MessageDigest md5Digest;
         try {
             md5Digest = MessageDigest.getInstance("MD5");
 
@@ -260,29 +261,21 @@ public class MessageMD5ChecksumHandler extends AbstractRequestHandler {
     }
 
     @Override
-    public void afterResponse(Request<?> request, Object response, TimingInfo timingInfo) {
-        if (request != null && response != null) {
-            // SendMessage
-            if (request.getOriginalRequest() instanceof SendMessageRequest && response instanceof SendMessageResponse) {
-
-                SendMessageRequest sendMessageRequest = (SendMessageRequest) request.getOriginalRequest();
-                SendMessageResponse sendMessageResult = (SendMessageResponse) response;
+    public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
+        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
+        if (response != null) {
+            if (originalRequest instanceof SendMessageRequest) {
+                SendMessageRequest sendMessageRequest = (SendMessageRequest) originalRequest;
+                SendMessageResponse sendMessageResult = (SendMessageResponse) response.getAwsResponse();
                 sendMessageOperationMd5Check(sendMessageRequest, sendMessageResult);
 
-            } else if (request.getOriginalRequest() instanceof ReceiveMessageRequest &&
-                       response instanceof ReceiveMessageResponse) {
-
-                // ReceiveMessage
-                ReceiveMessageResponse receiveMessageResult = (ReceiveMessageResponse) response;
+            } else if (originalRequest instanceof ReceiveMessageRequest) {
+                ReceiveMessageResponse receiveMessageResult = (ReceiveMessageResponse) response.getAwsResponse();
                 receiveMessageResultMd5Check(receiveMessageResult);
 
-            } else if (request.getOriginalRequest() instanceof SendMessageBatchRequest &&
-                       response instanceof SendMessageBatchResponse) {
-
-                // SendMessageBatch
-                SendMessageBatchRequest sendMessageBatchRequest = (SendMessageBatchRequest) request
-                        .getOriginalRequest();
-                SendMessageBatchResponse sendMessageBatchResult = (SendMessageBatchResponse) response;
+            } else if (originalRequest instanceof SendMessageBatchRequest) {
+                SendMessageBatchRequest sendMessageBatchRequest = (SendMessageBatchRequest) originalRequest;
+                SendMessageBatchResponse sendMessageBatchResult = (SendMessageBatchResponse) response.getAwsResponse();
                 sendMessageBatchOperationMd5Check(sendMessageBatchRequest, sendMessageBatchResult);
             }
         }

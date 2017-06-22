@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.http;
 
-import software.amazon.awssdk.annotation.NotThreadSafe;
+import software.amazon.awssdk.annotation.ThreadSafe;
 
 /**
  * Service Provider interface for HTTP implementations. The core uses {@link java.util.ServiceLoader} to find appropriate
@@ -26,10 +26,10 @@ import software.amazon.awssdk.annotation.NotThreadSafe;
  * information.
  *
  * <p>
- * This interface is simply a factory for {@link SdkHttpClientFactory}. Implementations are not required to be thread safe.
+ * This interface is simply a factory for {@link SdkHttpClientFactory}. Implementations must be thread safe.
  * </p>
  */
-@NotThreadSafe
+@ThreadSafe
 public interface SdkHttpService {
 
     /**

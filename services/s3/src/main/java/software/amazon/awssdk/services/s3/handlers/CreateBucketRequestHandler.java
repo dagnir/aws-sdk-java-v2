@@ -17,11 +17,11 @@ package software.amazon.awssdk.services.s3.handlers;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.services.s3.BucketUtils;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
-public class CreateBucketRequestHandler extends RequestHandler2 {
+public class CreateBucketRequestHandler extends RequestHandler {
 
     @Override
     @ReviewBeforeRelease("Automatically set location constraint to the bucket region if not provided. Also" +
@@ -43,6 +43,7 @@ public class CreateBucketRequestHandler extends RequestHandler2 {
      * name is not valid, an {@link IllegalArgumentException} is thrown. See
      * {@link BucketUtils#isValidDnsBucketName(String, boolean)} for additional
      * details.
+     *
      * @param bucketName Name of the bucket
      */
     private void validateBucketNameIsS3Compatible(String bucketName) {

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicy;
 import software.amazon.awssdk.utils.AttributeMap;
@@ -44,7 +44,7 @@ public class ClientOverrideConfiguration
     private final Boolean gzipEnabled;
     private final RequestMetricCollector requestMetricCollector;
     private final RetryPolicy retryPolicy;
-    private final List<RequestHandler2> requestListeners;
+    private final List<RequestHandler> requestListeners;
     private final AttributeMap advancedOptions;
 
     /**
@@ -177,7 +177,7 @@ public class ClientOverrideConfiguration
      */
     @ReviewBeforeRelease("We are probably going to update the request handler interface. The description should be updated to "
                          + "detail the functionality of the new interface.")
-    public List<RequestHandler2> requestListeners() {
+    public List<RequestHandler> requestListeners() {
         return requestListeners;
     }
 
@@ -275,7 +275,7 @@ public class ClientOverrideConfiguration
          *
          * @see ClientOverrideConfiguration#requestListeners()
          */
-        Builder requestListeners(List<RequestHandler2> requestListeners);
+        Builder requestListeners(List<RequestHandler> requestListeners);
 
         /**
          * Add a request listener that will be hooked into the execution of each request after the listeners that have previously
@@ -283,7 +283,7 @@ public class ClientOverrideConfiguration
          *
          * @see ClientOverrideConfiguration#requestListeners()
          */
-        Builder addRequestListener(RequestHandler2 requestListener);
+        Builder addRequestListener(RequestHandler requestListener);
 
         /**
          * Configure an advanced override option. These values are used very rarely, and the majority of SDK customers can ignore
@@ -312,7 +312,7 @@ public class ClientOverrideConfiguration
         private Boolean gzipEnabled;
         private RequestMetricCollector requestMetricCollector;
         private RetryPolicy retryPolicy;
-        private List<RequestHandler2> requestListeners = new ArrayList<>();
+        private List<RequestHandler> requestListeners = new ArrayList<>();
         private AttributeMap.Builder advancedOptions = AttributeMap.builder();
 
         @Override
@@ -383,19 +383,19 @@ public class ClientOverrideConfiguration
         }
 
         @Override
-        public Builder requestListeners(List<RequestHandler2> requestListeners) {
+        public Builder requestListeners(List<RequestHandler> requestListeners) {
             this.requestListeners.clear();
             this.requestListeners.addAll(requestListeners);
             return this;
         }
 
         @Override
-        public Builder addRequestListener(RequestHandler2 requestListener) {
+        public Builder addRequestListener(RequestHandler requestListener) {
             this.requestListeners.add(requestListener);
             return this;
         }
 
-        public void setRequestListeners(List<RequestHandler2> requestListeners) {
+        public void setRequestListeners(List<RequestHandler> requestListeners) {
             requestListeners(requestListeners);
         }
 

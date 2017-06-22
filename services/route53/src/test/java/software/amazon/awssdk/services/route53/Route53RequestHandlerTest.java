@@ -17,12 +17,10 @@ package software.amazon.awssdk.services.route53;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonWebServiceResponse;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.services.route53.internal.Route53IdRequestHandler;
 import software.amazon.awssdk.services.route53.model.CreateHostedZoneResponse;
 import software.amazon.awssdk.services.route53.model.CreateReusableDelegationSetResponse;
@@ -107,9 +105,7 @@ public class Route53RequestHandlerTest {
         assertEquals(createResult.delegationSet().id(), id);
     }
 
-    private void afterResponse(RequestHandler2 requestHandler2, Object responseObject) {
-        AmazonWebServiceResponse<Object> resp = new AmazonWebServiceResponse<>();
-        resp.setResult(responseObject);
-        requestHandler2.afterResponse(null, new Response<>(resp, null));
+    private void afterResponse(RequestHandler requestHandler, Object responseObject) {
+        requestHandler.afterResponse(null, new Response<>(responseObject, null));
     }
 }

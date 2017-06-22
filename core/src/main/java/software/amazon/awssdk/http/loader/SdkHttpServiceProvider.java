@@ -16,16 +16,17 @@
 package software.amazon.awssdk.http.loader;
 
 import java.util.Optional;
-import software.amazon.awssdk.http.SdkHttpService;
 
 /**
- * Interface to load an {@link SdkHttpService} from the environment/classpath.
+ * Interface to load an HTTP service binding from the environment/classpath.
+ *
+ * @param <T> Type of service binding being loaded.
  */
-interface SdkHttpServiceProvider {
+interface SdkHttpServiceProvider<T> {
 
     /**
      * @return Empty {@link Optional} if service can't be loaded, otherwise fulfilled {@link Optional} containing service
      * instance.
      */
-    Optional<SdkHttpService> loadService();
+    Optional<T> loadService();
 }

@@ -35,28 +35,17 @@ public final class HandlerChainFactory {
     private static final String GLOBAL_HANDLER_PATH = "software/amazon/awssdk/global/handlers/request.handler2s";
 
     /**
-     * For backward compatibility, constructs a new request handler chain adapted to {@link RequestHandler2} by analyzing the
-     * specified classpath resource.
+     * Constructs a new request handler chain by analyzing the specified classpath resource.
      *
      * @param resource The resource to load from the classpath containing the list of request handlers to instantiate.
      * @return A list of request handlers based on the handlers referenced in the specified resource.
      */
-    public List<RequestHandler2> newRequestHandlerChain(String resource) {
+    public List<RequestHandler> newRequestHandlerChain(String resource) {
         return createRequestHandlerChain(resource, RequestHandler.class);
     }
 
-    /**
-     * Constructs a new request handler (v2) chain by analyzing the specified classpath resource.
-     *
-     * @param resource The resource to load from the classpath containing the list of request handlers to instantiate.
-     * @return A list of request handlers based on the handlers referenced in the specified resource.
-     */
-    public List<RequestHandler2> newRequestHandler2Chain(String resource) {
-        return createRequestHandlerChain(resource, RequestHandler2.class);
-    }
-
-    public List<RequestHandler2> getGlobalHandlers() {
-        List<RequestHandler2> handlers = new ArrayList<RequestHandler2>();
+    public List<RequestHandler> getGlobalHandlers() {
+        List<RequestHandler> handlers = new ArrayList<RequestHandler>();
         BufferedReader fileReader = null;
 
         try {
@@ -71,7 +60,7 @@ public final class HandlerChainFactory {
                     if (requestHandlerClassName == null) {
                         break;
                     }
-                    RequestHandler2 requestHandler = createRequestHandler(requestHandlerClassName, RequestHandler2.class);
+                    RequestHandler requestHandler = createRequestHandler(requestHandlerClassName, RequestHandler.class);
                     if (requestHandler == null) {
                         continue;
                     }
@@ -94,7 +83,7 @@ public final class HandlerChainFactory {
         return handlers;
     }
 
-    private RequestHandler2 createRequestHandler(String handlerClassName, Class<?> handlerApiClass)
+    private RequestHandler createRequestHandler(String handlerClassName, Class<?> handlerApiClass)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         handlerClassName = handlerClassName.trim();
         if (handlerClassName.equals("")) {
@@ -105,12 +94,8 @@ public final class HandlerChainFactory {
                 handlerApiClass, getClass());
         Object requestHandlerObject = requestHandlerClass.newInstance();
         if (handlerApiClass.isInstance(requestHandlerObject)) {
-            if (handlerApiClass == RequestHandler2.class) {
-                return (RequestHandler2) requestHandlerObject;
-
-            } else if (handlerApiClass == RequestHandler.class) {
-                return RequestHandler2.adapt((RequestHandler) requestHandlerObject);
-
+            if (handlerApiClass == RequestHandler.class) {
+                return (RequestHandler) requestHandlerObject;
             } else {
                 throw new IllegalStateException();
             }
@@ -124,8 +109,8 @@ public final class HandlerChainFactory {
         }
     }
 
-    private List<RequestHandler2> createRequestHandlerChain(String resource, Class<?> handlerApiClass) {
-        List<RequestHandler2> handlers = new ArrayList<RequestHandler2>();
+    private List<RequestHandler> createRequestHandlerChain(String resource, Class<?> handlerApiClass) {
+        List<RequestHandler> handlers = new ArrayList<RequestHandler>();
         BufferedReader reader = null;
 
         try {
@@ -140,7 +125,7 @@ public final class HandlerChainFactory {
                 if (requestHandlerClassName == null) {
                     break;
                 }
-                RequestHandler2 requestHandler = createRequestHandler(requestHandlerClassName, handlerApiClass);
+                RequestHandler requestHandler = createRequestHandler(requestHandlerClassName, handlerApiClass);
                 if (requestHandler == null) {
                     continue;
                 }

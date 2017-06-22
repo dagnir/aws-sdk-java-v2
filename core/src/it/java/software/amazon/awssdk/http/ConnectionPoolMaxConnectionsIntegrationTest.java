@@ -30,7 +30,6 @@ import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.http.server.MockServer;
 import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.internal.http.response.EmptyAWSResponseHandler;
-import utils.HttpTestUtils;
 
 public class ConnectionPoolMaxConnectionsIntegrationTest {
 

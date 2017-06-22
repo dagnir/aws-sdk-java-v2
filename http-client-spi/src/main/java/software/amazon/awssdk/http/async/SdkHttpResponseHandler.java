@@ -16,12 +16,16 @@
 package software.amazon.awssdk.http.async;
 
 import java.nio.ByteBuffer;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscription;
 import software.amazon.awssdk.http.SdkHttpResponse;
 
 /**
  * Responsible for handling asynchronous http responses
+ *
+ * @param <T> Type of result returned in {@link #complete()}. May be {@link Void}.
  */
-public interface SdkHttpResponseHandler {
+public interface SdkHttpResponseHandler<T> {
 
     /**
      * Called when the initial response with headers is received.
@@ -31,11 +35,16 @@ public interface SdkHttpResponseHandler {
     void headersReceived(SdkHttpResponse response);
 
     /**
-     * Called when a chunk of data is received.
+     * Called when the HTTP client is ready to start sending data to the response handler. Implementations
+     * must subscribe to the {@link Publisher} and request data via a {@link org.reactivestreams.Subscription} as
+     * they can handle it.
      *
-     * @param part the data
+     * <p>
+     * If at any time the subscriber wishes to stop receiving data, it may call {@link Subscription#cancel()}. This
+     * will be treated as a failure of the response and the {@link #exceptionOccurred(Throwable)} callback will be invoked.
+     * </p>
      */
-    void bodyPartReceived(ByteBuffer part);
+    void onStream(Publisher<ByteBuffer> publisher);
 
     /**
      * Called when an exception occurs during the request/response.
@@ -46,6 +55,9 @@ public interface SdkHttpResponseHandler {
 
     /**
      * Called when all parts of the response have been received.
+     *
+     * @return Transformed result.
      */
-    void complete();
+    T complete();
+
 }

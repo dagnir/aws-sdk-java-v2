@@ -19,12 +19,12 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.Request;
+import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.Presigner;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.runtime.auth.SignerProviderContext;
 import software.amazon.awssdk.util.CredentialUtils;
@@ -46,54 +46,45 @@ public final class PresignerFacade {
         this.signerProvider = presignerParams.signerProvider();
     }
 
-    public URL presign(Request<?> request, Date expirationDate) {
+    public URL presign(SdkHttpFullRequest request, RequestConfig requestConfig, Date expirationDate) {
         final Presigner presigner = (Presigner) signerProvider.getSigner(SignerProviderContext.builder()
                                                                                               .withIsRedirect(false)
                                                                                               .withRequest(request)
                                                                                               .withUri(request.getEndpoint())
                                                                                               .build());
-        if (request.getOriginalRequest() != null) {
-            addCustomQueryParams(request);
-            addCustomHeaders(request);
+        SdkHttpFullRequest.Builder mutableRequest = request.toBuilder();
+        if (requestConfig != null) {
+            addCustomQueryParams(mutableRequest, requestConfig);
+            addCustomHeaders(mutableRequest, requestConfig);
         }
-        final AwsCredentialsProvider credentialsProvider = resolveCredentials(request);
-        presigner.presignRequest(request, credentialsProvider.getCredentials(), expirationDate);
-        return RuntimeHttpUtils.convertRequestToUrl(request, true, false);
+        final AwsCredentialsProvider credentialsProvider = resolveCredentials(requestConfig);
+        SdkHttpFullRequest signed = presigner.presignRequest(mutableRequest.build(),
+                                                             credentialsProvider.getCredentials(), expirationDate);
+        return RuntimeHttpUtils.convertRequestToUrl(signed, true, false);
     }
 
-    private void addCustomQueryParams(Request<?> request) {
-        final Map<String, List<String>> queryParameters = request.getOriginalRequest().getCustomQueryParameters();
+    private void addCustomQueryParams(SdkHttpFullRequest.Builder request, RequestConfig requestConfig) {
+        final Map<String, List<String>> queryParameters = requestConfig.getCustomQueryParameters();
         if (queryParameters == null || queryParameters.isEmpty()) {
             return;
         }
         for (Map.Entry<String, List<String>> param : queryParameters.entrySet()) {
-            request.addParameters(param.getKey(), param.getValue());
+            request.queryParameter(param.getKey(), param.getValue());
         }
     }
 
-    private void addCustomHeaders(Request<?> request) {
-        final Map<String, String> headers = request.getOriginalRequest().getCustomRequestHeaders();
+    private void addCustomHeaders(SdkHttpFullRequest.Builder request, RequestConfig requestConfig) {
+        final Map<String, String> headers = requestConfig.getCustomRequestHeaders();
         if (headers == null || headers.isEmpty()) {
             return;
         }
         for (Map.Entry<String, String> header : headers.entrySet()) {
-            request.addHeader(header.getKey(), header.getValue());
+            request.header(header.getKey(), header.getValue());
         }
     }
 
-    private AwsCredentialsProvider resolveCredentials(Request<?> request) {
-        return CredentialUtils.getCredentialsProvider(request.getOriginalRequest(), this.credentialsProvider);
+    private AwsCredentialsProvider resolveCredentials(RequestConfig requestConfig) {
+        return CredentialUtils.getCredentialsProvider(requestConfig, this.credentialsProvider);
     }
 
-    /**
-     * Empty request object useful for setting request level credentials without having the user facing presiging request extend
-     * from {@link AmazonWebServiceRequest}.
-     */
-    public static class PresigningRequest extends AmazonWebServiceRequest {
-
-        public PresigningRequest withRequestCredentialsProvider(AwsCredentialsProvider credentialsProvider) {
-            setRequestCredentialsProvider(credentialsProvider);
-            return this;
-        }
-    }
 }

@@ -18,6 +18,7 @@ package software.amazon.awssdk.internal.http.response;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
@@ -41,7 +42,7 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<SdkBaseExcep
     public AmazonServiceException handle(HttpResponse response) throws Exception {
         final AmazonServiceException ase = (AmazonServiceException) handleAse(response);
         ase.setStatusCode(response.getStatusCode());
-        ase.setServiceName(response.getRequest().getServiceName());
+        ase.setServiceName(response.getRequest().handlerContext(AwsHandlerKeys.SERVICE_NAME));
         awsRequestMetrics.addPropertyWith(AwsRequestMetrics.Field.AWSRequestID, ase.getRequestId())
                          .addPropertyWith(AwsRequestMetrics.Field.AWSErrorCode, ase.getErrorCode())
                          .addPropertyWith(AwsRequestMetrics.Field.StatusCode, ase.getStatusCode());
@@ -58,14 +59,12 @@ public class AwsErrorResponseHandler implements HttpResponseHandler<SdkBaseExcep
             // If the errorResponseHandler doesn't work, then check for error responses that don't have any content
             if (statusCode == 413) {
                 AmazonServiceException exception = new AmazonServiceException("Request entity too large");
-                exception.setServiceName(response.getRequest().getServiceName());
                 exception.setStatusCode(statusCode);
                 exception.setErrorType(AmazonServiceException.ErrorType.Client);
                 exception.setErrorCode("Request entity too large");
                 return exception;
             } else if (statusCode >= 500 && statusCode < 600) {
                 AmazonServiceException exception = new AmazonServiceException(response.getStatusText());
-                exception.setServiceName(response.getRequest().getServiceName());
                 exception.setStatusCode(statusCode);
                 exception.setErrorType(AmazonServiceException.ErrorType.Service);
                 exception.setErrorCode(response.getStatusText());

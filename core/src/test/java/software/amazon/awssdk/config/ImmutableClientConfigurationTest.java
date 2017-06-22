@@ -22,8 +22,8 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import org.junit.Test;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
@@ -31,8 +31,9 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.retry.RetryPolicy;
@@ -44,13 +45,14 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
 @SuppressWarnings("deprecation") // Intentional use of deprecated class
 public class ImmutableClientConfigurationTest {
     private static final NoOpSignerProvider SIGNER_PROVIDER = new NoOpSignerProvider();
-    private static final RequestHandler2 REQUEST_HANDLER = new RequestHandler2() {
+    private static final RequestHandler REQUEST_HANDLER = new RequestHandler() {
     };
     private static final AwsCredentialsProvider CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private static final URI ENDPOINT = URI.create("https://www.example.com");
     private static final RetryPolicy RETRY_POLICY = new RetryPolicy(null, null, 10, true);
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
-    private static final SdkHttpClient SDK_HTTP_CLIENT = mock(SdkHttpClient.class);
+    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1);
+    private static final SdkHttpClient SYNC_HTTP_CLIENT = mock(SdkHttpClient.class);
+    private static final SdkAsyncHttpClient ASYNC_HTTP_CLIENT = mock(SdkAsyncHttpClient.class);
 
     private static final LegacyClientConfiguration EXPECTED_LEGACY_CONFIGURATION =
             new LegacyClientConfiguration()
@@ -79,7 +81,7 @@ public class ImmutableClientConfigurationTest {
         }
 
         @Override
-        public List<RequestHandler2> getRequestHandlers() {
+        public List<RequestHandler> getRequestHandlers() {
             return Collections.singletonList(REQUEST_HANDLER);
         }
 
@@ -95,7 +97,7 @@ public class ImmutableClientConfigurationTest {
 
         @Override
         public SdkHttpClient sdkHttpClient() {
-            return SDK_HTTP_CLIENT;
+            return SYNC_HTTP_CLIENT;
         }
     };
 
@@ -116,7 +118,7 @@ public class ImmutableClientConfigurationTest {
         }
 
         @Override
-        public List<RequestHandler2> getRequestHandlers() {
+        public List<RequestHandler> getRequestHandlers() {
             return Collections.singletonList(REQUEST_HANDLER);
         }
 
@@ -131,13 +133,13 @@ public class ImmutableClientConfigurationTest {
         }
 
         @Override
-        public ExecutorService getExecutor() {
+        public ScheduledExecutorService getExecutor() {
             return EXECUTOR_SERVICE;
         }
 
         @Override
         public SdkHttpClient sdkHttpClient() {
-            return SDK_HTTP_CLIENT;
+            return SYNC_HTTP_CLIENT;
         }
     };
 
@@ -178,12 +180,21 @@ public class ImmutableClientConfigurationTest {
 
     private static class InitializedSyncConfiguration extends InitializedConfiguration implements SyncClientConfiguration {
 
+        @Override
+        public SdkHttpClient httpClient() {
+            return SYNC_HTTP_CLIENT;
+        }
     }
 
     private static class InitializedAsyncConfiguration extends InitializedConfiguration implements AsyncClientConfiguration {
         @Override
-        public ExecutorService asyncExecutorService() {
+        public ScheduledExecutorService asyncExecutorService() {
             return EXECUTOR_SERVICE;
+        }
+
+        @Override
+        public SdkAsyncHttpClient asyncHttpClient() {
+            return ASYNC_HTTP_CLIENT;
         }
     }
 
@@ -215,9 +226,5 @@ public class ImmutableClientConfigurationTest {
             return ENDPOINT;
         }
 
-        @Override
-        public SdkHttpClient httpClient() {
-            return SDK_HTTP_CLIENT;
-        }
     }
 }

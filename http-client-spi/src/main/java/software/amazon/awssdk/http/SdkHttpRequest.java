@@ -52,4 +52,13 @@ public interface SdkHttpRequest extends SdkHttpHeaders {
      * @return The HTTP method to use when sending this request.
      */
     SdkHttpMethod getHttpMethod();
+
+    /**
+     * Gets context from the request.
+     *
+     * @param key Key of context to retrieve.
+     * @param <T> Type of context value.
+     * @return Context value if present, null otherwise.
+     */
+    <T> T handlerContext(HandlerContextKey<T> key);
 }

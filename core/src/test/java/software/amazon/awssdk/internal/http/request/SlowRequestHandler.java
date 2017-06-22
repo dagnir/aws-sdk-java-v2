@@ -15,31 +15,32 @@
 
 package software.amazon.awssdk.internal.http.request;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
- * Implementation of {@link RequestHandler2} with configurable wait times
+ * Implementation of {@link RequestHandler} with configurable wait times
  */
-public class SlowRequestHandler extends RequestHandler2 {
+public class SlowRequestHandler extends RequestHandler {
 
     private int beforeRequestWait;
     private int afterResponseWait;
     private int afterErrorWait;
 
     @Override
-    public void beforeRequest(Request<?> request) {
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
         wait(beforeRequestWait);
+        return request;
     }
 
     @Override
-    public void afterResponse(Request<?> request, Response<?> response) {
+    public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
         wait(afterResponseWait);
     }
 
     @Override
-    public void afterError(Request<?> request, Response<?> response, Exception e) {
+    public void afterError(SdkHttpFullRequest request, Response<?> response, Exception e) {
         wait(afterErrorWait);
     }
 

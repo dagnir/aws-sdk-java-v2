@@ -15,27 +15,30 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
+import software.amazon.awssdk.utils.Pair;
 
 /**
- * Invoke the {@link RequestHandler2#beforeUnmarshalling(Request, HttpResponse)} callback to allow for pre-processing on the
- * {@link HttpResponse} before it is handed off to the unmarshaller.
+ * Invoke the {@link RequestHandler#beforeUnmarshalling(software.amazon.awssdk.http.SdkHttpFullRequest, HttpResponse)} callback
+ * to allow for pre-processing on the {@link HttpResponse} before it is handed off to the unmarshaller.
  */
-public class BeforeUnmarshallingCallbackStage implements RequestPipeline<HttpResponse, HttpResponse> {
+public class BeforeUnmarshallingCallbackStage
+        implements RequestPipeline<Pair<SdkHttpFullRequest, HttpResponse>, HttpResponse> {
 
     @Override
-    public HttpResponse execute(HttpResponse httpResponse, RequestExecutionContext context) throws Exception {
+    public HttpResponse execute(Pair<SdkHttpFullRequest, HttpResponse> input,
+                                RequestExecutionContext context) throws Exception {
         // TODO we should consider invoking beforeUnmarshalling regardless of success or error.
-        if (!httpResponse.isSuccessful()) {
-            return httpResponse;
+        HttpResponse toReturn = input.right();
+        if (!toReturn.isSuccessful()) {
+            return toReturn;
         }
-        HttpResponse toReturn = httpResponse;
-        for (RequestHandler2 requestHandler : context.requestHandler2s()) {
-            toReturn = requestHandler.beforeUnmarshalling(context.request(), toReturn);
+        for (RequestHandler requestHandler : context.requestHandlers()) {
+            toReturn = requestHandler.beforeUnmarshalling(input.left(), toReturn);
         }
         return toReturn;
     }

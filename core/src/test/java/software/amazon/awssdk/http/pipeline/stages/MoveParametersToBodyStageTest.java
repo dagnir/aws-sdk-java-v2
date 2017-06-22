@@ -24,12 +24,12 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 import org.junit.Test;
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.http.DefaultSdkHttpFullRequest;
 import software.amazon.awssdk.http.ExecutionContext;
-import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
 
 public class MoveParametersToBodyStageTest {
 
@@ -37,33 +37,38 @@ public class MoveParametersToBodyStageTest {
 
     @Test
     public void postRequestsWithNoBodyHaveTheirParametersMovedToTheBody() throws Exception {
-        Request<?> request = new DefaultRequest("my-service");
-        request.setContent(null);
-        request.setHttpMethod(HttpMethodName.POST);
-        request.addParameters("key", singletonList("value"));
+        SdkHttpFullRequest.Builder mutableRequest = DefaultSdkHttpFullRequest
+                .builder()
+                .content(null)
+                .httpMethod(SdkHttpMethod.POST)
+                .queryParameter("key", singletonList("value"));
 
-        Request<?> output = sut.execute(request, requestContext(request));
+        SdkHttpFullRequest.Builder output = sut.execute(mutableRequest, requestContext(mutableRequest));
 
         assertThat(output.getParameters()).hasSize(0);
-        assertThat(output.getHeaders()).containsKey("Content-Length")
-                                       .containsEntry("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+        assertThat(output.getHeaders())
+                .containsKey("Content-Length")
+                .containsEntry("Content-Type", singletonList("application/x-www-form-urlencoded; charset=utf-8"));
         assertThat(output.getContent()).isNotNull();
     }
 
     @Test
     public void nonPostRequestsWithNoBodyAreUnaltered() throws Exception {
-        Stream.of(HttpMethodName.values()).filter(m -> !m.equals(HttpMethodName.POST)).forEach(this::nonPostRequestsUnaltered);
+        Stream.of(SdkHttpMethod.values())
+              .filter(m -> !m.equals(SdkHttpMethod.POST))
+              .forEach(this::nonPostRequestsUnaltered);
     }
 
     @Test
     public void postWithContentIsUnaltered() throws Exception {
         InputStream content = new ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8));
-        Request<?> request = new DefaultRequest("my-service");
-        request.setContent(content);
-        request.setHttpMethod(HttpMethodName.POST);
-        request.addParameters("key", singletonList("value"));
+        SdkHttpFullRequest.Builder mutableRequest = DefaultSdkHttpFullRequest
+                .builder()
+                .content(content)
+                .httpMethod(SdkHttpMethod.POST)
+                .queryParameter("key", singletonList("value"));
 
-        Request<?> output = sut.execute(request, requestContext(request));
+        SdkHttpFullRequest.Builder output = sut.execute(mutableRequest, requestContext(mutableRequest));
 
         assertThat(output.getParameters()).hasSize(1);
         assertThat(output.getHeaders()).hasSize(0);
@@ -72,34 +77,35 @@ public class MoveParametersToBodyStageTest {
 
     @Test
     public void onlyAlterRequestsIfParamsArePresent() throws Exception {
-        Request<?> request = new DefaultRequest("my-service");
-        request.setContent(null);
-        request.setHttpMethod(HttpMethodName.POST);
+        SdkHttpFullRequest.Builder mutableRequest = DefaultSdkHttpFullRequest
+                .builder()
+                .content(null)
+                .httpMethod(SdkHttpMethod.POST);
 
-        Request<?> output = sut.execute(request, requestContext(request));
+        SdkHttpFullRequest.Builder output = sut.execute(mutableRequest, requestContext(mutableRequest));
 
         assertThat(output.getParameters()).hasSize(0);
         assertThat(output.getHeaders()).hasSize(0);
         assertThat(output.getContent()).isNull();
     }
 
-    private void nonPostRequestsUnaltered(HttpMethodName method) {
-        Request<?> request = new DefaultRequest("my-service");
-        request.setContent(null);
-        request.setHttpMethod(method);
-        request.addParameters("key", singletonList("value"));
+    private void nonPostRequestsUnaltered(SdkHttpMethod method) {
+        SdkHttpFullRequest.Builder mutableRequest = DefaultSdkHttpFullRequest
+                .builder()
+                .content(null)
+                .httpMethod(method)
+                .queryParameter("key", singletonList("value"));
 
-        Request<?> output = invokeSafely(() -> sut.execute(request, requestContext(request)));
+        SdkHttpFullRequest.Builder output = invokeSafely(() -> sut.execute(mutableRequest, requestContext(mutableRequest)));
 
         assertThat(output.getParameters()).hasSize(1);
         assertThat(output.getHeaders()).hasSize(0);
         assertThat(output.getContent()).isNull();
     }
 
-    private RequestExecutionContext requestContext(Request<?> request) {
+    private RequestExecutionContext requestContext(SdkHttpFullRequest.Builder mutableRequest) {
         return RequestExecutionContext.builder()
                                       .executionContext(ExecutionContext.builder().build())
-                                      .request(request)
                                       .requestConfig(RequestConfig.NO_OP)
                                       .build();
     }

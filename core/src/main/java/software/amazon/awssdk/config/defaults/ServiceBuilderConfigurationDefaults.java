@@ -31,16 +31,15 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
  */
 @SdkProtectedApi
 public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefaults {
+
     private final Supplier<SignerProvider> defaultSignerProvider;
     private final Supplier<URI> defaultEndpoint;
-    private final List<String> handler1Paths;
-    private final List<String> handler2Paths;
+    private final List<String> requestHandlerPaths;
 
     private ServiceBuilderConfigurationDefaults(Builder builder) {
         this.defaultSignerProvider = builder.defaultSignerProvider;
         this.defaultEndpoint = builder.defaultEndpoint;
-        this.handler1Paths = new ArrayList<>(builder.handler1Paths);
-        this.handler2Paths = new ArrayList<>(builder.handler2Paths);
+        this.requestHandlerPaths = new ArrayList<>(builder.requestHandlerPaths);
     }
 
     public static Builder builder() {
@@ -53,8 +52,7 @@ public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefa
         builder.advancedOption(SIGNER_PROVIDER,
                                applyDefault(config.advancedOption(SIGNER_PROVIDER), defaultSignerProvider));
         HandlerChainFactory chainFactory = new HandlerChainFactory();
-        handler1Paths.forEach(path -> chainFactory.newRequestHandlerChain(path).forEach(builder::addRequestListener));
-        handler2Paths.forEach(path -> chainFactory.newRequestHandler2Chain(path).forEach(builder::addRequestListener));
+        requestHandlerPaths.forEach(path -> chainFactory.newRequestHandlerChain(path).forEach(builder::addRequestListener));
     }
 
     @Override
@@ -63,10 +61,10 @@ public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefa
     }
 
     public static final class Builder {
+
         private Supplier<SignerProvider> defaultSignerProvider;
         private Supplier<URI> defaultEndpoint;
-        private List<String> handler1Paths = new ArrayList<>();
-        private List<String> handler2Paths = new ArrayList<>();
+        private List<String> requestHandlerPaths = new ArrayList<>();
 
         private Builder() {}
 
@@ -80,13 +78,8 @@ public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefa
             return this;
         }
 
-        public Builder addHandler1Path(String handlerPath) {
-            handler1Paths.add(handlerPath);
-            return this;
-        }
-
-        public Builder addHandler2Path(String handlerPath) {
-            handler2Paths.add(handlerPath);
+        public Builder addRequestHandlerPath(String handlerPath) {
+            requestHandlerPaths.add(handlerPath);
             return this;
         }
 

@@ -30,15 +30,13 @@ import java.util.zip.GZIPInputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 import software.amazon.awssdk.util.StringInputStream;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SdkHttpFullResponseAdapterTest {
 
-    private final Request<Void> request = new DefaultRequest<>("foo");
+    private final SdkHttpFullRequest request = DefaultSdkHttpFullRequest.builder().build();
 
     @Test
     public void adapt_SingleHeaderValue_AdaptedCorrectly() throws Exception {

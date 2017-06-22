@@ -15,27 +15,27 @@
 
 package software.amazon.awssdk.http.pipeline.stages;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
 
 /**
- * Runs the {@link RequestHandler2#beforeRequest(Request)} callback to pre-process the marshalled request before making
- * an HTTP call.
+ * Runs the {@link RequestHandler#beforeRequest(SdkHttpFullRequest)} callback to pre-process the marshalled request before
+ * making an HTTP call.
  */
 public class BeforeRequestHandlersStage implements RequestToRequestPipeline {
 
     @Override
-    public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public SdkHttpFullRequest execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         AwsCredentials credentials = context.credentialsProvider().getCredentials();
-        request.addHandlerContext(HandlerContextKey.AWS_CREDENTIALS, credentials);
+        SdkHttpFullRequest toReturn = request.toBuilder().handlerContext(AwsHandlerKeys.AWS_CREDENTIALS, credentials).build();
         // Apply any additional service specific request handlers that need to be run
-        for (RequestHandler2 requestHandler2 : context.requestHandler2s()) {
-            requestHandler2.beforeRequest(request);
+        for (RequestHandler requestHandler : context.requestHandlers()) {
+            toReturn = requestHandler.beforeRequest(toReturn);
         }
-        return request;
+        return toReturn;
     }
 }

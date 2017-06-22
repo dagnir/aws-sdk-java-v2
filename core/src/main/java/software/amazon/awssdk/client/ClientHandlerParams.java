@@ -29,6 +29,8 @@ public class ClientHandlerParams {
     private AwsSyncClientParams clientParams;
     private ServiceAdvancedConfiguration serviceAdvancedConfiguration;
 
+    private AwsAsyncClientParams asyncClientParams;
+
     /**
      * By default, the CRC 32 checksum is calculated based on the uncompressed data.
      */
@@ -40,6 +42,15 @@ public class ClientHandlerParams {
 
     public ClientHandlerParams withClientParams(AwsSyncClientParams clientParams) {
         this.clientParams = clientParams;
+        return this;
+    }
+
+    public AwsAsyncClientParams getAsyncClientParams() {
+        return asyncClientParams;
+    }
+
+    public ClientHandlerParams withAsyncClientParams(AwsAsyncClientParams clientParams) {
+        this.asyncClientParams = clientParams;
         return this;
     }
 

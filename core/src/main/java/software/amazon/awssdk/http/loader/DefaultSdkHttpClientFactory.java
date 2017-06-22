@@ -24,10 +24,13 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Utility to load the default HTTP client factory and create an instance of {@link SdkHttpClient}.
  */
-public class DefaultSdkHttpClientFactory implements SdkHttpClientFactory {
+public final class DefaultSdkHttpClientFactory implements SdkHttpClientFactory {
 
-    private static final SdkHttpServiceProvider DEFAULT_CHAIN = new CachingSdkHttpServiceProvider(
-            new SdkHttpServiceProviderChain(new SystemPropertyHttpServiceProvider(), new ClasspathSdkHttpServiceProvider()));
+    private static final SdkHttpServiceProvider<SdkHttpService> DEFAULT_CHAIN = new CachingSdkHttpServiceProvider<>(
+            new SdkHttpServiceProviderChain<>(
+                    SystemPropertyHttpServiceProvider.syncProvider(),
+                    ClasspathSdkHttpServiceProvider.syncProvider()
+            ));
 
     @Override
     public SdkHttpClient createHttpClientWithDefaults(AttributeMap serviceDefaults) {

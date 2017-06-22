@@ -17,7 +17,6 @@ package software.amazon.awssdk.http.pipeline.stages;
 
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishProgress;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.event.ProgressEventType;
 import software.amazon.awssdk.event.ProgressListener;
@@ -25,15 +24,17 @@ import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.pipeline.RequestPipeline;
+import software.amazon.awssdk.utils.Pair;
 
 /**
  * Delegate to the HTTP implementation to make an HTTP request and receive the response.
  */
-public class MakeHttpRequestStage implements RequestPipeline<Request<?>, SdkHttpFullResponse> {
+public class MakeHttpRequestStage
+        implements RequestPipeline<SdkHttpFullRequest, Pair<SdkHttpFullRequest, SdkHttpFullResponse>> {
 
     private final SdkHttpClient sdkHttpClient;
 
@@ -44,7 +45,8 @@ public class MakeHttpRequestStage implements RequestPipeline<Request<?>, SdkHttp
     /**
      * Returns the response from executing one httpClientSettings request; or null for retry.
      */
-    public SdkHttpFullResponse execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public Pair<SdkHttpFullRequest, SdkHttpFullResponse> execute(SdkHttpFullRequest request,
+                                                                 RequestExecutionContext context) throws Exception {
         AmazonHttpClient.checkInterrupted();
         final ProgressListener listener = context.requestConfig().getProgressListener();
 
@@ -52,14 +54,14 @@ public class MakeHttpRequestStage implements RequestPipeline<Request<?>, SdkHttp
         final SdkHttpFullResponse httpResponse = executeHttpRequest(request, context);
         publishProgress(listener, ProgressEventType.HTTP_REQUEST_COMPLETED_EVENT);
 
-        return httpResponse;
+        return new Pair<>(request, httpResponse);
     }
 
-    private SdkHttpFullResponse executeHttpRequest(Request<?> request, RequestExecutionContext context) throws Exception {
+    private SdkHttpFullResponse executeHttpRequest(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         final AbortableCallable<SdkHttpFullResponse> requestCallable = sdkHttpClient
-                .prepareRequest(new SdkHttpFullRequestAdapter(request), SdkRequestContext.builder()
-                                                                                         .metrics(context.awsRequestMetrics())
-                                                                                         .build());
+                .prepareRequest(request, SdkRequestContext.builder()
+                                                          .metrics(context.awsRequestMetrics())
+                                                          .build());
 
         context.getClientExecutionTrackerTask().setCurrentHttpRequest(requestCallable);
         return requestCallable.call();

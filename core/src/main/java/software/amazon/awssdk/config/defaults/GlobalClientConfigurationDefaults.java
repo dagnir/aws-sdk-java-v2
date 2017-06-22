@@ -18,8 +18,9 @@ package software.amazon.awssdk.config.defaults;
 import static software.amazon.awssdk.config.AdvancedClientOption.USER_AGENT_PREFIX;
 import static software.amazon.awssdk.config.AdvancedClientOption.USER_AGENT_SUFFIX;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.config.ClientConfiguration;
 import software.amazon.awssdk.config.ClientOverrideConfiguration;
@@ -35,6 +36,9 @@ import software.amazon.awssdk.util.VersionInfoUtils;
 @SdkInternalApi
 public final class GlobalClientConfigurationDefaults extends ClientConfigurationDefaults {
 
+    @ReviewBeforeRelease("Load test this to make sure it's appropriate.")
+    public static final int DEFAULT_ASYNC_POOL_SIZE = 1;
+
     @Override
     protected void applyOverrideDefaults(ClientOverrideConfiguration.Builder builder) {
         ClientOverrideConfiguration configuration = builder.build();
@@ -47,7 +51,7 @@ public final class GlobalClientConfigurationDefaults extends ClientConfiguration
     }
 
     @Override
-    protected ExecutorService getAsyncExecutorDefault(Integer maxConnections) {
-        return maxConnections == null ? null : Executors.newFixedThreadPool(maxConnections);
+    protected ScheduledExecutorService getAsyncExecutorDefault() {
+        return Executors.newScheduledThreadPool(DEFAULT_ASYNC_POOL_SIZE);
     }
 }

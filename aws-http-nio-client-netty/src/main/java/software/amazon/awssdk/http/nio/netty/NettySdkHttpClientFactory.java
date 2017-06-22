@@ -15,6 +15,11 @@
 
 package software.amazon.awssdk.http.nio.netty;
 
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.CONNECTION_TIMEOUT;
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.MAX_CONNECTIONS;
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.SOCKET_TIMEOUT;
+
+import java.time.Duration;
 import java.util.Optional;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
@@ -32,11 +37,11 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 public final class NettySdkHttpClientFactory
         implements SdkAsyncHttpClientFactory, ToCopyableBuilder<NettySdkHttpClientFactory.Builder, NettySdkHttpClientFactory> {
 
-    private final Optional<Integer> maxConnectionsPerEndpoint;
+    private final AttributeMap standardOptions;
     private final Optional<Boolean> trustAllCertificates;
 
     private NettySdkHttpClientFactory(DefaultBuilder builder) {
-        this.maxConnectionsPerEndpoint = Optional.ofNullable(builder.maxConnectionsPerEndpoint);
+        this.standardOptions = builder.standardOptions.build();
         this.trustAllCertificates = Optional.ofNullable(builder.trustAllCertificates);
     }
 
@@ -45,7 +50,23 @@ public final class NettySdkHttpClientFactory
      * @see Builder#maxConnectionsPerEndpoint(Integer)
      */
     public Optional<Integer> maxConnectionsPerEndpoint() {
-        return maxConnectionsPerEndpoint;
+        return Optional.ofNullable(standardOptions.get(MAX_CONNECTIONS));
+    }
+
+    /**
+     * @return Optional of the socketTimeout setting.
+     * @see Builder#socketTimeout(Duration)
+     */
+    public Optional<Duration> socketTimeout() {
+        return Optional.ofNullable(standardOptions.get(SOCKET_TIMEOUT));
+    }
+
+    /**
+     * @return Optional of the connectionTimeout setting.
+     * @see Builder#connectionTimeout(Duration)
+     */
+    public Optional<Duration> connectionTimeout() {
+        return Optional.ofNullable(standardOptions.get(SOCKET_TIMEOUT));
     }
 
     /**
@@ -64,23 +85,23 @@ public final class NettySdkHttpClientFactory
      * @return Created client.
      */
     public SdkAsyncHttpClient createHttpClient() {
-        return new NettyNioAsyncHttpClient(this, AttributeMap.empty());
+        return createHttpClientWithDefaults(AttributeMap.empty());
     }
 
     @Override
     public SdkAsyncHttpClient createHttpClientWithDefaults(AttributeMap serviceDefaults) {
-        return new NettyNioAsyncHttpClient(this, serviceDefaults.merge(SdkHttpConfigurationOption.GLOBAL_HTTP_DEFAULTS));
+        return new NettyNioAsyncHttpClient(this, standardOptions.merge(serviceDefaults)
+                                                                .merge(SdkHttpConfigurationOption.GLOBAL_HTTP_DEFAULTS));
     }
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .maxConnectionsPerEndpoint(maxConnectionsPerEndpoint.orElse(null))
+        return new DefaultBuilder(standardOptions.toBuilder())
                 .trustAllCertificates(trustAllCertificates.orElse(null));
     }
 
     public static Builder builder() {
-        return new DefaultBuilder();
+        return new DefaultBuilder(AttributeMap.builder());
     }
 
 
@@ -100,6 +121,17 @@ public final class NettySdkHttpClientFactory
         Builder maxConnectionsPerEndpoint(Integer maxConnectionsPerEndpoint);
 
         /**
+         * The amount of time to wait for data to be transferred over an established, open connection before the connection is
+         * timed out.
+         */
+        Builder socketTimeout(Duration socketTimeout);
+
+        /**
+         * The amount of time to wait when initially establishing a connection before giving up and timing out.
+         */
+        Builder connectionTimeout(Duration socketTimeout);
+
+        /**
          * Forces the HTTP client to trust all certificates, even invalid or self signed certificates. This should only ever
          * be used for testing purposes.
          *
@@ -112,22 +144,51 @@ public final class NettySdkHttpClientFactory
 
     private static final class DefaultBuilder implements Builder {
 
-        private Integer maxConnectionsPerEndpoint;
         private Boolean trustAllCertificates;
+        private final AttributeMap.Builder standardOptions;
 
-        private DefaultBuilder() {
+        private DefaultBuilder(AttributeMap.Builder standardOptions) {
+            this.standardOptions = standardOptions;
         }
 
         @Override
         public Builder maxConnectionsPerEndpoint(Integer maxConnectionsPerEndpoint) {
-            this.maxConnectionsPerEndpoint = maxConnectionsPerEndpoint;
+            standardOptions.put(MAX_CONNECTIONS, maxConnectionsPerEndpoint);
             return this;
+        }
+
+        public void setMaxConnectionsPerEndpoint(Integer maxConnectionsPerEndpoint) {
+            maxConnectionsPerEndpoint(maxConnectionsPerEndpoint);
+        }
+
+        @Override
+        public Builder socketTimeout(Duration socketTimeout) {
+            standardOptions.put(SOCKET_TIMEOUT, socketTimeout);
+            return this;
+        }
+
+        public void setSocketTimeout(Duration socketTimeout) {
+            socketTimeout(socketTimeout);
+        }
+
+        @Override
+        public Builder connectionTimeout(Duration connectionTimeout) {
+            standardOptions.put(CONNECTION_TIMEOUT, connectionTimeout);
+            return this;
+        }
+
+        public void setConnectionTimeout(Duration connectionTimeout) {
+            connectionTimeout(connectionTimeout);
         }
 
         @Override
         public Builder trustAllCertificates(Boolean trustAllCertificates) {
             this.trustAllCertificates = trustAllCertificates;
             return this;
+        }
+
+        public void setTrustAllCertificates(Boolean trustAllCertificates) {
+            trustAllCertificates(trustAllCertificates);
         }
 
         @Override

@@ -18,11 +18,10 @@ package software.amazon.awssdk.http.pipeline.stages;
 
 import static software.amazon.awssdk.event.SdkProgressPublisher.publishRequestContentLength;
 
-import java.util.Optional;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.StreamManagingStage;
 import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
 
@@ -34,11 +33,11 @@ public class ReportRequestContentLengthStage implements RequestToRequestPipeline
     private static final Log LOG = LogFactory.getLog(StreamManagingStage.class);
 
     @Override
-    public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public SdkHttpFullRequest execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         try {
-            Optional.ofNullable(request.getHeaders().get("Content-Length"))
-                    .map(Long::parseLong)
-                    .ifPresent(l -> publishRequestContentLength(context.requestConfig().getProgressListener(), l));
+            request.getFirstHeaderValue("Content-Length")
+                   .map(Long::parseLong)
+                   .ifPresent(l -> publishRequestContentLength(context.requestConfig().getProgressListener(), l));
         } catch (NumberFormatException e) {
             LOG.warn("Cannot parse the Content-Length header of the request.");
         }

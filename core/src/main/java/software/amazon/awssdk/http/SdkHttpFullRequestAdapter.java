@@ -16,65 +16,41 @@
 package software.amazon.awssdk.http;
 
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toMap;
 
-import java.io.InputStream;
-import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import software.amazon.awssdk.Request;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 
 /**
  * Adapts a {@link Request} to the new {@link SdkHttpFullRequest} interface.
  *
  * TODO this should eventually be removed and SdkHttpFullRequest should completely replace Request
  */
-public class SdkHttpFullRequestAdapter implements SdkHttpFullRequest {
+public class SdkHttpFullRequestAdapter {
 
-    private final Request<?> request;
-    private final Map<String, List<String>> headers;
-
-    public SdkHttpFullRequestAdapter(Request<?> request) {
-        this.request = request;
-        this.headers = request.getHeaders().entrySet().stream()
-                .collect(toMap(Map.Entry::getKey, e -> singletonList(e.getValue())));
+    public static SdkHttpFullRequest toHttpFullRequest(Request<?> request) {
+        return toMutableHttpFullRequest(request).build();
     }
 
-    @Override
-    public Map<String, List<String>> getHeaders() {
-        return this.headers;
+    public static SdkHttpFullRequest.Builder toMutableHttpFullRequest(Request<?> request) {
+        return DefaultSdkHttpFullRequest
+                .builder()
+                .content(request.getContent())
+                .httpMethod(SdkHttpMethod.fromValue(request.getHttpMethod().name()))
+                .headers(adaptHeaders(request.getHeaders()))
+                .queryParameters(request.getParameters())
+                .endpoint(request.getEndpoint())
+                .resourcePath(request.getResourcePath())
+                // TODO find a better place to set this
+                .handlerContext(AwsHandlerKeys.SERVICE_NAME, request.getServiceName());
     }
 
-    @Override
-    public Optional<String> getFirstHeaderValue(String header) {
-        return Optional.ofNullable(headers.get(header))
-                .filter(h -> !h.isEmpty())
-                .map(h -> h.get(0));
+    private static Map<String, List<String>> adaptHeaders(Map<String, String> headers) {
+        Map<String, List<String>> adapated = new HashMap<>(headers.size());
+        headers.forEach((k, v) -> adapated.put(k, singletonList(v)));
+        return adapated;
     }
 
-    @Override
-    public String getResourcePath() {
-        return request.getResourcePath();
-    }
-
-    @Override
-    public Map<String, List<String>> getParameters() {
-        return request.getParameters();
-    }
-
-    @Override
-    public URI getEndpoint() {
-        return request.getEndpoint();
-    }
-
-    @Override
-    public SdkHttpMethod getHttpMethod() {
-        return SdkHttpMethod.fromValue(request.getHttpMethod().name());
-    }
-
-    @Override
-    public InputStream getContent() {
-        return request.getContent();
-    }
 }

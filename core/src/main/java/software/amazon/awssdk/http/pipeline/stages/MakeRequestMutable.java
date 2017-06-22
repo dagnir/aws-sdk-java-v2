@@ -13,24 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk.handlers;
+package software.amazon.awssdk.http.pipeline.stages;
 
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.metrics.spi.TimingInfo;
+import software.amazon.awssdk.RequestExecutionContext;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.pipeline.RequestPipeline;
 
-/**
- * Simple implementation of RequestHandler to stub out required methods.
- *
- * @deprecated by {@link RequestHandler2}.
- */
-@Deprecated
-public abstract class AbstractRequestHandler implements RequestHandler {
-    public void beforeRequest(Request<?> request) {
-    }
-
-    public void afterResponse(Request<?> request, Object response, TimingInfo timingInfo) {
-    }
-
-    public void afterError(Request<?> request, Exception e) {
+public class MakeRequestMutable implements RequestPipeline<SdkHttpFullRequest, SdkHttpFullRequest.Builder> {
+    @Override
+    public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest input, RequestExecutionContext context) throws Exception {
+        return input.toBuilder();
     }
 }

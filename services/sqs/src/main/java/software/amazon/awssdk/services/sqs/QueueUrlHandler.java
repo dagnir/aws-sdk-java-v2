@@ -20,8 +20,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.AbstractRequestHandler;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
  * Custom request handler for SQS that processes the request before it gets routed to the client
@@ -30,10 +31,11 @@ import software.amazon.awssdk.handlers.AbstractRequestHandler;
  * SQS MessageQueue operations take a QueueUrl parameter that needs special handling to update the
  * endpoint and resource path on the request before it's executed.
  */
-public class QueueUrlHandler extends AbstractRequestHandler {
+@ReviewBeforeRelease("Do we still want to do this?")
+public class QueueUrlHandler extends RequestHandler {
     private static final String QUEUE_URL_PARAMETER = "QueueUrl";
 
-    public void beforeRequest(Request<?> request) {
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
 
         final Map<String, List<String>> requestParams = request.getParameters();
         final List<String> queueUrlParam = requestParams.get(QUEUE_URL_PARAMETER);
@@ -43,18 +45,21 @@ public class QueueUrlHandler extends AbstractRequestHandler {
 
             try {
                 URI uri = new URI(queueUrl);
-                request.setResourcePath(uri.getPath());
+                SdkHttpFullRequest.Builder mutableRequest = request.toBuilder();
+                mutableRequest.resourcePath(uri.getPath());
 
                 if (uri.getHost() != null) {
                     // If the URI has a host specified, set the request's endpoint to the queue URLs
                     // endpoint, so that queue URLs from different regions will send the request to
                     // the correct endpoint.
                     URI uriWithoutPath = new URI(uri.toString().replace(uri.getPath(), ""));
-                    request.setEndpoint(uriWithoutPath);
+                    mutableRequest.endpoint(uriWithoutPath);
                 }
+                return mutableRequest.build();
             } catch (URISyntaxException e) {
                 throw new AmazonClientException("Unable to parse SQS queue URL '" + queueUrl + "'", e);
             }
         }
+        return request;
     }
 }

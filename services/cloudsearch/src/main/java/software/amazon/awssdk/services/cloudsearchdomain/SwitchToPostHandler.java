@@ -16,25 +16,30 @@
 package software.amazon.awssdk.services.cloudsearchdomain;
 
 import java.io.ByteArrayInputStream;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.RequestHandler2;
-import software.amazon.awssdk.http.HttpMethodName;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
 import software.amazon.awssdk.util.SdkHttpUtils;
 
 /**
  * Ensures that all SearchRequests use <code>POST</code> instead of <code>GET</code>.
  */
-public class SwitchToPostHandler extends RequestHandler2 {
+public class SwitchToPostHandler extends RequestHandler {
     @Override
-    public void beforeRequest(Request<?> request) {
-        if (request.getOriginalRequest() instanceof SearchRequest && request.getHttpMethod() == HttpMethodName.GET) {
-            request.setHttpMethod(HttpMethodName.POST);
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        Object originaRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
+        if (originaRequest instanceof SearchRequest && request.getHttpMethod() == SdkHttpMethod.GET) {
             final byte[] content = SdkHttpUtils.encodeParameters(request).getBytes();
-            request.setContent(new ByteArrayInputStream(content));
-            request.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.addHeader("Content-Length", Integer.toString(content.length));
-            request.getParameters().clear();
+            return request.toBuilder()
+                          .httpMethod(SdkHttpMethod.POST)
+                          .content(new ByteArrayInputStream(content))
+                          .header("Content-Type", "application/x-www-form-urlencoded")
+                          .header("Content-Length", Integer.toString(content.length))
+                          .clearQueryParameters()
+                          .build();
         }
+        return request;
     }
 }

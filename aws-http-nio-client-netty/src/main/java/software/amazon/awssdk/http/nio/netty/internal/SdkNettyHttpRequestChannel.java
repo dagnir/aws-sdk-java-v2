@@ -16,20 +16,21 @@
 package software.amazon.awssdk.http.nio.netty.internal;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.EmptyByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.DefaultLastHttpContent;
 import io.netty.util.concurrent.Future;
 import java.nio.ByteBuffer;
 import java.util.function.Consumer;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.async.SdkRequestChannel;
 
 /**
  * An implementation of {@link SdkRequestChannel} that allows writing to a Netty {@link Channel}
  */
-public final class SdkNettyHttpRequestChannel implements SdkRequestChannel {
+final class SdkNettyHttpRequestChannel implements SdkRequestChannel {
 
     private final Channel channel;
     private final Consumer<Throwable> errorHandler;
@@ -42,18 +43,15 @@ public final class SdkNettyHttpRequestChannel implements SdkRequestChannel {
     }
 
     @Override
-    public void writeAndComplete(ByteBuffer data) {
-        channel.writeAndFlush(new DefaultLastHttpContent(toByteBuf(data))).addListener(this::handleFailure);
-    }
-
-    @Override
     public void write(ByteBuffer data) {
-        channel.write(new DefaultHttpContent(toByteBuf(data))).addListener(this::handleFailure);
+        channel.writeAndFlush(new DefaultHttpContent(toByteBuf(channel.alloc(), data)))
+               .addListener(this::handleFailure);
     }
 
     @Override
     public void complete() {
-        channel.writeAndFlush(new DefaultHttpContent(new EmptyByteBuf(channel.alloc()))).addListener(this::handleFailure);
+        channel.writeAndFlush(new DefaultLastHttpContent(new EmptyByteBuf(channel.alloc())))
+               .addListener(this::handleFailure);
     }
 
     @Override
@@ -61,8 +59,12 @@ public final class SdkNettyHttpRequestChannel implements SdkRequestChannel {
         abort.run();
     }
 
-    private ByteBuf toByteBuf(ByteBuffer data) {
-        return Unpooled.copiedBuffer(data);
+    @ReviewBeforeRelease("Unpooled vs channel.alloc? channel.alloc seems to be preferred but we should test" +
+                         " this more thoroughly under high concurrency.")
+    private ByteBuf toByteBuf(ByteBufAllocator allocator, ByteBuffer data) {
+        final ByteBuf buffer = allocator.buffer(data.limit());
+        buffer.writeBytes(data);
+        return buffer;
     }
 
     private void handleFailure(Future<? super Void> future) {

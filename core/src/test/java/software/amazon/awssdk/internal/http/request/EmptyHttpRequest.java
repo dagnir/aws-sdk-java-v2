@@ -23,7 +23,7 @@ import java.util.Map;
 import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.ReadLimitInfo;
 import software.amazon.awssdk.Request;
-import software.amazon.awssdk.handlers.HandlerContextKey;
+import software.amazon.awssdk.http.HandlerContextKey;
 import software.amazon.awssdk.http.HttpMethodName;
 import software.amazon.awssdk.metrics.spi.AwsRequestMetrics;
 

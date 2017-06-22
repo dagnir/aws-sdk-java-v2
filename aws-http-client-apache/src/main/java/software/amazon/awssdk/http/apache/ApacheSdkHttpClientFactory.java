@@ -108,15 +108,12 @@ public final class ApacheSdkHttpClientFactory
      * @return Builder instance to construct a {@link ApacheSdkHttpClientFactory}.
      */
     public static Builder builder() {
-        return new DefaultBuilder();
+        return new DefaultBuilder(AttributeMap.builder());
     }
 
     @Override
     public Builder toBuilder() {
-        return builder()
-                .socketTimeout(standardOptions.get(SOCKET_TIMEOUT))
-                .connectionTimeout(standardOptions.get(CONNECTION_TIMEOUT))
-                .maxConnections(standardOptions.get(MAX_CONNECTIONS))
+        return new DefaultBuilder(standardOptions.toBuilder())
                 .proxyConfiguration(proxyConfiguration)
                 .localAddress(localAddress.orElse(null))
                 .expectContinueEnabled(expectContinueEnabled.orElse(null))
@@ -180,14 +177,15 @@ public final class ApacheSdkHttpClientFactory
     @ReviewBeforeRelease("Review the options we expose and revisit organization of options.")
     private static final class DefaultBuilder implements Builder {
 
-        private final AttributeMap.Builder standardOptions = AttributeMap.builder();
+        private final AttributeMap.Builder standardOptions;
         private ProxyConfiguration proxyConfiguration = ProxyConfiguration.builder().build();
         private InetAddress localAddress;
         private Boolean expectContinueEnabled;
         private Duration connectionTimeToLive;
         private Duration connectionMaxIdleTime;
 
-        private DefaultBuilder() {
+        private DefaultBuilder(AttributeMap.Builder standardOptions) {
+            this.standardOptions = standardOptions;
         }
 
         @Override

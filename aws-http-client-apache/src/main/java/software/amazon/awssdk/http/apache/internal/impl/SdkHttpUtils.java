@@ -29,7 +29,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.http.SdkHttpMethod;
 
 public class SdkHttpUtils {
 
@@ -146,13 +145,6 @@ public class SdkHttpUtils {
         return true;
     }
 
-    public static boolean usePayloadForQueryParameters(SdkHttpFullRequest request) {
-        boolean requestIsPost = SdkHttpMethod.POST.equals(request.getHttpMethod());
-        boolean requestHasNoPayload = (request.getContent() == null);
-
-        return requestIsPost && requestHasNoPayload;
-    }
-
     /**
      * Creates an encoded query string from all the parameters in the specified
      * request.
@@ -178,14 +170,6 @@ public class SdkHttpUtils {
             .collect(Collectors.toList());
 
         return URLEncodedUtils.format(nameValuePairs, DEFAULT_ENCODING);
-    }
-
-    /**
-     * Append the given path to the given baseUri.
-     * By default, all slash characters in path will not be url-encoded.
-     */
-    public static String appendUri(String baseUri, String path) {
-        return appendUri(baseUri, path, false);
     }
 
     /**

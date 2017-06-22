@@ -15,8 +15,9 @@
 
 package software.amazon.awssdk.client;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 
 /**
  * Provides access to all params needed in a asynchronous AWS service client constructor. Abstract
@@ -25,6 +26,10 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 @SdkProtectedApi
 public abstract class AwsAsyncClientParams extends AwsSyncClientParams {
 
-    public abstract ExecutorService getExecutor();
+    public abstract ScheduledExecutorService getExecutor();
+
+    public SdkAsyncHttpClient getAsyncHttpClient() {
+        throw new UnsupportedOperationException("Must use new builders");
+    }
 
 }

@@ -15,9 +15,9 @@
 
 package software.amazon.awssdk.http.pipeline;
 
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.Response;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 public interface RequestToResponsePipeline<OutputT>
-        extends RequestPipeline<Request<?>, Response<OutputT>> {
+        extends RequestPipeline<SdkHttpFullRequest, Response<OutputT>> {
 }

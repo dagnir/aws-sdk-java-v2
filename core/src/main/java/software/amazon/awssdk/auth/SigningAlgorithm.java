@@ -21,12 +21,11 @@ import software.amazon.awssdk.SdkClientException;
 
 public enum SigningAlgorithm {
 
-    HmacSHA1,
     HmacSHA256;
 
     private final ThreadLocal<Mac> macReference;
 
-    private SigningAlgorithm() {
+    SigningAlgorithm() {
         final String algorithmName = this.toString();
         macReference = new MacThreadLocal(algorithmName);
     }
@@ -41,7 +40,7 @@ public enum SigningAlgorithm {
     private static class MacThreadLocal extends ThreadLocal<Mac> {
         private final String algorithmName;
 
-        public MacThreadLocal(String algorithmName) {
+        MacThreadLocal(String algorithmName) {
             this.algorithmName = algorithmName;
         }
 

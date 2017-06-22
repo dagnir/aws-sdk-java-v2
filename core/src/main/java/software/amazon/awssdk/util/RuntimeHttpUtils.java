@@ -27,6 +27,7 @@ import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 public class RuntimeHttpUtils {
     private static final String COMMA = ", ";
@@ -113,12 +114,69 @@ public class RuntimeHttpUtils {
      * @throws SdkClientException If the request cannot be converted to a well formed URL.
      */
     @SdkProtectedApi
+    @Deprecated
     public static URL convertRequestToUrl(Request<?> request,
                                           boolean removeLeadingSlashInResourcePath,
                                           boolean urlEncode) {
         String resourcePath = urlEncode ?
-                              SdkHttpUtils.urlEncode(request.getResourcePath(), true)
-                                        : request.getResourcePath();
+                SdkHttpUtils.urlEncode(request.getResourcePath(), true)
+                : request.getResourcePath();
+
+        // Removed the padding "/" that was already added into the request's resource path.
+        if (removeLeadingSlashInResourcePath
+            && resourcePath.startsWith("/")) {
+            resourcePath = resourcePath.substring(1);
+        }
+
+        // Some http client libraries (e.g. Apache HttpClient) cannot handle
+        // consecutive "/"s between URL authority and path components.
+        // So we escape "////..." into "/%2F%2F%2F...", in the same way as how
+        // we treat consecutive "/"s in AmazonS3Client#presignRequest(...)
+
+        String urlPath = "/" + resourcePath;
+        urlPath = urlPath.replaceAll("(?<=/)/", "%2F");
+        StringBuilder url = new StringBuilder(request.getEndpoint().toString());
+        url.append(urlPath);
+
+        StringBuilder queryParams = new StringBuilder();
+        Map<String, List<String>> requestParams = request.getParameters();
+        for (Map.Entry<String, List<String>> entry : requestParams.entrySet()) {
+            for (String value : entry.getValue()) {
+                queryParams = queryParams.length() > 0 ? queryParams
+                        .append("&") : queryParams.append("?");
+                queryParams.append(SdkHttpUtils.urlEncode(entry.getKey(), false))
+                           .append("=")
+                           .append(SdkHttpUtils.urlEncode(value, false));
+            }
+        }
+        url.append(queryParams.toString());
+
+        try {
+            return new URL(url.toString());
+        } catch (MalformedURLException e) {
+            throw new SdkClientException(
+                    "Unable to convert request to well formed URL: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Converts the specified request object into a URL, containing all the specified parameters, the specified request endpoint,
+     * etc.
+     *
+     * @param request                          The request to convert into a URL.
+     * @param removeLeadingSlashInResourcePath Whether the leading slash in resource-path should be removed before appending to
+     *                                         the endpoint.
+     * @param urlEncode                        True if request resource path should be URL encoded
+     * @return A new URL representing the specified request.
+     * @throws SdkClientException If the request cannot be converted to a well formed URL.
+     */
+    @SdkProtectedApi
+    public static URL convertRequestToUrl(SdkHttpFullRequest request,
+                                          boolean removeLeadingSlashInResourcePath,
+                                          boolean urlEncode) {
+        String resourcePath = urlEncode ?
+                SdkHttpUtils.urlEncode(request.getResourcePath(), true)
+                : request.getResourcePath();
 
         // Removed the padding "/" that was already added into the request's resource path.
         if (removeLeadingSlashInResourcePath

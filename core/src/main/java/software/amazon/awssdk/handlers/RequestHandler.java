@@ -15,49 +15,38 @@
 
 package software.amazon.awssdk.handlers;
 
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.metrics.spi.TimingInfo;
+import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.Response;
+import software.amazon.awssdk.http.HttpResponse;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
- * Interface for addition request handling in clients. A request handler is
- * executed on a request object <b>before</b> it is sent to the client runtime
- * to be executed.
- *
- * @deprecated by {@link RequestHandler2}.
+ * Interface that allows hooking into the lifecycle of a request and in certain cases, modifying
+ * the outbound request or inbound response.
+ * TODO: This shouldn't be coupled to AWS-specific concepts
  */
-@Deprecated
-public interface RequestHandler {
+public abstract class RequestHandler implements IRequestHandler {
 
-    /**
-     * Runs any additional processing logic on the specified request (before it
-     * is executed by the client runtime).
-     *
-     * @param request
-     *            The low level request being processed.
-     */
-    public void beforeRequest(Request<?> request);
+    @Override
+    public AmazonWebServiceRequest beforeMarshalling(AmazonWebServiceRequest request) {
+        return request;
+    }
 
-    /**
-     * Runs any additional processing logic on the specified request (after is
-     * has been executed by the client runtime).
-     *
-     * @param request
-     *            The low level request being processed.
-     * @param response
-     *            The response generated from the specified request.
-     * @param timingInfo
-     *            Timing information on the request's processing.
-     */
-    public void afterResponse(Request<?> request, Object response, TimingInfo timingInfo);
+    @Override
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
+        return request;
+    }
 
-    /**
-     * Runs any additional processing logic on a request after it has failed.
-     *
-     * @param request
-     *            The request that generated an error.
-     * @param e
-     *            The error that resulted from executing the request.
-     */
-    public void afterError(Request<?> request, Exception e);
+    @Override
+    public HttpResponse beforeUnmarshalling(SdkHttpFullRequest request, HttpResponse httpResponse) {
+        return httpResponse;
+    }
 
+    @Override
+    public void afterResponse(SdkHttpFullRequest request, Response<?> response) {
+    }
+
+    @Override
+    public void afterError(SdkHttpFullRequest request, Response<?> response, Exception e) {
+    }
 }

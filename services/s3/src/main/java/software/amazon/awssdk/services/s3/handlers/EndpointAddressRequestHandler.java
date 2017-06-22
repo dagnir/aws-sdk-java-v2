@@ -21,33 +21,35 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.handlers.HandlerContextKey;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.handlers.RequestHandler;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.s3.BucketUtils;
 import software.amazon.awssdk.services.s3.S3AdvancedConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 
-public class EndpointAddressRequestHandler extends RequestHandler2 {
+public class EndpointAddressRequestHandler extends RequestHandler {
 
     private static List<Class> ACCELERATE_DISABLED_OPERATIONS = Arrays.asList(
             ListBucketsRequest.class, CreateBucketRequest.class, DeleteBucketRequest.class);
 
     @Override
-    public void beforeRequest(Request<?> request) {
+    public SdkHttpFullRequest beforeRequest(SdkHttpFullRequest request) {
 
         S3AdvancedConfiguration advancedConfiguration =
-                (S3AdvancedConfiguration) request.getHandlerContext(HandlerContextKey.SERVICE_ADVANCED_CONFIG);
+                (S3AdvancedConfiguration) request.handlerContext(AwsHandlerKeys.SERVICE_ADVANCED_CONFIG);
+        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
+        SdkHttpFullRequest.Builder mutableRequest = request.toBuilder();
 
         if (advancedConfiguration == null || !advancedConfiguration.pathStyleAccessEnabled()) {
             try {
-                String bucketName = getBucketName(request);
+                String bucketName = getBucketName(originalRequest);
 
                 if (BucketUtils.isValidDnsBucketName(bucketName, false)) {
-                    changeToDnsEndpoint(request, bucketName);
+                    changeToDnsEndpoint(mutableRequest, bucketName);
                 }
             } catch (Exception e) {
                 // Unable to convert to DNS style addressing. Fall back to continue using path style.
@@ -56,37 +58,40 @@ public class EndpointAddressRequestHandler extends RequestHandler2 {
 
         // Remove accelerate from operations that don't allow it
         if (advancedConfiguration != null && advancedConfiguration.accelerateModeEnabled()
-            && ACCELERATE_DISABLED_OPERATIONS.contains(request.getOriginalRequest().getClass())) {
-            removeAccelerate(request);
+            && ACCELERATE_DISABLED_OPERATIONS.contains(originalRequest.getClass())) {
+            removeAccelerate(mutableRequest);
         }
+
+        return mutableRequest.build();
     }
 
     @ReviewBeforeRelease("Remove reflection here. Have some kind of interface where we can get bucket name or pass it" +
                          "in the handler context")
-    private String getBucketName(Request<?> request) throws IllegalAccessException, InvocationTargetException,
-                                                            NoSuchMethodException {
-        return (String) request.getOriginalRequest().getClass()
-                               .getMethod("bucket")
-                               .invoke(request.getOriginalRequest());
+    private String getBucketName(Object originalRequest) throws IllegalAccessException, InvocationTargetException,
+                                                                NoSuchMethodException {
+        return (String) originalRequest.getClass()
+                                       .getMethod("bucket")
+                                       .invoke(originalRequest);
     }
 
-    private URI removeAccelerate(Request<?> request) {
-        return URI.create(request.getEndpoint().toASCIIString().replaceFirst("s3-accelerate", "s3"));
+    private void removeAccelerate(SdkHttpFullRequest.Builder mutableRequest) {
+        mutableRequest.endpoint(URI.create(mutableRequest.getEndpoint().toASCIIString().replaceFirst("s3-accelerate", "s3")));
     }
 
-    private void changeToDnsEndpoint(Request<?> request, String bucketName) {
+    private void changeToDnsEndpoint(SdkHttpFullRequest.Builder mutableRequest, String bucketName) {
         // Replace /bucketName from resourcePath with nothing
-        String resourcePath = request.getResourcePath().replaceFirst("/" + bucketName, "");
+        String resourcePath = mutableRequest.getResourcePath().replaceFirst("/" + bucketName, "");
 
         // Prepend bucket to endpoint
         URI endpoint = invokeSafely(() -> new URI(
-                request.getEndpoint().getScheme(), // Existing scheme
-                request.getEndpoint().getHost().replaceFirst("s3", bucketName + "." + "s3"), // replace "s3" with "bucket.s3"
+                mutableRequest.getEndpoint().getScheme(), // Existing scheme
+                // replace "s3" with "bucket.s3"
+                mutableRequest.getEndpoint().getHost().replaceFirst("s3", bucketName + "." + "s3"),
                 null,
                 null));
 
-        request.setEndpoint(endpoint);
+        mutableRequest.endpoint(endpoint);
 
-        request.setResourcePath(resourcePath);
+        mutableRequest.resourcePath(resourcePath);
     }
 }

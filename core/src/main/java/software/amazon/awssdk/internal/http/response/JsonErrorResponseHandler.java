@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.internal.http.ErrorCodeParser;
@@ -71,7 +72,7 @@ public class JsonErrorResponseHandler implements HttpResponseHandler<AmazonServi
         }
 
         ase.setErrorCode(errorCode);
-        ase.setServiceName(response.getRequest().getServiceName());
+        ase.setServiceName(response.getRequest().handlerContext(AwsHandlerKeys.SERVICE_NAME));
         ase.setStatusCode(response.getStatusCode());
         ase.setErrorType(getErrorTypeFromStatusCode(response.getStatusCode()));
         ase.setRawResponse(jsonContent.getRawContent());
@@ -87,10 +88,8 @@ public class JsonErrorResponseHandler implements HttpResponseHandler<AmazonServi
      * Create an AmazonServiceException using the chain of unmarshallers. This method will never
      * return null, it will always return a valid AmazonServiceException
      *
-     * @param errorCode
-     *            Error code to find an appropriate unmarshaller
-     * @param jsonContent
-     *            JsonContent of HTTP response
+     * @param errorCode   Error code to find an appropriate unmarshaller
+     * @param jsonContent JsonContent of HTTP response
      * @return AmazonServiceException
      */
     private AmazonServiceException createException(String errorCode, JsonContent jsonContent) {

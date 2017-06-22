@@ -59,7 +59,7 @@ public class SearchRequestUnitTest {
      * @throws IOException
      */
     @Test
-    public void testPOSTUsedForSearchRequest() throws IOException {
+    public void testPostUsedForSearchRequest() throws IOException {
         stubFor(post(urlMatching("/.*"))
                     .willReturn(aResponse()
                             .withStatus(200)

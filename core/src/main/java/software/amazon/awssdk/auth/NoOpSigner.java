@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.auth;
 
-import software.amazon.awssdk.SignableRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 /**
  * A No-Op Signer Implementation.
@@ -23,6 +23,7 @@ import software.amazon.awssdk.SignableRequest;
 public class NoOpSigner implements Signer {
 
     @Override
-    public void sign(SignableRequest<?> request, AwsCredentials credentials) {
+    public SdkHttpFullRequest sign(SdkHttpFullRequest request, AwsCredentials credentials) {
+        return request;
     }
 }

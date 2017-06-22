@@ -20,14 +20,14 @@ import static software.amazon.awssdk.http.AmazonHttpClient.checkInterrupted;
 
 import java.util.Random;
 import java.util.UUID;
-import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestExecutionContext;
-import software.amazon.awssdk.http.pipeline.RequestToRequestPipeline;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
 
 /**
  * Generates a unique identifier for the request that is consistent across retries.
  */
-public class ApplyTransactionIdStage implements RequestToRequestPipeline {
+public class ApplyTransactionIdStage implements MutableRequestToRequestPipeline {
 
     /**
      * Used to generate UUID's for client transaction id. This gives a higher probability of id
@@ -37,9 +37,9 @@ public class ApplyTransactionIdStage implements RequestToRequestPipeline {
     private final Random random = new Random();
 
     @Override
-    public Request<?> execute(Request<?> request, RequestExecutionContext context) throws Exception {
+    public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest.Builder request, RequestExecutionContext context)
+            throws Exception {
         checkInterrupted();
-        request.addHeader(HEADER_SDK_TRANSACTION_ID, new UUID(random.nextLong(), random.nextLong()).toString());
-        return request;
+        return request.header(HEADER_SDK_TRANSACTION_ID, new UUID(random.nextLong(), random.nextLong()).toString());
     }
 }

@@ -16,6 +16,7 @@
 package software.amazon.awssdk.config;
 
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.SdkHttpClient;
 
 /**
  * An interface that represents configuration only required by a sync AWS client in order to operate. Sync AWS clients accept
@@ -27,4 +28,8 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 @SdkInternalApi
 public interface SyncClientConfiguration extends ClientConfiguration {
 
+    /**
+     * The HTTP client the SDK will use to make HTTP requests.
+     */
+    SdkHttpClient httpClient();
 }

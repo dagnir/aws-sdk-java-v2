@@ -15,9 +15,9 @@
 
 package software.amazon.awssdk.config;
 
-import java.util.concurrent.ExecutorService;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 
 /**
  * An interface that represents configuration only required by an async AWS client in order to operate. Async AWS clients accept
@@ -28,9 +28,14 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
  */
 @SdkInternalApi
 public interface AsyncClientConfiguration extends ClientConfiguration {
+
     /**
-     * The executor service that should be used to execute the asynchronous AWS client invocations.
+     * The scheduled executor service that should be used to queue up tasks like retry attempts.
      */
-    @ReviewBeforeRelease("When we switch to use NIO, this configuration will likely change.")
-    ExecutorService asyncExecutorService();
+    ScheduledExecutorService asyncExecutorService();
+
+    /**
+     * @return The asynchronous async HTTP client implementation to make HTTP requests with.
+     */
+    SdkAsyncHttpClient asyncHttpClient();
 }

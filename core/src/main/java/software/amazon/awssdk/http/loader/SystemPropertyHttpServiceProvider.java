@@ -18,30 +18,57 @@ package software.amazon.awssdk.http.loader;
 import java.util.Optional;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.http.SdkHttpService;
+import software.amazon.awssdk.http.async.SdkAsyncHttpService;
 import software.amazon.awssdk.utils.SdkSystemSetting;
+import software.amazon.awssdk.utils.SystemSetting;
 
 /**
- * Attempts to load the default implementation from the system property {@link SdkSystemSetting#HTTP_SERVICE_IMPL}. The property
- * value should be the fully qualified class name of the factory to use.
+ * Attempts to load the default implementation from the system property {@link SdkSystemSetting#SYNC_HTTP_SERVICE_IMPL}. The
+ * property value should be the fully qualified class name of the factory to use.
  */
-class SystemPropertyHttpServiceProvider implements SdkHttpServiceProvider {
+final class SystemPropertyHttpServiceProvider<T> implements SdkHttpServiceProvider<T> {
+
+    private final SystemSetting implSetting;
+    private final Class<T> serviceClass;
+
+    /**
+     * @param implSetting  {@link SystemSetting} to access the system property that has the implementation FQCN.
+     * @param serviceClass Service type being loaded.
+     */
+    private SystemPropertyHttpServiceProvider(SystemSetting implSetting, Class<T> serviceClass) {
+        this.implSetting = implSetting;
+        this.serviceClass = serviceClass;
+    }
 
     @Override
-    public Optional<SdkHttpService> loadService() {
-        return SdkSystemSetting.HTTP_SERVICE_IMPL
+    public Optional<T> loadService() {
+        return implSetting
                 .getStringValue()
                 .map(this::createServiceFromProperty);
     }
 
-    private SdkHttpService createServiceFromProperty(String httpImplFqcn) {
+    private T createServiceFromProperty(String httpImplFqcn) {
         try {
-            return (SdkHttpService) Class.forName(httpImplFqcn).newInstance();
+            return serviceClass.cast(Class.forName(httpImplFqcn).newInstance());
         } catch (Exception e) {
             throw new SdkClientException(String.format(
                     "Unable to load the HTTP factory implementation from the %s system property. " +
                     "Ensure the class '%s' is present on the classpath and has a no-arg constructor",
-                    SdkSystemSetting.HTTP_SERVICE_IMPL.property(), httpImplFqcn), e);
+                    SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL.property(), httpImplFqcn), e);
         }
     }
 
+    /**
+     * @return SystemPropertyHttpServiceProvider instance using the sync HTTP system property.
+     */
+    static SystemPropertyHttpServiceProvider<SdkHttpService> syncProvider() {
+        return new SystemPropertyHttpServiceProvider<>(SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL, SdkHttpService.class);
+    }
+
+    /**
+     * @return SystemPropertyHttpServiceProvider instance using the async HTTP system property.
+     */
+    static SystemPropertyHttpServiceProvider<SdkAsyncHttpService> asyncProvider() {
+        return new SystemPropertyHttpServiceProvider<>(SdkSystemSetting.ASYNC_HTTP_SERVICE_IMPL, SdkAsyncHttpService.class);
+    }
 }

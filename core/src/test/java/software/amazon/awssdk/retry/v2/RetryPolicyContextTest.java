@@ -19,8 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.http.DefaultSdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
 import utils.model.EmptyAmazonWebServiceRequest;
 
 public class RetryPolicyContextTest {
@@ -43,8 +44,7 @@ public class RetryPolicyContextTest {
     @Test
     public void buildFully() {
         final EmptyAmazonWebServiceRequest origRequest = new EmptyAmazonWebServiceRequest();
-        final DefaultRequest<EmptyAmazonWebServiceRequest> request =
-                new DefaultRequest<EmptyAmazonWebServiceRequest>(origRequest, "foo");
+        final SdkHttpFullRequest request = DefaultSdkHttpFullRequest.builder().build();
         final SdkClientException exception = new SdkClientException("boom");
         final RetryPolicyContext context = RetryPolicyContext.builder()
                                                              .retriesAttempted(3)

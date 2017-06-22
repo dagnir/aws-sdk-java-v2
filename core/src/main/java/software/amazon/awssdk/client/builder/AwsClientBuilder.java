@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.Protocol;
 import software.amazon.awssdk.SdkClientException;
@@ -34,7 +34,7 @@ import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerFactory;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.internal.auth.DefaultSignerProvider;
@@ -74,7 +74,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     private LegacyClientConfiguration clientConfig;
     private RequestMetricCollector metricsCollector;
     private Region region;
-    private List<RequestHandler2> requestHandlers;
+    private List<RequestHandler> requestHandlers;
     private EndpointConfiguration endpointConfiguration;
 
     protected AwsClientBuilder() {
@@ -263,7 +263,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
     /**
      * Gets the list of request handlers in use by the builder.
      */
-    public final List<RequestHandler2> getRequestHandlers() {
+    public final List<RequestHandler> getRequestHandlers() {
         return this.requestHandlers == null ? null :
                 Collections.unmodifiableList(this.requestHandlers);
     }
@@ -273,7 +273,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      *
      * @param handlers Request handlers to use for client.
      */
-    public final void setRequestHandlers(RequestHandler2... handlers) {
+    public final void setRequestHandlers(RequestHandler... handlers) {
         this.requestHandlers = Arrays.asList(handlers);
     }
 
@@ -283,7 +283,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * @param handlers Request handlers to use for client.
      * @return This object for method chaining.
      */
-    public final SubclassT withRequestHandlers(RequestHandler2... handlers) {
+    public final SubclassT withRequestHandlers(RequestHandler... handlers) {
         setRequestHandlers(handlers);
         return getSubclass();
     }
@@ -292,9 +292,9 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
      * Request handlers are copied to a new list to avoid mutation, if no request handlers are
      * provided to the builder we supply an empty list.
      */
-    private List<RequestHandler2> resolveRequestHandlers() {
-        return (requestHandlers == null) ? new ArrayList<RequestHandler2>() :
-                new ArrayList<RequestHandler2>(requestHandlers);
+    private List<RequestHandler> resolveRequestHandlers() {
+        return (requestHandlers == null) ? new ArrayList<RequestHandler>() :
+                new ArrayList<RequestHandler>(requestHandlers);
     }
 
     /**
@@ -379,7 +379,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         private final LegacyClientConfiguration clientConfig;
         private final AwsCredentialsProvider credentials;
         private final RequestMetricCollector metricsCollector;
-        private final List<RequestHandler2> requestHandlers;
+        private final List<RequestHandler> requestHandlers;
         private final Region signingRegion;
 
         protected SyncBuilderParams() {
@@ -415,7 +415,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         }
 
         @Override
-        public List<RequestHandler2> getRequestHandlers() {
+        public List<RequestHandler> getRequestHandlers() {
             return this.requestHandlers;
         }
 
@@ -438,7 +438,7 @@ public abstract class AwsClientBuilder<SubclassT extends AwsClientBuilder, TypeT
         }
 
         @Override
-        public ExecutorService getExecutor() {
+        public ScheduledExecutorService getExecutor() {
             throw new UnsupportedOperationException("ExecutorService is not used for sync client.");
         }
 

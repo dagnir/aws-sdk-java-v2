@@ -27,16 +27,16 @@ import software.amazon.awssdk.utils.SdkSystemSetting;
 
 public class SystemPropertyHttpServiceProviderTest {
 
-    private SdkHttpServiceProvider provider;
+    private SdkHttpServiceProvider<SdkHttpService> provider;
 
     @Before
     public void setup() {
-        provider = new SystemPropertyHttpServiceProvider();
+        provider = SystemPropertyHttpServiceProvider.syncProvider();
     }
 
     @After
     public void tearDown() {
-        System.clearProperty(SdkSystemSetting.HTTP_SERVICE_IMPL.property());
+        System.clearProperty(SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL.property());
     }
 
     @Test
@@ -46,25 +46,25 @@ public class SystemPropertyHttpServiceProviderTest {
 
     @Test(expected = SdkClientException.class)
     public void systemPropertySetToInvalidClassName_ThrowsException() {
-        System.setProperty(SdkSystemSetting.HTTP_SERVICE_IMPL.property(), "com.invalid.ClassName");
+        System.setProperty(SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL.property(), "com.invalid.ClassName");
         provider.loadService();
     }
 
     @Test(expected = SdkClientException.class)
     public void systemPropertySetToNonServiceClass_ThrowsException() {
-        System.setProperty(SdkSystemSetting.HTTP_SERVICE_IMPL.property(), getClass().getName());
+        System.setProperty(SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL.property(), getClass().getName());
         provider.loadService();
     }
 
     @Test(expected = SdkClientException.class)
     public void systemPropertySetToServiceClassWithNoDefaultCtor_ThrowsException() {
-        System.setProperty(SdkSystemSetting.HTTP_SERVICE_IMPL.property(), HttpServiceWithNoDefaultCtor.class.getName());
+        System.setProperty(SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL.property(), HttpServiceWithNoDefaultCtor.class.getName());
         provider.loadService();
     }
 
     @Test
     public void systemPropertySetToValidClass_ReturnsFulfulledOptional() {
-        System.setProperty(SdkSystemSetting.HTTP_SERVICE_IMPL.property(), MockHttpService.class.getName());
+        System.setProperty(SdkSystemSetting.SYNC_HTTP_SERVICE_IMPL.property(), MockHttpService.class.getName());
         assertThat(provider.loadService()).isPresent();
     }
 

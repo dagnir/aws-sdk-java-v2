@@ -20,7 +20,7 @@ import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.http.AbortableCallable;
+import software.amazon.awssdk.http.Abortable;
 
 /**
  * Keeps track of the scheduled {@link ClientExecutionAbortTask} and the associated {@link Future}
@@ -37,7 +37,7 @@ public class ClientExecutionAbortTrackerTaskImpl implements ClientExecutionAbort
     }
 
     @Override
-    public void setCurrentHttpRequest(AbortableCallable<?> newRequest) {
+    public void setCurrentHttpRequest(Abortable newRequest) {
         task.setCurrentHttpRequest(newRequest);
     }
 

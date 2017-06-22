@@ -16,19 +16,27 @@
 package software.amazon.awssdk.protocol.json;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AwsSystemSetting;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.annotation.SdkTestInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
+import software.amazon.awssdk.async.AsyncResponseHandler;
+import software.amazon.awssdk.http.HttpResponse;
 import software.amazon.awssdk.http.HttpResponseHandler;
+import software.amazon.awssdk.http.SdkHttpFullResponse;
+import software.amazon.awssdk.http.SdkHttpResponseAdapter;
+import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
+import software.amazon.awssdk.http.async.UnmarshallingAsyncResponseHandler;
 import software.amazon.awssdk.protocol.OperationInfo;
 import software.amazon.awssdk.protocol.Protocol;
 import software.amazon.awssdk.protocol.ProtocolRequestMarshaller;
 import software.amazon.awssdk.runtime.http.response.JsonResponseHandler;
 import software.amazon.awssdk.runtime.transform.JsonErrorUnmarshaller;
 import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContext;
+import software.amazon.awssdk.runtime.transform.JsonUnmarshallerContextImpl;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
 
 /**
@@ -88,6 +96,24 @@ public class SdkJsonProtocolFactory {
     }
 
     /**
+     * Returns the response handler to be used for handling a successful response.
+     */
+    public <ResponseT, ReturnT> SdkHttpResponseHandler<ReturnT> createStreamingResponseHandler(
+            Unmarshaller<ResponseT, JsonUnmarshallerContext> responseUnmarshaller,
+            AsyncResponseHandler<ResponseT, ReturnT> asyncResponseHandler) {
+
+        return new UnmarshallingAsyncResponseHandler<>(
+                asyncResponseHandler,
+            sdkHttpResponse -> unmarshall(responseUnmarshaller, (SdkHttpFullResponse) sdkHttpResponse));
+    }
+
+    private <ResponseT> ResponseT unmarshall(Unmarshaller<ResponseT, JsonUnmarshallerContext> responseUnmarshaller,
+                                             SdkHttpFullResponse sdkHttpResponse) throws Exception {
+        HttpResponse httpResponse = SdkHttpResponseAdapter.adapt(false, null, sdkHttpResponse);
+        return responseUnmarshaller.unmarshall(new JsonUnmarshallerContextImpl(null, Collections.emptyMap(), httpResponse));
+    }
+
+    /**
      * Creates a response handler for handling a error response (non 2xx response).
      */
     public HttpResponseHandler<AmazonServiceException> createErrorResponseHandler(
@@ -117,8 +143,8 @@ public class SdkJsonProtocolFactory {
             return SdkStructuredCborFactory.SDK_CBOR_FACTORY;
         } else if (isIonEnabled()) {
             return isIonBinaryEnabled()
-                   ? SdkStructuredIonFactory.SDK_ION_BINARY_FACTORY
-                   : SdkStructuredIonFactory.SDK_ION_TEXT_FACTORY;
+                    ? SdkStructuredIonFactory.SDK_ION_BINARY_FACTORY
+                    : SdkStructuredIonFactory.SDK_ION_TEXT_FACTORY;
         } else {
             return SdkStructuredPlainJsonFactory.SDK_JSON_FACTORY;
         }
@@ -132,8 +158,8 @@ public class SdkJsonProtocolFactory {
             return JsonContentTypeResolver.CBOR;
         } else if (isIonEnabled()) {
             return isIonBinaryEnabled()
-                   ? JsonContentTypeResolver.ION_BINARY
-                   : JsonContentTypeResolver.ION_TEXT;
+                    ? JsonContentTypeResolver.ION_BINARY
+                    : JsonContentTypeResolver.ION_TEXT;
         } else {
             return JsonContentTypeResolver.JSON;
         }

@@ -20,7 +20,6 @@ import java.net.ConnectException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import org.apache.http.conn.ConnectTimeoutException;
 import software.amazon.awssdk.LegacyClientConfiguration;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.auth.AnonymousCredentialsProvider;
@@ -30,7 +29,7 @@ import software.amazon.awssdk.auth.RequestSigner;
 import software.amazon.awssdk.auth.Signer;
 import software.amazon.awssdk.auth.SignerAsRequestSigner;
 import software.amazon.awssdk.client.AwsSyncClientParams;
-import software.amazon.awssdk.handlers.RequestHandler2;
+import software.amazon.awssdk.handlers.RequestHandler;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.loader.DefaultSdkHttpClientFactory;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
@@ -209,9 +208,11 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
     /**
      * Returns the default retry policy for ApiGateway clients.
      */
+    @ReviewBeforeRelease("This has removed ConnectTimeoutException due to a dependency on the Apache impl. We may want" +
+                         "to define a generic connect exception in the HTTP SPI to communicate this back to the core.")
     private RetryPolicy getDefaultRetryPolicy() {
         return RetryPolicyBuilder.standard()
-                                 .retryOnExceptions(ConnectException.class, BindException.class, ConnectTimeoutException.class)
+                                 .retryOnExceptions(ConnectException.class, BindException.class)
                                  .retryOnStatusCodes(429)
                                  .backoffStrategy(PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY_V2)
                                  .maxNumberOfRetries(PredefinedRetryPolicies.DEFAULT_MAX_ERROR_RETRY)
@@ -251,7 +252,7 @@ public abstract class SdkSyncClientBuilder<SubclassT extends SdkSyncClientBuilde
         }
 
         @Override
-        public List<RequestHandler2> getRequestHandlers() {
+        public List<RequestHandler> getRequestHandlers() {
             return Collections.emptyList();
         }
 
