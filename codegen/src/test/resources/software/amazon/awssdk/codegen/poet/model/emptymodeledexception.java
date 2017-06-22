@@ -9,34 +9,34 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 @Generated("software.amazon.awssdk:codegen")
 public class EmptyModeledException extends JsonProtocolTestsException implements
         ToCopyableBuilder<EmptyModeledException.Builder, EmptyModeledException> {
-    private EmptyModeledException(BeanStyleBuilder builder) {
+    private EmptyModeledException(BuilderImpl builder) {
         super(builder.message);
     }
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     public interface Builder extends CopyableBuilder<Builder, EmptyModeledException> {
         Builder message(String message);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private String message;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(EmptyModeledException model) {
+        private BuilderImpl(EmptyModeledException model) {
             this.message = model.getMessage();
         }
 

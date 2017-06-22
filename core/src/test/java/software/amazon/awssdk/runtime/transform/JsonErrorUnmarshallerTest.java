@@ -106,7 +106,7 @@ public class JsonErrorUnmarshallerTest {
             return customInt;
         }
 
-        public static Class<?> beanStyleBuilderClass() {
+        public static Class<?> serializableBuilderClass() {
             return BeanStyleBuilder.class;
         }
 

@@ -14,7 +14,7 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStruct.Builder, SimpleStruct> {
     private final String stringMember;
 
-    private SimpleStruct(BeanStyleBuilder builder) {
+    private SimpleStruct(BuilderImpl builder) {
         this.stringMember = builder.stringMember;
     }
 
@@ -28,15 +28,15 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -93,13 +93,13 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
         Builder stringMember(String stringMember);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private String stringMember;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(SimpleStruct model) {
+        private BuilderImpl(SimpleStruct model) {
             setStringMember(model.stringMember);
         }
 

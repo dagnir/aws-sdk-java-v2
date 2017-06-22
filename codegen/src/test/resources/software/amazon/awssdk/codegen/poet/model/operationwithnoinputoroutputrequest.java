@@ -8,20 +8,20 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 @Generated("software.amazon.awssdk:codegen")
 public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest implements
         ToCopyableBuilder<OperationWithNoInputOrOutputRequest.Builder, OperationWithNoInputOrOutputRequest> {
-    private OperationWithNoInputOrOutputRequest(BeanStyleBuilder builder) {
+    private OperationWithNoInputOrOutputRequest(BuilderImpl builder) {
     }
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -55,11 +55,11 @@ public class OperationWithNoInputOrOutputRequest extends AmazonWebServiceRequest
     public interface Builder extends CopyableBuilder<Builder, OperationWithNoInputOrOutputRequest> {
     }
 
-    private static final class BeanStyleBuilder implements Builder {
-        private BeanStyleBuilder() {
+    private static final class BuilderImpl implements Builder {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(OperationWithNoInputOrOutputRequest model) {
+        private BuilderImpl(OperationWithNoInputOrOutputRequest model) {
         }
 
         @Override

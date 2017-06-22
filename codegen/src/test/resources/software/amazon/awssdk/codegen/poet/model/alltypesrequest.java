@@ -59,7 +59,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
 
     private final SubTypeOne polymorphicTypeWithoutSubTypes;
 
-    private AllTypesRequest(BeanStyleBuilder builder) {
+    private AllTypesRequest(BuilderImpl builder) {
         this.stringMember = builder.stringMember;
         this.integerMember = builder.integerMember;
         this.booleanMember = builder.booleanMember;
@@ -261,15 +261,15 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -716,7 +716,7 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
         Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private String stringMember;
 
         private Integer integerMember;
@@ -759,10 +759,10 @@ public class AllTypesRequest extends AmazonWebServiceRequest implements
 
         private SubTypeOne polymorphicTypeWithoutSubTypes;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(AllTypesRequest model) {
+        private BuilderImpl(AllTypesRequest model) {
             setStringMember(model.stringMember);
             setIntegerMember(model.integerMember);
             setBooleanMember(model.booleanMember);

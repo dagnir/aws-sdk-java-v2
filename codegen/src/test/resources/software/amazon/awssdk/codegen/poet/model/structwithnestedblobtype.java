@@ -17,7 +17,7 @@ public class StructWithNestedBlobType implements StructuredPojo,
         ToCopyableBuilder<StructWithNestedBlobType.Builder, StructWithNestedBlobType> {
     private final ByteBuffer nestedBlob;
 
-    private StructWithNestedBlobType(BeanStyleBuilder builder) {
+    private StructWithNestedBlobType(BuilderImpl builder) {
         this.nestedBlob = builder.nestedBlob;
     }
 
@@ -39,15 +39,15 @@ public class StructWithNestedBlobType implements StructuredPojo,
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -104,13 +104,13 @@ public class StructWithNestedBlobType implements StructuredPojo,
         Builder nestedBlob(ByteBuffer nestedBlob);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private ByteBuffer nestedBlob;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(StructWithNestedBlobType model) {
+        private BuilderImpl(StructWithNestedBlobType model) {
             setNestedBlob(model.nestedBlob);
         }
 

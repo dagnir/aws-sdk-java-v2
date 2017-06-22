@@ -14,7 +14,7 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 public class SubTypeOne implements StructuredPojo, ToCopyableBuilder<SubTypeOne.Builder, SubTypeOne> {
     private final String subTypeOneMember;
 
-    private SubTypeOne(BeanStyleBuilder builder) {
+    private SubTypeOne(BuilderImpl builder) {
         this.subTypeOneMember = builder.subTypeOneMember;
     }
 
@@ -28,15 +28,15 @@ public class SubTypeOne implements StructuredPojo, ToCopyableBuilder<SubTypeOne.
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -93,13 +93,13 @@ public class SubTypeOne implements StructuredPojo, ToCopyableBuilder<SubTypeOne.
         Builder subTypeOneMember(String subTypeOneMember);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private String subTypeOneMember;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(SubTypeOne model) {
+        private BuilderImpl(SubTypeOne model) {
             setSubTypeOneMember(model.subTypeOneMember);
         }
 

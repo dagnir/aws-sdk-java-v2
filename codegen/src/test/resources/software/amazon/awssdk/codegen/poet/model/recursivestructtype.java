@@ -24,7 +24,7 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
 
     private final Map<String, RecursiveStructType> recursiveMap;
 
-    private RecursiveStructType(BeanStyleBuilder builder) {
+    private RecursiveStructType(BuilderImpl builder) {
         this.noRecurse = builder.noRecurse;
         this.recursiveStruct = builder.recursiveStruct;
         this.recursiveList = builder.recursiveList;
@@ -65,15 +65,15 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -194,7 +194,7 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
         Builder recursiveMap(Map<String, RecursiveStructType> recursiveMap);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private String noRecurse;
 
         private RecursiveStructType recursiveStruct;
@@ -203,10 +203,10 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
 
         private Map<String, RecursiveStructType> recursiveMap;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(RecursiveStructType model) {
+        private BuilderImpl(RecursiveStructType model) {
             setNoRecurse(model.noRecurse);
             setRecursiveStruct(model.recursiveStruct);
             setRecursiveList(model.recursiveList);
