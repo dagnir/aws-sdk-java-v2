@@ -60,7 +60,7 @@ public class AllTypesResponse extends AmazonWebServiceResult<ResponseMetadata> i
 
     private final SubTypeOne polymorphicTypeWithoutSubTypes;
 
-    private AllTypesResponse(BeanStyleBuilder builder) {
+    private AllTypesResponse(BuilderImpl builder) {
         this.stringMember = builder.stringMember;
         this.integerMember = builder.integerMember;
         this.booleanMember = builder.booleanMember;
@@ -262,15 +262,15 @@ public class AllTypesResponse extends AmazonWebServiceResult<ResponseMetadata> i
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -717,7 +717,7 @@ public class AllTypesResponse extends AmazonWebServiceResult<ResponseMetadata> i
         Builder polymorphicTypeWithoutSubTypes(SubTypeOne polymorphicTypeWithoutSubTypes);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private String stringMember;
 
         private Integer integerMember;
@@ -760,10 +760,10 @@ public class AllTypesResponse extends AmazonWebServiceResult<ResponseMetadata> i
 
         private SubTypeOne polymorphicTypeWithoutSubTypes;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(AllTypesResponse model) {
+        private BuilderImpl(AllTypesResponse model) {
             setStringMember(model.stringMember);
             setIntegerMember(model.integerMember);
             setBooleanMember(model.booleanMember);

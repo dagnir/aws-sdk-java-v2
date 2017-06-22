@@ -149,7 +149,7 @@ public class SdkStructuredIonFactoryTest {
             super(builder.message);
         }
 
-        public static Class<?> beanStyleBuilderClass() {
+        public static Class<?> serializableBuilderClass() {
             return BeanStyleBuilder.class;
         }
 

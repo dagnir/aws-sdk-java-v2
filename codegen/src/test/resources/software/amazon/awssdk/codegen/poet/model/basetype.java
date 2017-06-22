@@ -14,7 +14,7 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 public class BaseType implements StructuredPojo, ToCopyableBuilder<BaseType.Builder, BaseType> {
     private final String baseMember;
 
-    private BaseType(BeanStyleBuilder builder) {
+    private BaseType(BuilderImpl builder) {
         this.baseMember = builder.baseMember;
     }
 
@@ -28,15 +28,15 @@ public class BaseType implements StructuredPojo, ToCopyableBuilder<BaseType.Buil
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -93,13 +93,13 @@ public class BaseType implements StructuredPojo, ToCopyableBuilder<BaseType.Buil
         Builder baseMember(String baseMember);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private String baseMember;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(BaseType model) {
+        private BuilderImpl(BaseType model) {
             setBaseMember(model.baseMember);
         }
 

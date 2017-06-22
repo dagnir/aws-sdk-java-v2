@@ -21,7 +21,7 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
 
     private final Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 
-    private NestedContainersResponse(BeanStyleBuilder builder) {
+    private NestedContainersResponse(BuilderImpl builder) {
         this.listOfListOfStrings = builder.listOfListOfStrings;
         this.listOfListOfListOfStrings = builder.listOfListOfListOfStrings;
         this.mapOfStringToListOfListOfStrings = builder.mapOfStringToListOfListOfStrings;
@@ -53,15 +53,15 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -176,17 +176,17 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private List<List<String>> listOfListOfStrings;
 
         private List<List<List<String>>> listOfListOfListOfStrings;
 
         private Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(NestedContainersResponse model) {
+        private BuilderImpl(NestedContainersResponse model) {
             setListOfListOfStrings(model.listOfListOfStrings);
             setListOfListOfListOfStrings(model.listOfListOfListOfStrings);
             setMapOfStringToListOfListOfStrings(model.mapOfStringToListOfListOfStrings);

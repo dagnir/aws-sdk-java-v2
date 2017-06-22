@@ -9,20 +9,20 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 @Generated("software.amazon.awssdk:codegen")
 public class OperationWithNoInputOrOutputResponse extends AmazonWebServiceResult<ResponseMetadata> implements
         ToCopyableBuilder<OperationWithNoInputOrOutputResponse.Builder, OperationWithNoInputOrOutputResponse> {
-    private OperationWithNoInputOrOutputResponse(BeanStyleBuilder builder) {
+    private OperationWithNoInputOrOutputResponse(BuilderImpl builder) {
     }
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -56,11 +56,11 @@ public class OperationWithNoInputOrOutputResponse extends AmazonWebServiceResult
     public interface Builder extends CopyableBuilder<Builder, OperationWithNoInputOrOutputResponse> {
     }
 
-    private static final class BeanStyleBuilder implements Builder {
-        private BeanStyleBuilder() {
+    private static final class BuilderImpl implements Builder {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(OperationWithNoInputOrOutputResponse model) {
+        private BuilderImpl(OperationWithNoInputOrOutputResponse model) {
         }
 
         @Override
