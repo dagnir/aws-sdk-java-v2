@@ -7,7 +7,6 @@ started in minutes using ***Maven*** or by downloading a [single zip file][insta
 * [SDK Homepage][sdk-website]
 * [API Docs][docs-api]
 * [Developer Guide][docs-guide] ([source][docs-guide-source])
-* [Forum][sdk-forum]
 * [Issues][sdk-issues]
 * [SDK Blog][blog]
 * [Getting Help](#getting-help)
@@ -123,17 +122,16 @@ Please use these community resources for getting help. We use GitHub [issues][sd
 * **1.10.x** - Approved. Only major critical bugs will be fixed. To get the new features, upgrade to
     1.11.x version of the SDK.
 
-[aws-iam-credentials]: http://docs.aws.amazon.com/java-sdk/latest/developer-guide/java-dg-roles.html
+[aws-iam-credentials]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-roles.html
 [aws]: http://aws.amazon.com/
 [blog]: https://aws.amazon.com/blogs/developer/category/java/
-[docs-api]: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/index.html
-[docs-guide]: http://docs.aws.amazon.com/java-sdk/latest/developer-guide/welcome.html
-[docs-guide-source]: https://github.com/awsdocs/aws-java-developer-guide
-[docs-java-env]: http://docs.aws.amazon.com/java-sdk/latest/developer-guide/setup-install.html#installing-a-java-development-environment
-[docs-signup]: http://docs.aws.amazon.com/java-sdk/latest/developer-guide/signup-create-iam-user.html
-[docs-setup]: http://docs.aws.amazon.com/java-sdk/latest/developer-guide/setup-install.html
+[docs-api]: http://aws-java-sdk-javadoc.s3-website-us-west-2.amazonaws.com/latest/overview-summary.html
+[docs-guide]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/welcome.html
+[docs-guide-source]: https://github.com/awsdocs/aws-java-developer-guide-v2
+[docs-java-env]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-install.html#installing-a-java-development-environment
+[docs-signup]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/signup-create-iam-user.html
+[docs-setup]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/setup-install.html
 [install-jar]: http://sdk-for-java.amazonwebservices.com/latest/aws-java-sdk.zip
-[sdk-forum]: http://developer.amazonwebservices.com/connect/forum.jspa?forumID=70
 [sdk-issues]: https://github.com/aws/aws-sdk-java/issues
 [sdk-license]: http://aws.amazon.com/apache2.0/
 [sdk-website]: http://aws.amazon.com/sdkforjava
