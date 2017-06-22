@@ -25,7 +25,7 @@ import software.amazon.awssdk.services.json.transform.APostOperationWithOutputRe
 import software.amazon.awssdk.services.json.transform.APostOperationWithOutputResponseUnmarshaller;
 
 @Generated("software.amazon.awssdk:codegen")
-public class DefaultJsonAsyncClient implements JsonAsyncClient {
+class DefaultJsonAsyncClient implements JsonAsyncClient {
     private final AsyncClientHandler clientHandler;
 
     private final SdkJsonProtocolFactory protocolFactory;

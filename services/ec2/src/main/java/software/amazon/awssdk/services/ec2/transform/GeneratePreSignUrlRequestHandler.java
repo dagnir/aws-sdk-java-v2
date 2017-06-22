@@ -26,7 +26,6 @@ import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.regions.ServiceMetadata;
 import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.CopySnapshotRequest;
 import software.amazon.awssdk.util.AwsHostNameUtils;
@@ -138,7 +137,7 @@ public class GeneratePreSignUrlRequestHandler extends RequestHandler {
                                             + "found in region metadata. Update to latest version of SDK and try again.");
         }
 
-        return ServiceMetadata.of(EC2Client.SERVICE_NAME).endpointFor(region);
+        return EC2Client.serviceMetadata().endpointFor(region);
     }
 
     /**

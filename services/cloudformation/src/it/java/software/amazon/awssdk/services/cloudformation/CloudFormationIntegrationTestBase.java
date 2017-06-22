@@ -16,15 +16,24 @@
 package software.amazon.awssdk.services.cloudformation;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.policy.Action;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.s3.model.ObjectListing;
-import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.test.AwsTestBase;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Base class for CloudFormation integration tests. Loads AWS credentials from a properties file and
@@ -34,14 +43,13 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
 
     protected static CloudFormationClient cf;
     protected static String bucketName = "cloudformation-templates" + System.currentTimeMillis();
-    protected static String template1 = "sampleTemplate";
     protected static String templateForCloudFormationIntegrationTests = "templateForCloudFormationIntegrationTests";
     protected static String templateForStackIntegrationTests = "templateForStackIntegrationTests";
     protected static String templateUrlForCloudFormationIntegrationTests = "https://s3.amazonaws.com/" + bucketName
                                                                            + "/" + templateForCloudFormationIntegrationTests;
     protected static String templateUrlForStackIntegrationTests = "https://s3.amazonaws.com/" + bucketName + "/"
                                                                   + templateForStackIntegrationTests;
-    protected static AmazonS3Client s3;
+    protected static S3Client s3;
 
     /**
      * Loads the AWS account info for the integration tests and creates an S3 client for tests to
@@ -54,17 +62,30 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
                 .credentialsProvider(new StaticCredentialsProvider(credentials))
                 .region(Region.AP_NORTHEAST_1)
                 .build();
-        s3 = new AmazonS3Client(credentials);
-        s3.createBucket(bucketName);
-        s3.putObject(bucketName, templateForCloudFormationIntegrationTests, new File("tst/" +
-                                                                                     templateForCloudFormationIntegrationTests));
-        s3.putObject(bucketName, templateForStackIntegrationTests, new File("tst/" + templateForStackIntegrationTests));
+        s3 = S3Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.AP_NORTHEAST_1).build();
+
+        s3.createBucket(CreateBucketRequest.builder().bucket(bucketName).build());
+
+        s3.putObject(PutObjectRequest.builder()
+                                     .bucket(bucketName)
+                                     .key(templateForCloudFormationIntegrationTests)
+                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(
+                                         new FileInputStream(
+                                             new File("tst/" + templateForCloudFormationIntegrationTests)))))
+                                     .build());
+
+        s3.putObject(PutObjectRequest.builder()
+                                     .bucket(bucketName)
+                                     .key(templateForStackIntegrationTests)
+                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(
+                                         new FileInputStream(
+                                             new File("tst/" + templateForStackIntegrationTests)))))
+                                     .build());
     }
 
     @AfterClass
     public static void tearDown() {
         deleteBucketAndAllContents(bucketName);
-        s3.shutdown();
     }
 
     /**
@@ -74,22 +95,26 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
      *            The bucket to empty and delete.
      */
     protected static void deleteBucketAndAllContents(String bucketName) {
-        ObjectListing objectListing = s3.listObjects(bucketName);
+        ListObjectsResponse listObjectResponse = s3.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
+        List<S3Object> objectListing = listObjectResponse.contents();
 
         while (true) {
-            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                s3.deleteObject(bucketName, objectSummary.getKey());
+            for (S3Object objectSummary : objectListing) {
+                s3.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(objectSummary.key()).build());
             }
 
-            if (objectListing.isTruncated()) {
-                objectListing = s3.listNextBatchOfObjects(objectListing);
+            if (listObjectResponse.isTruncated()) {
+                listObjectResponse = s3.listObjects(ListObjectsRequest.builder()
+                                                                 .bucket(bucketName)
+                                                                 .marker(listObjectResponse.marker())
+                                                                 .build());
             } else {
                 break;
             }
         }
         ;
 
-        s3.deleteBucket(bucketName);
+        s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
     }
 
     /**

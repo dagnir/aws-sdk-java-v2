@@ -95,5 +95,4 @@ public class Ec2ProtocolSpec extends QueryXmlProtocolSpec {
                 .build();
 
     }
-
 }

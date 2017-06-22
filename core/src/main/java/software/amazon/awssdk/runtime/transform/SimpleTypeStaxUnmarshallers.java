@@ -255,4 +255,5 @@ public class SimpleTypeStaxUnmarshallers {
             return (shortString == null) ? null : Short.valueOf(shortString);
         }
     }
+
 }

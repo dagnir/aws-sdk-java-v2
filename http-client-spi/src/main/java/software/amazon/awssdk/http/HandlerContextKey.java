@@ -23,7 +23,7 @@ import software.amazon.awssdk.utils.AttributeMap;
  * <pre class="brush: java">
  *     final HandlerContextKey&lt;String&gt; METRICS_KEY = new HandlerContextKey("METRICS_KEY");
  *
- *      new RequestHandler2(){
+ *      new RequestHandler(){
  *
  *          {@literal @}Override
  *          public void beforeRequest(Request&lt;?&gt; request) {

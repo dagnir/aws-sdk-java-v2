@@ -7,7 +7,7 @@
 
 <#if memberModel.list>
     <#if memberModel.http.flattened>
-        <#local listMemberPath = memberModel.listModel.memberLocationName!memberModel.name />
+        <#local listMemberPath = memberModel.listModel.memberLocationName!memberModel.http.unmarshallLocationName!memberModel.name />
     <#else>
         <#local listMemberPath = unmarshallerLocationName + "/" + memberModel.listModel.memberLocationName!"member" />
     </#if>
@@ -28,7 +28,7 @@
                     continue;
                 }
 
-<#elseif memberModel.map>
+<#elseif memberModel.map && (!memberModel.http.location?? || memberModel.http.location != "headers")>
     <#local mapEntryPath = unmarshallerLocationName />
 
     <#if !memberModel.http.flattened>
@@ -45,7 +45,7 @@
                     continue;
                 }
 
-<#else>
+<#elseif !memberModel.map>
                 if (context.testExpression("${unmarshallerLocationName}", targetDepth)) {
                     ${shapeVarName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.simpleType}Unmarshaller.getInstance().unmarshall(context));
                     continue;

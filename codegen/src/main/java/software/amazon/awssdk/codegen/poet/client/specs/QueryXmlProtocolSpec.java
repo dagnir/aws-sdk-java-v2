@@ -112,6 +112,10 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
 
     @Override
     public CodeBlock executionHandler(OperationModel opModel) {
+        if (opModel.hasStreamingOutput()) {
+            // TODO FIXME
+            return CodeBlock.builder().addStatement("return null").build();
+        }
         ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
         ClassName marshaller = poetExtensions.getTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
@@ -127,7 +131,7 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
                                        "responseHandler",
                                        "errorResponseHandler",
                                        opModel.getInput().getVariableName())
-                .build();
+                        .build();
     }
 
     @Override

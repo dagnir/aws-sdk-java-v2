@@ -259,7 +259,7 @@ public abstract class DefaultClientBuilder<B extends ClientBuilder<B, C>, C>
     /**
      * Resolve the region that should be used based on the customer's configuration.
      */
-    private Optional<Region> resolveRegion() {
+    protected Optional<Region> resolveRegion() {
         return region != null ? Optional.of(region) : regionFromDefaultProvider();
     }
 

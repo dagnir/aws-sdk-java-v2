@@ -300,12 +300,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                    <configuration>
-                        <excludePackageNames>*.internal:*.transform</excludePackageNames>
-                        <minmemory>128m</minmemory>
-                        <maxmemory>1024m</maxmemory>
-                    </configuration>
+                    <version>2.10.4</version>
                 </plugin>
 
                 <plugin>
@@ -553,6 +548,410 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <id>public-javadoc</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <minmemory>128m</minmemory>
+                            <maxmemory>4g</maxmemory>
+                            <includeDependencySources>true</includeDependencySources>
+                            <show>public</show>
+                            <author>false</author>
+                            <version>true</version>
+                            <use>false</use>
+                            <notree>true</notree>
+                            <nodeprecatedlist>true</nodeprecatedlist>
+                            <windowtitle>AWS SDK for Java - ${project.version}</windowtitle>
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
+                            <doctitle>AWS SDK for Java API Reference - ${project.version}</doctitle>
+                            <packagesheader>AWS SDK for Java</packagesheader>
+                            <excludePackageNames>:*.codegen:software.amazon.awssdk.services.protocol*</excludePackageNames>
+                            <groups>
+                                <group>
+                                    <title>Greengrass</title>
+                                    <packages>software.amazon.awssdk.services.greengrass*</packages>
+                                </group>
+                                <group>
+                                    <title>Athena</title>
+                                    <packages>software.amazon.awssdk.services.athena*</packages>
+                                </group>
+                                <group>
+                                    <title>Marketplace Entitlement</title>
+                                    <packages>software.amazon.awssdk.services.marketplaceentitlement*</packages>
+                                </group>
+                                <group>
+                                    <title>CodeStar</title>
+                                    <packages>software.amazon.awssdk.services.codestar*</packages>
+                                </group>
+                                <group>
+                                    <title>Lex Model Building</title>
+                                    <packages>software.amazon.awssdk.services.lexmodelbuilding*</packages>
+                                </group>
+                                <group>
+                                    <title>Resource Groups Tagging API</title>
+                                    <packages>software.amazon.awssdk.services.resourcegroupstaggingapi*</packages>
+                                </group>
+                                <group>
+                                    <title>S3</title>
+                                    <packages>software.amazon.awssdk.services.s3*</packages>
+                                </group>
+                                <group>
+                                    <title>Glacier</title>
+                                    <packages>software.amazon.awssdk.services.glacier*</packages>
+                                </group>
+                                <group>
+                                    <title>DynamoDB</title>
+                                    <packages>software.amazon.awssdk.services.dynamo*</packages>
+                                </group>
+                                <group>
+                                    <title>EC2</title>
+                                    <packages>software.amazon.awssdk.services.ec2*</packages>
+                                </group>
+                                <group>
+                                    <title>SimpleDB</title>
+                                    <packages>software.amazon.awssdk.services.simpledb*</packages>
+                                </group>
+                                <group>
+                                    <title>SQS</title>
+                                    <packages>software.amazon.awssdk.services.sqs*</packages>
+                                </group>
+                                <group>
+                                    <title>SNS</title>
+                                    <packages>software.amazon.awssdk.services.sns*</packages>
+                                </group>
+                                <group>
+                                    <title>Relational Database Service</title>
+                                    <packages>software.amazon.awssdk.services.rds*</packages>
+                                </group>
+                                <group>
+                                    <title>Route 53</title>
+                                    <packages>software.amazon.awssdk.services.route53*</packages>
+                                </group>
+                                <group>
+                                    <title>Simple Workflow Service</title>
+                                    <!-- TODO: Unify Packages -->
+                                    <packages>software.amazon.awssdk.services.swf*:software.amazon.awssdk.services.simpleworkflow*</packages>
+                                </group>
+                                <group>
+                                    <title>Elastic MapReduce</title>
+                                    <packages>software.amazon.awssdk.services.emr*</packages>
+                                </group>
+                                <group>
+                                    <title>Simple Email Service</title>
+                                    <!-- TODO: Unify Packages -->
+                                    <packages>software.amazon.awssdk.services.ses*:software.amazon.awssdk.services.simpleemail*</packages>
+                                </group>
+                                <group>
+                                    <title>Elastic Load Balancing</title>
+                                    <packages>software.amazon.awssdk.services.elasticloadbalancing*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudSearch</title>
+                                    <packages>software.amazon.awssdk.services.cloudsearch*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudWatch</title>
+                                    <packages>software.amazon.awssdk.services.cloudwatch*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudWatch Logs</title>
+                                    <packages>software.amazon.awssdk.services.logs*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudWatch Events</title>
+                                    <packages>software.amazon.awssdk.services.cloudwatchevents*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudFront</title>
+                                    <packages>software.amazon.awssdk.services.cloudfront*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudDirectory</title>
+                                    <packages>software.amazon.awssdk.services.clouddirectory*</packages>
+                                </group>
+                                <group>
+                                    <title>Cognito</title>
+                                    <packages>software.amazon.awssdk.services.cognito*</packages>
+                                </group>
+                                <group>
+                                    <title>AutoScaling</title>
+                                    <packages>software.amazon.awssdk.services.autoscaling*</packages>
+                                </group>
+                                <group>
+                                    <title>Kinesis</title>
+                                    <packages>software.amazon.awssdk.services.kinesis*:software.amazon.awssdk.services.firehose*</packages>
+                                </group>
+                                <group>
+                                    <title>Redshift</title>
+                                    <packages>software.amazon.awssdk.services.redshift*</packages>
+                                </group>
+                                <group>
+                                    <title>ElastiCache</title>
+                                    <packages>software.amazon.awssdk.services.elasticache*</packages>
+                                </group>
+                                <group>
+                                    <title>Elastic Transcoder</title>
+                                    <packages>software.amazon.awssdk.services.elastictranscoder*</packages>
+                                </group>
+                                <group>
+                                    <title>OpsWorks</title>
+                                    <packages>software.amazon.awssdk.services.opsworks*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudFormation</title>
+                                    <packages>software.amazon.awssdk.services.cloudformation*</packages>
+                                </group>
+                                <group>
+                                    <title>Data Pipeline</title>
+                                    <packages>software.amazon.awssdk.services.datapipeline*</packages>
+                                </group>
+                                <group>
+                                    <title>Direct Connect</title>
+                                    <packages>software.amazon.awssdk.services.directconnect*</packages>
+                                </group>
+                                <group>
+                                    <title>Elastic Beanstalk</title>
+                                    <packages>software.amazon.awssdk.services.elasticbeanstalk*</packages>
+                                </group>
+                                <group>
+                                    <title>Identity and Access Management</title>
+                                    <packages>software.amazon.awssdk.services.iam*</packages>
+                                </group>
+                                <group>
+                                    <title>ImportExport</title>
+                                    <packages>software.amazon.awssdk.services.importexport*</packages>
+                                </group>
+                                <group>
+                                    <title>Security Token Service</title>
+                                    <packages>software.amazon.awssdk.services.sts*</packages>
+                                </group>
+                                <group>
+                                    <title>Storage Gateway Service</title>
+                                    <packages>software.amazon.awssdk.services.storagegateway*</packages>
+                                </group>
+                                <group>
+                                    <title>Support</title>
+                                    <packages>software.amazon.awssdk.services.support*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudTrail</title>
+                                    <packages>software.amazon.awssdk.services.cloudtrail*</packages>
+                                </group>
+                                <group>
+                                    <title>Config</title>
+                                    <packages>software.amazon.awssdk.services.config*</packages>
+                                </group>
+                                <group>
+                                    <title>Certificate Manager</title>
+                                    <packages>software.amazon.awssdk.services.acm*</packages>
+                                </group>
+                                <group>
+                                    <title>Key Management</title>
+                                    <packages>software.amazon.awssdk.services.kms*</packages>
+                                </group>
+                                <group>
+                                    <title>CodeDeploy</title>
+                                    <packages>software.amazon.awssdk.services.codedeploy*</packages>
+                                </group>
+                                <group>
+                                    <title>Lambda</title>
+                                    <packages>software.amazon.awssdk.services.lambda*</packages>
+                                </group>
+                                <group>
+                                    <title>EC2 Container Service</title>
+                                    <packages>software.amazon.awssdk.services.ecs*</packages>
+                                </group>
+                                <group>
+                                    <title>CloudHSM</title>
+                                    <packages>software.amazon.awssdk.services.cloudhsm*</packages>
+                                </group>
+                                <group>
+                                    <title>Simple Systems Management Service</title>
+                                    <packages>software.amazon.awssdk.services.ssm*</packages>
+                                </group>
+                                <group>
+                                    <title>WorkSpaces</title>
+                                    <packages>software.amazon.awssdk.services.workspaces*</packages>
+                                </group>
+                                <group>
+                                    <title>Machine Learning</title>
+                                    <packages>software.amazon.awssdk.services.machinelearning*</packages>
+                                </group>
+                                <group>
+                                    <title>Directory Service</title>
+                                    <packages>software.amazon.awssdk.services.directory*</packages>
+                                </group>
+                                <group>
+                                    <title>Elastic File System</title>
+                                    <packages>software.amazon.awssdk.services.efs*</packages>
+                                </group>
+                                <group>
+                                    <title>CodePipeline</title>
+                                    <packages>software.amazon.awssdk.services.codepipeline*</packages>
+                                </group>
+                                <group>
+                                    <title>CodeCommit</title>
+                                    <packages>software.amazon.awssdk.services.codecommit*</packages>
+                                </group>
+                                <group>
+                                    <title>Device Farm</title>
+                                    <packages>software.amazon.awssdk.services.devicefarm*</packages>
+                                </group>
+                                <group>
+                                    <title>Elasticsearch Service</title>
+                                    <packages>software.amazon.awssdk.services.elasticsearch*</packages>
+                                </group>
+                                <group>
+                                    <title>Marketplace Commerce Analytics</title>
+                                    <packages>software.amazon.awssdk.services.marketplacecommerceanalytics*</packages>
+                                </group>
+                                <group>
+                                    <title>WAF</title>
+                                    <packages>software.amazon.awssdk.services.waf*</packages>
+                                </group>
+                                <group>
+                                    <title>Inspector Service</title>
+                                    <packages>software.amazon.awssdk.services.inspector*</packages>
+                                </group>
+                                <group>
+                                    <title>IoT</title>
+                                    <packages>software.amazon.awssdk.services.iot*</packages>
+                                </group>
+                                <group>
+                                    <title>API Gateway</title>
+                                    <packages>software.amazon.awssdk.services.apigateway*</packages>
+                                </group>
+                                <group>
+                                    <title>EC2 Container Registry</title>
+                                    <packages>software.amazon.awssdk.services.ecr*</packages>
+                                </group>
+                                <group>
+                                    <title>GameLift</title>
+                                    <packages>software.amazon.awssdk.services.gamelift*</packages>
+                                </group>
+                                <group>
+                                    <title>Database Migration Service</title>
+                                    <packages>software.amazon.awssdk.services.databasemigration*</packages>
+                                </group>
+                                <group>
+                                    <title>Marketplace Metering Service</title>
+                                    <packages>software.amazon.awssdk.services.marketplacemetering*</packages>
+                                </group>
+                                <group>
+                                    <title>Cognito Identity Provider</title>
+                                    <packages>software.amazon.awssdk.services.cognitoidp*</packages>
+                                </group>
+                                <group>
+                                    <title>Application Discovery Service</title>
+                                    <packages>software.amazon.awssdk.services.applicationdiscovery*</packages>
+                                </group>
+                                <group>
+                                    <title>Application Auto Scaling</title>
+                                    <packages>software.amazon.awssdk.services.applicationautoscaling*</packages>
+                                </group>
+                                <group>
+                                    <title>Snowball</title>
+                                    <packages>software.amazon.awssdk.services.snowball*</packages>
+                                </group>
+                                <group>
+                                    <title>Service Catalog</title>
+                                    <packages>software.amazon.awssdk.services.servicecatalog*</packages>
+                                </group>
+                                <group>
+                                    <title>Budgets</title>
+                                    <packages>software.amazon.awssdk.services.budgets*</packages>
+                                </group>
+                                <group>
+                                    <title>Server Migration</title>
+                                    <packages>software.amazon.awssdk.services.sms*</packages>
+                                </group>
+                                <group>
+                                    <title>Rekognition</title>
+                                    <packages>software.amazon.awssdk.services.rekognition*</packages>
+                                </group>
+                                <group>
+                                    <title>Polly</title>
+                                    <packages>software.amazon.awssdk.services.polly*</packages>
+                                </group>
+                                <group>
+                                    <title>Lightsail</title>
+                                    <packages>software.amazon.awssdk.services.lightsail*</packages>
+                                </group>
+                                <group>
+                                    <title>AppStream</title>
+                                    <packages>software.amazon.awssdk.services.appstream*</packages>
+                                </group>
+                                <group>
+                                    <title>X-Ray</title>
+                                    <packages>software.amazon.awssdk.services.xray*</packages>
+                                </group>
+                                <group>
+                                    <title>OpsWorks for Chef Automate</title>
+                                    <packages>software.amazon.awssdk.services.opsworkscm*</packages>
+                                </group>
+                                <group>
+                                    <title>Pinpoint</title>
+                                    <packages>software.amazon.awssdk.services.pinpoint*</packages>
+                                </group>
+                                <group>
+                                    <title>Step Functions</title>
+                                    <!-- TODO: Unify Packages -->
+                                    <packages>software.amazon.awssdk.services.sfn*:software.amazon.awssdk.services.stepfunctions*</packages>
+                                </group>
+                                <group>
+                                    <title>Shield</title>
+                                    <packages>software.amazon.awssdk.services.shield*</packages>
+                                </group>
+                                <group>
+                                    <title>Health APIs and Notifications</title>
+                                    <packages>software.amazon.awssdk.services.health*</packages>
+                                </group>
+                                <group>
+                                    <title>Cost and Usage Report</title>
+                                    <packages>software.amazon.awssdk.services.costandusagereport*</packages>
+                                </group>
+                                <group>
+                                    <title>Code Build</title>
+                                    <packages>software.amazon.awssdk.services.codebuild*</packages>
+                                </group>
+                                <group>
+                                    <title>Batch</title>
+                                    <packages>software.amazon.awssdk.services.batch*</packages>
+                                </group>
+                                <group>
+                                    <title>Lex</title>
+                                    <packages>software.amazon.awssdk.services.lex*</packages>
+                                </group>
+                                <group>
+                                    <title>Mechanical Turk Requester</title>
+                                    <packages>software.amazon.awssdk.services.mechanicalturkrequester*</packages>
+                                </group>
+                                <group>
+                                    <title>Organizations</title>
+                                    <packages>software.amazon.awssdk.services.organizations*</packages>
+                                </group>
+                                <group>
+                                    <title>WorkDocs</title>
+                                    <packages>software.amazon.awssdk.services.workdocs*</packages>
+                                </group>
+                                <group>
+                                    <title>Common</title>
+                                    <packages>software.amazon.awssdk*</packages>
+                                </group>
+                            </groups>
+                            <bottom><![CDATA[Copyright &#169; 2017 Amazon Web Services, Inc. All Rights Reserved.]]></bottom>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

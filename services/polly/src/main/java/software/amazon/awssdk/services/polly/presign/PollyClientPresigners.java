@@ -86,6 +86,12 @@ public final class PollyClientPresigners {
         if (synthesizeSpeechRequest.getLexiconNames() != null) {
             request.queryParameter("LexiconNames", synthesizeSpeechRequest.getLexiconNames());
         }
+
+        if (synthesizeSpeechRequest.getSpeechMarkTypes() != null) {
+            for (String speechMarkType : synthesizeSpeechRequest.getSpeechMarkTypes()) {
+                request.queryParameter("SpeechMarkTypes", speechMarkType);
+            }
+        }
     }
 
     private Date getDefaultExpirationDate() {

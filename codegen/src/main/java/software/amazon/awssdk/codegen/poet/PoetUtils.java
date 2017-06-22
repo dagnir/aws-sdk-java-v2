@@ -77,7 +77,7 @@ public final class PoetUtils {
     }
 
     public static TypeSpec.Builder createClassBuilder(ClassName name) {
-        return TypeSpec.classBuilder(name).addAnnotation(GENERATED).addModifiers(Modifier.PUBLIC);
+        return TypeSpec.classBuilder(name).addAnnotation(GENERATED);
     }
 
     public static ParameterizedTypeName createParameterizedTypeName(ClassName className, String... typeVariables) {

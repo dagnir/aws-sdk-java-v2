@@ -18,6 +18,7 @@ package software.amazon.awssdk.client;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
@@ -44,6 +45,7 @@ public class ClientExecutionParams<InputT, OutputT> {
     private HttpResponseHandler<OutputT> responseHandler;
     private HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
     private RequestConfig requestConfig;
+    private ServiceAdvancedConfiguration serviceAdvancedConfiguration;
 
     public Marshaller<Request<InputT>, InputT> getMarshaller() {
         return marshaller;
@@ -107,9 +109,17 @@ public class ClientExecutionParams<InputT, OutputT> {
         return asyncRequestProvider;
     }
 
-    public ClientExecutionParams<InputT, OutputT> withAsyncRequestProvider(
-            AsyncRequestProvider asyncRequestProvider) {
+    public ClientExecutionParams<InputT, OutputT> withAsyncRequestProvider(AsyncRequestProvider asyncRequestProvider) {
         this.asyncRequestProvider = asyncRequestProvider;
+        return this;
+    }
+
+    public ServiceAdvancedConfiguration getServiceAdvancedConfiguration() {
+        return serviceAdvancedConfiguration;
+    }
+
+    public ClientExecutionParams<InputT, OutputT> withServiceAdvancedConfiguration(ServiceAdvancedConfiguration serviceConfig) {
+        this.serviceAdvancedConfiguration = serviceConfig;
         return this;
     }
 }

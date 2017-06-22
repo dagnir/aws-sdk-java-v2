@@ -19,12 +19,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.net.URI;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
+import software.amazon.awssdk.services.s3.S3Client;
 
 @Ignore
 // FIXME: Depends on S3 properly parsing region information from the endpoint (see AmazonS3#getRegionName())
@@ -37,10 +40,13 @@ public class S3ClientCacheIntegrationTest {
     }
 
     @Test
-    public void testBadClientCache() {
+    public void testBadClientCache() throws Exception {
         S3ClientCache s3cc = new S3ClientCache(credentials);
-        AmazonS3Client notAnAWSEndpoint = new AmazonS3Client(credentials);
-        notAnAWSEndpoint.setEndpoint("i.am.an.invalid.aws.endpoint.com");
+        S3Client notAnAWSEndpoint = S3Client.builder()
+                                            .credentialsProvider(new StaticCredentialsProvider(credentials))
+                                            .endpointOverride(new URI("i.am.an.invalid.aws.endpoint.com"))
+                                            .build();
+
         try {
             s3cc.useClient(notAnAWSEndpoint, Region.US_EAST_2);
         } catch (IllegalStateException e) {
@@ -52,10 +58,13 @@ public class S3ClientCacheIntegrationTest {
     }
 
     @Test
-    public void testNonExistantRegion() {
+    public void testNonExistantRegion() throws Exception {
         S3ClientCache s3cc = new S3ClientCache(credentials);
-        AmazonS3Client notAnAWSEndpoint = new AmazonS3Client(credentials);
-        notAnAWSEndpoint.setEndpoint("s3.mordor.amazonaws.com");
+        S3Client notAnAWSEndpoint = S3Client.builder()
+                .credentialsProvider(new StaticCredentialsProvider(credentials))
+                .endpointOverride(new URI("s3.mordor.amazonaws.com"))
+                .build();
+
         try {
             s3cc.useClient(notAnAWSEndpoint, Region.US_EAST_2);
         } catch (IllegalStateException e) {

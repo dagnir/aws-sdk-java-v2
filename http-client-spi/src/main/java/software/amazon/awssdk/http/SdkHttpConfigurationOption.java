@@ -54,6 +54,7 @@ public final class SdkHttpConfigurationOption<T> extends AttributeMap.Key<T> {
      * should be true. S3 however uses wildcard certificates for virtual bucket address (bucketname.s3.amazonaws.com) and
      * needs to disable strict hostname verification to allow for wildcard certs.
      */
+    @ReviewBeforeRelease("This does not appear to be needed anymore for S3")
     public static final SdkHttpConfigurationOption<Boolean> USE_STRICT_HOSTNAME_VERIFICATION =
             new SdkHttpConfigurationOption<>("UseStrictHostnameVerification", Boolean.class);
 

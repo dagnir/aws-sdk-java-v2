@@ -36,12 +36,14 @@ public final class AsyncClientClass extends AsyncClientInterface {
     private final PoetExtensions poetExtensions;
     private final ClassName className;
     private final ProtocolSpec protocolSpec;
+    private final String basePackage;
 
     public AsyncClientClass(GeneratorTaskParams dependencies) {
         super(dependencies.getModel());
         this.poetExtensions = dependencies.getPoetExtensions();
         this.className = poetExtensions.getClientClass(model.getMetadata().getAsyncClient());
         this.protocolSpec = getProtocolSpecs(poetExtensions, model.getMetadata().getProtocol());
+        this.basePackage = dependencies.getModel().getMetadata().getFullClientPackageName();
     }
 
     @Override
@@ -58,10 +60,20 @@ public final class AsyncClientClass extends AsyncClientInterface {
                                         .addMethod(protocolSpec.initProtocolFactory(model));
         protocolSpec.createErrorResponseHandler().ifPresent(classBuilder::addMethod);
 
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            classBuilder.addMethod(constructorWithAdvancedConfiguration());
+        }
+
         return classBuilder.build();
     }
 
     private MethodSpec constructor() {
+        if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
+            return MethodSpec.constructorBuilder()
+                             .addParameter(AwsAsyncClientParams.class, "asyncClientParams")
+                             .addStatement("this($N, null)", "asyncClientParams")
+                             .build();
+        }
         return MethodSpec.constructorBuilder()
                          .addModifiers(Modifier.PROTECTED)
                          .addParameter(AwsAsyncClientParams.class, "clientParams")
@@ -70,6 +82,30 @@ public final class AsyncClientClass extends AsyncClientInterface {
                                  ".withAsyncClientParams($N)\n" +
                                  ".withClientParams($N)\n" +
                                  ".withCalculateCrc32FromCompressedDataEnabled($L))",
+                                 "clientHandler",
+                                 // TODO this will likely differ for APIG clients
+                                 SdkAsyncClientHandler.class,
+                                 ClientHandlerParams.class,
+                                 "clientParams",
+                                 "clientParams",
+                                 model.getCustomizationConfig().isCalculateCrc32FromCompressedData())
+                         .addStatement("this.$N = init()", protocolSpec.protocolFactory(model).name)
+                         .build();
+    }
+
+    private MethodSpec constructorWithAdvancedConfiguration() {
+        ClassName advancedConfiguration = ClassName.get(basePackage,
+                                                        model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+        return MethodSpec.constructorBuilder()
+                         .addModifiers(Modifier.PROTECTED)
+                         .addParameter(AwsAsyncClientParams.class, "clientParams")
+                         .addParameter(advancedConfiguration, "advancedConfiguration")
+                         .addStatement(
+                                 "this.$N = new $T(new $T()\n" +
+                                 ".withAsyncClientParams($N)\n" +
+                                 ".withClientParams($N)\n" +
+                                 ".withCalculateCrc32FromCompressedDataEnabled($L)" +
+                                 ".withServiceAdvancedConfiguration(advancedConfiguration))",
                                  "clientHandler",
                                  // TODO this will likely differ for APIG clients
                                  SdkAsyncClientHandler.class,

@@ -647,6 +647,7 @@
         "input": {
           "Destination": {
             "BccAddresses": [
+
             ],
             "CcAddresses": [
               "recipient3@example.com"
@@ -673,6 +674,7 @@
             }
           },
           "ReplyToAddresses": [
+
           ],
           "ReturnPath": "",
           "ReturnPathArn": "",
@@ -697,6 +699,7 @@
       {
         "input": {
           "Destinations": [
+
           ],
           "FromArn": "",
           "RawMessage": {

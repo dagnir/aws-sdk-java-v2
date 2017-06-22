@@ -104,7 +104,8 @@ public class PathMarshallers {
         @Override
         public String marshall(String resourcePath, String paramName, String pathValue) {
             assertStringNotEmpty(pathValue, paramName);
-            return resourcePath.replace(String.format("{%s+}", paramName), trimLeadingSlash(pathValue));
+            return resourcePath.replace(String.format("{%s+}", paramName),
+                                        SdkHttpUtils.urlEncode(trimLeadingSlash(pathValue), true));
         }
 
         @Override

@@ -17,16 +17,18 @@ package software.amazon.awssdk.services.cloudfront;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.List;
 import org.junit.BeforeClass;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionRequest;
-import software.amazon.awssdk.services.s3.AmazonS3;
 import software.amazon.awssdk.services.cloudfront.model.GetDistributionResponse;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.s3.model.ObjectListing;
-import software.amazon.awssdk.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.test.AwsTestBase;
 
 /**
@@ -42,7 +44,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     /**
      * Shared S3 client for all tests to use.
      */
-    protected static AmazonS3 s3;
+    protected static S3Client s3;
 
     /**
      * Loads the AWS account info for the integration tests and creates an
@@ -55,9 +57,7 @@ public abstract class IntegrationTestBase extends AwsTestBase {
                                      .credentialsProvider(new StaticCredentialsProvider(credentials))
                                      .region(Region.AWS_GLOBAL)
                                      .build();
-        s3 = AmazonS3Client.builder()
-                           .withCredentials(new StaticCredentialsProvider(credentials))
-                           .build();
+        s3 = S3Client.builder().credentialsProvider(new StaticCredentialsProvider(credentials)).region(Region.AWS_GLOBAL).build();
     }
 
     /**
@@ -94,22 +94,25 @@ public abstract class IntegrationTestBase extends AwsTestBase {
      * @param bucketName The bucket to empty and delete.
      */
     protected static void deleteBucketAndAllContents(String bucketName) {
-        ObjectListing objectListing = s3.listObjects(bucketName);
+        ListObjectsResponse listObjectResponse = s3.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
+        List<S3Object> objectListing = listObjectResponse.contents();
 
         while (true) {
-            for (Iterator iterator = objectListing.getObjectSummaries().iterator(); iterator.hasNext(); ) {
-                S3ObjectSummary objectSummary = (S3ObjectSummary) iterator.next();
-                s3.deleteObject(bucketName, objectSummary.getKey());
+            for (S3Object objectSummary : objectListing) {
+                s3.deleteObject(DeleteObjectRequest.builder().bucket(bucketName).key(objectSummary.key()).build());
             }
 
-            if (objectListing.isTruncated()) {
-                objectListing = s3.listNextBatchOfObjects(objectListing);
+            if (listObjectResponse.isTruncated()) {
+                listObjectResponse = s3.listObjects(ListObjectsRequest.builder()
+                                                                 .bucket(bucketName)
+                                                                 .marker(listObjectResponse.marker())
+                                                                 .build());
             } else {
                 break;
             }
         }
+        ;
 
-        s3.deleteBucket(bucketName);
+        s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
     }
-
 }

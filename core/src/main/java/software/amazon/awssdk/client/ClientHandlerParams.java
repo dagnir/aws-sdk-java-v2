@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.client;
 
+import software.amazon.awssdk.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.annotation.NotThreadSafe;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
@@ -26,6 +27,7 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 public class ClientHandlerParams {
 
     private AwsSyncClientParams clientParams;
+    private ServiceAdvancedConfiguration serviceAdvancedConfiguration;
 
     private AwsAsyncClientParams asyncClientParams;
 
@@ -49,6 +51,15 @@ public class ClientHandlerParams {
 
     public ClientHandlerParams withAsyncClientParams(AwsAsyncClientParams clientParams) {
         this.asyncClientParams = clientParams;
+        return this;
+    }
+
+    public ServiceAdvancedConfiguration getServiceAdvancedConfiguration() {
+        return serviceAdvancedConfiguration;
+    }
+
+    public ClientHandlerParams withServiceAdvancedConfiguration(ServiceAdvancedConfiguration serviceAdvancecConfiguration) {
+        this.serviceAdvancedConfiguration = serviceAdvancecConfiguration;
         return this;
     }
 

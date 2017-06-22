@@ -98,6 +98,10 @@ public class StaxUnmarshallerContext {
         return headers.get(header);
     }
 
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
     /**
      * Returns the text contents of the current element being parsed.
      *

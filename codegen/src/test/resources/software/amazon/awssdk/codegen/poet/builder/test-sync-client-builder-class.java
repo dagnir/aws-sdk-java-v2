@@ -20,7 +20,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 
 @Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
-public final class DefaultJsonClientBuilder extends DefaultJsonBaseClientBuilder<JsonClientBuilder, JsonClient> implements
+final class DefaultJsonClientBuilder extends DefaultJsonBaseClientBuilder<JsonClientBuilder, JsonClient> implements
                                                                                                                 JsonClientBuilder {
     @Override
     protected final JsonClient buildClient() {

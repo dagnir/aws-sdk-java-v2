@@ -16,9 +16,11 @@
 package software.amazon.awssdk.services.polly.presign;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
+import software.amazon.awssdk.services.polly.model.SpeechMarkType;
 import software.amazon.awssdk.services.polly.model.TextType;
 import software.amazon.awssdk.services.polly.model.VoiceId;
 
@@ -43,6 +45,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
 
     private String voiceId;
 
+    private java.util.List<String> speechMarkTypes;
 
     /**
      * @return Expiration of the presigned request. Default is
@@ -286,6 +289,72 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
      */
     public SynthesizeSpeechPresignRequest withVoiceId(VoiceId voiceId) {
         setVoiceId(voiceId);
+        return this;
+    }
+
+    /**
+     * @see SpeechMarkType
+     */
+    public java.util.List<String> getSpeechMarkTypes() {
+        return speechMarkTypes;
+    }
+
+    /**
+     * @see SpeechMarkType
+     */
+    public void setSpeechMarkTypes(java.util.Collection<String> speechMarkTypes) {
+        if (speechMarkTypes == null) {
+            this.speechMarkTypes = null;
+            return;
+        }
+
+        this.speechMarkTypes = new java.util.ArrayList<String>(speechMarkTypes);
+    }
+
+    /**
+     * <p> <b>NOTE:</b> This method appends the values to the existing list (if any). Use {@link
+     * #setSpeechMarkTypes(Collection)} or {@link #withSpeechMarkTypes(java.util.Collection)} if you want to override the
+     * existing values. </p>
+     *
+     * @return Returns a reference to this object so that method calls can be chained together.
+     *  @see SpeechMarkType
+     */
+    public SynthesizeSpeechPresignRequest withSpeechMarkTypes(String... speechMarkTypes) {
+        if (this.speechMarkTypes == null) {
+            setSpeechMarkTypes(new java.util.ArrayList<String>(speechMarkTypes.length));
+        }
+        for (String ele : speechMarkTypes) {
+            this.speechMarkTypes.add(ele);
+        }
+        return this;
+    }
+
+    /**
+     * @return Returns a reference to this object so that method calls can be chained together.
+     * @see SpeechMarkType
+     */
+    public SynthesizeSpeechPresignRequest withSpeechMarkTypes(java.util.Collection<String> speechMarkTypes) {
+        setSpeechMarkTypes(speechMarkTypes);
+        return this;
+    }
+
+    /**
+     * <p> <b>NOTE:</b> This method appends the values to the existing list (if any). Use {@link
+     * #setSpeechMarkTypes(Collection)} or {@link #withSpeechMarkTypes(java.util.Collection)} if you want to override the
+     * existing values. </p>
+     *
+     * @return Returns a reference to this object so that method calls can be chained together.
+     */
+    public SynthesizeSpeechPresignRequest withSpeechMarkTypes(SpeechMarkType... speechMarkTypes) {
+        java.util.ArrayList<String> speechMarkTypesCopy = new java.util.ArrayList<String>(speechMarkTypes.length);
+        for (SpeechMarkType value : speechMarkTypes) {
+            speechMarkTypesCopy.add(value.toString());
+        }
+        if (getSpeechMarkTypes() == null) {
+            setSpeechMarkTypes(speechMarkTypesCopy);
+        } else {
+            getSpeechMarkTypes().addAll(speechMarkTypesCopy);
+        }
         return this;
     }
 }

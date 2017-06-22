@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.services.machinelearning;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -42,10 +42,11 @@ import software.amazon.awssdk.services.machinelearning.model.Prediction;
 import software.amazon.awssdk.services.machinelearning.model.RealtimeEndpointInfo;
 import software.amazon.awssdk.services.machinelearning.model.RealtimeEndpointStatus;
 import software.amazon.awssdk.services.machinelearning.model.S3DataSpec;
-import software.amazon.awssdk.services.s3.AmazonS3;
-import software.amazon.awssdk.services.s3.AmazonS3Client;
-import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
-import software.amazon.awssdk.services.s3.model.ObjectMetadata;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.test.AwsTestBase;
 
@@ -86,7 +87,7 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
                                               + "]"
                                               + "}";
 
-    private static AmazonS3 s3;
+    private static S3Client s3;
     private static MachineLearningClient client;
 
     private static String dataSourceId;
@@ -106,18 +107,19 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
     }
 
     private static void setUpS3() {
-        s3 = AmazonS3Client.builder()
-                .withCredentials(CREDENTIALS_PROVIDER_CHAIN)
-                .build();
+        s3 = S3Client.builder()
+                     .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                     .region(Region.US_EAST_1)
+                     .build();
 
-        s3.createBucket(BUCKET_NAME);
+        s3.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
 
-        s3.putObject(new PutObjectRequest(
-                BUCKET_NAME,
-                KEY,
-                new ByteArrayInputStream(DATA.getBytes()),
-                new ObjectMetadata())
-                             .withCannedAcl(CannedAccessControlList.PublicRead));
+        s3.putObject(PutObjectRequest.builder()
+                                     .bucket(BUCKET_NAME)
+                                     .key(KEY)
+                                     .body(ByteBuffer.wrap(DATA.getBytes()))
+                                     .acl(ObjectCannedACL.PublicRead)
+                                     .build());
     }
 
     @AfterClass
@@ -151,13 +153,13 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
 
         if (s3 != null) {
             try {
-                s3.deleteObject(BUCKET_NAME, KEY);
+                s3.deleteObject(DeleteObjectRequest.builder().bucket(BUCKET_NAME).key(KEY).build());
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
-                s3.deleteBucket(BUCKET_NAME);
+                s3.deleteBucket(DeleteBucketRequest.builder().bucket(BUCKET_NAME).build());
             } catch (Exception e) {
                 e.printStackTrace();
             }

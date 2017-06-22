@@ -35,6 +35,7 @@ import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.SdkClock;
+import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -45,7 +46,8 @@ public class SynthesizeSpeechPresignTest {
 
     // Note, $jacocoData is to account for the coverage tool doing some byte code manipulation.
     private static final List<String> ACKNOWLEDGED_FIELDS = Arrays.asList("lexiconNames", "outputFormat", "sampleRate",
-                                                                          "text", "textType", "voiceId", "$jacocoData");
+                                                                          "text", "textType", "voiceId", "$jacocoData",
+                                                                          "speechMarkTypes");
 
     private static final Date SIGNER_DATE = getFixedDate();
 

@@ -16,24 +16,39 @@
 package software.amazon.awssdk.handlers;
 
 import software.amazon.awssdk.RequestConfig;
+import software.amazon.awssdk.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.http.HandlerContextKey;
 
 public class AwsHandlerKeys {
 
-    /** The key under which the request credentials are set. */
+    /**
+     * The key under which the request credentials are set.
+     */
     public static final HandlerContextKey<AwsCredentials> AWS_CREDENTIALS =
             new HandlerContextKey<>(AwsCredentials.class, "AWSCredentials");
 
-    /** The key under which the request config is stored. */
+    /**
+     * The key under which the request config is stored.
+     */
     public static final HandlerContextKey<RequestConfig> REQUEST_CONFIG =
             new HandlerContextKey<>(RequestConfig.class, "RequestConfig");
 
-    /** The key under which the service name is stored. */
+    /**
+     * The key under which the service name is stored.
+     */
     public static final HandlerContextKey<String> SERVICE_NAME =
             new HandlerContextKey<>(String.class, "ServiceName");
 
-    /** The key under which the time offset (for clock skew correction) is stored. */
+    /**
+     * The key under which the time offset (for clock skew correction) is stored.
+     */
     public static final HandlerContextKey<Integer> TIME_OFFSET =
             new HandlerContextKey<>(Integer.class, "TimeOffset");
+
+    /**
+     * Handler context key for advanced configuration.
+     */
+    public static final HandlerContextKey<ServiceAdvancedConfiguration> SERVICE_ADVANCED_CONFIG =
+            new HandlerContextKey<>(ServiceAdvancedConfiguration.class, "ServiceConfig");
 }

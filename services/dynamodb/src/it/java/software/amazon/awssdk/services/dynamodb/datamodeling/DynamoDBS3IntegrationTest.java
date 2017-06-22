@@ -16,20 +16,19 @@
 package software.amazon.awssdk.services.dynamodb.datamodeling;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URL;
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
 import java.util.UUID;
-
 import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.pojos.S3LinksTestClass;
-import software.amazon.awssdk.services.s3.model.CannedAccessControlList;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.test.util.RandomTempFile;
+import software.amazon.awssdk.utils.IoUtils;
 
 @Ignore
 // FIXME: S3 operations appear to be broken.
@@ -64,18 +63,15 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
         assertObjectDoesntExist(s3West, obj.s3LinkWest().bucketName(), westKey);
 
-        PutObjectRequest pubObjectReq = new PutObjectRequest(linkWest.bucketName(), linkWest.getKey(),
-                                                             new RandomTempFile(westKey, OBJECT_SIZE));
-        linkWest.getAmazonS3Client().putObject(pubObjectReq);
+        linkWest.getAmazonS3Client().putObject(PutObjectRequest.builder().bucket(linkWest.bucketName()).key(linkWest.getKey()).body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(new RandomTempFile(westKey, OBJECT_SIZE))))).build());
 
         assertObjectExists(s3West, obj.s3LinkWest().bucketName(), westKey);
 
         S3Link linkEast = mapper.createS3Link(Region.US_EAST_1, DynamoDBS3IntegrationTestBase.EAST_BUCKET, eastKey);
         obj.setS3LinkEast(linkEast);
         assertObjectDoesntExist(s3East, obj.s3LinkEast().bucketName(), eastKey);
-        pubObjectReq = new PutObjectRequest(linkEast.bucketName(), linkEast.getKey(),
-                                            new RandomTempFile(westKey, OBJECT_SIZE));
-        linkEast.getAmazonS3Client().putObject(pubObjectReq);
+
+        linkEast.getAmazonS3Client().putObject(PutObjectRequest.builder().bucket(linkEast.bucketName()).key(linkEast.getKey()).body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(new RandomTempFile(westKey, OBJECT_SIZE))))).build());
         mapper.save(obj);
 
         assertObjectExists(s3West, obj.s3LinkWest().bucketName(), westKey);
@@ -93,11 +89,5 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         linkEast.downloadTo(baos);
         assertEquals(OBJECT_SIZE, baos.toByteArray().length);
-
-        linkEast.setAcl(CannedAccessControlList.PublicRead);
-
-        URL url = linkEast.getUrl();
-        assertTrue(url.getHost().startsWith(linkEast.bucketName()));
-        assertTrue(url.getPath().contains(linkEast.getKey()));
     }
 }

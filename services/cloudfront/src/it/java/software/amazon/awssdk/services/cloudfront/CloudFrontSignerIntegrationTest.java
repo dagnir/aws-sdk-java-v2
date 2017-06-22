@@ -27,7 +27,6 @@ public class CloudFrontSignerIntegrationTest {
                                              + "." + callerReference;
 
     private static String domainName = bucketName + ".s3.amazonaws.com";
-    ;
 
     @Test
     public void testPreSignedUrl() throws Exception {

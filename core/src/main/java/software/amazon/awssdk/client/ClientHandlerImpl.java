@@ -21,6 +21,7 @@ import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.annotation.Immutable;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
@@ -52,6 +53,7 @@ public class ClientHandlerImpl extends ClientHandler {
     private final URI endpoint;
     private final List<RequestHandler> requestHandlers;
     private final RequestMetricCollector clientLevelMetricCollector;
+    private final ServiceAdvancedConfiguration serviceAdvancedConfiguration;
     private final AmazonHttpClient client;
 
     public ClientHandlerImpl(ClientHandlerParams handlerParams) {
@@ -60,6 +62,7 @@ public class ClientHandlerImpl extends ClientHandler {
         this.awsCredentialsProvider = handlerParams.getClientParams().getCredentialsProvider();
         this.requestHandlers = handlerParams.getClientParams().getRequestHandlers();
         this.clientLevelMetricCollector = handlerParams.getClientParams().getRequestMetricCollector();
+        this.serviceAdvancedConfiguration = handlerParams.getServiceAdvancedConfiguration();
         this.client = buildHttpClient(handlerParams);
     }
 
@@ -88,6 +91,7 @@ public class ClientHandlerImpl extends ClientHandler {
             try {
                 request = executionParams.getMarshaller().marshall(tryBeforeMarshalling(inputT));
                 request.setAwsRequestMetrics(awsRequestMetrics);
+                request.addHandlerContext(AwsHandlerKeys.SERVICE_ADVANCED_CONFIG, serviceAdvancedConfiguration);
             } finally {
                 awsRequestMetrics.endEvent(AwsRequestMetrics.Field.RequestMarshallTime);
             }

@@ -828,6 +828,7 @@
           "Limit": 123,
           "Marker": "1",
           "VTLDeviceARNs": [
+
           ]
         },
         "output": {

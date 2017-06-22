@@ -23,7 +23,7 @@ import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.services.s3.model.Region;
+import software.amazon.awssdk.regions.Region;
 
 public class ConfigureS3LinksTest {
 
@@ -42,7 +42,7 @@ public class ConfigureS3LinksTest {
 
         assertNotNull(obj.s3());
         assertEquals("nonexisting-test-bucketname2", obj.s3().bucketName());
-        assertSame(Region.AP_Singapore.toString(), obj.s3().s3Region().value());
+        assertSame(Region.AP_SOUTHEAST_1.value(), obj.s3().s3Region().value());
         assertSame("ap-southeast-1", obj.s3().getRegion());
     }
 

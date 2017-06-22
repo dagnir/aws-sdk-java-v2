@@ -93,5 +93,10 @@
             <artifactId>bcprov-jdk15on</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -17,6 +17,7 @@ package software.amazon.awssdk.config.defaults;
 
 import static software.amazon.awssdk.config.AdvancedClientOption.SIGNER_PROVIDER;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -30,11 +31,14 @@ import software.amazon.awssdk.runtime.auth.SignerProvider;
  */
 @SdkProtectedApi
 public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefaults {
+
     private final Supplier<SignerProvider> defaultSignerProvider;
+    private final Supplier<URI> defaultEndpoint;
     private final List<String> requestHandlerPaths;
 
     private ServiceBuilderConfigurationDefaults(Builder builder) {
         this.defaultSignerProvider = builder.defaultSignerProvider;
+        this.defaultEndpoint = builder.defaultEndpoint;
         this.requestHandlerPaths = new ArrayList<>(builder.requestHandlerPaths);
     }
 
@@ -51,14 +55,26 @@ public class ServiceBuilderConfigurationDefaults extends ClientConfigurationDefa
         requestHandlerPaths.forEach(path -> chainFactory.newRequestHandlerChain(path).forEach(builder::addRequestListener));
     }
 
+    @Override
+    protected URI getEndpointDefault() {
+        return defaultEndpoint.get();
+    }
+
     public static final class Builder {
+
         private Supplier<SignerProvider> defaultSignerProvider;
+        private Supplier<URI> defaultEndpoint;
         private List<String> requestHandlerPaths = new ArrayList<>();
 
         private Builder() {}
 
         public Builder defaultSignerProvider(Supplier<SignerProvider> defaultSignerProvider) {
             this.defaultSignerProvider = defaultSignerProvider;
+            return this;
+        }
+
+        public Builder defaultEndpoint(Supplier<URI> endpoint) {
+            this.defaultEndpoint = endpoint;
             return this;
         }
 

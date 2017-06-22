@@ -168,7 +168,15 @@
               "createdAt": "1458680170.035",
               "dataCollected": true,
               "durationInSeconds": 3600,
+              "findingCounts": {
+                "High": 14,
+                "Informational": 0,
+                "Low": 0,
+                "Medium": 2,
+                "Undefined": 0
+              },
               "notifications": [
+
               ],
               "rulesPackageArns": [
                 "arn:aws:inspector:us-west-2:758058086616:rulespackage/0-X1KXtawP"
@@ -211,6 +219,7 @@
                 }
               ],
               "userAttributesForFindings": [
+
               ]
             }
           ],
@@ -278,6 +287,7 @@
                 "arn:aws:inspector:us-west-2:758058086616:rulespackage/0-X1KXtawP"
               ],
               "userAttributesForFindings": [
+
               ]
             }
           ],
@@ -328,11 +338,13 @@
               "arn": "arn:aws:inspector:us-west-2:123456789012:target/0-0kFIPusq/template/0-4r1V2mAw/run/0-MKkpXXPE/finding/0-HwPnsDm4",
               "assetAttributes": {
                 "ipv4Addresses": [
+
                 ],
                 "schemaVersion": 1
               },
               "assetType": "ec2-instance",
               "attributes": [
+
               ],
               "confidence": 10,
               "createdAt": "1458680301.37",
@@ -351,6 +363,7 @@
               "title": "No potential security issues found",
               "updatedAt": "1458680301.37",
               "userAttributes": [
+
               ]
             }
           ]
