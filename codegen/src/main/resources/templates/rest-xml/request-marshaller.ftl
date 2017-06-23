@@ -160,6 +160,7 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
         <#-- TODO @ReviewBeforeRelease codegen templates should not have service specific customizations -->
         <#if shapeName == "CreateMultipartUploadRequest">
         request.setContent(new ByteArrayInputStream(new byte[0]));
+        request.addHeader("Content-Length", String.valueOf(0));
         </#if>
 
         return request;
