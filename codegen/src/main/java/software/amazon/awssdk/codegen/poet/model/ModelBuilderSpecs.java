@@ -62,7 +62,7 @@ class ModelBuilderSpecs {
     }
 
     public ClassName builderImplName() {
-        return classToBuild().nestedClass("BeanStyleBuilder");
+        return classToBuild().nestedClass("BuilderImpl");
     }
 
     public TypeSpec builderInterface() {

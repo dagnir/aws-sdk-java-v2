@@ -40,7 +40,6 @@ import software.amazon.awssdk.protocol.StructuredPojo;
  */
 public class AwsServiceModel implements ClassSpec {
 
-    private final IntermediateModel intermediateModel;
     private final ShapeModel shapeModel;
     private final PoetExtensions poetExtensions;
     private final TypeProvider typeProvider;
@@ -50,12 +49,11 @@ public class AwsServiceModel implements ClassSpec {
     private final ModelBuilderSpecs modelBuilderSpecs;
 
     public AwsServiceModel(IntermediateModel intermediateModel, ShapeModel shapeModel) {
-        this.intermediateModel = intermediateModel;
         this.shapeModel = shapeModel;
-        this.poetExtensions = new PoetExtensions(this.intermediateModel);
+        this.poetExtensions = new PoetExtensions(intermediateModel);
         this.typeProvider = new TypeProvider(intermediateModel);
         this.shapeModelSpec = new ShapeModelSpec(this.shapeModel, typeProvider, poetExtensions);
-        this.interfaceProvider = new AwsShapePublicInterfaceProvider(this.intermediateModel, this.shapeModel);
+        this.interfaceProvider = new AwsShapePublicInterfaceProvider(intermediateModel, this.shapeModel);
         this.modelMethodOverrides = new ModelMethodOverrides(this.poetExtensions);
         this.modelBuilderSpecs = new ModelBuilderSpecs(intermediateModel, this.shapeModel, this.shapeModelSpec,
                                                        this.typeProvider);
@@ -102,7 +100,7 @@ public class AwsServiceModel implements ClassSpec {
                 methodSpecs.add(exceptionConstructor());
                 methodSpecs.add(toBuilderMethod());
                 methodSpecs.add(builderMethod());
-                methodSpecs.add(beanStyleBuilderClassMethod());
+                methodSpecs.add(serializableBuilderClass());
                 methodSpecs.addAll(memberGetters());
                 break;
             default:
@@ -110,7 +108,7 @@ public class AwsServiceModel implements ClassSpec {
                 methodSpecs.add(constructor());
                 methodSpecs.add(toBuilderMethod());
                 methodSpecs.add(builderMethod());
-                methodSpecs.add(beanStyleBuilderClassMethod());
+                methodSpecs.add(serializableBuilderClass());
                 methodSpecs.add(modelMethodOverrides.hashCodeMethod(shapeModel));
                 methodSpecs.add(modelMethodOverrides.equalsMethod(shapeModel));
                 methodSpecs.add(modelMethodOverrides.toStringMethod(shapeModel));
@@ -207,8 +205,8 @@ public class AwsServiceModel implements ClassSpec {
                          .build();
     }
 
-    private MethodSpec beanStyleBuilderClassMethod() {
-        return MethodSpec.methodBuilder("beanStyleBuilderClass")
+    private MethodSpec serializableBuilderClass() {
+        return MethodSpec.methodBuilder("serializableBuilderClass")
                          .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                          .returns(ParameterizedTypeName.get(ClassName.get(Class.class),
                                                             WildcardTypeName.subtypeOf(modelBuilderSpecs.builderInterfaceName())))

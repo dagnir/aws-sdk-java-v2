@@ -30,7 +30,7 @@
   </#if>
   <#if member.http.flattened>
       for (${listModel.memberType} ${loopVariable} : ${listVariable}) {
-          <#local memberLocationName = listModel.memberLocationName!member.name />
+          <#local memberLocationName = listModel.memberLocationName!http.marshallLocationName />
           xmlWriter.startElement("${memberLocationName}");
           <#if listModel.simple>
               xmlWriter.value(${loopVariable});

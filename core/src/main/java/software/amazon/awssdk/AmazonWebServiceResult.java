@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk;
 
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.http.SdkHttpMetadata;
 
 /**
@@ -32,7 +33,8 @@ public class AmazonWebServiceResult<T extends ResponseMetadata> {
     /**
      * @return The response metadata associated with this request.
      */
-    public T getSdkResponseMetadata() {
+    @ReviewBeforeRelease("This is broken. Fix before release")
+    private T getSdkResponseMetadata() {
         return sdkResponseMetadata;
     }
 
@@ -44,7 +46,8 @@ public class AmazonWebServiceResult<T extends ResponseMetadata> {
     /**
      * @return HTTP related metadata like headers and status code.
      */
-    public SdkHttpMetadata getSdkHttpMetadata() {
+    @ReviewBeforeRelease("This is broken. Fix before release")
+    private SdkHttpMetadata getSdkHttpMetadata() {
         return sdkHttpMetadata;
     }
 

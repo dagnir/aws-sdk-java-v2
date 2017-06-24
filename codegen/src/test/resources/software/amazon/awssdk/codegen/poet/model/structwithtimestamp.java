@@ -16,7 +16,7 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<StructWithTimestamp.Builder, StructWithTimestamp> {
     private final Date nestedTimestamp;
 
-    private StructWithTimestamp(BeanStyleBuilder builder) {
+    private StructWithTimestamp(BuilderImpl builder) {
         this.nestedTimestamp = builder.nestedTimestamp;
     }
 
@@ -30,15 +30,15 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
 
     @Override
     public Builder toBuilder() {
-        return new BeanStyleBuilder(this);
+        return new BuilderImpl(this);
     }
 
     public static Builder builder() {
-        return new BeanStyleBuilder();
+        return new BuilderImpl();
     }
 
-    public static Class<? extends Builder> beanStyleBuilderClass() {
-        return BeanStyleBuilder.class;
+    public static Class<? extends Builder> serializableBuilderClass() {
+        return BuilderImpl.class;
     }
 
     @Override
@@ -95,13 +95,13 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
         Builder nestedTimestamp(Date nestedTimestamp);
     }
 
-    private static final class BeanStyleBuilder implements Builder {
+    private static final class BuilderImpl implements Builder {
         private Date nestedTimestamp;
 
-        private BeanStyleBuilder() {
+        private BuilderImpl() {
         }
 
-        private BeanStyleBuilder(StructWithTimestamp model) {
+        private BuilderImpl(StructWithTimestamp model) {
             setNestedTimestamp(model.nestedTimestamp);
         }
 

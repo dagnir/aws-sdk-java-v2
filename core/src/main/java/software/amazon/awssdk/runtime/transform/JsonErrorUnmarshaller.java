@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.PascalCaseStrategy;
 import java.lang.reflect.Method;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.annotation.ThreadSafe;
 
@@ -50,15 +51,17 @@ public class JsonErrorUnmarshaller extends AbstractErrorUnmarshaller<JsonNode> {
     }
 
     @Override
+    @ReviewBeforeRelease("Figure out a better way to go from exception class to it's builder class in order to perform the " +
+            "deserialization")
     public AmazonServiceException unmarshall(JsonNode jsonContent) throws Exception {
         // FIXME: dirty hack below
         try {
-            Method beanStyleBuilderMethod = exceptionClass.getDeclaredMethod("beanStyleBuilderClass");
-            beanStyleBuilderMethod.setAccessible(true);
-            Class<?> beanStyleBuilderClass = (Class<?>) beanStyleBuilderMethod.invoke(null);
-            Method buildMethod = beanStyleBuilderClass.getMethod("build");
+            Method builderClassGetter = exceptionClass.getDeclaredMethod("serializableBuilderClass");
+            builderClassGetter.setAccessible(true);
+            Class<?> builderClass = (Class<?>) builderClassGetter.invoke(null);
+            Method buildMethod = builderClass.getMethod("build");
             buildMethod.setAccessible(true);
-            Object o = MAPPER.treeToValue(jsonContent, beanStyleBuilderClass);
+            Object o = MAPPER.treeToValue(jsonContent, builderClass);
             return (AmazonServiceException) buildMethod.invoke(o);
         } catch (NoSuchMethodException e) {
             // This exception is not the new style with a builder, assume it's still the old
