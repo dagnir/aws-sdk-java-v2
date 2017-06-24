@@ -17,20 +17,18 @@ package software.amazon.awssdk.services.s3;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.utils.IoUtils;
 
 public class UserMetadataIntegrationTest extends S3IntegrationTestBase {
 
@@ -79,8 +77,8 @@ public class UserMetadataIntegrationTest extends S3IntegrationTestBase {
                                      .bucket(BUCKET_NAME)
                                      .key(key)
                                      .metadata(userMetadata)
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(file))))
-                                     .build());
+                                     .build(),
+                     RequestBody.of(file));
 
         HeadObjectResponse response = s3.headObject(HeadObjectRequest.builder()
                                                                      .bucket(BUCKET_NAME)

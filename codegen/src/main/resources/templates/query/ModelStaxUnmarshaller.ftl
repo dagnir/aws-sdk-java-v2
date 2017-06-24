@@ -83,8 +83,6 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
         ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(context.getHttpResponse().getStatusCode());
         </#if>
 
-        // hello world
-
         <#if memberModel.map && (!memberModel.http.location?? || memberModel.http.location != "headers")>
         java.util.Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = null;
         </#if>
@@ -102,7 +100,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 </#list>
 
 <#-- If any member unmarshalls as payload we want to XML unmarshall. Otherwise, response won't contain xml -->
-<#if hasPayload>
+<#if hasPayload && !shape.hasStreamingMember >
 <#list shape.members as memberModel>
     <#if memberModel.map && (!memberModel.http.location?? || memberModel.http.location != "headers")>
         java.util.Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = null;
@@ -118,7 +116,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
                     ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.variableName});
     </#if>
 </#list>
-                return ${shape.variable.variableName}.build();
+                break;
             }
 
             if (xmlEvent.isAttribute() || xmlEvent.isStartElement()) {
@@ -148,15 +146,13 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 
     </#if>
 </#list>
-                    return ${shape.variable.variableName}.build();
+                    break;
                 }
             }
         }
 </#if>
         <#-- If any member unmarshalls as payload we want to XML unmarshall. Otherwise, response won't contain xml -->
-        <#if !hasPayload>
         return ${shape.variable.variableName}.build();
-        </#if>
     }
 
     private static ${shape.shapeName}Unmarshaller INSTANCE;

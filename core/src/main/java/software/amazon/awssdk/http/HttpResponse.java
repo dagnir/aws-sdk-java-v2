@@ -25,9 +25,10 @@ import software.amazon.awssdk.annotation.SdkPublicApi;
  * service request.
  */
 @SdkPublicApi
-public class HttpResponse {
+public class HttpResponse implements Abortable {
 
     private final SdkHttpFullRequest request;
+    private final Abortable abortable;
 
     private String statusText;
     private int statusCode;
@@ -40,7 +41,12 @@ public class HttpResponse {
      * @param request The associated request that generated this response.
      */
     public HttpResponse(SdkHttpFullRequest request) {
+        this(request, null);
+    }
+
+    public HttpResponse(SdkHttpFullRequest request, Abortable abortable) {
         this.request = request;
+        this.abortable = abortable;
     }
 
     /**
@@ -150,4 +156,10 @@ public class HttpResponse {
         return statusCode / 100 == HttpStatusCodes.OK / 100;
     }
 
+    @Override
+    public void abort() {
+        if (abortable != null) {
+            abortable.abort();
+        }
+    }
 }

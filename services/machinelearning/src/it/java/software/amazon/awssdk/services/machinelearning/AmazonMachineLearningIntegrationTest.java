@@ -16,7 +16,6 @@
 package software.amazon.awssdk.services.machinelearning;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -48,6 +47,7 @@ import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.test.AwsTestBase;
 
 public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
@@ -117,9 +117,9 @@ public class AmazonMachineLearningIntegrationTest extends AwsTestBase {
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(BUCKET_NAME)
                                      .key(KEY)
-                                     .body(ByteBuffer.wrap(DATA.getBytes()))
                                      .acl(ObjectCannedACL.PublicRead)
-                                     .build());
+                                     .build(),
+                     RequestBody.of(DATA.getBytes()));
     }
 
     @AfterClass

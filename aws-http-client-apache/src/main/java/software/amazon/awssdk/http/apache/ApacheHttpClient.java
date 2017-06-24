@@ -33,6 +33,7 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.pool.ConnPoolControl;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.http.AbortableCallable;
+import software.amazon.awssdk.http.AbortableInputStream;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -99,7 +100,7 @@ class ApacheHttpClient implements SdkHttpClient {
         try {
             awsRequestMetrics.startEvent(AwsRequestMetrics.Field.HttpRequestTime);
             final HttpResponse httpResponse = httpClient.execute(apacheRequest, localRequestContext);
-            return createResponse(httpResponse);
+            return createResponse(httpResponse, apacheRequest);
         } finally {
             awsRequestMetrics.endEvent(AwsRequestMetrics.Field.HttpRequestTime);
         }
@@ -130,15 +131,21 @@ class ApacheHttpClient implements SdkHttpClient {
      * @throws IOException If there were any problems getting any response information from the
      *                     HttpClient method object.
      */
-    private SdkHttpFullResponse createResponse(org.apache.http.HttpResponse apacheHttpResponse) throws IOException {
+    private SdkHttpFullResponse createResponse(org.apache.http.HttpResponse apacheHttpResponse,
+                                               HttpRequestBase apacheRequest) throws IOException {
         return SdkHttpFullResponse.builder()
                                   .statusCode(apacheHttpResponse.getStatusLine().getStatusCode())
                                   .statusText(apacheHttpResponse.getStatusLine().getReasonPhrase())
-                                  .content(apacheHttpResponse.getEntity() != null
-                                                   ? apacheHttpResponse.getEntity().getContent() : null)
+                                  .content(apacheHttpResponse.getEntity() != null ?
+                                                   toAbortableInputStream(apacheHttpResponse, apacheRequest) : null)
                                   .headers(transformHeaders(apacheHttpResponse))
                                   .build();
 
+    }
+
+    private AbortableInputStream toAbortableInputStream(HttpResponse apacheHttpResponse, HttpRequestBase apacheRequest)
+            throws IOException {
+        return new AbortableInputStream(apacheHttpResponse.getEntity().getContent(), apacheRequest::abort);
     }
 
     private Map<String, List<String>> transformHeaders(HttpResponse apacheHttpResponse) {

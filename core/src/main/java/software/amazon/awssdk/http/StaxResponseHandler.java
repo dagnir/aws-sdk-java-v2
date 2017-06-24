@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
@@ -26,28 +28,39 @@ import org.apache.commons.logging.LogFactory;
 import software.amazon.awssdk.ResponseMetadata;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
+import software.amazon.awssdk.async.AsyncResponseHandler;
+import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
+import software.amazon.awssdk.http.async.UnmarshallingAsyncResponseHandler;
 import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
 import software.amazon.awssdk.runtime.transform.Unmarshaller;
+import software.amazon.awssdk.runtime.transform.UnmarshallingStreamingResponseHandler;
 import software.amazon.awssdk.runtime.transform.VoidStaxUnmarshaller;
+import software.amazon.awssdk.sync.StreamingResponseHandler;
 import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.FunctionalUtils.UnsafeFunction;
 
 /**
  * Default implementation of HttpResponseHandler that handles a successful
  * response from an AWS service and unmarshalls the result using a StAX
  * unmarshaller.
  *
- * @param <T>
- *            Indicates the type being unmarshalled by this response handler.
+ * @param <T> Indicates the type being unmarshalled by this response handler.
  */
 @SdkProtectedApi
 @ReviewBeforeRelease("Metadata is currently broken. Revisit when base result types are refactored")
 public class StaxResponseHandler<T> implements HttpResponseHandler<T> {
 
-    /** Shared logger for profiling information. */
+    /**
+     * Shared logger for profiling information.
+     */
     private static final Log log = LogFactory.getLog("software.amazon.awssdk.request");
-    /** Shared factory for creating XML event readers. */
+    /**
+     * Shared factory for creating XML event readers.
+     */
     private static final XMLInputFactory XML_INPUT_FACTORY = XMLInputFactory.newInstance();
-    /** The StAX unmarshaller to use when handling the response. */
+    /**
+     * The StAX unmarshaller to use when handling the response.
+     */
     private Unmarshaller<T, StaxUnmarshallerContext> responseUnmarshaller;
 
     /**
@@ -56,8 +69,7 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<T> {
      * response element path to find the root of the business data in the
      * service's response.
      *
-     * @param responseUnmarshaller
-     *            The StAX unmarshaller to use on the response.
+     * @param responseUnmarshaller The StAX unmarshaller to use on the response.
      */
     public StaxResponseHandler(Unmarshaller<T, StaxUnmarshallerContext> responseUnmarshaller) {
         this.responseUnmarshaller = responseUnmarshaller;
@@ -118,9 +130,8 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<T> {
      * Hook for subclasses to override in order to collect additional metadata
      * from service responses.
      *
-     * @param unmarshallerContext
-     *            The unmarshaller context used to configure a service's response
-     *            data.
+     * @param unmarshallerContext The unmarshaller context used to configure a service's response
+     *                            data.
      */
     protected void registerAdditionalMetadataExpressions(StaxUnmarshallerContext unmarshallerContext) {
     }
@@ -134,6 +145,66 @@ public class StaxResponseHandler<T> implements HttpResponseHandler<T> {
      */
     public boolean needsConnectionLeftOpen() {
         return false;
+    }
+
+    /**
+     * Creates an synchronous {@link HttpResponseHandler} that unmarshalls the resposne POJO thne passes the HTTP content to the
+     * given {@link StreamingResponseHandler}.
+     *
+     * @param unmarshaller     Unmarshaller for response POJO.
+     * @param streamingHandler Customer provided response handler.
+     * @param <ResponseT>      Response POJO type.
+     * @param <ReturnT>        Return type of customer provided response handler.
+     */
+    public static <ResponseT, ReturnT> HttpResponseHandler<ReturnT> createStreamingResponseHandler(
+            Unmarshaller<ResponseT, StaxUnmarshallerContext> unmarshaller,
+            StreamingResponseHandler<ResponseT, ReturnT> streamingHandler) {
+        UnsafeFunction<HttpResponse, ResponseT> unmarshallFunction = response -> unmarshallStreaming(unmarshaller, response);
+        return new UnmarshallingStreamingResponseHandler<>(streamingHandler, unmarshallFunction);
+    }
+
+    /**
+     * Creates an async {@link SdkHttpResponseHandler} from the given unmarshaller and customer provided {@link
+     * AsyncResponseHandler}.
+     *
+     * @param unmarshaller         Unmarshaller for POJO response type.
+     * @param asyncResponseHandler Customer provided response handler to consume HTTP content.
+     * @param <ResponseT>          Response POJO type.
+     * @param <ReturnT>            Return type of customer provided response handler.
+     * @return SdkHttpResponseHandler that first unmarshalls the POJO and then provides the content.
+     */
+    public static <ResponseT, ReturnT> SdkHttpResponseHandler<ReturnT> createStreamingAsyncResponseHandler(
+            Unmarshaller<ResponseT, StaxUnmarshallerContext> unmarshaller,
+            AsyncResponseHandler<ResponseT, ReturnT> asyncResponseHandler) {
+        return new UnmarshallingAsyncResponseHandler<>(asyncResponseHandler, sdkHttpResponse -> {
+            HttpResponse httpResponse = SdkHttpResponseAdapter.adapt(false, null, (SdkHttpFullResponse) sdkHttpResponse);
+            return unmarshallStreaming(unmarshaller, httpResponse);
+        });
+    }
+
+    /**
+     * Unmarshalls a streaming HTTP response into a POJO. Does not touch the content since that's consumed by the response
+     * handler (either {@link StreamingResponseHandler} or {@link AsyncResponseHandler}).
+     *
+     * @param unmarshaller Unmarshaller for resposne type.
+     * @param response     HTTP response
+     * @param <ResponseT>  Response POJO Type.
+     * @return Unmarshalled response type.
+     * @throws Exception if error occurs during unmarshalling.
+     */
+    private static <ResponseT> ResponseT unmarshallStreaming(Unmarshaller<ResponseT, StaxUnmarshallerContext> unmarshaller,
+                                                             HttpResponse response) throws Exception {
+        // Create a dummy event reader to make unmarshallers happy
+        XMLEventReader eventReader;
+        synchronized (XML_INPUT_FACTORY) {
+            eventReader = invokeSafely(() -> XML_INPUT_FACTORY
+                    .createXMLEventReader(new ByteArrayInputStream("<eof/>".getBytes(StringUtils.UTF8))));
+        }
+
+        StaxUnmarshallerContext unmarshallerContext = new StaxUnmarshallerContext(eventReader, response.getHeaders());
+        unmarshallerContext.registerMetadataExpression("ResponseMetadata/RequestId", 2, ResponseMetadata.AWS_REQUEST_ID);
+        unmarshallerContext.registerMetadataExpression("requestId", 2, ResponseMetadata.AWS_REQUEST_ID);
+        return unmarshaller.unmarshall(unmarshallerContext);
     }
 
 }

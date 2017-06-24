@@ -17,6 +17,7 @@ package software.amazon.awssdk.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Simple wrapper for ByteArrayInputStream that will automatically encode the
@@ -27,7 +28,7 @@ public class StringInputStream extends ByteArrayInputStream {
     private final String string;
 
     public StringInputStream(String s) throws UnsupportedEncodingException {
-        super(s.getBytes(StringUtils.UTF8));
+        super(s.getBytes(StandardCharsets.UTF_8));
         this.string = s;
     }
 

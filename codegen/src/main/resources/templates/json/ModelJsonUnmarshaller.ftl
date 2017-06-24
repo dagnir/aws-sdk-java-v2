@@ -51,7 +51,7 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 <#if shape.hasPayloadMember>
     <#assign explicitPayloadMember=shape.payloadMember />
     <#if explicitPayloadMember.http.isStreaming>
-        ${shape.variable.variableName}Builder.${explicitPayloadMember.fluentSetterMethodName}(context.getHttpResponse().getContent());
+        <#-- Intentionally left blank, streaming handled by SyncResponseHandler -->
     <#elseif explicitPayloadMember.variable.variableType == "java.nio.ByteBuffer">
         java.io.InputStream is = context.getHttpResponse().getContent();
         if(is != null) {

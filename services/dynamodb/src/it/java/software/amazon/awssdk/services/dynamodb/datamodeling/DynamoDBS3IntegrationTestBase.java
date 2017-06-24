@@ -67,8 +67,8 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
                          .region(Region.US_WEST_2)
                          .build();
 
-        createBucket(s3East, EAST_BUCKET);
-        createBucket(s3West, WEST_BUCKET);
+        createBucket(s3East, EAST_BUCKET, null);
+        createBucket(s3West, WEST_BUCKET, Region.US_WEST_2.value());
     }
 
     @AfterClass
@@ -117,11 +117,11 @@ public class DynamoDBS3IntegrationTestBase extends DynamoDBIntegrationTestBase {
      * @param s3         The AmazonS# client to use.
      * @param bucketName The name of the bucket to create.
      */
-    protected static void createBucket(S3Client s3, String bucketName) throws InterruptedException {
+    protected static void createBucket(S3Client s3, String bucketName, String region) throws InterruptedException {
         s3.createBucket(CreateBucketRequest.builder()
                                            .bucket(bucketName)
                                            .createBucketConfiguration(CreateBucketConfiguration.builder()
-                                                                                               .locationConstraint("us-east-1")
+                                                                                               .locationConstraint(region)
                                                                                                .build())
                                            .build());
 

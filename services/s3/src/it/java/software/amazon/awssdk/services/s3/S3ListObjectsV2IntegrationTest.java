@@ -25,8 +25,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -36,6 +34,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
@@ -43,7 +42,6 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Integration tests for the listObjectsV2 operation in the Amazon S3 Java
@@ -116,8 +114,8 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(bucketName)
                                      .key(key)
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(file))))
-                                     .build());
+                                     .build(),
+                     RequestBody.of(file));
         keys.add(key);
     }
 

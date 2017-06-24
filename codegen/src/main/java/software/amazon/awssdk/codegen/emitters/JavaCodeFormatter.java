@@ -92,7 +92,7 @@ public class JavaCodeFormatter implements CodeTransformer {
         final TextEdit edit = codeFormatter.format(
                 CodeFormatter.K_COMPILATION_UNIT
                 | CodeFormatter.F_INCLUDE_COMMENTS, contents, 0,
-                contents.length(), 0, Constants.LINE_SEPARATOR);
+                contents.length(), 0, Constants.LF);
 
         if (edit == null) {
             // TODO log a fatal or warning here. Throwing an exception is causing the actual freemarker error to be lost

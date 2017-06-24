@@ -40,7 +40,8 @@ import software.amazon.awssdk.annotation.ReviewBeforeRelease;
  *
  * @see FileAsyncRequestProvider
  */
-@ReviewBeforeRelease("This is exactly the same of SdkHttpRequestProvider. Can we just have one?")
+@ReviewBeforeRelease("This is exactly the same of SdkHttpRequestProvider. Can we just have one? Also I like Producer better" +
+                     "than Provider")
 public interface AsyncRequestProvider extends Publisher<ByteBuffer> {
 
     /**

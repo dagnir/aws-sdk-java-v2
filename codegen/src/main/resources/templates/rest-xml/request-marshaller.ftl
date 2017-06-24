@@ -74,11 +74,7 @@ public class ${shapeName}Marshaller implements Marshaller<Request<${shapeName}>,
         <#if shape.hasPayloadMember>
             <#list shape.members as member>
                 <#if (member.http.isStreaming)>
-                <#if member.variable.variableType = "java.nio.ByteBuffer">
-                request.setContent(BinaryUtils.toStream(${shape.variable.variableName}.${member.fluentGetterMethodName}()));
-                <#else>
-                request.setContent(${shape.variable.variableName}.${member.fluentGetterMethodName}());
-                </#if>
+                <#-- Content is set by StreamingRequestMarshaller -->
                 if (!request.getHeaders().containsKey("Content-Type")) {
                     request.addHeader("Content-Type", "binary/octet-stream");
                 }

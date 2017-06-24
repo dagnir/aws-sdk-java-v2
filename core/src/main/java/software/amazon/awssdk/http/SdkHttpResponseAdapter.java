@@ -32,7 +32,7 @@ public class SdkHttpResponseAdapter {
     public static HttpResponse adapt(boolean calculateCrc32FromCompressedData,
                                      SdkHttpFullRequest request,
                                      SdkHttpFullResponse awsHttpResponse) {
-        final HttpResponse httpResponse = new HttpResponse(request);
+        final HttpResponse httpResponse = new HttpResponse(request, awsHttpResponse.getContent());
         httpResponse.setStatusCode(awsHttpResponse.getStatusCode());
         httpResponse.setStatusText(awsHttpResponse.getStatusText());
 

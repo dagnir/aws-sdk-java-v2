@@ -83,7 +83,7 @@ public class AsyncClientInterface implements ClassSpec {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(opModel.getMethodName())
                                                      .returns(getAsyncReturnType(opModel, responsePojoType))
                                                      .addParameter(requestType, opModel.getInput().getVariableName())
-                                                     .addJavadoc(opModel.getAsyncDocumentation(model.getMetadata()));
+                                                     .addJavadoc(opModel.getAsyncDocumentation(model, opModel));
 
         if (opModel.hasStreamingInput()) {
             methodBuilder.addParameter(ClassName.get(AsyncRequestProvider.class), "requestProvider");

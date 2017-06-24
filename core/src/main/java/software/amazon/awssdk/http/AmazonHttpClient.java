@@ -45,7 +45,6 @@ import software.amazon.awssdk.http.pipeline.stages.ExceptionReportingStage;
 import software.amazon.awssdk.http.pipeline.stages.HandleResponseStage;
 import software.amazon.awssdk.http.pipeline.stages.HttpResponseAdaptingStage;
 import software.amazon.awssdk.http.pipeline.stages.InstrumentHttpResponseContentStage;
-import software.amazon.awssdk.http.pipeline.stages.LastResetInputStreamStage;
 import software.amazon.awssdk.http.pipeline.stages.MakeHttpRequestStage;
 import software.amazon.awssdk.http.pipeline.stages.MakeRequestImmutable;
 import software.amazon.awssdk.http.pipeline.stages.MakeRequestMutable;
@@ -443,7 +442,6 @@ public class AmazonHttpClient implements AutoCloseable {
                                       .wrap(ExceptionReportingStage::new)
                                       .wrap(TimerExceptionHandlingStage::new)
                                       .wrap(RetryableStage::new)::build)
-                        .wrap(LastResetInputStreamStage::new)
                         .wrap(StreamManagingStage::new)
                         .wrap(AfterCallbackStage::new)
                         .wrap(ClientExecutionTimedStage::new)

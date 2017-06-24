@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
+import static software.amazon.awssdk.codegen.internal.Constants.LF;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.createLinkToServiceDocumentation;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHtmlTags;
 
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import software.amazon.awssdk.codegen.internal.DocumentationUtils;
 import software.amazon.awssdk.codegen.internal.Utils;
+import software.amazon.awssdk.utils.CollectionUtils;
 
 public class OperationModel extends DocumentationModel {
 
@@ -71,16 +72,12 @@ public class OperationModel extends DocumentationModel {
         this.deprecated = deprecated;
     }
 
-    public String getSyncDocumentation(final Metadata md) {
-        return getDocumentation(MethodType.SYNC, md);
+    public String getSyncDocumentation(IntermediateModel model, OperationModel opModel) {
+        return getDocumentation(MethodType.SYNC, model, opModel);
     }
 
-    public String getAsyncDocumentation(final Metadata md) {
-        return getDocumentation(MethodType.ASYNC, md);
-    }
-
-    public String getAsyncDocumentationWithHandler(final Metadata md) {
-        return getDocumentation(MethodType.ASYNC_WITH_HANDLER, md);
+    public String getAsyncDocumentation(IntermediateModel model, OperationModel opModel) {
+        return getDocumentation(MethodType.ASYNC, model, opModel);
     }
 
     public boolean isAuthenticated() {
@@ -124,7 +121,8 @@ public class OperationModel extends DocumentationModel {
         }
     }
 
-    private String getDocumentation(final MethodType methodType, final Metadata md) {
+    private String getDocumentation(final MethodType methodType, IntermediateModel model, OperationModel opModel) {
+        Metadata md = model.getMetadata();
         StringBuilder docBuilder = new StringBuilder();
 
         if (documentation != null) {
@@ -140,53 +138,141 @@ public class OperationModel extends DocumentationModel {
         }
 
         if (input != null) {
-            docBuilder.append(LINE_SEPARATOR).append("@param ").append(input.getVariableName())
-                    .append(" ").append(stripHtmlTags(input.getDocumentation()));
+            docBuilder.append(LF).append("@param ").append(input.getVariableName())
+                      .append(" ").append(stripHtmlTags(input.getDocumentation()));
         }
 
-        if (methodType == MethodType.ASYNC_WITH_HANDLER) {
-            docBuilder.append(LINE_SEPARATOR)
-                    .append("@param asyncHandler Asynchronous callback handler " +
-                            "for events in the lifecycle of the request. " +
-                            "Users can provide an implementation of the " +
-                            "callback methods in this interface to receive " +
-                            "notification of successful or unsuccessful " +
-                            "completion of the operation.");
+
+        if (methodType == MethodType.ASYNC) {
+            if (opModel.hasStreamingInput()) {
+                String streamMemberDocs = getStreamingMemberDocs(opModel.getInputShape());
+                docBuilder.append(LF)
+                          .append("@param requestProvider ")
+                          .append("Functional interface that can be implemented to produce the request content ")
+                          .append("in a non-blocking manner. The size of the content is expected to be known up front. ")
+                          .append("See {@link AsyncRequestProvider} for specific details on implementing this interface as well ")
+                          .append("as links to precanned implementations for common scenarios like uploading from a file. The ")
+                          .append("service documentation for the request content is as follows '")
+                          .append(streamMemberDocs)
+                          .append("'.");
+            }
+            if (opModel.hasStreamingOutput()) {
+                String streamMemberDocs = getStreamingMemberDocs(opModel.getOutputShape());
+                docBuilder.append(LF)
+                          .append("@param asyncResponseHandler The response handler for processing the streaming response in a ")
+                          .append("non-blocking manner. See {@link AsyncResponseHandler} for details on how this callback ")
+                          .append("should be implemented and for links to precanned implementations for common scenarios like ")
+                          .append("downloading to a file. The service documentation for the streamed content is as follows '")
+                          .append(streamMemberDocs).append("'.");
+            }
+        } else if (methodType == MethodType.SYNC) {
+            if (opModel.hasStreamingInput()) {
+                String streamMemberDocs = getStreamingMemberDocs(opModel.getInputShape());
+                docBuilder.append(LF)
+                          .append("@param requestBody ")
+                          .append("The content to send to the service. A {@link RequestBody} can be created using one of ")
+                          .append("several factory methods for various sources of data. For example, to create a request body ")
+                          .append("from a file you can do the following. ")
+                          .append("<pre>{@code RequestBody.of(new File(\"myfile.txt\"))}</pre>")
+                          .append("See documentation in {@link RequestBody} for additional details and which sources of data ")
+                          .append("are supported. The service documentation for the request content is as follows '")
+                          .append(streamMemberDocs).append("'.");
+            }
+            if (opModel.hasStreamingOutput()) {
+                String streamMemberDocs = getStreamingMemberDocs(opModel.getOutputShape());
+                docBuilder.append(LF)
+                          .append("@param streamingHandler ")
+                          .append("Functional interface for processing the streamed response content. The unmarshalled ")
+                          .append(opModel.getOutputShape().getShapeName())
+                          .append(" and an InputStream to the response content are provided as parameters to the callback. ")
+                          .append("The callback may return a transformed type which will be the return value of this method. ")
+                          .append("See {@link software.amazon.awssdk.runtime.transform.StreamingResponseHandler} for details on ")
+                          .append("implementing this interface and for links to precanned implementations for common scenarios ")
+                          .append("like downloading to a file. The service documentation for the response content is as ")
+                          .append("follows '").append(streamMemberDocs).append("'.");
+            }
         }
 
         if (returnType != null) {
-            docBuilder.append(LINE_SEPARATOR).append("@return ");
+            docBuilder.append(LF).append("@return ");
             if (methodType.isAsync()) {
-                docBuilder.append(DocumentationUtils.DEFAULT_ASYNC_RETURN
-                                          .replace("%s", operationName));
+                if (opModel.hasStreamingOutput()) {
+                    docBuilder.append("A future to the transformed result of the AsyncResponseHandler.");
+                } else {
+                    docBuilder.append(DocumentationUtils.DEFAULT_ASYNC_RETURN.replace("%s", operationName));
+                }
             } else {
-                docBuilder.append(DocumentationUtils.DEFAULT_SYNC_RETURN
-                                          .replace("%s", operationName));
+                if (opModel.hasStreamingOutput()) {
+                    docBuilder.append("The transformed result of the StreamingResponseHandler.");
+                } else {
+                    docBuilder.append(DocumentationUtils.DEFAULT_SYNC_RETURN.replace("%s", operationName));
+                }
             }
         }
 
-        if (!methodType.isAsync() && exceptions != null && !(exceptions.isEmpty())) {
-
+        if (!methodType.isAsync() && !CollectionUtils.isNullOrEmpty(exceptions)) {
             for (ExceptionModel exception : exceptions) {
-                docBuilder.append(LINE_SEPARATOR).append("@throws ")
-                        .append(exception.getExceptionName()).append(" ")
-                        .append(stripHtmlTags(exception.getDocumentation()));
+                docBuilder.append(LF).append("@throws ")
+                          .append(exception.getExceptionName()).append(" ")
+                          .append(stripHtmlTags(exception.getDocumentation()));
             }
+            docBuilder.append(LF)
+                      .append("@throws SdkBaseException Base class for all exceptions that can be thrown ")
+                      .append("by the SDK (both service and client). Can be used for catch all scenarios.")
+                      .append(LF)
+                      .append("@throws SdkClientException If any client side error occurs such as an IO related ")
+                      .append("failure, failure to get credentials, etc)")
+                      .append(LF)
+                      .append("@throws ").append(md.getBaseExceptionName())
+                      .append(" Base exception for all service exceptions. Unknown exceptions will be thrown as an ")
+                      .append("instance of this type")
+            ;
+        } else if (methodType.isAsync() && !CollectionUtils.isNullOrEmpty(exceptions)) {
+            docBuilder.append(LF).append("<br/>The CompletableFuture returned by this method can be " +
+                                         "completed exceptionally with the following exceptions.")
+                      .append("<ul>");
+            exceptions.forEach(e -> docBuilder.append("\n<li>")
+                                              .append(e.getExceptionName()).append(" ")
+                                              .append(stripHtmlTags(e.getDocumentation()))
+                                              .append("</li>"));
+            docBuilder
+                    .append("\n<li>SdkBaseException Base class for all exceptions that can be thrown ")
+                    .append("by the SDK (both service and client). Can be used for catch all scenarios.</li>")
+                    .append("\n<li>SdkClientException If any client side error occurs ")
+                    .append("such as an IO related failure, failure to get credentials, etc)</li>")
+                    .append("\n<li>")
+                    .append(md.getBaseExceptionName()).append(" Base class for all service exceptions. ")
+                    .append("Unknown exceptions will be thrown as an instance of this </li > ")
+                    .append("<ul>");
         }
 
         docBuilder.append(getSampleTagForMethodType(methodType, md));
         String crosslink = createLinkToServiceDocumentation(md, operationName);
         if (!crosslink.isEmpty()) {
-            docBuilder.append(LINE_SEPARATOR).append(crosslink);
+            docBuilder.append(LF).append(crosslink);
         }
 
         return docBuilder.toString().replace("$", "&#36;");
     }
 
+    /**
+     * @param streamingShape Shape containing streaming member.
+     * @return Documentation for the streaming member in the given Shape.
+     * @throws IllegalStateException if shape does not have streaming member.
+     */
+    private String getStreamingMemberDocs(ShapeModel streamingShape) {
+        return streamingShape.getMembers().stream()
+                             .filter(m -> m.getHttp().getIsStreaming())
+                             .map(DocumentationModel::getDocumentation)
+                             .findFirst()
+                             .orElseThrow(() -> new IllegalStateException(
+                                     "Streaming member not found in " + streamingShape.getShapeName()));
+    }
+
     private String getSampleTagForMethodType(final MethodType methodType, final Metadata md) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(LINE_SEPARATOR).append("@sample ");
+        sb.append(LF).append("@sample ");
 
         if (methodType == MethodType.SYNC) {
             sb.append(md.getSyncInterface());

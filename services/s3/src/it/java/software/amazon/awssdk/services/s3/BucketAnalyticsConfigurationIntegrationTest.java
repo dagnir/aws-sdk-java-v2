@@ -20,8 +20,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.List;
 import org.junit.AfterClass;
@@ -45,17 +43,21 @@ import software.amazon.awssdk.services.s3.model.StorageClassAnalysis;
 import software.amazon.awssdk.services.s3.model.StorageClassAnalysisDataExport;
 import software.amazon.awssdk.services.s3.model.StorageClassAnalysisSchemaVersion;
 import software.amazon.awssdk.services.s3.model.Tag;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import software.amazon.awssdk.utils.IoUtils;
 
 public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests. */
+    /**
+     * The bucket created and used by these tests.
+     */
     private static final String BUCKET_NAME = "java-bucket-analytics-integ-test-" + new Date().getTime();
 
     private static final String BUCKET_ARN = "arn:aws:s3:::" + BUCKET_NAME;
 
-    /** The key used in these tests. */
+    /**
+     * The key used in these tests.
+     */
     private static final String KEY = "key";
 
     @BeforeClass
@@ -71,10 +73,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(BUCKET_NAME)
                                      .key(KEY)
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(
-                                         new FileInputStream(
-                                             new RandomTempFile("foo", 1024)))))
-                                     .build());
+                                     .build(), RequestBody.of(new RandomTempFile("foo", 1024)));
     }
 
     @AfterClass
@@ -96,11 +95,12 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                                                                                  .id(configId)
                                                                                  .build());
 
-        AnalyticsConfiguration returnedConfig = s3.getBucketAnalyticsConfiguration(GetBucketAnalyticsConfigurationRequest.builder()
-                                                                                          .bucket(BUCKET_NAME)
-                                                                                          .id(configId)
-                                                                                          .build())
-                   .analyticsConfiguration();
+        AnalyticsConfiguration returnedConfig = s3
+                .getBucketAnalyticsConfiguration(GetBucketAnalyticsConfigurationRequest.builder()
+                                                                                       .bucket(BUCKET_NAME)
+                                                                                       .id(configId)
+                                                                                       .build())
+                .analyticsConfiguration();
 
         assertEquals(configId, returnedConfig.id());
         assertNull(returnedConfig.filter());
@@ -108,7 +108,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                      returnedConfig.storageClassAnalysis().dataExport().outputSchemaVersion());
 
         AnalyticsS3BucketDestination s3BucketDestination =
-            returnedConfig.storageClassAnalysis().dataExport().destination().s3BucketDestination();
+                returnedConfig.storageClassAnalysis().dataExport().destination().s3BucketDestination();
         assertEquals(BUCKET_ARN, s3BucketDestination.bucket());
         assertEquals(AnalyticsS3ExportFileFormat.CSV.toString(), s3BucketDestination.format());
         assertNull(s3BucketDestination.bucketAccountId());
@@ -141,9 +141,9 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                                                                                        .build());
 
         ListBucketAnalyticsConfigurationsResponse result =
-            s3.listBucketAnalyticsConfigurations(ListBucketAnalyticsConfigurationsRequest.builder()
-                                                                                         .bucket(BUCKET_NAME)
-                                                                                         .build());
+                s3.listBucketAnalyticsConfigurations(ListBucketAnalyticsConfigurationsRequest.builder()
+                                                                                             .bucket(BUCKET_NAME)
+                                                                                             .build());
         assertNull(result.analyticsConfigurationList());
     }
 
@@ -157,9 +157,9 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                                                               .build();
 
         AnalyticsConfiguration config2 = AnalyticsConfiguration.builder()
-                                                              .id(configId2)
-                                                              .storageClassAnalysis(getStorageClassAnalysis())
-                                                              .build();
+                                                               .id(configId2)
+                                                               .storageClassAnalysis(getStorageClassAnalysis())
+                                                               .build();
 
         s3.putBucketAnalyticsConfiguration(PutBucketAnalyticsConfigurationRequest.builder()
                                                                                  .bucket(BUCKET_NAME)
@@ -174,7 +174,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                                                                                  .build());
 
         ListBucketAnalyticsConfigurationsResponse result = s3.listBucketAnalyticsConfigurations(
-            ListBucketAnalyticsConfigurationsRequest.builder().bucket(BUCKET_NAME).build());
+                ListBucketAnalyticsConfigurationsRequest.builder().bucket(BUCKET_NAME).build());
 
         List<AnalyticsConfiguration> analyticsConfigurationList = result.analyticsConfigurationList();
         assertNull(result.continuationToken());
@@ -221,8 +221,8 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                                                               .filter(AnalyticsFilter.builder()
                                                                                      .prefix("")
                                                                                      .build())
-                                                              .storageClassAnalysis(getStorageClassAnalysis()).
-                                                                  build();
+                                                              .storageClassAnalysis(getStorageClassAnalysis())
+                                                              .build();
 
         s3.putBucketAnalyticsConfiguration(PutBucketAnalyticsConfigurationRequest.builder()
                                                                                  .bucket(BUCKET_NAME)
@@ -253,17 +253,19 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                                                                                  .build());
 
         config = s3.getBucketAnalyticsConfiguration(GetBucketAnalyticsConfigurationRequest.builder()
-                                                                                               .bucket(BUCKET_NAME)
-                                                                                               .id(configId)
-                                                                                               .build())
-                        .analyticsConfiguration();
+                                                                                          .bucket(BUCKET_NAME)
+                                                                                          .id(configId)
+                                                                                          .build())
+                   .analyticsConfiguration();
 
         assertEquals(configId, config.id());
         assertEquals("key", config.filter().tag().key());
         assertEquals("value", config.filter().tag().value());
-        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(), config.storageClassAnalysis().dataExport().outputSchemaVersion());
+        assertEquals(StorageClassAnalysisSchemaVersion.V_1.toString(),
+                     config.storageClassAnalysis().dataExport().outputSchemaVersion());
 
-        AnalyticsS3BucketDestination s3BucketDestination = config.storageClassAnalysis().dataExport().destination().s3BucketDestination();
+        AnalyticsS3BucketDestination s3BucketDestination = config.storageClassAnalysis().dataExport().destination()
+                                                                 .s3BucketDestination();
         assertEquals(BUCKET_ARN, s3BucketDestination.bucket());
         assertEquals(AnalyticsS3ExportFileFormat.CSV.toString(), s3BucketDestination.format());
         assertNull(s3BucketDestination.bucketAccountId());
@@ -274,8 +276,11 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
     public void setBucketAnalyticsConfiguration_fails_when_requiredfield_is_missing() throws Exception {
         String configId = "id";
         StorageClassAnalysisDataExport dataExport = StorageClassAnalysisDataExport.builder()
-                                                                                  .outputSchemaVersion(StorageClassAnalysisSchemaVersion.V_1)
-                                                                                  .destination(AnalyticsExportDestination.builder().build())
+                                                                                  .outputSchemaVersion(
+                                                                                          StorageClassAnalysisSchemaVersion.V_1)
+                                                                                  .destination(
+                                                                                          AnalyticsExportDestination.builder()
+                                                                                                                    .build())
                                                                                   .build();
 
         AnalyticsConfiguration config = AnalyticsConfiguration.builder()
@@ -300,9 +305,11 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
 
         return StorageClassAnalysis.builder()
                                    .dataExport(StorageClassAnalysisDataExport.builder()
-                                                                             .outputSchemaVersion(StorageClassAnalysisSchemaVersion.V_1)
+                                                                             .outputSchemaVersion(
+                                                                                     StorageClassAnalysisSchemaVersion.V_1)
                                                                              .destination(AnalyticsExportDestination.builder()
-                                                                                                                    .s3BucketDestination(s3BucketDestination)
+                                                                                                                    .s3BucketDestination(
+                                                                                                                            s3BucketDestination)
                                                                                                                     .build())
                                                                              .build())
                                    .build();

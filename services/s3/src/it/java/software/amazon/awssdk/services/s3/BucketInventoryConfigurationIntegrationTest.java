@@ -19,21 +19,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketInventoryConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketInventoryConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.ListBucketInventoryConfigurationsRequest;
-import software.amazon.awssdk.services.s3.model.PutBucketInventoryConfigurationRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.InventoryConfiguration;
 import software.amazon.awssdk.services.s3.model.InventoryDestination;
 import software.amazon.awssdk.services.s3.model.InventoryFilter;
@@ -43,16 +39,22 @@ import software.amazon.awssdk.services.s3.model.InventoryIncludedObjectVersions;
 import software.amazon.awssdk.services.s3.model.InventoryOptionalField;
 import software.amazon.awssdk.services.s3.model.InventoryS3BucketDestination;
 import software.amazon.awssdk.services.s3.model.InventorySchedule;
+import software.amazon.awssdk.services.s3.model.ListBucketInventoryConfigurationsRequest;
+import software.amazon.awssdk.services.s3.model.PutBucketInventoryConfigurationRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import software.amazon.awssdk.utils.IoUtils;
 
 public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTestBase {
 
-    /** The bucket created and used by these tests. */
+    /**
+     * The bucket created and used by these tests.
+     */
     private static final String BUCKET_NAME = "java-bucket-inventory-integ-test-" + new Date().getTime();
     private static final String BUCKET_ARN = "arn:aws:s3:::" + BUCKET_NAME;
 
-    /** The key used in these tests. */
+    /**
+     * The key used in these tests.
+     */
     private static final String KEY = "key";
 
     @BeforeClass
@@ -67,9 +69,8 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(BUCKET_NAME)
                                      .key(KEY)
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(
-                                         new RandomTempFile("foo", 1024)))))
-                                     .build());
+                                     .build(),
+                     RequestBody.of(new RandomTempFile("foo", 1024)));
     }
 
     @AfterClass
@@ -127,9 +128,9 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
                                                                                        .build());
 
         List<InventoryConfiguration> configurations = s3.listBucketInventoryConfigurations(
-            ListBucketInventoryConfigurationsRequest.builder()
-                                                    .bucket(BUCKET_NAME)
-                                                    .build())
+                ListBucketInventoryConfigurationsRequest.builder()
+                                                        .bucket(BUCKET_NAME)
+                                                        .build())
                                                         .inventoryConfigurationList();
         assertNull(configurations);
     }
