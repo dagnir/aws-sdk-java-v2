@@ -48,7 +48,7 @@
     },
     "when": {
       "action": "unmarshall",
-      "operation": "StreamingOperation"
+      "operation": "StreamingOutputOperation"
     },
     "then": {
       "deserializedAs": {

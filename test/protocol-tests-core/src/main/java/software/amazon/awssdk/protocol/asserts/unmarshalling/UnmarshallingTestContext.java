@@ -24,6 +24,7 @@ public class UnmarshallingTestContext {
 
     private IntermediateModel model;
     private String operationName;
+    private String streamedResonse;
 
     public UnmarshallingTestContext withModel(IntermediateModel model) {
         this.model = model;
@@ -42,4 +43,18 @@ public class UnmarshallingTestContext {
     public String getOperationName() {
         return operationName;
     }
+
+    /**
+     * Streamed response will only be present for operations that have a streaming member in the output. We
+     * capture the actual contents if via a custom {@link software.amazon.awssdk.sync.StreamingResponseHandler}.
+     */
+    public UnmarshallingTestContext withStreamedResponse(String streamedResonse) {
+        this.streamedResonse = streamedResonse;
+        return this;
+    }
+
+    public String getStreamedResponse() {
+        return streamedResonse;
+    }
+
 }

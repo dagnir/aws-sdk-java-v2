@@ -18,7 +18,7 @@ package software.amazon.awssdk.protocol.reflect;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
-
+import java.util.stream.Stream;
 import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.client.builder.ClientBuilder;
@@ -27,6 +27,7 @@ import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.protocol.model.TestCase;
 import software.amazon.awssdk.protocol.wiremock.WireMockUtils;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.sync.StreamingResponseHandler;
 
 /**
  * Reflection utils to create the client class and invoke operation methods.
@@ -56,13 +57,29 @@ public class ClientReflector {
     /**
      * Call the operation method on the client with the given request.
      *
-     * @param requestObject Request object to call operation with.
+     * @param params Params to call the operation with. Usually just the request POJO but might be additional params
+     *               for streaming operations.
      * @return Unmarshalled result
      */
-    public Object invokeMethod(TestCase testCase, Object requestObject) throws Exception {
+    public Object invokeMethod(TestCase testCase, Object... params) throws Exception {
         final String operationName = testCase.getWhen().getOperationName();
-        Method operationMethod = getOperationMethod(operationName);
-        return operationMethod.invoke(client, requestObject);
+        Method operationMethod = getOperationMethod(operationName, params);
+        return operationMethod.invoke(client, params);
+    }
+
+    /**
+     * Call the operation (with a streaming output) method on the client with the given request.
+     *
+     * @param requestObject   POJO request object.
+     * @param responseHandler Response handler for an operation with a streaming output.
+     * @return Unmarshalled result
+     */
+    public Object invokeStreamingMethod(TestCase testCase,
+                                        Object requestObject,
+                                        StreamingResponseHandler<?, ?> responseHandler) throws Exception {
+        final String operationName = testCase.getWhen().getOperationName();
+        Method operationMethod = getOperationMethod(operationName, requestObject.getClass(), StreamingResponseHandler.class);
+        return operationMethod.invoke(client, requestObject, responseHandler);
     }
 
     /**
@@ -102,19 +119,21 @@ public class ClientReflector {
     }
 
     /**
-     * @param simpleClassName Class name to fully qualify.
-     * @return Fully qualified name of class in the client's model package.
+     * Gets the method for the given operation and parameters. Assumes the classes of the params matches
+     * the classes of the declared method parameters (i.e. no inheritance).
+     *
+     * @return Method object to invoke operation.
      */
-    private String getModelFqcn(String simpleClassName) {
-        return String.format("%s.%s", metadata.getFullModelPackageName(), simpleClassName);
+    private Method getOperationMethod(String operationName, Object... params) throws Exception {
+        Class[] classes = Stream.of(params).map(Object::getClass).toArray(Class[]::new);
+        return getOperationMethod(operationName, classes);
     }
 
     /**
      * @return Method object to invoke operation.
      */
-    private Method getOperationMethod(String operationName) throws Exception {
-        return interfaceClass.getMethod(getOperationMethodName(operationName), Class.forName(
-                getModelFqcn(getOperationRequestClassName(operationName))));
+    private Method getOperationMethod(String operationName, Class<?>... classes) throws Exception {
+        return interfaceClass.getMethod(getOperationMethodName(operationName), classes);
     }
 
     /**
@@ -124,10 +143,4 @@ public class ClientReflector {
         return model.getOperations().get(operationName).getMethodName();
     }
 
-    /**
-     * @return Name of the request class that corresponds to the given operation.
-     */
-    private String getOperationRequestClassName(String operationName) {
-        return model.getOperations().get(operationName).getInput().getVariableType();
-    }
 }

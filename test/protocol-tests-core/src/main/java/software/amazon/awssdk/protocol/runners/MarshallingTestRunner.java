@@ -31,16 +31,17 @@ import software.amazon.awssdk.protocol.model.TestCase;
 import software.amazon.awssdk.protocol.reflect.ClientReflector;
 import software.amazon.awssdk.protocol.reflect.ShapeModelReflector;
 import software.amazon.awssdk.protocol.wiremock.WireMockUtils;
+import software.amazon.awssdk.sync.RequestBody;
 
 /**
  * Test runner for test cases exercising the client marshallers.
  */
-public class MarshallingTestRunner {
+class MarshallingTestRunner {
 
     private final IntermediateModel model;
     private final ClientReflector clientReflector;
 
-    public MarshallingTestRunner(IntermediateModel model, ClientReflector clientReflector) {
+    MarshallingTestRunner(IntermediateModel model, ClientReflector clientReflector) {
         this.model = model;
         this.clientReflector = clientReflector;
     }
@@ -48,15 +49,22 @@ public class MarshallingTestRunner {
     /**
      * @return LoggedRequest that wire mock captured.
      */
-    public static LoggedRequest getLoggedRequest() {
+    private static LoggedRequest getLoggedRequest() {
         List<LoggedRequest> requests = WireMockUtils.findAllLoggedRequests();
         assertEquals(1, requests.size());
         return requests.get(0);
     }
 
-    public void runTest(TestCase testCase) throws Exception {
+    void runTest(TestCase testCase) throws Exception {
         resetWireMock();
-        clientReflector.invokeMethod(testCase, createRequestObject(testCase));
+        ShapeModelReflector shapeModelReflector = createShapeModelReflector(testCase);
+        if (!model.getShapes().get(testCase.getWhen().getOperationName() + "Request").isHasStreamingMember()) {
+            clientReflector.invokeMethod(testCase, shapeModelReflector.createShapeObject());
+        } else {
+            clientReflector.invokeMethod(testCase,
+                                         shapeModelReflector.createShapeObject(),
+                                         RequestBody.of(shapeModelReflector.getStreamingMemberValue()));
+        }
         LoggedRequest actualRequest = getLoggedRequest();
         testCase.getThen().getMarshallingAssertion().assertMatches(actualRequest);
     }
@@ -75,21 +83,18 @@ public class MarshallingTestRunner {
         stubFor(any(urlMatching(".*")).willReturn(responseDefBuilder));
     }
 
-    /**
-     * Create a request object initialized with data from the Given declaration of the test case.
-     */
-    private Object createRequestObject(TestCase testCase) {
+    private ShapeModelReflector createShapeModelReflector(TestCase testCase) {
         final String operationName = testCase.getWhen().getOperationName();
         final String requestClassName = getOperationRequestClassName(operationName);
         final JsonNode input = testCase.getGiven().getInput();
-        return new ShapeModelReflector(model, requestClassName, input).createShapeObject();
+        return new ShapeModelReflector(model, requestClassName, input);
     }
 
     /**
      * @return Name of the request class that corresponds to the given operation.
      */
     private String getOperationRequestClassName(String operationName) {
-        return model.getOperations().get(operationName).getInput().getVariableType();
+        return operationName + "Request";
     }
 
 }

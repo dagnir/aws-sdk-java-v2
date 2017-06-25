@@ -105,7 +105,7 @@
     },
     "when": {
       "action": "marshall",
-      "operation": "StreamingOperation"
+      "operation": "StreamingInputOperation"
     },
     "then": {
       "serializedAs": {

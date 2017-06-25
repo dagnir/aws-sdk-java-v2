@@ -9,7 +9,8 @@
     "serviceFullName":"Amazon Protocol Rest Json",
     "signatureVersion":"v4",
     "targetPrefix":"ProtocolTestsService",
-    "timestampFormat":"unixTimestamp"
+    "timestampFormat":"unixTimestamp",
+    "uid":"restjson-2016-03-11"
   },
   "operations":{
     "AllTypes":{
@@ -45,6 +46,18 @@
         "requestUri":"/2016-03-11/idempotentOperation/{PathParam}"
       },
       "input":{"shape":"IdempotentOperationStructure"}
+    },
+    "JsonValuesOperation":{
+      "name":"JsonValuesOperation",
+      "http":{
+        "method":"POST",
+        "requestUri":"/2016-03-11/JsonValuesStructure"
+      },
+      "input":{"shape":"JsonValuesStructure"},
+      "output":{"shape":"JsonValuesStructure"},
+      "errors":[
+        {"shape":"EmptyModeledException"}
+      ]
     },
     "MapOfStringToListOfStringInQueryParams":{
       "name":"MapOfStringToListOfStringInQueryParams",
@@ -137,14 +150,21 @@
       },
       "input":{"shape":"QueryParamWithoutValueInput"}
     },
-    "StreamingOperation":{
-      "name":"StreamingOperation",
+    "StreamingInputOperation":{
+      "name":"StreamingInputOperation",
       "http":{
         "method":"POST",
-        "requestUri":"/2016-03-11/streamingOperation"
+        "requestUri":"/2016-03-11/streamingInputOperation"
       },
-      "input":{"shape":"StreamingOperationStructure"},
-      "output":{"shape":"StreamingOperationStructure"}
+      "input":{"shape":"StructureWithStreamingMember"}
+    },
+    "StreamingOutputOperation":{
+      "name":"StreamingOutputOperation",
+      "http":{
+        "method":"POST",
+        "requestUri":"/2016-03-11/streamingOutputOperation"
+      },
+      "output":{"shape":"StructureWithStreamingMember"}
     }
   },
   "shapes":{
@@ -220,6 +240,21 @@
       }
     },
     "Integer":{"type":"integer"},
+    "JsonValuesStructure":{
+      "type":"structure",
+      "members":{
+        "JsonValueHeaderMember":{
+          "shape":"String",
+          "jsonvalue":true,
+          "location":"header",
+          "locationName":"Encoded-Header"
+        },
+        "JsonValueMember":{
+          "shape":"String",
+          "jsonvalue":true
+        }
+      }
+    },
     "ListOfBlobsType":{
       "type":"list",
       "member":{"shape":"BlobType"}
@@ -495,13 +530,6 @@
       "type":"blob",
       "streaming":true
     },
-    "StreamingOperationStructure":{
-      "type":"structure",
-      "members":{
-        "StreamingMember":{"shape":"StreamType"}
-      },
-      "payload":"StreamingMember"
-    },
     "String":{"type":"string"},
     "StructWithNestedBlobType":{
       "type":"structure",
@@ -514,6 +542,13 @@
       "members":{
         "NestedTimestamp":{"shape":"Timestamp"}
       }
+    },
+    "StructureWithStreamingMember":{
+      "type":"structure",
+      "members":{
+        "StreamingMember":{"shape":"StreamType"}
+      },
+      "payload":"StreamingMember"
     },
     "SubTypeOne":{
       "type":"structure",
