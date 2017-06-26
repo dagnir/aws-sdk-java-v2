@@ -1,8 +1,10 @@
-# AWS SDK for Java [![Build Status](https://travis-ci.org/aws/aws-sdk-java.png?branch=master)](https://travis-ci.org/aws/aws-sdk-java)
+# AWS SDK for Java 2.0 Developer Preview [![Build Status](https://travis-ci.org/aws/aws-sdk-java.png?branch=master)](https://travis-ci.org/aws/aws-sdk-java)
 
-The **AWS SDK for Java** enables Java developers to easily work with [Amazon Web Services][aws] and
-build scalable solutions with Amazon S3, Amazon DynamoDB, Amazon Glacier, and more. You can get
-started in minutes using ***Maven***.
+The **AWS SDK for Java 2.0 Developer Preview** is a rewrite of 1.0 with some great new features. As with version 1.0, 
+it enables you to easily work with [Amazon Web Services][aws] but also includes features like non-blocking IO and pluggable
+HTTP implementation to further customize your applications. You can get started in minutes using ***Maven*** or any build system that supports MavenCentral as an artifact source.
+
+**NOTE** 2.0 version still a preview and is not recommended for production use yet. 
 
 * [SDK Homepage][sdk-website]
 * [API Docs][docs-api]
@@ -69,7 +71,7 @@ dependencies.
 See the [Set up the AWS SDK for Java][docs-setup] section of the developer guide for more
 information about installing the SDK through other means.
 
-## Features
+## New Features for Developer Preview
 
 * Provides a way to plug in your own HTTP implementation.
 
