@@ -239,7 +239,7 @@ public class OperationModel extends DocumentationModel {
                     .append("\n<li>SdkBaseException Base class for all exceptions that can be thrown ")
                     .append("by the SDK (both service and client). Can be used for catch all scenarios.</li>")
                     .append("\n<li>SdkClientException If any client side error occurs ")
-                    .append("such as an IO related failure, failure to get credentials, etc)</li>")
+                    .append("such as an IO related failure, failure to get credentials, etc</li>")
                     .append("\n<li>")
                     .append(md.getBaseExceptionName()).append(" Base class for all service exceptions. ")
                     .append("Unknown exceptions will be thrown as an instance of this </li > ")

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Arrays;
 import software.amazon.awssdk.util.StringInputStream;
 import software.amazon.awssdk.utils.BinaryUtils;
@@ -58,6 +59,16 @@ public class RequestBody {
      */
     public long getContentLength() {
         return contentLength;
+    }
+
+    /**
+     * Create a {@link RequestBody} using the full contents of the specified file.
+     *
+     * @param path File to send to the service.
+     * @return RequestBody instance.
+     */
+    public static RequestBody of(Path path) {
+        return of(path.toFile());
     }
 
     /**

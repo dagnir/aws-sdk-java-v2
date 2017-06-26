@@ -16,6 +16,7 @@
 package software.amazon.awssdk.async;
 
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
@@ -48,5 +49,15 @@ public interface AsyncRequestProvider extends Publisher<ByteBuffer> {
      * @return The content length of the data being produced.
      */
     long contentLength();
+
+    /**
+     * Creates an {@link AsyncRequestProvider} that produces data from the contents of a file.
+     *
+     * @param path Path to file to read from.
+     * @return Implementation of {@link AsyncRequestProvider} that reads data from the specified file.
+     */
+    static AsyncRequestProvider fromFile(Path path) {
+        return new FileAsyncRequestProvider(path);
+    }
 
 }

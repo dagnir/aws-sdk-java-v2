@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.http;
 
+import static software.amazon.awssdk.utils.Validate.paramNotNull;
+
 import java.io.FilterInputStream;
 import java.io.InputStream;
 
@@ -28,8 +30,8 @@ public final class AbortableInputStream extends FilterInputStream implements Abo
     private final Abortable abortable;
 
     public AbortableInputStream(InputStream delegate, Abortable abortable) {
-        super(delegate);
-        this.abortable = abortable;
+        super(paramNotNull(delegate, "delegate"));
+        this.abortable = paramNotNull(abortable, "abortable");
     }
 
     @Override

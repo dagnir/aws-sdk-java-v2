@@ -32,7 +32,7 @@ import org.reactivestreams.Subscription;
 /**
  * Implementation of {@link AsyncRequestProvider} that reads data from a file.
  */
-public class FileAsyncRequestProvider implements AsyncRequestProvider {
+class FileAsyncRequestProvider implements AsyncRequestProvider {
 
     /**
      * Size of ByteBuffer chunks delivered to subscriber
@@ -44,8 +44,8 @@ public class FileAsyncRequestProvider implements AsyncRequestProvider {
      */
     private final File file;
 
-    public FileAsyncRequestProvider(File file) {
-        this.file = file;
+    FileAsyncRequestProvider(Path path) {
+        this.file = path.toFile();
     }
 
     @Override
