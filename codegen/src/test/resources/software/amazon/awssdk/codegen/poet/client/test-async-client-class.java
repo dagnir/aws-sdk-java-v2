@@ -51,7 +51,7 @@ class DefaultJsonAsyncClient implements JsonAsyncClient {
      *         <li>SdkBaseException Base class for all exceptions that can be thrown by the SDK (both service and
      *         client). Can be used for catch all scenarios.</li>
      *         <li>SdkClientException If any client side error occurs such as an IO related failure, failure to get
-     *         credentials, etc)</li>
+     *         credentials, etc</li>
      *         <li>JsonException Base class for all service exceptions. Unknown exceptions will be thrown as an instance
      *         of this</li >
      *         <ul>
@@ -87,7 +87,7 @@ class DefaultJsonAsyncClient implements JsonAsyncClient {
      *         <li>SdkBaseException Base class for all exceptions that can be thrown by the SDK (both service and
      *         client). Can be used for catch all scenarios.</li>
      *         <li>SdkClientException If any client side error occurs such as an IO related failure, failure to get
-     *         credentials, etc)</li>
+     *         credentials, etc</li>
      *         <li>JsonException Base class for all service exceptions. Unknown exceptions will be thrown as an instance
      *         of this</li >
      *         <ul>
