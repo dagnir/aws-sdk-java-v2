@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.protocol.asserts.unmarshalling;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
@@ -37,9 +38,15 @@ public class UnmarshalledResultAssertion extends UnmarshallingAssertion {
 
     @Override
     protected void doAssert(UnmarshallingTestContext context, Object actual) throws Exception {
-        Object expectedResult = createExpectedResult(context);
+        ShapeModelReflector shapeModelReflector = createShapeReflector(context);
+        Object expectedResult = shapeModelReflector.createShapeObject();
         for (Field field : expectedResult.getClass().getDeclaredFields()) {
             assertFieldEquals(field, actual, expectedResult);
+        }
+
+        // Streaming response is captured by the response handler so we have to handle it separately
+        if (context.getStreamedResponse() != null) {
+            assertEquals(shapeModelReflector.getStreamingMemberValue(), context.getStreamedResponse());
         }
     }
 
@@ -59,9 +66,8 @@ public class UnmarshalledResultAssertion extends UnmarshallingAssertion {
         }
     }
 
-    private Object createExpectedResult(UnmarshallingTestContext context) {
-        return new ShapeModelReflector(context.getModel(), getOutputClassName(context),
-                                       this.expectedResult).createShapeObject();
+    private ShapeModelReflector createShapeReflector(UnmarshallingTestContext context) {
+        return new ShapeModelReflector(context.getModel(), getOutputClassName(context), this.expectedResult);
     }
 
     /**

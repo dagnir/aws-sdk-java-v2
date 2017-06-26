@@ -22,38 +22,66 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
-
 import java.lang.reflect.Method;
-
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
+import software.amazon.awssdk.http.AbortableInputStream;
 import software.amazon.awssdk.protocol.asserts.unmarshalling.UnmarshallingTestContext;
 import software.amazon.awssdk.protocol.model.GivenResponse;
 import software.amazon.awssdk.protocol.model.TestCase;
 import software.amazon.awssdk.protocol.reflect.ClientReflector;
+import software.amazon.awssdk.sync.StreamingResponseHandler;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Test runner for test cases exercising the client unmarshallers.
  */
-public class UnmarshallingTestRunner {
+class UnmarshallingTestRunner {
 
     private final IntermediateModel model;
     private final Metadata metadata;
     private final ClientReflector clientReflector;
 
-    public UnmarshallingTestRunner(IntermediateModel model, ClientReflector clientReflector) {
+    UnmarshallingTestRunner(IntermediateModel model, ClientReflector clientReflector) {
         this.model = model;
         this.metadata = model.getMetadata();
         this.clientReflector = clientReflector;
     }
 
-    public void runTest(TestCase testCase) throws Exception {
+    void runTest(TestCase testCase) throws Exception {
         resetWireMock(testCase.getGiven().getResponse());
         final String operationName = testCase.getWhen().getOperationName();
-        Object actualResult = clientReflector
-                .invokeMethod(testCase, createRequestObject(operationName));
-        testCase.getThen().getUnmarshallingAssertion()
-                .assertMatches(createContext(operationName), actualResult);
+        if (!hasStreamingMember(operationName)) {
+            Object actualResult = clientReflector.invokeMethod(testCase, createRequestObject(operationName));
+            testCase.getThen().getUnmarshallingAssertion().assertMatches(createContext(operationName), actualResult);
+        } else {
+            CapturingResponseHandler responseHandler = new CapturingResponseHandler();
+            Object actualResult = clientReflector
+                    .invokeStreamingMethod(testCase, createRequestObject(operationName), responseHandler);
+            testCase.getThen().getUnmarshallingAssertion()
+                    .assertMatches(createContext(operationName, responseHandler.captured), actualResult);
+        }
+    }
+
+    /**
+     * {@link StreamingResponseHandler} that simply captures all the content as a String so we
+     * can compare it with the expected in
+     * {@link software.amazon.awssdk.protocol.asserts.unmarshalling.UnmarshalledResultAssertion}.
+     */
+    private static class CapturingResponseHandler implements StreamingResponseHandler<Object, Void> {
+
+        private String captured;
+
+        @Override
+        public Void apply(Object response, AbortableInputStream inputStream) throws Exception {
+            this.captured = IoUtils.toString(inputStream);
+            return null;
+        }
+
+    }
+
+    private boolean hasStreamingMember(String operationName) {
+        return model.getShapes().get(operationName + "Response").isHasStreamingMember();
     }
 
     /**
@@ -69,7 +97,7 @@ public class UnmarshallingTestRunner {
 
         final ResponseDefinitionBuilder responseBuilder = aResponse().withStatus(200);
         if (givenResponse.getHeaders() != null) {
-            givenResponse.getHeaders().forEach((k, v) -> responseBuilder.withHeader(k, v));
+            givenResponse.getHeaders().forEach(responseBuilder::withHeader);
         }
         if (givenResponse.getStatusCode() != null) {
             responseBuilder.withStatus(givenResponse.getStatusCode());
@@ -116,14 +144,21 @@ public class UnmarshallingTestRunner {
     }
 
     private UnmarshallingTestContext createContext(String operationName) {
-        return new UnmarshallingTestContext().withModel(model).withOperationName(operationName);
+        return createContext(operationName, null);
+    }
+
+    private UnmarshallingTestContext createContext(String operationName, String streamedResponse) {
+        return new UnmarshallingTestContext()
+                .withModel(model)
+                .withOperationName(operationName)
+                .withStreamedResponse(streamedResponse);
     }
 
     /**
      * @param simpleClassName Class name to fully qualify.
      * @return Fully qualified name of class in the client's model package.
      */
-    public String getModelFqcn(String simpleClassName) {
+    private String getModelFqcn(String simpleClassName) {
         return String.format("%s.%s", metadata.getFullModelPackageName(), simpleClassName);
     }
 
@@ -133,4 +168,5 @@ public class UnmarshallingTestRunner {
     private String getOperationRequestClassName(String operationName) {
         return model.getOperations().get(operationName).getInput().getVariableType();
     }
+
 }

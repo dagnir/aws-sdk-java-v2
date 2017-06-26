@@ -15,18 +15,29 @@
 
 package software.amazon.awssdk.codegen.poet.client;
 
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
+import static software.amazon.awssdk.codegen.poet.client.AsyncClientInterface.STREAMING_TYPE_VARIABLE;
+
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.lang.model.element.Modifier;
+import software.amazon.awssdk.SdkBaseException;
+import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.regions.ServiceMetadata;
+import software.amazon.awssdk.sync.RequestBody;
+import software.amazon.awssdk.sync.StreamingResponseHandler;
 
 public final class SyncClientInterface implements ClassSpec {
 
@@ -43,15 +54,15 @@ public final class SyncClientInterface implements ClassSpec {
     @Override
     public TypeSpec poetSpec() {
         Builder classBuilder = PoetUtils.createInterfaceBuilder(className)
-                .addField(FieldSpec.builder(String.class, "SERVICE_NAME")
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                        .initializer("$S", model.getMetadata().getSigningName())
-                        .build())
-                .addSuperinterface(AutoCloseable.class)
-                .addMethods(operations())
-                .addMethod(builder())
-                .addMethod(create())
-                .addMethod(serviceMetadata());
+                                        .addField(FieldSpec.builder(String.class, "SERVICE_NAME")
+                                                           .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                                                           .initializer("$S", model.getMetadata().getSigningName())
+                                                           .build())
+                                        .addSuperinterface(AutoCloseable.class)
+                                        .addMethods(operations())
+                                        .addMethod(builder())
+                                        .addMethod(create())
+                                        .addMethod(serviceMetadata());
 
         if (model.getHasWaiters()) {
             classBuilder.addMethod(waiters());
@@ -69,64 +80,91 @@ public final class SyncClientInterface implements ClassSpec {
     }
 
     private Iterable<MethodSpec> operations() {
-        return model.getOperations().values().stream().map(this::operationMethodSpec).collect(Collectors.toList());
+        return model.getOperations().values().stream().map(this::operationMethodSpec).collect(toList());
     }
 
     private MethodSpec builder() {
         ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getSyncBuilder());
         ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getSyncBuilderInterface());
         return MethodSpec.methodBuilder("builder")
-                .returns(builderInterface)
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .addStatement("return new $T()", builderClass)
-                .build();
+                         .returns(builderInterface)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addStatement("return new $T()", builderClass)
+                         .build();
     }
 
     private MethodSpec create() {
         return MethodSpec.methodBuilder("create")
-                .returns(className)
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .addStatement("return builder().build()")
-                .build();
+                         .returns(className)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addStatement("return builder().build()")
+                         .build();
     }
 
     private MethodSpec serviceMetadata() {
         return MethodSpec.methodBuilder("serviceMetadata")
-                .returns(ServiceMetadata.class)
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .addStatement("return $T.of($S)", ServiceMetadata.class, model.getMetadata().getEndpointPrefix())
-                .build();
+                         .returns(ServiceMetadata.class)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addStatement("return $T.of($S)", ServiceMetadata.class, model.getMetadata().getEndpointPrefix())
+                         .build();
     }
 
     private MethodSpec operationMethodSpec(OperationModel opModel) {
-        ClassName returnType = ClassName.get(model.getMetadata().getFullModelPackageName(),
-                                             opModel.getReturnType().getReturnType());
-        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
-                                              opModel.getInput().getVariableType());
-
-        return MethodSpec.methodBuilder(opModel.getMethodName())
-                .returns(returnType)
-                .addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
-                .addParameter(requestType, opModel.getInput().getVariableName())
+        return operationMethodSignature(model, opModel)
+                .addModifiers(Modifier.DEFAULT)
                 .addStatement("throw new $T()", UnsupportedOperationException.class)
-                .addJavadoc(opModel.getSyncDocumentation(model.getMetadata()))
                 .build();
     }
 
+    // TODO This is inconsistent with how async client reuses method signature
+    public static MethodSpec.Builder operationMethodSignature(IntermediateModel model, OperationModel opModel) {
+        TypeName returnType = opModel.hasStreamingOutput() ? STREAMING_TYPE_VARIABLE :
+                ClassName.get(model.getMetadata().getFullModelPackageName(), opModel.getReturnType().getReturnType());
+        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getInput().getVariableType());
+
+        final MethodSpec.Builder method = MethodSpec.methodBuilder(opModel.getMethodName())
+                                                    .returns(returnType)
+                                                    .addModifiers(Modifier.PUBLIC)
+                                                    .addParameter(requestType, opModel.getInput().getVariableName())
+                                                    .addJavadoc(opModel.getSyncDocumentation(model, opModel))
+                                                    .addExceptions(getExceptionClasses(model, opModel));
+
+        if (opModel.hasStreamingInput()) {
+            method.addParameter(ClassName.get(RequestBody.class), "requestBody");
+        }
+        if (opModel.hasStreamingOutput()) {
+            method.addTypeVariable(STREAMING_TYPE_VARIABLE);
+            method.addParameter(ClassName.get(StreamingResponseHandler.class), "streamingHandler");
+        }
+        return method;
+    }
+
+    private static List<ClassName> getExceptionClasses(IntermediateModel model, OperationModel opModel) {
+        List<ClassName> exceptions = opModel.getExceptions().stream()
+                                            .map(e -> ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                                                    e.getExceptionName()))
+                                            .collect(toCollection(ArrayList::new));
+        Collections.addAll(exceptions, ClassName.get(SdkBaseException.class),
+                           ClassName.get(SdkClientException.class),
+                           ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                         model.getSdkModeledExceptionBaseClassName()));
+        return exceptions;
+    }
 
     private MethodSpec waiters() {
         return MethodSpec.methodBuilder("waiters")
-                .returns(ClassName.get(model.getMetadata().getFullWaitersPackageName(),
-                                       model.getMetadata().getSyncInterface() + "Waiters"))
-                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .build();
+                         .returns(ClassName.get(model.getMetadata().getFullWaitersPackageName(),
+                                                model.getMetadata().getSyncInterface() + "Waiters"))
+                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                         .build();
     }
 
     private MethodSpec presigners() {
         ClassName presignerClassName = PoetUtils.classNameFromFqcn(model.getCustomizationConfig().getPresignersFqcn());
         return MethodSpec.methodBuilder("presigners")
-                .returns(presignerClassName)
-                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .build();
+                         .returns(presignerClassName)
+                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                         .build();
     }
 }

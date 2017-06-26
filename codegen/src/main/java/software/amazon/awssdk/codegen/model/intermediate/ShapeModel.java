@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import software.amazon.awssdk.codegen.model.intermediate.customization.ShapeCustomizationInfo;
 import software.amazon.awssdk.util.StringUtils;
 
@@ -257,6 +258,15 @@ public class ShapeModel extends DocumentationModel implements HasDeprecation {
             return Collections.emptyList();
         }
         return members;
+    }
+
+    /**
+     * @return All non-streaming members of the shape.
+     */
+    public List<MemberModel> getNonStreamingMembers() {
+        return getMembers().stream()
+                           .filter(m -> !m.getHttp().getIsStreaming())
+                           .collect(Collectors.toList());
     }
 
     public void setMembers(List<MemberModel> members) {

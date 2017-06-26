@@ -94,11 +94,6 @@ public final class PoetUtils {
         return TypeVariableName.get(parameterName, createParameterizedTypeName(upperBound, typeVariables));
     }
 
-    public static TypeVariableName createBoundedTypeVariableName(String parameterName, Class<?> upperBound,
-                                                                 String... typeVariables) {
-        return createBoundedTypeVariableName(parameterName, ClassName.get(upperBound), typeVariables);
-    }
-
     public static ClassName classNameFromFqcn(String fqcn) {
         String basePath = fqcn.substring(0, fqcn.lastIndexOf("."));
         String className = fqcn.substring(fqcn.lastIndexOf(".") + 1);
@@ -110,4 +105,5 @@ public final class PoetUtils {
         spec.staticImports().forEach(i -> i.memberNames().forEach(m -> builder.addStaticImport(i.className(), m)));
         return builder.build();
     }
+
 }

@@ -15,8 +15,9 @@
 
 package software.amazon.awssdk.protocol.reflect;
 
+import static software.amazon.awssdk.utils.Validate.paramNotNull;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -25,11 +26,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.util.StringInputStream;
-import software.amazon.awssdk.util.ValidationUtils;
 
 /**
  * Transforms a JSON representation (using C2J member names) of a modeled POJO into that POJO.
@@ -41,9 +43,30 @@ public class ShapeModelReflector {
     private final JsonNode input;
 
     public ShapeModelReflector(IntermediateModel model, String shapeName, JsonNode input) {
-        this.model = ValidationUtils.assertNotNull(model, "model");
-        this.shapeName = ValidationUtils.assertNotNull(shapeName, "shapeName");
+        this.model = paramNotNull(model, "model");
+        this.shapeName = paramNotNull(shapeName, "shapeName");
         this.input = input;
+    }
+
+    public Object createShapeObject() {
+        try {
+            return createStructure(model.getShapes().get(shapeName), input);
+        } catch (Exception e) {
+            throw new TestCaseReflectionException(e);
+        }
+    }
+
+    /**
+     * Get the value for the streaming member in the {@link JsonNode}.
+     */
+    public String getStreamingMemberValue() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(input.fields(), Spliterator.ORDERED), false)
+                            .filter(f -> model.getShapes().get(shapeName)
+                                              .getMemberByC2jName(f.getKey())
+                                              .getHttp().getIsStreaming())
+                            .map(f -> f.getValue().asText())
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalStateException("Streaming member not found in " + shapeName));
     }
 
     private Object createStructure(ShapeModel structureShape, JsonNode input) throws Exception {
@@ -89,10 +112,12 @@ public class ShapeModelReflector {
                 throw new IllegalArgumentException("Member " + memberName + " was not found in the " +
                                                    structureShape.getC2jName() + " shape.");
             }
-            Method setter = getMemberSetter(shapeObject.getClass(), memberModel);
-            setter.setAccessible(true);
             final Object toSet = getMemberValue(input.get(memberName), memberModel);
-            setter.invoke(shapeObject, toSet);
+            if (toSet != null) {
+                Method setter = getMemberSetter(shapeObject.getClass(), memberModel);
+                setter.setAccessible(true);
+                setter.invoke(shapeObject, toSet);
+            }
         }
     }
 
@@ -140,6 +165,7 @@ public class ShapeModelReflector {
      * @param currentNode JsonNode containing value of member.
      */
     private Object getMemberValue(JsonNode currentNode, MemberModel memberModel) {
+        // Streaming members are not in the POJO
         if (currentNode.isNull()) {
             return null;
         }
@@ -162,22 +188,23 @@ public class ShapeModelReflector {
 
     private Object getMapMemberValue(JsonNode currentNode, MemberModel memberModel) {
         Map<String, Object> map = new HashMap<>();
-        currentNode.fields().forEachRemaining(e -> {
-            map.put(e.getKey(),
-                    getMemberValue(e.getValue(), memberModel.getMapModel().getValueModel()));
-        });
+        currentNode.fields()
+                   .forEachRemaining(e -> map.put(e.getKey(),
+                                                  getMemberValue(e.getValue(), memberModel.getMapModel().getValueModel())));
         return map;
     }
 
     private Object getListMemberValue(JsonNode currentNode, MemberModel memberModel) {
         ArrayList<Object> list = new ArrayList<>();
-        currentNode.elements().forEachRemaining(e -> {
-            list.add(getMemberValue(e, memberModel.getListModel().getListMemberModel()));
-        });
+        currentNode.elements()
+                   .forEachRemaining(e -> list.add(getMemberValue(e, memberModel.getListModel().getListMemberModel())));
         return list;
     }
 
     private Object getSimpleMemberValue(JsonNode currentNode, MemberModel memberModel) {
+        if (memberModel.getHttp().getIsStreaming()) {
+            return null;
+        }
         switch (memberModel.getVariable().getSimpleType()) {
             case "Long":
                 return currentNode.asLong();
@@ -194,22 +221,12 @@ public class ShapeModelReflector {
             case "ByteBuffer":
                 return ByteBuffer.wrap(currentNode.asText().getBytes(StandardCharsets.UTF_8));
             case "Float":
-                return Float.valueOf((float) currentNode.asDouble());
+                return (float) currentNode.asDouble();
             case "Character":
                 return asCharacter(currentNode);
-            case "InputStream":
-                return toInputStream(currentNode);
             default:
                 throw new IllegalArgumentException(
                         "Unsupported fieldType " + memberModel.getVariable().getSimpleType());
-        }
-    }
-
-    private Object toInputStream(JsonNode currentNode) {
-        try {
-            return new StringInputStream(currentNode.asText());
-        } catch (UnsupportedEncodingException e) {
-            throw new TestCaseReflectionException(e);
         }
     }
 
@@ -218,17 +235,9 @@ public class ShapeModelReflector {
         if (text != null && text.length() > 1) {
             throw new IllegalArgumentException("Invalid character " + currentNode.asText());
         } else if (text != null && text.length() == 1) {
-            return Character.valueOf(currentNode.asText().charAt(0));
+            return currentNode.asText().charAt(0);
         } else {
             return null;
-        }
-    }
-
-    public Object createShapeObject() {
-        try {
-            return createStructure(model.getShapes().get(shapeName), input);
-        } catch (Exception e) {
-            throw new TestCaseReflectionException(e);
         }
     }
 

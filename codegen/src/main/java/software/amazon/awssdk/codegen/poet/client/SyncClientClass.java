@@ -112,12 +112,12 @@ public class SyncClientClass implements ClassSpec {
     private MethodSpec constructor() {
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
             return MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PROTECTED)
-                .addParameter(AwsSyncClientParams.class, "clientParams")
-                .addStatement(
-                        "this($N, null)",
-                        "clientParams")
-                .build();
+                             .addModifiers(Modifier.PROTECTED)
+                             .addParameter(AwsSyncClientParams.class, "clientParams")
+                             .addStatement(
+                                     "this($N, null)",
+                                     "clientParams")
+                             .build();
         }
 
         return MethodSpec.constructorBuilder()
@@ -139,7 +139,7 @@ public class SyncClientClass implements ClassSpec {
 
     private MethodSpec constructorWithAdvancedConfiguration() {
         ClassName advancedConfiguration = ClassName.get(basePackage,
-                model.getCustomizationConfig().getServiceSpecificClientConfigClass());
+                                                        model.getCustomizationConfig().getServiceSpecificClientConfigClass());
         return MethodSpec.constructorBuilder()
                          .addModifiers(Modifier.PROTECTED)
                          .addParameter(AwsSyncClientParams.class, "clientParams")
@@ -163,17 +163,12 @@ public class SyncClientClass implements ClassSpec {
     }
 
     private MethodSpec operationMethodSpec(OperationModel opModel) {
-        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
-        ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
-        return MethodSpec.methodBuilder(opModel.getMethodName())
-                         .returns(returnType)
-                         .addModifiers(Modifier.PUBLIC)
-                         .addAnnotation(Override.class)
-                         .addParameter(requestType, opModel.getInput().getVariableName())
-                         .addCode(protocolSpec.responseHandler(opModel))
-                         .addCode(protocolSpec.errorResponseHandler(opModel))
-                         .addCode(protocolSpec.executionHandler(opModel))
-                         .build();
+        return SyncClientInterface.operationMethodSignature(model, opModel)
+                                  .addAnnotation(Override.class)
+                                  .addCode(protocolSpec.responseHandler(opModel))
+                                  .addCode(protocolSpec.errorResponseHandler(opModel))
+                                  .addCode(protocolSpec.executionHandler(opModel))
+                                  .build();
     }
 
     private MethodSpec waiters() {

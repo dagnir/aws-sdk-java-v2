@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 
 /**
  * Generic representation of an HTTP response.
@@ -28,13 +29,15 @@ import java.util.Map;
 public interface SdkHttpFullResponse extends SdkHttpResponse {
 
     /**
-     * Returns the input stream containing the response content.
+     * Returns the input stream containing the response content. Instance of {@link AbortableInputStream}
+     * which can be aborted before all content is read, this usually means killing the underlying HTTP
+     * connection but it's up to HTTP implementations to define.
      * <br/>
      * May be null, not all responses have content.
      *
      * @return The input stream containing the response content or null if there is no content.
      */
-    InputStream getContent();
+    AbortableInputStream getContent();
 
     /**
      * @return Builder instance to construct a {@link DefaultSdkHttpFullResponse}.
@@ -50,7 +53,7 @@ public interface SdkHttpFullResponse extends SdkHttpResponse {
 
         String statusText;
         int statusCode;
-        InputStream content;
+        AbortableInputStream content;
         Map<String, List<String>> headers = new HashMap<>();
 
         private Builder() {
@@ -66,9 +69,15 @@ public interface SdkHttpFullResponse extends SdkHttpResponse {
             return this;
         }
 
-        public Builder content(InputStream content) {
+        public Builder content(AbortableInputStream content) {
             this.content = content;
             return this;
+        }
+
+        @ReviewBeforeRelease("Should we only allow setting the AbortableInputStream?")
+        public Builder content(InputStream content) {
+            return content(new AbortableInputStream(content, () -> {
+            }));
         }
 
         public Builder headers(Map<String, List<String>> headers) {

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.zip.GZIPInputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.unitils.util.ReflectionUtils;
 import software.amazon.awssdk.util.Crc32ChecksumValidatingInputStream;
 import software.amazon.awssdk.util.StringInputStream;
 
@@ -71,7 +73,7 @@ public class SdkHttpFullResponseAdapterTest {
 
         HttpResponse adapted = adapt(httpResponse);
 
-        assertThat(adapted.getContent(), equalTo(content));
+        assertThat(getField(adapted.getContent(), "in"), equalTo(content));
     }
 
     @Test
@@ -131,10 +133,21 @@ public class SdkHttpFullResponseAdapterTest {
         return SdkHttpResponseAdapter.adapt(false, request, httpResponse);
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> T getField(Object obj, String fieldName) {
+        try {
+            Field field = ReflectionUtils.getFieldWithName(obj.getClass(), fieldName, false);
+            field.setAccessible(true);
+            return (T) field.get(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static class SimpleSdkHttpFullResponse implements SdkHttpFullResponse {
 
         private final Map<String, List<String>> headers;
-        private final InputStream content;
+        private final AbortableInputStream content;
         private final String statusText;
         private final int statusCode;
 
@@ -151,7 +164,7 @@ public class SdkHttpFullResponseAdapterTest {
         }
 
         @Override
-        public InputStream getContent() {
+        public AbortableInputStream getContent() {
             return content;
         }
 
@@ -179,7 +192,7 @@ public class SdkHttpFullResponseAdapterTest {
         public static final class Builder {
 
             private final Map<String, List<String>> headers = new HashMap<>();
-            private InputStream content;
+            private AbortableInputStream content;
             private String statusText;
             private int statusCode;
 
@@ -192,7 +205,8 @@ public class SdkHttpFullResponseAdapterTest {
             }
 
             public Builder content(InputStream content) {
-                this.content = content;
+                this.content = new AbortableInputStream(content, () -> {
+                });
                 return this;
             }
 

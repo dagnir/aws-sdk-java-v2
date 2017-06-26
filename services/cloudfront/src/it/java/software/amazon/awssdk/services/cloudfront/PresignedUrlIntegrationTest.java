@@ -18,11 +18,6 @@ package software.amazon.awssdk.services.cloudfront;
 import static org.junit.Assert.assertEquals;
 import static software.amazon.awssdk.test.util.DateUtils.yyMMddhhmmss;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.util.Date;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -32,7 +27,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.services.cloudfront.CloudFrontCookieSigner.CookiesForCannedPolicy;
 import software.amazon.awssdk.services.cloudfront.model.Aliases;
 import software.amazon.awssdk.services.cloudfront.model.CacheBehavior;
 import software.amazon.awssdk.services.cloudfront.model.CacheBehaviors;
@@ -62,7 +56,6 @@ import software.amazon.awssdk.services.cloudfront.util.SignerUtils.Protocol;
 import software.amazon.awssdk.services.s3.model.AccessControlPolicy;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.Grant;
 import software.amazon.awssdk.services.s3.model.Grantee;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
@@ -70,9 +63,9 @@ import software.amazon.awssdk.services.s3.model.Permission;
 import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.Type;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.test.util.RandomTempFile;
 import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Tests pre-signed URLs
@@ -121,14 +114,12 @@ public class PresignedUrlIntegrationTest extends IntegrationTestBase {
                                            .build());
 
         dnsName = bucketName + ".s3.amazonaws.com";
-        File content = new RandomTempFile("" + System.currentTimeMillis(),
-                                          1000L);
 
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(bucketName)
                                      .key("key")
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(content))))
-                                     .build());
+                                     .build(),
+                     RequestBody.of(new RandomTempFile("" + System.currentTimeMillis(), 1000L)));
 
         s3.putObjectAcl(PutObjectAclRequest.builder()
                                            .bucket(bucketName)

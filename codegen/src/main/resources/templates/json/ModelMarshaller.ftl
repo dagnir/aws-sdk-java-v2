@@ -28,8 +28,8 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 @SdkInternalApi
 public class ${className} {
 
-    <#if shape.members??>
-        <#list shape.members as member>
+    <#if shape.nonStreamingMembers??>
+        <#list shape.nonStreamingMembers as member>
             private static final MarshallingInfo<${member.marshallingTargetClass}> ${member.marshallerBindingFieldName} = MarshallingInfo.builder(MarshallingType.${member.marshallingType})
                  .marshallLocation(MarshallLocation.${member.http.marshallLocation})
                  <#if member.http.isPayload>
@@ -61,8 +61,8 @@ public class ${className} {
         }
 
         try {
-            <#if shape.members??>
-                <#list shape.members as member>
+            <#if shape.nonStreamingMembers??>
+                <#list shape.nonStreamingMembers as member>
                 <#assign getter = shape.variable.variableName + "." + member.fluentGetterMethodName + "()" />
                 protocolMarshaller.marshall(
                 ${getter},

@@ -64,7 +64,7 @@ public class ConstructorModel extends DocumentationModel {
                                                 : String.format(DocumentationUtils.CONSTRUCTOR_DOC, modelClassName));
 
         for (ArgumentModel arg : arguments) {
-            docBuilder.append(Constants.LINE_SEPARATOR);
+            docBuilder.append(Constants.LF);
             docBuilder.append("@param " + arg.getName() + " "
                               + DocumentationUtils.stripHtmlTags(arg.getDocumentation()));
         }

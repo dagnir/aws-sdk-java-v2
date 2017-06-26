@@ -18,12 +18,11 @@ package software.amazon.awssdk.services.s3;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.model.AccelerateConfiguration;
 import software.amazon.awssdk.services.s3.model.BucketAccelerateStatus;
@@ -45,7 +44,6 @@ import software.amazon.awssdk.services.s3.model.VersioningConfiguration;
 import software.amazon.awssdk.test.retry.AssertCallable;
 import software.amazon.awssdk.test.retry.RetryableAssertion;
 import software.amazon.awssdk.test.retry.RetryableParams;
-import software.amazon.awssdk.utils.IoUtils;
 
 
 /**
@@ -62,7 +60,13 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
     public static void setup() throws Exception {
         S3IntegrationTestBase.setUp();
 
-        accelerateClient = S3Client.builder().region(Region.US_WEST_2).credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).advancedConfiguration(S3AdvancedConfiguration.builder().accelerateModeEnabled(true).build()).build();
+        accelerateClient = S3Client.builder()
+                                   .region(Region.US_WEST_2)
+                                   .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                                   .advancedConfiguration(S3AdvancedConfiguration.builder()
+                                                                                 .accelerateModeEnabled(true)
+                                                                                 .build())
+                                   .build();
 
         setUpBuckets();
     }
@@ -73,7 +77,8 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
     }
 
     private static void setUpBuckets() {
-        s3.createBucket(CreateBucketRequest.builder().bucket(US_BUCKET_NAME).createBucketConfiguration(CreateBucketConfiguration.builder().locationConstraint("us-west-2").build()).build());
+        s3.createBucket(CreateBucketRequest.builder().bucket(US_BUCKET_NAME).createBucketConfiguration(
+                CreateBucketConfiguration.builder().locationConstraint("us-west-2").build()).build());
     }
 
     @Test
@@ -91,9 +96,9 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
         accelerateClient.putBucketVersioning(PutBucketVersioningRequest.builder()
                                                                        .bucket(US_BUCKET_NAME)
                                                                        .versioningConfiguration(
-                                                                           VersioningConfiguration.builder()
-                                                                                                  .status("Enabled")
-                                                                                                  .build())
+                                                                               VersioningConfiguration.builder()
+                                                                                                      .status("Enabled")
+                                                                                                      .build())
                                                                        .build());
 
         // Retry a couple of times due to eventual consistency
@@ -138,10 +143,10 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
 
         disableAccelerateOnBucket();
         assertEquals(BucketAccelerateStatus.Suspended.toString(),
-                s3.getBucketAccelerateConfiguration(GetBucketAccelerateConfigurationRequest.builder()
-                                                                                           .bucket(US_BUCKET_NAME)
-                                                                                           .build())
-                  .status());
+                     s3.getBucketAccelerateConfiguration(GetBucketAccelerateConfigurationRequest.builder()
+                                                                                                .bucket(US_BUCKET_NAME)
+                                                                                                .build())
+                       .status());
     }
 
     @Test
@@ -161,28 +166,28 @@ public class BucketAccelerateIntegrationTest extends S3IntegrationTestBase {
         accelerateClient.putObject(PutObjectRequest.builder()
                                                    .bucket(US_BUCKET_NAME)
                                                    .key(KEY_NAME)
-                                                   .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(uploadFile))))
-                                                   .build());
+                                                   .build(),
+                                   RequestBody.of(uploadFile));
     }
 
     private void enableAccelerateOnBucket() {
         s3.putBucketAccelerateConfiguration(
-            PutBucketAccelerateConfigurationRequest.builder()
-                                                   .bucket(US_BUCKET_NAME)
-                                                   .accelerateConfiguration(AccelerateConfiguration.builder()
-                                                                                                   .status(BucketAccelerateStatus.Enabled)
-                                                                                                   .build())
-                                                                                   .build());
+                PutBucketAccelerateConfigurationRequest.builder()
+                                                       .bucket(US_BUCKET_NAME)
+                                                       .accelerateConfiguration(AccelerateConfiguration.builder()
+                                                                                                       .status(BucketAccelerateStatus.Enabled)
+                                                                                                       .build())
+                                                       .build());
     }
 
     private void disableAccelerateOnBucket() {
         s3.putBucketAccelerateConfiguration(
-            PutBucketAccelerateConfigurationRequest.builder()
-                                                   .bucket(US_BUCKET_NAME)
-                                                   .accelerateConfiguration(AccelerateConfiguration.builder()
-                                                                                                   .status(BucketAccelerateStatus.Suspended)
-                                                                                                   .build())
-                                                                                   .build());
+                PutBucketAccelerateConfigurationRequest.builder()
+                                                       .bucket(US_BUCKET_NAME)
+                                                       .accelerateConfiguration(AccelerateConfiguration.builder()
+                                                                                                       .status(BucketAccelerateStatus.Suspended)
+                                                                                                       .build())
+                                                       .build());
     }
 
     @Test

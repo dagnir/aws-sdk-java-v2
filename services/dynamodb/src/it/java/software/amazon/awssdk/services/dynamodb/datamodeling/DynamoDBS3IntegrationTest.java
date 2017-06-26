@@ -18,8 +18,6 @@ package software.amazon.awssdk.services.dynamodb.datamodeling;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.util.UUID;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,11 +25,11 @@ import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.pojos.S3LinksTestClass;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.test.util.RandomTempFile;
-import software.amazon.awssdk.utils.IoUtils;
 
 @Ignore
-// FIXME: S3 operations appear to be broken.
+// Revisit S3
 public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
     private static final long OBJECT_SIZE = 123;
@@ -63,7 +61,11 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
 
         assertObjectDoesntExist(s3West, obj.s3LinkWest().bucketName(), westKey);
 
-        linkWest.getAmazonS3Client().putObject(PutObjectRequest.builder().bucket(linkWest.bucketName()).key(linkWest.getKey()).body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(new RandomTempFile(westKey, OBJECT_SIZE))))).build());
+        linkWest.getAmazonS3Client().putObject(PutObjectRequest.builder()
+                                                               .bucket(linkWest.bucketName())
+                                                               .key(linkWest.getKey())
+                                                               .build(),
+                                               RequestBody.of(new RandomTempFile(westKey, OBJECT_SIZE)));
 
         assertObjectExists(s3West, obj.s3LinkWest().bucketName(), westKey);
 
@@ -71,7 +73,11 @@ public class DynamoDBS3IntegrationTest extends DynamoDBS3IntegrationTestBase {
         obj.setS3LinkEast(linkEast);
         assertObjectDoesntExist(s3East, obj.s3LinkEast().bucketName(), eastKey);
 
-        linkEast.getAmazonS3Client().putObject(PutObjectRequest.builder().bucket(linkEast.bucketName()).key(linkEast.getKey()).body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(new RandomTempFile(westKey, OBJECT_SIZE))))).build());
+        linkEast.getAmazonS3Client().putObject(PutObjectRequest.builder()
+                                                               .bucket(linkEast.bucketName())
+                                                               .key(linkEast.getKey())
+                                                               .build(),
+                                               RequestBody.of(new RandomTempFile(westKey, OBJECT_SIZE)));
         mapper.save(obj);
 
         assertObjectExists(s3West, obj.s3LinkWest().bucketName(), westKey);

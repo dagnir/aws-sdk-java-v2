@@ -15,18 +15,10 @@
 
 package software.amazon.awssdk.services.dynamodb.datamodeling;
 
-import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.metrics.RequestMetricCollector;
 import software.amazon.awssdk.regions.Region;
@@ -38,8 +30,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.sync.RequestBody;
+import software.amazon.awssdk.sync.StreamingResponseHandler;
 import software.amazon.awssdk.util.json.Jackson;
-import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * An S3 Link that works with {@link DynamoDbMapper}.
@@ -206,16 +199,10 @@ public class S3Link {
 
     private PutObjectResponse uploadFrom0(final File source,
                                           RequestMetricCollector requestMetricCollector) {
-        try (FileInputStream fis = new FileInputStream(source)) {
-            ByteBuffer byteBuffer = invokeSafely(() -> ByteBuffer.wrap(IoUtils.toByteArray(fis)));
-            return getAmazonS3Client().putObject(PutObjectRequest.builder()
-                                                                 .bucket(bucketName())
-                                                                 .key(getKey())
-                                                                 .body(byteBuffer)
-                                                                 .build());
-        } catch (IOException e) {
-            throw new SdkClientException("Unable to read file", e);
-        }
+        return getAmazonS3Client().putObject(PutObjectRequest.builder()
+                                                             .bucket(bucketName())
+                                                             .key(getKey())
+                                                             .build(), RequestBody.of(source));
     }
 
     /**
@@ -242,13 +229,12 @@ public class S3Link {
     }
 
     private PutObjectResponse uploadFrom0(final byte[] buffer,
-                                        RequestMetricCollector requestMetricCollector) {
+                                          RequestMetricCollector requestMetricCollector) {
         return getAmazonS3Client().putObject(PutObjectRequest.builder()
                                                              .bucket(bucketName())
                                                              .key(getKey())
-                                                             .body(ByteBuffer.wrap(buffer))
                                                              .contentLength((long) buffer.length)
-                                                             .build());
+                                                             .build(), RequestBody.of(buffer));
     }
 
     /**
@@ -309,17 +295,12 @@ public class S3Link {
     }
 
     private GetObjectResponse downloadTo0(final File destination,
-                                       RequestMetricCollector requestMetricCollector) {
+                                          RequestMetricCollector requestMetricCollector) {
         GetObjectResponse response = getAmazonS3Client().getObject(GetObjectRequest.builder()
                                                                                    .bucket(bucketName())
                                                                                    .key(getKey())
-                                                                                   .build());
-
-        try (FileOutputStream fos = new FileOutputStream(destination)) {
-            fos.getChannel().write(response.body());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to write to destination file", e);
-        }
+                                                                                   .build(),
+                                                                   StreamingResponseHandler.writeToFile(destination.toPath()));
 
         return response;
     }
@@ -347,17 +328,12 @@ public class S3Link {
     }
 
     private GetObjectResponse downloadTo0(final OutputStream output,
-                                       RequestMetricCollector requestMetricCollector) {
+                                          RequestMetricCollector requestMetricCollector) {
         GetObjectResponse response = getAmazonS3Client().getObject(GetObjectRequest.builder()
                                                                                    .bucket(bucketName())
                                                                                    .key(getKey())
-                                                                                   .build());
-
-        try {
-            Channels.newChannel(output).write(response.body());
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to write to outputstream", e);
-        }
+                                                                                   .build(),
+                                                                   StreamingResponseHandler.writeToStream(output));
 
         return response;
     }

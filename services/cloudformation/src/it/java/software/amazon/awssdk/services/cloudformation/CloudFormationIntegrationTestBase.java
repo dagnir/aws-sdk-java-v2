@@ -16,8 +16,6 @@
 package software.amazon.awssdk.services.cloudformation;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -32,8 +30,8 @@ import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.test.AwsTestBase;
-import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Base class for CloudFormation integration tests. Loads AWS credentials from a properties file and
@@ -59,9 +57,9 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
     public static void setUp() throws Exception {
         setUpCredentials();
         cf = CloudFormationClient.builder()
-                .credentialsProvider(new StaticCredentialsProvider(credentials))
-                .region(Region.AP_NORTHEAST_1)
-                .build();
+                                 .credentialsProvider(new StaticCredentialsProvider(credentials))
+                                 .region(Region.AP_NORTHEAST_1)
+                                 .build();
         s3 = S3Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.AP_NORTHEAST_1).build();
 
         s3.createBucket(CreateBucketRequest.builder().bucket(bucketName).build());
@@ -69,18 +67,14 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(bucketName)
                                      .key(templateForCloudFormationIntegrationTests)
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(
-                                         new FileInputStream(
-                                             new File("tst/" + templateForCloudFormationIntegrationTests)))))
-                                     .build());
+                                     .build(),
+                     RequestBody.of(new File("tst/" + templateForCloudFormationIntegrationTests)));
 
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(bucketName)
                                      .key(templateForStackIntegrationTests)
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(
-                                         new FileInputStream(
-                                             new File("tst/" + templateForStackIntegrationTests)))))
-                                     .build());
+                                     .build(),
+                     RequestBody.of(new File("tst/" + templateForStackIntegrationTests)));
     }
 
     @AfterClass
@@ -91,8 +85,7 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
     /**
      * Deletes all objects in the specified bucket, and then deletes the bucket.
      *
-     * @param bucketName
-     *            The bucket to empty and delete.
+     * @param bucketName The bucket to empty and delete.
      */
     protected static void deleteBucketAndAllContents(String bucketName) {
         ListObjectsResponse listObjectResponse = s3.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
@@ -105,9 +98,9 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
 
             if (listObjectResponse.isTruncated()) {
                 listObjectResponse = s3.listObjects(ListObjectsRequest.builder()
-                                                                 .bucket(bucketName)
-                                                                 .marker(listObjectResponse.marker())
-                                                                 .build());
+                                                                      .bucket(bucketName)
+                                                                      .marker(listObjectResponse.marker())
+                                                                      .build());
             } else {
                 break;
             }

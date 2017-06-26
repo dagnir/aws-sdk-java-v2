@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
-import static software.amazon.awssdk.codegen.internal.Constants.LINE_SEPARATOR;
+import static software.amazon.awssdk.codegen.internal.Constants.LF;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_FLUENT_RETURN;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_GETTER;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_GETTER_PARAM;
@@ -302,27 +302,27 @@ public class MemberModel extends DocumentationModel {
                 this.getGetterModel().getReturnType())) {
 
             docBuilder.append("<p>")
-                    .append(LINE_SEPARATOR)
+                    .append(LF)
                     .append("AWS SDK for Java performs a Base64 " +
                             "encoding on this field before sending this request to AWS " +
                             "service by default. " +
                             "Users of the SDK should not perform Base64 " +
                             "encoding on this field.")
-                    .append(LINE_SEPARATOR)
+                    .append(LF)
                     .append("</p>")
-                    .append(LINE_SEPARATOR);
+                    .append(LF);
 
             docBuilder.append("<p>")
-                    .append(LINE_SEPARATOR)
+                    .append(LF)
                     .append("Warning: ByteBuffers returned by the SDK are mutable. " +
                             "Changes to the content or position of the byte buffer will be " +
                             "seen by all objects that have a reference to this object. " +
                             "It is recommended to call ByteBuffer.duplicate() or " +
                             "ByteBuffer.asReadOnlyBuffer() before using or reading from the buffer. " +
                             "This behavior will be changed in a future major version of the SDK.")
-                    .append(LINE_SEPARATOR)
+                    .append(LF)
                     .append("</p>")
-                    .append(LINE_SEPARATOR);
+                    .append(LF);
         }
 
         docBuilder.append(getParamDoc())
@@ -334,13 +334,13 @@ public class MemberModel extends DocumentationModel {
     public String getGetterDocumentation() {
         StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(documentation != null ? documentation : DEFAULT_GETTER.replace("%s", name))
-                .append(LINE_SEPARATOR);
+                .append(LF);
 
         if ("java.nio.ByteBuffer".equals(
                 this.getGetterModel().getReturnType())) {
 
             docBuilder.append("<p>")
-                    .append(LINE_SEPARATOR)
+                    .append(LF)
                     .append("{@code ByteBuffer}s are stateful. Calling "
                             + "their {@code get} methods changes their "
                             + "{@code position}. We recommend using "
@@ -352,9 +352,9 @@ public class MemberModel extends DocumentationModel {
                             + "Doing so will ensure that anyone else using "
                             + "the {@code ByteBuffer} will not be affected by "
                             + "changes to the {@code position}.")
-                    .append(LINE_SEPARATOR)
+                    .append(LF)
                     .append("</p>")
-                    .append(LINE_SEPARATOR);
+                    .append(LF);
         }
 
         String variableDesc = documentation != null ? documentation : DEFAULT_GETTER_PARAM.replace("%s", name);
@@ -370,7 +370,7 @@ public class MemberModel extends DocumentationModel {
         StringBuilder docBuilder = new StringBuilder();
         docBuilder.append(getSetterDoc())
                 .append(getParamDoc())
-                .append(LINE_SEPARATOR)
+                .append(LF)
                 .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
                 .append(getEnumDoc());
         return docBuilder.toString();
@@ -381,12 +381,12 @@ public class MemberModel extends DocumentationModel {
         docBuilder.append(getSetterDoc());
 
         if (listModel != null) {
-            docBuilder.append(LINE_SEPARATOR)
+            docBuilder.append(LF)
                     .append(LIST_VARARG_ADDITIONAL_DOC.replaceAll("%s", name));
         }
 
         docBuilder.append(getParamDoc())
-                .append(LINE_SEPARATOR)
+                .append(LF)
                 .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
                 .append(getEnumDoc());
 
@@ -406,7 +406,7 @@ public class MemberModel extends DocumentationModel {
         String variableDesc = documentation != null ? documentation
                 : DEFAULT_SETTER_PARAM.replace("%s", name);
 
-        docBuilder.append(LINE_SEPARATOR)
+        docBuilder.append(LF)
                   .append("@param ")
                   .append(variable.getVariableName())
                   .append(" ")
@@ -418,7 +418,7 @@ public class MemberModel extends DocumentationModel {
         StringBuilder docBuilder = new StringBuilder();
 
         if (enumType != null) {
-            docBuilder.append(LINE_SEPARATOR);
+            docBuilder.append(LF);
             docBuilder.append("@see " + enumType);
         }
 

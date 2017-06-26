@@ -70,8 +70,8 @@ class ModelBuilderSpecs {
                 .addSuperinterface(copyableBuilderSuperInterface())
                 .addModifiers(Modifier.PUBLIC);
 
-        shapeModel.getMembers().forEach(m -> builder.addMethods(
-                settersFactory.fluentSetterDeclarations(m, builderInterfaceName())));
+        shapeModel.getNonStreamingMembers()
+                  .forEach(m -> builder.addMethods(settersFactory.fluentSetterDeclarations(m, builderInterfaceName())));
 
         if (exception()) {
             builder.addMethod(MethodSpec.methodBuilder("message")
@@ -103,7 +103,7 @@ class ModelBuilderSpecs {
     private List<FieldSpec> fields() {
         List<FieldSpec> fields = shapeModelSpec.fields(Modifier.PRIVATE);
 
-        Map<String, MemberModel> members = shapeModel.getMembers().stream()
+        Map<String, MemberModel> members = shapeModel.getNonStreamingMembers().stream()
                 .collect(Collectors.toMap(m -> shapeModelSpec.asField(m).name, m -> m));
 
         // Auto initialize any auto construct containers
@@ -149,7 +149,7 @@ class ModelBuilderSpecs {
                 .addModifiers(Modifier.PRIVATE)
                 .addParameter(classToBuild(), "model");
 
-        shapeModel.getMembers().forEach(m -> {
+        shapeModel.getNonStreamingMembers().forEach(m -> {
             String name = m.getVariable().getVariableName();
             copyBuilderCtor.addStatement("$N(model.$N)", m.getSetterMethodName(), name);
         });
@@ -163,10 +163,10 @@ class ModelBuilderSpecs {
 
     private List<MethodSpec> setters() {
         List<MethodSpec> setters = new ArrayList<>();
-        shapeModel.getMembers().stream().flatMap(m ->
-            Stream.concat(settersFactory.fluentSetters(m, builderInterfaceName()).stream(),
-                settersFactory.beanStyleSetters(m).stream()))
-                .forEach(setters::add);
+        shapeModel.getNonStreamingMembers().stream()
+                  .flatMap(m -> Stream.concat(settersFactory.fluentSetters(m, builderInterfaceName()).stream(),
+                                              settersFactory.beanStyleSetters(m).stream()))
+                  .forEach(setters::add);
 
         if (exception()) {
             setters.addAll(exceptionMessageSetters());

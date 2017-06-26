@@ -42,7 +42,19 @@ class DefaultJsonAsyncClient implements JsonAsyncClient {
      * </p>
      *
      * @param aPostOperationRequest
-     * @return A Java Future containing the result of the APostOperation operation returned by the service.
+     * @return A Java Future containing the result of the APostOperation operation returned by the service. <br/>
+     *         The CompletableFuture returned by this method can be completed exceptionally with the following
+     *         exceptions.
+     *         <ul>
+     *         <li>InvalidInputException The request was rejected because an invalid or out-of-range value was supplied
+     *         for an input parameter.</li>
+     *         <li>SdkBaseException Base class for all exceptions that can be thrown by the SDK (both service and
+     *         client). Can be used for catch all scenarios.</li>
+     *         <li>SdkClientException If any client side error occurs such as an IO related failure, failure to get
+     *         credentials, etc)</li>
+     *         <li>JsonException Base class for all service exceptions. Unknown exceptions will be thrown as an instance
+     *         of this</li >
+     *         <ul>
      * @sample JsonAsyncClient.APostOperation
      * @see <a href="http://docs.aws.amazon.com/goto/WebAPI/json-service-2010-05-08/APostOperation" target="_top">AWS
      *      API Documentation</a>
@@ -51,8 +63,7 @@ class DefaultJsonAsyncClient implements JsonAsyncClient {
     public CompletableFuture<APostOperationResponse> aPostOperation(APostOperationRequest aPostOperationRequest) {
 
         HttpResponseHandler<APostOperationResponse> responseHandler = protocolFactory.createResponseHandler(
-                new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
-                new APostOperationResponseUnmarshaller());
+                new JsonOperationMetadata().withPayloadJson(true), new APostOperationResponseUnmarshaller());
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 
@@ -67,7 +78,19 @@ class DefaultJsonAsyncClient implements JsonAsyncClient {
      * </p>
      *
      * @param aPostOperationWithOutputRequest
-     * @return A Java Future containing the result of the APostOperationWithOutput operation returned by the service.
+     * @return A Java Future containing the result of the APostOperationWithOutput operation returned by the service. <br/>
+     *         The CompletableFuture returned by this method can be completed exceptionally with the following
+     *         exceptions.
+     *         <ul>
+     *         <li>InvalidInputException The request was rejected because an invalid or out-of-range value was supplied
+     *         for an input parameter.</li>
+     *         <li>SdkBaseException Base class for all exceptions that can be thrown by the SDK (both service and
+     *         client). Can be used for catch all scenarios.</li>
+     *         <li>SdkClientException If any client side error occurs such as an IO related failure, failure to get
+     *         credentials, etc)</li>
+     *         <li>JsonException Base class for all service exceptions. Unknown exceptions will be thrown as an instance
+     *         of this</li >
+     *         <ul>
      * @sample JsonAsyncClient.APostOperationWithOutput
      * @see <a href="http://docs.aws.amazon.com/goto/WebAPI/json-service-2010-05-08/APostOperationWithOutput"
      *      target="_top">AWS API Documentation</a>
@@ -77,8 +100,7 @@ class DefaultJsonAsyncClient implements JsonAsyncClient {
             APostOperationWithOutputRequest aPostOperationWithOutputRequest) {
 
         HttpResponseHandler<APostOperationWithOutputResponse> responseHandler = protocolFactory.createResponseHandler(
-                new JsonOperationMetadata().withPayloadJson(true).withHasStreamingSuccessResponse(false),
-                new APostOperationWithOutputResponseUnmarshaller());
+                new JsonOperationMetadata().withPayloadJson(true), new APostOperationWithOutputResponseUnmarshaller());
 
         HttpResponseHandler<AmazonServiceException> errorResponseHandler = createErrorResponseHandler();
 

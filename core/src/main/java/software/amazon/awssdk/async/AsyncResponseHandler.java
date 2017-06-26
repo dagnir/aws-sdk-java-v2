@@ -16,6 +16,7 @@
 package software.amazon.awssdk.async;
 
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
@@ -56,7 +57,8 @@ public interface AsyncResponseHandler<ResponseT, ReturnT> {
 
     /**
      * Called when an exception occurs while establishing the connection or streaming the response. Implementations
-     * should free up any resources in this method.
+     * should free up any resources in this method. This method may be called multiple times during the lifecycle
+     * of a request if automatic retries are enabled.
      *
      * @param throwable Exception that occurred.
      */
@@ -70,5 +72,18 @@ public interface AsyncResponseHandler<ResponseT, ReturnT> {
      * @return Transformed object as a result of the streamed data.
      */
     ReturnT complete();
+
+
+    /**
+     * Creates an {@link AsyncResponseHandler} that writes all the content to the given file.
+     *
+     * @param path        Path to file to write to.
+     * @param <ResponseT> Pojo Response type.
+     * @return AsyncResponseHandler instance.
+     */
+    static <ResponseT> AsyncResponseHandler<ResponseT, Void> toFile(Path path) {
+        // TODO
+        return null;
+    }
 
 }

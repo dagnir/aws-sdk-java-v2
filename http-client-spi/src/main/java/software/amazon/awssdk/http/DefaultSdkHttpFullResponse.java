@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.http;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +33,7 @@ class DefaultSdkHttpFullResponse implements SdkHttpFullResponse {
 
     private final String statusText;
     private final int statusCode;
-    private final InputStream content;
+    private final AbortableInputStream content;
     private final Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     DefaultSdkHttpFullResponse(Builder builder) {
@@ -56,7 +55,7 @@ class DefaultSdkHttpFullResponse implements SdkHttpFullResponse {
     }
 
     @Override
-    public InputStream getContent() {
+    public AbortableInputStream getContent() {
         return content;
     }
 

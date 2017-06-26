@@ -16,18 +16,16 @@
 package software.amazon.awssdk.services.s3;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.nio.ByteBuffer;
 import java.util.Date;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Integration test for the copyObject operation.
@@ -82,8 +80,8 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(BUCKET_NAME)
                                      .key(SOURCE_KEY)
-                                     .body(ByteBuffer.wrap(IoUtils.toByteArray(new FileInputStream(file))))
-                                     .build());
+                                     .build(),
+                     RequestBody.of(file));
     }
 
     /**

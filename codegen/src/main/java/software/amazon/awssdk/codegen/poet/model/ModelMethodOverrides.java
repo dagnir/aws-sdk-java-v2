@@ -17,9 +17,7 @@ package software.amazon.awssdk.codegen.poet.model;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-
 import javax.lang.model.element.Modifier;
-
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
@@ -36,37 +34,37 @@ public class ModelMethodOverrides {
     public MethodSpec equalsMethod(ShapeModel shapeModel) {
         ClassName className = poetExtensions.getModelClass(shapeModel.getShapeName());
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("equals")
-                .returns(boolean.class)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(Object.class, "obj")
+                                                     .returns(boolean.class)
+                                                     .addAnnotation(Override.class)
+                                                     .addModifiers(Modifier.PUBLIC)
+                                                     .addParameter(Object.class, "obj")
 
-                .beginControlFlow("if (this == obj)")
-                .addStatement("return true")
-                .endControlFlow()
+                                                     .beginControlFlow("if (this == obj)")
+                                                     .addStatement("return true")
+                                                     .endControlFlow()
 
-                .beginControlFlow("if (obj == null)")
-                .addStatement("return false")
-                .endControlFlow()
+                                                     .beginControlFlow("if (obj == null)")
+                                                     .addStatement("return false")
+                                                     .endControlFlow()
 
-                .beginControlFlow("if (!(obj instanceof $T))", className)
-                .addStatement("return false")
-                .endControlFlow();
+                                                     .beginControlFlow("if (!(obj instanceof $T))", className)
+                                                     .addStatement("return false")
+                                                     .endControlFlow();
 
-        if (!shapeModel.getMembers().isEmpty()) {
+        if (!shapeModel.getNonStreamingMembers().isEmpty()) {
             methodBuilder.addStatement("$T other = ($T) obj", className, className);
         }
 
-        shapeModel.getMembers().forEach(m -> {
+        shapeModel.getNonStreamingMembers().forEach(m -> {
             String getterName = m.getFluentGetterMethodName();
             methodBuilder.beginControlFlow("if (other.$N() == null ^ this.$N() == null)", getterName, getterName)
-                    .addStatement("return false")
-                    .endControlFlow()
+                         .addStatement("return false")
+                         .endControlFlow()
 
-                    .beginControlFlow("if (other.$N() != null && !other.$N().equals(this.$N()))", getterName, getterName,
-                            getterName)
-                    .addStatement("return false")
-                    .endControlFlow();
+                         .beginControlFlow("if (other.$N() != null && !other.$N().equals(this.$N()))", getterName, getterName,
+                                           getterName)
+                         .addStatement("return false")
+                         .endControlFlow();
         });
 
         methodBuilder.addStatement("return true");
@@ -76,18 +74,21 @@ public class ModelMethodOverrides {
 
     public MethodSpec toStringMethod(ShapeModel shapeModel) {
         MethodSpec.Builder toStringMethodBuilder = MethodSpec.methodBuilder("toString")
-                .returns(String.class)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addStatement("$T sb = new $T()", StringBuilder.class, StringBuilder.class)
-                .addStatement("sb.append(\"{\")");
+                                                             .returns(String.class)
+                                                             .addAnnotation(Override.class)
+                                                             .addModifiers(Modifier.PUBLIC)
+                                                             .addStatement("$T sb = new $T()", StringBuilder.class,
+                                                                           StringBuilder.class)
+                                                             .addStatement("sb.append(\"{\")");
 
-        shapeModel.getMembers().forEach(m -> {
-            String getterName = m.getFluentGetterMethodName();
-            toStringMethodBuilder.beginControlFlow("if ($N() != null)", getterName)
-                    .addStatement("sb.append(\"$N: \").append($N()).append(\",\")", m.getName(), getterName)
-                    .endControlFlow();
-        });
+        shapeModel.getNonStreamingMembers()
+                  .forEach(m -> {
+                      String getterName = m.getFluentGetterMethodName();
+                      toStringMethodBuilder.beginControlFlow("if ($N() != null)", getterName)
+                                           .addStatement("sb.append(\"$N: \").append($N()).append(\",\")", m.getName(),
+                                                         getterName)
+                                           .endControlFlow();
+                  });
 
         toStringMethodBuilder.addStatement("sb.append(\"}\")");
         toStringMethodBuilder.addStatement("return sb.toString()");
@@ -97,14 +98,16 @@ public class ModelMethodOverrides {
 
     public MethodSpec hashCodeMethod(ShapeModel shapeModel) {
         MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("hashCode")
-                .returns(int.class)
-                .addAnnotation(Override.class)
-                .addModifiers(Modifier.PUBLIC)
-                .addStatement("int hashCode = 1");
+                                                     .returns(int.class)
+                                                     .addAnnotation(Override.class)
+                                                     .addModifiers(Modifier.PUBLIC)
+                                                     .addStatement("int hashCode = 1");
 
-        shapeModel.getMembers().forEach(m ->
-                methodBuilder.addStatement("hashCode = 31 * hashCode + (($N() == null)? 0 : $N().hashCode())",
-                        m.getFluentGetterMethodName(), m.getFluentGetterMethodName()));
+        shapeModel.getNonStreamingMembers()
+                  .forEach(m -> methodBuilder.addStatement(
+                          "hashCode = 31 * hashCode + (($N() == null)? 0 : $N().hashCode())",
+                          m.getFluentGetterMethodName(),
+                          m.getFluentGetterMethodName()));
 
         methodBuilder.addStatement("return hashCode");
 

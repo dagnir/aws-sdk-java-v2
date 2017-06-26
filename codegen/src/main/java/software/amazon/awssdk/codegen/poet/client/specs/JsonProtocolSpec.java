@@ -15,13 +15,14 @@
 
 package software.amazon.awssdk.codegen.poet.client.specs;
 
+import static software.amazon.awssdk.codegen.poet.client.AsyncClientInterface.STREAMING_TYPE_VARIABLE;
+
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
-import com.squareup.javapoet.TypeVariableName;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +34,6 @@ import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
-import software.amazon.awssdk.codegen.poet.client.AsyncClientInterface;
 import software.amazon.awssdk.http.HttpResponseHandler;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.protocol.json.JsonClientMetadata;
@@ -41,6 +41,7 @@ import software.amazon.awssdk.protocol.json.JsonErrorResponseMetadata;
 import software.amazon.awssdk.protocol.json.JsonErrorShapeMetadata;
 import software.amazon.awssdk.protocol.json.JsonOperationMetadata;
 import software.amazon.awssdk.protocol.json.SdkJsonProtocolFactory;
+import software.amazon.awssdk.runtime.transform.StreamingRequestMarshaller;
 
 public class JsonProtocolSpec implements ProtocolSpec {
 
@@ -97,9 +98,9 @@ public class JsonProtocolSpec implements ProtocolSpec {
         if (opModel.hasStreamingOutput()) {
             return CodeBlock
                     .builder()
-                    .add("\n\n$T<$T> responseHandler = $L.createStreamingResponseHandler(new $T(), asyncResponseHandler);",
+                    .add("\n\n$T<$T> responseHandler = $L.createAsyncStreamingResponseHandler(new $T(), asyncResponseHandler);",
                          SdkHttpResponseHandler.class,
-                         AsyncClientInterface.STREAMING_TYPE_VARIABLE,
+                         STREAMING_TYPE_VARIABLE,
                          "protocolFactory",
                          unmarshaller)
                     .build();
@@ -110,22 +111,30 @@ public class JsonProtocolSpec implements ProtocolSpec {
 
     @Override
     public CodeBlock responseHandler(OperationModel opModel) {
-        boolean isStreamingBody = opModel.getOutputShape() != null && opModel.getOutputShape().isHasStreamingMember();
         ClassName unmarshaller = poetExtensions.getTransformClass(opModel.getReturnType().getReturnType() + "Unmarshaller");
         ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
 
-        return CodeBlock
-                .builder()
-                .add("\n\n$T<$T> responseHandler = $L.createResponseHandler(new $T().withPayloadJson($L)" +
-                     ".withHasStreamingSuccessResponse($L), new $T());",
-                     HttpResponseHandler.class,
-                     returnType,
-                     "protocolFactory",
-                     JsonOperationMetadata.class,
-                     !opModel.getHasBlobMemberAsPayload(),
-                     isStreamingBody,
-                     unmarshaller)
-                .build();
+        if (opModel.hasStreamingOutput()) {
+            return CodeBlock
+                    .builder()
+                    .add("$T<$T> responseHandler = protocolFactory.createStreamingResponseHandler(" +
+                         "new $T(), streamingHandler);",
+                         HttpResponseHandler.class,
+                         STREAMING_TYPE_VARIABLE,
+                         unmarshaller)
+                    .build();
+        } else {
+            return CodeBlock
+                    .builder()
+                    .add("\n\n$T<$T> responseHandler = $L.createResponseHandler(new $T().withPayloadJson($L), new $T());",
+                         HttpResponseHandler.class,
+                         returnType,
+                         "protocolFactory",
+                         JsonOperationMetadata.class,
+                         !opModel.getHasBlobMemberAsPayload(),
+                         unmarshaller)
+                    .build();
+        }
     }
 
     @Override
@@ -139,24 +148,32 @@ public class JsonProtocolSpec implements ProtocolSpec {
 
     @Override
     public CodeBlock executionHandler(OperationModel opModel) {
-        ClassName returnType = poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
+        TypeName returnType = opModel.hasStreamingOutput() ? STREAMING_TYPE_VARIABLE :
+                poetExtensions.getModelClass(opModel.getReturnType().getReturnType());
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
         ClassName marshaller = poetExtensions.getRequestTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
 
-        return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T>()\n" +
-                                       ".withMarshaller(new $T($N))" +
-                                       ".withResponseHandler($N)\n" +
-                                       ".withErrorResponseHandler($N)\n" +
-                                       ".withInput($L));\n",
-                                       ClientExecutionParams.class,
-                                       requestType,
-                                       returnType,
-                                       marshaller,
-                                       "protocolFactory",
-                                       "responseHandler",
-                                       "errorResponseHandler",
-                                       opModel.getInput().getVariableName())
-                        .build();
+        final CodeBlock.Builder codeBlock = CodeBlock
+                .builder()
+                .add("\n\nreturn clientHandler.execute(new $T<$T, $T>()\n" +
+                     ".withResponseHandler($N)\n" +
+                     ".withErrorResponseHandler($N)\n" +
+                     ".withInput($L)\n",
+                     ClientExecutionParams.class,
+                     requestType,
+                     returnType,
+                     "responseHandler",
+                     "errorResponseHandler",
+                     opModel.getInput().getVariableName());
+
+        if (opModel.hasStreamingInput()) {
+            return codeBlock.add(".withMarshaller(new $T(new $T(protocolFactory), requestBody)));",
+                                 ParameterizedTypeName.get(ClassName.get(StreamingRequestMarshaller.class), requestType),
+                                 marshaller)
+                            .build();
+        }
+
+        return codeBlock.add(".withMarshaller(new $T(protocolFactory)));", marshaller).build();
     }
 
     @Override
@@ -167,7 +184,7 @@ public class JsonProtocolSpec implements ProtocolSpec {
 
         String asyncRequestProvider = opModel.hasStreamingInput() ? ".withAsyncRequestProvider(requestProvider)"
                 : "";
-        TypeName returnType = opModel.hasStreamingOutput() ? TypeVariableName.get("ReturnT") : pojoResponseType;
+        TypeName returnType = opModel.hasStreamingOutput() ? STREAMING_TYPE_VARIABLE : pojoResponseType;
         String responseHandler = opModel.hasStreamingOutput() ? ".withAsyncResponseHandler(responseHandler)"
                 : ".withResponseHandler(responseHandler)";
         return CodeBlock.builder().add("\n\nreturn clientHandler.execute(new $T<$T, $T>()\n" +
