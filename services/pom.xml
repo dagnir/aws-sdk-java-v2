@@ -32,6 +32,7 @@
         <module>api-gateway</module>
         <module>applicationautoscaling</module>
         <module>appstream</module>
+        <module>athena</module>
         <module>autoscaling</module>
         <module>batch</module>
         <module>budgets</module>
@@ -46,6 +47,7 @@
         <module>codecommit</module>
         <module>codedeploy</module>
         <module>codepipeline</module>
+        <module>codestar</module>
         <module>cognitoidentity</module>
         <module>cognitoidp</module>
         <module>cognitosync</module>
@@ -72,6 +74,7 @@
         <module>events</module>
         <module>gamelift</module>
         <module>glacier</module>
+        <module>greengrass</module>
         <module>health</module>
         <module>iam</module>
         <module>importexport</module>
@@ -81,17 +84,22 @@
         <module>kms</module>
         <module>lambda</module>
         <module>lightsail</module>
+        <module>lexmodelbuilding</module>
         <module>logs</module>
         <module>machinelearning</module>
         <module>marketplacecommerceanalytics</module>
+        <module>marketplaceentitlement</module>
         <module>marketplacemeteringservice</module>
+        <module>mechanicalturkrequester</module>
         <module>opsworks</module>
         <module>opsworkscm</module>
+        <module>organizations</module>
         <module>pinpoint</module>
         <module>polly</module>
         <module>rds</module>
         <module>redshift</module>
         <module>rekognition</module>
+        <module>resourcegroupstaggingapi</module>
         <module>route53</module>
         <module>s3</module>
         <module>servermigration</module>
@@ -109,6 +117,7 @@
         <module>sts</module>
         <module>support</module>
         <module>waf</module>
+        <module>workdocs</module>
         <module>workspaces</module>
         <module>xray</module>
     </modules>
