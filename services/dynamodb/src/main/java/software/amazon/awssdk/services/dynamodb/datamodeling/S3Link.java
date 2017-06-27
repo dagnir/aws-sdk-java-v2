@@ -300,7 +300,7 @@ public class S3Link {
                                                                                    .bucket(bucketName())
                                                                                    .key(getKey())
                                                                                    .build(),
-                                                                   StreamingResponseHandler.writeToFile(destination.toPath()));
+                                                                   StreamingResponseHandler.toFile(destination.toPath()));
 
         return response;
     }
@@ -333,7 +333,7 @@ public class S3Link {
                                                                                    .bucket(bucketName())
                                                                                    .key(getKey())
                                                                                    .build(),
-                                                                   StreamingResponseHandler.writeToStream(output));
+                                                                   StreamingResponseHandler.toOutputStream(output));
 
         return response;
     }

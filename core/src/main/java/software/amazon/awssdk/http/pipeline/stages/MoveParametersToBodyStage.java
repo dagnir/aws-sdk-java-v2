@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.handlers.AwsHandlerKeys;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.pipeline.MutableRequestToRequestPipeline;
@@ -39,10 +40,21 @@ public final class MoveParametersToBodyStage implements MutableRequestToRequestP
     }
 
     private boolean shouldPutParamsInBody(SdkHttpFullRequest.Builder input) {
-        return input.getHttpMethod() == SdkHttpMethod.POST &&
+        return notSimpleDb(input) &&
+               input.getHttpMethod() == SdkHttpMethod.POST &&
                input.getContent() == null &&
                input.getParameters() != null &&
                input.getParameters().size() > 0;
+    }
+
+    // TODO FIXME hacky hack
+    @ReviewBeforeRelease("SigV2 expects query params to be signed as query params despite being in the body. Moving" +
+                         " before signing breaks SimpleDB which still uses SigV2. Probably the best thing to do is" +
+                         " make the SigV2 signer be aware that params are being moved into the body and move them back out" +
+                         " and unencode and sign them as query params. We did a similiar thing in the V4 signer in 1.11.x" +
+                         " but I'd rather have the grossness in the legacy signer implementation")
+    private boolean notSimpleDb(SdkHttpFullRequest.Builder input) {
+        return !"SimpleDBClient".equals(input.handlerContext(AwsHandlerKeys.SERVICE_NAME));
     }
 
     private SdkHttpFullRequest.Builder putParams(SdkHttpFullRequest.Builder input) {

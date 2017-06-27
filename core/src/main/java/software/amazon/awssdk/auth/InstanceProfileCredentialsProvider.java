@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.internal.CredentialsEndpointProvider;
 import software.amazon.awssdk.internal.EC2CredentialsUtils;
 import software.amazon.awssdk.util.EC2MetadataUtils;
@@ -36,6 +37,7 @@ public class InstanceProfileCredentialsProvider implements AwsCredentialsProvide
      * Create an {@link InstanceProfileCredentialsProvider} using the default configuration. See {@link #builder()} for
      * customizing the configuration.
      */
+    @ReviewBeforeRelease("This is inconsistent with client builders. Should this be a static create method?")
     public InstanceProfileCredentialsProvider() {
         this(builder());
     }
