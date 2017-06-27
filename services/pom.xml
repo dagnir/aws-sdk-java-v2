@@ -20,8 +20,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>software.amazon.awssdk</groupId>
-        <artifactId>aws-java-sdk-pom</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <artifactId>aws-sdk-java-pom</artifactId>
+        <version>2.0.0-preview-1</version>
     </parent>
     <artifactId>services</artifactId>
     <name>AWS Java SDK :: Services</name>
