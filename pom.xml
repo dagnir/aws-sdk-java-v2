@@ -64,6 +64,7 @@
         <module>codegen-maven-plugin</module>
         <module>jmespath-java</module>
         <module>bundle</module>
+        <module>build-tools</module>
         <module>test/protocol-tests</module>
         <module>test/protocol-tests-core</module>
         <module>test/test-utils</module>
@@ -372,6 +373,13 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>3.0.4</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>software.amazon.awssdk</groupId>
+                            <artifactId>build-tools</artifactId>
+                            <version>0.1-SNAPSHOT</version>
+                        </dependency>
+                    </dependencies>
                     <executions>
                         <execution>
                             <id>findbugs</id>
@@ -385,7 +393,7 @@
                         <failOnError>true</failOnError>
                         <fork>false</fork>
                         <findbugsXmlOutput>true</findbugsXmlOutput>
-                        <excludeFilterFile>build-tools/findbugs-suppressions.xml</excludeFilterFile>
+                        <excludeFilterFile>findbugs-suppressions.xml</excludeFilterFile>
                         <threshold>Low</threshold>
                         <effort>Max</effort>
                     </configuration>
@@ -404,6 +412,11 @@
                         <artifactId>checkstyle</artifactId>
                         <version>7.5.1</version>
                     </dependency>
+                    <dependency>
+                        <groupId>software.amazon.awssdk</groupId>
+                        <artifactId>build-tools</artifactId>
+                        <version>0.1-SNAPSHOT</version>
+                    </dependency>
                 </dependencies>
                 <executions>
                     <execution>
@@ -415,8 +428,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <configLocation>build-tools/checkstyle.xml</configLocation>
-                    <suppressionsLocation>build-tools/checkstyle-suppressions.xml</suppressionsLocation>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <logViolationsToConsole>true</logViolationsToConsole>
