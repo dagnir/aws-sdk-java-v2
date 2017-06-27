@@ -73,17 +73,17 @@ public interface AsyncResponseHandler<ResponseT, ReturnT> {
      */
     ReturnT complete();
 
-
     /**
-     * Creates an {@link AsyncResponseHandler} that writes all the content to the given file.
+     * Creates an {@link AsyncResponseHandler} that writes all the content to the given file. In the event of an error,
+     * the SDK will attempt to delete the file (whatever has been written to it so far). If the file already exists, an
+     * exception will be thrown.
      *
      * @param path        Path to file to write to.
      * @param <ResponseT> Pojo Response type.
      * @return AsyncResponseHandler instance.
      */
     static <ResponseT> AsyncResponseHandler<ResponseT, Void> toFile(Path path) {
-        // TODO
-        return null;
+        return new FileAsyncResponseHandler<>(path);
     }
 
 }
