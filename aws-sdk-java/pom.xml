@@ -20,12 +20,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>software.amazon.awssdk</groupId>
-        <artifactId>aws-java-sdk-pom</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <artifactId>aws-sdk-java-pom</artifactId>
+        <version>2.0.0-preview-1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>aws-java-sdk</artifactId>
-    <name>AWS Java SDK</name>
+    <artifactId>aws-sdk-java</artifactId>
+    <name>AWS SDK for Java</name>
     <description>The Amazon Web Services SDK for Java provides Java APIs for building software on AWS' cost-effective,
         scalable, and reliable infrastructure products. The AWS Java SDK allows developers to code against APIs for all
         of Amazon's infrastructure web services (Amazon S3, Amazon EC2, Amazon SQS, Amazon Relational Database Service,

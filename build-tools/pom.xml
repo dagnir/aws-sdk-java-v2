@@ -20,6 +20,6 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>software.amazon.awssdk</groupId>
     <artifactId>build-tools</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>2.0.0-preview-1</version>
     <name>AWS Java SDK :: Build Tools</name>
 </project>
