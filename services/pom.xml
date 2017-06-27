@@ -54,6 +54,7 @@
         <module>config</module>
         <module>costandusagereport</module>
         <module>datapipeline</module>
+        <module>dax</module>
         <module>devicefarm</module>
         <module>directconnect</module>
         <module>directory</module>
