@@ -128,11 +128,10 @@ public class AsyncClientHandlerImpl extends AsyncClientHandler {
                       responseHandler, errorHandler)
                 .handle((resp, err) -> {
                     try {
-                        if (resp != null) {
-                            return resp;
-                        } else {
+                        if (err != null) {
                             throw Throwables.failure(err);
                         }
+                        return resp;
                     } finally {
                         endClientExecution(awsRequestMetrics, executionParams.getRequestConfig(), request, resp);
                     }
