@@ -18,6 +18,10 @@ package software.amazon.awssdk.services.json;
 import javax.annotation.Generated;
 import software.amazon.awssdk.client.builder.ClientBuilder;
 
+/**
+ * This includes configuration specific to Json Service that is supported by both {@link JsonClientBuilder} and
+ * {@link JsonAsyncClientBuilder}.
+ */
 @Generated("software.amazon.awssdk:codegen")
 public interface JsonBaseClientBuilder<B extends JsonBaseClientBuilder<B, C>, C> extends ClientBuilder<B, C> {
 }

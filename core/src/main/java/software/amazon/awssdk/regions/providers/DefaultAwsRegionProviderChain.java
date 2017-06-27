@@ -16,7 +16,13 @@
 package software.amazon.awssdk.regions.providers;
 
 /**
- * Default region provider chain used when no explicit region is supplied to a client builder.
+ * AWS Region provider that looks for the region in this order:
+ * <ol>
+ *   <li>Check the 'aws.region' system property for the region.</li>
+ *   <li>Check the 'AWS_REGION' environment variable for the region.</li>
+ *   <li>Check the {user.home}/.aws/credentials and {user.home}/.aws/config files for the region.</li>
+ *   <li>If running in EC2, check the EC2 metadata service for the region.</li>
+ * </ol>
  */
 public class DefaultAwsRegionProviderChain extends AwsRegionProviderChain {
 

@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.poet.builder;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
@@ -44,13 +45,21 @@ public class BaseClientBuilderInterface implements ClassSpec {
         TypeSpec.Builder builder = PoetUtils.createInterfaceBuilder(builderInterfaceName)
                         .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", builderInterfaceName, "B", "C"))
                         .addTypeVariable(TypeVariableName.get("C"))
-                        .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"));
+                        .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"))
+                        .addJavadoc(getJavadoc());
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
             builder.addMethod(advancedConfigurationMethod());
         }
 
         return builder.build();
+    }
+
+    private CodeBlock getJavadoc() {
+        return CodeBlock.of("This includes configuration specific to $L that is supported by both {@link $T} and {@link $T}.",
+                            model.getMetadata().getServiceAbbreviation(),
+                            ClassName.get(basePackage, model.getMetadata().getSyncBuilderInterface()),
+                            ClassName.get(basePackage, model.getMetadata().getAsyncBuilderInterface()));
     }
 
     private MethodSpec advancedConfigurationMethod() {

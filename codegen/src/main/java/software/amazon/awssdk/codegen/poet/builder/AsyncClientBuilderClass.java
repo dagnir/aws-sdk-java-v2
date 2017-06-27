@@ -51,6 +51,7 @@ public class AsyncClientBuilderClass implements ClassSpec {
                          .addModifiers(Modifier.FINAL)
                          .superclass(ParameterizedTypeName.get(builderBaseClassName, builderInterfaceName, clientInterfaceName))
                          .addSuperinterface(builderInterfaceName)
+                         .addJavadoc("Internal implementation of {@link $T}.", builderInterfaceName)
                          .addMethod(buildClientMethod());
 
         return builder.build();

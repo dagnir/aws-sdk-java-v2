@@ -31,11 +31,13 @@ import java.util.List;
 import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.regions.ServiceMetadata;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 import software.amazon.awssdk.sync.RequestBody;
 import software.amazon.awssdk.sync.StreamingResponseHandler;
 
@@ -60,9 +62,9 @@ public final class SyncClientInterface implements ClassSpec {
                                                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                                                            .initializer("$S", model.getMetadata().getSigningName())
                                                            .build())
-                                        .addMethods(operations())
-                                        .addMethod(builder())
                                         .addMethod(create())
+                                        .addMethod(builder())
+                                        .addMethods(operations())
                                         .addMethod(serviceMetadata());
 
         if (model.getHasWaiters()) {
@@ -85,8 +87,14 @@ public final class SyncClientInterface implements ClassSpec {
                + "created using the static {@link #builder()} method.\n\n" + model.getMetadata().getDocumentation();
     }
 
-    private Iterable<MethodSpec> operations() {
-        return model.getOperations().values().stream().map(this::operationMethodSpec).collect(toList());
+    private MethodSpec create() {
+        return MethodSpec.methodBuilder("create")
+                 .returns(className)
+                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                 .addJavadoc("Create a {@link $T} with the region loaded from the {@link $T} and credentials loaded from the "
+                             + "{@link $T}.", className, DefaultAwsRegionProviderChain.class, DefaultCredentialsProvider.class)
+                 .addStatement("return builder().build()")
+                 .build();
     }
 
     private MethodSpec builder() {
@@ -95,16 +103,13 @@ public final class SyncClientInterface implements ClassSpec {
         return MethodSpec.methodBuilder("builder")
                          .returns(builderInterface)
                          .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addJavadoc("Create a builder that can be used to configure and create a {@link $T}.", className)
                          .addStatement("return new $T()", builderClass)
                          .build();
     }
 
-    private MethodSpec create() {
-        return MethodSpec.methodBuilder("create")
-                         .returns(className)
-                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                         .addStatement("return builder().build()")
-                         .build();
+    private Iterable<MethodSpec> operations() {
+        return model.getOperations().values().stream().map(this::operationMethodSpec).collect(toList());
     }
 
     private MethodSpec serviceMetadata() {

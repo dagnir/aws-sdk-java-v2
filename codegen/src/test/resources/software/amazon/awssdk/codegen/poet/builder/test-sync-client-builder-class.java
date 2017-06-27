@@ -18,6 +18,9 @@ package software.amazon.awssdk.services.json;
 import javax.annotation.Generated;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 
+/**
+ * Internal implementation of {@link JsonClientBuilder}.
+ */
 @Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
 final class DefaultJsonClientBuilder extends DefaultJsonBaseClientBuilder<JsonClientBuilder, JsonClient> implements

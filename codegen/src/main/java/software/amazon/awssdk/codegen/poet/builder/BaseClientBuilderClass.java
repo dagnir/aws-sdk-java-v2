@@ -61,7 +61,10 @@ public class BaseClientBuilderClass implements ClassSpec {
                          .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", builderInterfaceName, "B", "C"))
                          .addTypeVariable(TypeVariableName.get("C"))
                          .superclass(PoetUtils.createParameterizedTypeName(DefaultClientBuilder.class, "B", "C"))
-                         .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"));
+                         .addSuperinterface(PoetUtils.createParameterizedTypeName(ClientBuilder.class, "B", "C"))
+                         .addJavadoc("Internal base class for {@link $T} and {@link $T}.",
+                                     ClassName.get(basePackage, model.getMetadata().getSyncBuilder()),
+                                     ClassName.get(basePackage, model.getMetadata().getAsyncBuilder()));
 
         if (model.getCustomizationConfig().getServiceSpecificClientConfigClass() != null) {
             ClassName advancedConfiguration = ClassName.get(basePackage,

@@ -4,6 +4,7 @@ import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientExecutionParams;
@@ -28,8 +29,14 @@ import software.amazon.awssdk.services.json.transform.APostOperationResponseUnma
 import software.amazon.awssdk.services.json.transform.APostOperationWithOutputRequestMarshaller;
 import software.amazon.awssdk.services.json.transform.APostOperationWithOutputResponseUnmarshaller;
 
+/**
+ * Internal implementation of {@link JsonClient}.
+ *
+ * @see JsonClient#builder()
+ */
 @Generated("software.amazon.awssdk:codegen")
-class DefaultJsonClient implements JsonClient {
+@SdkInternalApi
+final class DefaultJsonClient implements JsonClient {
     private final ClientHandler clientHandler;
 
     private final SdkJsonProtocolFactory protocolFactory;

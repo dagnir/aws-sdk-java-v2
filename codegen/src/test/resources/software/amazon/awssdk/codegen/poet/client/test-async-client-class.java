@@ -3,6 +3,7 @@ package software.amazon.awssdk.services.json;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Generated;
 import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.client.AsyncClientHandler;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.ClientExecutionParams;
@@ -24,8 +25,14 @@ import software.amazon.awssdk.services.json.transform.APostOperationResponseUnma
 import software.amazon.awssdk.services.json.transform.APostOperationWithOutputRequestMarshaller;
 import software.amazon.awssdk.services.json.transform.APostOperationWithOutputResponseUnmarshaller;
 
+/**
+ * Internal implementation of {@link JsonAsyncClient}.
+ *
+ * @see JsonAsyncClient#builder()
+ */
 @Generated("software.amazon.awssdk:codegen")
-class DefaultJsonAsyncClient implements JsonAsyncClient {
+@SdkInternalApi
+final class DefaultJsonAsyncClient implements JsonAsyncClient {
     private final AsyncClientHandler clientHandler;
 
     private final SdkJsonProtocolFactory protocolFactory;

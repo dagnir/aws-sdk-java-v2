@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.poet.builder;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 import software.amazon.awssdk.client.builder.SyncClientBuilder;
@@ -51,8 +52,8 @@ public class SyncClientBuilderInterface implements ClassSpec {
         return builderInterfaceName;
     }
 
-    private String getJavadoc() {
-        return "A builder for creating an instance of {@link " + clientInterfaceName.simpleName() + "}. This can be created via "
-               + "{@link " + clientInterfaceName.simpleName() + "#builder()}.";
+    private CodeBlock getJavadoc() {
+        return CodeBlock.of("A builder for creating an instance of {@link $1T}. This can be created with the static "
+                            + "{@link $1T#builder()} method.", clientInterfaceName);
     }
 }

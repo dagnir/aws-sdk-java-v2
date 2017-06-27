@@ -26,10 +26,12 @@ import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.async.AsyncResponseHandler;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
 
 public class AsyncClientInterface implements ClassSpec {
 
@@ -53,9 +55,9 @@ public class AsyncClientInterface implements ClassSpec {
         return PoetUtils.createInterfaceBuilder(className)
                         .addSuperinterface(AutoCloseable.class)
                         .addJavadoc(getJavadoc())
-                        .addMethods(operations())
-                        .addMethod(builder())
                         .addMethod(create())
+                        .addMethod(builder())
+                        .addMethods(operations())
                         .build();
     }
 
@@ -67,6 +69,27 @@ public class AsyncClientInterface implements ClassSpec {
     private String getJavadoc() {
         return "Service client for accessing " + model.getMetadata().getServiceAbbreviation() + " asynchronously. This can be "
                + "created using the static {@link #builder()} method.\n\n" + model.getMetadata().getDocumentation();
+    }
+
+    private MethodSpec create() {
+        return MethodSpec.methodBuilder("create")
+                 .returns(className)
+                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                 .addJavadoc("Create a {@link $T} with the region loaded from the {@link $T} and credentials loaded from the "
+                             + "{@link $T}.", className, DefaultAwsRegionProviderChain.class, DefaultCredentialsProvider.class)
+                 .addStatement("return builder().build()")
+                 .build();
+    }
+
+    private MethodSpec builder() {
+        ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilder());
+        ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilderInterface());
+        return MethodSpec.methodBuilder("builder")
+                         .returns(builderInterface)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addJavadoc("Create a builder that can be used to configure and create a {@link $T}.", className)
+                         .addStatement("return new $T()", builderClass)
+                         .build();
     }
 
     protected final Iterable<MethodSpec> operations() {
@@ -116,24 +139,6 @@ public class AsyncClientInterface implements ClassSpec {
         } else {
             return ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), responsePojoType);
         }
-    }
-
-    private MethodSpec builder() {
-        ClassName builderClass = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilder());
-        ClassName builderInterface = ClassName.get(clientPackageName, model.getMetadata().getAsyncBuilderInterface());
-        return MethodSpec.methodBuilder("builder")
-                         .returns(builderInterface)
-                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                         .addStatement("return new $T()", builderClass)
-                         .build();
-    }
-
-    private MethodSpec create() {
-        return MethodSpec.methodBuilder("create")
-                .returns(className)
-                .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                .addStatement("return builder().build()")
-                .build();
     }
 
     private static class BuilderModelBag {

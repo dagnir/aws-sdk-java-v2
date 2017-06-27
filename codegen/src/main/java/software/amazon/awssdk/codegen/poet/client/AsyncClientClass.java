@@ -22,6 +22,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.client.AsyncClientHandler;
 import software.amazon.awssdk.client.AwsAsyncClientParams;
 import software.amazon.awssdk.client.ClientHandlerParams;
@@ -50,9 +51,13 @@ public final class AsyncClientClass extends AsyncClientInterface {
     public TypeSpec poetSpec() {
         ClassName interfaceClass = poetExtensions.getClientClass(model.getMetadata().getAsyncInterface());
         Builder classBuilder = PoetUtils.createClassBuilder(className)
+                                        .addAnnotation(SdkInternalApi.class)
+                                        .addModifiers(Modifier.FINAL)
                                         .addField(AsyncClientHandler.class, "clientHandler", Modifier.PRIVATE, Modifier.FINAL)
                                         .addField(protocolSpec.protocolFactory(model))
                                         .addSuperinterface(interfaceClass)
+                                        .addJavadoc("Internal implementation of {@link $1T}.\n\n@see $1T#builder()",
+                                                    interfaceClass)
                                         .addMethod(constructor())
                                         .addMethods(operations())
                                         .addMethod(closeMethod())

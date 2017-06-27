@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.SdkBaseException;
 import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientExecutionParams;
 import software.amazon.awssdk.client.ClientHandler;
@@ -29,8 +30,14 @@ import software.amazon.awssdk.services.query.transform.APostOperationWithOutputR
 import software.amazon.awssdk.services.query.transform.InvalidInputExceptionUnmarshaller;
 import software.amazon.awssdk.services.query.waiters.QueryClientWaiters;
 
+/**
+ * Internal implementation of {@link QueryClient}.
+ *
+ * @see QueryClient#builder()
+ */
 @Generated("software.amazon.awssdk:codegen")
-class DefaultQueryClient implements QueryClient {
+@SdkInternalApi
+final class DefaultQueryClient implements QueryClient {
     private final ClientHandler clientHandler;
 
     private final List<Unmarshaller<AmazonServiceException, Node>> exceptionUnmarshallers;

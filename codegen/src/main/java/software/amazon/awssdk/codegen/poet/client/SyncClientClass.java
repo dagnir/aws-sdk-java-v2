@@ -23,6 +23,7 @@ import com.squareup.javapoet.TypeSpec.Builder;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
+import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.client.AwsSyncClientParams;
 import software.amazon.awssdk.client.ClientHandler;
@@ -61,7 +62,11 @@ public class SyncClientClass implements ClassSpec {
         ClassName interfaceClass = poetExtensions.getClientClass(model.getMetadata().getSyncInterface());
 
         Builder classBuilder = PoetUtils.createClassBuilder(className)
+                                        .addAnnotation(SdkInternalApi.class)
+                                        .addModifiers(Modifier.FINAL)
                                         .addSuperinterface(interfaceClass)
+                                        .addJavadoc("Internal implementation of {@link $1T}.\n\n@see $1T#builder()",
+                                                    interfaceClass)
                                         .addField(ClientHandler.class, "clientHandler", Modifier.PRIVATE, Modifier.FINAL)
                                         .addField(protocolSpec.protocolFactory(model))
                                         .addField(clientParamsField())

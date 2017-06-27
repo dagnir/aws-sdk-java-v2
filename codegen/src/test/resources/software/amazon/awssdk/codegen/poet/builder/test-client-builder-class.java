@@ -12,6 +12,9 @@ import software.amazon.awssdk.config.defaults.ServiceBuilderConfigurationDefault
 import software.amazon.awssdk.runtime.auth.SignerProvider;
 import software.amazon.awssdk.utils.AttributeMap;
 
+/**
+ * Internal base class for {@link DefaultJsonClientBuilder} and {@link DefaultJsonAsyncClientBuilder}.
+ */
 @Generated("software.amazon.awssdk:codegen")
 @SdkInternalApi
 abstract class DefaultJsonBaseClientBuilder<B extends JsonBaseClientBuilder<B, C>, C> extends DefaultClientBuilder<B, C>
