@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.runtime.transform;
 
-import java.lang.reflect.Constructor;
 import javax.xml.xpath.XPath;
 import org.w3c.dom.Node;
 import software.amazon.awssdk.AmazonServiceException;
@@ -27,13 +26,7 @@ import software.amazon.awssdk.util.XpathUtils;
  * optionally, a subclass of AmazonServiceException if this class is extended.
  */
 @SdkProtectedApi
-public class LegacyErrorUnmarshaller implements Unmarshaller<AmazonServiceException, Node> {
-    /**
-     * The type of AmazonServiceException that will be instantiated. Subclasses
-     * specialized for a specific type of exception can control this through the
-     * protected constructor.
-     */
-    private final Class<? extends AmazonServiceException> exceptionClass;
+public class LegacyErrorUnmarshaller extends AbstractErrorUnmarshaller<Node> {
 
     /**
      * Constructs a new unmarshaller that will unmarshall AWS error responses as
@@ -48,12 +41,11 @@ public class LegacyErrorUnmarshaller implements Unmarshaller<AmazonServiceExcept
      * AmazonServiceException to instantiating when populating the exception
      * object with data from the AWS error response.
      *
-     * @param exceptionClass
-     *            The class of AmazonServiceException to create and populate
-     *            when unmarshalling the AWS error response.
+     * @param exceptionClass The class of AmazonServiceException to create and populate
+     *                       when unmarshalling the AWS error response.
      */
     public LegacyErrorUnmarshaller(Class<? extends AmazonServiceException> exceptionClass) {
-        this.exceptionClass = exceptionClass;
+        super(exceptionClass);
     }
 
     @Override
@@ -64,8 +56,7 @@ public class LegacyErrorUnmarshaller implements Unmarshaller<AmazonServiceExcept
         String requestId = XpathUtils.asString("Response/RequestID", in, xpath);
         String errorType = XpathUtils.asString("Response/Errors/Error/Type", in, xpath);
 
-        Constructor<? extends AmazonServiceException> constructor = exceptionClass.getConstructor(String.class);
-        AmazonServiceException ase = constructor.newInstance(message);
+        AmazonServiceException ase = newException(message);
         ase.setErrorCode(errorCode);
         ase.setRequestId(requestId);
 
@@ -83,14 +74,10 @@ public class LegacyErrorUnmarshaller implements Unmarshaller<AmazonServiceExcept
     /**
      * Returns the AWS error code for the specified error response.
      *
-     * @param in
-     *            The DOM tree node containing the error response.
-     *
+     * @param in The DOM tree node containing the error response.
      * @return The AWS error code contained in the specified error response.
-     *
-     * @throws Exception
-     *             If any problems were encountered pulling out the AWS error
-     *             code.
+     * @throws Exception If any problems were encountered pulling out the AWS error
+     *                   code.
      */
     public String parseErrorCode(Node in) throws Exception {
         return XpathUtils.asString("Response/Errors/Error/Code", in);
@@ -103,9 +90,7 @@ public class LegacyErrorUnmarshaller implements Unmarshaller<AmazonServiceExcept
     /**
      * Returns the path to the specified property within an error response.
      *
-     * @param property
-     *            The name of the desired property.
-     *
+     * @param property The name of the desired property.
      * @return The path to the specified property within an error message.
      */
     public String getErrorPropertyPath(String property) {
