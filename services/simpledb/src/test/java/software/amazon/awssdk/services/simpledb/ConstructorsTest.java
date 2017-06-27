@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.simpledb.model.SelectRequest;
  * convenient to model this a test class.
  * <p>
  * A more automated solution for detecting backwards incompatible changes would be a lot better,
- * especially considering all the Coral models we don't own.
+ * especially considering all the service models we don't own.
  */
 @ReviewBeforeRelease("Pending simple methods story")
 public class ConstructorsTest {

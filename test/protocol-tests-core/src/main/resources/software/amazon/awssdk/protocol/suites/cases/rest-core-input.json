@@ -139,7 +139,7 @@
       }
     }
   },
-  // TODO Coral supports binding list of strings and maps (string and list) to headers but Java SDK does not
+  // TODO Service models support binding list of strings and maps (string and list) to headers but Java SDK does not
   {
     "description": "Scalars in query parameters are marshalled correctly",
     "given": {

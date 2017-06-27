@@ -34,10 +34,6 @@ import software.amazon.awssdk.services.iam.model.User;
 
 /**
  * Integration tests of the user APIs of IAM.
- *
- * Adapted from jimfl@'s C# tests:
- *
- * https://brazil-subversion.amazon.com/brazil/src/appgroup/awsdr/sdk/AWSCSharpSDKFactory/mainline/Beta.NET.SDK/AWSSDKTests/IntegrationTests/IAM/UserTests.cs
  */
 public class UserIntegrationTest extends IntegrationTestBase {
 

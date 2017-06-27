@@ -30,14 +30,6 @@ import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 
 /**
  * Integration tests of the login profile APIs of IAM.
- *
- * Adapted from jimfl@'s C# tests:
- *
- * https://brazil-subversion.amazon.com/brazil/src/appgroup/awsdr/sdk/
- * AWSCSharpSDKFactory
- * /mainline/Beta.NET.SDK/AWSSDKTests/IntegrationTests/IAM/LoginProfileTests.cs
- *
- * @author zachmu
  */
 public class LoginProfileIntegrationTest extends IntegrationTestBase {
 

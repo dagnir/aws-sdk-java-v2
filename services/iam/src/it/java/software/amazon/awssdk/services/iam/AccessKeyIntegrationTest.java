@@ -33,13 +33,6 @@ import software.amazon.awssdk.services.iam.model.NoSuchEntityException;
 
 /**
  * Integration tests for access key methods in IAM.
- *
- * Converted from jimfl@'s C# code here:
- *
- * https://brazil-subversion.amazon.com/brazil/src/appgroup/awsdr/sdk/
- * AWSCSharpSDKFactory
- * /mainline/Beta.NET.SDK/AWSSDKTests/IntegrationTests/IAM/AccessKeyTests.cs
- *
  */
 public class AccessKeyIntegrationTest extends IntegrationTestBase {
 

@@ -333,7 +333,7 @@
       }
     }
   }
-  //  TODO this is not possible with Coral, payloads can only be structures or blobs. Only S3 utilizes this
+  //  TODO this is not possible, payloads can only be structures or blobs. Only S3 utilizes this
   //  {
   //    "description": "Tests an operation that has a string member explicitly marked as the payload",
   //    "given": {
