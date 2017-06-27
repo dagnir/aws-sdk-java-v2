@@ -18,6 +18,9 @@ package software.amazon.awssdk.services.json;
 import javax.annotation.Generated;
 import software.amazon.awssdk.client.builder.SyncClientBuilder;
 
+/**
+ * A builder for creating an instance of {@link JsonClient}. This can be created via {@link JsonClient#builder()}.
+ */
 @Generated("software.amazon.awssdk:codegen")
 public interface JsonClientBuilder extends SyncClientBuilder<JsonClientBuilder, JsonClient>,
                                            JsonBaseClientBuilder<JsonClientBuilder, JsonClient> {

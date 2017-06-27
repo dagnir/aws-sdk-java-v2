@@ -52,6 +52,7 @@ public class AsyncClientInterface implements ClassSpec {
     public TypeSpec poetSpec() {
         return PoetUtils.createInterfaceBuilder(className)
                         .addSuperinterface(AutoCloseable.class)
+                        .addJavadoc(getJavadoc())
                         .addMethods(operations())
                         .addMethod(builder())
                         .addMethod(create())
@@ -61,6 +62,11 @@ public class AsyncClientInterface implements ClassSpec {
     @Override
     public ClassName className() {
         return className;
+    }
+
+    private String getJavadoc() {
+        return "Service client for accessing " + model.getMetadata().getServiceAbbreviation() + " asynchronously. This can be "
+               + "created using the static {@link #builder()} method.\n\n" + model.getMetadata().getDocumentation();
     }
 
     protected final Iterable<MethodSpec> operations() {

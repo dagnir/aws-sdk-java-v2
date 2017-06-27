@@ -54,11 +54,12 @@ public final class SyncClientInterface implements ClassSpec {
     @Override
     public TypeSpec poetSpec() {
         Builder classBuilder = PoetUtils.createInterfaceBuilder(className)
+                                        .addSuperinterface(AutoCloseable.class)
+                                        .addJavadoc(getJavadoc())
                                         .addField(FieldSpec.builder(String.class, "SERVICE_NAME")
                                                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                                                            .initializer("$S", model.getMetadata().getSigningName())
                                                            .build())
-                                        .addSuperinterface(AutoCloseable.class)
                                         .addMethods(operations())
                                         .addMethod(builder())
                                         .addMethod(create())
@@ -77,6 +78,11 @@ public final class SyncClientInterface implements ClassSpec {
     @Override
     public ClassName className() {
         return className;
+    }
+
+    private String getJavadoc() {
+        return "Service client for accessing " + model.getMetadata().getServiceAbbreviation() + ". This can be "
+               + "created using the static {@link #builder()} method.\n\n" + model.getMetadata().getDocumentation();
     }
 
     private Iterable<MethodSpec> operations() {

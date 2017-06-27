@@ -42,11 +42,17 @@ public class SyncClientBuilderInterface implements ClassSpec {
                                                                      builderInterfaceName, clientInterfaceName))
                         .addSuperinterface(ParameterizedTypeName.get(baseBuilderInterfaceName,
                                                                      builderInterfaceName, clientInterfaceName))
+                        .addJavadoc(getJavadoc())
                         .build();
     }
 
     @Override
     public ClassName className() {
         return builderInterfaceName;
+    }
+
+    private String getJavadoc() {
+        return "A builder for creating an instance of {@link " + clientInterfaceName.simpleName() + "}. This can be created via "
+               + "{@link " + clientInterfaceName.simpleName() + "#builder()}.";
     }
 }

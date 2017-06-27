@@ -34,7 +34,7 @@ import software.amazon.awssdk.utils.builder.SdkBuilder;
 public interface ClientBuilder<B extends ClientBuilder<B, C>, C> extends SdkBuilder<B, C> {
 
     /**
-     * Configure overrides specifying request and response timeouts within the SDK.
+     * Specify overrides to the default SDK configuration that should be used for clients created by this builder.
      */
     B overrideConfiguration(ClientOverrideConfiguration overrideConfiguration);
 

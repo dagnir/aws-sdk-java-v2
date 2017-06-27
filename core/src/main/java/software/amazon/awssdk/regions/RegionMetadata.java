@@ -16,7 +16,7 @@
 package software.amazon.awssdk.regions;
 
 /**
- * Interface for a region implementation.
+ * A collection of metadata about a region. This can be loaded using the {@link #of(Region)} method.
  */
 public interface RegionMetadata {
 
