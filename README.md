@@ -41,7 +41,7 @@ dependencies.
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>bom</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>2.0.0-preview</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -108,7 +108,7 @@ We need your help in making this SDK great. Please participate in the community 
 [sdk-website]: http://aws.amazon.com/sdkforjava
 [aws-java-sdk-bom]: https://github.com/aws/aws-sdk-java-v2/tree/master/bom
 [stack-overflow]: http://stackoverflow.com/questions/tagged/aws-java-sdk
-[gitter]: https://gitter.im/aws/aws-sdk-java
+[gitter]: https://gitter.im/aws/aws-sdk-java-v2
 [features]: https://github.com/aws/aws-sdk-java-v2/issues?q=is%3Aopen+is%3Aissue+label%3A%22Feature+Request%22
 [support-center]: https://console.aws.amazon.com/support/
 [console]: https://console.aws.amazon.com
