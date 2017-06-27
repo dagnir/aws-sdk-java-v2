@@ -91,7 +91,7 @@ We need your help in making this SDK great. Please participate in the community 
 
 * Come join the AWS Java community chat on [Gitter][gitter].
 * Articulate your feature request or upvote existing ones on our [Issues][features] page.
-* Submit issues [issue][sdk-issues].
+* Submit [issues][sdk-issues].
 * Send feedback directly to the team at aws-java-sdk-v2-feedback@amazon.com. 
 
 [aws-iam-credentials]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-roles.html
