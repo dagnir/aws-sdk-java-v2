@@ -48,7 +48,7 @@ public class ClockSkewIntegrationTest extends IntegrationTestBase {
                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                 .build();
 
-        clockSkewClient.listDomains(ListDomainsRequest.builder().build());
+        clockSkewClient.listDomains(ListDomainsRequest.builder().build()).join();
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }
 }
