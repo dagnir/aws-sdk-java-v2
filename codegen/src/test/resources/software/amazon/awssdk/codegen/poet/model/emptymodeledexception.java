@@ -40,6 +40,14 @@ public class EmptyModeledException extends JsonProtocolTestsException implements
             this.message = model.getMessage();
         }
 
+        public String getMessage() {
+            return message;
+        }
+
+        public String message() {
+            return message;
+        }
+
         public void setMessage(String message) {
             this.message = message;
         }
@@ -56,4 +64,3 @@ public class EmptyModeledException extends JsonProtocolTestsException implements
         }
     }
 }
-

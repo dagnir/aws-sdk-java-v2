@@ -103,6 +103,10 @@ public class BaseType implements StructuredPojo, ToCopyableBuilder<BaseType.Buil
             setBaseMember(model.baseMember);
         }
 
+        public final String getBaseMember() {
+            return baseMember;
+        }
+
         @Override
         public final Builder baseMember(String baseMember) {
             this.baseMember = baseMember;
@@ -119,4 +123,3 @@ public class BaseType implements StructuredPojo, ToCopyableBuilder<BaseType.Buil
         }
     }
 }
-

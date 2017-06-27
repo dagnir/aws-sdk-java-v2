@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
@@ -44,7 +43,7 @@ class ModelBuilderSpecs {
     private final ShapeModelSpec shapeModelSpec;
     private final TypeProvider typeProvider;
     private final PoetExtensions poetExtensions;
-    private final SettersFactory settersFactory;
+    private final AccessorsFactory accessorsFactory;
 
     public ModelBuilderSpecs(IntermediateModel intermediateModel, ShapeModel shapeModel,
                              ShapeModelSpec shapeModelSpec,
@@ -54,7 +53,7 @@ class ModelBuilderSpecs {
         this.shapeModelSpec = shapeModelSpec;
         this.typeProvider = typeProvider;
         this.poetExtensions = new PoetExtensions(this.intermediateModel);
-        this.settersFactory = new SettersFactory(this.shapeModel, this.intermediateModel, this.typeProvider);
+        this.accessorsFactory = new AccessorsFactory(this.shapeModel, this.intermediateModel, this.typeProvider);
     }
 
     public ClassName builderInterfaceName() {
@@ -71,7 +70,7 @@ class ModelBuilderSpecs {
                 .addModifiers(Modifier.PUBLIC);
 
         shapeModel.getNonStreamingMembers()
-                  .forEach(m -> builder.addMethods(settersFactory.fluentSetterDeclarations(m, builderInterfaceName())));
+                  .forEach(m -> builder.addMethods(accessorsFactory.fluentSetterDeclarations(m, builderInterfaceName())));
 
         if (exception()) {
             builder.addMethod(MethodSpec.methodBuilder("message")
@@ -94,7 +93,7 @@ class ModelBuilderSpecs {
         builderClassBuilder.addFields(fields());
         builderClassBuilder.addMethod(noargConstructor());
         builderClassBuilder.addMethod(modelCopyConstructor());
-        builderClassBuilder.addMethods(setters());
+        builderClassBuilder.addMethods(accessors());
         builderClassBuilder.addMethod(buildMethod());
 
         return builderClassBuilder.build();
@@ -161,18 +160,21 @@ class ModelBuilderSpecs {
         return copyBuilderCtor.build();
     }
 
-    private List<MethodSpec> setters() {
-        List<MethodSpec> setters = new ArrayList<>();
+    private List<MethodSpec> accessors() {
+        List<MethodSpec> accessors = new ArrayList<>();
         shapeModel.getNonStreamingMembers().stream()
-                  .flatMap(m -> Stream.concat(settersFactory.fluentSetters(m, builderInterfaceName()).stream(),
-                                              settersFactory.beanStyleSetters(m).stream()))
-                  .forEach(setters::add);
+                  .forEach(m -> {
+                      accessors.add(accessorsFactory.beanStyleGetters(m));
+                      accessors.addAll(accessorsFactory.fluentSetters(m, builderInterfaceName()));
+                      accessors.addAll(accessorsFactory.beanStyleSetters(m));
+                  });
 
         if (exception()) {
-            setters.addAll(exceptionMessageSetters());
+            accessors.addAll(exceptionMessageGetters());
+            accessors.addAll(exceptionMessageSetters());
         }
 
-        return setters;
+        return accessors;
     }
 
     private MethodSpec buildMethod() {
@@ -198,7 +200,26 @@ class ModelBuilderSpecs {
                 classToBuild());
     }
 
-    List<MethodSpec> exceptionMessageSetters() {
+    private List<MethodSpec> exceptionMessageGetters() {
+        List<MethodSpec> getters = new ArrayList<>();
+
+        // bean style
+        getters.add(MethodSpec.methodBuilder("getMessage")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(String.class)
+                .addStatement("return message")
+                .build());
+
+        getters.add(MethodSpec.methodBuilder("message")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(String.class)
+                .addStatement("return message")
+                .build());
+
+        return getters;
+    }
+
+    private List<MethodSpec> exceptionMessageSetters() {
         List<MethodSpec> setters = new ArrayList<>();
 
         // bean style

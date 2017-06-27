@@ -213,6 +213,10 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
             setRecursiveMap(model.recursiveMap);
         }
 
+        public final String getNoRecurse() {
+            return noRecurse;
+        }
+
         @Override
         public final Builder noRecurse(String noRecurse) {
             this.noRecurse = noRecurse;
@@ -223,6 +227,10 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
             this.noRecurse = noRecurse;
         }
 
+        public final RecursiveStructType getRecursiveStruct() {
+            return recursiveStruct;
+        }
+
         @Override
         public final Builder recursiveStruct(RecursiveStructType recursiveStruct) {
             this.recursiveStruct = recursiveStruct;
@@ -231,6 +239,10 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
 
         public final void setRecursiveStruct(RecursiveStructType recursiveStruct) {
             this.recursiveStruct = recursiveStruct;
+        }
+
+        public final Collection<RecursiveStructType> getRecursiveList() {
+            return recursiveList;
         }
 
         @Override
@@ -265,6 +277,10 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
             }
         }
 
+        public final Map<String, RecursiveStructType> getRecursiveMap() {
+            return recursiveMap;
+        }
+
         @Override
         public final Builder recursiveMap(Map<String, RecursiveStructType> recursiveMap) {
             this.recursiveMap = RecursiveMapTypeCopier.copy(recursiveMap);
@@ -281,4 +297,3 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
         }
     }
 }
-

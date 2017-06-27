@@ -192,6 +192,10 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
             setMapOfStringToListOfListOfStrings(model.mapOfStringToListOfListOfStrings);
         }
 
+        public final Collection<? extends Collection<String>> getListOfListOfStrings() {
+            return listOfListOfStrings;
+        }
+
         @Override
         public final Builder listOfListOfStrings(Collection<? extends Collection<String>> listOfListOfStrings) {
             this.listOfListOfStrings = ListOfListOfStringsCopier.copy(listOfListOfStrings);
@@ -222,6 +226,10 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
             for (Collection<String> e : listOfListOfStrings) {
                 this.listOfListOfStrings.add(ListOfStringsCopier.copy(e));
             }
+        }
+
+        public final Collection<? extends Collection<? extends Collection<String>>> getListOfListOfListOfStrings() {
+            return listOfListOfListOfStrings;
         }
 
         @Override
@@ -258,6 +266,10 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
             }
         }
 
+        public final Map<String, ? extends Collection<? extends Collection<String>>> getMapOfStringToListOfListOfStrings() {
+            return mapOfStringToListOfListOfStrings;
+        }
+
         @Override
         public final Builder mapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings) {
@@ -276,4 +288,3 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
         }
     }
 }
-

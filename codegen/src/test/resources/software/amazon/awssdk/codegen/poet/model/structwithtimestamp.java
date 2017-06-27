@@ -105,6 +105,10 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
             setNestedTimestamp(model.nestedTimestamp);
         }
 
+        public final Date getNestedTimestamp() {
+            return nestedTimestamp;
+        }
+
         @Override
         public final Builder nestedTimestamp(Date nestedTimestamp) {
             this.nestedTimestamp = StandardMemberCopier.copy(nestedTimestamp);
@@ -121,4 +125,3 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
         }
     }
 }
-

@@ -18,21 +18,32 @@ package software.amazon.awssdk.codegen.poet.model;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 
+import java.util.Arrays;
 import java.util.List;
 
+import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 
-class SettersFactory {
+class AccessorsFactory {
+
     private final ShapeModel shapeModel;
     private final TypeProvider typeProvider;
     private final IntermediateModel intermediateModel;
 
-    public SettersFactory(ShapeModel shapeModel, IntermediateModel intermediateModel, TypeProvider typeProvider) {
+    public AccessorsFactory(ShapeModel shapeModel, IntermediateModel intermediateModel, TypeProvider typeProvider) {
         this.shapeModel = shapeModel;
         this.typeProvider = typeProvider;
         this.intermediateModel = intermediateModel;
+    }
+
+    public MethodSpec beanStyleGetters(MemberModel memberModel) {
+        return MethodSpec.methodBuilder(memberModel.getBeanStyleGetterMethodName())
+            .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            .returns(typeProvider.parameterType(memberModel))
+            .addStatement("return $N", memberModel.getVariable().getVariableName())
+            .build();
     }
 
     public List<MethodSpec> fluentSetterDeclarations(MemberModel memberModel, TypeName returnType) {

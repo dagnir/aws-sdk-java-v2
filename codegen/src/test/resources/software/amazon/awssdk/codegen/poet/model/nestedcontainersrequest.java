@@ -151,8 +151,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
          * @param listOfListOfListOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder listOfListOfListOfStrings(
-                Collection<? extends Collection<? extends Collection<String>>> listOfListOfListOfStrings);
+        Builder listOfListOfListOfStrings(Collection<? extends Collection<? extends Collection<String>>> listOfListOfListOfStrings);
 
         /**
          *
@@ -161,7 +160,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
          * {@link #setListOfListOfListOfStrings(java.util.Collection)} or
          * {@link #withListOfListOfListOfStrings(java.util.Collection)} if you want to override the existing values.
          * </p>
-         * 
+         *
          * @param listOfListOfListOfStrings
          * @return Returns a reference to this object so that method calls can be chained together.
          */
@@ -190,6 +189,10 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
             setListOfListOfStrings(model.listOfListOfStrings);
             setListOfListOfListOfStrings(model.listOfListOfListOfStrings);
             setMapOfStringToListOfListOfStrings(model.mapOfStringToListOfListOfStrings);
+        }
+
+        public final Collection<? extends Collection<String>> getListOfListOfStrings() {
+            return listOfListOfStrings;
         }
 
         @Override
@@ -222,6 +225,10 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
             for (Collection<String> e : listOfListOfStrings) {
                 this.listOfListOfStrings.add(ListOfStringsCopier.copy(e));
             }
+        }
+
+        public final Collection<? extends Collection<? extends Collection<String>>> getListOfListOfListOfStrings() {
+            return listOfListOfListOfStrings;
         }
 
         @Override
@@ -258,18 +265,20 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
             }
         }
 
+        public final Map<String, ? extends Collection<? extends Collection<String>>> getMapOfStringToListOfListOfStrings() {
+            return mapOfStringToListOfListOfStrings;
+        }
+
         @Override
         public final Builder mapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings) {
-            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier
-                    .copy(mapOfStringToListOfListOfStrings);
+            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier.copy(mapOfStringToListOfListOfStrings);
             return this;
         }
 
         public final void setMapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings) {
-            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier
-                    .copy(mapOfStringToListOfListOfStrings);
+            this.mapOfStringToListOfListOfStrings = MapOfStringToListOfListOfStringsCopier.copy(mapOfStringToListOfListOfStrings);
         }
 
         @Override
@@ -278,4 +287,3 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         }
     }
 }
-

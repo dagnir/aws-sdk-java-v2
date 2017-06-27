@@ -114,6 +114,10 @@ public class StructWithNestedBlobType implements StructuredPojo,
             setNestedBlob(model.nestedBlob);
         }
 
+        public final ByteBuffer getNestedBlob() {
+            return nestedBlob;
+        }
+
         @Override
         public final Builder nestedBlob(ByteBuffer nestedBlob) {
             this.nestedBlob = StandardMemberCopier.copy(nestedBlob);
@@ -130,4 +134,3 @@ public class StructWithNestedBlobType implements StructuredPojo,
         }
     }
 }
-

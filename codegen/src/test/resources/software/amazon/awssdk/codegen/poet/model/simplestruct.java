@@ -103,6 +103,10 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
             setStringMember(model.stringMember);
         }
 
+        public final String getStringMember() {
+            return stringMember;
+        }
+
         @Override
         public final Builder stringMember(String stringMember) {
             this.stringMember = stringMember;
@@ -119,4 +123,3 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
         }
     }
 }
-
