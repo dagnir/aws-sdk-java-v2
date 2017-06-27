@@ -30,9 +30,6 @@ public class QueryParamBindingTest {
     /**
      * Make sure the marshaller is able to handle @UriLabel parameter values
      * containing special characters.
-     *
-     * https://tt.amazon.com/0048388339
-     * https://tt.amazon.com/0048675980
      */
     @Test
     public void testReservedCharInParamValue() {
@@ -40,8 +37,6 @@ public class QueryParamBindingTest {
         final String VALUE_WITH_SEMICOLON = ";foo";
         final String VALUE_WITH_AMPERSAND = "&bar";
         final String VALUE_WITH_QUESTION_MARK = "?charlie";
-
-        // https://tt.amazon.com/0048388339
 
         ListHealthChecksRequest listReq = ListHealthChecksRequest.builder()
                 .marker(VALUE_WITH_SEMICOLON)
@@ -55,8 +50,6 @@ public class QueryParamBindingTest {
         Assert.assertEquals(2, queryParams.size());
         Assert.assertEquals(VALUE_WITH_SEMICOLON, queryParams.get("marker").get(0));
         Assert.assertEquals(VALUE_WITH_AMPERSAND, queryParams.get("maxitems").get(0));
-
-        // https://tt.amazon.com/0048675980
 
         GetHealthCheckLastFailureReasonRequest getFailureReq = GetHealthCheckLastFailureReasonRequest.builder()
                 .healthCheckId(VALUE_WITH_QUESTION_MARK)

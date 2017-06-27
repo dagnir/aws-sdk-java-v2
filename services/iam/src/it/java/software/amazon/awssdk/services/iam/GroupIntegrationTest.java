@@ -41,12 +41,6 @@ import software.amazon.awssdk.services.iam.model.User;
 
 /**
  * Integration tests for group-related IAM interfaces.
- *
- * Adapted from jimfl@'s C# tests here:
- *
- * https://brazil-subversion.amazon.com/brazil/src/appgroup/awsdr/sdk/
- * AWSCSharpSDKFactory
- * /mainline/Beta.NET.SDK/AWSSDKTests/IntegrationTests/IAM/GroupTests.cs
  */
 public class GroupIntegrationTest extends IntegrationTestBase {
 

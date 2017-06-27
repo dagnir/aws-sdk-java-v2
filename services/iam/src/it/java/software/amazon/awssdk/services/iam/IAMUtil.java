@@ -44,12 +44,6 @@ import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
 import software.amazon.awssdk.services.iam.model.SigningCertificate;
 import software.amazon.awssdk.services.iam.model.User;
 
-
-/**
- * Shamelessly stolen from:
- *
- * https://brazil-subversion.amazon.com/brazil/src/appgroup/awsdr/sdk/AWSCSharpSDKFactory/mainline/Beta.NET.SDK/AWSSDKTests/IntegrationTests/IAM/Util.cs
- */
 public class IAMUtil {
     private static final IAMClient client;
     public static String TEST_PATH = "/IntegrationTests/IAM/";

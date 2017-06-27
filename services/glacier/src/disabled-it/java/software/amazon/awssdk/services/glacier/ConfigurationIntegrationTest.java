@@ -33,7 +33,7 @@ public class ConfigurationIntegrationTest extends GlacierIntegrationTestBase {
         initializeClient();
 
         String topic = "arn:aws:sns:us-east-1:311841313490:topic";
-        // TODO: It would be nice to have enums in the Coral model for event types
+        // TODO: It would be nice to have enums in the service model for event types
         String event = "ArchiveRetrievalCompleted";
         VaultNotificationConfig config = new VaultNotificationConfig().withSNSTopic(topic).withEvents(event);
         glacier.setVaultNotifications(new SetVaultNotificationsRequest().withAccountId(accountId).withVaultName(vaultName)

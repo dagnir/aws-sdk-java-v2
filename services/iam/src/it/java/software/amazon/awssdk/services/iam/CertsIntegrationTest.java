@@ -32,12 +32,6 @@ import software.amazon.awssdk.services.iam.model.UploadSigningCertificateRespons
 
 /**
  * Certs integ tests for IAM.
- *
- * Converted from jimfl@'s C# code here:
- *
- * https://brazil-subversion.amazon.com/brazil/src/appgroup/awsdr/sdk/AWSCSharpSDKFactory/mainline/Beta.NET.SDK/AWSSDKTests/IntegrationTests/IAM/CertTests.cs
- *
- * @author zachmu
  */
 public class CertsIntegrationTest extends IntegrationTestBase {
 

@@ -87,7 +87,7 @@
       }
     }
   }
-  // TODO header maps, Coral supports this but Java SDK does not (not currently exercised)
-  // TODO header maps with prefix, Coral does not support this, only used by S3
-  // TODO List of strings bound to header, Coral supports this, not currently exercised by any service
+  // TODO header maps, service models supports this but Java SDK does not (not currently exercised)
+  // TODO header maps with prefix, services models do not support this, only used by S3
+  // TODO List of strings bound to header, service  models supports this, not currently exercised by any service
 ]

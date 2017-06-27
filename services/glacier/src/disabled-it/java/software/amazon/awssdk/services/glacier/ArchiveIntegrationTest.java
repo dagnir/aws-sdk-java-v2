@@ -89,7 +89,7 @@ public class ArchiveIntegrationTest extends GlacierIntegrationTestBase {
         ListVaultsResult listVaultsResult = glacier.listVaults(new ListVaultsRequest().withAccountId(accountId));
         assertNotNull(listVaultsResult.getVaultList());
         DescribeVaultOutput vault = listVaultsResult.getVaultList().get(0);
-        // TODO: CreateDate and LastInventoryDate should probably be dates in the Coral model, not Strings
+        // TODO: CreateDate and LastInventoryDate should probably be dates in the service model, not Strings
         assertNotNull(vault.getCreationDate());
         assertNotNull(vault.getSizeInBytes());
         assertNotNull(vault.getVaultARN());
@@ -100,7 +100,7 @@ public class ArchiveIntegrationTest extends GlacierIntegrationTestBase {
         listVaultsResult = glacier.listVaults(new ListVaultsRequest());
         assertNotNull(listVaultsResult.getVaultList());
         vault = listVaultsResult.getVaultList().get(0);
-        // TODO: CreateDate and LastInventoryDate should probably be dates in the Coral model, not Strings
+        // TODO: CreateDate and LastInventoryDate should probably be dates in the service model, not Strings
         assertNotNull(vault.getCreationDate());
         assertNotNull(vault.getSizeInBytes());
         assertNotNull(vault.getVaultARN());
