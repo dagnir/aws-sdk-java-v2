@@ -41,7 +41,7 @@ dependencies.
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>bom</artifactId>
-      <version>2.0.0-preview</version>
+      <version>2.0.0-preview-1</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
