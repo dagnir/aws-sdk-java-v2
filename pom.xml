@@ -302,43 +302,6 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.6</version>
-                    <executions>
-                        <execution>
-                            <id>empty-javadoc-jar</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                            <configuration>
-                                <classifier>javadoc</classifier>
-                                <classesDirectory>${basedir}/javadoc</classesDirectory>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>empty-sources-jar</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                            <configuration>
-                                <classifier>sources</classifier>
-                                <classesDirectory>${basedir}/javadoc</classesDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <configuration>
-                        <skipSource>true</skipSource>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.10.4</version>
                 </plugin>
