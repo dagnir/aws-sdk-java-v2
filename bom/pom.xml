@@ -468,11 +468,6 @@
                 <groupId>software.amazon.awssdk</groupId>
                 <version>${awsjavasdk.version}</version>
             </dependency>
-            <dependency>
-                <artifactId>swf-libraries</artifactId>
-                <groupId>software.amazon.awssdk</groupId>
-                <version>1.11.22</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
