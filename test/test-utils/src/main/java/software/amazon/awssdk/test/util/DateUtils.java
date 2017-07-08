@@ -15,15 +15,14 @@
 
 package software.amazon.awssdk.test.util;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DateUtils {
-
     /**
      * Returns the current time in yyMMdd-hhmmss format.
      */
     public static String yyMMddhhmmss() {
-        return DateTimeFormat.forPattern("yyMMdd-hhmmss").print(new DateTime());
+        return DateTimeFormatter.ofPattern("yyMMdd-hhmmss").format(ZonedDateTime.now());
     }
 }

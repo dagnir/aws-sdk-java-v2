@@ -23,11 +23,10 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Contains Jackson module for serializing dates to ISO8601 format per the <a href="https://states-language.net/spec.html#timestamps">spec</a>.
@@ -35,7 +34,8 @@ import org.joda.time.format.ISODateTimeFormat;
 public class DateModule {
 
     public static final SimpleModule INSTANCE = new SimpleModule();
-    private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("y-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.of("GMT"));
 
     static {
         INSTANCE.addSerializer(Date.class, new StdSerializer<Date>(Date.class) {
@@ -44,7 +44,7 @@ public class DateModule {
                                   JsonGenerator jsonGenerator,
                                   SerializerProvider serializerProvider) throws
                                                                          IOException {
-                jsonGenerator.writeString(FORMATTER.print(new DateTime(date, DateTimeZone.UTC)));
+                jsonGenerator.writeString(FORMATTER.format(date.toInstant()));
             }
         });
         INSTANCE.addDeserializer(Date.class, new StdDeserializer<Date>(Date.class) {
@@ -58,7 +58,7 @@ public class DateModule {
     }
 
     public static Date fromJson(String jsonText) {
-        return FORMATTER.parseDateTime(jsonText).toDate();
+        return Date.from(Instant.from(FORMATTER.parse(jsonText)));
     }
 
 }

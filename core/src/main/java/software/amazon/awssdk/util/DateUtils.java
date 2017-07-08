@@ -17,247 +17,156 @@ package software.amazon.awssdk.util;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Date;
+import java.time.ZoneId;
+
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.joda.time.tz.FixedDateTimeZone;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.ThreadSafe;
 
 /**
- * Utilities for parsing and formatting dates.
+ * Utilities for parsing and formatting dates. All {@code Instant}s are
+ * formatted using the GMT timezone.
+ * <p>
+ *     The following format patterns are used:
+ *     <ul>
+ *         <li>RFC 822: {@code "EEE, dd MMM y HH:mm:ss 'GMT'"}</li>
+ *         <li>ISO 8601: {@code "y-MM-dd'T'HH:mm:ss[.SSS]'Z'"}</li>
+ *         <li>ISO 8601 Compressed: {@code "yMMdd'T'HHmmss'Z'"}</li>
+ *     </ul>
+ * </p>
+ *
+ * See {@link DateTimeFormatter} for more information on format patterns.
+ * <p>
+ *     Since all {@code Instant}s are formatted and parsed as datetimes, they
+ *     must be less than or equal to {@link java.time.LocalDateTime#MAX}, which
+ *     is 1 year less than {@link Instant#MAX}.
+ * </p>
  */
 @ThreadSafe
-public class DateUtils {
-    private static final DateTimeZone GMT = new FixedDateTimeZone("GMT", "GMT", 0, 0);
-    /** ISO 8601 format. */
-    protected static final DateTimeFormatter ISO_8601_DATE_FORMAT =
-            ISODateTimeFormat.dateTime().withZone(GMT);
-    /** Alternate ISO 8601 format without fractional seconds. */
-    protected static final DateTimeFormatter ALTERNATE_ISO_8601_DATE_FORMAT =
-            DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(GMT);
-    /** RFC 822 format. */
-    protected static final DateTimeFormatter RFC_822_DATE_FORMAT =
-            DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
-                          .withLocale(Locale.US)
-                          .withZone(GMT);
-    /**
-     * This is another ISO 8601 format that's used in clock skew error response
-     */
-    protected static final DateTimeFormatter COMPRESSED_ISO_8601_DATE_FORMAT =
-            DateTimeFormat.forPattern("yyyyMMdd'T'HHmmss'Z'")
-                          .withZone(GMT);
-    private static final long MILLI_SECONDS_OF_365_DAYS = 365L * 24 * 60 * 60 * 1000;
-    private static final int AWS_DATE_MILLI_SECOND_PRECISION = 3;
+public final class DateUtils {
+    private static final DateTimeFormatter RFC_822_FORMATTER = DateTimeFormatter
+            .ofPattern("EEE, dd MMM y HH:mm:ss 'GMT'")
+            .withLocale(Locale.US)
+            .withZone(ZoneId.of("GMT"));
+
+    private static final DateTimeFormatter ISO_8601_FORMATTER = DateTimeFormatter
+            .ofPattern("y-MM-dd'T'HH:mm:ss[.SSS]'Z'")
+            .withZone(ZoneId.of("GMT"));
+
+    private static final DateTimeFormatter ISO_8601_COMPRESSED_FORMATTER = DateTimeFormatter
+            .ofPattern("yMMdd'T'HHmmss'Z'")
+            .withZone(ZoneId.of("GMT"));
+
+    private static final int AWS_DATE_MILLISECOND_PRECISION = 3;
+
+    private DateUtils() {
+    }
 
     /**
-     * Parses the specified date string as an ISO 8601 date and returns the Date
-     * object.
+     * Parse the specified ISO 8601 formatted date string.
      *
      * @param dateString
      *            The date string to parse.
      *
-     * @return The parsed Date object.
+     * @return The parsed date.
      */
-    public static Date parseIso8601Date(String dateString) {
-        try {
-            return doParseIso8601Date(dateString);
-        } catch (RuntimeException ex) {
-            throw handleException(ex);
-        }
-    }
-
-    static Date doParseIso8601Date(final String dateStringOrig) {
-        String dateString = dateStringOrig;
-
-        // For EC2 Spot Fleet.
-        if (dateString.endsWith("+0000")) {
-            dateString = dateString
-                    .substring(0, dateString.length() - 5)
-                    .concat("Z");
-        }
-
-        // https://github.com/aws/aws-sdk-java/issues/233
-        String temp = tempDateStringForJodaTime(dateString);
-        try {
-            if (temp.equals(dateString)) {
-                // Normal case: nothing special here
-                return new Date(ISO_8601_DATE_FORMAT.parseMillis(dateString));
-            }
-            // Handling edge case:
-            // Joda-time can only handle up to year 292278993 but we are given
-            // 292278994;  So we parse the date string by first adjusting
-            // the year to 292278993. Then we add 1 year back afterwards.
-            final long milliLess365Days = ISO_8601_DATE_FORMAT.parseMillis(temp);
-            final long milli = milliLess365Days + MILLI_SECONDS_OF_365_DAYS;
-            if (milli < 0) { // overflow!
-                // re-parse the original date string using JodaTime so as to
-                // throw  an exception with a consistent message
-                return new Date(ISO_8601_DATE_FORMAT.parseMillis(dateString));
-            }
-            return new Date(milli);
-        } catch (IllegalArgumentException e) {
-            try {
-                return new Date(ALTERNATE_ISO_8601_DATE_FORMAT.parseMillis(dateString));
-                // If the first ISO 8601 parser didn't work, try the alternate
-                // version which doesn't include fractional seconds
-            } catch (Exception oops) {
-                // no the alternative route doesn't work; let's bubble up the original exception
-                throw e;
-            }
-        }
+    public static Instant parseIso8601Date(String dateString) {
+        return Instant.from(ISO_8601_FORMATTER.parse(dateString));
     }
 
     /**
-     * Returns a date string with the prefix temporarily substituted, if
-     * applicable, so that JodaTime can handle it.  Otherwise, if not applicable,
-     * the original date string is returned.
-     * <p>
-     * See https://github.com/aws/aws-sdk-java/issues/233
-     */
-    private static String tempDateStringForJodaTime(String dateString) {
-        final String fromPrefix = "292278994-";
-        final String toPrefix = "292278993-";
-        return dateString.startsWith(fromPrefix)
-               ? toPrefix + dateString.substring(fromPrefix.length())
-               : dateString;
-    }
-
-    /**
-     * Returns the original runtime exception iff the joda-time being used
-     * at runtime behaves as expected.
+     * Format the specified {@code Instant} to an ISO 8601 date string in the
+     * GMT timezone.
      *
-     * @throws IllegalStateException if the joda-time being used at runtime
-     *     doens't appear to be of the right version.
+     * @param instant
+     *            The {@code Instant} to format.
+     *
+     * @return The formatted {@code Instant}.
      */
-    private static <E extends RuntimeException> E handleException(E ex) {
-        if (JodaTime.hasExpectedBehavior()) {
-            return ex;
-        }
-        throw new IllegalStateException("Joda-time 2.2 or later version is required, but found version: " +
-                                        JodaTime.getVersion(), ex);
+    public static String formatIso8601Date(Instant instant) {
+        return ISO_8601_FORMATTER.format(instant);
     }
 
     /**
-     * Formats the specified date as an ISO 8601 string.
-     *
-     * @param date
-     *            The date to format.
-     *
-     * @return The ISO 8601 string representing the specified date.
-     */
-    public static String formatIso8601Date(Date date) {
-        try {
-            return ISO_8601_DATE_FORMAT.print(date.getTime());
-        } catch (RuntimeException ex) {
-            throw handleException(ex);
-        }
-    }
-
-    /**
-     * Formats the specified date as an ISO 8601 string.
-     *
-     * @param date the date to format
-     * @return the ISO-8601 string representing the specified date
-     */
-    public static String formatIso8601Date(DateTime date) {
-        try {
-            return ISO_8601_DATE_FORMAT.print(date);
-        } catch (RuntimeException ex) {
-            throw handleException(ex);
-        }
-    }
-
-    /**
-     * Parses the specified date string as an RFC 822 date and returns the Date
-     * object.
+     * Parse the specified RFC 822 formatted date string.
      *
      * @param dateString
      *            The date string to parse.
      *
-     * @return The parsed Date object.
+     * @return The parsed {@code Instant}.
      */
     public static Instant parseRfc822Date(String dateString) {
         if (dateString == null) {
             return null;
         }
-        try {
-            return Instant.ofEpochMilli(RFC_822_DATE_FORMAT.parseMillis(dateString));
-        } catch (RuntimeException ex) {
-            throw handleException(ex);
-        }
+        return Instant.from(RFC_822_FORMATTER.parse(dateString));
     }
 
     /**
-     * Formats the specified date as an RFC 822 string.
+     * Format the specified {@code Instant} as an RFC 822 date string in the
+     * GMT timezone.
      *
      * @param instant
      *            The date to format.
      *
-     * @return The RFC 822 string representing the specified date.
+     * @return The formatted {@code Instant}.
      */
     public static String formatRfc822Date(Instant instant) {
-        try {
-            return RFC_822_DATE_FORMAT.print(instant.toEpochMilli());
-        } catch (RuntimeException ex) {
-            throw handleException(ex);
-        }
+        return RFC_822_FORMATTER.format(instant);
     }
 
     /**
-     * Parses the specified date string as a compressedIso8601DateFormat ("yyyyMMdd'T'HHmmss'Z'") and returns the Date
-     * object.
+     * Parse the specified compressed ISO 8601 date string.
      *
      * @param dateString
      *            The date string to parse.
      *
-     * @return The parsed Date object.
+     * @return The parsed {@code Instant}.
      */
-    public static Date parseCompressedIso8601Date(String dateString) {
-        try {
-            return new Date(COMPRESSED_ISO_8601_DATE_FORMAT.parseMillis(dateString));
-        } catch (RuntimeException ex) {
-            throw handleException(ex);
-        }
+    public static Instant parseCompressedIso8601Date(String dateString) {
+        return Instant.from(ISO_8601_COMPRESSED_FORMATTER.parse(dateString));
     }
 
     /**
-     * Parses the given date string returned by the AWS service into a Date
-     * object.
+     * Parses the given date string returned by the AWS service.
+     *
+     * @param dateString
+     *            The date string to parse.
+     *
+     * @return The parsed {@code Instant}.
      */
-    public static Date parseServiceSpecificDate(String dateString) {
+    public static Instant parseServiceSpecificDate(String dateString) {
         if (dateString == null) {
             return null;
         }
         try {
             BigDecimal dateValue = new BigDecimal(dateString);
-            return new Date(dateValue.scaleByPowerOfTen(
-                    AWS_DATE_MILLI_SECOND_PRECISION).longValue());
+            return Instant.ofEpochMilli(dateValue.scaleByPowerOfTen(
+                    AWS_DATE_MILLISECOND_PRECISION).longValue());
+
+
         } catch (NumberFormatException nfe) {
-            throw new SdkClientException("Unable to parse date : "
-                                         + dateString, nfe);
+            throw new SdkClientException("Unable to parse date : " + dateString, nfe);
         }
     }
 
     /**
-     * Formats the give date object into an AWS Service format.
+     * Format the given {@code Instant} to an AWS service specific date string.
+     *
+     * @param instant
+     *            The {@code Instant} to format.
+     *
+     * @return The formatted {@link Instant}.
      */
-    public static String formatServiceSpecificDate(Date date) {
-        if (date == null) {
+    public static String formatServiceSpecificDate(Instant instant) {
+        if (instant == null) {
             return null;
         }
-        BigDecimal dateValue = BigDecimal.valueOf(date.getTime());
-        return dateValue.scaleByPowerOfTen(0 - AWS_DATE_MILLI_SECOND_PRECISION)
+        BigDecimal dateValue = BigDecimal.valueOf(instant.toEpochMilli());
+        return dateValue.scaleByPowerOfTen(0 - AWS_DATE_MILLISECOND_PRECISION)
                         .toPlainString();
-    }
-
-    public static Date cloneDate(Date date) {
-        return date == null ? null : new Date(date.getTime());
     }
 
     /**
@@ -265,6 +174,6 @@ public class DateUtils {
      * of milliseconds since epoch.
      */
     public static long numberOfDaysSinceEpoch(long milliSinceEpoch) {
-        return TimeUnit.MILLISECONDS.toDays(milliSinceEpoch);
+        return ChronoUnit.DAYS.between(Instant.EPOCH, Instant.ofEpochMilli(milliSinceEpoch));
     }
 }

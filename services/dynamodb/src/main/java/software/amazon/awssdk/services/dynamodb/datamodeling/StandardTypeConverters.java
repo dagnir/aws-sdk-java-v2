@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -30,9 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.regex.Pattern;
-import org.joda.time.DateTime;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.util.DateUtils;
@@ -124,7 +124,7 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
          */
         CALENDAR(ScalarAttributeType.S, new ConverterMap(Calendar.class, null)
                 .with(Date.class, ToCalendar.FROM_DATE)
-                .with(DateTime.class, ToCalendar.FROM_DATE.join(ToDate.FROM_DATETIME))
+                .with(ZonedDateTime.class, ToCalendar.FROM_DATE.join(ToDate.FROM_DATETIME))
                 .with(Long.class, ToCalendar.FROM_DATE.join(ToDate.FROM_LONG))
                 .with(String.class, ToCalendar.FROM_DATE.join(ToDate.FROM_STRING))
         ),
@@ -148,15 +148,15 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
          */
         DATE(ScalarAttributeType.S, new ConverterMap(Date.class, null)
                 .with(Calendar.class, ToDate.FROM_CALENDAR)
-                .with(DateTime.class, ToDate.FROM_DATETIME)
+                .with(ZonedDateTime.class, ToDate.FROM_DATETIME)
                 .with(Long.class, ToDate.FROM_LONG)
                 .with(String.class, ToDate.FROM_STRING)
         ),
 
         /**
-         * {@link DateTime}
+         * {@link ZonedDateTime}
          */
-        DATE_TIME(/*ScalarAttributeType.S*/null, new ConverterMap(DateTime.class, null)
+        DATE_TIME(/*ScalarAttributeType.S*/null, new ConverterMap(ZonedDateTime.class, null)
                 .with(Calendar.class, ToDateTime.FROM_DATE.join(ToDate.FROM_CALENDAR))
                 .with(Date.class, ToDateTime.FROM_DATE)
                 .with(Long.class, ToDateTime.FROM_DATE.join(ToDate.FROM_LONG))
@@ -199,7 +199,7 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
          */
         LONG(ScalarAttributeType.N, new ConverterMap(Long.class, Long.TYPE)
                 .with(Date.class, ToLong.FROM_DATE)
-                .with(DateTime.class, ToLong.FROM_DATE.join(ToDate.FROM_DATETIME))
+                .with(ZonedDateTime.class, ToLong.FROM_DATE.join(ToDate.FROM_DATETIME))
                 .with(Number.class, ToLong.FROM_NUMBER)
                 .with(String.class, ToLong.FROM_STRING)
         ),
@@ -228,14 +228,14 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
                 .with(Date.class, ToString.FROM_DATE)
                 .with(Enum.class, ToString.FROM_ENUM)
                 .with(Locale.class, ToString.FROM_LOCALE)
-                .with(TimeZone.class, ToString.FROM_TIME_ZONE)
+                .with(ZoneId.class, ToString.FROM_TIME_ZONE)
                 .with(Object.class, ToString.FROM_OBJECT)
         ),
 
         /**
-         * {@link TimeZone}
+         * {@link ZoneId}
          */
-        TIME_ZONE(ScalarAttributeType.S, new ConverterMap(TimeZone.class, null)
+        TIME_ZONE(ScalarAttributeType.S, new ConverterMap(ZoneId.class, null)
                 .with(String.class, ToTimeZone.FROM_STRING)
         ),
 
@@ -687,10 +687,10 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
             }
         };
 
-        private static final ToDate<DateTime> FROM_DATETIME = new ToDate<DateTime>() {
+        private static final ToDate<ZonedDateTime> FROM_DATETIME = new ToDate<ZonedDateTime>() {
             @Override
-            public final Date convert(final DateTime o) {
-                return o.toDate();
+            public final Date convert(final ZonedDateTime o) {
+                return Date.from(o.toInstant());
             }
         };
 
@@ -704,18 +704,18 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
         private static final ToDate<String> FROM_STRING = new ToDate<String>() {
             @Override
             public final Date convert(final String o) {
-                return DateUtils.parseIso8601Date(o);
+                return Date.from(DateUtils.parseIso8601Date(o));
             }
         };
     }
 
     /**
-     * {@link DateTime} conversion functions.
+     * {@link ZonedDateTime} conversion functions.
      */
-    private abstract static class ToDateTime<T> extends Converter<DateTime, T> {
+    private abstract static class ToDateTime<T> extends Converter<ZonedDateTime, T> {
         private static final ToDateTime<Date> FROM_DATE = new ToDateTime<Date>() {
-            public final DateTime convert(final Date o) {
-                return new DateTime(o);
+            public final ZonedDateTime convert(final Date o) {
+                return ZonedDateTime.ofInstant(o.toInstant(), ZoneId.of("GMT"));
             }
         };
     }
@@ -880,7 +880,7 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
         private static final ToString<Date> FROM_DATE = new ToString<Date>() {
             @Override
             public final String convert(final Date o) {
-                return DateUtils.formatIso8601Date(o);
+                return DateUtils.formatIso8601Date(o.toInstant());
             }
         };
 
@@ -912,10 +912,10 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
             }
         };
 
-        private static final ToString<TimeZone> FROM_TIME_ZONE = new ToString<TimeZone>() {
+        private static final ToString<ZoneId> FROM_TIME_ZONE = new ToString<ZoneId>() {
             @Override
-            public final String convert(final TimeZone o) {
-                return o.getID();
+            public final String convert(final ZoneId o) {
+                return o.getId();
             }
         };
 
@@ -928,13 +928,13 @@ final class StandardTypeConverters extends DynamoDbTypeConverterFactory {
     }
 
     /**
-     * {@link TimeZone} conversion functions.
+     * {@link ZoneId} conversion functions.
      */
-    private abstract static class ToTimeZone<T> extends Converter<TimeZone, T> {
+    private abstract static class ToTimeZone<T> extends Converter<ZoneId, T> {
         private static final ToTimeZone<String> FROM_STRING = new ToTimeZone<String>() {
             @Override
-            public final TimeZone convert(final String o) {
-                return TimeZone.getTimeZone(o);
+            public final ZoneId convert(final String o) {
+                return ZoneId.of(o);
             }
         };
     }

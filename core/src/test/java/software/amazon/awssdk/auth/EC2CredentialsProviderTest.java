@@ -99,7 +99,7 @@ public class EC2CredentialsProviderTest {
 
         // When there are valid credentials (but need to be refreshed) and the endpoint returns 404 status,
         // the provider should throw an exception.
-        stubForSuccessResonseWithCustomExpirationDate(new Date(System.currentTimeMillis() + ONE_MINUTE * 4));
+        stubForSuccessResonseWithCustomExpirationDate(Instant.now().plus(Duration.ofMinutes(4)));
         credentialsProvider.getCredentials(); // loads the credentials that will be expired soon
 
         stubForErrorResponse();  // Behaves as if server is unavailable.
@@ -111,7 +111,7 @@ public class EC2CredentialsProviderTest {
         EC2CredentialsProvider credentialsProvider = testCredentialsProvider();
 
         // Successful load
-        stubForSuccessResonseWithCustomExpirationDate(Date.from(Instant.now().plus(Duration.ofDays(10))));
+        stubForSuccessResonseWithCustomExpirationDate(Instant.now().plus(Duration.ofDays(10)));
         assertThat(credentialsProvider.getCredentials()).isNotNull();
 
         // Break the server
@@ -131,7 +131,7 @@ public class EC2CredentialsProviderTest {
                                             .withBody(body)));
     }
 
-    private void stubForSuccessResonseWithCustomExpirationDate(Date expiration) {
+    private void stubForSuccessResonseWithCustomExpirationDate(Instant expiration) {
         stubForSuccessResponseWithCustomBody("{\"AccessKeyId\":\"ACCESS_KEY_ID\",\"SecretAccessKey\":\"SECRET_ACCESS_KEY\","
                                              + "\"Expiration\":\"" + DateUtils.formatIso8601Date(expiration) + "\"}");
     }

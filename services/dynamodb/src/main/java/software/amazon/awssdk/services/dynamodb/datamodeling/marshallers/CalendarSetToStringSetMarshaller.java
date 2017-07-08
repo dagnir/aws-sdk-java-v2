@@ -47,7 +47,7 @@ public class CalendarSetToStringSetMarshaller
 
         List<String> timestamps = new ArrayList<String>(dates.size());
         for (Calendar date : dates) {
-            timestamps.add(DateUtils.formatIso8601Date(date.getTime()));
+            timestamps.add(DateUtils.formatIso8601Date(date.getTime().toInstant()));
         }
 
         return AttributeValue.builder().ss(timestamps).build();

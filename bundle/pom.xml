@@ -54,7 +54,6 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>joda-time:joda-time</include>
                             <include>com.fasterxml.jackson.core:*</include>
                             <include>com.fasterxml.jackson.dataformat:jackson-dataformat-cbor</include>
                             <include>org.apache.httpcomponents:*</include>

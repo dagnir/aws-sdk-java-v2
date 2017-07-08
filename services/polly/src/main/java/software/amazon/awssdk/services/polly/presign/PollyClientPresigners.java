@@ -17,8 +17,10 @@ package software.amazon.awssdk.services.polly.presign;
 
 import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
-import org.joda.time.DateTime;
+
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.auth.SdkClock;
@@ -57,9 +59,9 @@ public final class PollyClientPresigners {
                 .resourcePath("/v1/speech")
                 .httpMethod(SdkHttpMethod.GET);
         marshallIntoRequest(synthesizeSpeechPresignRequest, request);
-        Date expirationDate = synthesizeSpeechPresignRequest.getExpirationDate() == null ?
+        Instant expirationDate = synthesizeSpeechPresignRequest.getExpirationDate() == null ?
                               getDefaultExpirationDate() : synthesizeSpeechPresignRequest.getExpirationDate();
-        return presignerFacade.presign(request.build(), RequestConfig.NO_OP, expirationDate);
+        return presignerFacade.presign(request.build(), RequestConfig.NO_OP, Date.from(expirationDate));
     }
 
     private void marshallIntoRequest(SynthesizeSpeechPresignRequest synthesizeSpeechRequest, SdkHttpFullRequest.Builder request) {
@@ -94,10 +96,9 @@ public final class PollyClientPresigners {
         }
     }
 
-    private Date getDefaultExpirationDate() {
-        return new DateTime(clock.currentTimeMillis())
-                .plusMinutes(SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES)
-                .toDate();
+    private Instant getDefaultExpirationDate() {
+        return Instant.ofEpochMilli(clock.currentTimeMillis())
+                .plus(Duration.ofMinutes(SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES));
     }
 
 }

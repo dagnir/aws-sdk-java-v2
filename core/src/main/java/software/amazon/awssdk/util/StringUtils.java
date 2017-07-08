@@ -78,9 +78,9 @@ public class StringUtils {
      *
      * @return An ISO 8601 timestamp string created from the specified date.
      */
-    public static String fromDate(Date value) {
-        return DateUtils.formatIso8601Date(value);
-    }
+    // public static String fromDate(Date value) {
+//        return DateUtils.formatIso8601Date(value);
+//    }
 
     /**
      * Converts the specified date to an ISO 8601 timestamp string and returns
@@ -92,7 +92,7 @@ public class StringUtils {
      * @return An ISO 8601 timestamp string created from the specified date.
      */
     public static String fromInstant(Instant value) {
-        return DateUtils.formatIso8601Date(Date.from(value));
+        return DateUtils.formatIso8601Date(value);
     }
 
     /**

@@ -200,7 +200,7 @@ public class SdkJsonGenerator implements StructuredJsonGenerator {
     @Override
     public StructuredJsonGenerator writeValue(Instant instant) {
         try {
-            generator.writeNumber(DateUtils.formatServiceSpecificDate(Date.from(instant)));
+            generator.writeNumber(DateUtils.formatServiceSpecificDate(instant));
         } catch (IOException e) {
             throw new JsonGenerationException(e);
         }

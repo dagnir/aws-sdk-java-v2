@@ -16,6 +16,7 @@
 package software.amazon.awssdk.services.dynamodb.datamodeling.unmarshallers;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class CalendarSetUnmarshaller extends SsUnmarshaller {
 
         for (String s : value.ss()) {
             Calendar cal = GregorianCalendar.getInstance();
-            cal.setTime(DateUtils.parseIso8601Date(s));
+            cal.setTime(Date.from(DateUtils.parseIso8601Date(s)));
             result.add(cal);
         }
 

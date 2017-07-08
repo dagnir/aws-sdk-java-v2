@@ -18,6 +18,8 @@ package software.amazon.awssdk.services.dynamodb.datamodeling.unmarshallers;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.util.DateUtils;
 
+import java.util.Date;
+
 /**
  * An unmarshaller that unmarshals ISO-8601-formatted dates as Java
  * {@code Date} objects.
@@ -36,6 +38,6 @@ public class DateUnmarshaller extends SUnmarshaller {
 
     @Override
     public Object unmarshall(AttributeValue value) {
-        return DateUtils.parseIso8601Date(value.s());
+        return Date.from(DateUtils.parseIso8601Date(value.s()));
     }
 }

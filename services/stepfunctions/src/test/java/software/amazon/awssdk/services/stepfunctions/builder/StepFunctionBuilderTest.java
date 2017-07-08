@@ -46,14 +46,15 @@ import static software.amazon.awssdk.services.stepfunctions.builder.StepFunction
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 public class StepFunctionBuilderTest {
-
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
     @Test
     public void singleSucceedState() {
         final StateMachine stateMachine = stateMachine()
@@ -206,7 +207,7 @@ public class StepFunctionBuilderTest {
         final StateMachine stateMachine = stateMachine()
                 .startAt("InitialState")
                 .state("InitialState", waitState()
-                        .waitFor(timestamp(DateTime.parse("2016-03-14T01:59:00Z").toDate()))
+                        .waitFor(timestamp(parseToDate("2016-03-14T01:59:00Z")))
                         .transition(end()))
                 .build();
 
@@ -218,7 +219,7 @@ public class StepFunctionBuilderTest {
         final StateMachine stateMachine = stateMachine()
                 .startAt("InitialState")
                 .state("InitialState", waitState()
-                        .waitFor(timestamp(DateTime.parse("2016-03-14T01:59:00.123Z").toDate()))
+                        .waitFor(timestamp(parseToDate("2016-03-14T01:59:00.123Z")))
                         .transition(end()))
                 .build();
 
@@ -226,11 +227,11 @@ public class StepFunctionBuilderTest {
     }
 
     @Test
-    public void singleWaitState_WaitUntilTimestampWithTimezone() {
+    public void singleWaitState_WaitUntilTimestampWithTimezoneOffset() {
         final StateMachine stateMachine = stateMachine()
                 .startAt("InitialState")
                 .state("InitialState", waitState()
-                        .waitFor(timestamp(DateTime.parse("2016-03-14T01:59:00.123-08:00").toDate()))
+                        .waitFor(timestamp(parseToDate("2016-03-14T01:59:00.123-08:00")))
                         .transition(end()))
                 .build();
 
@@ -374,7 +375,7 @@ public class StepFunctionBuilderTest {
 
     @Test
     public void choiceStateWithAllPrimitiveConditions() {
-        final Date date = DateTime.parse("2016-03-14T01:59:00.000Z").toDate();
+        final Date date = parseToDate("2016-03-14T01:59:00.000Z");
         final StateMachine stateMachine = stateMachine()
                 .startAt("InitialState")
                 .state("InitialState", choiceState()
@@ -534,4 +535,7 @@ public class StepFunctionBuilderTest {
         return TestResourceLoader.loadAsJson(resourcePath);
     }
 
+    private Date parseToDate(String dateString) {
+        return Date.from(Instant.from(FORMATTER.parse(dateString)));
+    }
 }

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.Date;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -191,6 +192,23 @@ public class SimpleTypeCborUnmarshallers {
             return new Date(unmarshallerContext.getJsonParser().getLongValue());
         }
     }
+
+    /**
+     * Unmarshaller for Instant values - JSON dates come in as epoch seconds.
+     */
+    public static class InstantCborUnmarshaller implements Unmarshaller<Instant, JsonUnmarshallerContext> {
+        private static final InstantCborUnmarshaller INSTANCE = new InstantCborUnmarshaller();
+
+        public static InstantCborUnmarshaller getInstance() {
+            return INSTANCE;
+        }
+
+        public Instant unmarshall(JsonUnmarshallerContext unmarshallerContext)
+                throws Exception {
+            return Instant.ofEpochMilli(unmarshallerContext.getJsonParser().getLongValue());
+        }
+    }
+
 
     /**
      * Unmarshaller for ByteBuffer values.

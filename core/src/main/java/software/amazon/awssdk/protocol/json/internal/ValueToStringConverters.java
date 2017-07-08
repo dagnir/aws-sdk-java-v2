@@ -57,5 +57,5 @@ public class ValueToStringConverters {
     /**
      * Marshalls date to an ISO8601 date string.
      */
-    public static final ValueToString<Instant> FROM_INSTANT = (Instant i) -> StringUtils.fromDate(Date.from(i));
+    public static final ValueToString<Instant> FROM_INSTANT = StringUtils::fromInstant;
 }

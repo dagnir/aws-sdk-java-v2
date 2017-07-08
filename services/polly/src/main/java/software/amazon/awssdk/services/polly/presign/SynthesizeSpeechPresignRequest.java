@@ -16,8 +16,8 @@
 package software.amazon.awssdk.services.polly.presign;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
 import software.amazon.awssdk.services.polly.model.SpeechMarkType;
@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.polly.model.VoiceId;
  */
 public class SynthesizeSpeechPresignRequest implements Serializable {
 
-    private Date expirationDate;
+    private Instant expirationDate;
 
     private AwsCredentialsProvider signingCredentials;
 
@@ -51,7 +51,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
      * @return Expiration of the presigned request. Default is
      *     {@link PollyClientPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      */
-    public Date getExpirationDate() {
+    public Instant getExpirationDate() {
         return expirationDate;
     }
 
@@ -59,7 +59,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
      * Sets the expiration of the presigned request. Default is
      * {@link PollyClientPresigners#SYNTHESIZE_SPEECH_DEFAULT_EXPIRATION_MINUTES} minutes if not overridden.
      */
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(Instant expirationDate) {
         this.expirationDate = expirationDate;
     }
 
@@ -69,7 +69,7 @@ public class SynthesizeSpeechPresignRequest implements Serializable {
      *
      * @return This object for method chaining.
      */
-    public SynthesizeSpeechPresignRequest withExpirationDate(Date date) {
+    public SynthesizeSpeechPresignRequest withExpirationDate(Instant date) {
         setExpirationDate(date);
         return this;
     }

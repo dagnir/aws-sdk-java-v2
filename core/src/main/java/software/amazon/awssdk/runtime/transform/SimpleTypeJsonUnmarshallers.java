@@ -173,7 +173,7 @@ public class SimpleTypeJsonUnmarshallers {
         public Instant unmarshall(JsonUnmarshallerContext unmarshallerContext)
                 throws Exception {
             return DateUtils.parseServiceSpecificDate(unmarshallerContext
-                    .readText()).toInstant();
+                    .readText());
         }
     }
 

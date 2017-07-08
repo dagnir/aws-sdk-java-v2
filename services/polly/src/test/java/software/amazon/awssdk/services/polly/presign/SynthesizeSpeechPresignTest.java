@@ -21,13 +21,13 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.TimeZone;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import software.amazon.awssdk.auth.Aws4Signer;
@@ -35,7 +35,6 @@ import software.amazon.awssdk.auth.AwsCredentials;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.SdkClock;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.StaticSignerProvider;
 import software.amazon.awssdk.auth.presign.PresignerParams;
 import software.amazon.awssdk.runtime.auth.SignerProvider;
@@ -49,22 +48,17 @@ public class SynthesizeSpeechPresignTest {
                                                                           "text", "textType", "voiceId", "$jacocoData",
                                                                           "speechMarkTypes");
 
-    private static final Date SIGNER_DATE = getFixedDate();
+    private static final Instant SIGNER_DATE = getFixedDate();
 
-    private static final SdkClock CLOCK = new SdkClock.MockClock(SIGNER_DATE);
+    private static final SdkClock CLOCK = new SdkClock.MockClock(Date.from(SIGNER_DATE));
 
     private static final AwsCredentialsProvider CREDENTIALS = new StaticCredentialsProvider(
             new AwsCredentials("akid", "skid"));
 
     private PollyClientPresigners presigners;
 
-    private static Date getFixedDate() {
-        Calendar c = new GregorianCalendar();
-        c.setTimeZone(TimeZone.getTimeZone("UTC"));
-        // 20161107T173933Z
-        // Note: month is 0-based
-        c.set(2016, 10, 7, 17, 39, 33);
-        return c.getTime();
+    private static Instant getFixedDate() {
+        return ZonedDateTime.of(2016, 11, 7, 17, 39, 33, 0, ZoneId.of("UTC")).toInstant();
     }
 
     @Before
@@ -80,7 +74,7 @@ public class SynthesizeSpeechPresignTest {
 
     private SignerProvider createSigner() {
         final Aws4Signer signer = new Aws4Signer(CLOCK);
-        signer.setOverrideDate(SIGNER_DATE);
+        signer.setOverrideDate(Date.from(SIGNER_DATE));
         signer.setServiceName("polly");
         return new StaticSignerProvider(signer);
     }
@@ -119,7 +113,7 @@ public class SynthesizeSpeechPresignTest {
     public void multipleLexiconNamesInRequest_CanonicalizesCorrectly() {
         final URL url = presigners.getPresignedSynthesizeSpeechUrl(
                 new SynthesizeSpeechPresignRequest()
-                        .withExpirationDate(new DateTime(SIGNER_DATE).plusMinutes(30).toDate())
+                        .withExpirationDate(SIGNER_DATE.plus(Duration.ofMinutes(30)))
                         .withText("S3 is an AWS service")
                         .withOutputFormat(OutputFormat.Mp3)
                         .withLexiconNames("FooLexicon", "AwsLexicon")
