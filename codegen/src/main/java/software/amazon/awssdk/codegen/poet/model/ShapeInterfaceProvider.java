@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 import java.util.Set;
 
@@ -26,5 +27,5 @@ public interface ShapeInterfaceProvider {
 
     Set<TypeName> interfacesToImplement();
 
-    TypeName baseClassToExtend();
+    ClassName baseClassToExtend();
 }

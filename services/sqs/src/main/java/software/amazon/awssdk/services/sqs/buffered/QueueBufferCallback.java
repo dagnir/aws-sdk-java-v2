@@ -16,6 +16,7 @@
 package software.amazon.awssdk.services.sqs.buffered;
 
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.SdkRequest;
 import software.amazon.awssdk.handlers.AsyncHandler;
 
 /**
@@ -25,7 +26,7 @@ import software.amazon.awssdk.handlers.AsyncHandler;
  * have to store it in the classes that do actual work. Those classes tend to forget about the
  * request objects as soon as the required data was extracted from them.
  */
-class QueueBufferCallback<RequestT extends AmazonWebServiceRequest, ResultT> {
+class QueueBufferCallback<RequestT extends SdkRequest, ResultT> {
 
     private final AsyncHandler<RequestT, ResultT> handler;
     private final RequestT request;

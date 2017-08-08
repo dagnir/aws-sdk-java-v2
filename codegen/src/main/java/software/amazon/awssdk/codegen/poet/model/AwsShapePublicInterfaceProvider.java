@@ -20,9 +20,9 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import java.util.HashSet;
 import java.util.Set;
-import software.amazon.awssdk.AmazonWebServiceRequest;
-import software.amazon.awssdk.AmazonWebServiceResult;
-import software.amazon.awssdk.ResponseMetadata;
+
+import software.amazon.awssdk.SdkRequest;
+import software.amazon.awssdk.SdkResponse;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -53,9 +53,7 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
 
         switch (shapeModel.getShapeType()) {
             case Exception:
-            case Request:
             case Model:
-            case Response:
                 superInterfaces.add(toCopyableBuilderInterface());
                 break;
             default:
@@ -70,15 +68,15 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
     }
 
     @Override
-    public TypeName baseClassToExtend() {
+    public ClassName baseClassToExtend() {
         switch (shapeModel.getShapeType()) {
             case Request:
-                return ClassName.get(AmazonWebServiceRequest.class);
+                return ClassName.get(SdkRequest.class);
             case Response:
                 if (intermediateModel.getMetadata().getProtocol() == Protocol.API_GATEWAY) {
                     return ClassName.get("software.amazon.awssdk.opensdk", "BaseResult");
                 }
-                return ParameterizedTypeName.get(AmazonWebServiceResult.class, ResponseMetadata.class);
+                return ClassName.get(SdkResponse.class);
             case Exception:
                 return exceptionBaseClass();
             case Model:
@@ -87,7 +85,7 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
         }
     }
 
-    private TypeName exceptionBaseClass() {
+    private ClassName exceptionBaseClass() {
         final String customExceptionBase = intermediateModel.getCustomizationConfig()
                 .getSdkModeledExceptionBaseClassName();
         if (customExceptionBase != null) {
@@ -97,14 +95,14 @@ public class AwsShapePublicInterfaceProvider implements ShapeInterfaceProvider {
 
     }
 
-    private boolean implementStructuredPojoInterface() {
-        return intermediateModel.getMetadata().isJsonProtocol() && shapeModel.getShapeType() == ShapeType.Model;
-    }
-
     private TypeName toCopyableBuilderInterface() {
         return ParameterizedTypeName.get(ClassName.get(ToCopyableBuilder.class),
                 modelClassName().nestedClass("Builder"),
                 modelClassName());
+    }
+
+    private boolean implementStructuredPojoInterface() {
+        return intermediateModel.getMetadata().isJsonProtocol() && shapeModel.getShapeType() == ShapeType.Model;
     }
 
     private ClassName modelClassName() {

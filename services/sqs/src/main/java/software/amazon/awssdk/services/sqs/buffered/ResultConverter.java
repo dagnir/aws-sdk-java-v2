@@ -18,6 +18,7 @@ package software.amazon.awssdk.services.sqs.buffered;
 import software.amazon.awssdk.AmazonServiceException;
 import software.amazon.awssdk.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.SdkRequest;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResultEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
@@ -44,8 +45,9 @@ class ResultConverter {
 
     }
 
-    public static <X extends AmazonWebServiceRequest> X appendUserAgent(X request, String userAgent) {
-        request.getRequestClientOptions().appendUserAgent(userAgent);
+    public static <X extends SdkRequest> X appendUserAgent(X request, String userAgent) {
+        // FIXME(dongie)
+        // request.getRequestClientOptions().appendUserAgent(userAgent);
         return request;
     }
 

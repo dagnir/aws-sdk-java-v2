@@ -41,7 +41,7 @@ public class DefaultRequest<T> implements Request<T> {
      * The original, user facing request object which this internal request
      * object is representing
      */
-    private final AmazonWebServiceRequest originalRequest;
+    private final SdkRequest originalRequest;
 
     /** The resource path being requested. */
     private String resourcePath;
@@ -81,7 +81,7 @@ public class DefaultRequest<T> implements Request<T> {
      *            The original, user facing, AWS request being represented by
      *            this internal request object.
      */
-    public DefaultRequest(AmazonWebServiceRequest originalRequest, String serviceName) {
+    public DefaultRequest(SdkRequest originalRequest, String serviceName) {
         this.serviceName = serviceName;
         this.originalRequest = originalRequest == null
                                ? AmazonWebServiceRequest.NOOP
@@ -107,7 +107,7 @@ public class DefaultRequest<T> implements Request<T> {
      * @return The original, user facing request object which this request
      *         object is representing.
      */
-    public AmazonWebServiceRequest getOriginalRequest() {
+    public SdkRequest getOriginalRequest() {
         return originalRequest;
     }
 
@@ -339,7 +339,8 @@ public class DefaultRequest<T> implements Request<T> {
 
     @Override
     public ReadLimitInfo getReadLimitInfo() {
-        return originalRequest;
+        // FIXME(dongie)
+        return null;
     }
 
     @Override

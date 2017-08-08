@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.SdkRequest;
 import software.amazon.awssdk.services.sqs.SQSAsyncClient;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityBatchRequest;
@@ -163,7 +164,7 @@ public class SendQueueBuffer {
      * @return new {@code OutboundBatchTask} of appropriate type, never null
      */
     @SuppressWarnings("unchecked")
-    private <R extends AmazonWebServiceRequest, ResultT> OutboundBatchTask<R, ResultT> newOutboundBatchTask(R request) {
+    private <R extends SdkRequest, ResultT> OutboundBatchTask<R, ResultT> newOutboundBatchTask(R request) {
 
         if (request instanceof SendMessageRequest) {
             return (OutboundBatchTask<R, ResultT>) new SendMessageBatchTask();
@@ -222,7 +223,7 @@ public class SendQueueBuffer {
      *             (see the various outbound calls for details)
      */
     @SuppressWarnings("unchecked")
-    <OBT extends OutboundBatchTask<R, ResultT>, R extends AmazonWebServiceRequest, ResultT>
+    <OBT extends OutboundBatchTask<R, ResultT>, R extends SdkRequest, ResultT>
         QueueBufferFuture<R, ResultT> submitOutboundRequest(Object operationLock,
                                                             OBT[] openOutboundBatchTask,
                                                             R request,
@@ -299,7 +300,7 @@ public class SendQueueBuffer {
      * @param <ResultT>
      *            the type of result he futures issued by this task will return
      */
-    private abstract class OutboundBatchTask<R extends AmazonWebServiceRequest, ResultT> implements Runnable {
+    private abstract class OutboundBatchTask<R extends SdkRequest, ResultT> implements Runnable {
 
         protected final List<R> requests;
         protected final ArrayList<QueueBufferFuture<R, ResultT>> futures;

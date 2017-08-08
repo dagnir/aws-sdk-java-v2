@@ -21,12 +21,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.SdkRequest;
 
 /**
  * QueueBufferFuture class is used to deliver asynchronous results of various QueueBuffer
  * operations. QueueBufferFutures are not cancellable
  */
-class QueueBufferFuture<ReqT extends AmazonWebServiceRequest, ResT> implements Future<ResT> {
+class QueueBufferFuture<ReqT extends SdkRequest, ResT> implements Future<ResT> {
     /**
      * callback we should call after the future is done. may be null
      */

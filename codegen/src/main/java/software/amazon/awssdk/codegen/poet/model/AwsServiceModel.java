@@ -31,6 +31,7 @@ import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.model.intermediate.VariableModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
@@ -59,7 +60,7 @@ public class AwsServiceModel implements ClassSpec {
         this.interfaceProvider = new AwsShapePublicInterfaceProvider(intermediateModel, this.shapeModel);
         this.modelMethodOverrides = new ModelMethodOverrides(this.poetExtensions);
         this.modelBuilderSpecs = new ModelBuilderSpecs(intermediateModel, this.shapeModel, this.shapeModelSpec,
-                                                       this.typeProvider);
+                                                       this.typeProvider, this.interfaceProvider);
     }
 
     @Override
@@ -92,7 +93,18 @@ public class AwsServiceModel implements ClassSpec {
     }
 
     private TypeName modelSuperClass() {
-        return interfaceProvider.baseClassToExtend();
+        // FIXME (dongie)
+        switch (shapeModel.getShapeType()) {
+            case Request:
+            case Response:
+                return ParameterizedTypeName.get(interfaceProvider.baseClassToExtend(),
+                        className().nestedClass("Builder"),
+                        className());
+            default:
+                return interfaceProvider.baseClassToExtend();
+
+        }
+
     }
 
     private List<MethodSpec> modelClassMethods() {
@@ -183,6 +195,12 @@ public class AwsServiceModel implements ClassSpec {
         MethodSpec.Builder ctorBuilder = MethodSpec.constructorBuilder()
                                                    .addModifiers(Modifier.PRIVATE)
                                                    .addParameter(modelBuilderSpecs.builderImplName(), "builder");
+
+        if (interfaceProvider.baseClassToExtend() != ClassName.OBJECT
+                // FIXME (dongie): there should be a better way to do this
+                && shapeModel.getShapeType() != ShapeType.Exception) {
+            ctorBuilder.addStatement("super(builder)");
+        }
 
         shapeModelSpec.fields().forEach(f -> ctorBuilder.addStatement("this.$N = builder.$N", f, f));
 

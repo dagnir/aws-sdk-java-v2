@@ -15,12 +15,51 @@
 
 package software.amazon.awssdk;
 
+import java.util.Optional;
+
+import software.amazon.awssdk.event.ProgressListener;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
+
 /**
  * The base class for all SDK requests.
  *
- * TODO: SDK-specific options on the {@link AmazonWebServiceRequest} should be migrated here as part of the base-model refactor.
- *
  * @see SdkResponse
  */
-public abstract class SdkRequest {
+public abstract class SdkRequest<B extends SdkRequest.Builder<B, R>, R extends SdkRequest<B, R>> implements ToCopyableBuilder<B, R> {
+
+    private final ProgressListener progressListener;
+
+    protected SdkRequest(BuilderImpl<B, R> builder) {
+        progressListener = builder.progressListener;
+    }
+
+    final public Optional<ProgressListener> progressListener() {
+        return Optional.ofNullable(progressListener);
+    }
+
+    public interface Builder<B extends SdkRequest.Builder<B, R>, R extends SdkRequest<B, R>> extends CopyableBuilder<B, R> {
+        B progressListener(ProgressListener progressListener);
+    }
+
+    protected static abstract class BuilderImpl<B extends Builder<B, R>, R extends SdkRequest<B, R>> implements Builder<B, R> {
+        private final Class<? extends B> concrete;
+
+        private ProgressListener progressListener;
+
+        protected BuilderImpl(Class<? extends B> concrete) {
+            this.concrete = concrete;
+        }
+
+        protected BuilderImpl(Class<? extends B> concrete, SdkRequest<B, R> request) {
+            this(concrete);
+            this.progressListener = request.progressListener;
+        }
+
+        @Override
+        public B progressListener(ProgressListener progressListener) {
+            this.progressListener = progressListener;
+            return concrete.cast(this);
+        }
+    }
 }

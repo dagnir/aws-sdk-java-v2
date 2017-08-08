@@ -24,7 +24,11 @@ package software.amazon.awssdk;
  * @param <T>
  *            The type of result contained by this response.
  */
-public class AmazonWebServiceResponse<T> extends SdkResponse {
+public class AmazonWebServiceResponse<T> extends SdkResponse<AmazonWebServiceResponse.Builder<T>, AmazonWebServiceResponse<T>> {
+
+    public AmazonWebServiceResponse() {
+        super(null);
+    }
 
     /** The result contained by this response. */
     private T result;
@@ -72,6 +76,15 @@ public class AmazonWebServiceResponse<T> extends SdkResponse {
      */
     public void setResponseMetadata(ResponseMetadata responseMetadata) {
         this.responseMetadata = responseMetadata;
+    }
+
+    @Override
+    public Builder<T> toBuilder() {
+        return null;
+    }
+
+    public interface Builder<T> extends SdkResponse.Builder<Builder<T>, AmazonWebServiceResponse<T>> {
+
     }
 
     /**

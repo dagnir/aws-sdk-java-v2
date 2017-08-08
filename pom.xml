@@ -56,7 +56,7 @@
         <module>services</module>
         <module>aws-sdk-java</module>
         <module>core</module>
-        <module>opensdk-runtime</module>
+        <!-- <module>opensdk-runtime</module> -->
         <module>cloudwatchmetrics</module>
         <module>bom</module>
         <module>codegen</module>

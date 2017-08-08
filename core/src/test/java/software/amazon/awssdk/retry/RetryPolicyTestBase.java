@@ -36,7 +36,8 @@ import software.amazon.awssdk.util.StringInputStream;
  */
 public class RetryPolicyTestBase {
 
-    protected static final AmazonWebServiceRequest originalRequest = new TestAmazonWebServiceRequest();
+    // FIXME(dongie)
+    protected static final AmazonWebServiceRequest originalRequest = null;
     protected static final HttpResponseHandler<AmazonServiceException> errorResponseHandler = new TestHttpResponseHandler();
 
     /**
@@ -155,9 +156,6 @@ public class RetryPolicyTestBase {
             exceptions.add(exception);
             retriesAttemptedValues.add(retriesAttempted);
         }
-    }
-
-    public static class TestAmazonWebServiceRequest extends AmazonWebServiceRequest {
     }
 
     /**

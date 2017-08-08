@@ -15,13 +15,31 @@
 
 package software.amazon.awssdk;
 
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
+
 /**
  * The base class for all SDK responses.
  *
- * TODO: SDK-specific options on the {@link AmazonWebServiceResponse} and {@link AmazonWebServiceResult} should be migrated here
- * as part of the base-model refactor.
- *
  * @see SdkRequest
  */
-public abstract class SdkResponse {
+public abstract class SdkResponse<B extends SdkResponse.Builder<B, R>, R extends SdkResponse<B, R>> implements ToCopyableBuilder<B, R> {
+
+    protected SdkResponse(BuilderImpl<B, R> builder) {
+    }
+
+    public interface Builder<B extends SdkResponse.Builder<B, R>, R extends SdkResponse<B, R>> extends CopyableBuilder<B, R> {
+    }
+
+    protected static abstract class BuilderImpl<B extends Builder<B, R>, R extends SdkResponse<B, R>> implements Builder<B, R> {
+        private final Class<? extends B> concrete;
+
+        protected BuilderImpl(Class<? extends B> concrete) {
+            this.concrete = concrete;
+        }
+
+        protected BuilderImpl(Class<? extends B> concrete, SdkResponse<B, R> request) {
+            this(concrete);
+        }
+    }
 }
