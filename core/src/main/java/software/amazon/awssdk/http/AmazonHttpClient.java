@@ -55,7 +55,6 @@ import software.amazon.awssdk.http.pipeline.stages.MoveParametersToBodyStage;
 import software.amazon.awssdk.http.pipeline.stages.ReportRequestContentLengthStage;
 import software.amazon.awssdk.http.pipeline.stages.RetryableStage;
 import software.amazon.awssdk.http.pipeline.stages.SigningStage;
-import software.amazon.awssdk.http.pipeline.stages.ThreadInterruptionHandlingStage;
 import software.amazon.awssdk.http.pipeline.stages.TimerExceptionHandlingStage;
 import software.amazon.awssdk.http.pipeline.stages.UnwrapResponseContainer;
 import software.amazon.awssdk.interceptor.ExecutionAttributes;
