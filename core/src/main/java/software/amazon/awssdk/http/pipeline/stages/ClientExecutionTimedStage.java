@@ -25,6 +25,7 @@ import software.amazon.awssdk.RequestExecutionContext;
 import software.amazon.awssdk.Response;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.config.ClientConfiguration;
+import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpClientDependencies;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.exception.ClientExecutionTimeoutException;
@@ -53,7 +54,12 @@ public class ClientExecutionTimedStage<OutputT> implements RequestToResponsePipe
     @Override
     public Response<OutputT> execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
         try {
-            return executeWithTimer(request, context);
+            final Response<OutputT> result = executeWithTimer(request, context);
+            // We allow users to just preserve the interrupted flag upon
+            // being interrupted without rethrowing the interrupted exception
+            // but we still want to bubble up the client exception
+            handleUnRethrownInterruptedException(context);
+            return result;
         } catch (InterruptedException ie) {
             throw handleInterruptedException(context, ie);
         } catch (AbortedException ae) {
@@ -131,6 +137,12 @@ public class ClientExecutionTimedStage<OutputT> implements RequestToResponsePipe
             return clientConfig.overrideConfiguration().totalExecutionTimeout().toMillis();
         } else {
             return 0;
+        }
+    }
+
+    private void handleUnRethrownInterruptedException(RequestExecutionContext context) {
+        if (context.clientExecutionTrackerTask().hasTimeoutExpired() && Thread.currentThread().isInterrupted()) {
+            throw new ClientExecutionTimeoutException();
         }
     }
 }

@@ -114,7 +114,6 @@ public class GetObjectFaultIntegrationTest extends S3IntegrationTestBase {
                         fail("Expected Interrupted Exception");
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
-                        throw new RuntimeException("Interrupted");
                     }
                     return null;
                 });
