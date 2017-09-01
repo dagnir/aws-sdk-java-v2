@@ -22,6 +22,7 @@ import software.amazon.awssdk.annotations.SdkTestInternalApi;
 import software.amazon.awssdk.annotations.ThreadSafe;
 import software.amazon.awssdk.core.AmazonServiceException;
 import software.amazon.awssdk.core.AwsSystemSetting;
+import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.http.HttpResponseHandler;
 import software.amazon.awssdk.core.protocol.OperationInfo;
 import software.amazon.awssdk.core.protocol.Protocol;
@@ -48,7 +49,8 @@ public class SdkJsonProtocolFactory {
         createErrorUnmarshallers();
     }
 
-    public <T> ProtocolRequestMarshaller<T> createProtocolMarshaller(OperationInfo operationInfo, T origRequest) {
+    public <T extends SdkRequest> ProtocolRequestMarshaller<T> createProtocolMarshaller(
+            OperationInfo operationInfo, T origRequest) {
         return JsonProtocolMarshallerBuilder.<T>standard()
                 .jsonGenerator(createGenerator(operationInfo))
                 .contentType(getContentType())

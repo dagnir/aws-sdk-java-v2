@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
-import software.amazon.awssdk.utils.builder.CopyableBuilder;
-import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class NestedContainersRequest extends AmazonWebServiceRequest implements
-        ToCopyableBuilder<NestedContainersRequest.Builder, NestedContainersRequest> {
+public class NestedContainersRequest extends JsonProtocolTestsRequest {
     private final List<List<String>> listOfListOfStrings;
 
     private final List<List<List<String>>> listOfListOfListOfStrings;
@@ -22,6 +19,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
     private final Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 
     private NestedContainersRequest(BuilderImpl builder) {
+        super(builder);
         this.listOfListOfStrings = builder.listOfListOfStrings;
         this.listOfListOfListOfStrings = builder.listOfListOfListOfStrings;
         this.mapOfStringToListOfListOfStrings = builder.mapOfStringToListOfListOfStrings;
@@ -32,7 +30,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
      * <p>
      * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
      * </p>
-     *
+     * 
      * @return The value of the ListOfListOfStrings property for this object.
      */
     public List<List<String>> listOfListOfStrings() {
@@ -44,7 +42,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
      * <p>
      * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
      * </p>
-     *
+     * 
      * @return The value of the ListOfListOfListOfStrings property for this object.
      */
     public List<List<List<String>>> listOfListOfListOfStrings() {
@@ -56,7 +54,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
      * <p>
      * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
      * </p>
-     *
+     * 
      * @return The value of the MapOfStringToListOfListOfStrings property for this object.
      */
     public Map<String, List<List<String>>> mapOfStringToListOfListOfStrings() {
@@ -153,7 +151,7 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         }
     }
 
-    public interface Builder extends CopyableBuilder<Builder, NestedContainersRequest> {
+    public interface Builder extends JsonProtocolTestsRequest.Builder {
         /**
          * Sets the value of the ListOfListOfStrings property for this object.
          *
@@ -199,9 +197,15 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
          */
         Builder mapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings);
+
+        @Override
+        Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig);
+
+        @Override
+        NestedContainersRequest build();
     }
 
-    static final class BuilderImpl implements Builder {
+    static final class BuilderImpl extends JsonProtocolTestsRequest.BuilderImpl implements Builder {
         private List<List<String>> listOfListOfStrings;
 
         private List<List<List<String>>> listOfListOfListOfStrings;
@@ -278,8 +282,15 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         }
 
         @Override
+        public Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig) {
+            super.requestOverrideConfig(awsRequestOverrideConfig);
+            return this;
+        }
+
+        @Override
         public NestedContainersRequest build() {
             return new NestedContainersRequest(this);
         }
     }
 }
+

@@ -16,6 +16,7 @@
 package software.amazon.awssdk.core.http.pipeline.stages;
 
 import java.nio.ByteBuffer;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;

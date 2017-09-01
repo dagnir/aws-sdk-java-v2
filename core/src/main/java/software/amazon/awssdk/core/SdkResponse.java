@@ -20,12 +20,14 @@ import java.util.Optional;
 /**
  * The base class for all SDK responses.
  *
- * TODO: SDK-specific options on the {@link AmazonWebServiceResponse} and {@link AmazonWebServiceResult} should be migrated here
- * as part of the base-model refactor.
- *
  * @see SdkRequest
  */
-public abstract class SdkResponse {
+public interface SdkResponse {
+
+    /**
+     * @return The metadata about this response.
+     */
+    Object responseMetadata();
 
     /**
      * Used to retrieve the value of a field from any class that extends {@link SdkResponse}. The field name
@@ -38,7 +40,13 @@ public abstract class SdkResponse {
      * @param clazz The class to cast the returned object to.
      * @return Optional containing the casted return value
      */
-    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+    default  <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
         return Optional.empty();
+    }
+
+    Builder toBuilder();
+
+    interface Builder {
+        SdkResponse build();
     }
 }

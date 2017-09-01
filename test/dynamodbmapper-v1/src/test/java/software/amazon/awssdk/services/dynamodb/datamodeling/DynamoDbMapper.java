@@ -35,7 +35,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.AmazonServiceException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
+import software.amazon.awssdk.core.AwsRequest;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.SdkClientException;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.core.regions.Region;
@@ -770,14 +771,28 @@ public class DynamoDbMapper extends AbstractDynamoDbMapper {
         return mergedExpectedValues;
     }
 
-    static <X extends AmazonWebServiceRequest> X applyUserAgent(X request) {
-        request.getRequestClientOptions().appendUserAgent(USER_AGENT);
-        return request;
+    static <X extends AwsRequest> X applyUserAgent(X request) {
+        final AwsRequestOverrideConfig newCfg = request.requestOverrideConfig()
+                .map(c -> c.toBuilder())
+                .orElse(AwsRequestOverrideConfig.builder())
+                .appendUserAgent(USER_AGENT)
+                .build();
+
+        return (X) request.toBuilder()
+                .requestOverrideConfig(newCfg)
+                .build();
     }
 
-    static <X extends AmazonWebServiceRequest> X applyBatchOperationUserAgent(X request) {
-        request.getRequestClientOptions().appendUserAgent(USER_AGENT_BATCH_OPERATION);
-        return request;
+    static <X extends AwsRequest> X applyBatchOperationUserAgent(X request) {
+        final AwsRequestOverrideConfig newCfg = request.requestOverrideConfig()
+                .map(c -> c.toBuilder())
+                .orElse(AwsRequestOverrideConfig.builder())
+                .appendUserAgent(USER_AGENT_BATCH_OPERATION)
+                .build();
+
+        return (X) request.toBuilder()
+                .requestOverrideConfig(newCfg)
+                .build();
     }
 
     /**

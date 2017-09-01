@@ -15,12 +15,14 @@
 
 package software.amazon.awssdk.core.http.async;
 
+import static software.amazon.awssdk.core.RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE;
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.nio.ByteBuffer;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -50,7 +52,10 @@ public class SimpleRequestProvider implements SdkHttpRequestProvider {
     }
 
     private int getReadLimit(ExecutionAttributes executionAttributes) {
-        return executionAttributes.getAttribute(AwsExecutionAttributes.REQUEST_CONFIG).getRequestClientOptions().getReadLimit();
+        return executionAttributes.getAttribute(AwsExecutionAttributes.REQUEST_CONFIG)
+                .readLimitInfo()
+                .map(ReadLimitInfo::getReadLimit)
+                .orElse(DEFAULT_STREAM_BUFFER_SIZE);
     }
 
     @Override

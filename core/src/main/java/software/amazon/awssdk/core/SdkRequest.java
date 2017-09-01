@@ -17,14 +17,22 @@ package software.amazon.awssdk.core;
 
 import java.util.Optional;
 
+import software.amazon.awssdk.annotations.Immutable;
+
 /**
  * The base class for all SDK requests.
- *
- * TODO: SDK-specific options on the {@link AmazonWebServiceRequest} should be migrated here as part of the base-model refactor.
- *
+ * <p>
+ *     Implementations must ensure the class is immutable.
+ * </p>
  * @see SdkResponse
  */
-public abstract class SdkRequest {
+@Immutable
+public interface SdkRequest {
+
+    /**
+     * @return The optional client configuration overrides for this request.
+     */
+    Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig();
 
     /**
      * Used to retrieve the value of a field from any class that extends {@link SdkRequest}. The field name
@@ -37,7 +45,15 @@ public abstract class SdkRequest {
      * @param clazz The class to cast the returned object to.
      * @return Optional containing the casted return value
      */
-    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+    default <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
         return Optional.empty();
+    }
+
+    Builder toBuilder();
+
+    interface Builder {
+        SdkRequestOverrideConfig requestOverrideConfig();
+
+        SdkRequest build();
     }
 }

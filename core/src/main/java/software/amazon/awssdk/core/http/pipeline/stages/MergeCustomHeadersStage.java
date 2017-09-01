@@ -43,7 +43,8 @@ public class MergeCustomHeadersStage implements MutableRequestToRequestPipeline 
             throws Exception {
         return request.headers(mergeHeaders(request.headers(),
                                             config.overrideConfiguration().additionalHttpHeaders(),
-                                            adaptHeaders(context.requestConfig().getCustomRequestHeaders())));
+                                            adaptHeaders(context.requestConfig().additionalHeaders()
+                                                    .orElse(Collections.emptyMap()))));
     }
 
     @SafeVarargs

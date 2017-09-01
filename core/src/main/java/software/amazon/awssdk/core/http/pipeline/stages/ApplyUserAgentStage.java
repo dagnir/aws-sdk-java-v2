@@ -16,7 +16,6 @@
 package software.amazon.awssdk.core.http.pipeline.stages;
 
 import software.amazon.awssdk.core.AwsSystemSetting;
-import software.amazon.awssdk.core.RequestClientOptions;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.config.AdvancedClientOption;
 import software.amazon.awssdk.core.config.ClientConfiguration;
@@ -47,11 +46,8 @@ public class ApplyUserAgentStage implements MutableRequestToRequestPipeline {
     @Override
     public SdkHttpFullRequest.Builder execute(SdkHttpFullRequest.Builder request, RequestExecutionContext context)
             throws Exception {
-        RequestClientOptions opts = context.requestConfig().getRequestClientOptions();
-        String userAgent = opts != null
-                           ? getUserAgent(clientConfig, opts.getClientMarker(RequestClientOptions.Marker.USER_AGENT))
-                           : getUserAgent(clientConfig, null);
-
+        final String userAgent = getUserAgent(clientConfig,
+                context.requestConfig().appendUserAgent().orElse(null));
         return request.header(HEADER_USER_AGENT, userAgent);
     }
 

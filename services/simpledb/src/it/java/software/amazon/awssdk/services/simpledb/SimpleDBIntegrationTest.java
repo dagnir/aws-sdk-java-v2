@@ -33,6 +33,8 @@ import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.Test;
 import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 import software.amazon.awssdk.services.simpledb.model.Attribute;
 import software.amazon.awssdk.services.simpledb.model.AttributeDoesNotExistException;
 import software.amazon.awssdk.services.simpledb.model.BatchDeleteAttributesRequest;
@@ -148,8 +150,11 @@ public class SimpleDBIntegrationTest extends IntegrationTestBase {
     private void gotestOverriddenRequestCredentials() throws Exception {
         sdb.listDomains(ListDomainsRequest.builder().build());
 
-        ListDomainsRequest listDomainsRequest = ListDomainsRequest.builder().build();
-        listDomainsRequest.setRequestCredentials(AwsCredentials.create("foo", "bar"));
+        ListDomainsRequest listDomainsRequest = ListDomainsRequest.builder()
+                .requestOverrideConfig(AwsRequestOverrideConfig.builder()
+                        .awsCredentialsProvider(StaticCredentialsProvider.create(AwsCredentials.create("foo", "bar")))
+                        .build())
+                .build();
         try {
             sdb.listDomains(listDomainsRequest);
             fail("Expected an authentication exception from bogus request credentials.");

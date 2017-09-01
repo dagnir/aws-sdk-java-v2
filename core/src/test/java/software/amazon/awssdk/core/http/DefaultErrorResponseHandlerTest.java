@@ -88,6 +88,7 @@ public class DefaultErrorResponseHandlerTest extends WireMockTestBase {
                 Request<?> request = newGetRequest(RESOURCE);
                 client.requestExecutionBuilder()
                       .errorResponseHandler(sut)
+                      .originalRequest(NoopTestAwsRequest.builder().build())
                       .executionContext(executionContext(SdkHttpFullRequestAdapter.toHttpFullRequest(request)))
                       .request(request)
                       .execute();
@@ -101,6 +102,7 @@ public class DefaultErrorResponseHandlerTest extends WireMockTestBase {
             r.run();
             throw new RuntimeException("Expected exception, got none");
         } catch (Exception e) {
+            System.out.println("exept");
             // Ignored or expected.
         }
     }

@@ -6,16 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.core.AmazonWebServiceResult;
-import software.amazon.awssdk.core.ResponseMetadata;
-import software.amazon.awssdk.utils.builder.CopyableBuilder;
-import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
+import software.amazon.awssdk.core.AwsResponseMetadata;
 
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMetadata> implements
-        ToCopyableBuilder<NestedContainersResponse.Builder, NestedContainersResponse> {
+public class NestedContainersResponse extends JsonProtocolTestsResponse {
     private final List<List<String>> listOfListOfStrings;
 
     private final List<List<List<String>>> listOfListOfListOfStrings;
@@ -23,6 +19,7 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
     private final Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 
     private NestedContainersResponse(BuilderImpl builder) {
+        super(builder);
         this.listOfListOfStrings = builder.listOfListOfStrings;
         this.listOfListOfListOfStrings = builder.listOfListOfListOfStrings;
         this.mapOfStringToListOfListOfStrings = builder.mapOfStringToListOfListOfStrings;
@@ -33,7 +30,7 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
      * <p>
      * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
      * </p>
-     *
+     * 
      * @return The value of the ListOfListOfStrings property for this object.
      */
     public List<List<String>> listOfListOfStrings() {
@@ -45,7 +42,7 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
      * <p>
      * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
      * </p>
-     *
+     * 
      * @return The value of the ListOfListOfListOfStrings property for this object.
      */
     public List<List<List<String>>> listOfListOfListOfStrings() {
@@ -57,7 +54,7 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
      * <p>
      * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
      * </p>
-     *
+     * 
      * @return The value of the MapOfStringToListOfListOfStrings property for this object.
      */
     public Map<String, List<List<String>>> mapOfStringToListOfListOfStrings() {
@@ -154,7 +151,7 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
         }
     }
 
-    public interface Builder extends CopyableBuilder<Builder, NestedContainersResponse> {
+    public interface Builder extends JsonProtocolTestsResponse.Builder {
         /**
          * Sets the value of the ListOfListOfStrings property for this object.
          *
@@ -200,9 +197,15 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
          */
         Builder mapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings);
+
+        @Override
+        Builder responseMetadata(AwsResponseMetadata awsResponseMetadata);
+
+        @Override
+        NestedContainersResponse build();
     }
 
-    static final class BuilderImpl implements Builder {
+    static final class BuilderImpl extends JsonProtocolTestsResponse.BuilderImpl implements Builder {
         private List<List<String>> listOfListOfStrings;
 
         private List<List<List<String>>> listOfListOfListOfStrings;
@@ -279,8 +282,15 @@ public class NestedContainersResponse extends AmazonWebServiceResult<ResponseMet
         }
 
         @Override
+        public Builder responseMetadata(AwsResponseMetadata awsResponseMetadata) {
+            super.responseMetadata(awsResponseMetadata);
+            return this;
+        }
+
+        @Override
         public NestedContainersResponse build() {
             return new NestedContainersResponse(this);
         }
     }
 }
+

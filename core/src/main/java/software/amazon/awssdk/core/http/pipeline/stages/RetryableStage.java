@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.AmazonServiceException;
+import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.ResetException;
 import software.amazon.awssdk.core.Response;
@@ -183,7 +184,10 @@ public class RetryableStage<OutputT> implements RequestToResponsePipeline<Output
          * so we cannot retry the request.
          */
         private int readLimit() {
-            return context.requestConfig().getRequestClientOptions().getReadLimit();
+            return context.requestConfig()
+                    .readLimitInfo()
+                    .map(ReadLimitInfo::getReadLimit)
+                    .orElse((1 << 17) + 1);
         }
 
         /**

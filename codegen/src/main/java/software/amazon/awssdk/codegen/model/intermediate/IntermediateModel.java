@@ -23,10 +23,12 @@ import java.io.InputStream;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Map;
+
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.service.PaginatorDefinition;
 import software.amazon.awssdk.core.AmazonWebServiceResult;
+import software.amazon.awssdk.core.AwsResponse;
 import software.amazon.awssdk.core.ResponseMetadata;
 import software.amazon.awssdk.utils.IoUtils;
 
@@ -143,6 +145,22 @@ public final class IntermediateModel {
         }
     }
 
+    public String getSdkRequestBaseClassName() {
+        if (customizationConfig.getSdkRequestBaseClassName() != null) {
+            return customizationConfig.getSdkRequestBaseClassName();
+        } else {
+            return metadata.getBaseRequestName();
+        }
+    }
+
+    public String getSdkResponseBaseClassName() {
+        if (customizationConfig.getSdkResponseBaseClassName() != null) {
+            return customizationConfig.getSdkResponseBaseClassName();
+        } else {
+            return metadata.getBaseResponseName();
+        }
+    }
+
     public String getFileHeader() throws IOException {
         if (customizationConfig.getCustomFileHeader() != null) {
             return String.format("/**%n%s%n*/", customizationConfig.getCustomFileHeader());
@@ -170,7 +188,7 @@ public final class IntermediateModel {
             return "software.amazon.awssdk.opensdk.BaseResult";
         } else {
             return String.format("%s<%s>",
-                                 AmazonWebServiceResult.class.getName(),
+                                 AwsResponse.class.getName(),
                                  getResponseMetadataClassName());
         }
     }

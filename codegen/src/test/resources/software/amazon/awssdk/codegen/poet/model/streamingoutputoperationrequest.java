@@ -2,14 +2,12 @@ package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
-import software.amazon.awssdk.utils.builder.CopyableBuilder;
-import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 
 @Generated("software.amazon.awssdk:codegen")
-public class StreamingOutputOperationRequest extends AmazonWebServiceRequest implements
-        ToCopyableBuilder<StreamingOutputOperationRequest.Builder, StreamingOutputOperationRequest> {
+public class StreamingOutputOperationRequest extends JsonProtocolTestsRequest {
     private StreamingOutputOperationRequest(BuilderImpl builder) {
+        super(builder);
     }
 
     @Override
@@ -59,14 +57,25 @@ public class StreamingOutputOperationRequest extends AmazonWebServiceRequest imp
         return Optional.empty();
     }
 
-    public interface Builder extends CopyableBuilder<Builder, StreamingOutputOperationRequest> {
+    public interface Builder extends JsonProtocolTestsRequest.Builder {
+        @Override
+        Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig);
+
+        @Override
+        StreamingOutputOperationRequest build();
     }
 
-    static final class BuilderImpl implements Builder {
+    static final class BuilderImpl extends JsonProtocolTestsRequest.BuilderImpl implements Builder {
         private BuilderImpl() {
         }
 
         private BuilderImpl(StreamingOutputOperationRequest model) {
+        }
+
+        @Override
+        public Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig) {
+            super.requestOverrideConfig(awsRequestOverrideConfig);
+            return this;
         }
 
         @Override
@@ -75,3 +84,4 @@ public class StreamingOutputOperationRequest extends AmazonWebServiceRequest imp
         }
     }
 }
+

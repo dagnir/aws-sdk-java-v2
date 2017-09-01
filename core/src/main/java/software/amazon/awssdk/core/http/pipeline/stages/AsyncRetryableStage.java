@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.ResetException;
 import software.amazon.awssdk.core.Response;
@@ -193,7 +194,10 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
          * so we cannot retry the request.
          */
         private int readLimit() {
-            return context.requestConfig().getRequestClientOptions().getReadLimit();
+            return context.originalRequest().requestOverrideConfig()
+                    .flatMap(c -> c.readLimitInfo())
+                    .map(ReadLimitInfo::getReadLimit)
+                    .orElse(12345);
         }
     }
 }

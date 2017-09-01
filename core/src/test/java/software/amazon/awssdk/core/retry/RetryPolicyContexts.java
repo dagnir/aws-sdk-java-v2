@@ -16,7 +16,6 @@
 package software.amazon.awssdk.core.retry;
 
 import software.amazon.awssdk.core.SdkBaseException;
-import software.amazon.awssdk.core.retry.RetryPolicyContext;
 
 /**
  * Precanned instances of {@link RetryPolicyContext} and factory methods for creating contexts.

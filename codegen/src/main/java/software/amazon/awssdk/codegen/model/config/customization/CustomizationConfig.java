@@ -184,6 +184,10 @@ public class CustomizationConfig {
      */
     private List<String> verifiedSimpleMethods = new ArrayList<>();
 
+    private String sdkRequestBaseClassName;
+
+    private String sdkResponseBaseClassName;
+
     private CustomizationConfig() {
     }
 
@@ -460,5 +464,21 @@ public class CustomizationConfig {
 
     public void setVerifiedSimpleMethods(List<String> verifiedSimpleMethods) {
         this.verifiedSimpleMethods = verifiedSimpleMethods;
+    }
+
+    public String getSdkRequestBaseClassName() {
+        return sdkRequestBaseClassName;
+    }
+
+    public void setSdkRequestBaseClassName(String sdkRequestBaseClassName) {
+        this.sdkRequestBaseClassName = sdkRequestBaseClassName;
+    }
+
+    public String getSdkResponseBaseClassName() {
+        return sdkResponseBaseClassName;
+    }
+
+    public void setSdkResponseBaseClassName(String sdkResponseBaseClassName) {
+        this.sdkResponseBaseClassName = sdkResponseBaseClassName;
     }
 }
