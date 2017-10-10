@@ -30,7 +30,7 @@
 - [ ] I have read the **README** document
 - [ ] I have added tests to cover my changes
 - [ ] All new and existing tests passed
-- [ ] A short description of the change has been added to 
+- [ ] A short description of the change has been added to the **CHANGELOG**
 
 ## License
 <!--- The SDK is released under the Apache 2.0 license (http://aws.amazon.com/apache2.0/), so any code you submit will be released under that license -->
