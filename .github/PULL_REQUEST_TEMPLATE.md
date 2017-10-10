@@ -22,12 +22,15 @@
 ## Checklist
 <!--- Go over all the following points, and put an `x` in all the boxes that apply -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
+- [ ] I have read the **CONTRIBUTING** document
+- [ ] Local run of `mvn install` succeeds
 - [ ] My code follows the code style of this project
-- [ ] My change requires a change to the documentation
-- [ ] I have updated the documentation accordingly
+- [ ] My change requires a change to the Javadoc documentation
+- [ ] I have updated the Javadoc documentation accordingly
 - [ ] I have read the **README** document
 - [ ] I have added tests to cover my changes
 - [ ] All new and existing tests passed
+- [ ] A short description of the change has been added to 
 
 ## License
 <!--- The SDK is released under the Apache 2.0 license (http://aws.amazon.com/apache2.0/), so any code you submit will be released under that license -->
