@@ -29,5 +29,3 @@
 * AWS Java SDK version used: 
 * JDK version used:
 * Operating System and version: 
-
-[logging]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-logging.html
