@@ -120,17 +120,11 @@ public class AwsServiceModel implements ClassSpec {
     }
 
     private TypeName requestBaseClass() {
-        return ParameterizedTypeName.get(
-                new AwsServiceBaseRequestSpec(intermediateModel).className(),
-                className().nestedClass("Builder"),
-                className());
+        return new AwsServiceBaseRequestSpec(intermediateModel).className();
     }
 
     private TypeName responseBaseClass() {
-        return ParameterizedTypeName.get(
-                new AwsServiceBaseResponseSpec(intermediateModel).className(),
-                className().nestedClass("Builder"),
-                className());
+        return new AwsServiceBaseResponseSpec(intermediateModel).className();
     }
 
     private ClassName exceptionBaseClass() {

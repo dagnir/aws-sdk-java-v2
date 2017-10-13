@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.client;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.SdkRequest;
 import software.amazon.awssdk.SdkResponse;
 import software.amazon.awssdk.ServiceAdvancedConfiguration;
@@ -62,7 +62,7 @@ public class SdkClientHandler extends ClientHandler {
 
     private <InputT extends SdkRequest, OutputT> ClientExecutionParams<InputT, OutputT> addRequestConfig(
             ClientExecutionParams<InputT, OutputT> params) {
-        return params.withRequestConfig(new AmazonWebServiceRequestAdapter((AmazonWebServiceRequest) params.getInput()))
+        return params.withRequestConfig(new AmazonWebServiceRequestAdapter(params.getInput()))
                      // TODO this is a hack to get the build working. Also doesn't deal with AwsResponseHandlerAdapter
                      .withErrorResponseHandler(
                              new AwsErrorResponseHandler(params.getErrorResponseHandler()));

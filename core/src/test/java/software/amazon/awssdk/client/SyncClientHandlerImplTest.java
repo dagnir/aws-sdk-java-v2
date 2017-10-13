@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
@@ -57,7 +57,7 @@ public class SyncClientHandlerImplTest {
     private AwsCredentials awsCredentials = new AwsCredentials("public", "private");
 
     @Mock
-    private AmazonWebServiceRequest request;
+    private AwsRequest request;
 
     @Mock
     private RequestConfig requestConfig;

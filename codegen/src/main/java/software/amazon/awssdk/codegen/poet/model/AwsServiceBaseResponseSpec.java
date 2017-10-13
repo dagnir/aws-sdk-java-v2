@@ -43,13 +43,10 @@ public class AwsServiceBaseResponseSpec implements ClassSpec {
                 .addJavadoc("Base response class for all requests to " + intermediateModel.getMetadata().getServiceFullName())
                 .addAnnotation(PoetUtils.GENERATED)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", className().nestedClass("Builder"), "B, R"))
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("R", className(), "B", "R"))
-                .superclass(ParameterizedTypeName.get(ClassName.get(AwsResponse.class), TypeVariableName.get("B"),
-                        TypeVariableName.get("R"), ClassName.get(AwsResponseMetadata.class)))
+                .superclass(ClassName.get(AwsResponse.class))
                 .addMethod(MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PROTECTED)
-                        .addParameter(TypeVariableName.get("B"), "builder")
+                        .addParameter(className().nestedClass("Builder"), "builder")
                         .addStatement("super(builder)")
                         .build())
                 .addType(builderInterfaceSpec())
@@ -64,35 +61,48 @@ public class AwsServiceBaseResponseSpec implements ClassSpec {
 
     private TypeSpec builderInterfaceSpec() {
         return TypeSpec.interfaceBuilder("Builder")
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", className().nestedClass("Builder"), "B, R"))
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("R", className(), "B", "R"))
-                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(AwsResponse.Builder.class), TypeVariableName.get("B"),
-                        TypeVariableName.get("R"), ClassName.get(AwsResponseMetadata.class)))
+                .addSuperinterface(ClassName.get(AwsResponse.class).nestedClass("Builder"))
+
+                .addMethod(MethodSpec.methodBuilder("build")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                        .returns(className())
+                        .build())
+
+                .addMethod(MethodSpec.methodBuilder("responseMetadata")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                        .addParameter(AwsResponseMetadata.class, "awsResponseMetadata")
+                        .returns(className().nestedClass("Builder"))
+                        .build())
                 .build();
     }
 
     private TypeSpec builderImplSpec() {
         return TypeSpec.classBuilder("BuilderImpl")
                 .addModifiers(Modifier.PROTECTED, Modifier.STATIC, Modifier.ABSTRACT)
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", className().nestedClass("Builder"), "B, R"))
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("R", className(), "B", "R"))
-                .addSuperinterface(ParameterizedTypeName.get(className().nestedClass("Builder"), TypeVariableName.get("B"),
-                        TypeVariableName.get("R")))
-                .superclass(ParameterizedTypeName.get(ClassName.get(AwsResponse.class).nestedClass("BuilderImpl"),
-                        TypeVariableName.get("B"), TypeVariableName.get("R"), ClassName.get(AwsResponseMetadata.class)))
+                .addSuperinterface(className().nestedClass("Builder"))
+                .superclass(ClassName.get(AwsResponse.class).nestedClass("BuilderImpl"))
+
                 .addMethod(MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PROTECTED)
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), TypeVariableName.get("B")),
-                                "concrete")
-                        .addStatement("super(concrete)")
                         .build())
+
                 .addMethod(MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PROTECTED)
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), TypeVariableName.get("B")),
-                                "concrete")
-                        .addParameter(TypeVariableName.get("R"), "request")
-                        .addStatement("super(concrete, request)")
+                        .addParameter(className(), "request")
+                        .addStatement("super(request)")
                         .build())
+
+                .addMethod(MethodSpec.methodBuilder("responseMetadata")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(className().nestedClass("Builder"))
+                        .addParameter(AwsResponseMetadata.class, "awsResponseMetadata")
+                        .addStatement("super.responseMetadata($N)", "awsResponseMetadata")
+                        .addStatement("return this")
+                        .build())
+
                 .build();
     }
 }

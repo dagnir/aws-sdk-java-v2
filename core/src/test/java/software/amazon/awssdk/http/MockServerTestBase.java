@@ -17,8 +17,8 @@ package software.amazon.awssdk.http;
 
 import org.junit.After;
 import org.junit.Before;
+import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 
 public abstract class MockServerTestBase {
 
@@ -35,8 +35,10 @@ public abstract class MockServerTestBase {
         server.stopServer();
     }
 
-    protected EmptyHttpRequest newGetRequest() {
-        return new EmptyHttpRequest(server.getEndpoint(), HttpMethodName.GET);
+    protected Request newGetRequest() {
+        // FIXME (dongie)
+        // return new EmptyHttpRequest(server.getEndpoint(), HttpMethodName.GET);
+        return null;
     }
 
     /**

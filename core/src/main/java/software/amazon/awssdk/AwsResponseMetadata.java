@@ -27,36 +27,13 @@ import java.util.Map;
  * Access to AWS request IDs is also available through the com.amazonaws.request
  * logger in the AWS SDK for Java.
  */
-public class AwsResponseMetadata implements SdkResponseMetadata<AwsResponseMetadata.Builder, AwsResponseMetadata> {
+public final class AwsResponseMetadata {
     public static final String AWS_REQUEST_ID = "AWS_REQUEST_ID";
 
-    protected final Map<String, String> metadata;
-
-    /**
-     * Creates a new ResponseMetadata object from a specified map of raw
-     * metadata information.
-     *
-     * @param metadata
-     *            The raw metadata for the new ResponseMetadata object.
-     */
-    public AwsResponseMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
-    }
+    private final Map<String, String> metadata;
 
     public AwsResponseMetadata(BuilderImpl builder) {
         this.metadata = builder.metadata;
-    }
-
-    /**
-     * Creates a new ResponseMetadata object from an existing ResponseMetadata
-     * object.
-     *
-     * @param originalResponseMetadata
-     *            The ResponseMetadata object from which to create the new
-     *            object.
-     */
-    public AwsResponseMetadata(AwsResponseMetadata originalResponseMetadata) {
-        this(originalResponseMetadata.metadata);
     }
 
     /**
@@ -78,13 +55,9 @@ public class AwsResponseMetadata implements SdkResponseMetadata<AwsResponseMetad
         return metadata.toString();
     }
 
-    @Override
-    public Builder toBuilder() {
-        return new BuilderImpl(this);
-    }
-
-    public interface Builder extends SdkResponseMetadata.Builder<Builder, AwsResponseMetadata> {
+    public interface Builder {
         Builder metadata(Map<String, String> metadata);
+        Map<String, String> metadata();
     }
 
     private static class BuilderImpl implements Builder {
@@ -100,17 +73,8 @@ public class AwsResponseMetadata implements SdkResponseMetadata<AwsResponseMetad
             return this;
         }
 
-        public void setMetadata(Map<String, String> metadata) {
-            metadata(metadata);
-        }
-
-        public Map<String, String> getMetadata() {
+        public Map<String, String> metadata() {
             return metadata;
-        }
-
-        @Override
-        public AwsResponseMetadata build() {
-            return new AwsResponseMetadata(this);
         }
     }
 }

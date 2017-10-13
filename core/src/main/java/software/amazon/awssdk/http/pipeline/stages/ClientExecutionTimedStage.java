@@ -18,7 +18,6 @@ package software.amazon.awssdk.http.pipeline.stages;
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import software.amazon.awssdk.AbortedException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.RequestExecutionContext;

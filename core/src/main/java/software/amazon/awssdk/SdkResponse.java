@@ -18,62 +18,16 @@ package software.amazon.awssdk;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
+import java.util.Optional;
+
 /**
- * The base class for all SDK responses.
+ * Common interface class for all SDK responses.
  *
  * @see SdkRequest
  */
-public abstract class SdkResponse<B extends SdkResponse.Builder<B, R, M>,
-        R extends SdkResponse<B, R, M>,
-        M> implements ToCopyableBuilder<B, R> {
+public interface SdkResponse extends ToCopyableBuilder<SdkResponse.Builder, SdkResponse> {
+    Optional<?> responseMetadata();
 
-    private final M responseMetadata;
-
-    protected SdkResponse(B builder) {
-        responseMetadata = builder.responseMetadata();
-    }
-
-    /**
-     * @return The metadata for this response.
-     */
-    public M responseMetadata() {
-        return responseMetadata;
-    }
-
-    public interface Builder<B extends SdkResponse.Builder<B, R, M>,
-            R extends SdkResponse<B, R, M>,
-            M> extends CopyableBuilder<B, R> {
-
-        B responseMetadata(M responseMetadata);
-        M responseMetadata();
-    }
-
-    protected abstract static class BuilderImpl<B extends SdkResponse.Builder<B, R, M>,
-            R extends SdkResponse<B, R, M>,
-            M> implements Builder<B, R, M> {
-        private final Class<B> concrete;
-
-        private M responseMetadata;
-
-        protected BuilderImpl(Class<B> concrete) {
-            this.concrete = concrete;
-        }
-
-        protected BuilderImpl(Class<B> concrete,
-                              SdkResponse<B, R, M> request) {
-            this(concrete);
-            this.responseMetadata = request.responseMetadata();
-        }
-
-        @Override
-        public B responseMetadata(M responseMetadata) {
-            this.responseMetadata = responseMetadata;
-            return concrete.cast(this);
-        }
-
-        @Override
-        public M responseMetadata() {
-            return responseMetadata;
-        }
+    interface Builder extends CopyableBuilder<Builder, SdkResponse> {
     }
 }

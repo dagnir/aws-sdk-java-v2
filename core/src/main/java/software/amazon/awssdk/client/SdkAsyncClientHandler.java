@@ -16,7 +16,7 @@
 package software.amazon.awssdk.client;
 
 import java.util.concurrent.CompletableFuture;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+
 import software.amazon.awssdk.SdkRequest;
 import software.amazon.awssdk.SdkResponse;
 import software.amazon.awssdk.ServiceAdvancedConfiguration;
@@ -61,7 +61,7 @@ public class SdkAsyncClientHandler extends AsyncClientHandler {
 
     private <InputT extends SdkRequest, OutputT> ClientExecutionParams<InputT, OutputT> addRequestConfig(
             ClientExecutionParams<InputT, OutputT> params) {
-        return params.withRequestConfig(new AmazonWebServiceRequestAdapter((AmazonWebServiceRequest) params.getInput()))
+        return params.withRequestConfig(new AmazonWebServiceRequestAdapter(params.getInput()))
                      .withErrorResponseHandler(
                              // TODO this is a hack to get the build working. Also doesn't deal with AwsResponseHandlerAdapter
                              new AwsErrorResponseHandler(params.getErrorResponseHandler()));

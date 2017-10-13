@@ -21,7 +21,7 @@ import software.amazon.awssdk.annotation.SdkProtectedApi;
 import software.amazon.awssdk.util.ValidationUtils;
 
 @SdkProtectedApi
-public class WaiterExecution<InputT extends SdkRequest<?, ?, ?>, OutputT> {
+public class WaiterExecution<InputT extends SdkRequest, OutputT> {
 
     /**
      * Resource specific function that makes a call to the

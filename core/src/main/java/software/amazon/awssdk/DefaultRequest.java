@@ -35,7 +35,6 @@ import software.amazon.awssdk.util.json.JacksonUtils;
  */
 @NotThreadSafe
 public class DefaultRequest<T> implements Request<T> {
-
     /**
      * The original, user facing request object which this internal request
      * object is representing
@@ -81,7 +80,7 @@ public class DefaultRequest<T> implements Request<T> {
     public DefaultRequest(SdkRequest originalRequest, String serviceName) {
         this.serviceName = serviceName;
         this.originalRequest = originalRequest == null
-                               ? AmazonWebServiceRequest.NOOP
+                               ? AwsRequest.NOOP
                                : originalRequest;
     }
 

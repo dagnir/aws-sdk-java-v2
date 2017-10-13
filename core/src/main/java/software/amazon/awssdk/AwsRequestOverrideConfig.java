@@ -20,17 +20,17 @@ import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import java.util.Optional;
 
 /**
- * The default per-request configuration override for AWS service clients.
+ * Request-specific configuration overrides for AWS service clients.
  */
-public class AwsRequestOverrideConfig extends SdkRequestOverrideConfig<AwsRequestOverrideConfig.Builder, AwsRequestOverrideConfig> {
+final public class AwsRequestOverrideConfig extends SdkRequestOverrideConfig {
     private final AwsCredentialsProvider awsCredentialsProvider;
 
-    protected AwsRequestOverrideConfig(Builder builder) {
+    private AwsRequestOverrideConfig(Builder builder) {
         super(builder);
         this.awsCredentialsProvider = builder.awsCredentialsProvider();
     }
 
-    public final Optional<AwsCredentialsProvider> awsCredentialsProvider() {
+    public Optional<AwsCredentialsProvider> awsCredentialsProvider() {
         return Optional.ofNullable(awsCredentialsProvider);
     }
 
@@ -43,22 +43,21 @@ public class AwsRequestOverrideConfig extends SdkRequestOverrideConfig<AwsReques
         return new BuilderImpl();
     }
 
-    public interface Builder extends SdkRequestOverrideConfig.Builder<Builder,AwsRequestOverrideConfig> {
+    public interface Builder extends SdkRequestOverrideConfig.Builder<Builder> {
         Builder awsCredentialsProvider(AwsCredentialsProvider awsCredentialsProvider);
 
         AwsCredentialsProvider awsCredentialsProvider();
     }
 
-    protected static class BuilderImpl extends SdkRequestOverrideConfig.BuilderImpl<Builder, AwsRequestOverrideConfig> implements Builder {
+    protected static final class BuilderImpl extends SdkRequestOverrideConfig.BuilderImpl<Builder> implements Builder {
 
         private AwsCredentialsProvider awsCredentialsProvider;
 
-        protected BuilderImpl() {
-            super(Builder.class);
+        private BuilderImpl() {
         }
 
-        protected BuilderImpl(AwsRequestOverrideConfig awsRequestOverrideConfig) {
-            super(Builder.class, awsRequestOverrideConfig);
+        private BuilderImpl(AwsRequestOverrideConfig awsRequestOverrideConfig) {
+            super(awsRequestOverrideConfig);
             this.awsCredentialsProvider = awsRequestOverrideConfig.awsCredentialsProvider;
         }
 

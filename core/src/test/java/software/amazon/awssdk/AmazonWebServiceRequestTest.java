@@ -32,41 +32,41 @@ import software.amazon.awssdk.event.SyncProgressListener;
 import utils.model.EmptyAmazonWebServiceRequest;
 
 public class AmazonWebServiceRequestTest {
-
-    public static void verifyBaseBeforeCopy(final AmazonWebServiceRequest to) {
-        assertNull(to.getCustomRequestHeaders());
-        assertNull(to.getCustomQueryParameters());
-        assertSame(ProgressListener.NOOP, to.getGeneralProgressListener());
-
-        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == to
-                .getReadLimit());
-        RequestClientOptions toOptions = to.getRequestClientOptions();
-        assertNull(toOptions.getClientMarker(Marker.USER_AGENT));
-        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == toOptions
-                .getReadLimit());
-    }
-
-    private static void verifyBaseAfterCopy(final ProgressListener listener,
-                                            final AwsCredentials credentials,
-                                            final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
-        Map<String, String> headers = to.getCustomRequestHeaders();
-        assertTrue(2 == headers.size());
-        assertEquals("v1", headers.get("k1"));
-        assertEquals("v2", headers.get("k2"));
-        Map<String, List<String>> parmas = to.getCustomQueryParameters();
-        assertTrue(2 == parmas.size());
-        assertEquals(Arrays.asList("v1"), parmas.get("k1"));
-        assertEquals(Arrays.asList("v2a", "v2b"), parmas.get("k2"));
-        assertSame(listener, to.getGeneralProgressListener());
-
-        assertTrue(1234 == to.getReadLimit());
-        RequestClientOptions toOptions = to.getRequestClientOptions();
-        assertEquals(
-                from.getRequestClientOptions().getClientMarker(
-                        Marker.USER_AGENT),
-                toOptions.getClientMarker(Marker.USER_AGENT));
-        assertTrue(1234 == toOptions.getReadLimit());
-    }
+//
+//    public static void verifyBaseBeforeCopy(final AmazonWebServiceRequest to) {
+//        assertNull(to.getCustomRequestHeaders());
+//        assertNull(to.getCustomQueryParameters());
+//        assertSame(ProgressListener.NOOP, to.getGeneralProgressListener());
+//
+//        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == to
+//                .getReadLimit());
+//        RequestClientOptions toOptions = to.getRequestClientOptions();
+//        assertNull(toOptions.getClientMarker(Marker.USER_AGENT));
+//        assertTrue(RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE == toOptions
+//                .getReadLimit());
+//    }
+//
+//    private static void verifyBaseAfterCopy(final ProgressListener listener,
+//                                            final AwsCredentials credentials,
+//                                            final AmazonWebServiceRequest from, final AmazonWebServiceRequest to) {
+//        Map<String, String> headers = to.getCustomRequestHeaders();
+//        assertTrue(2 == headers.size());
+//        assertEquals("v1", headers.get("k1"));
+//        assertEquals("v2", headers.get("k2"));
+//        Map<String, List<String>> parmas = to.getCustomQueryParameters();
+//        assertTrue(2 == parmas.size());
+//        assertEquals(Arrays.asList("v1"), parmas.get("k1"));
+//        assertEquals(Arrays.asList("v2a", "v2b"), parmas.get("k2"));
+//        assertSame(listener, to.getGeneralProgressListener());
+//
+//        assertTrue(1234 == to.getReadLimit());
+//        RequestClientOptions toOptions = to.getRequestClientOptions();
+//        assertEquals(
+//                from.getRequestClientOptions().getClientMarker(
+//                        Marker.USER_AGENT),
+//                toOptions.getClientMarker(Marker.USER_AGENT));
+//        assertTrue(1234 == toOptions.getReadLimit());
+//    }
 
     @Test
     public void testClone() {
@@ -125,10 +125,10 @@ public class AmazonWebServiceRequestTest {
 //        verifyBaseAfterCopy(listener, credentials, collector, from, to);
     }
 
-    @Test
-    public void nullCredentialsSet_ReturnsNullProvider() {
-        AmazonWebServiceRequest request = new EmptyAmazonWebServiceRequest();
-        request.setRequestCredentials(null);
-        assertNull(request.getRequestCredentialsProvider());
-    }
+//    @Test
+//    public void nullCredentialsSet_ReturnsNullProvider() {
+//        AmazonWebServiceRequest request = new EmptyAmazonWebServiceRequest();
+//        request.setRequestCredentials(null);
+//        assertNull(request.getRequestCredentialsProvider());
+//    }
 }

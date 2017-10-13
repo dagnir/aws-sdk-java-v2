@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.retry.v2.RetryPolicyContext;
 import software.amazon.awssdk.retry.v2.RetryPolicyContexts;
 
@@ -69,7 +69,7 @@ public class RetryPolicyAdapterTest {
         adapter.computeDelayBeforeNextRetry(context);
 
         verify(backoffStrategy).delayBeforeNextRetry(
-                eq((AmazonWebServiceRequest) context.originalRequest()),
+                eq((AwsRequest) context.originalRequest()),
                 eq((AmazonClientException) context.exception()),
                 eq(context.retriesAttempted()));
     }
@@ -85,7 +85,7 @@ public class RetryPolicyAdapterTest {
         adapter.shouldRetry(context);
 
         verify(retryCondition).shouldRetry(
-                eq((AmazonWebServiceRequest) context.originalRequest()),
+                eq((AwsRequest) context.originalRequest()),
                 eq((AmazonClientException) context.exception()),
                 eq(context.retriesAttempted()));
     }

@@ -23,7 +23,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.SdkRequest;
-import software.amazon.awssdk.TestRequest;
 import software.amazon.awssdk.http.AmazonHttpClient;
 import software.amazon.awssdk.http.ExecutionContext;
 import software.amazon.awssdk.http.HttpMethodName;
@@ -33,7 +32,6 @@ import software.amazon.awssdk.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.interceptor.ExecutionInterceptorChain;
 import software.amazon.awssdk.interceptor.InterceptorContext;
 import software.amazon.awssdk.internal.auth.NoOpSignerProvider;
-import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.internal.http.response.ErrorDuringUnmarshallingResponseHandler;
 import software.amazon.awssdk.internal.http.response.NullErrorResponseHandler;
 import software.amazon.awssdk.internal.http.timers.client.ClientExecutionTimer;
@@ -104,7 +102,9 @@ public class ClientExecutionAndRequestTimerTestUtils {
 
     public static Request<?> createMockGetRequest() {
         String localhostEndpoint = "http://localhost:0";
-        return new EmptyHttpRequest(localhostEndpoint, HttpMethodName.GET);
+        // FIXME (dongie)
+        // return new EmptyHttpRequest(localhostEndpoint, HttpMethodName.GET);
+        return null;
     }
 
     /**
@@ -121,7 +121,8 @@ public class ClientExecutionAndRequestTimerTestUtils {
     public static ExecutionContext executionContext(SdkHttpFullRequest request) {
         InterceptorContext incerceptorContext =
                 InterceptorContext.builder()
-                                  .request(TestRequest.builder().build())
+                                  // FIXME (dongie)
+                                  //.request(TestRequest.builder().build())
                                   .httpRequest(request)
                                   .build();
         return ExecutionContext.builder()

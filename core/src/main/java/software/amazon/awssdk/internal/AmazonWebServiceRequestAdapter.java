@@ -18,7 +18,6 @@ package software.amazon.awssdk.internal;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import software.amazon.awssdk.AmazonWebServiceRequest;
 import software.amazon.awssdk.RequestClientOptions;
 import software.amazon.awssdk.RequestConfig;
 import software.amazon.awssdk.SdkRequest;

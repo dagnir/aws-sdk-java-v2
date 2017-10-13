@@ -15,32 +15,54 @@
 
 package software.amazon.awssdk;
 
+import java.util.Optional;
+
 /**
  * Base class for all AWS Service responses.
  */
-public abstract class AwsResponse<B extends AwsResponse.Builder<B,R, M>,
-        R extends AwsResponse<B,R, M>,
-        M extends AwsResponseMetadata> extends SdkResponse<B, R, AwsResponseMetadata> {
+public abstract class AwsResponse implements SdkResponse {
+    private final AwsResponseMetadata awsResponseMetadata;
 
-    protected AwsResponse(B builder) {
-        super(builder);
+    protected AwsResponse(Builder builder) {
+        this.awsResponseMetadata = builder.responseMetadata();
     }
 
-    public interface Builder<B extends AwsResponse.Builder<B,R, M>,
-            R extends AwsResponse<B,R, M>,
-            M extends AwsResponseMetadata> extends SdkResponse.Builder<B, R, AwsResponseMetadata> {
-
+    @Override
+    public Optional<AwsResponseMetadata> responseMetadata() {
+        return Optional.ofNullable(awsResponseMetadata);
     }
 
-    protected static abstract class BuilderImpl<B extends AwsResponse.Builder<B,R, M>,
-            R extends AwsResponse<B,R, M>,
-            M extends AwsResponseMetadata> extends SdkResponse.BuilderImpl<B, R, AwsResponseMetadata> implements Builder<B, R, M> {
-        protected BuilderImpl(Class<B> concrete) {
-            super(concrete);
+    @Override
+    public abstract Builder toBuilder();
+
+    protected interface Builder extends SdkResponse.Builder {
+        @Override
+        AwsResponse build();
+
+        AwsResponseMetadata responseMetadata();
+
+        Builder responseMetadata(AwsResponseMetadata awsResponseMetadata);
+    }
+
+    protected static abstract class BuilderImpl implements Builder {
+        private AwsResponseMetadata awsResponseMetadata;
+
+        protected BuilderImpl() {
         }
 
-        protected BuilderImpl(Class<B> concrete, R response) {
-            super(concrete, response);
+        protected BuilderImpl(AwsResponse response) {
+            response.responseMetadata().map(this::responseMetadata);
+        }
+
+        @Override
+        public Builder responseMetadata(AwsResponseMetadata awsResponseMetadata) {
+            this.awsResponseMetadata = awsResponseMetadata;
+            return this;
+        }
+
+        @Override
+        public AwsResponseMetadata responseMetadata() {
+            return awsResponseMetadata;
         }
     }
 }

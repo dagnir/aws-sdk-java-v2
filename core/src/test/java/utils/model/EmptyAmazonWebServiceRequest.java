@@ -15,11 +15,15 @@
 
 package utils.model;
 
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.SdkRequest;
 
 // FIXME(dongie)
-public class EmptyAmazonWebServiceRequest extends AmazonWebServiceRequest {
+public class EmptyAmazonWebServiceRequest extends AwsRequest {
+    protected EmptyAmazonWebServiceRequest(Builder builder) {
+        super(builder);
+    }
+
     @Override
     public Builder toBuilder() {
         return null;

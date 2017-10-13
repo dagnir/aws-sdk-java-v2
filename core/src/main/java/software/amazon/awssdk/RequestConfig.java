@@ -66,7 +66,7 @@ public abstract class RequestConfig {
      * @return Returns an empty, no-op implementation of request config.
      */
     public static RequestConfig empty() {
-        return new AmazonWebServiceRequestAdapter(AmazonWebServiceRequest.NOOP);
+        return new AmazonWebServiceRequestAdapter(AwsRequest.NOOP);
     }
 
 }

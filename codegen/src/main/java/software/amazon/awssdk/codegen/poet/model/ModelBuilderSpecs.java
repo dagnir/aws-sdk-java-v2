@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.lang.model.element.Modifier;
 
+import software.amazon.awssdk.AwsRequestOverrideConfig;
+import software.amazon.awssdk.AwsResponseMetadata;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
@@ -70,11 +72,37 @@ class ModelBuilderSpecs {
         shapeModel.getNonStreamingMembers()
                   .forEach(m -> builder.addMethods(accessorsFactory.fluentSetterDeclarations(m, builderInterfaceName())));
 
-        if (exception()) {
+        if (isException()) {
             builder.addMethod(MethodSpec.methodBuilder("message")
                     .returns(builderInterfaceName())
                     .addParameter(String.class, "message")
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT).build());
+        }
+
+        if (isRequest()) {
+            builder.addMethod(MethodSpec.methodBuilder("requestOverrideConfig")
+                    .returns(builderInterfaceName())
+                    .addAnnotation(Override.class)
+                    .addParameter(AwsRequestOverrideConfig.class, "awsRequestOverrideConfig")
+                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                    .build());
+        }
+
+        if (isResponse()) {
+            builder.addMethod(MethodSpec.methodBuilder("responseMetadata")
+                    .returns(builderInterfaceName())
+                    .addAnnotation(Override.class)
+                    .addParameter(AwsResponseMetadata.class, "awsResponseMetadata")
+                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                    .build());
+        }
+
+        if (isRequest() || isResponse()) {
+            builder.addMethod(MethodSpec.methodBuilder("build")
+                    .returns(classToBuild())
+                    .addAnnotation(Override.class)
+                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                    .build());
         }
 
         return builder.build();
@@ -97,17 +125,11 @@ class ModelBuilderSpecs {
 
     private TypeName builderImplSuperClass() {
         if (shapeModel.getShapeType() == ShapeType.Request) {
-            return ParameterizedTypeName.get(
-                    new AwsServiceBaseRequestSpec(intermediateModel).className().nestedClass("BuilderImpl"),
-                    builderInterfaceName(),
-                    classToBuild());
+            return new AwsServiceBaseRequestSpec(intermediateModel).className().nestedClass("BuilderImpl");
         }
 
         if (shapeModel.getShapeType() == ShapeType.Response) {
-            return ParameterizedTypeName.get(
-                    new AwsServiceBaseResponseSpec(intermediateModel).className().nestedClass("BuilderImpl"),
-                    builderInterfaceName(),
-                    classToBuild());
+            return new AwsServiceBaseResponseSpec(intermediateModel).className().nestedClass("BuilderImpl");
         }
 
         return ClassName.OBJECT;
@@ -116,8 +138,8 @@ class ModelBuilderSpecs {
     private List<FieldSpec> fields() {
         List<FieldSpec> fields = shapeModelSpec.fields(Modifier.PRIVATE);
 
-        // Inject a message member for the exception message
-        if (exception()) {
+        // Inject a message member for the isException message
+        if (isException()) {
             fields = new ArrayList<>(fields);
             fields.add(FieldSpec.builder(String.class, "message", Modifier.PRIVATE).build());
         }
@@ -128,9 +150,6 @@ class ModelBuilderSpecs {
     private MethodSpec noargConstructor() {
         MethodSpec.Builder ctorBuilder = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE);
-        if (shapeModel.getShapeType() == ShapeType.Request || shapeModel.getShapeType() == ShapeType.Response) {
-            ctorBuilder.addStatement("super($T.class)", builderInterfaceName());
-        }
         return ctorBuilder.build();
     }
 
@@ -140,7 +159,7 @@ class ModelBuilderSpecs {
                 .addParameter(classToBuild(), "model");
 
         if (builderImplSuperClass() != ClassName.OBJECT) {
-            copyBuilderCtor.addStatement("super($T.class, model)", builderInterfaceName());
+            copyBuilderCtor.addStatement("super(model)");
         }
 
         shapeModel.getNonStreamingMembers().forEach(m -> {
@@ -148,7 +167,7 @@ class ModelBuilderSpecs {
             copyBuilderCtor.addStatement("$N(model.$N)", m.getSetterMethodName(), name);
         });
 
-        if (exception()) {
+        if (isException()) {
             copyBuilderCtor.addStatement("this.message = model.getMessage()");
         }
 
@@ -164,9 +183,31 @@ class ModelBuilderSpecs {
                       accessors.addAll(accessorsFactory.beanStyleSetters(m));
                   });
 
-        if (exception()) {
+        if (isException()) {
             accessors.addAll(exceptionMessageGetters());
             accessors.addAll(exceptionMessageSetters());
+        }
+
+        if (isRequest()) {
+            accessors.add(MethodSpec.methodBuilder("requestOverrideConfig")
+                    .addAnnotation(Override.class)
+                    .returns(builderInterfaceName())
+                    .addParameter(AwsRequestOverrideConfig.class, "awsRequestOverrideConfig")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addStatement("super.requestOverrideConfig($N)", "awsRequestOverrideConfig")
+                    .addStatement("return this")
+                    .build());
+        }
+
+        if (isResponse()) {
+            accessors.add(MethodSpec.methodBuilder("responseMetadata")
+                    .addAnnotation(Override.class)
+                    .returns(builderInterfaceName())
+                    .addParameter(AwsResponseMetadata.class, "awsResponseMetadata")
+                    .addModifiers(Modifier.PUBLIC)
+                    .addStatement("super.responseMetadata($N)", "awsResponseMetadata")
+                    .addStatement("return this")
+                    .build());
         }
 
         return accessors;
@@ -185,19 +226,25 @@ class ModelBuilderSpecs {
         return poetExtensions.getModelClass(shapeModel.getShapeName());
     }
 
-    private boolean exception() {
+    private boolean isException() {
         return shapeModel.getShapeType() == ShapeType.Exception;
+    }
+
+    private boolean isRequest() {
+        return shapeModel.getShapeType() == ShapeType.Request;
+    }
+
+    private boolean isResponse() {
+        return shapeModel.getShapeType() == ShapeType.Response;
     }
 
     private TypeName builderSuperInterface() {
         ClassName superInterface;
         switch (shapeModel.getShapeType()) {
             case Request:
-                superInterface = new AwsServiceBaseRequestSpec(intermediateModel).className().nestedClass("Builder");
-                break;
+                return new AwsServiceBaseRequestSpec(intermediateModel).className().nestedClass("Builder");
             case Response:
-                superInterface = new AwsServiceBaseResponseSpec(intermediateModel).className().nestedClass("Builder");
-                break;
+                return new AwsServiceBaseResponseSpec(intermediateModel).className().nestedClass("Builder");
             default:
                 superInterface = ClassName.get(CopyableBuilder.class);
                 break;

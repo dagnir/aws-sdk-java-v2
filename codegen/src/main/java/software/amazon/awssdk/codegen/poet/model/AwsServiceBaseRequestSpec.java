@@ -43,14 +43,16 @@ public class AwsServiceBaseRequestSpec implements ClassSpec {
                 .addJavadoc("Base request class for all requests to " + intermediateModel.getMetadata().getServiceFullName())
                 .addAnnotation(PoetUtils.GENERATED)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", className().nestedClass("Builder"), "B, R"))
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("R", className(), "B", "R"))
-                .superclass(ParameterizedTypeName.get(ClassName.get(AwsRequest.class), TypeVariableName.get("B"),
-                        TypeVariableName.get("R"), ClassName.get(AwsRequestOverrideConfig.class)))
+                .superclass(ClassName.get(AwsRequest.class))
                 .addMethod(MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PROTECTED)
-                        .addParameter(TypeVariableName.get("B"), "builder")
+                        .addParameter(className().nestedClass("Builder"), "builder")
                         .addStatement("super(builder)")
+                        .build())
+                .addMethod(MethodSpec.methodBuilder("toBuilder")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                        .returns(className().nestedClass("Builder"))
                         .build())
                 .addType(builderInterfaceSpec())
                 .addType(builderImplSpec());
@@ -64,34 +66,27 @@ public class AwsServiceBaseRequestSpec implements ClassSpec {
 
     private TypeSpec builderInterfaceSpec() {
         return TypeSpec.interfaceBuilder("Builder")
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", className().nestedClass("Builder"), "B, R"))
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("R", className(), "B", "R"))
-                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(AwsRequest.Builder.class), TypeVariableName.get("B"),
-                        TypeVariableName.get("R"), ClassName.get(AwsRequestOverrideConfig.class)))
+                .addSuperinterface(ClassName.get(AwsRequest.class).nestedClass("Builder"))
+                .addMethod(MethodSpec.methodBuilder("build")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                        .returns(className())
+                        .build())
                 .build();
     }
 
     private TypeSpec builderImplSpec() {
         return TypeSpec.classBuilder("BuilderImpl")
                 .addModifiers(Modifier.PROTECTED, Modifier.STATIC, Modifier.ABSTRACT)
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("B", className().nestedClass("Builder"), "B, R"))
-                .addTypeVariable(PoetUtils.createBoundedTypeVariableName("R", className(), "B", "R"))
-                .addSuperinterface(ParameterizedTypeName.get(className().nestedClass("Builder"), TypeVariableName.get("B"),
-                        TypeVariableName.get("R")))
-                .superclass(ParameterizedTypeName.get(ClassName.get(AwsRequest.class).nestedClass("BuilderImpl"),
-                        TypeVariableName.get("B"), TypeVariableName.get("R"), ClassName.get(AwsRequestOverrideConfig.class)))
+                .addSuperinterface(className().nestedClass("Builder"))
+                .superclass(ClassName.get(AwsRequest.class).nestedClass("BuilderImpl"))
                 .addMethod(MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PROTECTED)
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), TypeVariableName.get("B")),
-                                "concrete")
-                        .addStatement("super(concrete)")
                         .build())
                 .addMethod(MethodSpec.constructorBuilder()
                         .addModifiers(Modifier.PROTECTED)
-                        .addParameter(ParameterizedTypeName.get(ClassName.get(Class.class), TypeVariableName.get("B")),
-                                "concrete")
-                        .addParameter(TypeVariableName.get("R"), "request")
-                        .addStatement("super(concrete, request)")
+                        .addParameter(className(), "request")
+                        .addStatement("super(request)")
                         .build())
                 .build();
     }

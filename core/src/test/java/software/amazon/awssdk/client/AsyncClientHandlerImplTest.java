@@ -31,7 +31,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.RequestConfig;
@@ -62,7 +62,7 @@ public class AsyncClientHandlerImplTest {
     private AwsCredentials awsCredentials = new AwsCredentials("public", "private");
 
     @Mock
-    private AmazonWebServiceRequest request;
+    private AwsRequest request;
 
     @Mock
     private RequestConfig requestConfig;

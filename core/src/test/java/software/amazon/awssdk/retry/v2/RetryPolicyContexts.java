@@ -16,9 +16,8 @@
 package software.amazon.awssdk.retry.v2;
 
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.SdkBaseException;
-import utils.model.EmptyAmazonWebServiceRequest;
 
 /**
  * Precanned instances of {@link RetryPolicyContext} and factory methods for creating contexts.
@@ -32,7 +31,7 @@ public class RetryPolicyContexts {
 
     public static final RetryPolicyContext LEGACY = RetryPolicyContexts.fromLegacy(
             new AmazonClientException("boom"),
-            new EmptyAmazonWebServiceRequest(),
+            AwsRequest.NOOP,
             2);
 
     public static RetryPolicyContext withException(SdkBaseException e) {
@@ -54,7 +53,7 @@ public class RetryPolicyContexts {
     }
 
     public static RetryPolicyContext fromLegacy(AmazonClientException exception,
-                                                AmazonWebServiceRequest origRequest,
+                                                AwsRequest origRequest,
                                                 int retriesAttempted) {
         return RetryPolicyContext.builder()
                                  .exception(exception)

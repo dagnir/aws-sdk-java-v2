@@ -23,7 +23,7 @@ import software.amazon.awssdk.SdkRequest;
 import software.amazon.awssdk.annotation.SdkProtectedApi;
 
 @SdkProtectedApi
-public class WaiterBuilder<InputT extends SdkRequest<?, ?, ?>, OutputT> {
+public class WaiterBuilder<InputT extends SdkRequest, OutputT> {
 
     private SdkFunction<InputT, OutputT> sdkFunction;
 

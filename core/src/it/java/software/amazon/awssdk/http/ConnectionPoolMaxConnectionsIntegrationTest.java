@@ -27,7 +27,6 @@ import software.amazon.awssdk.AmazonClientException;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.http.apache.ApacheSdkHttpClientFactory;
 import software.amazon.awssdk.http.server.MockServer;
-import software.amazon.awssdk.internal.http.request.EmptyHttpRequest;
 import software.amazon.awssdk.internal.http.response.EmptyAWSResponseHandler;
 import software.amazon.awssdk.retry.PredefinedRetryPolicies;
 import utils.HttpTestUtils;
@@ -65,7 +64,9 @@ public class ConnectionPoolMaxConnectionsIntegrationTest {
                                                                                          .createHttpClient())
                                                    .build();
 
-        Request<?> request = new EmptyHttpRequest(localhostEndpoint, HttpMethodName.GET);
+        // FIXME (dongie)
+        Request<?> request = null;
+        //Request<?> request = new EmptyHttpRequest(localhostEndpoint, HttpMethodName.GET);
 
         // Block the first connection in the pool with this request.
         httpClient.requestExecutionBuilder()

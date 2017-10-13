@@ -24,7 +24,7 @@ public class PollingStrategyContext {
     /**
      * Represents the original input of the operation.
      */
-    private final SdkRequest<?, ?, ?> originalRequest;
+    private final SdkRequest originalRequest;
 
     /**
      * Represents the number of retries made so far
@@ -35,7 +35,7 @@ public class PollingStrategyContext {
      * Constructs a new polling strategy context with the given
      * request and retries attempted required for custom polling
      */
-    PollingStrategyContext(SdkRequest<?, ?, ?> originalRequest, int retriesAttempted) {
+    PollingStrategyContext(SdkRequest originalRequest, int retriesAttempted) {
         this.originalRequest = originalRequest;
         this.retriesAttempted = retriesAttempted;
     }
@@ -43,7 +43,7 @@ public class PollingStrategyContext {
     /**
      * @return Original input of the operation.
      */
-    public SdkRequest<?, ?, ?> getOriginalRequest() {
+    public SdkRequest getOriginalRequest() {
         return originalRequest;
     }
 

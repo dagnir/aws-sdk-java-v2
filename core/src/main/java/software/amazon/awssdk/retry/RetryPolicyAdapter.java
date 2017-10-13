@@ -18,7 +18,7 @@ package software.amazon.awssdk.retry;
 import static software.amazon.awssdk.util.ValidationUtils.assertNotNull;
 
 import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.annotation.ReviewBeforeRelease;
 import software.amazon.awssdk.annotation.SdkInternalApi;
 import software.amazon.awssdk.retry.v2.RetryPolicyContext;
@@ -40,7 +40,7 @@ public class RetryPolicyAdapter implements software.amazon.awssdk.retry.v2.Retry
     @Override
     public long computeDelayBeforeNextRetry(RetryPolicyContext context) {
         return legacyRetryPolicy.getBackoffStrategy().delayBeforeNextRetry(
-                (AmazonWebServiceRequest) context.originalRequest(),
+                (AwsRequest) context.originalRequest(),
                 tryConvertException(context.exception()),
                 context.retriesAttempted());
     }
@@ -51,7 +51,7 @@ public class RetryPolicyAdapter implements software.amazon.awssdk.retry.v2.Retry
             return false;
         }
         return legacyRetryPolicy.getRetryCondition().shouldRetry(
-                (AmazonWebServiceRequest) context.originalRequest(),
+                (AwsRequest) context.originalRequest(),
                 tryConvertException(context.exception()),
                 context.retriesAttempted());
     }

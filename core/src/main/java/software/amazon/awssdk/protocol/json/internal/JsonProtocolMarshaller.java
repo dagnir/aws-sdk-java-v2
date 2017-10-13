@@ -18,7 +18,7 @@ package software.amazon.awssdk.protocol.json.internal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.DefaultRequest;
 import software.amazon.awssdk.Request;
 import software.amazon.awssdk.annotation.SdkInternalApi;
@@ -75,8 +75,8 @@ public class JsonProtocolMarshaller<OrigRequestT> implements ProtocolRequestMars
     }
 
     private DefaultRequest<OrigRequestT> createRequest(OperationInfo operationInfo, OrigRequestT originalRequest) {
-        if (originalRequest instanceof AmazonWebServiceRequest) {
-            return new DefaultRequest<>((AmazonWebServiceRequest) originalRequest, operationInfo.serviceName());
+        if (originalRequest instanceof AwsRequest) {
+            return new DefaultRequest<>((AwsRequest) originalRequest, operationInfo.serviceName());
         } else {
             return new DefaultRequest<>(operationInfo.serviceName());
         }

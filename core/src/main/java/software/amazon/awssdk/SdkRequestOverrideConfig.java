@@ -1,64 +1,72 @@
 package software.amazon.awssdk;
 
 import software.amazon.awssdk.event.ProgressListener;
-import software.amazon.awssdk.utils.Validate;
-import software.amazon.awssdk.utils.builder.CopyableBuilder;
-import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Base per-request override configuration for all SDK requests.
  */
-public abstract class SdkRequestOverrideConfig<B extends SdkRequestOverrideConfig.Builder<B, C>,
-        C extends SdkRequestOverrideConfig<B, C>> implements ToCopyableBuilder<B, SdkRequestOverrideConfig<B, C>> {
+public abstract class SdkRequestOverrideConfig {
 
     private final ProgressListener progressListener;
 
-    private final Map<String, String> customHeaders;
+    private final Map<String, String> additionalHeaders;
 
-    private final Map<String, List<String>> customQueryParameters;
+    private final Map<String, List<String>> additionalQueryParameters;
 
-    protected SdkRequestOverrideConfig(B builder) {
-        this.progressListener = builder.getProgressListener();
-        this.customHeaders = builder.getCustomHeaders();
-        this.customQueryParameters = builder.getCustomQueryParameters();
+    private final Duration clientExecutionTimeout;
+
+    protected SdkRequestOverrideConfig(Builder<?> builder) {
+        this.progressListener = builder.progressListener();
+        this.additionalHeaders = builder.additionalHeaders();
+        this.additionalQueryParameters = builder.additionalQueryParameters();
+        this.clientExecutionTimeout = builder.clientExecutionTimeout();
     }
 
     public Optional<ProgressListener> progressListener() {
         return Optional.ofNullable(progressListener);
     }
 
-    public Optional<Map<String, String>> customHeaders() {
-        return Optional.ofNullable(customHeaders);
+    public Optional<Map<String, String>> additionalHeaders() {
+        return Optional.ofNullable(additionalHeaders);
     }
 
-    public Optional<Map<String, List<String>>> customQueryParameters() {
-        return Optional.ofNullable(customQueryParameters);
+    public Optional<Map<String, List<String>>> additionalQueryParameters() {
+        return Optional.ofNullable(additionalQueryParameters);
     }
 
-    public interface Builder<B extends SdkRequestOverrideConfig.Builder<B, C>,
-            C extends SdkRequestOverrideConfig<B, C>> extends CopyableBuilder<B, SdkRequestOverrideConfig<B, C>> {
-        ProgressListener getProgressListener();
+    public Optional<Duration> clientExecutionTimeout() {
+        return Optional.ofNullable(clientExecutionTimeout);
+    }
+
+    public abstract Builder<? extends Builder> toBuilder();
+
+    public interface Builder<B extends Builder> {
+        ProgressListener progressListener();
 
         B progressListener(ProgressListener progressListener);
 
-        Map<String, String> getCustomHeaders();
+        Map<String, String> additionalHeaders();
 
-        B customHeaders(Map<String, String> customHeaders);
+        B additionalHeaders(Map<String, String> customHeaders);
 
-        Map<String, List<String>> getCustomQueryParameters();
+        Map<String, List<String>> additionalQueryParameters();
 
-        B customQueryParameters(Map<String, List<String>> customQueryParameters);
+        B additionalQueryParameters(Map<String, List<String>> customQueryParameters);
+
+        Duration clientExecutionTimeout();
+
+        B clientExecutionTimeout(Duration clientExecutionTimeout);
     }
 
-    protected static abstract class BuilderImpl<B extends SdkRequestOverrideConfig.Builder<B, C>,
-            C extends SdkRequestOverrideConfig<B, C>> implements Builder<B, C> {
-        private final Class<B> concrete;
+    protected static abstract class BuilderImpl<B extends Builder> implements Builder<B> {
 
         private ProgressListener progressListener;
 
@@ -66,66 +74,74 @@ public abstract class SdkRequestOverrideConfig<B extends SdkRequestOverrideConfi
 
         private Map<String, List<String>> customQueryParameters;
 
-        protected BuilderImpl(Class<B> concrete) {
-            Validate.isInstanceOf(concrete, this, "This class is not an instance of %s!", concrete);
-            this.concrete = concrete;
+        private Duration clientExecutionTimeout;
+
+        protected BuilderImpl() {
         }
 
-        protected BuilderImpl(Class<B> concrete, C sdkRequestOverrideConfig) {
-            this(concrete);
+        protected BuilderImpl(SdkRequestOverrideConfig sdkRequestOverrideConfig) {
             sdkRequestOverrideConfig.progressListener().map(this::progressListener);
-            sdkRequestOverrideConfig.customHeaders().map(this::customHeaders);
-            sdkRequestOverrideConfig.customQueryParameters().map(this::customQueryParameters);
+            sdkRequestOverrideConfig.additionalHeaders().map(this::additionalHeaders);
+            sdkRequestOverrideConfig.additionalQueryParameters().map(this::additionalQueryParameters);
         }
 
         @Override
-        public ProgressListener getProgressListener() {
+        public ProgressListener progressListener() {
             return progressListener;
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public B progressListener(ProgressListener progressListener) {
             this.progressListener = progressListener;
-            return concrete.cast(this);
+            return (B) this;
         }
 
         @Override
-        public Map<String, String> getCustomHeaders() {
+        public Map<String, String> additionalHeaders() {
             return customHeaders;
         }
 
-        public void setCustomHeaders(Map<String, String> customHeaders) {
-            customHeaders(customHeaders);
-        }
-
         @Override
-        public B customHeaders(Map<String, String> customHeaders) {
+        @SuppressWarnings("unchecked")
+        public B additionalHeaders(Map<String, String> customHeaders) {
             if (customHeaders == null) {
                 this.customHeaders = null;
             } else {
                 this.customHeaders = new HashMap<>(customHeaders);
             }
-            return concrete.cast(this);
+            return (B) this;
         }
 
         @Override
-        public Map<String, List<String>> getCustomQueryParameters() {
+        public Map<String, List<String>> additionalQueryParameters() {
             return customQueryParameters;
         }
 
-        public void setCustomQueryParameters(Map<String, List<String>> customQueryParameters) {
-            customQueryParameters(customQueryParameters);
-        }
-
         @Override
-        public B customQueryParameters(Map<String, List<String>> customQueryParameters) {
+        @SuppressWarnings("unchecked")
+        public B additionalQueryParameters(Map<String, List<String>> customQueryParameters) {
             if (customQueryParameters == null) {
                 this.customQueryParameters = null;
             } else {
-                this.customQueryParameters = new HashMap<>(customQueryParameters.size());
-                customQueryParameters.forEach((key, value) -> this.customQueryParameters.put(key, new ArrayList<>(value)));
+                this.customQueryParameters = customQueryParameters.entrySet().stream()
+                        .collect(Collectors.toMap(Map.Entry::getKey, e -> new ArrayList<>(e.getValue())));
             }
-            return concrete.cast(this);
+            return (B) this;
         }
+
+        @Override
+        public Duration clientExecutionTimeout() {
+            return clientExecutionTimeout;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public B clientExecutionTimeout(Duration clientExecutionTimeout) {
+            this.clientExecutionTimeout = clientExecutionTimeout;
+            return (B) this;
+        }
+
+        public abstract SdkRequestOverrideConfig build();
     }
 }
