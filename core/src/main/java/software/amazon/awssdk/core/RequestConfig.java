@@ -17,6 +17,7 @@ package software.amazon.awssdk.core;
 
 import java.util.List;
 import java.util.Map;
+
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.annotations.SdkProtectedApi;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
@@ -65,7 +66,7 @@ public abstract class RequestConfig {
      * @return Returns an empty, no-op implementation of request config.
      */
     public static RequestConfig empty() {
-        return new AmazonWebServiceRequestAdapter(AwsRequest.NOOP);
+        return new AmazonWebServiceRequestAdapter(AmazonWebServiceRequest.NOOP);
     }
 
 }

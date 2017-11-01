@@ -15,14 +15,15 @@
 
 package software.amazon.awssdk;
 
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-
 import java.util.Optional;
+
+import software.amazon.awssdk.core.ReadLimitInfo;
+import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 
 /**
  * Request-specific configuration overrides for AWS service clients.
  */
-final public class AwsRequestOverrideConfig extends SdkRequestOverrideConfig {
+public final class AwsRequestOverrideConfig extends SdkRequestOverrideConfig {
     private final AwsCredentialsProvider awsCredentialsProvider;
 
     private AwsRequestOverrideConfig(Builder builder) {
@@ -47,11 +48,15 @@ final public class AwsRequestOverrideConfig extends SdkRequestOverrideConfig {
         Builder awsCredentialsProvider(AwsCredentialsProvider awsCredentialsProvider);
 
         AwsCredentialsProvider awsCredentialsProvider();
+
+        AwsRequestOverrideConfig build();
     }
 
     protected static final class BuilderImpl extends SdkRequestOverrideConfig.BuilderImpl<Builder> implements Builder {
 
         private AwsCredentialsProvider awsCredentialsProvider;
+
+        private ReadLimitInfo readLimitInfo;
 
         private BuilderImpl() {
         }

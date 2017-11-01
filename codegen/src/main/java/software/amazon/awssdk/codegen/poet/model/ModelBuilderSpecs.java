@@ -28,6 +28,7 @@ import javax.lang.model.element.Modifier;
 
 import software.amazon.awssdk.AwsRequestOverrideConfig;
 import software.amazon.awssdk.AwsResponseMetadata;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
@@ -137,12 +138,17 @@ class ModelBuilderSpecs {
     }
 
     private List<FieldSpec> fields() {
-        List<FieldSpec> fields = shapeModelSpec.fields(Modifier.PRIVATE);
+        List<FieldSpec> fields = new ArrayList<>(shapeModelSpec.fields(Modifier.PRIVATE));
 
         // Inject a message member for the isException message
         if (isException()) {
-            fields = new ArrayList<>(fields);
             fields.add(FieldSpec.builder(String.class, "message", Modifier.PRIVATE).build());
+        }
+
+        if (isRequest()) {
+            fields.add(FieldSpec.builder(AwsRequestOverrideConfig.class, "requestOverrideConfig", Modifier.PRIVATE).build());
+        } else if (isResponse()) {
+            fields.add(FieldSpec.builder(AwsResponseMetadata.class, "responseMetadata", Modifier.PRIVATE).build());
         }
 
         return fields;
@@ -158,10 +164,6 @@ class ModelBuilderSpecs {
         MethodSpec.Builder copyBuilderCtor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE)
                 .addParameter(classToBuild(), "model");
-
-        if (builderImplSuperClass() != ClassName.OBJECT) {
-            copyBuilderCtor.addStatement("super(model)");
-        }
 
         shapeModel.getNonStreamingMembers().forEach(m -> {
             String name = m.getVariable().getVariableName();
@@ -195,8 +197,15 @@ class ModelBuilderSpecs {
                     .returns(builderInterfaceName())
                     .addParameter(AwsRequestOverrideConfig.class, "awsRequestOverrideConfig")
                     .addModifiers(Modifier.PUBLIC)
-                    .addStatement("super.requestOverrideConfig($N)", "awsRequestOverrideConfig")
+                    .addStatement("this.requestOverrideConfig = awsRequestOverrideConfig")
                     .addStatement("return this")
+                    .build());
+
+            accessors.add(MethodSpec.methodBuilder("requestOverrideConfig")
+                    .addAnnotation(Override.class)
+                    .returns(AwsRequestOverrideConfig.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addStatement("return requestOverrideConfig")
                     .build());
         }
 
@@ -206,8 +215,15 @@ class ModelBuilderSpecs {
                     .returns(builderInterfaceName())
                     .addParameter(AwsResponseMetadata.class, "awsResponseMetadata")
                     .addModifiers(Modifier.PUBLIC)
-                    .addStatement("super.responseMetadata($N)", "awsResponseMetadata")
+                    .addStatement("responseMetadata = awsResponseMetadata")
                     .addStatement("return this")
+                    .build());
+
+            accessors.add(MethodSpec.methodBuilder("responseMetadata")
+                    .addAnnotation(Override.class)
+                    .returns(AwsResponseMetadata.class)
+                    .addModifiers(Modifier.PUBLIC)
+                    .addStatement("return responseMetadata")
                     .build());
         }
 

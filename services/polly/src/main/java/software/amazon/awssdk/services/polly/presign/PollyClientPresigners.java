@@ -65,38 +65,38 @@ public final class PollyClientPresigners {
                                   .encodedPath(SdkHttpUtils.appendUri(endpoint.getPath(), "/v1/speech"))
                                   .method(SdkHttpMethod.GET);
         marshallIntoRequest(synthesizeSpeechPresignRequest, request);
-        Date expirationDate = synthesizeSpeechPresignRequest.getExpirationDate() == null ?
-                              getDefaultExpirationDate() : synthesizeSpeechPresignRequest.getExpirationDate();
+        Date expirationDate = synthesizeSpeechPresignRequest.expirationDate() == null ?
+                              getDefaultExpirationDate() : synthesizeSpeechPresignRequest.expirationDate();
         return presignerFacade.presign(synthesizeSpeechPresignRequest, request.build(), RequestConfig.empty(), expirationDate);
     }
 
     private void marshallIntoRequest(SynthesizeSpeechPresignRequest synthesizeSpeechRequest, SdkHttpFullRequest.Builder request) {
-        if (synthesizeSpeechRequest.getText() != null) {
-            request.rawQueryParameter("Text", synthesizeSpeechRequest.getText());
+        if (synthesizeSpeechRequest.text() != null) {
+            request.rawQueryParameter("Text", synthesizeSpeechRequest.text());
         }
 
-        if (synthesizeSpeechRequest.getTextType() != null) {
-            request.rawQueryParameter("TextType", synthesizeSpeechRequest.getTextType());
+        if (synthesizeSpeechRequest.textType() != null) {
+            request.rawQueryParameter("TextType", synthesizeSpeechRequest.textType());
         }
 
-        if (synthesizeSpeechRequest.getVoiceId() != null) {
-            request.rawQueryParameter("VoiceId", synthesizeSpeechRequest.getVoiceId());
+        if (synthesizeSpeechRequest.voiceId() != null) {
+            request.rawQueryParameter("VoiceId", synthesizeSpeechRequest.voiceId());
         }
 
-        if (synthesizeSpeechRequest.getSampleRate() != null) {
-            request.rawQueryParameter("SampleRate", synthesizeSpeechRequest.getSampleRate());
+        if (synthesizeSpeechRequest.sampleRate() != null) {
+            request.rawQueryParameter("SampleRate", synthesizeSpeechRequest.sampleRate());
         }
 
-        if (synthesizeSpeechRequest.getOutputFormat() != null) {
-            request.rawQueryParameter("OutputFormat", synthesizeSpeechRequest.getOutputFormat());
+        if (synthesizeSpeechRequest.outputFormat() != null) {
+            request.rawQueryParameter("OutputFormat", synthesizeSpeechRequest.outputFormat());
         }
 
-        if (synthesizeSpeechRequest.getLexiconNames() != null) {
-            request.rawQueryParameter("LexiconNames", synthesizeSpeechRequest.getLexiconNames());
+        if (synthesizeSpeechRequest.lexiconNames() != null) {
+            request.rawQueryParameter("LexiconNames", synthesizeSpeechRequest.lexiconNames());
         }
 
-        if (synthesizeSpeechRequest.getSpeechMarkTypes() != null) {
-            request.rawQueryParameter("SpeechMarkTypes", synthesizeSpeechRequest.getSpeechMarkTypes());
+        if (synthesizeSpeechRequest.speechMarkTypes() != null) {
+            request.rawQueryParameter("SpeechMarkTypes", synthesizeSpeechRequest.speechMarkTypes());
         }
     }
 

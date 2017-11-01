@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.NotThreadSafe;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.auth.AwsCredentials;
@@ -31,9 +34,18 @@ import software.amazon.awssdk.core.event.ProgressListener;
  * Base class for all user facing web service requests.
  */
 @NotThreadSafe
-public abstract class AmazonWebServiceRequest extends SdkRequest implements Cloneable, ReadLimitInfo {
+public abstract class AmazonWebServiceRequest implements SdkRequest, Cloneable, ReadLimitInfo {
 
     public static final AmazonWebServiceRequest NOOP = new AmazonWebServiceRequest() {
+        @Override
+        public Builder toBuilder() {
+            return null;
+        }
+
+        @Override
+        public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
+            return null;
+        }
     };
     /**
      * Arbitrary options storage for individual {@link AmazonWebServiceRequest}s. This field is not

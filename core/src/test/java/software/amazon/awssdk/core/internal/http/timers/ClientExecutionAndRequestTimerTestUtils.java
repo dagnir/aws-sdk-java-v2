@@ -21,6 +21,8 @@ import static org.junit.Assert.assertNull;
 import java.util.Collections;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.Request;
 import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.http.AmazonHttpClient;
@@ -120,7 +122,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
     public static ExecutionContext executionContext(SdkHttpFullRequest request) {
         InterceptorContext incerceptorContext =
                 InterceptorContext.builder()
-                                  .request(new SdkRequest() {})
+                                  .request(AmazonWebServiceRequest.NOOP)
                                   .httpRequest(request)
                                   .build();
         return ExecutionContext.builder()

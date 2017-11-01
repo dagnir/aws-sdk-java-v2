@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.core;
 
+import software.amazon.awssdk.AwsResponse;
+import software.amazon.awssdk.AwsResponseMetadata;
+
 /**
  * Represents the response from an AWS service, including the result payload and
  * any response metadata. AWS response metadata consists primarily of the AWS

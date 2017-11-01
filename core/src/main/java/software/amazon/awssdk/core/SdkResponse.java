@@ -17,6 +17,9 @@ package software.amazon.awssdk.core;
 
 import java.util.Optional;
 
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
+
 /**
  * The base class for all SDK responses.
  *
@@ -25,7 +28,12 @@ import java.util.Optional;
  *
  * @see SdkRequest
  */
-public abstract class SdkResponse {
+public interface SdkResponse extends ToCopyableBuilder<SdkResponse.Builder, SdkResponse> {
+
+    /**
+     * @return The metadata about this response.
+     */
+    Object responseMetadata();
 
     /**
      * Used to retrieve the value of a field from any class that extends {@link SdkResponse}. The field name
@@ -38,7 +46,11 @@ public abstract class SdkResponse {
      * @param clazz The class to cast the returned object to.
      * @return Optional containing the casted return value
      */
-    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+    default  <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
         return Optional.empty();
+    }
+
+    interface Builder extends CopyableBuilder<Builder, SdkResponse> {
+
     }
 }

@@ -24,6 +24,15 @@ import software.amazon.awssdk.annotations.ReviewBeforeRelease;
  * @param <T> Type of {@link ResponseMetadata}.
  */
 @ReviewBeforeRelease("This should be deleted.")
-public class AmazonWebServiceResult<T extends ResponseMetadata> extends SdkResponse {
+public class AmazonWebServiceResult<T extends ResponseMetadata> implements SdkResponse {
 
+    @Override
+    public Object responseMetadata() {
+        return null;
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return null;
+    }
 }

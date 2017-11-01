@@ -33,6 +33,7 @@ import software.amazon.awssdk.core.runtime.endpoint.DefaultServiceEndpointBuilde
 import software.amazon.awssdk.core.util.AwsHostNameUtils;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
+import software.amazon.awssdk.services.rds.model.RDSRequest;
 import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 
@@ -42,7 +43,7 @@ import software.amazon.awssdk.utils.http.SdkHttpUtils;
  *
  * @param <T> The request type.
  */
-abstract class RdsPresignInterceptor<T extends AmazonWebServiceRequest> implements ExecutionInterceptor {
+abstract class RdsPresignInterceptor<T extends RDSRequest> implements ExecutionInterceptor {
     private static final String SERVICE_NAME = "rds";
     private static final String PARAM_SOURCE_REGION = "SourceRegion";
     private static final String PARAM_DESTINATION_REGION = "DestinationRegion";

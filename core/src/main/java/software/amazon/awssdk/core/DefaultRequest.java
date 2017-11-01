@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import software.amazon.awssdk.annotations.NotThreadSafe;
 import software.amazon.awssdk.core.event.ProgressInputStream;
 import software.amazon.awssdk.core.http.HttpMethodName;
@@ -39,7 +40,7 @@ public class DefaultRequest<T> implements Request<T> {
      * The original, user facing request object which this internal request
      * object is representing
      */
-    private final SdkRequest originalRequest;
+    private final T originalRequest;
 
     /** The resource path being requested. */
     private String resourcePath;
@@ -77,11 +78,9 @@ public class DefaultRequest<T> implements Request<T> {
      *            The original, user facing, AWS request being represented by
      *            this internal request object.
      */
-    public DefaultRequest(SdkRequest originalRequest, String serviceName) {
+    public DefaultRequest(T originalRequest, String serviceName) {
         this.serviceName = serviceName;
-        this.originalRequest = originalRequest == null
-                               ? AwsRequest.NOOP
-                               : originalRequest;
+        this.originalRequest = originalRequest;
     }
 
     /**
@@ -103,7 +102,7 @@ public class DefaultRequest<T> implements Request<T> {
      * @return The original, user facing request object which this request
      *         object is representing.
      */
-    public SdkRequest getOriginalRequest() {
+    public T getOriginalRequest() {
         return originalRequest;
     }
 
@@ -317,16 +316,5 @@ public class DefaultRequest<T> implements Request<T> {
             is = pris.getWrappedInputStream();
         }
         return is;
-    }
-
-    @Override
-    public ReadLimitInfo getReadLimitInfo() {
-        // FIXME(dongie)
-        return null;
-    }
-
-    @Override
-    public Object getOriginalRequestObject() {
-        return originalRequest;
     }
 }

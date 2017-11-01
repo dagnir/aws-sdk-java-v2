@@ -19,8 +19,6 @@ import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.annotations.SdkTestInternalApi;
 import software.amazon.awssdk.annotations.ThreadSafe;
-import software.amazon.awssdk.core.AmazonServiceException;
-import software.amazon.awssdk.core.AmazonWebServiceResponse;
 import software.amazon.awssdk.core.Request;
 import software.amazon.awssdk.core.RequestConfig;
 import software.amazon.awssdk.core.RequestExecutionContext;
@@ -52,9 +50,6 @@ import software.amazon.awssdk.core.http.pipeline.stages.SigningStage;
 import software.amazon.awssdk.core.http.pipeline.stages.TimerExceptionHandlingStage;
 import software.amazon.awssdk.core.http.pipeline.stages.UnwrapResponseContainer;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
-import software.amazon.awssdk.core.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.core.internal.http.response.AwsErrorResponseHandler;
-import software.amazon.awssdk.core.internal.http.response.AwsResponseHandlerAdapter;
 import software.amazon.awssdk.core.internal.http.timers.client.ClientExecutionTimer;
 import software.amazon.awssdk.core.retry.v2.RetryPolicy;
 import software.amazon.awssdk.core.util.CapacityManager;
@@ -113,33 +108,6 @@ public class AmazonHttpClient implements SdkAutoCloseable {
     @SdkTestInternalApi
     public ClientExecutionTimer getClientExecutionTimer() {
         return this.httpClientDependencies.clientExecutionTimer();
-    }
-
-    /**
-     * Executes the request and returns the result.
-     *
-     * @param request              The AmazonWebServices request to send to the remote server
-     * @param responseHandler      A response handler to accept a successful response from the
-     *                             remote server
-     * @param errorResponseHandler A response handler to accept an unsuccessful response from the
-     *                             remote server
-     * @param executionContext     Additional information about the context of this web service
-     *                             call
-     * @deprecated Use {@link #requestExecutionBuilder()} to configure and execute a HTTP request.
-     */
-    @Deprecated
-    public <T> T execute(Request<?> request,
-                         HttpResponseHandler<AmazonWebServiceResponse<T>> responseHandler,
-                         HttpResponseHandler<AmazonServiceException> errorResponseHandler,
-                         ExecutionContext executionContext) {
-        HttpResponseHandler<T> adaptedRespHandler = new AwsResponseHandlerAdapter<>(
-                getNonNullResponseHandler(responseHandler));
-        return requestExecutionBuilder()
-                .request(request)
-                .requestConfig(new AmazonWebServiceRequestAdapter(request.getOriginalRequest()))
-                .errorResponseHandler(new AwsErrorResponseHandler(errorResponseHandler))
-                .executionContext(executionContext)
-                .execute(adaptedRespHandler);
     }
 
     /**

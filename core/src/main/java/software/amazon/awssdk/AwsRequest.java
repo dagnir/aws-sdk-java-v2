@@ -1,13 +1,28 @@
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package software.amazon.awssdk;
 
 import java.util.Optional;
+
+import software.amazon.awssdk.core.SdkRequest;
 
 /**
  * Base class for all AWS Service requests.
  */
 public abstract class AwsRequest implements SdkRequest {
-    public static final AwsRequest NOOP = NoopRequest.builder().build();
-
     private final AwsRequestOverrideConfig requestOverrideConfig;
 
     protected AwsRequest(Builder builder) {
@@ -15,7 +30,7 @@ public abstract class AwsRequest implements SdkRequest {
     }
 
     @Override
-    final public Optional<AwsRequestOverrideConfig> requestOverrideConfig() {
+    public final Optional<AwsRequestOverrideConfig> requestOverrideConfig() {
         return Optional.ofNullable(requestOverrideConfig);
     }
 
@@ -32,7 +47,7 @@ public abstract class AwsRequest implements SdkRequest {
         AwsRequest build();
     }
 
-    protected static abstract class BuilderImpl implements Builder {
+    protected abstract static class BuilderImpl implements Builder {
         private AwsRequestOverrideConfig awsRequestOverrideConfig;
 
         protected BuilderImpl() {
@@ -49,31 +64,8 @@ public abstract class AwsRequest implements SdkRequest {
         }
 
         @Override
-        final public AwsRequestOverrideConfig requestOverrideConfig() {
+        public final AwsRequestOverrideConfig requestOverrideConfig() {
             return awsRequestOverrideConfig;
-        }
-    }
-
-    // FIXME: This is an artifact from AmazonWebServiceRequest. Remove this once the usage of NOOP is removed.
-    private static class NoopRequest extends AwsRequest {
-        private NoopRequest(Builder b) {
-            super(b);
-        }
-
-        @Override
-        public Builder toBuilder() {
-            return new Builder();
-        }
-
-        public static Builder builder() {
-            return new Builder();
-        }
-
-        private static class Builder extends AwsRequest.BuilderImpl {
-            @Override
-            public NoopRequest build() {
-                return new NoopRequest(this);
-            }
         }
     }
 }

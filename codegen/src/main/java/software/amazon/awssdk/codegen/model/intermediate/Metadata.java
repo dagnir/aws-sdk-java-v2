@@ -97,6 +97,10 @@ public class Metadata {
 
     private AuthType authType;
 
+    private String baseRequestName;
+
+    private String baseResponseName;
+
     public String getApiVersion() {
         return apiVersion;
     }
@@ -670,6 +674,24 @@ public class Metadata {
 
     public Metadata withAuthType(AuthType authType) {
         this.authType = authType;
+        return this;
+    }
+
+    public String getBaseRequestName() {
+        return baseRequestName;
+    }
+
+    public Metadata withBaseRequestName(String baseRequestName) {
+        this.baseRequestName = baseRequestName;
+        return this;
+    }
+
+    public String getBaseResponseName() {
+        return baseResponseName;
+    }
+
+    public Metadata withBaseResponseName(String baseResponseName) {
+        this.baseResponseName = baseResponseName;
         return this;
     }
 

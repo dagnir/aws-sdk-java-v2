@@ -15,11 +15,11 @@
 
 package software.amazon.awssdk;
 
-import software.amazon.awssdk.utils.builder.CopyableBuilder;
-import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  * Represents additional metadata included with a response from AWS. Response
@@ -69,6 +69,7 @@ public final class AwsResponseMetadata implements ToCopyableBuilder<AwsResponseM
 
     public interface Builder extends CopyableBuilder<Builder, AwsResponseMetadata> {
         Builder metadata(Map<String, String> metadata);
+
         Map<String, String> metadata();
     }
 

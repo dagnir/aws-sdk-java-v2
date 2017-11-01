@@ -105,11 +105,12 @@ public class SynthesizeSpeechPresignTest {
     @Test
     public void singleLexiconNameInRequest_GeneratesCorrectUrl() {
         final URL url = presigners.getPresignedSynthesizeSpeechUrl(
-                new SynthesizeSpeechPresignRequest()
-                        .withText("Hello world")
-                        .withOutputFormat(OutputFormat.PCM)
-                        .withLexiconNames("AwsLexicon")
-                        .withVoiceId("Salli"));
+                SynthesizeSpeechPresignRequest.builder()
+                        .text("Hello world")
+                        .outputFormat(OutputFormat.PCM.toString())
+                        .lexiconNames(Arrays.asList("AwsLexicon"))
+                        .voiceId("Salli")
+                        .build());
         assertEquals(
                 "https://polly.us-east-1.amazonaws.com/v1/speech?Text=Hello%20world&VoiceId=Salli&OutputFormat=pcm&LexiconNames=AwsLexicon&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20161107T173933Z&X-Amz-SignedHeaders=host&X-Amz-Expires=900&X-Amz-Credential=akid%2F20161107%2Fus-east-1%2Fpolly%2Faws4_request&X-Amz-Signature=402d90c3ea6087b251dd1d7871a14d261e982ecf19ed21f7f1ad66326cbe2867",
                 url.toExternalForm());
@@ -119,12 +120,13 @@ public class SynthesizeSpeechPresignTest {
     public void multipleLexiconNamesInRequest_CanonicalizesCorrectly() {
         Instant instant = SIGNER_DATE.toInstant().plus(30, ChronoUnit.MINUTES);
         final URL url = presigners.getPresignedSynthesizeSpeechUrl(
-                new SynthesizeSpeechPresignRequest()
-                        .withExpirationDate(Date.from(instant))
-                        .withText("S3 is an AWS service")
-                        .withOutputFormat(OutputFormat.MP3)
-                        .withLexiconNames("FooLexicon", "AwsLexicon")
-                        .withVoiceId("Salli"));
+                SynthesizeSpeechPresignRequest.builder()
+                        .expirationDate(Date.from(instant))
+                        .text("S3 is an AWS service")
+                        .outputFormat(OutputFormat.MP3.toString())
+                        .lexiconNames(Arrays.asList("FooLexicon", "AwsLexicon"))
+                        .voiceId("Salli")
+                        .build());
         assertEquals(
                 "https://polly.us-east-1.amazonaws.com/v1/speech?Text=S3%20is%20an%20AWS%20service&VoiceId=Salli&OutputFormat=mp3&LexiconNames=FooLexicon&LexiconNames=AwsLexicon&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20161107T173933Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1800&X-Amz-Credential=akid%2F20161107%2Fus-east-1%2Fpolly%2Faws4_request&X-Amz-Signature=62f1bea76407769779e61e5b0ed18a4e40607c9637109c005f53ba1785d4874a",
                 url.toExternalForm());

@@ -17,6 +17,8 @@ package software.amazon.awssdk;
 
 import java.util.Optional;
 
+import software.amazon.awssdk.core.SdkResponse;
+
 /**
  * Base class for all AWS Service responses.
  */
@@ -44,7 +46,7 @@ public abstract class AwsResponse implements SdkResponse {
         Builder responseMetadata(AwsResponseMetadata awsResponseMetadata);
     }
 
-    protected static abstract class BuilderImpl implements Builder {
+    protected abstract static class BuilderImpl implements Builder {
         private AwsResponseMetadata awsResponseMetadata;
 
         protected BuilderImpl() {

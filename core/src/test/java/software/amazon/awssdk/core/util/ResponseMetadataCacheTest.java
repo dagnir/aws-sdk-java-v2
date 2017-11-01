@@ -19,10 +19,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Random;
 import org.junit.Test;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.ResponseMetadata;
+import software.amazon.awssdk.core.SdkRequest;
 
 /** Tests for the response metadata cache class. */
 public class ResponseMetadataCacheTest {
@@ -80,5 +83,14 @@ public class ResponseMetadataCacheTest {
     }
 
     private class TestRequest extends AmazonWebServiceRequest {
+        @Override
+        public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
+            return null;
+        }
+
+        @Override
+        public Builder toBuilder() {
+            return null;
+        }
     }
 }

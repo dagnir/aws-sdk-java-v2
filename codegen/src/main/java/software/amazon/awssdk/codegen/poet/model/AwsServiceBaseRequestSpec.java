@@ -23,7 +23,9 @@ import com.squareup.javapoet.TypeVariableName;
 import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.AwsRequestOverrideConfig;
+import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
+import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
@@ -40,7 +42,6 @@ public class AwsServiceBaseRequestSpec implements ClassSpec {
     @Override
     public TypeSpec poetSpec() {
         TypeSpec.Builder builder = TypeSpec.classBuilder(className())
-                .addJavadoc("Base request class for all requests to " + intermediateModel.getMetadata().getServiceFullName())
                 .addAnnotation(PoetUtils.GENERATED)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .superclass(ClassName.get(AwsRequest.class))
@@ -61,11 +62,12 @@ public class AwsServiceBaseRequestSpec implements ClassSpec {
 
     @Override
     public ClassName className() {
-        return poetExtensions.getModelClass(intermediateModel.getMetadata().getServiceName().replace(" ", "") + "Request");
+        return poetExtensions.getModelClass(intermediateModel.getSdkRequestBaseClassName());
     }
 
     private TypeSpec builderInterfaceSpec() {
         return TypeSpec.interfaceBuilder("Builder")
+                .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ClassName.get(AwsRequest.class).nestedClass("Builder"))
                 .addMethod(MethodSpec.methodBuilder("build")
                         .addAnnotation(Override.class)

@@ -132,6 +132,22 @@ public final class IntermediateModel {
         }
     }
 
+    public String getSdkRequestBaseClassName() {
+        if (customizationConfig.getSdkRequestBaseClassName() != null) {
+            return customizationConfig.getSdkRequestBaseClassName();
+        } else {
+            return metadata.getBaseRequestName();
+        }
+    }
+
+    public String getSdkResponseBaseClassName() {
+        if (customizationConfig.getSdkResponseBaseClassName() != null) {
+            return customizationConfig.getSdkResponseBaseClassName();
+        } else {
+            return metadata.getBaseResponseName();
+        }
+    }
+
     public String getFileHeader() throws IOException {
         if (customizationConfig.getCustomFileHeader() != null) {
             return String.format("/**%n%s%n*/", customizationConfig.getCustomFileHeader());

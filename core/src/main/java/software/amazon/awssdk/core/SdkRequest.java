@@ -17,6 +17,10 @@ package software.amazon.awssdk.core;
 
 import java.util.Optional;
 
+import software.amazon.awssdk.SdkRequestOverrideConfig;
+import software.amazon.awssdk.utils.builder.CopyableBuilder;
+import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
+
 /**
  * The base class for all SDK requests.
  *
@@ -24,7 +28,12 @@ import java.util.Optional;
  *
  * @see SdkResponse
  */
-public abstract class SdkRequest {
+public interface SdkRequest extends ToCopyableBuilder<SdkRequest.Builder, SdkRequest> {
+
+    /**
+     * @return The optional client configuration overrides for this request.
+     */
+    Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig();
 
     /**
      * Used to retrieve the value of a field from any class that extends {@link SdkRequest}. The field name
@@ -37,7 +46,11 @@ public abstract class SdkRequest {
      * @param clazz The class to cast the returned object to.
      * @return Optional containing the casted return value
      */
-    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+    default <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
         return Optional.empty();
+    }
+
+    interface Builder extends CopyableBuilder<Builder, SdkRequest> {
+        SdkRequestOverrideConfig requestOverrideConfig();
     }
 }

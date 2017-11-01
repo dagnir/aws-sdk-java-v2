@@ -19,12 +19,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+
 import org.junit.Assert;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.AmazonClientException;
 import software.amazon.awssdk.core.AmazonServiceException;
 import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.DefaultRequest;
 import software.amazon.awssdk.core.Request;
+import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.http.HttpResponse;
 import software.amazon.awssdk.core.http.HttpResponseHandler;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
@@ -157,6 +161,15 @@ public class RetryPolicyTestBase {
     }
 
     public static class TestAmazonWebServiceRequest extends AmazonWebServiceRequest {
+        @Override
+        public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
+            return null;
+        }
+
+        @Override
+        public Builder toBuilder() {
+            return null;
+        }
     }
 
     /**

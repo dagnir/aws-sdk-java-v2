@@ -15,7 +15,20 @@
 
 package utils.model;
 
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.AmazonWebServiceRequest;
+import software.amazon.awssdk.core.SdkRequest;
+
+import java.util.Optional;
 
 public class EmptyAmazonWebServiceRequest extends AmazonWebServiceRequest {
+    @Override
+    public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
+        return null;
+    }
+
+    @Override
+    public Builder toBuilder() {
+        return null;
+    }
 }

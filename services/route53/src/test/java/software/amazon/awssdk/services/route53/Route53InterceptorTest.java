@@ -110,7 +110,8 @@ public class Route53InterceptorTest {
 
     private SdkResponse modifyResponse(ExecutionInterceptor interceptor, SdkResponse responseObject) {
         return interceptor.modifyResponse(InterceptorContext.builder()
-                                                            .request(new SdkRequest() {})
+                                                            // FIXME: dongie
+                                                            .request(null)
                                                             .response(responseObject)
                                                             .build(),
                                           new ExecutionAttributes());

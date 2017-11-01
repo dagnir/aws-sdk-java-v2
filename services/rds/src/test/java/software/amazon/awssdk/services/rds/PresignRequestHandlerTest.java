@@ -38,6 +38,7 @@ import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.core.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.services.rds.model.CopyDBSnapshotRequest;
+import software.amazon.awssdk.services.rds.model.RDSRequest;
 import software.amazon.awssdk.services.rds.transform.CopyDBSnapshotRequestMarshaller;
 import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
@@ -160,10 +161,11 @@ public class PresignRequestHandlerTest {
                          .build();
     }
 
-    private ExecutionAttributes executionAttributes(AmazonWebServiceRequest request) {
+    private ExecutionAttributes executionAttributes(RDSRequest request) {
         return new ExecutionAttributes().putAttribute(AwsExecutionAttributes.AWS_CREDENTIALS, CREDENTIALS)
                                         .putAttribute(AwsExecutionAttributes.REQUEST_CONFIG,
-                                                      new AmazonWebServiceRequestAdapter(request));
+                                                      //FIXME: dongie
+                                                      new AmazonWebServiceRequestAdapter(null));
     }
 
     private CopyDBSnapshotRequest makeTestRequest() {
@@ -176,7 +178,7 @@ public class PresignRequestHandlerTest {
     }
 
     private SdkHttpFullRequest modifyHttpRequest(ExecutionInterceptor interceptor,
-                                                 AmazonWebServiceRequest request,
+                                                 RDSRequest request,
                                                  SdkHttpFullRequest httpRequest) {
         InterceptorContext context = InterceptorContext.builder().request(request).httpRequest(httpRequest).build();
         return interceptor.modifyHttpRequest(context, executionAttributes(request));

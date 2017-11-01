@@ -23,7 +23,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import org.junit.Test;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.RequestClientOptions.Marker;
 import software.amazon.awssdk.core.auth.AwsCredentials;
 import software.amazon.awssdk.core.event.ProgressEvent;
@@ -71,6 +74,15 @@ public class AmazonWebServiceRequestTest {
     @Test
     public void testClone() {
         AmazonWebServiceRequest root = new AmazonWebServiceRequest() {
+            @Override
+            public Builder toBuilder() {
+                return null;
+            }
+
+            @Override
+            public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
+                return null;
+            }
         };
         assertNull(root.getCloneSource());
         assertNull(root.getCloneRoot());
@@ -95,6 +107,15 @@ public class AmazonWebServiceRequestTest {
                                                               "accessid");
 
         final AmazonWebServiceRequest from = new AmazonWebServiceRequest() {
+            @Override
+            public Builder toBuilder() {
+                return null;
+            }
+
+            @Override
+            public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
+                return null;
+            }
         };
         from.setGeneralProgressListener(listener);
         from.setRequestCredentials(credentials);
@@ -106,6 +127,15 @@ public class AmazonWebServiceRequestTest {
         from.getRequestClientOptions().setReadLimit(1234);
 
         final AmazonWebServiceRequest to = new AmazonWebServiceRequest() {
+            @Override
+            public Builder toBuilder() {
+                return null;
+            }
+
+            @Override
+            public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
+                return null;
+            }
         };
 
         // Before copy

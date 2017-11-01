@@ -1,6 +1,19 @@
-package software.amazon.awssdk;
+/*
+ * Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *  http://aws.amazon.com/apache2.0
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 
-import software.amazon.awssdk.event.ProgressListener;
+package software.amazon.awssdk;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -9,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import software.amazon.awssdk.core.event.ProgressListener;
 
 /**
  * Base per-request override configuration for all SDK requests.
@@ -66,7 +81,7 @@ public abstract class SdkRequestOverrideConfig {
         B clientExecutionTimeout(Duration clientExecutionTimeout);
     }
 
-    protected static abstract class BuilderImpl<B extends Builder> implements Builder<B> {
+    protected abstract static class BuilderImpl<B extends Builder> implements Builder<B> {
 
         private ProgressListener progressListener;
 

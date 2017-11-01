@@ -40,7 +40,6 @@ public class AwsServiceBaseResponseSpec implements ClassSpec {
     @Override
     public TypeSpec poetSpec() {
         TypeSpec.Builder builder = TypeSpec.classBuilder(className())
-                .addJavadoc("Base response class for all requests to " + intermediateModel.getMetadata().getServiceFullName())
                 .addAnnotation(PoetUtils.GENERATED)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .superclass(ClassName.get(AwsResponse.class))
@@ -56,11 +55,12 @@ public class AwsServiceBaseResponseSpec implements ClassSpec {
 
     @Override
     public ClassName className() {
-        return poetExtensions.getModelClass(intermediateModel.getMetadata().getServiceName().replace(" ", "") + "Response");
+        return poetExtensions.getModelClass(intermediateModel.getSdkResponseBaseClassName());
     }
 
     private TypeSpec builderInterfaceSpec() {
         return TypeSpec.interfaceBuilder("Builder")
+                .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ClassName.get(AwsResponse.class).nestedClass("Builder"))
 
                 .addMethod(MethodSpec.methodBuilder("build")
