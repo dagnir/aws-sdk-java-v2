@@ -40,19 +40,26 @@ public class InstrumentHttpResponseContentStage
     @Override
     public Pair<SdkHttpFullRequest, HttpResponse> execute(Pair<SdkHttpFullRequest, HttpResponse> input,
                                                           RequestExecutionContext context) throws Exception {
-        ProgressListener listener = context.requestConfig().getProgressListener();
+        Optional<ProgressListener> listener = context.requestConfig().progressListener();
         HttpResponse httpResponse = input.right();
         InputStream is = input.right().getContent();
+
         if (is != null) {
-            httpResponse.setContent(ProgressInputStream.inputStreamForResponse(is, listener));
+            if (listener.isPresent()) {
+                is = ProgressInputStream.inputStreamForResponse(is, listener.get());
+            }
+            httpResponse.setContent(is);
         }
-        try {
-            Optional.ofNullable(httpResponse.getHeaders().get("Content-Length"))
-                    .map(Long::parseLong)
-                    .ifPresent(l -> publishResponseContentLength(listener, l));
-        } catch (NumberFormatException e) {
-            log.warn("Cannot parse the Content-Length header of the response.");
-        }
+
+        listener.ifPresent(l -> {
+            try {
+                Optional.ofNullable(httpResponse.getHeaders().get("Content-Length"))
+                        .map(Long::parseLong)
+                        .ifPresent(len -> publishResponseContentLength(l, len));
+            } catch (NumberFormatException e) {
+                log.warn("Cannot parse the Content-Length header of the response.");
+            }
+        });
         return input;
     }
 }

@@ -15,9 +15,8 @@
 
 package utils.retry;
 
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.core.AmazonClientException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
-import software.amazon.awssdk.core.retry.RetryPolicy;
 import software.amazon.awssdk.core.retry.RetryPolicy.RetryCondition;
 
 /**
@@ -26,7 +25,7 @@ import software.amazon.awssdk.core.retry.RetryPolicy.RetryCondition;
 public final class AlwaysRetryCondition implements RetryCondition {
 
     @Override
-    public boolean shouldRetry(AmazonWebServiceRequest originalRequest,
+    public boolean shouldRetry(AwsRequest originalRequest,
                                AmazonClientException exception,
                                int retriesAttempted) {
         return true;

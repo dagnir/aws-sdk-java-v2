@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.Response;
 import software.amazon.awssdk.core.RetryableException;
 import software.amazon.awssdk.core.SdkBaseException;
 import software.amazon.awssdk.core.SdkClientException;
+import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.SdkStandardLoggers;
 import software.amazon.awssdk.core.event.ProgressEventType;
 import software.amazon.awssdk.core.event.ProgressListener;
@@ -88,7 +90,10 @@ public class HandleResponseStage<OutputT> implements RequestPipeline<HttpRespons
     @SuppressWarnings("deprecation")
     private OutputT handleSuccessResponse(HttpResponse httpResponse, RequestExecutionContext context)
             throws IOException, InterruptedException {
-        ProgressListener listener = context.requestConfig().getProgressListener();
+        ProgressListener listener = context.originalRequest()
+                .requestOverrideConfig()
+                .flatMap(SdkRequestOverrideConfig::progressListener)
+                .orElse(ProgressListener.NOOP);
         try {
             OutputT awsResponse;
             publishProgress(listener, ProgressEventType.HTTP_RESPONSE_STARTED_EVENT);

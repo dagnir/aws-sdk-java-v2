@@ -15,15 +15,16 @@
 
 package software.amazon.awssdk.core.http;
 
+import software.amazon.awssdk.AwsRequestOverrideConfig;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.annotations.SdkTestInternalApi;
 import software.amazon.awssdk.annotations.ThreadSafe;
 import software.amazon.awssdk.core.Request;
-import software.amazon.awssdk.core.RequestConfig;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.SdkBaseException;
 import software.amazon.awssdk.core.SdkClientException;
+import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.config.SyncClientConfiguration;
 import software.amazon.awssdk.core.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.core.http.pipeline.stages.AfterExecutionInterceptorsStage;
@@ -172,13 +173,7 @@ public class AmazonHttpClient implements SdkAutoCloseable {
          */
         RequestExecutionBuilder executionContext(ExecutionContext executionContext);
 
-        /**
-         * Fluent setter for {@link RequestConfig}
-         *
-         * @param requestConfig Request config object
-         * @return This builder for method chaining.
-         */
-        RequestExecutionBuilder requestConfig(RequestConfig requestConfig);
+        RequestExecutionBuilder originalRequest(SdkRequest originalRequest);
 
         /**
          * Executes the request with the given configuration.
@@ -212,7 +207,7 @@ public class AmazonHttpClient implements SdkAutoCloseable {
     private class RequestExecutionBuilderImpl implements RequestExecutionBuilder {
 
         private SdkHttpFullRequest request;
-        private RequestConfig requestConfig;
+        private SdkRequest originalRequest;
         private HttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
         private ExecutionContext executionContext;
 
@@ -243,8 +238,8 @@ public class AmazonHttpClient implements SdkAutoCloseable {
         }
 
         @Override
-        public RequestExecutionBuilder requestConfig(RequestConfig requestConfig) {
-            this.requestConfig = requestConfig;
+        public RequestExecutionBuilder originalRequest(SdkRequest originalRequest) {
+            this.originalRequest = originalRequest;
             return this;
         }
 
@@ -305,7 +300,7 @@ public class AmazonHttpClient implements SdkAutoCloseable {
 
         private RequestExecutionContext createRequestExecutionDependencies() {
             return RequestExecutionContext.builder()
-                                          .requestConfig(requestConfig == null ? RequestConfig.empty() : requestConfig)
+                                          .originalRequest(originalRequest)
                                           .executionContext(executionContext)
                                           .build();
         }

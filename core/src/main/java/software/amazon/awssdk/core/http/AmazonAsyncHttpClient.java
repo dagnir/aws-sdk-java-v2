@@ -18,12 +18,14 @@ package software.amazon.awssdk.core.http;
 import static software.amazon.awssdk.core.http.pipeline.RequestPipelineBuilder.async;
 
 import java.util.concurrent.CompletableFuture;
+
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.annotations.ThreadSafe;
-import software.amazon.awssdk.core.RequestConfig;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.SdkBaseException;
 import software.amazon.awssdk.core.SdkClientException;
+import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.config.AsyncClientConfiguration;
 import software.amazon.awssdk.core.http.pipeline.RequestPipelineBuilder;
 import software.amazon.awssdk.core.http.pipeline.stages.AfterExecutionInterceptorsStage;
@@ -130,7 +132,7 @@ public class AmazonAsyncHttpClient implements SdkAutoCloseable {
          * @param requestConfig Request config object
          * @return This builder for method chaining.
          */
-        RequestExecutionBuilder requestConfig(RequestConfig requestConfig);
+        RequestExecutionBuilder originalRequest(SdkRequest originalRequest);
 
         /**
          * Executes the request with the given configuration.
@@ -147,7 +149,7 @@ public class AmazonAsyncHttpClient implements SdkAutoCloseable {
 
         private SdkHttpRequestProvider requestProvider;
         private SdkHttpFullRequest request;
-        private RequestConfig requestConfig;
+        private SdkRequest originalRequest;
         private SdkHttpResponseHandler<? extends SdkBaseException> errorResponseHandler;
         private ExecutionContext executionContext;
 
@@ -178,8 +180,8 @@ public class AmazonAsyncHttpClient implements SdkAutoCloseable {
         }
 
         @Override
-        public RequestExecutionBuilder requestConfig(RequestConfig requestConfig) {
-            this.requestConfig = requestConfig;
+        public RequestExecutionBuilder originalRequest(SdkRequest originalRequest) {
+            this.originalRequest = originalRequest;
             return this;
         }
 
@@ -217,7 +219,7 @@ public class AmazonAsyncHttpClient implements SdkAutoCloseable {
         private RequestExecutionContext createRequestExecutionDependencies() {
             return RequestExecutionContext.builder()
                                           .requestProvider(requestProvider)
-                                          .requestConfig(requestConfig)
+                                          .originalRequest(originalRequest)
                                           .executionContext(executionContext)
                                           .build();
         }

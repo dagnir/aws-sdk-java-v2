@@ -17,6 +17,7 @@ package software.amazon.awssdk.core.http.pipeline.stages;
 
 import static software.amazon.awssdk.core.event.SdkProgressPublisher.publishProgress;
 
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.event.ProgressEventType;
 import software.amazon.awssdk.core.event.ProgressListener;
@@ -29,6 +30,8 @@ import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.utils.Pair;
+
+import java.util.Optional;
 
 /**
  * Delegate to the HTTP implementation to make an HTTP request and receive the response.
@@ -48,11 +51,12 @@ public class MakeHttpRequestStage
     public Pair<SdkHttpFullRequest, SdkHttpFullResponse> execute(SdkHttpFullRequest request,
                                                                  RequestExecutionContext context) throws Exception {
         InterruptMonitor.checkInterrupted();
-        final ProgressListener listener = context.requestConfig().getProgressListener();
 
-        publishProgress(listener, ProgressEventType.HTTP_REQUEST_STARTED_EVENT);
+        final Optional<ProgressListener> listener = context.requestConfig().progressListener();
+
+        listener.ifPresent(l -> publishProgress(l, ProgressEventType.HTTP_REQUEST_STARTED_EVENT));
         final SdkHttpFullResponse httpResponse = executeHttpRequest(request, context);
-        publishProgress(listener, ProgressEventType.HTTP_REQUEST_COMPLETED_EVENT);
+        listener.ifPresent(l -> publishProgress(l, ProgressEventType.HTTP_REQUEST_COMPLETED_EVENT));
 
         return Pair.of(request, httpResponse);
     }

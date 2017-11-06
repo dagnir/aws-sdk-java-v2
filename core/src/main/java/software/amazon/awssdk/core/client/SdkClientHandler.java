@@ -17,13 +17,10 @@ package software.amazon.awssdk.core.client;
 
 import software.amazon.awssdk.annotations.Immutable;
 import software.amazon.awssdk.annotations.ThreadSafe;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.SdkResponse;
 import software.amazon.awssdk.core.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.core.config.SyncClientConfiguration;
-import software.amazon.awssdk.core.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.core.internal.http.response.AwsErrorResponseHandler;
 import software.amazon.awssdk.core.sync.StreamingResponseHandler;
 
 /**
@@ -44,7 +41,7 @@ public class SdkClientHandler extends ClientHandler {
     @Override
     public <InputT extends SdkRequest, OutputT extends SdkResponse> OutputT execute(
             ClientExecutionParams<InputT, OutputT> executionParams) {
-        return delegateHandler.execute(addRequestConfig(executionParams));
+        return delegateHandler.execute(executionParams);
 
     }
 
@@ -52,20 +49,12 @@ public class SdkClientHandler extends ClientHandler {
     public <InputT extends SdkRequest, OutputT extends SdkResponse, ReturnT> ReturnT execute(
             ClientExecutionParams<InputT, OutputT> executionParams,
             StreamingResponseHandler<OutputT, ReturnT> streamingResponseHandler) {
-        return delegateHandler.execute(addRequestConfig(executionParams), streamingResponseHandler);
+        return delegateHandler.execute(executionParams, streamingResponseHandler);
     }
 
     @Override
     public void close() {
         delegateHandler.close();
-    }
-
-    private <InputT extends SdkRequest, OutputT> ClientExecutionParams<InputT, OutputT> addRequestConfig(
-            ClientExecutionParams<InputT, OutputT> params) {
-        return params.withRequestConfig(new AmazonWebServiceRequestAdapter((AmazonWebServiceRequest) params.getInput()))
-                     // TODO this is a hack to get the build working. Also doesn't deal with AwsResponseHandlerAdapter
-                     .withErrorResponseHandler(
-                             new AwsErrorResponseHandler(params.getErrorResponseHandler()));
     }
 
 }

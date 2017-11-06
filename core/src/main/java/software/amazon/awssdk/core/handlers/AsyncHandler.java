@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.core.handlers;
 
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 
 /**
  * Callback interface for notification on web service requests executed with the
@@ -24,7 +24,7 @@ import software.amazon.awssdk.core.AmazonWebServiceRequest;
  */
 @ReviewBeforeRelease("This doesn't seem to be used outside of SQS. Is this the correct location for it? If so, it probably "
                      + "shouldn't be in the handlers package.")
-public interface AsyncHandler<REQUEST extends AmazonWebServiceRequest, RESULT> {
+public interface AsyncHandler<REQUEST extends AwsRequest, RESULT> {
 
     /**
      * Invoked after an asynchronous request

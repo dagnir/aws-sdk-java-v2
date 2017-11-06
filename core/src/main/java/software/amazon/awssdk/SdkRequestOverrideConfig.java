@@ -21,8 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.event.ProgressListener;
 
 /**
@@ -38,11 +40,17 @@ public abstract class SdkRequestOverrideConfig {
 
     private final Duration clientExecutionTimeout;
 
+    private final String appendUserAgent;
+
+    private ReadLimitInfo readLimitInfo;
+
     protected SdkRequestOverrideConfig(Builder<?> builder) {
         this.progressListener = builder.progressListener();
         this.additionalHeaders = builder.additionalHeaders();
         this.additionalQueryParameters = builder.additionalQueryParameters();
         this.clientExecutionTimeout = builder.clientExecutionTimeout();
+        this.appendUserAgent = builder.appendUserAgent();
+        this.readLimitInfo = builder.readLimitInfo();
     }
 
     public Optional<ProgressListener> progressListener() {
@@ -61,6 +69,14 @@ public abstract class SdkRequestOverrideConfig {
         return Optional.ofNullable(clientExecutionTimeout);
     }
 
+    public Optional<String> appendUserAgent() {
+        return Optional.ofNullable(appendUserAgent);
+    }
+
+    public Optional<ReadLimitInfo> readLimitInfo() {
+        return Optional.ofNullable(readLimitInfo);
+    }
+
     public abstract Builder<? extends Builder> toBuilder();
 
     public interface Builder<B extends Builder> {
@@ -70,26 +86,42 @@ public abstract class SdkRequestOverrideConfig {
 
         Map<String, String> additionalHeaders();
 
+        B additionalHeader(String name, String value);
+
         B additionalHeaders(Map<String, String> customHeaders);
 
         Map<String, List<String>> additionalQueryParameters();
+
+        B additionalQueryParameter(String name, String value);
 
         B additionalQueryParameters(Map<String, List<String>> customQueryParameters);
 
         Duration clientExecutionTimeout();
 
         B clientExecutionTimeout(Duration clientExecutionTimeout);
+
+        String appendUserAgent();
+
+        B appendUserAgent(String appendUserAgent);
+
+        ReadLimitInfo readLimitInfo();
+
+        B readLimitInfo(ReadLimitInfo readLimitInfo);
     }
 
     protected abstract static class BuilderImpl<B extends Builder> implements Builder<B> {
 
         private ProgressListener progressListener;
 
-        private Map<String, String> customHeaders;
+        private Map<String, String> additionalHeaders;
 
-        private Map<String, List<String>> customQueryParameters;
+        private Map<String, List<String>> additionalQueryParameters;
 
         private Duration clientExecutionTimeout;
+
+        private String appendUserAgent;
+
+        private ReadLimitInfo readLimitInfo;
 
         protected BuilderImpl() {
         }
@@ -98,6 +130,7 @@ public abstract class SdkRequestOverrideConfig {
             sdkRequestOverrideConfig.progressListener().map(this::progressListener);
             sdkRequestOverrideConfig.additionalHeaders().map(this::additionalHeaders);
             sdkRequestOverrideConfig.additionalQueryParameters().map(this::additionalQueryParameters);
+            sdkRequestOverrideConfig.clientExecutionTimeout().map(this::clientExecutionTimeout);
         }
 
         @Override
@@ -114,32 +147,52 @@ public abstract class SdkRequestOverrideConfig {
 
         @Override
         public Map<String, String> additionalHeaders() {
-            return customHeaders;
+            return additionalHeaders;
+        }
+
+        @Override
+        public B additionalHeader(String name, String value) {
+            if (additionalHeaders == null) {
+                additionalHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            }
+            additionalHeaders.put(name, value);
+            return (B) this;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public B additionalHeaders(Map<String, String> customHeaders) {
             if (customHeaders == null) {
-                this.customHeaders = null;
+                this.additionalHeaders = null;
             } else {
-                this.customHeaders = new HashMap<>(customHeaders);
+                this.additionalHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                this.additionalHeaders.putAll(customHeaders);
             }
             return (B) this;
         }
 
         @Override
+        public B additionalQueryParameter(String name, String value) {
+            if (additionalQueryParameters == null) {
+                additionalQueryParameters = new HashMap<>();
+            }
+            additionalQueryParameters.computeIfAbsent(name, n -> new ArrayList<>())
+                    .add(value);
+            return (B) this;
+        }
+
+        @Override
         public Map<String, List<String>> additionalQueryParameters() {
-            return customQueryParameters;
+            return additionalQueryParameters;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public B additionalQueryParameters(Map<String, List<String>> customQueryParameters) {
             if (customQueryParameters == null) {
-                this.customQueryParameters = null;
+                this.additionalQueryParameters = null;
             } else {
-                this.customQueryParameters = customQueryParameters.entrySet().stream()
+                this.additionalQueryParameters = customQueryParameters.entrySet().stream()
                         .collect(Collectors.toMap(Map.Entry::getKey, e -> new ArrayList<>(e.getValue())));
             }
             return (B) this;
@@ -154,6 +207,27 @@ public abstract class SdkRequestOverrideConfig {
         @SuppressWarnings("unchecked")
         public B clientExecutionTimeout(Duration clientExecutionTimeout) {
             this.clientExecutionTimeout = clientExecutionTimeout;
+            return (B) this;
+        }
+
+        public B readLimitInfo(ReadLimitInfo readLimitInfo) {
+            this.readLimitInfo = readLimitInfo;
+            return (B) this;
+        }
+
+        @Override
+        public ReadLimitInfo readLimitInfo() {
+            return readLimitInfo;
+        }
+
+        @Override
+        public String appendUserAgent() {
+            return appendUserAgent;
+        }
+
+        @Override
+        public B appendUserAgent(String appendUserAgent) {
+            this.appendUserAgent = appendUserAgent;
             return (B) this;
         }
 

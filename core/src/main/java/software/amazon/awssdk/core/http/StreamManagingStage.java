@@ -22,9 +22,11 @@ import static software.amazon.awssdk.utils.IoUtils.closeQuietly;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.core.RequestConfig;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.Response;
 import software.amazon.awssdk.core.event.ProgressEventType;
@@ -55,15 +57,15 @@ public class StreamManagingStage<OutputT> implements RequestPipeline<SdkHttpFull
 
     @Override
     public Response<OutputT> execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
-        final InputStream toBeClosed = createManagedStream(request, context.requestConfig());
+        final InputStream toBeClosed = createManagedStream(request, context.requestConfig().progressListener().orElse(null));
         try {
-            ProgressListener listener = context.requestConfig().getProgressListener();
-            publishProgress(listener, ProgressEventType.CLIENT_REQUEST_STARTED_EVENT);
+            Optional<ProgressListener> listener = context.requestConfig().progressListener();
+            listener.ifPresent(l -> publishProgress(l, ProgressEventType.CLIENT_REQUEST_STARTED_EVENT));
             Response<OutputT> response = wrapped.execute(
                     request.toBuilder()
                            .content(nonCloseableInputStream(toBeClosed))
                            .build(), context);
-            publishProgress(listener, ProgressEventType.CLIENT_REQUEST_SUCCESS_EVENT);
+            listener.ifPresent(l -> publishProgress(l, ProgressEventType.CLIENT_REQUEST_SUCCESS_EVENT));
             return response;
         } finally {
             // Always close so any progress tracking would get the final events propagated.
@@ -88,11 +90,11 @@ public class StreamManagingStage<OutputT> implements RequestPipeline<SdkHttpFull
      *
      * @return Modified input stream to use for the remainder of the execution.
      */
-    private InputStream createManagedStream(SdkHttpFullRequest request, RequestConfig requestConfig) {
+    private InputStream createManagedStream(SdkHttpFullRequest request, ProgressListener listener) {
         return request.content()
                       .map(this::makeResettable)
                       .map(this::bufferIfNeeded)
-                      .map(content -> monitorStreamProgress(requestConfig.getProgressListener(), content))
+                      .map(content -> monitorStreamProgress(listener, content))
                       .map(content -> unreliableTestConfig == null ? content : makeUnreliable(content))
                       .orElse(null);
     }

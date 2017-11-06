@@ -16,16 +16,14 @@
 package software.amazon.awssdk.core.client;
 
 import java.util.concurrent.CompletableFuture;
+
 import software.amazon.awssdk.annotations.Immutable;
 import software.amazon.awssdk.annotations.ThreadSafe;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.SdkResponse;
 import software.amazon.awssdk.core.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.core.async.AsyncResponseHandler;
 import software.amazon.awssdk.core.config.AsyncClientConfiguration;
-import software.amazon.awssdk.core.internal.AmazonWebServiceRequestAdapter;
-import software.amazon.awssdk.core.internal.http.response.AwsErrorResponseHandler;
 
 /**
  * Client handler for SDK clients.
@@ -45,26 +43,18 @@ public class SdkAsyncClientHandler extends AsyncClientHandler {
     @Override
     public <InputT extends SdkRequest, OutputT extends SdkResponse> CompletableFuture<OutputT> execute(
             ClientExecutionParams<InputT, OutputT> executionParams) {
-        return delegateHandler.execute(addRequestConfig(executionParams));
+        return delegateHandler.execute(executionParams);
     }
 
     @Override
     public <InputT extends SdkRequest, OutputT extends SdkResponse, ReturnT> CompletableFuture<ReturnT> execute(
             ClientExecutionParams<InputT, OutputT> executionParams, AsyncResponseHandler<OutputT, ReturnT> asyncResponseHandler) {
-        return delegateHandler.execute(addRequestConfig(executionParams), asyncResponseHandler);
+        return delegateHandler.execute(executionParams, asyncResponseHandler);
     }
 
     @Override
     public void close() {
         delegateHandler.close();
-    }
-
-    private <InputT extends SdkRequest, OutputT> ClientExecutionParams<InputT, OutputT> addRequestConfig(
-            ClientExecutionParams<InputT, OutputT> params) {
-        return params.withRequestConfig(new AmazonWebServiceRequestAdapter((AmazonWebServiceRequest) params.getInput()))
-                     .withErrorResponseHandler(
-                             // TODO this is a hack to get the build working. Also doesn't deal with AwsResponseHandlerAdapter
-                             new AwsErrorResponseHandler(params.getErrorResponseHandler()));
     }
 
 }

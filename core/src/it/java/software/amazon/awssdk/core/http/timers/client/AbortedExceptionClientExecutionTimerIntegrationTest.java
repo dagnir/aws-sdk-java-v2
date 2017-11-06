@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import software.amazon.awssdk.AwsRequest;
 import software.amazon.awssdk.core.AbortedException;
 import software.amazon.awssdk.core.AmazonClientException;
 import software.amazon.awssdk.core.http.AmazonHttpClient;

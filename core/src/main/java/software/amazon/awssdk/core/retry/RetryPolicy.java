@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.core.retry;
 
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.annotations.Immutable;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.AmazonClientException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 
 /**
  * Retry policy that can be configured on a specific service client using
@@ -141,7 +141,7 @@ public final class RetryPolicy {
     public interface RetryCondition {
         RetryCondition NO_RETRY_CONDITION = new RetryCondition() {
             @Override
-            public boolean shouldRetry(AmazonWebServiceRequest originalRequest,
+            public boolean shouldRetry(AwsRequest originalRequest,
                                        AmazonClientException exception,
                                        int retriesAttempted) {
                 return false;
@@ -182,7 +182,7 @@ public final class RetryPolicy {
          *
          * @return True if the failed request should be retried.
          */
-        boolean shouldRetry(AmazonWebServiceRequest originalRequest,
+        boolean shouldRetry(AwsRequest originalRequest,
                             AmazonClientException exception,
                             int retriesAttempted);
 
@@ -195,7 +195,7 @@ public final class RetryPolicy {
     public interface BackoffStrategy {
         RetryPolicy.BackoffStrategy NO_DELAY = new BackoffStrategy() {
             @Override
-            public long delayBeforeNextRetry(AmazonWebServiceRequest originalRequest,
+            public long delayBeforeNextRetry(AwsRequest originalRequest,
                                              AmazonClientException exception,
                                              int retriesAttempted) {
                 return 0;
@@ -229,7 +229,7 @@ public final class RetryPolicy {
          *
          * @return The delay (in milliseconds) before next retry attempt.
          */
-        long delayBeforeNextRetry(AmazonWebServiceRequest originalRequest,
+        long delayBeforeNextRetry(AwsRequest originalRequest,
                                   AmazonClientException exception,
                                   int retriesAttempted);
     }

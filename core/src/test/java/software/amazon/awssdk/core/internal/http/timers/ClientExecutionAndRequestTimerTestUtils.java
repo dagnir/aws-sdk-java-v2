@@ -22,12 +22,11 @@ import java.util.Collections;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.Request;
-import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.http.AmazonHttpClient;
 import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.http.HttpMethodName;
+import software.amazon.awssdk.core.http.NoopTestAwsRequest;
 import software.amazon.awssdk.core.http.SdkHttpFullRequestAdapter;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptorChain;
@@ -114,6 +113,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
     public static void execute(AmazonHttpClient httpClient, Request<?> request) {
         httpClient.requestExecutionBuilder()
                 .request(request)
+                .originalRequest(NoopTestAwsRequest.builder().build())
                   .executionContext(executionContext(SdkHttpFullRequestAdapter.toHttpFullRequest(request)))
                 .errorResponseHandler(new NullErrorResponseHandler())
                 .execute(new ErrorDuringUnmarshallingResponseHandler());
@@ -122,7 +122,7 @@ public class ClientExecutionAndRequestTimerTestUtils {
     public static ExecutionContext executionContext(SdkHttpFullRequest request) {
         InterceptorContext incerceptorContext =
                 InterceptorContext.builder()
-                                  .request(AmazonWebServiceRequest.NOOP)
+                                  .request(NoopTestAwsRequest.builder().build())
                                   .httpRequest(request)
                                   .build();
         return ExecutionContext.builder()

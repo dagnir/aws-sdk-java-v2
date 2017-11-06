@@ -34,13 +34,15 @@ public class ReportRequestContentLengthStage implements RequestToRequestPipeline
 
     @Override
     public SdkHttpFullRequest execute(SdkHttpFullRequest request, RequestExecutionContext context) throws Exception {
-        try {
-            request.firstMatchingHeader("Content-Length")
-                   .map(Long::parseLong)
-                   .ifPresent(l -> publishRequestContentLength(context.requestConfig().getProgressListener(), l));
-        } catch (NumberFormatException e) {
-            log.warn("Cannot parse the Content-Length header of the request.");
-        }
+        context.requestConfig().progressListener().ifPresent(l -> {
+            try {
+                request.firstMatchingHeader("Content-Length")
+                        .map(Long::parseLong)
+                        .ifPresent(len -> publishRequestContentLength(l, len));
+            } catch (NumberFormatException e) {
+                log.warn("Cannot parse the Content-Length header of the request.");
+            }
+        });
         return request;
     }
 }

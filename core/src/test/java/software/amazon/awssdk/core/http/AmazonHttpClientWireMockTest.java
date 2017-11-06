@@ -79,6 +79,7 @@ public class AmazonHttpClientWireMockTest extends WireMockTestBase {
     private void sendRequest(Request<?> request, AmazonHttpClient sut) {
         sut.requestExecutionBuilder()
            .request(request)
+           .originalRequest(NoopTestAwsRequest.builder().build())
            .executionContext(executionContext(SdkHttpFullRequestAdapter.toHttpFullRequest(request)))
            .errorResponseHandler(new NullErrorResponseHandler())
            .execute();

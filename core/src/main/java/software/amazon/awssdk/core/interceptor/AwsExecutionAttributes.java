@@ -15,8 +15,9 @@
 
 package software.amazon.awssdk.core.interceptor;
 
-import software.amazon.awssdk.annotations.ReviewBeforeRelease;
-import software.amazon.awssdk.core.RequestConfig;
+import software.amazon.awssdk.AwsRequestOverrideConfig;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
+import software.amazon.awssdk.annotations.ReviewBeforeRelease;;
 import software.amazon.awssdk.core.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.core.auth.AwsCredentials;
 import software.amazon.awssdk.core.regions.Region;
@@ -42,7 +43,7 @@ public class AwsExecutionAttributes {
      * The key under which the request config is stored.
      */
     @ReviewBeforeRelease("RequestConfig feels pretty internal. Can we just expose parts of it?")
-    public static final ExecutionAttribute<RequestConfig> REQUEST_CONFIG = new ExecutionAttribute<>("RequestConfig");
+    public static final ExecutionAttribute<SdkRequestOverrideConfig> REQUEST_CONFIG = new ExecutionAttribute<>("RequestConfig");
 
     /**
      * The key under which the service name is stored.

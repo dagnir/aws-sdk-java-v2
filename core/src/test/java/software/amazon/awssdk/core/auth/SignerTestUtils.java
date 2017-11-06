@@ -17,8 +17,6 @@ package software.amazon.awssdk.core.auth;
 
 import java.util.Date;
 
-import software.amazon.awssdk.AwsRequest;
-import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.http.NoopTestRequest;
 import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;

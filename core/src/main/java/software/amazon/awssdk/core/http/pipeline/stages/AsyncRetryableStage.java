@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.core.http.pipeline.stages;
 
+import static software.amazon.awssdk.core.RequestClientOptions.DEFAULT_STREAM_BUFFER_SIZE;
 import static software.amazon.awssdk.core.event.SdkProgressPublisher.publishProgress;
 
 import java.io.IOException;
@@ -24,6 +25,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
+import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.ResetException;
 import software.amazon.awssdk.core.Response;
@@ -99,7 +102,10 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
         private RetryExecutor(SdkHttpFullRequest request, RequestExecutionContext context) {
             this.request = request;
             this.context = context;
-            this.progressListener = context.requestConfig().getProgressListener();
+            this.progressListener = context.originalRequest()
+                    .requestOverrideConfig()
+                    .flatMap(SdkRequestOverrideConfig::progressListener)
+                    .orElse(null);
             this.retryHandler = new RetryHandler(retryPolicy, retryCapacity);
         }
 
@@ -199,7 +205,11 @@ public class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHttpFull
          * so we cannot retry the request.
          */
         private int readLimit() {
-            return context.requestConfig().getRequestClientOptions().getReadLimit();
+            return context.originalRequest()
+                    .requestOverrideConfig()
+                    .flatMap(SdkRequestOverrideConfig::readLimitInfo)
+                    .map(ReadLimitInfo::getReadLimit)
+                    .orElse(DEFAULT_STREAM_BUFFER_SIZE);
         }
     }
 }

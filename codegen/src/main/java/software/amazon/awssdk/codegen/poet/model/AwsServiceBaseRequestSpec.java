@@ -17,15 +17,11 @@ package software.amazon.awssdk.codegen.poet.model;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeVariableName;
+
 import javax.lang.model.element.Modifier;
-import software.amazon.awssdk.AwsRequest;
-import software.amazon.awssdk.AwsRequestOverrideConfig;
-import software.amazon.awssdk.codegen.internal.Utils;
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
-import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.codegen.poet.PoetUtils;

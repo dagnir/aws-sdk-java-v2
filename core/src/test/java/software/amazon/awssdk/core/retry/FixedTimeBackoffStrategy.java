@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.core.retry;
 
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.core.AmazonClientException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.retry.RetryPolicy.BackoffStrategy;
 
 /**
@@ -31,7 +31,7 @@ public class FixedTimeBackoffStrategy implements BackoffStrategy {
     }
 
     @Override
-    public long delayBeforeNextRetry(AmazonWebServiceRequest originalRequest,
+    public long delayBeforeNextRetry(AwsRequest originalRequest,
                                      AmazonClientException exception,
                                      int retriesAttempted) {
         return this.fixedTimeDelay;

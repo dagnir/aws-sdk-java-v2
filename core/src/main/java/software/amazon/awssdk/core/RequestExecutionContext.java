@@ -15,6 +15,8 @@
 
 package software.amazon.awssdk.core;
 
+import software.amazon.awssdk.AwsRequestOverrideConfig;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
@@ -29,16 +31,16 @@ import software.amazon.awssdk.utils.Validate;
  * {@link software.amazon.awssdk.http.pipeline.RequestPipeline#execute(Object, RequestExecutionContext)} method.
  */
 public final class RequestExecutionContext {
-
+    private static final SdkRequestOverrideConfig EMPTY_CONFIG = AwsRequestOverrideConfig.builder().build();
     private final SdkHttpRequestProvider requestProvider;
-    private final RequestConfig requestConfig;
+    private final SdkRequest originalRequest;
     private final ExecutionContext executionContext;
 
     private ClientExecutionAbortTrackerTask clientExecutionTrackerTask;
 
     private RequestExecutionContext(Builder builder) {
         this.requestProvider = builder.requestProvider;
-        this.requestConfig = Validate.paramNotNull(builder.requestConfig, "requestConfig");
+        this.originalRequest = Validate.paramNotNull(builder.originalRequest, "originalRequest");
         this.executionContext = Validate.paramNotNull(builder.executionContext, "executionContext");
     }
 
@@ -51,13 +53,6 @@ public final class RequestExecutionContext {
 
     public SdkHttpRequestProvider requestProvider() {
         return requestProvider;
-    }
-
-    /**
-     * @return Request level configuration.
-     */
-    public RequestConfig requestConfig() {
-        return requestConfig;
     }
 
     /**
@@ -77,6 +72,16 @@ public final class RequestExecutionContext {
         return executionContext;
     }
 
+    public SdkRequest originalRequest() {
+        return originalRequest;
+    }
+
+    public SdkRequestOverrideConfig requestConfig() {
+        return originalRequest.requestOverrideConfig()
+                // ugly but needed to avoid capture of capture and creating a type mismatch
+                .map(c -> (SdkRequestOverrideConfig) c)
+                .orElse(EMPTY_CONFIG);
+    }
     /**
      * @return SignerProvider used to obtain an instance of a {@link software.amazon.awssdk.core.auth.Signer}.
      */
@@ -105,7 +110,7 @@ public final class RequestExecutionContext {
     public static final class Builder {
 
         private SdkHttpRequestProvider requestProvider;
-        private RequestConfig requestConfig;
+        private SdkRequest originalRequest;
         private ExecutionContext executionContext;
 
         public Builder requestProvider(SdkHttpRequestProvider requestProvider) {
@@ -113,8 +118,8 @@ public final class RequestExecutionContext {
             return this;
         }
 
-        public Builder requestConfig(RequestConfig requestConfig) {
-            this.requestConfig = requestConfig;
+        public Builder originalRequest(SdkRequest originalRequest) {
+            this.originalRequest = originalRequest;
             return this;
         }
 

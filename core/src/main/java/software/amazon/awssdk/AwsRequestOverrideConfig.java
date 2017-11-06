@@ -49,6 +49,10 @@ public final class AwsRequestOverrideConfig extends SdkRequestOverrideConfig {
 
         AwsCredentialsProvider awsCredentialsProvider();
 
+        Builder readLimitInfo(ReadLimitInfo readLimitInfo);
+
+        ReadLimitInfo readLimitInfo();
+
         AwsRequestOverrideConfig build();
     }
 
@@ -56,7 +60,6 @@ public final class AwsRequestOverrideConfig extends SdkRequestOverrideConfig {
 
         private AwsCredentialsProvider awsCredentialsProvider;
 
-        private ReadLimitInfo readLimitInfo;
 
         private BuilderImpl() {
         }

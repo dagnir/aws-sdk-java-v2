@@ -17,10 +17,14 @@ package software.amazon.awssdk.core.event;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
+
+import software.amazon.awssdk.core.AwsRequest;
+import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.NotThreadSafe;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.annotations.SdkInternalApi;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
+import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.runtime.io.SdkFilterInputStream;
 
 /**
@@ -75,10 +79,12 @@ public abstract class ProgressInputStream extends SdkFilterInputStream {
      *
      * @param is the response content input stream
      */
-    public static InputStream inputStreamForResponse(InputStream is, AmazonWebServiceRequest req) {
-        return req == null
-               ? is
-               : new ResponseProgressInputStream(is, req.getGeneralProgressListener());
+    public static InputStream inputStreamForResponse(InputStream is, AwsRequest req) {
+        return Optional.ofNullable(req)
+                .flatMap(SdkRequest::requestOverrideConfig)
+                .flatMap(SdkRequestOverrideConfig::progressListener)
+                .map(listener -> (InputStream) new ResponseProgressInputStream(is, listener))
+                .orElse(is);
     }
 
     /**

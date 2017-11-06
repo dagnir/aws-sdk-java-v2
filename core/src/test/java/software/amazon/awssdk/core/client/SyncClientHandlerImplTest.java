@@ -27,11 +27,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.core.AmazonServiceException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.DefaultRequest;
 import software.amazon.awssdk.core.Request;
-import software.amazon.awssdk.core.RequestConfig;
 import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.SdkResponse;
 import software.amazon.awssdk.core.auth.AwsCredentials;
@@ -58,10 +57,7 @@ public class SyncClientHandlerImplTest {
     private AwsCredentials awsCredentials = new AwsCredentials("public", "private");
 
     @Mock
-    private AmazonWebServiceRequest request;
-
-    @Mock
-    private RequestConfig requestConfig;
+    private AwsRequest request;
 
     @Mock
     private Marshaller<Request<SdkRequest>, SdkRequest> marshaller;
@@ -127,7 +123,6 @@ public class SyncClientHandlerImplTest {
 
     private void expectRetrievalFromMocks() {
         when(credentialsProvider.getCredentials()).thenReturn(awsCredentials);
-        when(requestConfig.getOriginalRequest()).thenReturn(request);
         when(marshaller.marshall(request)).thenReturn(marshalledRequest);
         when(httpClient.prepareRequest(any(), any())).thenReturn(httpClientCall);
     }
@@ -136,7 +131,6 @@ public class SyncClientHandlerImplTest {
         return new ClientExecutionParams<SdkRequest, SdkResponse>()
                 .withInput(request)
                 .withMarshaller(marshaller)
-                .withRequestConfig(requestConfig)
                 .withResponseHandler(responseHandler)
                 .withErrorResponseHandler(errorResponseHandler);
     }

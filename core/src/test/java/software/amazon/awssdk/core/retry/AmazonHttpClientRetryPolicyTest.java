@@ -38,7 +38,6 @@ import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptorChain;
 import software.amazon.awssdk.core.interceptor.InterceptorContext;
-import software.amazon.awssdk.core.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.core.internal.auth.NoOpSignerProvider;
 import software.amazon.awssdk.http.AbortableCallable;
 import software.amazon.awssdk.http.SdkHttpClient;
@@ -103,7 +102,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         try {
             testedClient.requestExecutionBuilder()
                         .request(testedRepeatableRequest)
-                        .requestConfig(new AmazonWebServiceRequestAdapter(originalRequest))
+                        .originalRequest(originalRequest)
                         .errorResponseHandler(errorResponseHandler)
                         .executionContext(context)
                         .execute();
@@ -149,7 +148,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         try {
             testedClient.requestExecutionBuilder()
                         .request(testedRepeatableRequest)
-                        .requestConfig(new AmazonWebServiceRequestAdapter(originalRequest))
+                        .originalRequest(originalRequest)
                         .errorResponseHandler(errorResponseHandler)
                         .executionContext(context)
                         .execute();
@@ -196,6 +195,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         try {
             testedClient.requestExecutionBuilder()
                         .request(testedNonRepeatableRequest)
+                        .originalRequest(originalRequest)
                         .errorResponseHandler(errorResponseHandler)
                         .executionContext(context)
                         .execute();
@@ -239,6 +239,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
         try {
             testedClient.requestExecutionBuilder()
                         .request(testedRepeatableRequest)
+                        .originalRequest(originalRequest)
                         .errorResponseHandler(errorResponseHandler)
                         .executionContext(context)
                         .execute();
@@ -281,6 +282,7 @@ public class AmazonHttpClientRetryPolicyTest extends RetryPolicyTestBase {
             testedClient.requestExecutionBuilder()
                         .request(testedRepeatableRequest)
                         .errorResponseHandler(errorResponseHandler)
+                        .originalRequest(originalRequest)
                         .executionContext(context)
                         .execute();
             Assert.fail("AmazonClientException is expected.");

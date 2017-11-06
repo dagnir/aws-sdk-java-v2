@@ -74,6 +74,7 @@ public class AmazonHttpClientTest {
         try {
             client.requestExecutionBuilder()
                     .request(ValidSdkObjects.legacyRequest())
+                    .originalRequest(NoopTestAwsRequest.builder().build())
                     .executionContext(context)
                     .execute();
             Assert.fail("No exception when request repeatedly fails!");
@@ -99,6 +100,7 @@ public class AmazonHttpClientTest {
         try {
             client.requestExecutionBuilder()
                     .request(ValidSdkObjects.legacyRequest())
+                    .originalRequest(NoopTestAwsRequest.builder().build())
                     .executionContext(context)
                     .execute(mockHandler);
             Assert.fail("No exception when request repeatedly fails!");
@@ -134,6 +136,7 @@ public class AmazonHttpClientTest {
 
         client.requestExecutionBuilder()
               .request(request)
+              .originalRequest(NoopTestAwsRequest.builder().build())
               .executionContext(ClientExecutionAndRequestTimerTestUtils.executionContext(null))
               .execute(handler);
 

@@ -20,13 +20,8 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
-import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.Request;
-import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.http.HttpMethodName;
 import software.amazon.awssdk.core.http.NoopTestRequest;
 

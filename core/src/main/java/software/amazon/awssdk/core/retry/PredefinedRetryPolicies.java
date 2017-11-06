@@ -16,9 +16,10 @@
 package software.amazon.awssdk.core.retry;
 
 import java.io.IOException;
+
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.core.AmazonClientException;
 import software.amazon.awssdk.core.AmazonServiceException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.NonRetryableException;
 import software.amazon.awssdk.core.RetryableException;
 
@@ -157,7 +158,7 @@ public class PredefinedRetryPolicies {
     public static class SdkDefaultRetryCondition implements RetryPolicy.RetryCondition {
 
         @Override
-        public boolean shouldRetry(AmazonWebServiceRequest originalRequest,
+        public boolean shouldRetry(AwsRequest originalRequest,
                                    AmazonClientException exception,
                                    int retriesAttempted) {
 

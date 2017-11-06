@@ -40,7 +40,8 @@ public class FailureProgressPublishingStage<OutputT> implements RequestToRespons
         try {
             return wrapped.execute(request, context);
         } catch (Exception e) {
-            publishProgress(context.requestConfig().getProgressListener(), ProgressEventType.CLIENT_REQUEST_FAILED_EVENT);
+            context.requestConfig().progressListener().ifPresent(l ->
+                    publishProgress(l, ProgressEventType.CLIENT_REQUEST_FAILED_EVENT));
             throw e;
         }
     }

@@ -18,6 +18,7 @@ package software.amazon.awssdk.core.http.pipeline.stages;
 import static software.amazon.awssdk.core.event.SdkProgressPublisher.publishProgress;
 
 import java.nio.ByteBuffer;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -71,10 +72,10 @@ public class MakeAsyncHttpRequestStage<OutputT>
                                                         RequestExecutionContext context) throws Exception {
 
         InterruptMonitor.checkInterrupted();
-        final ProgressListener listener = context.requestConfig().getProgressListener();
-
-        publishProgress(listener, ProgressEventType.HTTP_REQUEST_STARTED_EVENT);
-        return executeHttpRequest(request, context, listener);
+        Optional<ProgressListener> listener = context.requestConfig().progressListener();
+        context.requestConfig().progressListener().ifPresent(l ->
+            publishProgress(l, ProgressEventType.HTTP_REQUEST_STARTED_EVENT));
+        return executeHttpRequest(request, context, listener.orElse(null));
     }
 
     private CompletableFuture<Response<OutputT>> executeHttpRequest(SdkHttpFullRequest request,

@@ -18,16 +18,18 @@ package software.amazon.awssdk.core;
 import java.util.Optional;
 
 import software.amazon.awssdk.SdkRequestOverrideConfig;
+import software.amazon.awssdk.annotations.Immutable;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
  * The base class for all SDK requests.
- *
- * TODO: SDK-specific options on the {@link AmazonWebServiceRequest} should be migrated here as part of the base-model refactor.
- *
+ * <p>
+ *     Implementations must ensure the class is immutable.
+ * </p>
  * @see SdkResponse
  */
+@Immutable
 public interface SdkRequest extends ToCopyableBuilder<SdkRequest.Builder, SdkRequest> {
 
     /**

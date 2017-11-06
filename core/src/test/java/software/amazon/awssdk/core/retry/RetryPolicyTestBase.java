@@ -19,18 +19,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Assert;
-import software.amazon.awssdk.SdkRequestOverrideConfig;
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.core.AmazonClientException;
 import software.amazon.awssdk.core.AmazonServiceException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.DefaultRequest;
 import software.amazon.awssdk.core.Request;
-import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.http.HttpResponse;
 import software.amazon.awssdk.core.http.HttpResponseHandler;
+import software.amazon.awssdk.core.http.NoopTestAwsRequest;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.util.StringInputStream;
 
@@ -39,7 +37,7 @@ import software.amazon.awssdk.core.util.StringInputStream;
  */
 public class RetryPolicyTestBase {
 
-    protected static final AmazonWebServiceRequest originalRequest = new TestAmazonWebServiceRequest();
+    protected static final AwsRequest originalRequest = NoopTestAwsRequest.builder().build();
     protected static final HttpResponseHandler<AmazonServiceException> errorResponseHandler = new TestHttpResponseHandler();
 
     /**
@@ -50,8 +48,8 @@ public class RetryPolicyTestBase {
     protected static ContextDataCollectionBackoffStrategy backoffStrategy;
 
     @SuppressWarnings("rawtypes")
-    public static Request<?> getSampleRequestWithRepeatableContent(AmazonWebServiceRequest amazonWebServiceRequest) {
-        DefaultRequest<?> request = new DefaultRequest(
+    public static Request<?> getSampleRequestWithRepeatableContent(AwsRequest amazonWebServiceRequest) {
+        DefaultRequest<?> request = new DefaultRequest<>(
                 amazonWebServiceRequest, "non-existent-service");
         request.setEndpoint(URI.create("http://non-existent-service.amazonaws.com"));
         // StringInputStream#markSupported() returns true
@@ -63,9 +61,8 @@ public class RetryPolicyTestBase {
         return request;
     }
 
-    @SuppressWarnings("rawtypes")
-    public static Request<?> getSampleRequestWithNonRepeatableContent(AmazonWebServiceRequest amazonWebServiceRequest) {
-        DefaultRequest<?> request = new DefaultRequest(
+    public static Request<?> getSampleRequestWithNonRepeatableContent(AwsRequest amazonWebServiceRequest) {
+        DefaultRequest<?> request = new DefaultRequest<>(
                 amazonWebServiceRequest, "non-existent-service");
         request.setEndpoint(URI.create("http://non-existent-service.amazonaws.com"));
         // NonRepeatableInputStream#markSupported() returns false
@@ -77,7 +74,7 @@ public class RetryPolicyTestBase {
      * Verifies the RetryCondition has collected the expected context information.
      */
     public static void verifyExpectedContextData(ContextDataCollection contextDataCollection,
-                                                 AmazonWebServiceRequest failedRequest,
+                                                 AwsRequest failedRequest,
                                                  AmazonClientException expectedException,
                                                  int expectedRetries) {
 
@@ -88,7 +85,7 @@ public class RetryPolicyTestBase {
         if (expectedRetries > 0) {
             if (failedRequest != null) {
                 // It should keep getting the same original request instance
-                for (AmazonWebServiceRequest seenRequest : contextDataCollection.failedRequests) {
+                for (AwsRequest seenRequest : contextDataCollection.failedRequests) {
                     Assert.assertTrue("seeRequest=" + seenRequest
                                       + ", failedRequest=" + failedRequest,
                                       seenRequest == failedRequest);
@@ -126,7 +123,7 @@ public class RetryPolicyTestBase {
                                                             ContextDataCollection implements RetryPolicy.RetryCondition {
 
         @Override
-        public boolean shouldRetry(AmazonWebServiceRequest originalRequest,
+        public boolean shouldRetry(AwsRequest originalRequest,
                                    AmazonClientException exception,
                                    int retriesAttempted) {
             collect(originalRequest, exception, retriesAttempted);
@@ -138,7 +135,7 @@ public class RetryPolicyTestBase {
                                                              ContextDataCollection implements RetryPolicy.BackoffStrategy {
 
         @Override
-        public long delayBeforeNextRetry(AmazonWebServiceRequest originalRequest,
+        public long delayBeforeNextRetry(AwsRequest originalRequest,
                                          AmazonClientException exception,
                                          int retriesAttempted) {
             collect(originalRequest, exception, retriesAttempted);
@@ -148,27 +145,15 @@ public class RetryPolicyTestBase {
 
     private static class ContextDataCollection {
 
-        public List<AmazonWebServiceRequest> failedRequests = new LinkedList<AmazonWebServiceRequest>();
+        public List<AwsRequest> failedRequests = new LinkedList<>();
         public List<AmazonClientException> exceptions = new LinkedList<AmazonClientException>();
         public List<Integer> retriesAttemptedValues = new LinkedList<Integer>();
 
-        public void collect(AmazonWebServiceRequest originalRequest,
+        public void collect(AwsRequest originalRequest,
                             AmazonClientException exception, int retriesAttempted) {
             failedRequests.add(originalRequest);
             exceptions.add(exception);
             retriesAttemptedValues.add(retriesAttempted);
-        }
-    }
-
-    public static class TestAmazonWebServiceRequest extends AmazonWebServiceRequest {
-        @Override
-        public Optional<? extends SdkRequestOverrideConfig> requestOverrideConfig() {
-            return null;
-        }
-
-        @Override
-        public Builder toBuilder() {
-            return null;
         }
     }
 
