@@ -15,9 +15,7 @@
 
 package software.amazon.awssdk.core.http.pipeline.stages;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.AwsSystemSetting;
-import software.amazon.awssdk.core.RequestClientOptions;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.config.AdvancedClientOption;
 import software.amazon.awssdk.core.config.ClientConfiguration;
@@ -27,8 +25,6 @@ import software.amazon.awssdk.core.http.pipeline.MutableRequestToRequestPipeline
 import software.amazon.awssdk.core.util.UserAgentUtils;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.utils.StringUtils;
-
-import static sun.net.www.protocol.http.HttpURLConnection.userAgent;
 
 /**
  * Apply any custom user agent supplied, otherwise instrument the user agent with info about the SDK and environment.

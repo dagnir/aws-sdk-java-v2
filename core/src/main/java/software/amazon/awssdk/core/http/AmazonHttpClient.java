@@ -15,7 +15,6 @@
 
 package software.amazon.awssdk.core.http;
 
-import software.amazon.awssdk.AwsRequestOverrideConfig;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.annotations.SdkTestInternalApi;

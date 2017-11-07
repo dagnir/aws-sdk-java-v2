@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.SdkRequestOverrideConfig;
+
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.Response;
 import software.amazon.awssdk.core.event.ProgressEventType;

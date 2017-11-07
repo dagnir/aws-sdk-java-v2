@@ -17,7 +17,8 @@ package software.amazon.awssdk.core.http.pipeline.stages;
 
 import static software.amazon.awssdk.core.event.SdkProgressPublisher.publishProgress;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
+import java.util.Optional;
+
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.event.ProgressEventType;
 import software.amazon.awssdk.core.event.ProgressListener;
@@ -30,8 +31,6 @@ import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.utils.Pair;
-
-import java.util.Optional;
 
 /**
  * Delegate to the HTTP implementation to make an HTTP request and receive the response.

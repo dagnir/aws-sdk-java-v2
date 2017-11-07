@@ -55,7 +55,8 @@ public final class PresignerFacade {
     }
 
     @ReviewBeforeRelease("Can this be cleaned up with the signer refactor?")
-    public URL presign(SdkRequest request, SdkHttpFullRequest httpRequest, AwsRequestOverrideConfig requestConfig, Date expirationDate) {
+    public URL presign(SdkRequest request, SdkHttpFullRequest httpRequest, AwsRequestOverrideConfig requestConfig,
+                       Date expirationDate) {
         final Presigner presigner = (Presigner) signerProvider.getSigner(SignerProviderContext.builder()
                                                                                               .withIsRedirect(false)
                                                                                               .withRequest(httpRequest)
@@ -78,11 +79,12 @@ public final class PresignerFacade {
     }
 
     private void addCustomQueryParams(SdkHttpFullRequest.Builder request, SdkRequestOverrideConfig requestConfig) {
-        Optional.ofNullable(requestConfig).flatMap(SdkRequestOverrideConfig::additionalQueryParameters).ifPresent(queryParameters -> {
-            for (Map.Entry<String, List<String>> param : queryParameters.entrySet()) {
-                request.rawQueryParameter(param.getKey(), param.getValue());
-            }
-        });
+        Optional.ofNullable(requestConfig).flatMap(SdkRequestOverrideConfig::additionalQueryParameters)
+                .ifPresent(queryParameters -> {
+                    for (Map.Entry<String, List<String>> param : queryParameters.entrySet()) {
+                        request.rawQueryParameter(param.getKey(), param.getValue());
+                    }
+                });
     }
 
     private void addCustomHeaders(SdkHttpFullRequest.Builder request, SdkRequestOverrideConfig requestConfig) {

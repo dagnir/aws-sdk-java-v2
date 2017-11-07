@@ -19,7 +19,6 @@ import static software.amazon.awssdk.core.http.pipeline.RequestPipelineBuilder.a
 
 import java.util.concurrent.CompletableFuture;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.annotations.ThreadSafe;
 import software.amazon.awssdk.core.RequestExecutionContext;

@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.core.handlers;
 
-import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
+import software.amazon.awssdk.core.AwsRequest;
 
 /**
  * Callback interface for notification on web service requests executed with the

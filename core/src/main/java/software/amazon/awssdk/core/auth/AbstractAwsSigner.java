@@ -35,7 +35,6 @@ import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import software.amazon.awssdk.AwsRequestOverrideConfig;
 import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.AmazonClientException;
 import software.amazon.awssdk.core.ReadLimitInfo;

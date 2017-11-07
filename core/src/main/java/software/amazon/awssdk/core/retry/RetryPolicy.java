@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.core.retry;
 
-import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.annotations.Immutable;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.AmazonClientException;
+import software.amazon.awssdk.core.AwsRequest;
 
 /**
  * Retry policy that can be configured on a specific service client using

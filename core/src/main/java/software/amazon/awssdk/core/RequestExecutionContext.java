@@ -82,6 +82,7 @@ public final class RequestExecutionContext {
                 .map(c -> (SdkRequestOverrideConfig) c)
                 .orElse(EMPTY_CONFIG);
     }
+
     /**
      * @return SignerProvider used to obtain an instance of a {@link software.amazon.awssdk.core.auth.Signer}.
      */

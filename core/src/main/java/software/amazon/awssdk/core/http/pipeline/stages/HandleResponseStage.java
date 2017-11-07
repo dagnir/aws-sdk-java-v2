@@ -28,7 +28,6 @@ import software.amazon.awssdk.core.Response;
 import software.amazon.awssdk.core.RetryableException;
 import software.amazon.awssdk.core.SdkBaseException;
 import software.amazon.awssdk.core.SdkClientException;
-import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.SdkStandardLoggers;
 import software.amazon.awssdk.core.event.ProgressEventType;
 import software.amazon.awssdk.core.event.ProgressListener;

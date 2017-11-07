@@ -17,9 +17,9 @@ package software.amazon.awssdk.core.retry;
 
 import java.io.IOException;
 
-import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.core.AmazonClientException;
 import software.amazon.awssdk.core.AmazonServiceException;
+import software.amazon.awssdk.core.AwsRequest;
 import software.amazon.awssdk.core.NonRetryableException;
 import software.amazon.awssdk.core.RetryableException;
 
