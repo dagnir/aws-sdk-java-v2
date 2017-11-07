@@ -54,7 +54,7 @@ public abstract class AwsRequest implements SdkRequest {
         }
 
         protected BuilderImpl(AwsRequest request) {
-            this.awsRequestOverrideConfig = request.requestOverrideConfig;
+            request.requestOverrideConfig().ifPresent(this::requestOverrideConfig);
         }
 
         @Override

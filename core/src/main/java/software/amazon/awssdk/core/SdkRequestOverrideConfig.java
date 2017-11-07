@@ -126,10 +126,10 @@ public abstract class SdkRequestOverrideConfig {
         }
 
         protected BuilderImpl(SdkRequestOverrideConfig sdkRequestOverrideConfig) {
-            sdkRequestOverrideConfig.progressListener().map(this::progressListener);
-            sdkRequestOverrideConfig.additionalHeaders().map(this::additionalHeaders);
-            sdkRequestOverrideConfig.additionalQueryParameters().map(this::additionalQueryParameters);
-            sdkRequestOverrideConfig.clientExecutionTimeout().map(this::clientExecutionTimeout);
+            sdkRequestOverrideConfig.progressListener().ifPresent(this::progressListener);
+            sdkRequestOverrideConfig.additionalHeaders().ifPresent(this::additionalHeaders);
+            sdkRequestOverrideConfig.additionalQueryParameters().ifPresent(this::additionalQueryParameters);
+            sdkRequestOverrideConfig.clientExecutionTimeout().ifPresent(this::clientExecutionTimeout);
         }
 
         @Override

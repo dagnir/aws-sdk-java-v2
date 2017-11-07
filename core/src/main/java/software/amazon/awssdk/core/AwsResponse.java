@@ -53,7 +53,7 @@ public abstract class AwsResponse implements SdkResponse {
         }
 
         protected BuilderImpl(AwsResponse response) {
-            response.responseMetadata().map(this::responseMetadata);
+            this.awsResponseMetadata = response.awsResponseMetadata;
         }
 
         @Override
