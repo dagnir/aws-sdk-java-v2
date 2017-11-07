@@ -15,8 +15,8 @@
 
 package software.amazon.awssdk.core.runtime.auth;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.SdkProtectedApi;
+import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 
 @SdkProtectedApi

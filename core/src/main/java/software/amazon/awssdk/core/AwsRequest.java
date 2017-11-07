@@ -17,7 +17,7 @@ package software.amazon.awssdk.core;
 
 import java.util.Optional;
 
-import software.amazon.awssdk.AwsRequestOverrideConfig;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 
 /**
  * Base class for all AWS Service requests.

@@ -1,6 +1,6 @@
 package software.amazon.awssdk.core.http;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
+import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.SdkRequest;
 
 import java.util.Optional;

@@ -17,10 +17,10 @@ package software.amazon.awssdk.core.http.pipeline.stages;
 
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.AbortedException;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.Response;
+import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.config.ClientConfiguration;
 import software.amazon.awssdk.core.http.HttpClientDependencies;
 import software.amazon.awssdk.core.http.exception.ClientExecutionTimeoutException;

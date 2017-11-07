@@ -17,7 +17,6 @@ package software.amazon.awssdk.core;
 
 import java.util.Optional;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.Immutable;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;

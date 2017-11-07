@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk;
+package software.amazon.awssdk.core;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.event.ProgressListener;
 
 /**

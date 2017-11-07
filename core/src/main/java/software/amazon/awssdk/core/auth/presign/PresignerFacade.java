@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import software.amazon.awssdk.AwsRequestOverrideConfig;
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.Immutable;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.annotations.SdkProtectedApi;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.SdkRequest;
+import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.core.auth.Presigner;
 import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;

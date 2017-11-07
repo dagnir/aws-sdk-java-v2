@@ -15,9 +15,9 @@
 
 package software.amazon.awssdk.core.client;
 
-import software.amazon.awssdk.AwsRequestOverrideConfig;
-import software.amazon.awssdk.SdkRequestOverrideConfig;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.SdkRequest;
+import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.SdkResponse;
 import software.amazon.awssdk.core.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.core.auth.AwsCredentials;

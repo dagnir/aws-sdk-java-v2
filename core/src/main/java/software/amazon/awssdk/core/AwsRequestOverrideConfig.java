@@ -13,11 +13,10 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.awssdk;
+package software.amazon.awssdk.core;
 
 import java.util.Optional;
 
-import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 
 /**

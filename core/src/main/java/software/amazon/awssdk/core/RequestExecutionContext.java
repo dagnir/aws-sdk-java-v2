@@ -15,8 +15,6 @@
 
 package software.amazon.awssdk.core;
 
-import software.amazon.awssdk.AwsRequestOverrideConfig;
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.core.http.ExecutionContext;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;

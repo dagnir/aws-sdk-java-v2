@@ -35,10 +35,10 @@ import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import software.amazon.awssdk.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.AmazonClientException;
 import software.amazon.awssdk.core.ReadLimitInfo;
 import software.amazon.awssdk.core.SdkClientException;
+import software.amazon.awssdk.core.SdkRequestOverrideConfig;
 import software.amazon.awssdk.core.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.core.event.ProgressInputStream;
 import software.amazon.awssdk.core.runtime.io.SdkDigestInputStream;
