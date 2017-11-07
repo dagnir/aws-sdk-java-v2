@@ -1,6 +1,6 @@
 package software.amazon.awssdk.core.http;
 
-import software.amazon.awssdk.AwsResponse;
+import software.amazon.awssdk.core.AwsResponse;
 
 public class EmptyAwsResponse extends AwsResponse {
     public EmptyAwsResponse(Builder builder) {

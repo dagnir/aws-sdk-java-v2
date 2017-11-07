@@ -21,8 +21,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import software.amazon.awssdk.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.AbortedException;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.RequestExecutionContext;
 import software.amazon.awssdk.core.Response;
 import software.amazon.awssdk.core.SdkRequest;

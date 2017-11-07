@@ -22,7 +22,7 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import software.amazon.awssdk.core.AwsRequest;
-import software.amazon.awssdk.AwsRequestOverrideConfig;;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;;
 import software.amazon.awssdk.core.auth.AwsCredentials;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.core.auth.DefaultCredentialsProvider;

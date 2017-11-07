@@ -19,8 +19,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
-import software.amazon.awssdk.AwsResponse;
 import software.amazon.awssdk.core.AmazonClientException;
+import software.amazon.awssdk.core.AwsResponse;
 import software.amazon.awssdk.core.http.HttpResponse;
 import software.amazon.awssdk.core.http.HttpResponseHandler;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.core.internal.http.response;
 
-import software.amazon.awssdk.AwsResponse;
+import software.amazon.awssdk.core.AwsResponse;
 import software.amazon.awssdk.core.http.HttpResponse;
 import software.amazon.awssdk.core.http.HttpResponseHandler;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;

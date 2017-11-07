@@ -1,7 +1,7 @@
 package software.amazon.awssdk.core.http;
 
 import software.amazon.awssdk.core.AwsRequest;
-import software.amazon.awssdk.AwsRequestOverrideConfig;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 
 public class NoopTestAwsRequest extends AwsRequest {
     private NoopTestAwsRequest(Builder builder) {
