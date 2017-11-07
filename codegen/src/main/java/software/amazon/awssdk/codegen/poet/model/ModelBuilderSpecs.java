@@ -145,10 +145,6 @@ class ModelBuilderSpecs {
             fields.add(FieldSpec.builder(String.class, "message", Modifier.PRIVATE).build());
         }
 
-        if (isResponse()) {
-            fields.add(FieldSpec.builder(AwsResponseMetadata.class, "responseMetadata", Modifier.PRIVATE).build());
-        }
-
         return fields;
     }
 
@@ -198,13 +194,6 @@ class ModelBuilderSpecs {
                     .addStatement("super.requestOverrideConfig(awsRequestOverrideConfig)")
                     .addStatement("return this")
                     .build());
-//
-//            accessors.add(MethodSpec.methodBuilder("requestOverrideConfig")
-//                    .addAnnotation(Override.class)
-//                    .returns(AwsRequestOverrideConfig.class)
-//                    .addModifiers(Modifier.PUBLIC)
-//                    .addStatement("return requestOverrideConfig")
-//                    .build());
         }
 
         if (isResponse()) {
@@ -213,16 +202,9 @@ class ModelBuilderSpecs {
                     .returns(builderInterfaceName())
                     .addParameter(AwsResponseMetadata.class, "awsResponseMetadata")
                     .addModifiers(Modifier.PUBLIC)
-                    .addStatement("responseMetadata = awsResponseMetadata")
+                    .addStatement("super.responseMetadata(awsResponseMetadata)")
                     .addStatement("return this")
                     .build());
-
-//            accessors.add(MethodSpec.methodBuilder("responseMetadata")
-//                    .addAnnotation(Override.class)
-//                    .returns(AwsResponseMetadata.class)
-//                    .addModifiers(Modifier.PUBLIC)
-//                    .addStatement("return responseMetadata")
-//                    .build());
         }
 
         return accessors;

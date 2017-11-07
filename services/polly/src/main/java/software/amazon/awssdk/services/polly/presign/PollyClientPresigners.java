@@ -23,9 +23,9 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
-import software.amazon.awssdk.AwsRequestOverrideConfig;
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
 import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.core.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.auth.SdkClock;
 import software.amazon.awssdk.core.auth.presign.PresignerFacade;
 import software.amazon.awssdk.core.auth.presign.PresignerParams;
@@ -68,7 +68,8 @@ public final class PollyClientPresigners {
         marshallIntoRequest(synthesizeSpeechPresignRequest, request);
         Date expirationDate = synthesizeSpeechPresignRequest.expirationDate() == null ?
                               getDefaultExpirationDate() : synthesizeSpeechPresignRequest.expirationDate();
-        return presignerFacade.presign(synthesizeSpeechPresignRequest, request.build(), AwsRequestOverrideConfig.builder().build(), expirationDate);
+        return presignerFacade.presign(synthesizeSpeechPresignRequest, request.build(),
+                AwsRequestOverrideConfig.builder().build(), expirationDate);
     }
 
     private void marshallIntoRequest(SynthesizeSpeechPresignRequest synthesizeSpeechRequest, SdkHttpFullRequest.Builder request) {

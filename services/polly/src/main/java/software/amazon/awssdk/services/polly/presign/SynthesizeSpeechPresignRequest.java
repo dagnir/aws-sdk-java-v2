@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import software.amazon.awssdk.annotations.ReviewBeforeRelease;
-import software.amazon.awssdk.core.SdkRequest;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.polly.model.OutputFormat;
 import software.amazon.awssdk.services.polly.model.PollyRequest;
@@ -191,10 +190,10 @@ public class SynthesizeSpeechPresignRequest extends PollyRequest implements Seri
 
         private java.util.List<String> speechMarkTypes;
 
-        public BuilderImpl() {
+        private BuilderImpl() {
         }
 
-        public BuilderImpl(SynthesizeSpeechPresignRequest request) {
+        private BuilderImpl(SynthesizeSpeechPresignRequest request) {
             super(request);
         }
 
