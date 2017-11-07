@@ -18,7 +18,6 @@ package software.amazon.awssdk.services.rds;
 import java.net.URI;
 import java.util.Date;
 import software.amazon.awssdk.core.AmazonClientException;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.core.Request;
 import software.amazon.awssdk.core.SdkRequest;

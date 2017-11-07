@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import org.junit.Test;
-import software.amazon.awssdk.core.AmazonWebServiceRequest;
+import software.amazon.awssdk.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.core.Request;
 import software.amazon.awssdk.core.auth.AwsCredentials;
@@ -33,7 +33,6 @@ import software.amazon.awssdk.core.interceptor.AwsExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
 import software.amazon.awssdk.core.interceptor.InterceptorContext;
-import software.amazon.awssdk.core.internal.AmazonWebServiceRequestAdapter;
 import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.core.runtime.endpoint.DefaultServiceEndpointBuilder;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -163,9 +162,8 @@ public class PresignRequestHandlerTest {
 
     private ExecutionAttributes executionAttributes(RDSRequest request) {
         return new ExecutionAttributes().putAttribute(AwsExecutionAttributes.AWS_CREDENTIALS, CREDENTIALS)
-                                        .putAttribute(AwsExecutionAttributes.REQUEST_CONFIG,
-                                                      //FIXME: dongie
-                                                      new AmazonWebServiceRequestAdapter(null));
+                                        .putAttribute(AwsExecutionAttributes.REQUEST_CONFIG, request.requestOverrideConfig()
+                                                .orElse(AwsRequestOverrideConfig.builder().build()));
     }
 
     private CopyDBSnapshotRequest makeTestRequest() {
