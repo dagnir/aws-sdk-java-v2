@@ -41,7 +41,7 @@ public class CredentialUtilsTest {
                                                                  awsSecretAccessKey);
         AwsRequest req = NoopTestAwsRequest.builder()
                 .requestOverrideConfig(AwsRequestOverrideConfig.builder()
-                        .awsCredentialsProvider(new StaticCredentialsProvider(reqCredentials))
+                        .awsCredentialsProvider(StaticCredentialsProvider.create(reqCredentials))
                         .build())
                 .build();
         AwsCredentialsProvider actual = CredentialUtils.getCredentialsProvider(req,

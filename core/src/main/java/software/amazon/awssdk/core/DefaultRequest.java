@@ -300,20 +300,4 @@ public class DefaultRequest<T> implements Request<T> {
 
         return builder.toString();
     }
-
-    @SuppressWarnings("resource")
-    @Override
-    public InputStream getContentUnwrapped() {
-        InputStream is = getContent();
-        if (is == null) {
-            return null;
-        }
-        // We want to disable the progress reporting when the stream is
-        // consumed for signing purpose.
-        while (is instanceof ProgressInputStream) {
-            ProgressInputStream pris = (ProgressInputStream) is;
-            is = pris.getWrappedInputStream();
-        }
-        return is;
-    }
 }

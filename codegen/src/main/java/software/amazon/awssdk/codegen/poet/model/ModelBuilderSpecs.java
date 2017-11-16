@@ -24,8 +24,10 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.lang.model.element.Modifier;
 
+import com.squareup.javapoet.WildcardTypeName;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
@@ -104,6 +106,13 @@ class ModelBuilderSpecs {
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                     .build());
+
+
+            builder.addMethod(MethodSpec.methodBuilder("apply")
+                    .returns(builderInterfaceName())
+                    .addParameter(ParameterizedTypeName.get(ClassName.get(Consumer.class), WildcardTypeName.supertypeOf(builderInterfaceName())), "consumer")
+                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                    .build());
         }
 
         return builder.build();
@@ -121,6 +130,10 @@ class ModelBuilderSpecs {
         builderClassBuilder.addMethod(modelCopyConstructor());
         builderClassBuilder.addMethods(accessors());
         builderClassBuilder.addMethod(buildMethod());
+
+        if (isRequest() || isResponse()) {
+            builderClassBuilder.addMethod(applyMethod());
+        }
 
         return builderClassBuilder.build();
     }
@@ -216,6 +229,17 @@ class ModelBuilderSpecs {
                 .addModifiers(Modifier.PUBLIC)
                 .returns(classToBuild())
                 .addStatement("return new $T(this)", classToBuild())
+                .build();
+    }
+
+    private MethodSpec applyMethod() {
+        return MethodSpec.methodBuilder("apply")
+                .returns(builderInterfaceName())
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ParameterizedTypeName.get(ClassName.get(Consumer.class), WildcardTypeName.supertypeOf(builderInterfaceName())), "consumer")
+                .addStatement("consumer.accept(this)")
+                .addStatement("return this")
                 .build();
     }
 

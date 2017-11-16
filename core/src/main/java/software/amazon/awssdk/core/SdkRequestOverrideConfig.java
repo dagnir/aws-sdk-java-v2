@@ -24,14 +24,10 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import software.amazon.awssdk.core.event.ProgressListener;
-
 /**
  * Base per-request override configuration for all SDK requests.
  */
 public abstract class SdkRequestOverrideConfig {
-
-    private final ProgressListener progressListener;
 
     private final Map<String, String> additionalHeaders;
 
@@ -44,16 +40,11 @@ public abstract class SdkRequestOverrideConfig {
     private ReadLimitInfo readLimitInfo;
 
     protected SdkRequestOverrideConfig(Builder<?> builder) {
-        this.progressListener = builder.progressListener();
         this.additionalHeaders = builder.additionalHeaders();
         this.additionalQueryParameters = builder.additionalQueryParameters();
         this.clientExecutionTimeout = builder.clientExecutionTimeout();
         this.appendUserAgent = builder.appendUserAgent();
         this.readLimitInfo = builder.readLimitInfo();
-    }
-
-    public Optional<ProgressListener> progressListener() {
-        return Optional.ofNullable(progressListener);
     }
 
     public Optional<Map<String, String>> additionalHeaders() {
@@ -79,10 +70,6 @@ public abstract class SdkRequestOverrideConfig {
     public abstract Builder<? extends Builder> toBuilder();
 
     public interface Builder<B extends Builder> {
-        ProgressListener progressListener();
-
-        B progressListener(ProgressListener progressListener);
-
         Map<String, String> additionalHeaders();
 
         B additionalHeader(String name, String value);
@@ -109,9 +96,6 @@ public abstract class SdkRequestOverrideConfig {
     }
 
     protected abstract static class BuilderImpl<B extends Builder> implements Builder<B> {
-
-        private ProgressListener progressListener;
-
         private Map<String, String> additionalHeaders;
 
         private Map<String, List<String>> additionalQueryParameters;
@@ -126,22 +110,11 @@ public abstract class SdkRequestOverrideConfig {
         }
 
         protected BuilderImpl(SdkRequestOverrideConfig sdkRequestOverrideConfig) {
-            sdkRequestOverrideConfig.progressListener().ifPresent(this::progressListener);
             sdkRequestOverrideConfig.additionalHeaders().ifPresent(this::additionalHeaders);
             sdkRequestOverrideConfig.additionalQueryParameters().ifPresent(this::additionalQueryParameters);
             sdkRequestOverrideConfig.clientExecutionTimeout().ifPresent(this::clientExecutionTimeout);
-        }
-
-        @Override
-        public ProgressListener progressListener() {
-            return progressListener;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public B progressListener(ProgressListener progressListener) {
-            this.progressListener = progressListener;
-            return (B) this;
+            sdkRequestOverrideConfig.appendUserAgent().ifPresent(this::appendUserAgent);
+            sdkRequestOverrideConfig.readLimitInfo().ifPresent(this::readLimitInfo);
         }
 
         @Override
@@ -209,6 +182,8 @@ public abstract class SdkRequestOverrideConfig {
             return (B) this;
         }
 
+        @Override
+        @SuppressWarnings("unchecked")
         public B readLimitInfo(ReadLimitInfo readLimitInfo) {
             this.readLimitInfo = readLimitInfo;
             return (B) this;
@@ -225,6 +200,7 @@ public abstract class SdkRequestOverrideConfig {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public B appendUserAgent(String appendUserAgent) {
             this.appendUserAgent = appendUserAgent;
             return (B) this;
