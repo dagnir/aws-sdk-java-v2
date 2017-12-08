@@ -23,6 +23,9 @@
     <suppress checks=".*"
               files=".*[\\/](test|it)[\\/]java[\\/].+\.java$"/>
 
+    <suppress checks=".*"
+              files=".*[\\/]generated-sources[\\/].+\.java$"/>
+
     <!-- Assumes getter/setter match JSON property -->
     <suppress checks="AbbreviationAsWordInName"
               files=".*[\\/]software[\\/]amazon[\\/]awssdk[\\/]services[\\/]s3[\\/]event[\\/]S3EventNotification.java$"/>

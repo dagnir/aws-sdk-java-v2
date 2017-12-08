@@ -17,6 +17,7 @@ package software.amazon.awssdk.services.elasticache;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.testutils.SdkAsserts.assertNotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +68,7 @@ public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBa
         EngineDefaults engineDefaults = elasticache
                 .describeEngineDefaultParameters(
                         DescribeEngineDefaultParametersRequest.builder().cacheParameterGroupFamily(CACHE_PARAMETER_GROUP_FAMILY)
-                                                              .build());
+                                                              .build()).engineDefaults();
         assertTrue(engineDefaults.cacheNodeTypeSpecificParameters().size() > 0);
         CacheNodeTypeSpecificParameter cacheNodeParameter = engineDefaults.cacheNodeTypeSpecificParameters().get(0);
         assertNotEmpty(cacheNodeParameter.parameterName());
@@ -84,7 +85,7 @@ public class ParameterGroupsIntegrationTest extends ElastiCacheIntegrationTestBa
         CacheParameterGroup cacheParameterGroup = elasticache.createCacheParameterGroup(
                 CreateCacheParameterGroupRequest.builder().cacheParameterGroupName(cacheParameterGroupName)
                                                 .cacheParameterGroupFamily(CACHE_PARAMETER_GROUP_FAMILY).description(DESCRIPTION)
-                                                .build());
+                                                .build()).cacheParameterGroup();
         assertEquals(CACHE_PARAMETER_GROUP_FAMILY, cacheParameterGroup.cacheParameterGroupFamily());
         assertEquals(cacheParameterGroupName, cacheParameterGroup.cacheParameterGroupName());
         assertEquals(DESCRIPTION, cacheParameterGroup.description());

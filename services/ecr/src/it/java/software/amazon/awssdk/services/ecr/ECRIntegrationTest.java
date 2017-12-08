@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.ecr.model.CreateRepositoryResponse;
 import software.amazon.awssdk.services.ecr.model.DeleteRepositoryRequest;
 import software.amazon.awssdk.services.ecr.model.DescribeRepositoriesRequest;
 import software.amazon.awssdk.services.ecr.model.Repository;
-import software.amazon.awssdk.test.AwsIntegrationTestBase;
+import software.amazon.awssdk.testutils.service.AwsIntegrationTestBase;
 
 public class ECRIntegrationTest extends AwsIntegrationTestBase {
 
@@ -33,7 +33,6 @@ public class ECRIntegrationTest extends AwsIntegrationTestBase {
 
     @BeforeClass
     public static void setUpClient() throws Exception {
-        setUpCredentials();
         ecr = ECRClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
     }
 

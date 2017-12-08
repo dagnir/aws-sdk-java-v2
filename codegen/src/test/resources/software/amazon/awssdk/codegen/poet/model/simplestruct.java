@@ -1,9 +1,11 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
+import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.protocol.ProtocolMarshaller;
-import software.amazon.awssdk.protocol.StructuredPojo;
+import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.core.protocol.ProtocolMarshaller;
+import software.amazon.awssdk.core.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.SimpleStructMarshaller;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
@@ -19,8 +21,9 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
     }
 
     /**
+     * Returns the value of the StringMember property for this object.
      *
-     * @return
+     * @return The value of the StringMember property for this object.
      */
     public String stringMember() {
         return stringMember;
@@ -42,7 +45,7 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((stringMember() == null) ? 0 : stringMember().hashCode());
+        hashCode = 31 * hashCode + Objects.hashCode(stringMember());
         return hashCode;
     }
 
@@ -58,24 +61,29 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
             return false;
         }
         SimpleStruct other = (SimpleStruct) obj;
-        if (other.stringMember() == null ^ this.stringMember() == null) {
-            return false;
-        }
-        if (other.stringMember() != null && !other.stringMember().equals(this.stringMember())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(stringMember(), other.stringMember());
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        StringBuilder sb = new StringBuilder("{");
         if (stringMember() != null) {
             sb.append("StringMember: ").append(stringMember()).append(",");
         }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 1);
+        }
         sb.append("}");
         return sb.toString();
+    }
+
+    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+        switch (fieldName) {
+        case "StringMember":
+            return Optional.of(clazz.cast(stringMember()));
+        default:
+            return Optional.empty();
+        }
     }
 
     @SdkInternalApi
@@ -86,21 +94,23 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
 
     public interface Builder extends CopyableBuilder<Builder, SimpleStruct> {
         /**
+         * Sets the value of the StringMember property for this object.
          *
          * @param stringMember
+         *        The new value for the StringMember property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder stringMember(String stringMember);
     }
 
-    private static final class BuilderImpl implements Builder {
+    static final class BuilderImpl implements Builder {
         private String stringMember;
 
         private BuilderImpl() {
         }
 
         private BuilderImpl(SimpleStruct model) {
-            setStringMember(model.stringMember);
+            stringMember(model.stringMember);
         }
 
         public final String getStringMember() {
@@ -123,3 +133,4 @@ public class SimpleStruct implements StructuredPojo, ToCopyableBuilder<SimpleStr
         }
     }
 }
+

@@ -24,16 +24,14 @@ import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.net.URI;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.config.ClientOverrideConfiguration;
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.core.AmazonClientException;
+import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesResponse;
@@ -56,12 +54,7 @@ public class AwsJsonCrc32ChecksumTests {
     private static final String JSON_BODY_EXTRA_DATA_GZIP_Crc32_CHECKSUM = "1561543715";
 
     private static final StaticCredentialsProvider FAKE_CREDENTIALS_PROVIDER =
-            new StaticCredentialsProvider(new AwsCredentials("foo", "bar"));
-
-    @BeforeClass
-    public static void setup() {
-        BasicConfigurator.configure();
-    }
+            StaticCredentialsProvider.create(AwsCredentials.create("foo", "bar"));
 
     @Test
     public void clientCalculatesCrc32FromCompressedData_WhenCrc32IsValid() {

@@ -62,7 +62,7 @@ public class CodeGenerator {
     }
 
     /**
-     * load ServiceModel. load code gen configuration from individual client. load Waiters. generate intermediate model. generate
+     * load ServiceModel. load code gen configuration from individual client. generate intermediate model. generate
      * code.
      */
     public void execute() {
@@ -113,7 +113,7 @@ public class CodeGenerator {
         }
     }
 
-    private void emitCode(IntermediateModel intermediateModel) throws Exception {
+    private void emitCode(IntermediateModel intermediateModel) {
         final Iterable<GeneratorTask> generatorTasks = createGeneratorTasks(intermediateModel);
         try (CodeEmitter emitter = new CodeEmitter(generatorTasks, new GeneratorTaskExecutor())) {
             emitter.emit();

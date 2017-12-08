@@ -1,7 +1,9 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.util.ArrayList;
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Generated;
 
@@ -11,11 +13,7 @@ final class ListOfStringsCopier {
         if (listOfStringsParam == null) {
             return null;
         }
-        List<String> listOfStringsParamCopy = new ArrayList<>(listOfStringsParam.size());
-        for (String e : listOfStringsParam) {
-            listOfStringsParamCopy.add(e);
-        }
-        return listOfStringsParamCopy;
+        List<String> listOfStringsParamCopy = listOfStringsParam.stream().collect(toList());
+        return Collections.unmodifiableList(listOfStringsParamCopy);
     }
 }
-

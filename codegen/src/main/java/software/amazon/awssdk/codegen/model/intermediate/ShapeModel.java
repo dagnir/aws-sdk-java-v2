@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import software.amazon.awssdk.codegen.model.intermediate.customization.ShapeCustomizationInfo;
-import software.amazon.awssdk.util.StringUtils;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class ShapeModel extends DocumentationModel implements HasDeprecation {
 
@@ -44,6 +44,7 @@ public class ShapeModel extends DocumentationModel implements HasDeprecation {
     private boolean hasStatusCodeMember;
     private boolean hasStreamingMember;
     private boolean wrapper;
+    private boolean simpleMethod;
     private String requestSignerClassFqcn;
 
     private List<MemberModel> members;
@@ -221,6 +222,14 @@ public class ShapeModel extends DocumentationModel implements HasDeprecation {
         this.wrapper = wrapper;
     }
 
+    public boolean isSimpleMethod() {
+        return simpleMethod;
+    }
+
+    public void setSimpleMethod(boolean simpleMethod) {
+        this.simpleMethod = simpleMethod;
+    }
+
     public ShapeModel withHasStatusCodeMember(boolean hasStatusCodeMember) {
         setHasStatusCodeMember(hasStatusCodeMember);
         return this;
@@ -347,7 +356,7 @@ public class ShapeModel extends DocumentationModel implements HasDeprecation {
         final Map<String, MemberModel> shapeMembers = new HashMap<String, MemberModel>();
 
         // Creating a map of shape's members. This map is used below when
-        // fetching the details of a memeber.
+        // fetching the details of a member.
         final List<MemberModel> memberModels = getMembers();
         if (memberModels != null) {
             for (MemberModel model : memberModels) {

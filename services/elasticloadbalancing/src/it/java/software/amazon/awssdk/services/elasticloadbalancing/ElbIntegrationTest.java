@@ -30,7 +30,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.services.ec2.EC2Client;
 import software.amazon.awssdk.services.ec2.model.Placement;
 import software.amazon.awssdk.services.ec2.model.RunInstancesRequest;
@@ -69,7 +69,7 @@ import software.amazon.awssdk.services.elasticloadbalancing.model.SetLoadBalance
 import software.amazon.awssdk.services.iam.IAMClient;
 import software.amazon.awssdk.services.iam.model.ListServerCertificatesRequest;
 import software.amazon.awssdk.services.iam.model.ServerCertificateMetadata;
-import software.amazon.awssdk.test.AwsIntegrationTestBase;
+import software.amazon.awssdk.testutils.service.AwsIntegrationTestBase;
 
 /**
  * Integration tests for the Elastic Load Balancing client.
@@ -483,7 +483,7 @@ public class ElbIntegrationTest extends AwsIntegrationTestBase {
         assertNotNull(policyDescriptions.get(0).policyTypeName());
 
         // Remove the policy from the listener
-        elb.setLoadBalancerPoliciesOfListener(SetLoadBalancerPoliciesOfListenerRequest.builder().loadBalancerName(loadBalancerName).loadBalancerPort(80).build());
+        elb.setLoadBalancerPoliciesOfListener(SetLoadBalancerPoliciesOfListenerRequest.builder().loadBalancerName(loadBalancerName).loadBalancerPort(80).policyNames().build());
         assertFalse(doesLoadBalancerHaveListenerWithPolicy(loadBalancerName,
                                                            policyName));
 

@@ -25,9 +25,9 @@ import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.services.protocoljsonrpc.ProtocolJsonRpcClient;
 import software.amazon.awssdk.services.protocoljsonrpc.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocoljsonrpc.model.EmptyModeledException;
@@ -47,7 +47,7 @@ public class AwsJsonExceptionTest {
     @Before
     public void setupClient() {
         client = ProtocolJsonRpcClient.builder()
-                                      .credentialsProvider(new StaticCredentialsProvider(new AwsCredentials("akid", "skid")))
+                                      .credentialsProvider(StaticCredentialsProvider.create(AwsCredentials.create("akid", "skid")))
                                       .region(Region.US_EAST_1)
                                       .endpointOverride(URI.create("http://localhost:" + wireMock.port()))
                                       .build();

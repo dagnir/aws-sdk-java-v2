@@ -23,10 +23,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static software.amazon.awssdk.testutils.service.S3BucketUtils.temporaryBucketName;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,14 +36,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import software.amazon.awssdk.sync.RequestBody;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.annotations.ReviewBeforeRelease;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.testutils.RandomTempFile;
 
 /**
  * Integration tests for the listObjectsV2 operation in the Amazon S3 Java
@@ -63,7 +64,7 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
     /**
      * The name of the bucket created, used, and deleted by these tests.
      */
-    private static String bucketName = "list-objects-integ-test-" + new Date().getTime();
+    private static String bucketName = temporaryBucketName("list-objects-integ-test");
     /**
      * List of all keys created  by these tests.
      */
@@ -83,12 +84,7 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
      */
     @BeforeClass
     public static void createResources() throws Exception {
-        s3.createBucket(CreateBucketRequest.builder()
-                                           .bucket(bucketName)
-                                           .createBucketConfiguration(CreateBucketConfiguration.builder()
-                                                                                               .locationConstraint("us-west-2")
-                                                                                               .build())
-                                           .build());
+        createBucket(bucketName);
 
         NumberFormat numberFormatter = new DecimalFormat("##00");
         for (int i = 1; i <= BUCKET_OBJECTS; i++) {
@@ -109,7 +105,7 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
      */
     private static void createKey(String key) throws Exception {
 
-        File file = getRandomTempFile("list-objects-integ-test-" + new Date().getTime(), CONTENT_LENGTH);
+        File file = new RandomTempFile("list-objects-integ-test-" + new Date().getTime(), CONTENT_LENGTH);
 
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(bucketName)
@@ -249,7 +245,7 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
         List<S3Object> objects = result.contents();
 
         // EncodingType should be returned in the response.
-        assertEquals(encodingType, result.encodingType());
+        assertEquals(encodingType, result.encodingTypeString());
 
         System.out.println(result.contents().get(0).key());
 
@@ -332,10 +328,10 @@ public class S3ListObjectsV2IntegrationTest extends S3IntegrationTestBase {
 
             // Verify that the last modified date is within an hour
             assertNotNull(obj.lastModified());
-            long offset = obj.lastModified().getTime() - new Date().getTime();
+            long offset = obj.lastModified().toEpochMilli() - Instant.now().toEpochMilli();
             assertTrue(offset < ONE_HOUR_IN_MILLISECONDS);
 
-            assertTrue(obj.storageClass().length() > 1);
+            assertTrue(obj.storageClassString().length() > 1);
 
             if (shouldIncludeOwner) {
                 assertNotNull(obj.owner());

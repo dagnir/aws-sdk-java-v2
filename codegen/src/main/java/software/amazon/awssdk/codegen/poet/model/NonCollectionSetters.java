@@ -17,40 +17,42 @@ package software.amazon.awssdk.codegen.poet.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.function.Consumer;
+import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 class NonCollectionSetters extends AbstractMemberSetters {
-    private final PoetExtensions poetExtensions;
-
     NonCollectionSetters(IntermediateModel intermediateModel,
                          ShapeModel shapeModel,
                          MemberModel memberModel,
                          TypeProvider typeProvider) {
         super(intermediateModel, shapeModel, memberModel, typeProvider);
-        this.poetExtensions = new PoetExtensions(intermediateModel);
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
         List<MethodSpec> fluentDeclarations = new ArrayList<>();
-        fluentDeclarations.add(fluentSetterDeclaration(memberAsParameter(), returnType)
-                .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
-                .build());
+        fluentDeclarations.add(fluentAbstractSetterDeclaration(memberAsParameter(), returnType)
+                                   .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
+                                   .build());
 
         if (memberModel().getEnumType() != null) {
-            fluentDeclarations.add(fluentSetterDeclaration(modeledParam(), returnType)
-                    .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
-                    .build());
+            fluentDeclarations.add(fluentAbstractSetterDeclaration(modeledParam(), returnType)
+                                       .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
+                                       .build());
+        }
+
+        if (memberModel().hasBuilder()) {
+            fluentDeclarations.add(fluentConsumerFluentSetter(returnType));
         }
 
         return fluentDeclarations;
@@ -70,57 +72,55 @@ class NonCollectionSetters extends AbstractMemberSetters {
     }
 
     @Override
-    public List<MethodSpec> beanStyle() {
-        List<MethodSpec> beanStyle = new ArrayList<>();
-
-        beanStyle.add(beanStyleAssignmentSetter());
-
-        if (memberModel().getEnumType() != null) {
-            beanStyle.add(beanStyleEnumToStringSetter());
-        }
-
-        return beanStyle;
-    }
-
-    private MethodSpec fluentAssignmentSetter(TypeName returnType) {
-        return fluentSetterBuilder(returnType)
-                .addCode(copySetterBody().toBuilder().addStatement("return this").build())
-                .build();
-    }
-
-
-    private MethodSpec beanStyleAssignmentSetter() {
+    public MethodSpec beanStyle() {
         MethodSpec.Builder builder = beanStyleSetterBuilder()
-                .addCode(copySetterBody());
+            .addCode(copySetterBuilderBody());
 
         if (annotateJsonProperty()) {
             builder.addAnnotation(
-                    AnnotationSpec.builder(JsonProperty.class)
-                    .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
+                AnnotationSpec.builder(JsonProperty.class)
+                              .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
         }
 
         return builder.build();
     }
 
-    private MethodSpec fluentEnumToStringSetter(TypeName returnType) {
-        return fluentSetterBuilder(modeledParam(), returnType)
-                .addCode(enumToStringAssignmentBody().toBuilder().addStatement("return this").build())
-                .build();
+    private MethodSpec fluentAssignmentSetter(TypeName returnType) {
+        return fluentSetterBuilder(returnType)
+            .addCode(copySetterBody().toBuilder().addStatement("return this").build())
+            .build();
     }
 
-    private MethodSpec beanStyleEnumToStringSetter() {
-        return beanStyleSetterBuilder(modeledParam())
-                .addCode(enumToStringAssignmentBody())
-                .build();
+    private MethodSpec fluentEnumToStringSetter(TypeName returnType) {
+        return fluentSetterBuilder(modeledParam(), returnType)
+            .addCode(enumToStringAssignmentBody().toBuilder().addStatement("return this").build())
+            .build();
+    }
+
+    private MethodSpec fluentConsumerFluentSetter(TypeName returnType) {
+        ClassName memberClass = poetExtensions.getModelClass(memberModel().getShape().getC2jName());
+        ClassName builderClass = memberClass.nestedClass("Builder");
+        return fluentDefaultSetterDeclaration(builderConsumerParam(builderClass), returnType)
+            .addModifiers(Modifier.DEFAULT)
+            .addStatement("return $N($T.builder().apply($N).build())",
+                          memberModel().getFluentSetterMethodName(),
+                          memberClass,
+                          fieldName())
+            .addJavadoc("$L", memberModel().getDefaultConsumerFluentSetterDocumentation())
+            .build();
     }
 
     private CodeBlock enumToStringAssignmentBody() {
         return CodeBlock.builder()
-                .addStatement("this.$N($N.toString())", fieldName(), fieldName())
-                .build();
+                        .addStatement("this.$N($N.toString())", fieldName(), fieldName())
+                        .build();
     }
 
     private ParameterSpec modeledParam() {
         return ParameterSpec.builder(poetExtensions.getModelClass(memberModel().getShape().getShapeName()), fieldName()).build();
+    }
+
+    private ParameterSpec builderConsumerParam(ClassName builderClass) {
+        return ParameterSpec.builder(ParameterizedTypeName.get(ClassName.get(Consumer.class), builderClass), fieldName()).build();
     }
 }

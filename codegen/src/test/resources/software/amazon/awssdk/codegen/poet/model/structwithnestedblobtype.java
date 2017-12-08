@@ -1,11 +1,13 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.protocol.ProtocolMarshaller;
-import software.amazon.awssdk.protocol.StructuredPojo;
-import software.amazon.awssdk.runtime.StandardMemberCopier;
+import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.core.protocol.ProtocolMarshaller;
+import software.amazon.awssdk.core.protocol.StructuredPojo;
+import software.amazon.awssdk.core.runtime.StandardMemberCopier;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.StructWithNestedBlobTypeMarshaller;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
@@ -22,19 +24,15 @@ public class StructWithNestedBlobType implements StructuredPojo,
     }
 
     /**
-     *
+     * Returns the value of the NestedBlob property for this object.
      * <p>
-     * {@code ByteBuffer}s are stateful. Calling their {@code get} methods changes their {@code position}. We recommend
-     * using {@link java.nio.ByteBuffer#asReadOnlyBuffer()} to create a read-only view of the buffer with an independent
-     * {@code position}, and calling {@code get} methods on this rather than directly on the returned {@code ByteBuffer}
-     * . Doing so will ensure that anyone else using the {@code ByteBuffer} will not be affected by changes to the
-     * {@code position}.
+     * This method will return a new read-only {@code ByteBuffer} each time it is invoked.
      * </p>
-     * 
-     * @return
+     *
+     * @return The value of the NestedBlob property for this object.
      */
     public ByteBuffer nestedBlob() {
-        return nestedBlob;
+        return nestedBlob == null ? null : nestedBlob.asReadOnlyBuffer();
     }
 
     @Override
@@ -53,7 +51,7 @@ public class StructWithNestedBlobType implements StructuredPojo,
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((nestedBlob() == null) ? 0 : nestedBlob().hashCode());
+        hashCode = 31 * hashCode + Objects.hashCode(nestedBlob());
         return hashCode;
     }
 
@@ -69,24 +67,29 @@ public class StructWithNestedBlobType implements StructuredPojo,
             return false;
         }
         StructWithNestedBlobType other = (StructWithNestedBlobType) obj;
-        if (other.nestedBlob() == null ^ this.nestedBlob() == null) {
-            return false;
-        }
-        if (other.nestedBlob() != null && !other.nestedBlob().equals(this.nestedBlob())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(nestedBlob(), other.nestedBlob());
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        StringBuilder sb = new StringBuilder("{");
         if (nestedBlob() != null) {
             sb.append("NestedBlob: ").append(nestedBlob()).append(",");
         }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 1);
+        }
         sb.append("}");
         return sb.toString();
+    }
+
+    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+        switch (fieldName) {
+        case "NestedBlob":
+            return Optional.of(clazz.cast(nestedBlob()));
+        default:
+            return Optional.empty();
+        }
     }
 
     @SdkInternalApi
@@ -97,21 +100,27 @@ public class StructWithNestedBlobType implements StructuredPojo,
 
     public interface Builder extends CopyableBuilder<Builder, StructWithNestedBlobType> {
         /**
+         * Sets the value of the NestedBlob property for this object.
+         * <p>
+         * To preserve immutability, the remaining bytes in the provided buffer will be copied into a new buffer when
+         * set.
+         * </p>
          *
          * @param nestedBlob
+         *        The new value for the NestedBlob property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder nestedBlob(ByteBuffer nestedBlob);
     }
 
-    private static final class BuilderImpl implements Builder {
+    static final class BuilderImpl implements Builder {
         private ByteBuffer nestedBlob;
 
         private BuilderImpl() {
         }
 
         private BuilderImpl(StructWithNestedBlobType model) {
-            setNestedBlob(model.nestedBlob);
+            nestedBlob(model.nestedBlob);
         }
 
         public final ByteBuffer getNestedBlob() {
@@ -134,3 +143,4 @@ public class StructWithNestedBlobType implements StructuredPojo,
         }
     }
 }
+

@@ -15,13 +15,14 @@
 
 package software.amazon.awssdk.services.cloudformation;
 
+import static software.amazon.awssdk.testutils.service.S3BucketUtils.temporaryBucketName;
+
 import java.io.File;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.auth.policy.Action;
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.core.regions.Region;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
@@ -30,8 +31,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import software.amazon.awssdk.sync.RequestBody;
-import software.amazon.awssdk.test.AwsTestBase;
+import software.amazon.awssdk.testutils.service.AwsTestBase;
 
 /**
  * Base class for CloudFormation integration tests. Loads AWS credentials from a properties file and
@@ -40,7 +40,7 @@ import software.amazon.awssdk.test.AwsTestBase;
 public class CloudFormationIntegrationTestBase extends AwsTestBase {
 
     protected static CloudFormationClient cf;
-    protected static String bucketName = "cloudformation-templates" + System.currentTimeMillis();
+    protected static String bucketName = temporaryBucketName("cloudformation-templates");
     protected static String templateForCloudFormationIntegrationTests = "templateForCloudFormationIntegrationTests";
     protected static String templateForStackIntegrationTests = "templateForStackIntegrationTests";
     protected static String templateUrlForCloudFormationIntegrationTests = "https://s3.amazonaws.com/" + bucketName
@@ -57,7 +57,7 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
     public static void setUp() throws Exception {
         setUpCredentials();
         cf = CloudFormationClient.builder()
-                                 .credentialsProvider(new StaticCredentialsProvider(credentials))
+                                 .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
                                  .region(Region.AP_NORTHEAST_1)
                                  .build();
         s3 = S3Client.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).region(Region.AP_NORTHEAST_1).build();
@@ -108,22 +108,6 @@ public class CloudFormationIntegrationTestBase extends AwsTestBase {
         ;
 
         s3.deleteBucket(DeleteBucketRequest.builder().bucket(bucketName).build());
-    }
-
-    /**
-     * An auxiliary class to help instantiate the action object.
-     */
-    protected static class NamedAction implements Action {
-
-        private String actionName;
-
-        public NamedAction(String actionName) {
-            this.actionName = actionName;
-        }
-
-        public String getActionName() {
-            return actionName;
-        }
     }
 
 }

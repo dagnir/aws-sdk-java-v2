@@ -20,16 +20,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utilities for IO operations.
  */
-public enum IoUtils {
-    ;
+public final class IoUtils {
+
     private static final int BUFFER_SIZE = 1024 * 4;
-    private static final Log DEFAULT_LOG = LogFactory.getLog(IoUtils.class);
+    private static final Logger DEFAULT_LOG = LoggerFactory.getLogger(IoUtils.class);
+
+    private IoUtils() {
+    }
 
     /**
      * Reads and returns the rest of the given input stream as a byte array.
@@ -62,12 +65,12 @@ public enum IoUtils {
      * @param is the given closeable
      * @param log logger used to log any failure should the close fail
      */
-    public static void closeQuietly(AutoCloseable is, Log log) {
+    public static void closeQuietly(AutoCloseable is, Logger log) {
         if (is != null) {
             try {
                 is.close();
             } catch (Exception ex) {
-                Log logger = log == null ? DEFAULT_LOG : log;
+                Logger logger = log == null ? DEFAULT_LOG : log;
                 if (logger.isDebugEnabled()) {
                     logger.debug("Ignore failure in closing the Closeable", ex);
                 }

@@ -25,8 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.codegen.customization.CodegenCustomizationProcessor;
 import software.amazon.awssdk.codegen.customization.processors.DefaultCustomizationProcessor;
+import software.amazon.awssdk.codegen.internal.Constants;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.BasicCodeGenConfig;
@@ -38,15 +41,12 @@ import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.model.intermediate.Protocol;
 import software.amazon.awssdk.codegen.model.intermediate.ServiceExamples;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
-import software.amazon.awssdk.codegen.model.intermediate.WaiterDefinitionModel;
 import software.amazon.awssdk.codegen.model.service.AuthType;
 import software.amazon.awssdk.codegen.model.service.Operation;
+import software.amazon.awssdk.codegen.model.service.Paginators;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
-import software.amazon.awssdk.codegen.model.service.Waiters;
 import software.amazon.awssdk.codegen.naming.DefaultNamingStrategy;
 import software.amazon.awssdk.codegen.naming.NamingStrategy;
-import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.utils.Logger;
 
 /**
  * Builds an intermediate model to be used by the templates from the service model and
@@ -54,7 +54,7 @@ import software.amazon.awssdk.utils.Logger;
  */
 public class IntermediateModelBuilder {
 
-    private static final Logger log = Logger.loggerFor(IntermediateModelBuilder.class);
+    private static final Logger log = LoggerFactory.getLogger(IntermediateModelBuilder.class);
     private final CustomizationConfig customConfig;
     private final BasicCodeGenConfig codeGenConfig;
     private final ServiceModel service;
@@ -62,7 +62,7 @@ public class IntermediateModelBuilder {
     private final NamingStrategy namingStrategy;
     private final TypeUtils typeUtils;
     private final List<IntermediateModelShapeProcessor> shapeProcessors;
-    private final Waiters waiters;
+    private final Paginators paginators;
 
     public IntermediateModelBuilder(C2jModels models) {
         this.customConfig = models.customizationConfig();
@@ -72,7 +72,7 @@ public class IntermediateModelBuilder {
         this.namingStrategy = new DefaultNamingStrategy(service, customConfig);
         this.typeUtils = new TypeUtils(namingStrategy);
         this.shapeProcessors = createShapeProcessors();
-        this.waiters = models.waitersModel();
+        this.paginators = models.paginatorsModel();
     }
 
 
@@ -94,22 +94,20 @@ public class IntermediateModelBuilder {
         // Note: This needs to come before any pre/post processing of the
         // models, as the transformer must have access to the original shapes,
         // before any customizations have been applied (which modifies them).
-        log.info(() -> "Applying customizations to examples...");
+        log.info("Applying customizations to examples...");
         new ExamplesCustomizer(service, customConfig).applyCustomizationsToExamples(examples);
-        log.info(() -> "Examples customized.");
+        log.info("Examples customized.");
 
         CodegenCustomizationProcessor customization = DefaultCustomizationProcessor
-                .getProcessorFor(customConfig);
+            .getProcessorFor(customConfig);
 
         customization.preprocess(service);
 
         final Map<String, OperationModel> operations = new TreeMap<>();
         final Map<String, ShapeModel> shapes = new HashMap<>();
-        final Map<String, WaiterDefinitionModel> waiters = new HashMap<>();
         final Map<String, AuthorizerModel> authorizers = new HashMap<>();
 
         operations.putAll(new AddOperations(this).constructOperations());
-        waiters.putAll(new AddWaiters(this.waiters, operations).constructWaiters());
         authorizers.putAll(new AddCustomAuthorizers(this.service, getNamingStrategy()).constructAuthorizers());
 
         for (IntermediateModelShapeProcessor processor : shapeProcessors) {
@@ -117,31 +115,33 @@ public class IntermediateModelBuilder {
                                             Collections.unmodifiableMap(shapes)));
         }
 
-        log.info(() -> shapes.size() + " shapes found in total.");
+        log.info("{} shapes found in total.", shapes.size());
 
         IntermediateModel fullModel = new IntermediateModel(
-                constructMetadata(service, codeGenConfig, customConfig), operations, shapes,
-                customConfig, examples, waiters, authorizers);
+            constructMetadata(service, codeGenConfig, customConfig), operations, shapes,
+            customConfig, examples, authorizers, paginators.getPaginators());
 
         customization.postprocess(fullModel);
 
-        log.info(() -> fullModel.getShapes().size() + " shapes remained after applying customizations.");
+        log.info("{} shapes remained after applying customizations.", fullModel.getShapes().size());
 
         Map<String, ShapeModel> trimmedShapes = removeUnusedShapes(fullModel);
 
-        log.info(() -> trimmedShapes.size() + " shapes remained after removing unused shapes.");
+        log.info("{} shapes remained after removing unused shapes.", trimmedShapes.size());
 
         IntermediateModel trimmedModel = new IntermediateModel(fullModel.getMetadata(),
                                                                fullModel.getOperations(),
                                                                trimmedShapes,
                                                                fullModel.getCustomizationConfig(),
                                                                fullModel.getExamples(),
-                                                               fullModel.getWaiters(),
-                                                               fullModel.getCustomAuthorizers());
+                                                               fullModel.getCustomAuthorizers(),
+                                                               fullModel.getPaginators());
 
         linkMembersToShapes(trimmedModel);
         linkOperationsToInputOutputShapes(trimmedModel);
         linkCustomAuthorizationToRequestShapes(trimmedModel);
+
+        setSimpleMethods(trimmedModel);
 
         return trimmedModel;
     }
@@ -156,7 +156,7 @@ public class IntermediateModelBuilder {
             if (entry.getValue().getMembers() != null) {
                 for (MemberModel member : entry.getValue().getMembers()) {
                     member.setShape(
-                            Utils.findShapeModelByC2jNameIfExists(model, member.getC2jShape()));
+                        Utils.findShapeModelByC2jNameIfExists(model, member.getC2jShape()));
                 }
             }
         }
@@ -164,23 +164,17 @@ public class IntermediateModelBuilder {
 
     private void linkOperationsToInputOutputShapes(IntermediateModel model) {
         for (Map.Entry<String, OperationModel> entry : model.getOperations().entrySet()) {
+
             Operation operation = service.getOperations().get(entry.getKey());
+
             if (entry.getValue().getInput() != null) {
                 entry.getValue().setInputShape(model.getShapes().get(entry.getValue().getInput().getSimpleType()));
             }
+
             if (operation.getOutput() != null) {
                 String outputShapeName = operation.getOutput().getShape();
-                // TODO need to figure this out for wrapper outputs.
-                // See [JAVA-1556]
-
-                // Only link when output shape is not a result wrapper. When it is a result wrapper
-                // we only preserve the single member the wrapper has in the intermediate model
-                // so this lookup will fail.
-                if (StringUtils.isNullOrEmpty(operation.getOutput().getResultWrapper())) {
-                    entry.getValue().setOutputShape(model.getShapeByC2jName(outputShapeName));
-                }
+                entry.getValue().setOutputShape(model.getShapeByC2jName(outputShapeName));
             }
-
         }
     }
 
@@ -190,28 +184,49 @@ public class IntermediateModelBuilder {
         }
 
         model.getOperations().values().stream()
-                .filter(OperationModel::isAuthenticated)
-                .forEach(operation -> {
-                    Operation c2jOperation = service.getOperation(operation.getOperationName());
+             .filter(OperationModel::isAuthenticated)
+             .forEach(operation -> {
+                 Operation c2jOperation = service.getOperation(operation.getOperationName());
 
-                    ShapeModel shape = operation.getInputShape();
-                    if (shape == null) {
-                        throw new RuntimeException(String.format("Operation %s has unknown input shape",
-                                operation.getOperationName()));
-                    }
-                    if (AuthType.CUSTOM.equals(c2jOperation.getAuthType())) {
-                        AuthorizerModel auth = model.getCustomAuthorizers().get(c2jOperation.getAuthorizer());
-                        if (auth == null) {
-                            throw new RuntimeException(String.format("Required custom auth not defined: %s",
-                                    c2jOperation.getAuthorizer()));
-                        }
-                        shape.setRequestSignerClassFqcn(model.getMetadata().getAuthPolicyPackageName() + '.' +
-                                                        auth.getInterfaceName());
-                    } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
-                        model.getMetadata().setRequiresIamSigners(true);
-                        shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");
-                    }
-                });
+                 ShapeModel shape = operation.getInputShape();
+                 if (shape == null) {
+                     throw new RuntimeException(String.format("Operation %s has unknown input shape",
+                                                              operation.getOperationName()));
+                 }
+                 if (AuthType.CUSTOM.equals(c2jOperation.getAuthType())) {
+                     AuthorizerModel auth = model.getCustomAuthorizers().get(c2jOperation.getAuthorizer());
+                     if (auth == null) {
+                         throw new RuntimeException(String.format("Required custom auth not defined: %s",
+                                                                  c2jOperation.getAuthorizer()));
+                     }
+                     shape.setRequestSignerClassFqcn(model.getMetadata().getAuthPolicyPackageName() + '.' +
+                                                     auth.getInterfaceName());
+                 } else if (AuthType.IAM.equals(c2jOperation.getAuthType())) {
+                     model.getMetadata().setRequiresIamSigners(true);
+                     shape.setRequestSignerClassFqcn("software.amazon.awssdk.opensdk.protect.auth.IamRequestSigner");
+                 }
+             });
+    }
+
+    private void setSimpleMethods(IntermediateModel model) {
+        model.getOperations().entrySet().stream().forEach(m -> {
+
+            ShapeModel inputShape = m.getValue().getInputShape();
+            String methodName = m.getValue().getMethodName();
+            CustomizationConfig config = model.getCustomizationConfig();
+
+            if (inputShape.getRequired() == null
+                && !config.getBlacklistedSimpleMethods().contains(methodName)
+                && !m.getValue().hasStreamingInput()
+                && !m.getValue().hasStreamingOutput()) {
+                if (!methodName.matches(Constants.APPROVED_SIMPLE_METHOD_VERBS) &&
+                    !config.getVerifiedSimpleMethods().contains(methodName)) {
+                    throw new RuntimeException("Simple method encountered that is not approved or blacklisted: " + methodName);
+                }
+
+                inputShape.setSimpleMethod(true);
+            }
+        });
     }
 
     public CustomizationConfig getCustomConfig() {
@@ -238,4 +253,7 @@ public class IntermediateModelBuilder {
         return typeUtils;
     }
 
+    public Paginators getPaginators() {
+        return paginators;
+    }
 }

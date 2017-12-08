@@ -19,10 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
-
 import java.util.Collections;
 import java.util.List;
-
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -34,7 +32,7 @@ class MapSetters extends AbstractMemberSetters {
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
-        return Collections.singletonList(fluentSetterDeclaration(memberAsParameter(), returnType)
+        return Collections.singletonList(fluentAbstractSetterDeclaration(memberAsParameter(), returnType)
                 .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
                 .build());
     }
@@ -49,9 +47,9 @@ class MapSetters extends AbstractMemberSetters {
     }
 
     @Override
-    public List<MethodSpec> beanStyle() {
+    public MethodSpec beanStyle() {
         MethodSpec.Builder builder = beanStyleSetterBuilder()
-                .addCode(copySetterBody());
+                .addCode(memberModel().isCollectionWithBuilderMember() ? copySetterBuilderBody() : copySetterBody());
 
         if (annotateJsonProperty()) {
             builder.addAnnotation(
@@ -59,6 +57,6 @@ class MapSetters extends AbstractMemberSetters {
                             .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
         }
 
-        return Collections.singletonList(builder.build());
+        return builder.build();
     }
 }

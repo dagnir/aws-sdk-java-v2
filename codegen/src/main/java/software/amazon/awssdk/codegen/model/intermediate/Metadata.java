@@ -69,7 +69,7 @@ public class Metadata {
 
     private String requestTransformPackageName;
 
-    private String waitersPackageName;
+    private String paginatorsPackageName;
 
     private String authPolicyPackageName;
 
@@ -435,20 +435,20 @@ public class Metadata {
         return this;
     }
 
-    public String getFullWaitersPackageName() {
-        return joinPackageNames(rootPackageName, getWaitersPackageName());
+    public String getFullPaginatorsPackageName() {
+        return joinPackageNames(rootPackageName, getPaginatorsPackageName());
     }
 
-    public String getWaitersPackageName() {
-        return waitersPackageName;
+    public String getPaginatorsPackageName() {
+        return paginatorsPackageName;
     }
 
-    public void setWaitersPackageName(String waitersPackageName) {
-        this.waitersPackageName = waitersPackageName;
+    public void setPaginatorsPackageName(String paginatorsPackageName) {
+        this.paginatorsPackageName = paginatorsPackageName;
     }
 
-    public Metadata withWaitersPackageName(String waitersPackageName) {
-        setWaitersPackageName(waitersPackageName);
+    public Metadata withPaginatorsPackageName(String paginatorsPackageName) {
+        setPaginatorsPackageName(paginatorsPackageName);
         return this;
     }
 

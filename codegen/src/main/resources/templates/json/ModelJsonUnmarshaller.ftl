@@ -8,8 +8,8 @@ import java.nio.ByteBuffer;
 import javax.annotation.Generated;
 
 import ${metadata.fullModelPackageName}.*;
-import software.amazon.awssdk.runtime.transform.SimpleTypeJsonUnmarshallers.*;
-import software.amazon.awssdk.runtime.transform.*;
+import software.amazon.awssdk.core.runtime.transform.SimpleTypeJsonUnmarshallers.*;
+import software.amazon.awssdk.core.runtime.transform.*;
 
 import com.fasterxml.jackson.core.JsonToken;
 import static com.fasterxml.jackson.core.JsonToken.*;
@@ -29,8 +29,8 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
         <#if memberModel.http.isHeader() >
             if (context.getHeader("${memberModel.http.unmarshallLocationName}") != null) {
                 context.setCurrentHeader("${memberModel.http.unmarshallLocationName}");
-                <#if memberModel.variable.simpleType == "Date">
-                    ${shape.variable.variableName}Builder.${memberModel.fluentSetterMethodName}(software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
+                <#if memberModel.variable.simpleType == "Instant">
+                    ${shape.variable.variableName}Builder.${memberModel.fluentSetterMethodName}(software.amazon.awssdk.core.util.DateUtils.parseRfc1123Date(context.readText()));
                 <#else>
                     ${shape.variable.variableName}Builder.${memberModel.fluentSetterMethodName}(<@MemberUnmarshallerDeclarationMacro.content memberModel />.unmarshall(context));
                 </#if>
@@ -71,9 +71,8 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
         return ${shape.variable.variableName}Builder.build();
     }
 
-    private static ${shape.shapeName}Unmarshaller INSTANCE;
+    private static final ${shape.shapeName}Unmarshaller INSTANCE = new ${shape.shapeName}Unmarshaller();
     public static ${shape.shapeName}Unmarshaller getInstance() {
-        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}Unmarshaller();
         return INSTANCE;
     }
 }

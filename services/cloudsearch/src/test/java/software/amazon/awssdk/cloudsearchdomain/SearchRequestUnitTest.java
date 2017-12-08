@@ -22,15 +22,17 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
+import com.github.tomakehurst.wiremock.common.ConsoleNotifier;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.io.IOException;
 import java.net.URI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.services.cloudsearchdomain.CloudSearchDomainClient;
 import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
 
@@ -38,17 +40,17 @@ import software.amazon.awssdk.services.cloudsearchdomain.model.SearchRequest;
  * Unit tests for {@link SearchRequest}.
  */
 public class SearchRequestUnitTest {
-    private static final AwsCredentials CREDENTIALS = new AwsCredentials("access", "secret");
+    private static final AwsCredentials CREDENTIALS = AwsCredentials.create("access", "secret");
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(0);
+    public WireMockRule wireMockRule = new WireMockRule(new WireMockConfiguration().port(0).notifier(new ConsoleNotifier(true)));
 
     private CloudSearchDomainClient searchClient;
 
     @Before
     public void testSetup() {
         searchClient = CloudSearchDomainClient.builder()
-                                              .credentialsProvider(new StaticCredentialsProvider(CREDENTIALS))
+                                              .credentialsProvider(StaticCredentialsProvider.create(CREDENTIALS))
                                               .region(Region.US_EAST_1)
                                               .endpointOverride(URI.create("http://localhost:" + wireMockRule.port()))
                                               .build();

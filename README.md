@@ -1,10 +1,10 @@
-# AWS SDK for Java 2.0 Developer Preview [![Build Status](https://travis-ci.org/aws/aws-sdk-java.png?branch=master)](https://travis-ci.org/aws/aws-sdk-java)
+# AWS SDK for Java 2.0 Developer Preview [![Build Status](https://travis-ci.org/aws/aws-sdk-java-v2.svg?branch=master)](https://travis-ci.org/aws/aws-sdk-java-v2)
 
-The **AWS SDK for Java 2.0 Developer Preview** is a rewrite of 1.0 with some great new features. As with version 1.0, 
+The **AWS SDK for Java 2.0 Developer Preview** is a rewrite of 1.0 with some great new features. As with version 1.0,
 it enables you to easily work with [Amazon Web Services][aws] but also includes features like non-blocking IO and pluggable
 HTTP implementation to further customize your applications. You can get started in minutes using ***Maven*** or any build system that supports MavenCentral as an artifact source.
 
-**NOTE** 2.0 version still a preview and is not recommended for production use yet. 
+**NOTE** 2.0 version still a preview and is not recommended for production use yet.
 
 * [SDK Homepage][sdk-website]
 * [API Docs][docs-api]
@@ -30,8 +30,7 @@ section of the developer guide.
 #### Install the SDK ####
 
 The recommended way to use the AWS SDK for Java in your project is to consume it from Maven. Import
-the [bom][] and specify the SDK Maven modules that your project needs in the
-dependencies.
+the [bom](./bom) and specify the SDK Maven modules that your project needs in the dependencies.
 
 ##### Importing the BOM #####
 
@@ -41,7 +40,7 @@ dependencies.
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>bom</artifactId>
-      <version>2.0.0-preview-1</version>
+      <version>2.0.0-preview-6</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -86,13 +85,13 @@ in the build, use:
 mvn clean install -Dgpg.skip=true
 ```
 
-## Giving Feedback 
-We need your help in making this SDK great. Please participate in the community and contribute to this effort by submitting issues, participating in discussion forums and submitting pull requests through the following channels. 
+## Giving Feedback
+We need your help in making this SDK great. Please participate in the community and contribute to this effort by submitting issues, participating in discussion forums and submitting pull requests through the following channels.
 
 * Come join the AWS Java community chat on [Gitter][gitter].
 * Articulate your feature request or upvote existing ones on our [Issues][features] page.
 * Submit [issues][sdk-issues].
-* Send feedback directly to the team at aws-java-sdk-v2-feedback@amazon.com. 
+* Send feedback directly to the team at aws-java-sdk-v2-feedback@amazon.com.
 
 [aws-iam-credentials]: http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/java-dg-roles.html
 [aws]: http://aws.amazon.com/

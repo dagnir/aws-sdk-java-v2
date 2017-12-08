@@ -10,10 +10,10 @@ import javax.xml.stream.events.XMLEvent;
 import javax.annotation.Generated;
 
 import ${metadata.fullModelPackageName}.*;
-import software.amazon.awssdk.runtime.transform.Unmarshaller;
-import software.amazon.awssdk.runtime.transform.MapEntry;
-import software.amazon.awssdk.runtime.transform.StaxUnmarshallerContext;
-import software.amazon.awssdk.runtime.transform.SimpleTypeStaxUnmarshallers.*;
+import software.amazon.awssdk.core.runtime.transform.Unmarshaller;
+import software.amazon.awssdk.core.runtime.transform.MapEntry;
+import software.amazon.awssdk.core.runtime.transform.StaxUnmarshallerContext;
+import software.amazon.awssdk.core.runtime.transform.SimpleTypeStaxUnmarshallers.*;
 
 
 /**
@@ -44,7 +44,13 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
         int originalDepth = context.getCurrentDepth();
         int targetDepth = originalDepth + 1;
 
-<#if shape.hasPayloadMember>
+<#if shape.customization.hasStaxTargetDepthOffset() >
+    <#if shape.customization.staxTargetDepthOffset == 0 >
+        <#-- if it's zero we can skip applying the offset -->
+    <#else>
+        if (context.isStartOfDocument()) targetDepth += ${shape.customization.staxTargetDepthOffset};
+    </#if>
+<#elseif shape.hasPayloadMember>
     <#-- Do not adjust stax context if we need to read raw payload data -->
 <#elseif shape.wrapper>
     <#-- For query (elasticache, rds, redshift) protocol, if the return type of certain operation is wrapped, -->
@@ -66,8 +72,8 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
         <#if memberModel.http.isHeader() >
             context.setCurrentHeader("${memberModel.http.unmarshallLocationName}");
             ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(
-            <#if memberModel.variable.simpleType == "Date">
-                software.amazon.awssdk.util.DateUtils.parseRfc822Date(context.readText()));
+            <#if memberModel.variable.simpleType == "Instant">
+                software.amazon.awssdk.core.util.DateUtils.parseRfc1123Date(context.readText()));
             <#else>
                 ${memberModel.variable.simpleType}Unmarshaller.getInstance().unmarshall(context));
             </#if>
@@ -83,15 +89,20 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
         ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(context.getHttpResponse().getStatusCode());
         </#if>
 
-        <#if memberModel.map && (!memberModel.http.location?? || memberModel.http.location != "headers")>
-        java.util.Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = null;
+        <#if !memberModel.http.location?? || memberModel.http.location != "headers">
+            <#if memberModel.map>
+                java.util.Map<${memberModel.mapModel.keyModel.variable.variableType}, ${memberModel.mapModel.valueModel.variable.variableType}> ${memberModel.variable.variableName} = null;
+            </#if>
+            <#if memberModel.list>
+                java.util.List<${memberModel.listModel.memberType}> ${memberModel.variable.variableName} = null;
+            </#if>
         </#if>
     </#list>
 </#if>
 
 <#list shape.members as memberModel>
     <#if memberModel.map && memberModel.http.location?? && memberModel.http.location == "headers">
-    Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = new HashMap<>();
+    Map<${memberModel.mapModel.keyModel.variable.variableType}, ${memberModel.mapModel.valueModel.variable.variableType}> ${memberModel.variable.variableName} = new HashMap<>();
     context.getHeaders().entrySet().stream().filter(e -> e.getKey().startsWith("${memberModel.http.unmarshallLocationName}")).forEach(e -> {
         ${memberModel.variable.variableName}.put(e.getKey().replace("${memberModel.http.unmarshallLocationName}", ""), e.getValue());
     });
@@ -102,8 +113,13 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
 <#-- If any member unmarshalls as payload we want to XML unmarshall. Otherwise, response won't contain xml -->
 <#if hasPayload && !shape.hasStreamingMember >
 <#list shape.members as memberModel>
-    <#if memberModel.map && (!memberModel.http.location?? || memberModel.http.location != "headers")>
-        java.util.Map<${memberModel.mapModel.keyType}, ${memberModel.mapModel.valueType}> ${memberModel.variable.variableName} = null;
+    <#if !memberModel.http.location?? || memberModel.http.location != "headers">
+        <#if memberModel.map>
+            java.util.Map<${memberModel.mapModel.keyModel.variable.variableType}, ${memberModel.mapModel.valueModel.variable.variableType}> ${memberModel.variable.variableName} = null;
+        </#if>
+        <#if memberModel.list>
+            java.util.List<${memberModel.listModel.memberType}> ${memberModel.variable.variableName} = null;
+        </#if>
     </#if>
 </#list>
 
@@ -112,8 +128,8 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
             if (xmlEvent.isEndDocument()) {
             <#-- Set any map members we filled during unmarshalling -->
 <#list shape.members as memberModel>
-    <#if memberModel.map && (!memberModel.http.location?? || memberModel.http.location == "headers")>
-                    ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.variableName});
+    <#if memberModel.map || memberModel.list>
+        ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.variableName});
     </#if>
 </#list>
                 break;
@@ -141,9 +157,8 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
             } else if (xmlEvent.isEndElement()) {
                 if (context.getCurrentDepth() < originalDepth) {
 <#list shape.members as memberModel>
-    <#if memberModel.map && (!memberModel.http.location?? || memberModel.http.location == "headers")>
-                    ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.variableName});
-
+    <#if memberModel.map || memberModel.list>
+        ${shape.variable.variableName}.${memberModel.fluentSetterMethodName}(${memberModel.variable.variableName});
     </#if>
 </#list>
                     break;
@@ -155,9 +170,8 @@ public class ${shape.shapeName}Unmarshaller implements Unmarshaller<${shape.shap
         return ${shape.variable.variableName}.build();
     }
 
-    private static ${shape.shapeName}Unmarshaller INSTANCE;
+    private static final ${shape.shapeName}Unmarshaller INSTANCE = new ${shape.shapeName}Unmarshaller();
     public static ${shape.shapeName}Unmarshaller getInstance() {
-        if (INSTANCE == null) INSTANCE = new ${shape.shapeName}Unmarshaller();
         return INSTANCE;
     }
 }

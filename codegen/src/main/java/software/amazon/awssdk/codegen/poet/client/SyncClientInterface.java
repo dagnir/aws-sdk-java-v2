@@ -22,59 +22,61 @@ import static software.amazon.awssdk.codegen.poet.client.AsyncClientInterface.ST
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.squareup.javapoet.TypeSpec.Builder;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.lang.model.element.Modifier;
-import software.amazon.awssdk.SdkBaseException;
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.codegen.docs.ClientType;
+import software.amazon.awssdk.codegen.docs.SimpleMethodOverload;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
+import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
-import software.amazon.awssdk.regions.ServiceMetadata;
-import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
-import software.amazon.awssdk.sync.RequestBody;
-import software.amazon.awssdk.sync.StreamingResponseHandler;
+import software.amazon.awssdk.codegen.utils.PaginatorUtils;
+import software.amazon.awssdk.core.SdkBaseException;
+import software.amazon.awssdk.core.SdkClientException;
+import software.amazon.awssdk.core.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.regions.ServiceMetadata;
+import software.amazon.awssdk.core.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.sync.ResponseInputStream;
+import software.amazon.awssdk.core.sync.StreamingResponseHandler;
+import software.amazon.awssdk.utils.SdkAutoCloseable;
 
 public final class SyncClientInterface implements ClassSpec {
 
     private final IntermediateModel model;
     private final ClassName className;
     private final String clientPackageName;
+    private final PoetExtensions poetExtensions;
 
     public SyncClientInterface(IntermediateModel model) {
         this.model = model;
         this.clientPackageName = model.getMetadata().getFullClientPackageName();
         this.className = ClassName.get(clientPackageName, model.getMetadata().getSyncInterface());
+        this.poetExtensions = new PoetExtensions(model);
     }
 
     @Override
     public TypeSpec poetSpec() {
-        Builder classBuilder = PoetUtils.createInterfaceBuilder(className)
-                                        .addSuperinterface(AutoCloseable.class)
-                                        .addJavadoc(getJavadoc())
-                                        .addField(FieldSpec.builder(String.class, "SERVICE_NAME")
+        return PoetUtils.createInterfaceBuilder(className)
+                        .addSuperinterface(SdkAutoCloseable.class)
+                        .addJavadoc(getJavadoc())
+                        .addField(FieldSpec.builder(String.class, "SERVICE_NAME")
                                                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                                                            .initializer("$S", model.getMetadata().getSigningName())
                                                            .build())
-                                        .addMethod(create())
-                                        .addMethod(builder())
-                                        .addMethods(operations())
-                                        .addMethod(serviceMetadata());
-
-        if (model.getHasWaiters()) {
-            classBuilder.addMethod(waiters());
-        }
-        if (model.getCustomizationConfig().getPresignersFqcn() != null) {
-            classBuilder.addMethod(presigners());
-        }
-
-        return classBuilder.build();
+                        .addMethod(create())
+                        .addMethod(builder())
+                        .addMethods(operations())
+                        .addMethod(serviceMetadata())
+                        .build();
     }
 
     @Override
@@ -89,12 +91,14 @@ public final class SyncClientInterface implements ClassSpec {
 
     private MethodSpec create() {
         return MethodSpec.methodBuilder("create")
-                 .returns(className)
-                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                 .addJavadoc("Create a {@link $T} with the region loaded from the {@link $T} and credentials loaded from the "
-                             + "{@link $T}.", className, DefaultAwsRegionProviderChain.class, DefaultCredentialsProvider.class)
-                 .addStatement("return builder().build()")
-                 .build();
+                         .returns(className)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addJavadoc(
+                                 "Create a {@link $T} with the region loaded from the {@link $T} and credentials loaded from the "
+                                 + "{@link $T}.", className, DefaultAwsRegionProviderChain.class,
+                                 DefaultCredentialsProvider.class)
+                         .addStatement("return builder().build()")
+                         .build();
     }
 
     private MethodSpec builder() {
@@ -109,7 +113,10 @@ public final class SyncClientInterface implements ClassSpec {
     }
 
     private Iterable<MethodSpec> operations() {
-        return model.getOperations().values().stream().map(this::operationMethodSpec).collect(toList());
+        return model.getOperations().values().stream()
+                    .map(this::operationMethodSpec)
+                    .flatMap(List::stream)
+                    .collect(toList());
     }
 
     private MethodSpec serviceMetadata() {
@@ -120,35 +127,226 @@ public final class SyncClientInterface implements ClassSpec {
                          .build();
     }
 
-    private MethodSpec operationMethodSpec(OperationModel opModel) {
-        return operationMethodSignature(model, opModel)
-                .addModifiers(Modifier.DEFAULT)
-                .addStatement("throw new $T()", UnsupportedOperationException.class)
-                .build();
+    private List<MethodSpec> operationMethodSpec(OperationModel opModel) {
+        List<MethodSpec> methods = new ArrayList<>();
+
+        if (opModel.getInputShape().isSimpleMethod()) {
+            methods.add(simpleMethod(opModel));
+        }
+
+        methods.add(operationMethodSignature(model, opModel)
+                            .addModifiers(Modifier.DEFAULT)
+                            .addStatement("throw new $T()", UnsupportedOperationException.class)
+                            .build());
+
+        if (!opModel.isStreaming()) {
+            methods.add(operationBuilderConsumer(model, opModel));
+        }
+        methods.addAll(streamingSimpleMethods(opModel));
+        methods.addAll(paginatedMethods(opModel));
+
+        return methods;
+    }
+
+    private MethodSpec operationBuilderConsumer(IntermediateModel model,
+                                                OperationModel opModel) {
+        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getInput().getVariableType());
+        ClassName builder = requestType.nestedClass("Builder");
+        TypeName consumer = ParameterizedTypeName.get(ClassName.get(Consumer.class), builder);
+
+        return operationBaseSignature(model, opModel, b -> b.addParameter(consumer, opModel.getInput().getVariableName()))
+            .addModifiers(Modifier.DEFAULT)
+            .addStatement("return $L($T.builder().apply($L).build())",
+                          opModel.getMethodName(),
+                          requestType,
+                          opModel.getInput().getVariableName())
+            .build();
+    }
+
+    private MethodSpec simpleMethod(OperationModel opModel) {
+        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getInput().getVariableType());
+        return operationSimpleMethodSignature(model, opModel, opModel.getMethodName())
+            .addStatement("return $L($T.builder().build())", opModel.getMethodName(), requestType)
+            .addJavadoc(opModel.getDocs(model, ClientType.SYNC, SimpleMethodOverload.NO_ARG))
+            .build();
+    }
+
+    private static MethodSpec.Builder operationBaseSignature(IntermediateModel model,
+                                                             OperationModel opModel,
+                                                             Consumer<MethodSpec.Builder> addFirstParameter) {
+
+        return operationBaseSignature(model, opModel, addFirstParameter, SimpleMethodOverload.NORMAL, opModel.getMethodName());
+    }
+
+    private static MethodSpec.Builder operationBaseSignature(IntermediateModel model,
+                                                             OperationModel opModel,
+                                                             Consumer<MethodSpec.Builder> addFirstParameter,
+                                                             SimpleMethodOverload simpleMethodOverload,
+                                                             String methodName) {
+
+        TypeName responseType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getReturnType().getReturnType());
+        TypeName returnType = opModel.hasStreamingOutput() ? STREAMING_TYPE_VARIABLE : responseType;
+
+        final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(methodName)
+                                                           .returns(returnType)
+                                                           .addModifiers(Modifier.PUBLIC)
+                                                           .addJavadoc(opModel.getDocs(model, ClientType.SYNC,
+                                                                                       simpleMethodOverload))
+                                                           .addExceptions(getExceptionClasses(model, opModel));
+
+        addFirstParameter.accept(methodBuilder);
+        streamingMethod(methodBuilder, opModel, responseType);
+
+        return methodBuilder;
+    }
+
+    static MethodSpec.Builder operationMethodSignature(IntermediateModel model,
+                                                       OperationModel opModel) {
+        return operationMethodSignature(model, opModel, SimpleMethodOverload.NORMAL, opModel.getMethodName());
     }
 
     // TODO This is inconsistent with how async client reuses method signature
-    public static MethodSpec.Builder operationMethodSignature(IntermediateModel model, OperationModel opModel) {
-        TypeName returnType = opModel.hasStreamingOutput() ? STREAMING_TYPE_VARIABLE :
-                ClassName.get(model.getMetadata().getFullModelPackageName(), opModel.getReturnType().getReturnType());
+    static MethodSpec.Builder operationMethodSignature(IntermediateModel model,
+                                                       OperationModel opModel,
+                                                       SimpleMethodOverload simpleMethodOverload,
+                                                       String methodName) {
         ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
                                               opModel.getInput().getVariableType());
 
-        final MethodSpec.Builder method = MethodSpec.methodBuilder(opModel.getMethodName())
-                                                    .returns(returnType)
-                                                    .addModifiers(Modifier.PUBLIC)
-                                                    .addParameter(requestType, opModel.getInput().getVariableName())
-                                                    .addJavadoc(opModel.getSyncDocumentation(model, opModel))
-                                                    .addExceptions(getExceptionClasses(model, opModel));
+        return operationBaseSignature(model, opModel, b -> b.addParameter(requestType, opModel.getInput().getVariableName()),
+                                      simpleMethodOverload, methodName);
+    }
 
+    private MethodSpec.Builder operationSimpleMethodSignature(IntermediateModel model,
+                                                              OperationModel opModel,
+                                                              String methodName) {
+        TypeName returnType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                            opModel.getReturnType().getReturnType());
+
+        return MethodSpec.methodBuilder(methodName)
+                         .returns(returnType)
+                         .addModifiers(Modifier.PUBLIC)
+                         .addModifiers(Modifier.DEFAULT)
+                         .addExceptions(getExceptionClasses(model, opModel));
+    }
+
+    private List<MethodSpec> paginatedMethods(OperationModel opModel) {
+        List<MethodSpec> paginatedMethodSpecs = new ArrayList<>();
+
+        if (opModel.isPaginated()) {
+            if (opModel.getInputShape().isSimpleMethod()) {
+                paginatedMethodSpecs.add(paginatedSimpleMethod(opModel));
+            }
+
+            paginatedMethodSpecs.add(operationMethodSignature(model,
+                                                              opModel,
+                                                              SimpleMethodOverload.PAGINATED,
+                                                              PaginatorUtils.getSyncMethodName(opModel.getMethodName()))
+                                         .returns(poetExtensions.getResponseClassForPaginatedSyncOperation(
+                                             opModel.getOperationName()))
+                                         .addModifiers(Modifier.DEFAULT)
+                                         .addStatement("throw new $T()", UnsupportedOperationException.class)
+                                         .build());
+        }
+
+        return paginatedMethodSpecs;
+    }
+
+    private MethodSpec paginatedSimpleMethod(OperationModel opModel) {
+        String paginatedMethodName = PaginatorUtils.getSyncMethodName(opModel.getMethodName());
+        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getInput().getVariableType());
+
+        return operationSimpleMethodSignature(model, opModel, paginatedMethodName)
+                .returns(poetExtensions.getResponseClassForPaginatedSyncOperation(opModel.getOperationName()))
+                .addStatement("return $L($T.builder().build())", paginatedMethodName, requestType)
+                .addJavadoc(opModel.getDocs(model, ClientType.SYNC, SimpleMethodOverload.NO_ARG_PAGINATED))
+                .build();
+    }
+
+    private static void streamingMethod(MethodSpec.Builder methodBuilder, OperationModel opModel, TypeName responseType) {
         if (opModel.hasStreamingInput()) {
-            method.addParameter(ClassName.get(RequestBody.class), "requestBody");
+            methodBuilder.addParameter(ClassName.get(RequestBody.class), "requestBody");
         }
         if (opModel.hasStreamingOutput()) {
-            method.addTypeVariable(STREAMING_TYPE_VARIABLE);
-            method.addParameter(ClassName.get(StreamingResponseHandler.class), "streamingHandler");
+            methodBuilder.addTypeVariable(STREAMING_TYPE_VARIABLE);
+            ParameterizedTypeName streamingResponseHandlerType = ParameterizedTypeName
+                    .get(ClassName.get(StreamingResponseHandler.class), responseType, STREAMING_TYPE_VARIABLE);
+            methodBuilder.addParameter(streamingResponseHandlerType, "streamingResponseHandler");
         }
-        return method;
+    }
+
+    private List<MethodSpec> streamingSimpleMethods(OperationModel opModel) {
+        TypeName responseType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getReturnType().getReturnType());
+        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getInput().getVariableType());
+        List<MethodSpec> simpleMethods = new ArrayList<>();
+        if (opModel.hasStreamingInput()) {
+            simpleMethods.add(uploadFromFileSimpleMethod(opModel, responseType, requestType));
+        }
+        if (opModel.hasStreamingOutput()) {
+            simpleMethods.add(downloadToFileSimpleMethod(opModel, responseType, requestType));
+            simpleMethods.add(inputStreamSimpleMethod(opModel, responseType, requestType));
+        }
+        return simpleMethods;
+    }
+
+    /**
+     * @return Simple method for streaming input operations to read data from a file.
+     */
+    private MethodSpec uploadFromFileSimpleMethod(OperationModel opModel, TypeName responseType, ClassName requestType) {
+        return MethodSpec.methodBuilder(opModel.getMethodName())
+                         .returns(responseType)
+                         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                         .addParameter(requestType, opModel.getInput().getVariableName())
+                         .addParameter(ClassName.get(Path.class), "filePath")
+                         .addJavadoc(opModel.getDocs(model, ClientType.SYNC, SimpleMethodOverload.FILE))
+                         .addExceptions(getExceptionClasses(model, opModel))
+                         .addStatement("return $L($L, $T.of($L))", opModel.getMethodName(),
+                                       opModel.getInput().getVariableName(),
+                                       ClassName.get(RequestBody.class),
+                                       "filePath")
+                         .build();
+    }
+
+    /**
+     * @return Simple method for streaming output operations to get content as an input stream.
+     */
+    private MethodSpec inputStreamSimpleMethod(OperationModel opModel, TypeName responseType, ClassName requestType) {
+        ParameterizedTypeName returnType = ParameterizedTypeName.get(ClassName.get(ResponseInputStream.class),
+                                                                     responseType);
+        return MethodSpec.methodBuilder(opModel.getMethodName())
+                         .returns(returnType)
+                         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                         .addParameter(requestType, opModel.getInput().getVariableName())
+                         .addJavadoc(opModel.getDocs(model, ClientType.SYNC, SimpleMethodOverload.INPUT_STREAM))
+                         .addExceptions(getExceptionClasses(model, opModel))
+                         .addStatement("return $L($L, $T.toInputStream())", opModel.getMethodName(),
+                                       opModel.getInput().getVariableName(),
+                                       ClassName.get(StreamingResponseHandler.class))
+                         .build();
+    }
+
+    /**
+     * @return Simple method for streaming output operations to write response content to a file.
+     */
+    private MethodSpec downloadToFileSimpleMethod(OperationModel opModel, TypeName responseType, ClassName requestType) {
+        return MethodSpec.methodBuilder(opModel.getMethodName())
+                         .returns(responseType)
+                         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+                         .addParameter(requestType, opModel.getInput().getVariableName())
+                         .addParameter(ClassName.get(Path.class), "filePath")
+                         .addJavadoc(opModel.getDocs(model, ClientType.SYNC, SimpleMethodOverload.FILE))
+                         .addExceptions(getExceptionClasses(model, opModel))
+                         .addStatement("return $L($L, $T.toFile($L))", opModel.getMethodName(),
+                                       opModel.getInput().getVariableName(),
+                                       ClassName.get(StreamingResponseHandler.class),
+                                       "filePath")
+                         .build();
     }
 
     private static List<ClassName> getExceptionClasses(IntermediateModel model, OperationModel opModel) {
@@ -161,21 +359,5 @@ public final class SyncClientInterface implements ClassSpec {
                            ClassName.get(model.getMetadata().getFullModelPackageName(),
                                          model.getSdkModeledExceptionBaseClassName()));
         return exceptions;
-    }
-
-    private MethodSpec waiters() {
-        return MethodSpec.methodBuilder("waiters")
-                         .returns(ClassName.get(model.getMetadata().getFullWaitersPackageName(),
-                                                model.getMetadata().getSyncInterface() + "Waiters"))
-                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                         .build();
-    }
-
-    private MethodSpec presigners() {
-        ClassName presignerClassName = PoetUtils.classNameFromFqcn(model.getCustomizationConfig().getPresignersFqcn());
-        return MethodSpec.methodBuilder("presigners")
-                         .returns(presignerClassName)
-                         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                         .build();
     }
 }

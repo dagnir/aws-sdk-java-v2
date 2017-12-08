@@ -4,8 +4,8 @@ package ${transformPackage};
 import org.w3c.dom.Node;
 import javax.annotation.Generated;
 
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.util.XpathUtils;
+import software.amazon.awssdk.core.AmazonServiceException;
+import software.amazon.awssdk.core.util.XpathUtils;
 
 import ${metadata.fullModelPackageName}.${shape.shapeName};
 
@@ -24,6 +24,6 @@ public class ${shape.shapeName}Unmarshaller extends ${exceptionUnmarshallerImpl}
         if(errorCode == null || !errorCode.equals("${shape.errorCode}"))
             return null;
 
-        return (${shape.shapeName})super.unmarshall(node);
+        return super.unmarshall(node);
     }
 }

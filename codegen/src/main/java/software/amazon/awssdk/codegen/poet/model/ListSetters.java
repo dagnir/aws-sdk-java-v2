@@ -16,19 +16,16 @@
 package software.amazon.awssdk.codegen.poet.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ArrayTypeName;
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
@@ -36,36 +33,36 @@ import software.amazon.awssdk.codegen.poet.PoetExtensions;
 
 class ListSetters extends AbstractMemberSetters {
     private final TypeProvider typeProvider;
-    private final ServiceModelCopiers serviceModelCopiers;
     private final PoetExtensions poetExtensions;
 
-    public ListSetters(IntermediateModel intermediateModel,
+    ListSetters(IntermediateModel intermediateModel,
                        ShapeModel shapeModel,
                        MemberModel memberModel,
                        TypeProvider typeProvider) {
         super(intermediateModel, shapeModel, memberModel, typeProvider);
         this.typeProvider = typeProvider;
-        this.serviceModelCopiers = new ServiceModelCopiers(intermediateModel);
         this.poetExtensions = new PoetExtensions(intermediateModel);
     }
 
     public List<MethodSpec> fluentDeclarations(TypeName returnType) {
         List<MethodSpec> fluentDeclarations = new ArrayList<>();
 
-        fluentDeclarations.add(fluentSetterDeclaration(memberAsParameter(), returnType)
-                .addJavadoc("$L", memberModel().getFluentSetterDocumentation())
+        String setterDocumentation = memberModel().getFluentSetterDocumentation();
+
+        fluentDeclarations.add(fluentAbstractSetterDeclaration(memberAsParameter(), returnType)
+                .addJavadoc("$L", setterDocumentation)
                 .build());
 
-        fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(asArray(), fieldName()).build(), returnType)
-                .addJavadoc("$L", memberModel().getVarargSetterDocumentation())
+        fluentDeclarations.add(fluentAbstractSetterDeclaration(ParameterSpec.builder(asArray(), fieldName()).build(), returnType)
+                .addJavadoc("$L", setterDocumentation)
                 .varargs(true)
                 .build());
 
         if (memberModel().getEnumType() != null) {
-            fluentDeclarations.add(fluentSetterDeclaration(ParameterSpec.builder(
+            fluentDeclarations.add(fluentAbstractSetterDeclaration(ParameterSpec.builder(
                     asArrayOfModeledEnum(), fieldName()).build(), returnType)
                     .varargs(true)
-                    .addJavadoc("$L", memberModel().getVarargSetterDocumentation())
+                    .addJavadoc("$L", setterDocumentation)
                     .build());
         }
 
@@ -87,17 +84,18 @@ class ListSetters extends AbstractMemberSetters {
     }
 
     @Override
-    public List<MethodSpec> beanStyle() {
-        List<MethodSpec> beanStyle = new ArrayList<>();
+    public MethodSpec beanStyle() {
+        MethodSpec.Builder builder = beanStyleSetterBuilder()
+            .addCode(memberModel().isCollectionWithBuilderMember() ? copySetterBuilderBody() : copySetterBody());
 
-        beanStyle.add(beanStyleCopySetter());
-        beanStyle.add(beanStyleVarargToListSetter());
-
-        if (memberModel().getEnumType() != null) {
-            beanStyle.add(beanStyleEnumVarargToListSetter());
+        if (annotateJsonProperty()) {
+            builder.addAnnotation(
+                AnnotationSpec.builder(JsonProperty.class)
+                              .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
         }
 
-        return beanStyle;
+        return builder.build();
+
     }
 
     private MethodSpec fluentCopySetter(TypeName returnType) {
@@ -108,33 +106,12 @@ class ListSetters extends AbstractMemberSetters {
                 .build();
     }
 
-    private MethodSpec beanStyleCopySetter() {
-        MethodSpec.Builder builder = beanStyleSetterBuilder()
-                .addCode(copySetterBody());
-
-        if (annotateJsonProperty()) {
-            builder.addAnnotation(
-                    AnnotationSpec.builder(JsonProperty.class)
-                            .addMember("value", "$S", memberModel().getHttp().getMarshallLocationName()).build());
-        }
-
-        return builder.build();
-
-    }
-
     private MethodSpec fluentVarargToListSetter(TypeName returnType) {
         return fluentSetterBuilder(ParameterSpec.builder(asArray(), fieldName()).build(), returnType)
                 .varargs(true)
                 .addAnnotation(SafeVarargs.class)
-                .addCode(varargToListBody().toBuilder().addStatement("return this").build())
-                .build();
-    }
-
-    private MethodSpec beanStyleVarargToListSetter() {
-        return beanStyleSetterBuilder(ParameterSpec.builder(asArray(), fieldName()).build())
-                .varargs(true)
-                .addAnnotation(SafeVarargs.class)
-                .addCode(varargToListBody())
+                .addCode(varargToListSetterBody())
+                .addStatement("return this")
                 .build();
     }
 
@@ -142,47 +119,19 @@ class ListSetters extends AbstractMemberSetters {
         return fluentSetterBuilder(ParameterSpec.builder(asArrayOfModeledEnum(), fieldName()).build(), returnType)
                 .varargs(true)
                 .addAnnotation(SafeVarargs.class)
-                .addCode(enumVarargToListBody().toBuilder().addStatement("return this").build())
+                .addCode(enumVarargToListSetterBody())
+                .addStatement("return this")
                 .build();
     }
 
-    private MethodSpec beanStyleEnumVarargToListSetter() {
-        return beanStyleSetterBuilder(ParameterSpec.builder(asArrayOfModeledEnum(), fieldName()).build())
-                .varargs(true)
-                .addAnnotation(SafeVarargs.class)
-                .addCode(enumVarargToListBody())
-                .build();
+
+    private CodeBlock varargToListSetterBody() {
+        return CodeBlock.of("$1L($2T.asList($1L));", fieldName(), Arrays.class);
     }
 
-    private CodeBlock varargToListBody() {
-        CodeBlock.Builder builder = CodeBlock.builder()
-                .beginControlFlow("if (this.$N == null)", fieldName())
-                .addStatement("this.$N = new $T<>($N.length)", fieldName(),
-                        typeProvider.listImplClassName(),
-                        fieldName())
-                .endControlFlow()
-                .beginControlFlow("for ($T e: $N)", listElementType(), fieldName());
-
-        serviceModelCopiers.copierClassFor(elementModel())
-                .map(copierClass -> builder.addStatement("this.$N.add($T.$N(e))", fieldName(), copierClass,
-                        serviceModelCopiers.copyMethodName()))
-                .orElseGet(() -> builder.addStatement("this.$N.add(e)", fieldName()));
-
-        return builder.endControlFlow().build();
-    }
-
-    private CodeBlock enumVarargToListBody() {
-        return CodeBlock.builder()
-                .beginControlFlow("if (this.$N == null)", fieldName())
-                .addStatement("this.$N = new $T($N.length)", fieldName(),
-                        ParameterizedTypeName.get(typeProvider.listImplClassName(),
-                                ClassName.get(String.class)),
-                        fieldName())
-                .endControlFlow()
-                .beginControlFlow("for ($T ele : $N)", modeledEnumElement(), fieldName())
-                .addStatement("this.$N.add(ele.toString())", fieldName())
-                .endControlFlow()
-                .build();
+    private CodeBlock enumVarargToListSetterBody() {
+        return CodeBlock.of("$1L($2T.asList($1L).stream().map($3T::toString).collect($4T.toList()));",
+                            fieldName(), Arrays.class, Object.class, Collectors.class);
     }
 
     private MemberModel elementModel() {

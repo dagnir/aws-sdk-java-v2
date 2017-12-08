@@ -30,7 +30,7 @@ import software.amazon.awssdk.protocol.model.TestSuite;
  * Loads the test specification from it's JSON representation. Assumes the JSON files are in the
  * AwsDrSharedSdk package under /test/protocols.
  */
-public class ProtocolTestSuiteLoader {
+public final class ProtocolTestSuiteLoader {
 
     private static final String RESOURCE_PREFIX = "/software/amazon/awssdk/protocol/suites/";
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -51,11 +51,13 @@ public class ProtocolTestSuiteLoader {
     private Stream<? extends TestCase> loadTestCases(String testCase) {
         try {
             final List<TestCase> testCases = MAPPER
-                    .readValue(getClass().getResource(RESOURCE_PREFIX + testCase), new TypeReference<List<TestCase>>() {
-                    });
+                    .readValue(getClass().getResource(RESOURCE_PREFIX + testCase), new ListTypeReference());
             return testCases.stream();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static class ListTypeReference extends TypeReference<List<TestCase>> {
     }
 }
