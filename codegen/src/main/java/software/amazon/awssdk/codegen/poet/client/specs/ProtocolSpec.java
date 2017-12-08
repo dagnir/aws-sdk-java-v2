@@ -21,10 +21,10 @@ import com.squareup.javapoet.MethodSpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import software.amazon.awssdk.client.ClientHandler;
-import software.amazon.awssdk.client.SdkClientHandler;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
+import software.amazon.awssdk.core.client.ClientHandler;
+import software.amazon.awssdk.core.client.SdkClientHandler;
 
 public interface ProtocolSpec {
 
@@ -33,13 +33,6 @@ public interface ProtocolSpec {
     MethodSpec initProtocolFactory(IntermediateModel model);
 
     CodeBlock responseHandler(OperationModel opModel);
-
-    /**
-     * Response handler only differs for protocols that support streaming outputs (REST-JSON, REST-XML).
-     */
-    default CodeBlock asyncResponseHandler(OperationModel opModel) {
-        return responseHandler(opModel);
-    }
 
     CodeBlock errorResponseHandler(OperationModel opModel);
 

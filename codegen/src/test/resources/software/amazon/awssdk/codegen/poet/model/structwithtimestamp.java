@@ -1,11 +1,12 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.util.Date;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.protocol.ProtocolMarshaller;
-import software.amazon.awssdk.protocol.StructuredPojo;
-import software.amazon.awssdk.runtime.StandardMemberCopier;
+import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.core.protocol.ProtocolMarshaller;
+import software.amazon.awssdk.core.protocol.StructuredPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.StructWithTimestampMarshaller;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
@@ -14,17 +15,18 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
  */
 @Generated("software.amazon.awssdk:codegen")
 public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<StructWithTimestamp.Builder, StructWithTimestamp> {
-    private final Date nestedTimestamp;
+    private final Instant nestedTimestamp;
 
     private StructWithTimestamp(BuilderImpl builder) {
         this.nestedTimestamp = builder.nestedTimestamp;
     }
 
     /**
+     * Returns the value of the NestedTimestamp property for this object.
      *
-     * @return
+     * @return The value of the NestedTimestamp property for this object.
      */
-    public Date nestedTimestamp() {
+    public Instant nestedTimestamp() {
         return nestedTimestamp;
     }
 
@@ -44,7 +46,7 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((nestedTimestamp() == null) ? 0 : nestedTimestamp().hashCode());
+        hashCode = 31 * hashCode + Objects.hashCode(nestedTimestamp());
         return hashCode;
     }
 
@@ -60,24 +62,29 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
             return false;
         }
         StructWithTimestamp other = (StructWithTimestamp) obj;
-        if (other.nestedTimestamp() == null ^ this.nestedTimestamp() == null) {
-            return false;
-        }
-        if (other.nestedTimestamp() != null && !other.nestedTimestamp().equals(this.nestedTimestamp())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(nestedTimestamp(), other.nestedTimestamp());
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        StringBuilder sb = new StringBuilder("{");
         if (nestedTimestamp() != null) {
             sb.append("NestedTimestamp: ").append(nestedTimestamp()).append(",");
         }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 1);
+        }
         sb.append("}");
         return sb.toString();
+    }
+
+    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+        switch (fieldName) {
+        case "NestedTimestamp":
+            return Optional.of(clazz.cast(nestedTimestamp()));
+        default:
+            return Optional.empty();
+        }
     }
 
     @SdkInternalApi
@@ -88,35 +95,37 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
 
     public interface Builder extends CopyableBuilder<Builder, StructWithTimestamp> {
         /**
+         * Sets the value of the NestedTimestamp property for this object.
          *
          * @param nestedTimestamp
+         *        The new value for the NestedTimestamp property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
-        Builder nestedTimestamp(Date nestedTimestamp);
+        Builder nestedTimestamp(Instant nestedTimestamp);
     }
 
-    private static final class BuilderImpl implements Builder {
-        private Date nestedTimestamp;
+    static final class BuilderImpl implements Builder {
+        private Instant nestedTimestamp;
 
         private BuilderImpl() {
         }
 
         private BuilderImpl(StructWithTimestamp model) {
-            setNestedTimestamp(model.nestedTimestamp);
+            nestedTimestamp(model.nestedTimestamp);
         }
 
-        public final Date getNestedTimestamp() {
+        public final Instant getNestedTimestamp() {
             return nestedTimestamp;
         }
 
         @Override
-        public final Builder nestedTimestamp(Date nestedTimestamp) {
-            this.nestedTimestamp = StandardMemberCopier.copy(nestedTimestamp);
+        public final Builder nestedTimestamp(Instant nestedTimestamp) {
+            this.nestedTimestamp = nestedTimestamp;
             return this;
         }
 
-        public final void setNestedTimestamp(Date nestedTimestamp) {
-            this.nestedTimestamp = StandardMemberCopier.copy(nestedTimestamp);
+        public final void setNestedTimestamp(Instant nestedTimestamp) {
+            this.nestedTimestamp = nestedTimestamp;
         }
 
         @Override
@@ -125,3 +134,4 @@ public class StructWithTimestamp implements StructuredPojo, ToCopyableBuilder<St
         }
     }
 }
+

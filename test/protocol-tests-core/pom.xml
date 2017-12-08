@@ -20,7 +20,7 @@
     <parent>
         <artifactId>aws-sdk-java-pom</artifactId>
         <groupId>software.amazon.awssdk</groupId>
-        <version>2.0.0-preview-1</version>
+        <version>2.0.0-preview-7-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -28,6 +28,10 @@
     <artifactId>protocol-tests-core</artifactId>
     <name>AWS Java SDK :: Test :: Protocol Tests Core</name>
     <description>Contains test drivers and assertions for protocol tests.</description>
+
+    <properties>
+        <root.offset>../..</root.offset>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -49,13 +53,9 @@
             <version>${awsjavasdk.version}</version>
         </dependency>
         <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>opensdk-runtime</artifactId>
-            <version>${awsjavasdk.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

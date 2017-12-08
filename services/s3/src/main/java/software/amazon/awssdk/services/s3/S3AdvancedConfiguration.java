@@ -15,10 +15,10 @@
 
 package software.amazon.awssdk.services.s3;
 
-import software.amazon.awssdk.ServiceAdvancedConfiguration;
-import software.amazon.awssdk.annotation.Immutable;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.ThreadSafe;
+import software.amazon.awssdk.annotations.Immutable;
+import software.amazon.awssdk.annotations.NotThreadSafe;
+import software.amazon.awssdk.annotations.ThreadSafe;
+import software.amazon.awssdk.core.ServiceAdvancedConfiguration;
 import software.amazon.awssdk.services.s3.model.PutBucketAccelerateConfigurationRequest;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
@@ -52,6 +52,9 @@ public final class S3AdvancedConfiguration implements
         this.dualstackEnabled = resolveBoolean(builder.dualstackEnabled, DEFAULT_DUALSTACK_ENABLED);
         this.accelerateModeEnabled = resolveBoolean(builder.accelerateModeEnabled, DEFAULT_ACCELERATE_MODE_ENABLED);
         this.pathStyleAccessEnabled = resolveBoolean(builder.pathStyleAccessEnabled, DEFAULT_PATH_STYLE_ACCESS_ENABLED);
+        if (accelerateModeEnabled && pathStyleAccessEnabled) {
+            throw new IllegalArgumentException("Accelerate mode cannot be used with path style addressing");
+        }
     }
 
     /**

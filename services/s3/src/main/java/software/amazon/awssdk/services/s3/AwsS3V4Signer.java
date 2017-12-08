@@ -15,19 +15,17 @@
 
 package software.amazon.awssdk.services.s3;
 
-import static software.amazon.awssdk.auth.internal.SignerConstants.X_AMZ_CONTENT_SHA256;
+import static software.amazon.awssdk.core.auth.internal.SignerConstants.X_AMZ_CONTENT_SHA256;
 import static software.amazon.awssdk.utils.Validate.validState;
 
 import java.io.IOException;
 import java.io.InputStream;
-import software.amazon.awssdk.ResetException;
-import software.amazon.awssdk.SdkClientException;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
-import software.amazon.awssdk.auth.Aws4Signer;
-import software.amazon.awssdk.auth.internal.Aws4SignerRequestParams;
-import software.amazon.awssdk.handlers.AwsHandlerKeys;
+import software.amazon.awssdk.annotations.ReviewBeforeRelease;
+import software.amazon.awssdk.core.ResetException;
+import software.amazon.awssdk.core.SdkClientException;
+import software.amazon.awssdk.core.auth.Aws4Signer;
+import software.amazon.awssdk.core.auth.internal.Aws4SignerRequestParams;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.services.s3.auth.AwsChunkedEncodingInputStream;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
@@ -62,20 +60,22 @@ public class AwsS3V4Signer extends Aws4Signer {
      * If necessary, creates a chunk-encoding wrapper on the request payload.
      */
     @Override
-    protected void processRequestPayload(SdkHttpFullRequest.Builder request, byte[] signature,
-                                         byte[] signingKey, Aws4SignerRequestParams signerRequestParams) {
-        if (useChunkEncoding(request)) {
+    protected void processRequestPayload(SdkHttpFullRequest.Builder requestBuilder,
+                                         byte[] signature, byte[] signingKey,
+                                         Aws4SignerRequestParams signerRequestParams) {
+        if (useChunkEncoding(signerRequestParams)) {
             AwsChunkedEncodingInputStream chunkEncodededStream = new AwsChunkedEncodingInputStream(
-                    request.getContent(), signingKey,
+                    signerRequestParams.httpRequest().content(), signingKey,
                     signerRequestParams.getFormattedSigningDateTime(),
                     signerRequestParams.getScope(),
                     BinaryUtils.toHex(signature), this);
-            request.content(chunkEncodededStream);
+            requestBuilder.content(chunkEncodededStream);
         }
     }
 
     @Override
-    protected String calculateContentHashPresign(SdkHttpFullRequest.Builder request) {
+    protected String calculateContentHashPresign(Aws4SignerRequestParams signerRequestParams,
+                                                 SdkHttpFullRequest.Builder mutableRequest) {
         return "UNSIGNED-PAYLOAD";
     }
 
@@ -85,15 +85,19 @@ public class AwsS3V4Signer extends Aws4Signer {
      * method which calculates the hash of the whole content for signing.
      */
     @Override
-    protected String calculateContentHash(SdkHttpFullRequest.Builder request) {
+    protected String calculateContentHash(Aws4SignerRequestParams signerRequestParams,
+                                          SdkHttpFullRequest.Builder mutableRequest) {
         // To be consistent with other service clients using sig-v4,
         // we just set the header as "required", and AWS4Signer.sign() will be
         // notified to pick up the header value returned by this method.
-        request.header(X_AMZ_CONTENT_SHA256, "required");
+        mutableRequest.header(X_AMZ_CONTENT_SHA256, "required");
 
-        if (isPayloadSigningEnabled(request)) {
-            if (useChunkEncoding(request)) {
-                final String contentLength = request.getFirstHeaderValue(CONTENT_LENGTH).orElse(null);
+        SdkHttpFullRequest.Builder requestToSign = signerRequestParams.httpRequest();
+
+        if (isPayloadSigningEnabled(requestToSign)) {
+            if (useChunkEncoding(signerRequestParams)) {
+                final String contentLength = requestToSign.firstMatchingHeader(CONTENT_LENGTH)
+                                                          .orElse(null);
                 final long originalContentLength;
                 if (contentLength != null) {
                     originalContentLength = Long.parseLong(contentLength);
@@ -108,22 +112,19 @@ public class AwsS3V4Signer extends Aws4Signer {
                      * stream here.
                      */
                     try {
-                        originalContentLength = getContentLength(request);
+                        originalContentLength = getContentLength(signerRequestParams);
                     } catch (IOException e) {
-                        throw new SdkClientException(
-                                "Cannot get the content-length of the request content.", e);
+                        throw new SdkClientException("Cannot get the content-length of the request content.", e);
                     }
                 }
-                request.header("x-amz-decoded-content-length",
-                               Long.toString(originalContentLength));
+                mutableRequest.header("x-amz-decoded-content-length", Long.toString(originalContentLength));
                 // Make sure "Content-Length" header is not empty so that HttpClient
                 // won't cache the stream again to recover Content-Length
-                request.header(CONTENT_LENGTH, Long.toString(
-                        AwsChunkedEncodingInputStream
-                                .calculateStreamContentLength(originalContentLength)));
+                mutableRequest.header(CONTENT_LENGTH, Long.toString(
+                        AwsChunkedEncodingInputStream.calculateStreamContentLength(originalContentLength)));
                 return CONTENT_SHA_256;
             } else {
-                return super.calculateContentHash(request);
+                return super.calculateContentHash(signerRequestParams, mutableRequest);
             }
         }
 
@@ -133,14 +134,16 @@ public class AwsS3V4Signer extends Aws4Signer {
     /**
      * Determine whether to use aws-chunked for signing
      */
-    private boolean useChunkEncoding(SdkHttpRequest request) {
+    private boolean useChunkEncoding(Aws4SignerRequestParams signerRequestParams) {
         // If chunked encoding is explicitly disabled through client options return right here.
         // Chunked encoding only makes sense to do when the payload is signed
-        if (!isPayloadSigningEnabled(request) || isChunkedEncodingDisabled()) {
+        if (!isPayloadSigningEnabled(signerRequestParams.httpRequest()) ||
+            isChunkedEncodingDisabled()) {
             return false;
         }
-        Object originalRequest = request.handlerContext(AwsHandlerKeys.REQUEST_CONFIG).getOriginalRequest();
-        return originalRequest instanceof PutObjectRequest || originalRequest instanceof UploadPartRequest;
+
+        return signerRequestParams.originalRequest() instanceof PutObjectRequest ||
+               signerRequestParams.originalRequest() instanceof UploadPartRequest;
     }
 
     /**
@@ -154,11 +157,11 @@ public class AwsS3V4Signer extends Aws4Signer {
     /**
      * @return True if payload signing is explicitly enabled.
      */
-    private boolean isPayloadSigningEnabled(SdkHttpRequest request) {
+    private boolean isPayloadSigningEnabled(SdkHttpFullRequest.Builder request) {
         /**
          * If we aren't using https we should always sign the payload.
          */
-        if (!request.getEndpoint().getScheme().equals("https")) {
+        if (!request.protocol().equals("https")) {
             return true;
         }
 
@@ -170,14 +173,14 @@ public class AwsS3V4Signer extends Aws4Signer {
      * method will wrap the stream by SdkBufferedInputStream if it is not
      * mark-supported.
      */
-    private static long getContentLength(SdkHttpFullRequest.Builder request) throws IOException {
-        final InputStream content = request.getContent();
+    private static long getContentLength(Aws4SignerRequestParams signerParams) throws IOException {
+        final InputStream content = signerParams.httpRequest().content();
         validState(content.markSupported(), "Request input stream must have been made mark-and-resettable");
 
         long contentLength = 0;
         byte[] tmp = new byte[4096];
         int read;
-        content.mark(getReadLimit(request));
+        content.mark(getReadLimit(signerParams));
         while ((read = content.read(tmp)) != -1) {
             contentLength += read;
         }

@@ -15,6 +15,9 @@
 
 package software.amazon.awssdk.services.stepfunctions.builder.internal;
 
+import static software.amazon.awssdk.core.util.DateUtils.formatIso8601Date;
+import static software.amazon.awssdk.core.util.DateUtils.parseIso8601Date;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -24,18 +27,13 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
 import java.util.Date;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Contains Jackson module for serializing dates to ISO8601 format per the <a href="https://states-language.net/spec.html#timestamps">spec</a>.
  */
-public class DateModule {
+public final class DateModule {
 
     public static final SimpleModule INSTANCE = new SimpleModule();
-    private static final DateTimeFormatter FORMATTER = ISODateTimeFormat.dateTime();
 
     static {
         INSTANCE.addSerializer(Date.class, new StdSerializer<Date>(Date.class) {
@@ -44,7 +42,7 @@ public class DateModule {
                                   JsonGenerator jsonGenerator,
                                   SerializerProvider serializerProvider) throws
                                                                          IOException {
-                jsonGenerator.writeString(FORMATTER.print(new DateTime(date, DateTimeZone.UTC)));
+                jsonGenerator.writeString(formatIso8601Date(date.toInstant()));
             }
         });
         INSTANCE.addDeserializer(Date.class, new StdDeserializer<Date>(Date.class) {
@@ -57,8 +55,11 @@ public class DateModule {
         });
     }
 
+    private DateModule() {
+    }
+
     public static Date fromJson(String jsonText) {
-        return FORMATTER.parseDateTime(jsonText).toDate();
+        return Date.from(parseIso8601Date(jsonText));
     }
 
 }

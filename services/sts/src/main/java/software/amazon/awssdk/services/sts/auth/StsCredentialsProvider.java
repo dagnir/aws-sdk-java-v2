@@ -18,13 +18,14 @@ package software.amazon.awssdk.services.sts.auth;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
-import software.amazon.awssdk.annotation.NotThreadSafe;
-import software.amazon.awssdk.annotation.SdkInternalApi;
-import software.amazon.awssdk.annotation.ThreadSafe;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.annotations.NotThreadSafe;
+import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.annotations.ThreadSafe;
+import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.services.sts.STSClient;
 import software.amazon.awssdk.services.sts.model.Credentials;
+import software.amazon.awssdk.utils.SdkAutoCloseable;
 import software.amazon.awssdk.utils.Validate;
 import software.amazon.awssdk.utils.cache.CachedSupplier;
 import software.amazon.awssdk.utils.cache.NonBlocking;
@@ -38,7 +39,7 @@ import software.amazon.awssdk.utils.cache.RefreshResult;
  */
 @ThreadSafe
 @SdkInternalApi
-abstract class StsCredentialsProvider implements AwsCredentialsProvider, AutoCloseable {
+abstract class StsCredentialsProvider implements AwsCredentialsProvider, SdkAutoCloseable {
     /**
      * The STS client that should be used for periodically updating the session credentials in the background.
      */

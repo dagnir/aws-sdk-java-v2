@@ -2,15 +2,15 @@
   "version":"2.0",
   "metadata":{
     "apiVersion":"2016-03-11",
-    "endpointPrefix":"jsonrpc",
+    "endpointPrefix":"restjson",
     "jsonVersion":"1.1",
-    "protocol":"json",
+    "protocol":"rest-json",
     "serviceAbbreviation":"JsonProtocolTests",
     "serviceFullName":"AWS DR Tools JSON Protocol Tests",
     "signatureVersion":"v4",
     "targetPrefix":"ProtocolTestsJsonRpcService",
     "timestampFormat":"unixTimestamp",
-    "uid":"jsonrpc-2016-03-11"
+    "uid":"restjson-2016-03-11"
   },
   "operations":{
     "AllTypes":{
@@ -40,6 +40,22 @@
         "method":"POST",
         "requestUri":"/"
       }
+    },
+    "StreamingInputOperation":{
+      "name":"StreamingInputOperation",
+      "http":{
+        "method":"POST",
+        "requestUri":"/2016-03-11/streamingInputOperation"
+      },
+      "input":{"shape":"StructureWithStreamingMember"}
+    },
+    "StreamingOutputOperation":{
+      "name":"StreamingOutputOperation",
+      "http":{
+        "method":"POST",
+        "requestUri":"/2016-03-11/streamingOutputOperation"
+      },
+      "output":{"shape":"StructureWithStreamingMember"}
     }
   },
   "shapes":{
@@ -53,11 +69,16 @@
         "DoubleMember":{"shape":"Double"},
         "LongMember":{"shape":"Long"},
         "SimpleList":{"shape":"ListOfStrings"},
+        "ListOfEnums":{"shape":"ListOfEnums"},
         "ListOfMaps":{"shape":"ListOfMapStringToString"},
         "ListOfStructs":{"shape":"ListOfSimpleStructs"},
         "MapOfStringToIntegerList":{"shape":"MapOfStringToIntegerList"},
         "MapOfStringToString":{"shape":"MapOfStringToString"},
-        "MapOfStringToStruct":{"shape":"MapOfStringToSimpleStruct"},
+        "MapOfStringToSimpleStruct":{"shape":"MapOfStringToSimpleStruct"},
+        "MapOfEnumToEnum":{"shape":"MapOfEnumToEnum"},
+        "MapOfEnumToString":{"shape":"MapOfEnumToString"},
+        "MapOfStringToEnum":{"shape":"MapOfStringToEnum"},
+        "MapOfEnumToSimpleStruct":{"shape":"MapOfEnumToSimpleStruct"},
         "TimestampMember":{"shape":"Timestamp"},
         "StructWithNestedTimestampMember":{"shape":"StructWithTimestamp"},
         "BlobArg":{"shape":"BlobType"},
@@ -66,7 +87,8 @@
         "ListOfBlobs":{"shape":"ListOfBlobsType"},
         "RecursiveStruct":{"shape":"RecursiveStructType"},
         "PolymorphicTypeWithSubTypes":{"shape":"BaseType"},
-        "PolymorphicTypeWithoutSubTypes":{"shape":"SubTypeOne"}
+        "PolymorphicTypeWithoutSubTypes":{"shape":"SubTypeOne"},
+        "EnumType":{"shape":"EnumType"}
       }
     },
     "BaseType":{
@@ -128,6 +150,10 @@
       "type":"list",
       "member":{"shape":"String"}
     },
+    "ListOfEnums":{
+      "type":"list",
+      "member":{"shape":"EnumType"}
+    },
     "Long":{"type":"long"},
     "MapOfStringToIntegerList":{
       "type":"map",
@@ -148,6 +174,26 @@
       "type":"map",
       "key":{"shape":"String"},
       "value":{"shape":"String"}
+    },
+    "MapOfEnumToEnum":{
+      "type":"map",
+      "key":{"shape":"EnumType"},
+      "value":{"shape":"EnumType"}
+    },
+    "MapOfEnumToString":{
+      "type":"map",
+      "key":{"shape":"EnumType"},
+      "value":{"shape":"String"}
+    },
+    "MapOfStringToEnum":{
+      "type":"map",
+      "key":{"shape":"String"},
+      "value":{"shape":"EnumType"}
+    },
+    "MapOfEnumToSimpleStruct":{
+      "type":"map",
+      "key":{"shape":"EnumType"},
+      "value":{"shape":"SimpleStruct"}
     },
     "NestedContainersStructure":{
       "type":"structure",
@@ -181,6 +227,10 @@
         "StringMember":{"shape":"String"}
       }
     },
+    "StreamType":{
+      "type":"blob",
+      "streaming":true
+    },
     "String":{"type":"string"},
     "StructWithNestedBlobType":{
       "type":"structure",
@@ -194,11 +244,24 @@
         "NestedTimestamp":{"shape":"Timestamp"}
       }
     },
+    "StructureWithStreamingMember":{
+      "type":"structure",
+      "members":{
+        "StreamingMember":{"shape":"StreamType"}
+      },
+      "payload":"StreamingMember"
+    },
     "SubTypeOne":{
       "type":"structure",
       "members":{
         "SubTypeOneMember":{"shape":"String"}
       }
+    },
+    "EnumType": {
+      "type":"string",
+      "enum": [
+        "EnumValue1", "EnumValue2"
+      ]
     },
     "Timestamp":{"type":"timestamp"}
   }

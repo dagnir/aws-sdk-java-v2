@@ -15,24 +15,26 @@
 
 package software.amazon.awssdk.codegen.poet.model;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static software.amazon.awssdk.codegen.poet.PoetMatchers.generatesTo;
-
-import com.squareup.javapoet.ClassName;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import software.amazon.awssdk.codegen.C2jModels;
 import software.amazon.awssdk.codegen.IntermediateModelBuilder;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
@@ -41,32 +43,51 @@ import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
-import software.amazon.awssdk.runtime.StandardMemberCopier;
 
+@RunWith(Parameterized.class)
 public class ModelCopierSpecTest {
     private static File serviceModelFile;
     private static IntermediateModel intermediateModel;
     private static TestMemberModels testMemberModels;
 
-    @BeforeClass
-    public static void setUp() throws URISyntaxException, IOException {
+    private final ClassSpec spec;
+    private final String specName;
+
+    private static void setUp() throws URISyntaxException, IOException {
         serviceModelFile = new File(AwsModelSpecTest.class
                 .getResource("service-2.json")
                 .getFile());
+
+        File customizationConfigFile = new File(AwsModelSpecTest.class
+                .getResource("customization.config")
+                .getFile());
+
         intermediateModel = new IntermediateModelBuilder(
                 C2jModels.builder()
                         .serviceModel(ModelLoaderUtils.loadModel(ServiceModel.class, serviceModelFile))
-                        .customizationConfig(CustomizationConfig.DEFAULT)
+                        .customizationConfig(ModelLoaderUtils.loadModel(CustomizationConfig.class, customizationConfigFile))
                         .build())
                 .build();
 
         testMemberModels = new TestMemberModels(intermediateModel);
     }
 
+    @Parameterized.Parameters(name = "{1}")
+    public static Collection<Object[]> data() {
+        invokeSafely(ModelCopierSpecTest::setUp);
+        return new ServiceModelCopiers(intermediateModel).copierSpecs().stream()
+                                                         .map(spec -> new Object[] { spec, spec.className().simpleName().toLowerCase(Locale.ENGLISH) })
+                                                         .collect(toList());
+    }
+
+    public ModelCopierSpecTest(ClassSpec spec, String specName) {
+        this.spec = spec;
+        this.specName = specName;
+    }
+
     @Test
     public void basicGeneration() {
-        new ServiceModelCopiers(intermediateModel).copierSpecs()
-                .forEach(spec -> assertThat(spec, generatesTo(referenceFileFor(spec))));
+        assertThat(spec, generatesTo(specName + ".java"));
     }
 
     @Test
@@ -85,9 +106,4 @@ public class ModelCopierSpecTest {
 
         immutableMembers.forEach(m -> assertThat(copiers.copierClassFor(m), is(equalTo(Optional.empty()))));
     }
-
-    private static String referenceFileFor(ClassSpec spec) {
-        return spec.className().simpleName().toLowerCase(Locale.ENGLISH) + ".java";
-    }
-
 }

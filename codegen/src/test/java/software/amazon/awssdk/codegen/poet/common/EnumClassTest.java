@@ -20,9 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static software.amazon.awssdk.codegen.poet.PoetMatchers.generatesTo;
 
 import java.io.IOException;
-
 import org.junit.Test;
-
 import software.amazon.awssdk.codegen.model.intermediate.EnumModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
@@ -35,7 +33,7 @@ public class EnumClassTest {
         ShapeModel m = new ShapeModel("TestEnumClass");
         m.setType(ShapeType.Enum);
         m.setShapeName("TestEnumClass");
-        m.setEnums(asList(new EnumModel("Available", "available"), new EnumModel("PermanentFailure", "permanent-failure")));
+        m.setEnums(asList(new EnumModel("AVAILABLE", "available"), new EnumModel("PERMANENT_FAILURE", "permanent-failure")));
         m.setDocumentation("Some comment on the class itself");
 
         EnumClass sut = new EnumClass("software.amazon.awssdk.codegen.poet.common.model", m);

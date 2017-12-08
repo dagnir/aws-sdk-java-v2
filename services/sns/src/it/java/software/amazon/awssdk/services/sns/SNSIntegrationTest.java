@@ -20,7 +20,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,9 +36,8 @@ import java.util.Map.Entry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.AmazonServiceException.ErrorType;
-import software.amazon.awssdk.annotation.ReviewBeforeRelease;
+import software.amazon.awssdk.core.AmazonServiceException;
+import software.amazon.awssdk.core.AmazonServiceException.ErrorType;
 import software.amazon.awssdk.services.sns.model.AddPermissionRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
@@ -54,12 +59,11 @@ import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.Subscription;
 import software.amazon.awssdk.services.sns.model.UnsubscribeRequest;
-import software.amazon.awssdk.services.sns.util.SignatureChecker;
-import software.amazon.awssdk.services.sns.util.Topics;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueAttributesRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
+import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SetQueueAttributesRequest;
 
@@ -117,28 +121,6 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         }
     }
 
-    /** Tests the functionality in the Topics utility class. */
-    @Test
-    public void testTopics_subscribeQueue() throws Exception {
-        topicArn = sns.createTopic(CreateTopicRequest.builder().name("subscribeTopicTest-" + System.currentTimeMillis()).build())
-                      .topicArn();
-        queueUrl = sqs.createQueue(
-                CreateQueueRequest.builder().queueName("subscribeTopicTest-" + System.currentTimeMillis()).build())
-                      .queueUrl();
-
-        subscriptionArn = Topics.subscribeQueue(sns, sqs, topicArn, queueUrl);
-        assertNotNull(subscriptionArn);
-
-        // Verify that the queue is receiving messages
-        sns.publish(PublishRequest.builder().topicArn(topicArn).message("Hello SNS World").subject("Subject").build());
-        String message = receiveMessage();
-        Map<String, String> messageDetails = parseJSON(message);
-        assertEquals("Hello SNS World", messageDetails.get("Message"));
-        assertEquals("Subject", messageDetails.get("Subject"));
-        assertNotNull(messageDetails.get("MessageId"));
-        assertNotNull(messageDetails.get("Signature"));
-    }
-
     @Test
     public void testSendUnicodeMessages() throws InterruptedException {
         String unicodeMessage = "你好";
@@ -171,8 +153,6 @@ public class SNSIntegrationTest extends IntegrationTestBase {
      * Tests that we can invoke operations on Cloudcast and correctly interpret the responses.
      */
     @Test
-    @ReviewBeforeRelease("This test uses a hardcoded certifacte. We should really download the cert from the SigningCertURL " +
-                         "in case SNS rotates their cert in the future.")
     public void testCloudcastOperations() throws Exception {
 
         // Create Topic
@@ -239,9 +219,8 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         assertNotNull(messageDetails.get("Signature"));
 
         // Verify Message Signature
-        Certificate certificate = CertificateFactory.getInstance("X509")
-                                                    .generateCertificate(
-                                                            getClass().getResourceAsStream(SnsTestResources.PUBLIC_CERT));
+        Certificate certificate = getCertificate(messageDetails.get("SigningCertURL"));
+
         assertTrue(signatureChecker.verifyMessageSignature(message, certificate.getPublicKey()));
 
         // Add/Remove Permissions
@@ -395,7 +374,7 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         Thread.sleep(1000 * 4);
         String queueArn = sqs.getQueueAttributes(
                 GetQueueAttributesRequest.builder().queueUrl(queueUrl).attributeNames(new String[] {"QueueArn"}).build())
-                             .attributes().get("QueueArn");
+                             .attributes().get(QueueAttributeName.QUEUE_ARN);
         HashMap<String, String> attributes = new HashMap<>();
         attributes.put("Policy", generateSqsPolicyForTopic(queueArn, topicArn));
         sqs.setQueueAttributes(SetQueueAttributesRequest.builder().queueUrl(queueUrl).attributes(attributes).build());
@@ -420,4 +399,24 @@ public class SNSIntegrationTest extends IntegrationTestBase {
         return policy;
     }
 
+    private Certificate getCertificate(String certUrl) {
+        try {
+            return CertificateFactory.getInstance("X509").generateCertificate(getCertificateStream(certUrl));
+        } catch (CertificateException e) {
+            throw new RuntimeException("Unable to create certificate from " + certUrl, e);
+        }
+    }
+
+    private InputStream getCertificateStream(String certUrl) {
+        try {
+            URL cert = new URL(certUrl);
+            HttpURLConnection connection = (HttpURLConnection) cert.openConnection();
+            if (connection.getResponseCode() != 200) {
+                throw new RuntimeException("Received non 200 response when requesting certificate " + certUrl);
+            }
+            return connection.getInputStream();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Unable to request certificate " + certUrl, e);
+        }
+    }
 }

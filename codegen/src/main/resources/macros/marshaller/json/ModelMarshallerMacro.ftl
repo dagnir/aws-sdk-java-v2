@@ -11,14 +11,14 @@ import java.util.Map;
 import java.util.List;
 import javax.annotation.Generated;
 
-import software.amazon.awssdk.SdkClientException;
+import software.amazon.awssdk.core.SdkClientException;
 import ${metadata.fullModelPackageName}.*;
-import software.amazon.awssdk.runtime.transform.Marshaller;
+import software.amazon.awssdk.core.runtime.transform.Marshaller;
 import software.amazon.awssdk.utils.BinaryUtils;
-import software.amazon.awssdk.util.StringUtils;
-import software.amazon.awssdk.util.IdempotentUtils;
-import software.amazon.awssdk.util.StringInputStream;
-import software.amazon.awssdk.protocol.json.*;
+import software.amazon.awssdk.core.util.StringUtils;
+import software.amazon.awssdk.core.util.IdempotentUtils;
+import software.amazon.awssdk.core.util.StringInputStream;
+import software.amazon.awssdk.core.protocol.json.*;
 
 /**
  * ${shapeName}Marshaller
@@ -49,9 +49,8 @@ public class ${shapeName}JsonMarshaller {
         }
     }
 
-    private static ${shapeName}JsonMarshaller INSTANCE;
+    private static final ${shapeName}JsonMarshaller INSTANCE = new ${shapeName}JsonMarshaller();
     public static ${shapeName}JsonMarshaller getInstance() {
-        if (INSTANCE == null) INSTANCE = new ${shapeName}JsonMarshaller();
         return INSTANCE;
     }
 

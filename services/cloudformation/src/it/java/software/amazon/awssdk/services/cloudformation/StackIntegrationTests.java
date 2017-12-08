@@ -21,19 +21,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonServiceException.ErrorType;
-import software.amazon.awssdk.SdkGlobalTime;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.auth.policy.Policy;
-import software.amazon.awssdk.auth.policy.Resource;
-import software.amazon.awssdk.auth.policy.Statement;
-import software.amazon.awssdk.auth.policy.Statement.Effect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.core.AmazonServiceException.ErrorType;
+import software.amazon.awssdk.core.SdkGlobalTime;
+import software.amazon.awssdk.core.auth.policy.Action;
+import software.amazon.awssdk.core.auth.policy.Policy;
+import software.amazon.awssdk.core.auth.policy.Resource;
+import software.amazon.awssdk.core.auth.policy.Statement;
+import software.amazon.awssdk.core.auth.policy.Statement.Effect;
+import software.amazon.awssdk.core.util.json.JacksonUtils;
 import software.amazon.awssdk.services.cloudformation.model.AlreadyExistsException;
 import software.amazon.awssdk.services.cloudformation.model.CancelUpdateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.CreateStackRequest;
@@ -64,6 +67,7 @@ import software.amazon.awssdk.services.cloudformation.model.StackStatus;
 import software.amazon.awssdk.services.cloudformation.model.StackSummary;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackRequest;
 import software.amazon.awssdk.services.cloudformation.model.UpdateStackResponse;
+import software.amazon.awssdk.testutils.Waiter;
 
 /**
  * Tests of the Stack APIs : CloudFormation
@@ -74,14 +78,14 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
 
     /** The initial stack policy which allows access to all resources. */
     private static final Policy INIT_STACK_POLICY;
-    private static Logger LOG = Logger.getLogger(StackIntegrationTests.class);
+    private static Logger LOG = LoggerFactory.getLogger(StackIntegrationTests.class);
     private static final int PAGINATION_THRESHOLD = 120;
     private static String testStackName;
     private static String testStackId;
 
     static {
         INIT_STACK_POLICY = new Policy().withStatements(new Statement(Effect.Allow).withActions(
-                new NamedAction("Update:*")).withResources(new Resource("*")));
+                new Action("Update:*")).withResources(new Resource("*")));
     }
 
     // Create a stack to be used by the other tests.
@@ -230,7 +234,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         waitForStackToChangeStatus(StackStatus.CREATE_IN_PROGRESS);
 
         Policy DENY_ALL_POLICY = new Policy().withStatements(new Statement(Effect.Deny).withActions(
-                new NamedAction("Update:*")).withResources(new Resource("*")));
+                new Action("Update:*")).withResources(new Resource("*")));
         cf.setStackPolicy(SetStackPolicyRequest.builder().stackName(testStackName).stackPolicyBody(
                 DENY_ALL_POLICY.toJson()).build());
 
@@ -263,7 +267,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
             assertNotNull(e.resourceStatus());
             assertNotNull(e.resourceType());
             assertNotNull(e.timestamp());
-            LOG.debug(e);
+            LOG.debug(JacksonUtils.toJsonPrettyString(e));
         }
     }
 
@@ -278,7 +282,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
             assertNotNull(summary);
             assertNotNull(summary.stackStatus());
             assertNotNull(summary.creationTime());
-            if (summary.stackStatus().contains("DELETE")) {
+            if (summary.stackStatusString().contains("DELETE")) {
                 assertNotNull(summary.deletionTime());
             }
             assertNotNull(summary.stackId());
@@ -297,7 +301,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
             assertNotNull(summary);
             assertNotNull(summary.stackStatus());
             assertNotNull(summary.creationTime());
-            if (summary.stackStatus().contains("DELETE")) {
+            if (summary.stackStatusString().contains("DELETE")) {
                 assertNotNull(summary.deletionTime());
             }
             assertNotNull(summary.stackId());
@@ -321,7 +325,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
             assertTrue(summary.stackStatus().equals("CREATE_COMPLETE")
                        || summary.stackStatus().equals("DELETE_COMPLETE"));
             assertNotNull(summary.creationTime());
-            if (summary.stackStatus().contains("DELETE")) {
+            if (summary.stackStatusString().contains("DELETE")) {
                 assertNotNull(summary.deletionTime());
             }
             assertNotNull(summary.stackId());
@@ -390,27 +394,9 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
      *            the test stack has a status other than this.
      */
     private void waitForStackToChangeStatus(StackStatus oldStatus) throws Exception {
-        long startTime = System.currentTimeMillis();
-        long timeoutInMinutes = 35;
-        while (true) {
-            List<Stack> stacks = cf.describeStacks(DescribeStacksRequest.builder().stackName(testStackName).build())
-                                   .stacks();
-            assertEquals(1, stacks.size());
-
-            if (!stacks.get(0).stackStatus().equalsIgnoreCase(oldStatus.toString())) {
-                return;
-            }
-
-            System.out.println("Waiting for stack to change out of status " + oldStatus.toString()
-                               + " (current status: " + stacks.get(0).stackStatus() + ")");
-
-            if ((System.currentTimeMillis() - startTime) > (timeoutInMinutes * 1000 * 60)) {
-                throw new RuntimeException("Waited " + timeoutInMinutes
-                                           + " minutes, but stack never changed status from " + oldStatus.toString());
-            }
-
-            Thread.sleep(1000 * 120);
-        }
+        Waiter.run(() -> cf.describeStacks(d -> d.stackName(testStackName)))
+              .until(r -> r.stacks().size() == 1 && r.stacks().get(0).stackStatus() != oldStatus)
+              .orFailAfter(Duration.ofMinutes(2));
     }
 
     /**
@@ -423,8 +409,7 @@ public class StackIntegrationTests extends CloudFormationIntegrationTestBase {
         SdkGlobalTime.setGlobalTimeOffset(3600);
         // Need to create a new client to have the time offset take affect
         CloudFormationClient clockSkewClient = CloudFormationClient.builder()
-                                                                   .credentialsProvider(
-                                                                           new StaticCredentialsProvider(credentials)).build();
+                                                                   .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
         clockSkewClient.describeStacks(DescribeStacksRequest.builder().build());
         assertTrue(SdkGlobalTime.getGlobalTimeOffset() < 60);
     }

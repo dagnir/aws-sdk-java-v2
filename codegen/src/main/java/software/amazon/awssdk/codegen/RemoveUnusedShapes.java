@@ -35,7 +35,10 @@ import software.amazon.awssdk.codegen.model.intermediate.VariableModel;
  */
 final class RemoveUnusedShapes {
 
-    public static final Map<String, ShapeModel> removeUnusedShapes(IntermediateModel model) {
+    private RemoveUnusedShapes() {
+    }
+
+    public static Map<String, ShapeModel> removeUnusedShapes(IntermediateModel model) {
 
         Map<String, ShapeModel> out = new HashMap<String, ShapeModel>();
         Map<String, ShapeModel> in = model.getShapes();

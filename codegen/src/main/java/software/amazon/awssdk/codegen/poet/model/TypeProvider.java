@@ -19,72 +19,64 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.WildcardTypeName;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ListModel;
 import software.amazon.awssdk.codegen.model.intermediate.MapModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
-import software.amazon.awssdk.runtime.SdkInternalList;
-import software.amazon.awssdk.runtime.SdkInternalMap;
 
 /**
  * Helper class for resolving Poet {@link TypeName}s for use in model classes.
  */
-class TypeProvider {
-    private final IntermediateModel intermediateModel;
+public class TypeProvider {
     private final PoetExtensions poetExtensions;
 
     public TypeProvider(IntermediateModel intermediateModel) {
-        this.intermediateModel = intermediateModel;
         this.poetExtensions = new PoetExtensions(intermediateModel);
     }
 
     public ClassName listImplClassName() {
-        if (intermediateModel.getCustomizationConfig().isUseAutoConstructList()) {
-            return ClassName.get(SdkInternalList.class);
-        }
         return ClassName.get(ArrayList.class);
     }
 
     public ClassName mapImplClassName() {
-        if (intermediateModel.getCustomizationConfig().isUseAutoConstructMap()) {
-            return ClassName.get(SdkInternalMap.class);
-        }
         return ClassName.get(HashMap.class);
     }
 
+    public TypeName enumReturnType(MemberModel memberModel) {
+        return fieldType(memberModel, true);
+    }
+
+    public TypeName returnType(MemberModel memberModel) {
+        return fieldType(memberModel, false);
+    }
+
     public TypeName fieldType(MemberModel memberModel) {
+        return fieldType(memberModel, false);
+    }
+
+    private TypeName fieldType(MemberModel memberModel, boolean preserveEnumType) {
         if (memberModel.isSimple()) {
-            return getTypeNameForSimpleType(memberModel.getVariable().getSimpleType());
+            boolean isEnumMember = memberModel.getEnumType() != null;
+            return preserveEnumType && isEnumMember ? poetExtensions.getModelClass(memberModel.getEnumType())
+                                                    : getTypeNameForSimpleType(memberModel.getVariable().getVariableType());
         } else if (memberModel.isList()) {
-            ListModel listModel = memberModel.getListModel();
-            TypeName elementType = fieldType(listModel.getListMemberModel());
+            TypeName elementType = fieldType(memberModel.getListModel().getListMemberModel(), preserveEnumType);
             return ParameterizedTypeName.get(ClassName.get(List.class), elementType);
         } else if (memberModel.isMap()) {
-            MapModel mapModel = memberModel.getMapModel();
-
-            TypeName keyType;
-            if (mapModel.isKeySimple()) {
-                keyType = getTypeNameForSimpleType(mapModel.getKeyType());
-            } else {
-                keyType = fieldType(mapModel.getKeyModel());
-            }
-
-            TypeName valueType = fieldType(mapModel.getValueModel());
-
+            TypeName keyType = fieldType(memberModel.getMapModel().getKeyModel(), preserveEnumType);
+            TypeName valueType = fieldType(memberModel.getMapModel().getValueModel(), preserveEnumType);
             return ParameterizedTypeName.get(ClassName.get(Map.class), keyType, valueType);
         }
         return poetExtensions.getModelClass(memberModel.getC2jShape());
@@ -105,8 +97,8 @@ class TypeProvider {
             MapModel mapModel = memberModel.getMapModel();
 
             TypeName keyType;
-            if (mapModel.isKeySimple()) {
-                keyType = getTypeNameForSimpleType(mapModel.getKeyType());
+            if (mapModel.getKeyModel().isSimple()) {
+                keyType = getTypeNameForSimpleType(mapModel.getKeyModel().getVariable().getVariableType());
             } else {
                 keyType = parameterType(mapModel.getKeyModel());
 
@@ -125,8 +117,8 @@ class TypeProvider {
 
     public TypeName mapEntryType(MapModel mapModel) {
         TypeName keyType;
-        if (mapModel.isKeySimple()) {
-            keyType = getTypeNameForSimpleType(mapModel.getKeyType());
+        if (mapModel.getKeyModel().isSimple()) {
+            keyType = getTypeNameForSimpleType(mapModel.getKeyModel().getVariable().getVariableType());
         } else {
             keyType = parameterType(mapModel.getKeyModel());
         }
@@ -135,6 +127,13 @@ class TypeProvider {
         if (mapModel.getValueModel().isList()) {
             valueType = WildcardTypeName.subtypeOf(valueType);
         }
+
+        return ParameterizedTypeName.get(ClassName.get(Map.Entry.class), keyType, valueType);
+    }
+
+    public TypeName mapEntryWithConcreteTypes(MapModel mapModel) {
+        TypeName keyType = fieldType(mapModel.getKeyModel());
+        TypeName valueType = fieldType(mapModel.getValueModel());
 
         return ParameterizedTypeName.get(ClassName.get(Map.Entry.class), keyType, valueType);
     }
@@ -155,7 +154,7 @@ class TypeProvider {
                 // and non-streaming
                 ByteBuffer.class,
                 InputStream.class,
-                Date.class)
+                Instant.class)
                 .filter(cls -> cls.getName().equals(simpleType) || cls.getSimpleName().equals(simpleType))
                 .map(ClassName::get)
                 .findFirst()

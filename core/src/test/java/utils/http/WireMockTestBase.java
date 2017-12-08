@@ -22,13 +22,14 @@ import static org.mockito.Mockito.when;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.net.URI;
 import org.junit.Rule;
-import software.amazon.awssdk.AmazonServiceException;
-import software.amazon.awssdk.DefaultRequest;
-import software.amazon.awssdk.Request;
-import software.amazon.awssdk.http.HttpMethodName;
-import software.amazon.awssdk.http.HttpResponse;
-import software.amazon.awssdk.http.HttpResponseHandler;
-import software.amazon.awssdk.internal.http.response.JsonErrorResponseHandler;
+import software.amazon.awssdk.core.AmazonServiceException;
+import software.amazon.awssdk.core.DefaultRequest;
+import software.amazon.awssdk.core.Request;
+import software.amazon.awssdk.core.http.HttpMethodName;
+import software.amazon.awssdk.core.http.HttpResponse;
+import software.amazon.awssdk.core.http.HttpResponseHandler;
+import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
+import software.amazon.awssdk.core.internal.http.response.JsonErrorResponseHandler;
 
 /**
  * Base class for tests that use a WireMock server
@@ -52,7 +53,7 @@ public abstract class WireMockTestBase {
 
     protected HttpResponseHandler<AmazonServiceException> stubErrorHandler() throws Exception {
         HttpResponseHandler<AmazonServiceException> errorHandler = mock(JsonErrorResponseHandler.class);
-        when(errorHandler.handle(any(HttpResponse.class))).thenReturn(mockException());
+        when(errorHandler.handle(any(HttpResponse.class), any(ExecutionAttributes.class))).thenReturn(mockException());
         return errorHandler;
     }
 

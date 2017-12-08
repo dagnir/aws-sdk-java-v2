@@ -23,7 +23,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonServiceException;
+import software.amazon.awssdk.core.AmazonServiceException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogStreamRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.DeleteLogGroupRequest;
@@ -200,7 +200,6 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         OutputLogEvent event = getResult.events().get(0);
         Assert.assertEquals(LOG_MESSAGE, event.message());
         Assert.assertEquals(LOG_MESSAGE_TIMESTAMP, event.timestamp().longValue());
-        Assert.assertTrue(event.ingestionTime() > event.timestamp());
 
         // Use DescribeLogStreams API to verify that the new log event has
         // updated the following parameters of the log stream.

@@ -17,7 +17,6 @@ package software.amazon.awssdk.services.apigateway;
 
 import java.util.List;
 import junit.framework.Assert;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,7 +57,6 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @BeforeClass
     public static void createRestApi() {
-        BasicConfigurator.configure();
         CreateRestApiResponse createRestApiResult = apiGateway.createRestApi(
                 CreateRestApiRequest.builder().name(NAME)
                                           .description(DESCRIPTION).build());
@@ -83,7 +81,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void testUpdateRetrieveRestApi() {
-        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+        PatchOperation patch = PatchOperation.builder().op(Op.REPLACE)
                                                    .path("/description").value("updatedDesc").build();
         apiGateway.updateRestApi(UpdateRestApiRequest.builder().restApiId(restApiId)
                                                            .patchOperations(patch).build());
@@ -119,7 +117,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(createApiKeyResult.name(), NAME);
         Assert.assertEquals(createApiKeyResult.description(), DESCRIPTION);
 
-        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+        PatchOperation patch = PatchOperation.builder().op(Op.REPLACE)
                                                    .path("/description").value("updatedDesc").build();
         apiGateway.updateApiKey(UpdateApiKeyRequest.builder().apiKey(apiKeyId)
                                                          .patchOperations(patch).build());
@@ -165,7 +163,7 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertEquals(createResourceResult.pathPart(), "fooPath");
         Assert.assertEquals(createResourceResult.parentId(), rootResourceId);
 
-        PatchOperation patch = PatchOperation.builder().op(Op.Replace)
+        PatchOperation patch = PatchOperation.builder().op(Op.REPLACE)
                                                    .path("/pathPart").value("updatedPath").build();
         apiGateway.updateResource(UpdateResourceRequest.builder()
                                           .restApiId(restApiId)
@@ -206,6 +204,6 @@ public class ServiceIntegrationTest extends IntegrationTestBase {
         Assert.assertNotNull(putIntegrationResult.cacheNamespace());
         Assert.assertNotNull(putIntegrationResult.type());
         Assert.assertEquals(putIntegrationResult.type(),
-                            IntegrationType.MOCK.toString());
+                            IntegrationType.MOCK);
     }
 }

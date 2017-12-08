@@ -24,17 +24,15 @@ import com.github.tomakehurst.wiremock.common.SingleRootFileSource;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.net.URI;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import software.amazon.awssdk.AmazonClientException;
-import software.amazon.awssdk.auth.AwsCredentials;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.StaticCredentialsProvider;
-import software.amazon.awssdk.config.ClientOverrideConfiguration;
-import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.core.AmazonClientException;
+import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.core.auth.StaticCredentialsProvider;
+import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.services.protocolrestjson.ProtocolRestJsonClient;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesRequest;
 import software.amazon.awssdk.services.protocolrestjson.model.AllTypesResponse;
@@ -49,18 +47,13 @@ public class RestJsonCrc32ChecksumTests {
     private static final String JSON_BODY_Crc32_CHECKSUM = "3049587505";
     private static final String JSON_BODY_GZIP_Crc32_CHECKSUM = "3023995622";
     private static final String RESOURCE_PATH = "/2016-03-11/allTypes";
-    private static final AwsCredentialsProvider FAKE_CREDENTIALS_PROVIDER = new StaticCredentialsProvider(
-            new AwsCredentials("foo", "bar"));
+    private static final AwsCredentialsProvider FAKE_CREDENTIALS_PROVIDER = StaticCredentialsProvider.create(
+            AwsCredentials.create("foo", "bar"));
     @Rule
     public WireMockRule mockServer = new WireMockRule(WireMockConfiguration.wireMockConfig()
             .port(0)
             .fileSource(
                     new SingleRootFileSource("src/test/resources")));
-
-    @BeforeClass
-    public static void setup() {
-        BasicConfigurator.configure();
-    }
 
     @Test
     public void clientCalculatesCrc32FromCompressedData_WhenCrc32IsValid() {

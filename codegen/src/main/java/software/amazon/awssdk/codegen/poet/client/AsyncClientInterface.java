@@ -15,23 +15,32 @@
 
 package software.amazon.awssdk.codegen.poet.client;
 
+import static java.util.stream.Collectors.toList;
+
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 import javax.lang.model.element.Modifier;
-import software.amazon.awssdk.async.AsyncRequestProvider;
-import software.amazon.awssdk.async.AsyncResponseHandler;
-import software.amazon.awssdk.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.codegen.docs.ClientType;
+import software.amazon.awssdk.codegen.docs.SimpleMethodOverload;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.OperationModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
-import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.core.async.AsyncRequestProvider;
+import software.amazon.awssdk.core.async.AsyncResponseHandler;
+import software.amazon.awssdk.core.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.utils.SdkAutoCloseable;
 
 public class AsyncClientInterface implements ClassSpec {
 
@@ -53,11 +62,11 @@ public class AsyncClientInterface implements ClassSpec {
     @Override
     public TypeSpec poetSpec() {
         return PoetUtils.createInterfaceBuilder(className)
-                        .addSuperinterface(AutoCloseable.class)
+                        .addSuperinterface(SdkAutoCloseable.class)
                         .addJavadoc(getJavadoc())
                         .addMethod(create())
                         .addMethod(builder())
-                        .addMethods(operations())
+                        .addMethods(operationsAndSimpleMethods())
                         .build();
     }
 
@@ -73,12 +82,15 @@ public class AsyncClientInterface implements ClassSpec {
 
     private MethodSpec create() {
         return MethodSpec.methodBuilder("create")
-                 .returns(className)
-                 .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                 .addJavadoc("Create a {@link $T} with the region loaded from the {@link $T} and credentials loaded from the "
-                             + "{@link $T}.", className, DefaultAwsRegionProviderChain.class, DefaultCredentialsProvider.class)
-                 .addStatement("return builder().build()")
-                 .build();
+                         .returns(className)
+                         .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                         .addJavadoc("Create a {@link $T} with the region loaded from the {@link $T} and credentials loaded "
+                                     + "from the {@link $T}.",
+                                     className,
+                                     DefaultAwsRegionProviderChain.class,
+                                     DefaultCredentialsProvider.class)
+                         .addStatement("return builder().build()")
+                         .build();
     }
 
     private MethodSpec builder() {
@@ -92,38 +104,178 @@ public class AsyncClientInterface implements ClassSpec {
                          .build();
     }
 
-    protected final Iterable<MethodSpec> operations() {
+    /**
+     * @return List generated of traditional (request/response) methods for all operations.
+     */
+    protected final List<MethodSpec> operations() {
         return model.getOperations().values().stream()
-                    .map(this::operationSignatureAndJavaDoc)
-                    .map(b -> this.operationBody(b.builder, b.opModel))
+                    .map(this::traditionalMethod)
                     .map(MethodSpec.Builder::build)
-                    .collect(Collectors.toList());
+                    .collect(toList());
     }
 
+    /**
+     * @return Traditional request/response methods plus any additional simple method overloads (for no-args and streaming for
+     * example).
+     */
+    private Iterable<MethodSpec> operationsAndSimpleMethods() {
+        List<MethodSpec> methods = operations();
+        methods.addAll(model.getOperations().values().stream()
+                            .map(this::addMethodOverloads)
+                            .flatMap(List::stream)
+                            .map(MethodSpec.Builder::build)
+                            .collect(toList()));
+        return methods.stream().sorted(Comparator.comparing(m -> m.name)).collect(toList());
+    }
+
+    /**
+     * @param opModel Operation to generate simple methods for.
+     * @return All simple method overloads for a given operation.
+     */
+    private List<MethodSpec.Builder> addMethodOverloads(OperationModel opModel) {
+        List<MethodSpec.Builder> methodOverloads = new ArrayList<>();
+        if (opModel.getInputShape().isSimpleMethod()) {
+            methodOverloads.add(noArgSimpleMethod(opModel));
+        }
+        if (opModel.hasStreamingInput()) {
+            methodOverloads.add(streamingInputFileSimpleMethod(opModel));
+        }
+        if (opModel.hasStreamingOutput()) {
+            methodOverloads.add(streamingOutputFileSimpleMethod(opModel));
+        }
+        if (!opModel.isStreaming()) {
+            methodOverloads.add(builderConsumerMethod(opModel));
+        }
+        return methodOverloads;
+    }
+
+    /**
+     * Add the implementation body. The interface implements all methods by throwing an {@link UnsupportedOperationException}
+     * except for simple method overloads which just delegate to the traditional request/response method. This is overridden
+     * in {@link AsyncClientClass} to add an actual implementation.
+     *
+     * @param builder        Current {@link com.squareup.javapoet.MethodSpec.Builder} to add implementation to.
+     * @param operationModel Operation to generate method body for.
+     * @return Builder with method body added.
+     */
     protected MethodSpec.Builder operationBody(MethodSpec.Builder builder, OperationModel operationModel) {
         return builder.addModifiers(Modifier.DEFAULT, Modifier.PUBLIC)
                       .addStatement("throw new $T()", UnsupportedOperationException.class);
     }
 
-    private BuilderModelBag operationSignatureAndJavaDoc(OperationModel opModel) {
-        ClassName responsePojoType = ClassName.get(modelPackage, opModel.getReturnType().getReturnType());
+    /**
+     * Generates the traditional method for an operation (i.e. one that takes a request and returns a response).
+     */
+    private MethodSpec.Builder traditionalMethod(OperationModel opModel) {
+        ClassName responsePojoType = getPojoResponseType(opModel);
         ClassName requestType = ClassName.get(modelPackage, opModel.getInput().getVariableType());
 
-        MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(opModel.getMethodName())
-                                                     .returns(getAsyncReturnType(opModel, responsePojoType))
-                                                     .addParameter(requestType, opModel.getInput().getVariableName())
-                                                     .addJavadoc(opModel.getAsyncDocumentation(model, opModel));
+        MethodSpec.Builder builder = methodSignatureWithReturnType(opModel)
+                .addParameter(requestType, opModel.getInput().getVariableName())
+                .addJavadoc(opModel.getDocs(model, ClientType.ASYNC));
 
         if (opModel.hasStreamingInput()) {
-            methodBuilder.addParameter(ClassName.get(AsyncRequestProvider.class), "requestProvider");
+            builder.addParameter(ClassName.get(AsyncRequestProvider.class), "requestProvider");
         }
         if (opModel.hasStreamingOutput()) {
-            methodBuilder.addTypeVariable(STREAMING_TYPE_VARIABLE);
+            builder.addTypeVariable(STREAMING_TYPE_VARIABLE);
             final ParameterizedTypeName asyncResponseHandlerType = ParameterizedTypeName
                     .get(ClassName.get(AsyncResponseHandler.class), responsePojoType, STREAMING_TYPE_VARIABLE);
-            methodBuilder.addParameter(asyncResponseHandlerType, "asyncResponseHandler");
+            builder.addParameter(asyncResponseHandlerType, "asyncResponseHandler");
         }
-        return new BuilderModelBag(methodBuilder, opModel);
+
+        return operationBody(builder, opModel);
+    }
+
+    /**
+     * Generate a simple method that takes no arguments for operations with no required parameters.
+     */
+    private MethodSpec.Builder noArgSimpleMethod(OperationModel opModel) {
+        return interfaceMethodSignature(opModel)
+                .addJavadoc(opModel.getDocs(model, ClientType.ASYNC, SimpleMethodOverload.NO_ARG))
+                .addStatement("return $N($N.builder().build())",
+                              opModel.getMethodName(),
+                              opModel.getInput().getVariableType());
+    }
+
+
+    /**
+     * Creates a method that thats a Consumer of Request.Builder
+     */
+    private MethodSpec.Builder builderConsumerMethod(OperationModel opModel) {
+        ClassName requestType = ClassName.get(model.getMetadata().getFullModelPackageName(),
+                                              opModel.getInput().getVariableType());
+        ClassName builder = requestType.nestedClass("Builder");
+        TypeName consumer = ParameterizedTypeName.get(ClassName.get(Consumer.class), builder);
+
+        return interfaceMethodSignature(opModel)
+            .addParameter(consumer, opModel.getInput().getVariableName())
+            .addJavadoc(opModel.getDocs(model, ClientType.ASYNC, SimpleMethodOverload.CONSUMER_BUILDER))
+            .addStatement("return $N($T.builder().apply($N).build())",
+                          opModel.getMethodName(),
+                          requestType,
+                          opModel.getInput().getVariableName());
+    }
+
+    /**
+     * Generate a simple method for operations with a streaming input member that takes a {@link Path} containing the data
+     * to upload.
+     */
+    private MethodSpec.Builder streamingInputFileSimpleMethod(OperationModel opModel) {
+        ClassName requestType = ClassName.get(modelPackage, opModel.getInput().getVariableType());
+        return interfaceMethodSignature(opModel)
+                .addJavadoc(opModel.getDocs(model, ClientType.ASYNC, SimpleMethodOverload.FILE))
+                .addParameter(requestType, opModel.getInput().getVariableName())
+                .addParameter(ClassName.get(Path.class), "path")
+                .addStatement("return $L($L, $T.fromFile(path))", opModel.getMethodName(),
+                              opModel.getInput().getVariableName(),
+                              ClassName.get(AsyncRequestProvider.class));
+    }
+
+    /**
+     * Generate a simple method for operations with a streaming output member that takes a {@link Path} where data
+     * will be downloaded to.
+     */
+    private MethodSpec.Builder streamingOutputFileSimpleMethod(OperationModel opModel) {
+        ClassName requestType = ClassName.get(modelPackage, opModel.getInput().getVariableType());
+        return interfaceMethodSignature(opModel)
+                .returns(
+                        completableFutureType(getPojoResponseType(opModel)))
+                .addJavadoc(opModel.getDocs(model, ClientType.ASYNC, SimpleMethodOverload.FILE))
+                .addParameter(requestType, opModel.getInput().getVariableName())
+                .addParameter(ClassName.get(Path.class), "path")
+                .addStatement("return $L($L, $T.toFile(path))", opModel.getMethodName(),
+                              opModel.getInput().getVariableName(),
+                              ClassName.get(AsyncResponseHandler.class));
+    }
+
+    /**
+     * Factory method for creating a {@link com.squareup.javapoet.MethodSpec.Builder} with correct return type.
+     *
+     * @return MethodSpec with only return type set.
+     */
+    private MethodSpec.Builder methodSignatureWithReturnType(OperationModel opModel) {
+        ClassName responsePojoType = getPojoResponseType(opModel);
+        return MethodSpec.methodBuilder(opModel.getMethodName())
+                         .returns(getAsyncReturnType(opModel, responsePojoType));
+    }
+
+    /**
+     * Factory method for creating a {@link com.squareup.javapoet.MethodSpec.Builder} with
+     * correct return type and public/default modifiers for use in interfaces.
+     *
+     * @return MethodSpec with public/default modifiers for interface file.
+     */
+    private MethodSpec.Builder interfaceMethodSignature(OperationModel opModel) {
+        return methodSignatureWithReturnType(opModel)
+                .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT);
+    }
+
+    /**
+     * @return ClassName for POJO response class.
+     */
+    private ClassName getPojoResponseType(OperationModel opModel) {
+        return ClassName.get(modelPackage, opModel.getReturnType().getReturnType());
     }
 
     /**
@@ -135,19 +287,16 @@ public class AsyncClientInterface implements ClassSpec {
      */
     private TypeName getAsyncReturnType(OperationModel opModel, ClassName responsePojoType) {
         if (opModel.hasStreamingOutput()) {
-            return ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), STREAMING_TYPE_VARIABLE);
+            return completableFutureType(STREAMING_TYPE_VARIABLE);
         } else {
-            return ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), responsePojoType);
+            return completableFutureType(responsePojoType);
         }
     }
 
-    private static class BuilderModelBag {
-        private final MethodSpec.Builder builder;
-        private final OperationModel opModel;
-
-        private BuilderModelBag(MethodSpec.Builder builder, OperationModel opModel) {
-            this.builder = builder;
-            this.opModel = opModel;
-        }
+    /**
+     * Returns a {@link ParameterizedTypeName} of {@link CompletableFuture} with the given typeName as the type parameter.
+     */
+    private ParameterizedTypeName completableFutureType(TypeName typeName) {
+        return ParameterizedTypeName.get(ClassName.get(CompletableFuture.class), typeName);
     }
 }

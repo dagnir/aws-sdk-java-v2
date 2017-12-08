@@ -15,12 +15,16 @@
 
 package utils.resources;
 
-import software.amazon.awssdk.AmazonClientException;
+import java.time.Duration;
+import software.amazon.awssdk.core.AmazonClientException;
+import software.amazon.awssdk.testutils.Waiter;
+import software.amazon.awssdk.utils.Logger;
 import utils.resources.RequiredResources.ResourceCreationPolicy;
 import utils.resources.TestResource.ResourceStatus;
 
 
 public class TestResourceUtils {
+    private static final Logger log = Logger.loggerFor(TestResourceUtils.class);
 
     public static void createResource(TestResource resource, ResourceCreationPolicy policy) throws InterruptedException {
         TestResource.ResourceStatus finalizedStatus = waitForFinalizedStatus(resource);
@@ -32,13 +36,17 @@ public class TestResourceUtils {
         } else if (policy == ResourceCreationPolicy.REUSE_EXISTING) {
             switch (finalizedStatus) {
                 case AVAILABLE:
-                    System.out.println("Found existing resource " + resource + " that could be reused...");
+                    log.info(() -> "Found existing resource " + resource + " that could be reused...");
                     return;
                 case EXIST_INCOMPATIBLE_RESOURCE:
                     resource.delete(true);
                     resource.create(true);
+                    // fallthru
                 case NOT_EXIST:
                     resource.create(true);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -51,17 +59,8 @@ public class TestResourceUtils {
     }
 
     public static ResourceStatus waitForFinalizedStatus(TestResource resource) throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + (10 * 60 * 1000);
-        while (System.currentTimeMillis() < endTime) {
-            ResourceStatus status = resource.getResourceStatus();
-            if (status != ResourceStatus.TRANSIENT) {
-                return status;
-            }
-            System.out.println("Waiting for " + resource + " to escape the transient state...");
-            Thread.sleep(1000 * 10);
-        }
-
-        throw new AmazonClientException("Resource never escaped the transient state.");
+        return Waiter.run(resource::getResourceStatus)
+                     .until(s -> s != ResourceStatus.TRANSIENT)
+                     .orFailAfter(Duration.ofMinutes(5));
     }
 }

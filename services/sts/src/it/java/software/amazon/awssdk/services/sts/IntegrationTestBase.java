@@ -18,7 +18,8 @@ package software.amazon.awssdk.services.sts;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.junit.BeforeClass;
-import software.amazon.awssdk.test.AwsTestBase;
+import software.amazon.awssdk.core.regions.Region;
+import software.amazon.awssdk.testutils.service.AwsTestBase;
 
 /**
  * Base class for all STS integration tests. Loads AWS credentials from a
@@ -33,6 +34,9 @@ public abstract class IntegrationTestBase extends AwsTestBase {
     @BeforeClass
     public static void setUp() throws FileNotFoundException, IOException {
         setUpCredentials();
-        sts = STSClient.builder().credentialsProvider(CREDENTIALS_PROVIDER_CHAIN).build();
+        sts = STSClient.builder()
+                       .credentialsProvider(CREDENTIALS_PROVIDER_CHAIN)
+                       .region(Region.AWS_GLOBAL)
+                       .build();
     }
 }

@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.utils.builder;
 
-import java.util.function.UnaryOperator;
+import java.util.function.Consumer;
 
 /**
  * A mutable object that can be used to create an immutable object of type T.
@@ -50,11 +50,12 @@ public interface SdkBuilder<B extends SdkBuilder<B, T>, T> {
      * ClassBeingBuilt = ClassBeingBuilt.builder().apply(Util::addSomeDetailToTheBuilder).build();
      * </code></pre>
      *
-     * @param function the function that mutates and then returns the builder
+     * @param mutator the function that mutates the builder
      * @return B the mutated builder instance
      */
     @SuppressWarnings("unchecked")
-    default B apply(UnaryOperator<B> function) {
-        return function.apply((B) this);
+    default B apply(Consumer<B> mutator) {
+        mutator.accept((B) this);
+        return (B) this;
     }
 }

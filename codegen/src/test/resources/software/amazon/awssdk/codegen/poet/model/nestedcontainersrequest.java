@@ -1,11 +1,13 @@
 package software.amazon.awssdk.services.jsonprotocoltests.model;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.AmazonWebServiceRequest;
+import software.amazon.awssdk.core.AmazonWebServiceRequest;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
@@ -27,24 +29,36 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
     }
 
     /**
+     * Returns the value of the ListOfListOfStrings property for this object.
+     * <p>
+     * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
+     * </p>
      *
-     * @return
+     * @return The value of the ListOfListOfStrings property for this object.
      */
     public List<List<String>> listOfListOfStrings() {
         return listOfListOfStrings;
     }
 
     /**
+     * Returns the value of the ListOfListOfListOfStrings property for this object.
+     * <p>
+     * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
+     * </p>
      *
-     * @return
+     * @return The value of the ListOfListOfListOfStrings property for this object.
      */
     public List<List<List<String>>> listOfListOfListOfStrings() {
         return listOfListOfListOfStrings;
     }
 
     /**
+     * Returns the value of the MapOfStringToListOfListOfStrings property for this object.
+     * <p>
+     * Attempts to modify the collection returned by this method will result in an UnsupportedOperationException.
+     * </p>
      *
-     * @return
+     * @return The value of the MapOfStringToListOfListOfStrings property for this object.
      */
     public Map<String, List<List<String>>> mapOfStringToListOfListOfStrings() {
         return mapOfStringToListOfListOfStrings;
@@ -66,10 +80,9 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
     @Override
     public int hashCode() {
         int hashCode = 1;
-        hashCode = 31 * hashCode + ((listOfListOfStrings() == null) ? 0 : listOfListOfStrings().hashCode());
-        hashCode = 31 * hashCode + ((listOfListOfListOfStrings() == null) ? 0 : listOfListOfListOfStrings().hashCode());
-        hashCode = 31 * hashCode
-                + ((mapOfStringToListOfListOfStrings() == null) ? 0 : mapOfStringToListOfListOfStrings().hashCode());
+        hashCode = 31 * hashCode + Objects.hashCode(listOfListOfStrings());
+        hashCode = 31 * hashCode + Objects.hashCode(listOfListOfListOfStrings());
+        hashCode = 31 * hashCode + Objects.hashCode(mapOfStringToListOfListOfStrings());
         return hashCode;
     }
 
@@ -85,33 +98,14 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
             return false;
         }
         NestedContainersRequest other = (NestedContainersRequest) obj;
-        if (other.listOfListOfStrings() == null ^ this.listOfListOfStrings() == null) {
-            return false;
-        }
-        if (other.listOfListOfStrings() != null && !other.listOfListOfStrings().equals(this.listOfListOfStrings())) {
-            return false;
-        }
-        if (other.listOfListOfListOfStrings() == null ^ this.listOfListOfListOfStrings() == null) {
-            return false;
-        }
-        if (other.listOfListOfListOfStrings() != null
-                && !other.listOfListOfListOfStrings().equals(this.listOfListOfListOfStrings())) {
-            return false;
-        }
-        if (other.mapOfStringToListOfListOfStrings() == null ^ this.mapOfStringToListOfListOfStrings() == null) {
-            return false;
-        }
-        if (other.mapOfStringToListOfListOfStrings() != null
-                && !other.mapOfStringToListOfListOfStrings().equals(this.mapOfStringToListOfListOfStrings())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(listOfListOfStrings(), other.listOfListOfStrings())
+                && Objects.equals(listOfListOfListOfStrings(), other.listOfListOfListOfStrings())
+                && Objects.equals(mapOfStringToListOfListOfStrings(), other.mapOfStringToListOfListOfStrings());
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        StringBuilder sb = new StringBuilder("{");
         if (listOfListOfStrings() != null) {
             sb.append("ListOfListOfStrings: ").append(listOfListOfStrings()).append(",");
         }
@@ -121,61 +115,75 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         if (mapOfStringToListOfListOfStrings() != null) {
             sb.append("MapOfStringToListOfListOfStrings: ").append(mapOfStringToListOfListOfStrings()).append(",");
         }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 1);
+        }
         sb.append("}");
         return sb.toString();
     }
 
+    public <T> Optional<T> getValueForField(String fieldName, Class<T> clazz) {
+        switch (fieldName) {
+        case "ListOfListOfStrings":
+            return Optional.of(clazz.cast(listOfListOfStrings()));
+        case "ListOfListOfListOfStrings":
+            return Optional.of(clazz.cast(listOfListOfListOfStrings()));
+        case "MapOfStringToListOfListOfStrings":
+            return Optional.of(clazz.cast(mapOfStringToListOfListOfStrings()));
+        default:
+            return Optional.empty();
+        }
+    }
+
     public interface Builder extends CopyableBuilder<Builder, NestedContainersRequest> {
         /**
+         * Sets the value of the ListOfListOfStrings property for this object.
          *
          * @param listOfListOfStrings
+         *        The new value for the ListOfListOfStrings property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder listOfListOfStrings(Collection<? extends Collection<String>> listOfListOfStrings);
 
         /**
+         * Sets the value of the ListOfListOfStrings property for this object.
          *
-         * <p>
-         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
-         * {@link #setListOfListOfStrings(java.util.Collection)} or
-         * {@link #withListOfListOfStrings(java.util.Collection)} if you want to override the existing values.
-         * </p>
-         * 
          * @param listOfListOfStrings
+         *        The new value for the ListOfListOfStrings property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder listOfListOfStrings(Collection<String>... listOfListOfStrings);
 
         /**
+         * Sets the value of the ListOfListOfListOfStrings property for this object.
          *
          * @param listOfListOfListOfStrings
+         *        The new value for the ListOfListOfListOfStrings property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder listOfListOfListOfStrings(Collection<? extends Collection<? extends Collection<String>>> listOfListOfListOfStrings);
 
         /**
-         *
-         * <p>
-         * <b>NOTE:</b> This method appends the values to the existing list (if any). Use
-         * {@link #setListOfListOfListOfStrings(java.util.Collection)} or
-         * {@link #withListOfListOfListOfStrings(java.util.Collection)} if you want to override the existing values.
-         * </p>
+         * Sets the value of the ListOfListOfListOfStrings property for this object.
          *
          * @param listOfListOfListOfStrings
+         *        The new value for the ListOfListOfListOfStrings property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder listOfListOfListOfStrings(Collection<? extends Collection<String>>... listOfListOfListOfStrings);
 
         /**
+         * Sets the value of the MapOfStringToListOfListOfStrings property for this object.
          *
          * @param mapOfStringToListOfListOfStrings
+         *        The new value for the MapOfStringToListOfListOfStrings property for this object.
          * @return Returns a reference to this object so that method calls can be chained together.
          */
         Builder mapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings);
     }
 
-    private static final class BuilderImpl implements Builder {
+    static final class BuilderImpl implements Builder {
         private List<List<String>> listOfListOfStrings;
 
         private List<List<List<String>>> listOfListOfListOfStrings;
@@ -186,9 +194,9 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         }
 
         private BuilderImpl(NestedContainersRequest model) {
-            setListOfListOfStrings(model.listOfListOfStrings);
-            setListOfListOfListOfStrings(model.listOfListOfListOfStrings);
-            setMapOfStringToListOfListOfStrings(model.mapOfStringToListOfListOfStrings);
+            listOfListOfStrings(model.listOfListOfStrings);
+            listOfListOfListOfStrings(model.listOfListOfListOfStrings);
+            mapOfStringToListOfListOfStrings(model.mapOfStringToListOfListOfStrings);
         }
 
         public final Collection<? extends Collection<String>> getListOfListOfStrings() {
@@ -204,27 +212,12 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         @Override
         @SafeVarargs
         public final Builder listOfListOfStrings(Collection<String>... listOfListOfStrings) {
-            if (this.listOfListOfStrings == null) {
-                this.listOfListOfStrings = new ArrayList<>(listOfListOfStrings.length);
-            }
-            for (Collection<String> e : listOfListOfStrings) {
-                this.listOfListOfStrings.add(ListOfStringsCopier.copy(e));
-            }
+            listOfListOfStrings(Arrays.asList(listOfListOfStrings));
             return this;
         }
 
         public final void setListOfListOfStrings(Collection<? extends Collection<String>> listOfListOfStrings) {
             this.listOfListOfStrings = ListOfListOfStringsCopier.copy(listOfListOfStrings);
-        }
-
-        @SafeVarargs
-        public final void setListOfListOfStrings(Collection<String>... listOfListOfStrings) {
-            if (this.listOfListOfStrings == null) {
-                this.listOfListOfStrings = new ArrayList<>(listOfListOfStrings.length);
-            }
-            for (Collection<String> e : listOfListOfStrings) {
-                this.listOfListOfStrings.add(ListOfStringsCopier.copy(e));
-            }
         }
 
         public final Collection<? extends Collection<? extends Collection<String>>> getListOfListOfListOfStrings() {
@@ -241,28 +234,13 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         @Override
         @SafeVarargs
         public final Builder listOfListOfListOfStrings(Collection<? extends Collection<String>>... listOfListOfListOfStrings) {
-            if (this.listOfListOfListOfStrings == null) {
-                this.listOfListOfListOfStrings = new ArrayList<>(listOfListOfListOfStrings.length);
-            }
-            for (Collection<? extends Collection<String>> e : listOfListOfListOfStrings) {
-                this.listOfListOfListOfStrings.add(ListOfListOfStringsCopier.copy(e));
-            }
+            listOfListOfListOfStrings(Arrays.asList(listOfListOfListOfStrings));
             return this;
         }
 
         public final void setListOfListOfListOfStrings(
                 Collection<? extends Collection<? extends Collection<String>>> listOfListOfListOfStrings) {
             this.listOfListOfListOfStrings = ListOfListOfListOfStringsCopier.copy(listOfListOfListOfStrings);
-        }
-
-        @SafeVarargs
-        public final void setListOfListOfListOfStrings(Collection<? extends Collection<String>>... listOfListOfListOfStrings) {
-            if (this.listOfListOfListOfStrings == null) {
-                this.listOfListOfListOfStrings = new ArrayList<>(listOfListOfListOfStrings.length);
-            }
-            for (Collection<? extends Collection<String>> e : listOfListOfListOfStrings) {
-                this.listOfListOfListOfStrings.add(ListOfListOfStringsCopier.copy(e));
-            }
         }
 
         public final Map<String, ? extends Collection<? extends Collection<String>>> getMapOfStringToListOfListOfStrings() {
@@ -287,3 +265,4 @@ public class NestedContainersRequest extends AmazonWebServiceRequest implements
         }
     }
 }
+

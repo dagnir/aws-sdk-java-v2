@@ -21,14 +21,16 @@ import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_GETTER_PARAM;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_SETTER;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.DEFAULT_SETTER_PARAM;
-import static software.amazon.awssdk.codegen.internal.DocumentationUtils.LIST_VARARG_ADDITIONAL_DOC;
 import static software.amazon.awssdk.codegen.internal.DocumentationUtils.stripHtmlTags;
 import static software.amazon.awssdk.utils.StringUtils.upperCase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Map;
 import software.amazon.awssdk.codegen.internal.TypeUtils;
-import software.amazon.awssdk.protocol.MarshallingInfo;
-import software.amazon.awssdk.runtime.transform.PathMarshallers;
+import software.amazon.awssdk.core.runtime.transform.PathMarshallers;
+import software.amazon.awssdk.utils.StringUtils;
 
 public class MemberModel extends DocumentationModel {
 
@@ -61,6 +63,8 @@ public class MemberModel extends DocumentationModel {
     private ShapeModel shape;
 
     private String fluentGetterMethodName;
+
+    private String fluentEnumGetterMethodName;
 
     private String fluentSetterMethodName;
 
@@ -143,6 +147,19 @@ public class MemberModel extends DocumentationModel {
 
     public MemberModel withFluentGetterMethodName(String getterMethodName) {
         setFluentGetterMethodName(getterMethodName);
+        return this;
+    }
+
+    public String getFluentEnumGetterMethodName() {
+        return fluentEnumGetterMethodName;
+    }
+
+    public void setFluentEnumGetterMethodName(String fluentEnumGetterMethodName) {
+        this.fluentEnumGetterMethodName = fluentEnumGetterMethodName;
+    }
+
+    public MemberModel withFluentEnumGetterMethodName(String fluentEnumGetterMethodName) {
+        setFluentEnumGetterMethodName(fluentEnumGetterMethodName);
         return this;
     }
 
@@ -250,13 +267,13 @@ public class MemberModel extends DocumentationModel {
         this.listModel = listModel;
     }
 
-    public MapModel getMapModel() {
-        return mapModel;
-    }
-
     public MemberModel withListModel(ListModel list) {
         setListModel(list);
         return this;
+    }
+
+    public MapModel getMapModel() {
+        return mapModel;
     }
 
     public void setMapModel(MapModel map) {
@@ -296,33 +313,12 @@ public class MemberModel extends DocumentationModel {
 
     public String getSetterDocumentation() {
         StringBuilder docBuilder = new StringBuilder();
-        docBuilder.append(getSetterDoc());
 
-        if ("java.nio.ByteBuffer".equals(
-                this.getGetterModel().getReturnType())) {
+        docBuilder.append(StringUtils.isNotBlank(documentation) ? documentation : DEFAULT_SETTER.replace("%s", name) + "\n");
 
-            docBuilder.append("<p>")
-                    .append(LF)
-                    .append("AWS SDK for Java performs a Base64 " +
-                            "encoding on this field before sending this request to AWS " +
-                            "service by default. " +
-                            "Users of the SDK should not perform Base64 " +
-                            "encoding on this field.")
-                    .append(LF)
-                    .append("</p>")
-                    .append(LF);
-
-            docBuilder.append("<p>")
-                    .append(LF)
-                    .append("Warning: ByteBuffers returned by the SDK are mutable. " +
-                            "Changes to the content or position of the byte buffer will be " +
-                            "seen by all objects that have a reference to this object. " +
-                            "It is recommended to call ByteBuffer.duplicate() or " +
-                            "ByteBuffer.asReadOnlyBuffer() before using or reading from the buffer. " +
-                            "This behavior will be changed in a future major version of the SDK.")
-                    .append(LF)
-                    .append("</p>")
-                    .append(LF);
+        if (returnTypeIs(ByteBuffer.class)) {
+            appendParagraph(docBuilder, "To preserve immutability, the remaining bytes in the provided buffer will be copied "
+                                        + "into a new buffer when set.");
         }
 
         docBuilder.append(getParamDoc())
@@ -333,31 +329,40 @@ public class MemberModel extends DocumentationModel {
 
     public String getGetterDocumentation() {
         StringBuilder docBuilder = new StringBuilder();
-        docBuilder.append(documentation != null ? documentation : DEFAULT_GETTER.replace("%s", name))
+        docBuilder.append(StringUtils.isNotBlank(documentation) ? documentation : DEFAULT_GETTER.replace("%s", name))
                 .append(LF);
 
-        if ("java.nio.ByteBuffer".equals(
-                this.getGetterModel().getReturnType())) {
-
-            docBuilder.append("<p>")
-                    .append(LF)
-                    .append("{@code ByteBuffer}s are stateful. Calling "
-                            + "their {@code get} methods changes their "
-                            + "{@code position}. We recommend using "
-                            + "{@link java.nio.ByteBuffer#asReadOnlyBuffer()} "
-                            + "to create a read-only view of the buffer with "
-                            + "an independent {@code position}, and calling "
-                            + "{@code get} methods on this rather than "
-                            + "directly on the returned {@code ByteBuffer}. "
-                            + "Doing so will ensure that anyone else using "
-                            + "the {@code ByteBuffer} will not be affected by "
-                            + "changes to the {@code position}.")
-                    .append(LF)
-                    .append("</p>")
-                    .append(LF);
+        if (returnTypeIs(ByteBuffer.class)) {
+            appendParagraph(docBuilder,
+                            "This method will return a new read-only {@code ByteBuffer} each time it is invoked.");
+        } else if (returnTypeIs(List.class) || returnTypeIs(Map.class)) {
+            appendParagraph(docBuilder, "Attempts to modify the collection returned by this method will result in an "
+                                        + "UnsupportedOperationException.");
         }
 
-        String variableDesc = documentation != null ? documentation : DEFAULT_GETTER_PARAM.replace("%s", name);
+        if (enumType != null) {
+            if (returnTypeIs(List.class)) {
+                appendParagraph(docBuilder,
+                                "If the list returned by the service includes enum values that are not available in the "
+                                + "current SDK version, {@link #%s} will use {@link %s#UNKNOWN_TO_SDK_VERSION} in place of those "
+                                + "values in the list. The raw values returned by the service are available from {@link #%s}.",
+                                getFluentEnumGetterMethodName(), getEnumType(), getFluentGetterMethodName());
+            } else if (returnTypeIs(Map.class)) {
+                appendParagraph(docBuilder,
+                                "If the map returned by the service includes enum values that are not available in the "
+                                + "current SDK version, {@link #%s} will not include those keys in the map. {@link #%s} "
+                                + "will include all data from the service.",
+                                getFluentEnumGetterMethodName(), getEnumType(), getFluentGetterMethodName());
+            } else {
+                appendParagraph(docBuilder,
+                                "If the service returns an enum value that is not available in the current SDK version, "
+                                + "{@link #%s} will return {@link %s#UNKNOWN_TO_SDK_VERSION}. The raw value returned by the "
+                                + "service is available from {@link #%s}.",
+                                getFluentEnumGetterMethodName(), getEnumType(), getFluentGetterMethodName());
+            }
+        }
+
+        String variableDesc = StringUtils.isNotBlank(documentation) ? documentation : DEFAULT_GETTER_PARAM.replace("%s", name);
 
         docBuilder.append("@return ")
                   .append(stripHtmlTags(variableDesc))
@@ -366,60 +371,62 @@ public class MemberModel extends DocumentationModel {
         return docBuilder.toString();
     }
 
+    private boolean returnTypeIs(Class<?> clazz) {
+        String returnType = this.getGetterModel().getReturnType();
+        return returnType != null && returnType.startsWith(clazz.getName()); // Use startsWith in case it's parametrized
+    }
+
     public String getFluentSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder();
-        docBuilder.append(getSetterDoc())
-                .append(getParamDoc())
-                .append(LF)
-                .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
-                .append(getEnumDoc());
-        return docBuilder.toString();
+        return getSetterDocumentation()
+               + LF
+               + "@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN)
+               + getEnumDoc();
     }
 
-    public String getVarargSetterDocumentation() {
-        StringBuilder docBuilder = new StringBuilder();
-        docBuilder.append(getSetterDoc());
-
-        if (listModel != null) {
-            docBuilder.append(LF)
-                    .append(LIST_VARARG_ADDITIONAL_DOC.replaceAll("%s", name));
-        }
-
-        docBuilder.append(getParamDoc())
-                .append(LF)
-                .append("@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN))
-                .append(getEnumDoc());
-
-        return docBuilder.toString();
-    }
-
-    private String getSetterDoc() {
-
-        return documentation != null
-                ? documentation
-                : DEFAULT_SETTER.replace("%s", name);
+    public String getDefaultConsumerFluentSetterDocumentation() {
+        return (StringUtils.isNotBlank(documentation) ? documentation : DEFAULT_SETTER.replace("%s", name) + "\n")
+               + LF
+               + "This is a convenience that creates an instance of the {@link "
+               + variable.getSimpleType()
+               + ".Builder} avoiding the need to create one manually via {@link "
+               + variable.getSimpleType()
+               + "#builder()}.\n"
+               + LF
+               + "When the {@link Consumer} completes, {@link "
+               + variable.getSimpleType()
+               + ".Builder#build()} is called immediately and its result is passed to {@link #"
+               + getFluentGetterMethodName()
+               + "("
+               + variable.getSimpleType()
+               + ")}."
+               + LF
+               + "@param "
+               + variable.getVariableName()
+               + " a consumer that will call methods on {@link "
+               + variable.getSimpleType() + ".Builder}"
+               + LF
+               + "@return " + stripHtmlTags(DEFAULT_FLUENT_RETURN)
+               + LF
+               + "@see #"
+               + getFluentSetterMethodName()
+               + "("
+               + variable.getSimpleType()
+               + ")";
     }
 
     private String getParamDoc() {
-        StringBuilder docBuilder = new StringBuilder();
-
-        String variableDesc = documentation != null ? documentation
-                : DEFAULT_SETTER_PARAM.replace("%s", name);
-
-        docBuilder.append(LF)
-                  .append("@param ")
-                  .append(variable.getVariableName())
-                  .append(" ")
-                  .append(stripHtmlTags(variableDesc));
-        return docBuilder.toString();
+        return LF
+               + "@param "
+               + variable.getVariableName()
+               + " "
+               + stripHtmlTags(StringUtils.isNotBlank(documentation) ? documentation : DEFAULT_SETTER_PARAM.replace("%s", name));
     }
 
     private String getEnumDoc() {
         StringBuilder docBuilder = new StringBuilder();
 
         if (enumType != null) {
-            docBuilder.append(LF);
-            docBuilder.append("@see " + enumType);
+            docBuilder.append(LF).append("@see ").append(enumType);
         }
 
         return docBuilder.toString();
@@ -467,11 +474,22 @@ public class MemberModel extends DocumentationModel {
         return upperCase(this.name) + "_BINDING";
     }
 
+    @JsonIgnore
+    public boolean hasBuilder() {
+        return !(isSimple() || isList() || isMap());
+    }
+
+    @JsonIgnore
+    public boolean isCollectionWithBuilderMember() {
+        return (isList() && getListModel().getListMemberModel() != null && getListModel().getListMemberModel().hasBuilder()) ||
+               (isMap() && getMapModel().getValueModel() != null && getMapModel().getValueModel().hasBuilder());
+    }
+
     /**
      * Currently used only for JSON services.
      *
      * @return Marshalling type to use when creating a {@link MarshallingInfo}. Must be a field of {@link
-     * software.amazon.awssdk.protocol.MarshallingType}.
+     * software.amazon.awssdk.core.protocol.MarshallingType}.
      */
     public String getMarshallingType() {
         if (isList()) {
@@ -514,6 +532,15 @@ public class MemberModel extends DocumentationModel {
     @Override
     public String toString() {
         return c2jName;
+    }
+
+    private void appendParagraph(StringBuilder builder, String content, Object... contentArgs) {
+        builder.append("<p>")
+               .append(LF)
+               .append(String.format(content, contentArgs))
+               .append(LF)
+               .append("</p>")
+               .append(LF);
     }
 
 }

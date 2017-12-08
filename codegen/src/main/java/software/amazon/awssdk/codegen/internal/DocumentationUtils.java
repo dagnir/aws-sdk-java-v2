@@ -26,12 +26,7 @@ import java.util.Set;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 
-public class DocumentationUtils {
-
-    public static final String DEFAULT_ASYNC_RETURN =
-            "A Java Future containing the result of the %s operation returned by the service.";
-
-    public static final String DEFAULT_SYNC_RETURN = "Result of the %s operation returned by the service.";
+public final class DocumentationUtils {
 
     public static final String DEFAULT_SETTER = "Sets the value of the %s property for this object.";
 
@@ -44,15 +39,6 @@ public class DocumentationUtils {
     public static final String DEFAULT_FLUENT_RETURN =
             "Returns a reference to this object so that method calls can be chained together.";
 
-    public static final String CONSTRUCTOR_DOC =
-            "Constructs a new %s object. Callers should use the setter or fluent setter (with...) methods to initialize any " +
-            "additional object members.";
-
-    public static final String LIST_VARARG_ADDITIONAL_DOC =
-            "<p><b>NOTE:</b> This method appends the values to the existing list (if any). Use " +
-            "{@link #set%s(java.util.Collection)} or {@link #with%s(java.util.Collection)} if you want to override the " +
-            "existing values.</p>";
-
     //TODO kylthoms@: probably should move this to a custom config in each service
     private static final Set<String> SERVICES_EXCLUDED_FROM_CROSS_LINKING = new HashSet<>(Arrays.asList(
             "apigateway", "budgets", "cloudsearch", "cloudsearchdomain",
@@ -60,16 +46,7 @@ public class DocumentationUtils {
             "iot", "data.iot", "machinelearning", "rekognition", "s3", "sdb", "swf"
                                                                                                        ));
 
-    public static String generateSetterDocumentation() {
-        return null;
-    }
-
-    public static String generateGetterDocumentation() {
-        return null;
-    }
-
-    public static String generateWitherDocumentation() {
-        return null;
+    private DocumentationUtils() {
     }
 
     /**
@@ -132,7 +109,7 @@ public class DocumentationUtils {
      */
     public static String createLinkToServiceDocumentation(Metadata metadata, String name) {
         if (isCrossLinkingEnabledForService(metadata)) {
-            return String.format("@see <a href=\"http://%s/goto/WebAPI/%s/%s\" target=\"_top\">AWS API Documentation</a>",
+            return String.format("<a href=\"http://%s/goto/WebAPI/%s/%s\" target=\"_top\">AWS API Documentation</a>",
                                  AWS_DOCS_HOST,
                                  metadata.getUid(),
                                  name);

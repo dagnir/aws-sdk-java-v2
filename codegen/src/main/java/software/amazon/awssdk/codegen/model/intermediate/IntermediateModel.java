@@ -15,18 +15,23 @@
 
 package software.amazon.awssdk.codegen.model.intermediate;
 
+import static software.amazon.awssdk.codegen.internal.Constants.APPROVED_SIMPLE_METHOD_VERBS;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-
-import org.joda.time.DateTime;
+import java.util.stream.Collectors;
 import software.amazon.awssdk.codegen.internal.Utils;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
-import software.amazon.awssdk.util.ValidationUtils;
+import software.amazon.awssdk.codegen.model.service.PaginatorDefinition;
+import software.amazon.awssdk.core.AmazonWebServiceResult;
+import software.amazon.awssdk.core.ResponseMetadata;
 import software.amazon.awssdk.utils.IoUtils;
 
 public final class IntermediateModel {
@@ -49,34 +54,34 @@ public final class IntermediateModel {
     private final Map<String, AuthorizerModel> customAuthorizers;
 
     @JsonIgnore
-    private final Map<String, WaiterDefinitionModel> waiters;
+    private final Map<String, PaginatorDefinition> paginators;
 
     @JsonCreator
     public IntermediateModel(
-            @JsonProperty("metadata") Metadata metadata,
-            @JsonProperty("operations") Map<String, OperationModel> operations,
-            @JsonProperty("shapes") Map<String, ShapeModel> shapes,
-            @JsonProperty("customizationConfig") CustomizationConfig customizationConfig,
-            @JsonProperty("serviceExamples") ServiceExamples examples) {
+        @JsonProperty("metadata") Metadata metadata,
+        @JsonProperty("operations") Map<String, OperationModel> operations,
+        @JsonProperty("shapes") Map<String, ShapeModel> shapes,
+        @JsonProperty("customizationConfig") CustomizationConfig customizationConfig,
+        @JsonProperty("serviceExamples") ServiceExamples examples) {
 
         this(metadata, operations, shapes, customizationConfig, examples, Collections.emptyMap(), Collections.emptyMap());
     }
 
     public IntermediateModel(
-            Metadata metadata,
-            Map<String, OperationModel> operations,
-            Map<String, ShapeModel> shapes,
-            CustomizationConfig customizationConfig,
-            ServiceExamples examples,
-            Map<String, WaiterDefinitionModel> waiters,
-            Map<String, AuthorizerModel> customAuthorizers) {
+        Metadata metadata,
+        Map<String, OperationModel> operations,
+        Map<String, ShapeModel> shapes,
+        CustomizationConfig customizationConfig,
+        ServiceExamples examples,
+        Map<String, AuthorizerModel> customAuthorizers,
+        Map<String, PaginatorDefinition> paginators) {
         this.metadata = metadata;
         this.operations = operations;
         this.shapes = shapes;
         this.customizationConfig = customizationConfig;
         this.examples = examples;
-        this.waiters = ValidationUtils.assertNotNull(waiters, "waiters");
         this.customAuthorizers = customAuthorizers;
+        this.paginators = paginators;
     }
 
     public Metadata getMetadata() {
@@ -107,20 +112,16 @@ public final class IntermediateModel {
         return examples;
     }
 
-    public Map<String, WaiterDefinitionModel> getWaiters() {
-        return waiters;
+    public Map<String, PaginatorDefinition> getPaginators() {
+        return paginators;
     }
 
     /**
      * @return Exception unmarshaller implementation to use. Currently only needed by XML based
-     *     protocols.
+     * protocols.
      */
     public String getExceptionUnmarshallerImpl() {
-        if (customizationConfig.getCustomExceptionUnmarshallerImpl() != null) {
-            return customizationConfig.getCustomExceptionUnmarshallerImpl();
-        } else {
-            return metadata.getProtocolDefaultExceptionUmarshallerImpl();
-        }
+        return metadata.getProtocolDefaultExceptionUmarshallerImpl();
     }
 
     public String getServiceBaseExceptionFqcn() {
@@ -143,48 +144,51 @@ public final class IntermediateModel {
     }
 
     public String getFileHeader() throws IOException {
-        if (customizationConfig.getCustomFileHeader() != null) {
-            return String.format("/**%n%s%n*/", customizationConfig.getCustomFileHeader());
-        } else {
-            return loadDeafultFileHeader();
-        }
+        return loadDefaultFileHeader();
     }
 
-    private String loadDeafultFileHeader() throws IOException {
+    private String loadDefaultFileHeader() throws IOException {
         try (InputStream inputStream = getClass()
-                .getResourceAsStream("/software/amazon/awssdk/codegen/DefaultFileHeader.txt")) {
+            .getResourceAsStream("/software/amazon/awssdk/codegen/DefaultFileHeader.txt")) {
             return IoUtils.toString(inputStream)
                           .replaceFirst("%COPYRIGHT_DATE_RANGE%", getCopyrightDateRange());
         }
     }
 
     private String getCopyrightDateRange() {
-        final int currentYear = DateTime.now().getYear();
+        final int currentYear = ZonedDateTime.now().getYear();
         final int copyrightStartYear = currentYear - 5;
         return String.format("%d-%d", copyrightStartYear, currentYear);
-    }
-
-    public boolean getHasWaiters() {
-        return waiters.size() > 0;
     }
 
     public String getSdkBaseResponseFqcn() {
         if (metadata.getProtocol() == Protocol.API_GATEWAY) {
             return "software.amazon.awssdk.opensdk.BaseResult";
         } else {
-            return String.format("software.amazon.awssdk.AmazonWebServiceResult<%s>",
+            return String.format("%s<%s>",
+                                 AmazonWebServiceResult.class.getName(),
                                  getResponseMetadataClassName());
         }
     }
 
     private String getResponseMetadataClassName() {
-        return customizationConfig.getCustomResponseMetadataClassName() == null ?
-               "software.amazon.awssdk.ResponseMetadata" :
-               customizationConfig.getCustomResponseMetadataClassName();
+        return ResponseMetadata.class.getName();
     }
 
+    @JsonIgnore
+    public List<OperationModel> simpleMethodsRequiringTesting() {
+        return getOperations().values().stream()
+                              .filter(v -> v.getInputShape().isSimpleMethod())
+                              .filter(v -> !getCustomizationConfig().getVerifiedSimpleMethods().contains(v.getMethodName()))
+                              .filter(v -> v.getMethodName().matches(APPROVED_SIMPLE_METHOD_VERBS))
+                              .collect(Collectors.toList());
+    }
 
     public Map<String, AuthorizerModel> getCustomAuthorizers() {
         return customAuthorizers;
+    }
+
+    public boolean hasPaginators() {
+        return paginators.size() > 0;
     }
 }

@@ -15,17 +15,18 @@
 
 package software.amazon.awssdk.services.s3;
 
+import static software.amazon.awssdk.testutils.service.S3BucketUtils.temporaryBucketName;
+
 import java.io.File;
 import java.util.Date;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import software.amazon.awssdk.sync.RequestBody;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
-import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.testutils.RandomTempFile;
 
 /**
  * Integration test for the copyObject operation.
@@ -35,7 +36,7 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
     /**
      * The S3 bucket created and used by these tests.
      */
-    private static final String BUCKET_NAME = "copy-object-integ-test-" + new Date().getTime();
+    private static final String BUCKET_NAME = temporaryBucketName("copy-object-integ-test");
     /**
      * The key of the object being copied.
      */
@@ -68,14 +69,9 @@ public class CopyObjectIntegrationTest extends S3IntegrationTestBase {
      */
     @BeforeClass
     public static void initializeTestData() throws Exception {
-        s3.createBucket(CreateBucketRequest.builder()
-                                           .bucket(BUCKET_NAME)
-                                           .createBucketConfiguration(CreateBucketConfiguration.builder()
-                                                                                               .locationConstraint("us-west-2")
-                                                                                               .build())
-                                           .build());
+        createBucket(BUCKET_NAME);
 
-        file = getRandomTempFile("copy-object-integ-test-" + new Date().getTime(), CONTENT_LENGTH);
+        file = new RandomTempFile("copy-object-integ-test-" + new Date().getTime(), CONTENT_LENGTH);
 
         s3.putObject(PutObjectRequest.builder()
                                      .bucket(BUCKET_NAME)

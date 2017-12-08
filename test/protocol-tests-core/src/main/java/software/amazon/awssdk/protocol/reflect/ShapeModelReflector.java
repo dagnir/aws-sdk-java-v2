@@ -21,8 +21,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,6 +32,7 @@ import java.util.stream.StreamSupport;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
+import software.amazon.awssdk.utils.StringUtils;
 
 /**
  * Transforms a JSON representation (using C2J member names) of a modeled POJO into that POJO.
@@ -134,14 +135,14 @@ public class ShapeModelReflector {
      */
     private Method getMemberSetter(Class<?> containingClass, MemberModel currentMember) throws
                                                                                         Exception {
-        return containingClass.getMethod("set" + currentMember.getName(),
+        return containingClass.getMethod(StringUtils.uncapitalize(currentMember.getName()),
                                          Class.forName(getFullyQualifiedType(currentMember)));
     }
 
     private String getFullyQualifiedType(MemberModel memberModel) {
         if (memberModel.isSimple()) {
             switch (memberModel.getVariable().getSimpleType()) {
-                case "Date":
+                case "Instant":
                 case "ByteBuffer":
                 case "InputStream":
                     return memberModel.getSetterModel().getVariableSetterType();
@@ -216,8 +217,8 @@ public class ShapeModelReflector {
                 return currentNode.asBoolean();
             case "Double":
                 return currentNode.asDouble();
-            case "Date":
-                return new Date(currentNode.asLong());
+            case "Instant":
+                return Instant.ofEpochMilli(currentNode.asLong());
             case "ByteBuffer":
                 return ByteBuffer.wrap(currentNode.asText().getBytes(StandardCharsets.UTF_8));
             case "Float":

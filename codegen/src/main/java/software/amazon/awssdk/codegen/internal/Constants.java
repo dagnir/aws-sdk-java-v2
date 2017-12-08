@@ -15,10 +15,7 @@
 
 package software.amazon.awssdk.codegen.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-public class Constants {
+public final class Constants {
 
     public static final String CODEGEN_CONFIG_FILE = "codegen.config";
 
@@ -51,7 +48,7 @@ public class Constants {
 
     public static final String PACKAGE_NAME_TRANSFORM_PATTERN = "%s.transform";
 
-    public static final String PACKAGE_NAME_WAITERS_PATTERN = "%s.waiters";
+    public static final String PACKAGE_NAME_PAGINATORS_PATTERN = "%s.paginators";
 
     public static final String PACKAGE_NAME_SMOKE_TEST_PATTERN = "%s.smoketests";
 
@@ -73,8 +70,10 @@ public class Constants {
 
     public static final String LF = System.lineSeparator();
 
-    public static final Log LOGGER = LogFactory.getLog("software.amazon.awssdk.javasdk.codegen");
-
     public static final String AWS_DOCS_HOST = "docs.aws.amazon.com";
 
+    public static final String APPROVED_SIMPLE_METHOD_VERBS = "(get|list|describe|lookup|batchGet).*";
+
+    private Constants() {
+    }
 }

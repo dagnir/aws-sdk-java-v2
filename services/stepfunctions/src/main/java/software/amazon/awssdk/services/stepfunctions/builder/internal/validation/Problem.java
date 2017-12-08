@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.services.stepfunctions.builder.internal.validation;
 
-import software.amazon.awssdk.annotation.SdkInternalApi;
+import software.amazon.awssdk.annotations.SdkInternalApi;
 
 /**
  * Validation problem.
@@ -26,7 +26,7 @@ final class Problem {
     private final ValidationContext context;
     private final String message;
 
-    public Problem(ValidationContext context, String message) {
+    Problem(ValidationContext context, String message) {
         this.context = context;
         this.message = message;
     }
