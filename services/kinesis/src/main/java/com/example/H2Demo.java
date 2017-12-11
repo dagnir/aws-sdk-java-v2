@@ -1,31 +1,25 @@
-package software.amazon.awssdk.services;
-
-import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
+package com.example;
 
 import java.net.URI;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.BasicConfigurator;
 import software.amazon.awssdk.core.AwsSystemSetting;
 import software.amazon.awssdk.core.auth.AwsCredentials;
+import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.core.client.builder.ClientAsyncHttpConfiguration;
+import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.core.regions.Region;
+import software.amazon.awssdk.core.retry.PredefinedRetryPolicies;
+import software.amazon.awssdk.core.retry.RetryPolicyAdapter;
 import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 import software.amazon.awssdk.http.nio.netty.h2.NettyH2AsyncHttpClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
+import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.kinesis.model.ListStreamsResponse;
-import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
-import software.amazon.awssdk.utils.FunctionalUtils;
 
 public class H2Demo {
 
+    private static final AwsCredentialsProvider CREDENTIALS = () ->
+        new AwsCredentials("AKIAFKNUZVAC6HDWUJRA", "YF/V6JcKVN30trTF5jqgXEVAJNkAOb/N20GXuHsq");
     public static final int COUNT = 500_000;
     public static final int INTERVAL = 10;
 
@@ -33,23 +27,47 @@ public class H2Demo {
         BasicConfigurator.configure();
 
         System.setProperty(AwsSystemSetting.AWS_CBOR_ENABLED.property(), "false");
+        KinesisClient.builder()
+                     .credentialsProvider(CREDENTIALS)
+                     .region(Region.US_EAST_1)
+                     .endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
+                     .overrideConfiguration(ClientOverrideConfiguration
+                                                .builder()
+                                                .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
+                                                .build())
+                     .build()
+                     .listStreams();
         NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient();
         KinesisAsyncClient client = KinesisAsyncClient
             .builder()
-            .credentialsProvider(() -> new AwsCredentials("AKIAFKNUZVAC6HDWUJRA", "YF/V6JcKVN30trTF5jqgXEVAJNkAOb/N20GXuHsq"))
+            .credentialsProvider(CREDENTIALS)
             .asyncHttpConfiguration(ClientAsyncHttpConfiguration
                                         .builder()
                                         .httpClient(sdkHttpClient)
-//                                         .httpClientFactory(NettySdkHttpClientFactory.builder().trustAllCertificates(true).build())
+                                        //                                        .httpClientFactory(NettySdkHttpClientFactory.builder()
+                                        //                                                                                    .trustAllCertificates(true)
+                                        //                                                                                    .build())
                                         .build())
             .region(Region.US_EAST_1)
-            .endpointOverride(URI.create("https://yasemin-6.desktop.amazon.com:8001"))
+            .endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
+            .overrideConfiguration(ClientOverrideConfiguration
+                                       .builder()
+                                       .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
+                                       .build())
             .build();
 
-        client.listStreams()
-              .thenApply(ListStreamsResponse::streamNames)
-              .thenAccept(s -> s.forEach(System.out::println))
-              .join();
+        while (true) {
+            try {
+                System.out.println(client.describeLimits().join());
+                //                client.listStreams()
+                //                      .thenApply(ListStreamsResponse::streamNames)
+                //                      .thenAccept(s -> s.forEach(System.out::println))
+                //                      .join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Thread.sleep(5000);
+        }
 
         //        List<Throwable> exceptions = new ArrayList<>();
         //        CountDownLatch latch = new CountDownLatch(COUNT);
@@ -90,8 +108,6 @@ public class H2Demo {
         //        }
         //        executorService.shutdown();
         //        executorService.awaitTermination(30, TimeUnit.SECONDS);
-        System.out.println("SHUTTING DOWN CLIENT");
-        client.close();
-        sdkHttpClient.close();
+        //        System.out.println("SHUTTING DOWN CLIENT");
     }
 }
