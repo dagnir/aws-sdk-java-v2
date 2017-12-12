@@ -56,7 +56,7 @@ public final class DefaultEventLoopGroupFactory
     @Override
     public EventLoopGroup create() {
         int numThreads = numberOfThreads == null ? 0 : numberOfThreads;
-        return new NioEventLoopGroup(numThreads, resolveThreadFactory());
+        return new NioEventLoopGroup(1, resolveThreadFactory());
         /*
         Need to investigate why epoll is raising channel inactive after succesful response that causes
         problems with retries.
