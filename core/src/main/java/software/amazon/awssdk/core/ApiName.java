@@ -15,7 +15,7 @@
 
 package software.amazon.awssdk.core;
 
-import static software.amazon.awssdk.utils.Validate.notNull;
+import static software.amazon.awssdk.utils.Validate.paramNotNull;
 
 /**
  * Encapsulates the API name and version of a library built using the AWS SDK.
@@ -27,8 +27,8 @@ public final class ApiName {
     private final String version;
 
     private ApiName(BuilderImpl b) {
-        this.name = notNull(b.name, "name must not be null");
-        this.version = notNull(b.version, "version must not be null");
+        this.name = paramNotNull(b.name, "name");
+        this.version = paramNotNull(b.version, "version");
     }
 
     public String name() {
