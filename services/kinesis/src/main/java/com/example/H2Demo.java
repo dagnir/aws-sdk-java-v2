@@ -1,7 +1,20 @@
 package com.example;
 
+import static java.util.Collections.singletonList;
+
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Semaphore;
 import org.apache.log4j.BasicConfigurator;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import software.amazon.awssdk.core.AwsSystemSetting;
 import software.amazon.awssdk.core.auth.AwsCredentials;
 import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
@@ -10,34 +23,40 @@ import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.core.retry.PredefinedRetryPolicies;
 import software.amazon.awssdk.core.retry.RetryPolicyAdapter;
+import software.amazon.awssdk.core.util.ImmutableMapParameter;
+import software.amazon.awssdk.core.util.StringInputStream;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
+import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.SdkRequestContext;
+import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
+import software.amazon.awssdk.http.nio.netty.h2.H2MetricsCollector;
 import software.amazon.awssdk.http.nio.netty.h2.NettyH2AsyncHttpClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.kinesis.model.ListStreamsResponse;
+import software.amazon.awssdk.services.kinesis.model.KinesisException;
+import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
+import software.amazon.awssdk.utils.BinaryUtils;
 
 public class H2Demo {
 
     private static final AwsCredentialsProvider CREDENTIALS = () ->
-        new AwsCredentials("AKIAFKNUZVAC6HDWUJRA", "YF/V6JcKVN30trTF5jqgXEVAJNkAOb/N20GXuHsq");
+        new AwsCredentials("AKIAGTRV6ARSGLEGSSKQ", "3NiC+3IVBgVNValHyCiIkh2SamQWrAbtHrc9XS6O");
     public static final int COUNT = 500_000;
     public static final int INTERVAL = 10;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, UnsupportedEncodingException {
         BasicConfigurator.configure();
 
-        System.setProperty(AwsSystemSetting.AWS_CBOR_ENABLED.property(), "false");
-        KinesisClient.builder()
-                     .credentialsProvider(CREDENTIALS)
-                     .region(Region.US_EAST_1)
-                     .endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
-                     .overrideConfiguration(ClientOverrideConfiguration
-                                                .builder()
-                                                .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
-                                                .build())
-                     .build()
-                     .listStreams();
-        NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient();
+//        System.setProperty(AwsSystemSetting.AWS_CBOR_ENABLED.property(), "false");
+        NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient(new H2MetricsCollector() {
+            @Override
+            public void putMetric(String methodName, String metricName, double metric) {
+//                System.out.printf("METRIC: %s-%s = %f\n", methodName, metricName, metric);
+            }
+        }, 10);
+        //        makeRequest(sdkHttpClient);
         KinesisAsyncClient client = KinesisAsyncClient
             .builder()
             .credentialsProvider(CREDENTIALS)
@@ -49,24 +68,32 @@ public class H2Demo {
                                         //                                                                                    .build())
                                         .build())
             .region(Region.US_EAST_1)
-            .endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
+            .endpointOverride(URI.create("https://kinesis-devperf2.us-east-1.amazon.com"))
             .overrideConfiguration(ClientOverrideConfiguration
                                        .builder()
                                        .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
                                        .build())
             .build();
 
+        Semaphore permits = new Semaphore(1);
+
+        int count = 0;
         while (true) {
-            try {
-                System.out.println(client.describeLimits().join());
-                //                client.listStreams()
-                //                      .thenApply(ListStreamsResponse::streamNames)
-                //                      .thenAccept(s -> s.forEach(System.out::println))
-                //                      .join();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            Thread.sleep(5000);
+            permits.acquire();
+            System.out.println("Executing request = " + ++count);
+            client.putRecord(PutRecordRequest.builder()
+                                             .streamName("prashray-50")
+                                             .partitionKey(UUID.randomUUID().toString())
+                                             .data(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}))
+                                             .build())
+                  .whenComplete((r, e) -> {
+                      permits.release();
+                      if (r != null) {
+                          System.out.println(r);
+                      } else if (!(e.getCause() instanceof KinesisException)) {
+                          e.printStackTrace();
+                      }
+                  }).join();
         }
 
         //        List<Throwable> exceptions = new ArrayList<>();
@@ -109,5 +136,92 @@ public class H2Demo {
         //        executorService.shutdown();
         //        executorService.awaitTermination(30, TimeUnit.SECONDS);
         //        System.out.println("SHUTTING DOWN CLIENT");
+    }
+
+    private static void makeRequest(NettyH2AsyncHttpClient sdkHttpClient) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        sdkHttpClient.prepareRequest(SdkHttpFullRequest.builder()
+                                                       .method(SdkHttpMethod.POST)
+                                                       .headers(ImmutableMapParameter.<String, List<String>>builder()
+                                                                    .put("Authorization", singletonList("AWS4-HMAC-SHA256 Credential=AKIAGTRV6ARSGLEGSSKQ/20180115/us-east-1/kinesis/aws4_request, SignedHeaders=content-length;content-type;user-agent;x-amz-date;x-amz-sdk-invocation-id;x-amz-target, Signature=37ebc3e8fbaa578ec821635bcdd8bb1d1a33fc8ee68fca74d7c23c360be1e622"))
+                                                                    .put("Content-Length", singletonList("104"))
+                                                                    .put("Content-Type", singletonList("application/x-amz-json-1.1"))
+                                                                    .put("Host", singletonList("kinesis-devperf2.us-east-1.amazon.com"))
+                                                                    .put("User-Agent", singletonList("aws-sdk-java/2.0.0-preview-5-SNAPSHOT Mac_OS_X/10.12.6 Java_HotSpot(TM)_64-Bit_Server_VM/9.0.1+11/9.0.1"))
+                                                                    .put("X-Amz-Date", singletonList("20180115T201830Z"))
+                                                                    .put("x-amz-sdk-invocation-id", singletonList("x-amz-sdk-invocation-id: 908cee5e-31c9-18e8-8660-7675841faddb"))
+                                                                    .put("X-Amz-Target", singletonList("Kinesis_20131202.PutRecord"))
+                                                                    .build())
+                                                       .host("kinesis-devperf2.us-east-1.amazon.com")
+                                                       .encodedPath("/")
+                                                       .port(443)
+                                                       .protocol("https")
+                                                       .build(), SdkRequestContext.builder().build(), new SdkHttpRequestProvider() {
+                                         @Override
+                                         public long contentLength() {
+                                             return 104;
+                                         }
+
+                                         @Override
+                                         public void subscribe(Subscriber<? super ByteBuffer> subscriber) {
+                                             subscriber.onSubscribe(new Subscription() {
+                                                 @Override
+                                                 public void request(long l) {
+                                                     subscriber.onNext(ByteBuffer.wrap("{\"StreamName\":\"prashray-50\",\"Data\":\"AQIDBAUGBwgJ\",\"PartitionKey\":\"9aa44c57-fafb-48b0-8759-489b2a49466e\"}".getBytes(StandardCharsets.UTF_8)));
+                                                     subscriber.onComplete();
+                                                 }
+
+                                                 @Override
+                                                 public void cancel() {
+
+                                                 }
+                                             });
+                                         }
+                                     },
+                                     new SdkHttpResponseHandler<Void>() {
+                                         @Override
+                                         public void headersReceived(SdkHttpResponse response) {
+
+                                         }
+
+                                         @Override
+                                         public void onStream(Publisher<ByteBuffer> publisher) {
+                                             publisher.subscribe(new Subscriber<ByteBuffer>() {
+                                                 @Override
+                                                 public void onSubscribe(Subscription subscription) {
+                                                     subscription.request(Long.MAX_VALUE);
+                                                 }
+
+                                                 @Override
+                                                 public void onNext(ByteBuffer buffer) {
+                                                     System.out.println(new String(BinaryUtils.copyBytesFrom(buffer), StandardCharsets.UTF_8));
+                                                 }
+
+                                                 @Override
+                                                 public void onError(Throwable throwable) {
+                                                     throwable.printStackTrace();
+                                                 }
+
+                                                 @Override
+                                                 public void onComplete() {
+                                                 }
+                                             });
+
+                                         }
+
+                                         @Override
+                                         public void exceptionOccurred(Throwable throwable) {
+                                             future.completeExceptionally(throwable);
+                                         }
+
+                                         @Override
+                                         public Void complete() {
+                                             future.complete(null);
+                                             return null;
+                                         }
+                                     }
+        ).run();
+
+        future.join();
     }
 }
