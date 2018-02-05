@@ -35,52 +35,39 @@ import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 import software.amazon.awssdk.http.nio.netty.h2.H2MetricsCollector;
 import software.amazon.awssdk.http.nio.netty.h2.NettyH2AsyncHttpClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClientBuilder;
 import software.amazon.awssdk.services.kinesis.model.KinesisException;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.utils.BinaryUtils;
 
 public class H2Demo {
 
-    private static final AwsCredentialsProvider CREDENTIALS = () ->
-        new AwsCredentials("AKIAGTRV6ARSGLEGSSKQ", "3NiC+3IVBgVNValHyCiIkh2SamQWrAbtHrc9XS6O");
     public static final int COUNT = 500_000;
     public static final int INTERVAL = 10;
 
     public static void main(String[] args) throws InterruptedException, UnsupportedEncodingException {
         BasicConfigurator.configure();
 
-//        System.setProperty(AwsSystemSetting.AWS_CBOR_ENABLED.property(), "false");
-        NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient(new H2MetricsCollector() {
-            @Override
-            public void putMetric(String methodName, String metricName, double metric) {
-//                System.out.printf("METRIC: %s-%s = %f\n", methodName, metricName, metric);
-            }
-        }, 10);
-        //        makeRequest(sdkHttpClient);
-        KinesisAsyncClient client = KinesisAsyncClient
-            .builder()
-            .credentialsProvider(CREDENTIALS)
-            .asyncHttpConfiguration(ClientAsyncHttpConfiguration
-                                        .builder()
-                                        .httpClient(sdkHttpClient)
-                                        //                                        .httpClientFactory(NettySdkHttpClientFactory.builder()
-                                        //                                                                                    .trustAllCertificates(true)
-                                        //                                                                                    .build())
-                                        .build())
-            .region(Region.US_EAST_1)
-            .endpointOverride(URI.create("https://kinesis-devperf2.us-east-1.amazon.com"))
-            .overrideConfiguration(ClientOverrideConfiguration
-                                       .builder()
-                                       .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
-                                       .build())
-            .build();
+        NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient(10);
+        KinesisAsyncClient client = alpha(
+            KinesisAsyncClient
+                .builder()
+                .asyncHttpConfiguration(ClientAsyncHttpConfiguration
+                                            .builder()
+                                            .httpClient(sdkHttpClient)
+                                            //.httpClientFactory(NettySdkHttpClientFactory.builder()
+                                            //.trustAllCertificates(true)
+                                            //.build())
+                                            .build())
+                .overrideConfiguration(ClientOverrideConfiguration
+                                           .builder()
+                                           .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
+                                           .build())
+        ).build();
 
         Semaphore permits = new Semaphore(1);
 
-        int count = 0;
-        while (true) {
-            permits.acquire();
-            System.out.println("Executing request = " + ++count);
+        while(true) {
             client.putRecord(PutRecordRequest.builder()
                                              .streamName("prashray-50")
                                              .partitionKey(UUID.randomUUID().toString())
@@ -89,12 +76,29 @@ public class H2Demo {
                   .whenComplete((r, e) -> {
                       permits.release();
                       if (r != null) {
-                          System.out.println(r);
+                          System.out.println("SUCCESS: " + r);
                       } else if (!(e.getCause() instanceof KinesisException)) {
                           e.printStackTrace();
                       }
                   }).join();
+            break;
         }
+        sdkHttpClient.close();
+        //            System.out.println("Executing request = " + ++count);
+        //            client.putRecord(PutRecordRequest.builder()
+        //                                             .streamName("prashray-50")
+        //                                             .partitionKey(UUID.randomUUID().toString())
+        //                                             .data(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}))
+        //                                             .build())
+        //                  .whenComplete((r, e) -> {
+        //                      permits.release();
+        //                      if (r != null) {
+        //                          System.out.println(r);
+        //                      } else if (!(e.getCause() instanceof KinesisException)) {
+        //                          e.printStackTrace();
+        //                      }
+        //                  }).join();
+        //        }
 
         //        List<Throwable> exceptions = new ArrayList<>();
         //        CountDownLatch latch = new CountDownLatch(COUNT);
@@ -136,6 +140,18 @@ public class H2Demo {
         //        executorService.shutdown();
         //        executorService.awaitTermination(30, TimeUnit.SECONDS);
         //        System.out.println("SHUTTING DOWN CLIENT");
+    }
+
+    private static KinesisAsyncClientBuilder alpha(KinesisAsyncClientBuilder builder) {
+        return builder.endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
+                      .region(Region.US_WEST_2)
+                      .credentialsProvider(() -> new AwsCredentials("AKIAFKNUZVAC6HDWUJRA", "YF/V6JcKVN30trTF5jqgXEVAJNkAOb/N20GXuHsq"));
+    }
+
+    private static KinesisAsyncClientBuilder devPerf(KinesisAsyncClientBuilder builder) {
+        return builder.endpointOverride(URI.create("https://kinesis-devperf2.us-east-1.amazon.com"))
+                      .region(Region.US_EAST_1)
+                      .credentialsProvider(() -> new AwsCredentials("AKIAGTRV6ARSGLEGSSKQ", "3NiC+3IVBgVNValHyCiIkh2SamQWrAbtHrc9XS6O"));
     }
 
     private static void makeRequest(NettyH2AsyncHttpClient sdkHttpClient) {
