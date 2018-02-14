@@ -1,16 +1,24 @@
 package com.example;
 
 import static java.util.Collections.singletonList;
+import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.BasicConfigurator;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -39,6 +47,7 @@ import software.amazon.awssdk.services.kinesis.KinesisAsyncClientBuilder;
 import software.amazon.awssdk.services.kinesis.model.KinesisException;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.utils.BinaryUtils;
+import software.amazon.awssdk.utils.FunctionalUtils;
 
 public class H2Demo {
 
@@ -65,16 +74,14 @@ public class H2Demo {
                                            .build())
         ).build();
 
-        Semaphore permits = new Semaphore(1);
-
-        while(true) {
+        //
+        while (true) {
             client.putRecord(PutRecordRequest.builder()
                                              .streamName("prashray-50")
                                              .partitionKey(UUID.randomUUID().toString())
                                              .data(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}))
                                              .build())
                   .whenComplete((r, e) -> {
-                      permits.release();
                       if (r != null) {
                           System.out.println("SUCCESS: " + r);
                       } else if (!(e.getCause() instanceof KinesisException)) {
@@ -84,28 +91,13 @@ public class H2Demo {
             break;
         }
         sdkHttpClient.close();
-        //            System.out.println("Executing request = " + ++count);
-        //            client.putRecord(PutRecordRequest.builder()
-        //                                             .streamName("prashray-50")
-        //                                             .partitionKey(UUID.randomUUID().toString())
-        //                                             .data(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}))
-        //                                             .build())
-        //                  .whenComplete((r, e) -> {
-        //                      permits.release();
-        //                      if (r != null) {
-        //                          System.out.println(r);
-        //                      } else if (!(e.getCause() instanceof KinesisException)) {
-        //                          e.printStackTrace();
-        //                      }
-        //                  }).join();
-        //        }
 
         //        List<Throwable> exceptions = new ArrayList<>();
         //        CountDownLatch latch = new CountDownLatch(COUNT);
         //        AtomicInteger submitCount = new AtomicInteger(0);
         //
         //        int workerThreadCount = 1;
-        //        int councurrentConnections = 1;
+        //        int councurrentConnections = 10;
         //        ExecutorService executorService = Executors.newFixedThreadPool(workerThreadCount);
         //        for (int i = 0; i < workerThreadCount; i++) {
         //            executorService.submit(() -> {
@@ -113,9 +105,8 @@ public class H2Demo {
         //                while (submitCount.incrementAndGet() <= COUNT) {
         //                    invokeSafely((FunctionalUtils.UnsafeRunnable) permits::acquire);
         //                    client.putRecord(PutRecordRequest.builder()
-        //                                                     .stream("FooStream")
-        //                                                     .key("mykey")
-        //                                                     .explicitHashKey("mykey")
+        //                                                     .streamName("prashray-50")
+        //                                                     .partitionKey(UUID.randomUUID().toString())
         //                                                     .data(ByteBuffer.wrap(new byte[] {1, 2, 3}))
         //                                                     .build())
         //                          .whenComplete((r, e) -> {
@@ -144,7 +135,7 @@ public class H2Demo {
 
     private static KinesisAsyncClientBuilder alpha(KinesisAsyncClientBuilder builder) {
         return builder.endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
-                      .region(Region.US_WEST_2)
+                      .region(Region.US_EAST_1)
                       .credentialsProvider(() -> new AwsCredentials("AKIAFKNUZVAC6HDWUJRA", "YF/V6JcKVN30trTF5jqgXEVAJNkAOb/N20GXuHsq"));
     }
 
