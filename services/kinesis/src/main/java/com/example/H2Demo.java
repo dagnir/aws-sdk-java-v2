@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -19,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.log4j.BasicConfigurator;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -44,18 +47,34 @@ import software.amazon.awssdk.http.nio.netty.h2.H2MetricsCollector;
 import software.amazon.awssdk.http.nio.netty.h2.NettyH2AsyncHttpClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClientBuilder;
+import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.KinesisException;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
+import software.amazon.awssdk.services.kinesis.model.Record;
+import software.amazon.awssdk.services.kinesis.model.RecordBatchEvent;
+import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
+import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.BinaryUtils;
 import software.amazon.awssdk.utils.FunctionalUtils;
+import software.amazon.eventstream.MessageDecoder;
 
 public class H2Demo {
+
+    private static final String ALPHA_STREAM_NAME = "UpdateShardCountTest-00000";
+    private static final String DEVPERF_STREAM_NAME = "prashray-50";
 
     public static final int COUNT = 500_000;
     public static final int INTERVAL = 10;
 
     public static void main(String[] args) throws InterruptedException, UnsupportedEncodingException {
-        BasicConfigurator.configure();
+        //        BasicConfigurator.configure();
+        NettySdkHttpClientFactory build = NettySdkHttpClientFactory.builder()
+                                                                   .maxConnectionsPerEndpoint(200)
+                                                                   .build();
+        System.out.println(build    );
 
         NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient(10);
         KinesisAsyncClient client = alpha(
@@ -73,23 +92,107 @@ public class H2Demo {
                                            .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
                                            .build())
         ).build();
-
+        AtomicReference<SdkPublisher<RecordBatchEvent>> publisherRef = new AtomicReference<>();
+        ResponseIterator<SubscribeToShardResponse, RecordBatchEvent> iterator = client.subscribeToShardBlocking(SubscribeToShardRequest.builder()
+                                                                                                                                       .consumerName("shorea")
+                                                                                                                                       .shardId("shardId-000000000001")
+                                                                                                                                       .shardIteratorType(ShardIteratorType.LATEST)
+                                                                                                                                       .streamARN("arn:aws:kinesis:us-east-1:052958737983:stream/UpdateShardCountTest-00000")
+                                                                                                                                       .build());
+        //        CompletableFuture<Integer> result = client.subscribeToShard(SubscribeToShardRequest.builder()
+        //                                                                                           .consumerName("shorea")
+        //                                                                                           .shardId("shardId-000000000001")
+        //                                                                                           .shardIteratorType(ShardIteratorType.LATEST)
+        //                                                                                           .streamARN("arn:aws:kinesis:us-east-1:052958737983:stream/UpdateShardCountTest-00000")
+        //                                                                                           .build(),
+        //                                                                    new SdkFlowResponseHandler<SubscribeToShardResponse, RecordBatchEvent, Integer>() {
+        //                                                                        AtomicInteger count = new AtomicInteger(0);
         //
-        while (true) {
-            client.putRecord(PutRecordRequest.builder()
-                                             .streamName("prashray-50")
-                                             .partitionKey(UUID.randomUUID().toString())
-                                             .data(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}))
-                                             .build())
-                  .whenComplete((r, e) -> {
-                      if (r != null) {
-                          System.out.println("SUCCESS: " + r);
-                      } else if (!(e.getCause() instanceof KinesisException)) {
-                          e.printStackTrace();
-                      }
-                  }).join();
-            break;
-        }
+        //                                                                        @Override
+        //                                                                        public void responseReceived(SubscribeToShardResponse response) {
+        //                                                                            System.out.println("Initial Response = " + response);
+        //                                                                        }
+        //
+        //                                                                        @Override
+        //                                                                        public void onStream(SdkPublisher<RecordBatchEvent> p) {
+        //                                                                            publisherRef.set(p);
+        //                                                                            //                                                                            publisher.forEach(c -> {
+        //                                                                            //                                                                                count.incrementAndGet();
+        //                                                                            //                                                                                System.out.println("RECORDS = " + c);
+        //                                                                            //                                                                            });
+        //                                                                            //publisher.subscribe(new Subscriber<RecordBatchEvent>() {
+        //                                                                            //    @Override
+        //                                                                            //    public void onSubscribe(Subscription subscription) {
+        //                                                                            //        subscription.request(Long.MAX_VALUE);
+        //                                                                            //    }
+        //                                                                            //
+        //                                                                            //    @Override
+        //                                                                            //    public void onNext(RecordBatchEvent recordBatchEvent) {
+        //                                                                            //        count.incrementAndGet();
+        //                                                                            //        System.out.println("RECORDS = " + recordBatchEvent);
+        //                                                                            //    }
+        //                                                                            //
+        //                                                                            //    @Override
+        //                                                                            //    public void onError(Throwable throwable) {
+        //                                                                            //
+        //                                                                            //    }
+        //                                                                            //
+        //                                                                            //    @Override
+        //                                                                            //    public void onComplete() {
+        //                                                                            //
+        //                                                                            //    }
+        //                                                                            //});
+        //
+        //                                                                        }
+        //
+        //                                                                        @Override
+        //                                                                        public void exceptionOccurred(Throwable throwable) {
+        //
+        //                                                                        }
+        //
+        //                                                                        @Override
+        //                                                                        public Integer complete() {
+        //                                                                            return count.get();
+        //                                                                        }
+        //                                                                    });
+        System.out.println("Intial Response = " + iterator.response());
+        iterator.forEachRemaining(r -> System.out.println("RECORDS = " + r));
+
+        //        byte[] bytes = BinaryUtils.copyBytesFrom(result.join().eventStream());
+        //        System.out.println("--------------------------------------------------------------------------------BYTES");
+        //        for (byte b : bytes) {
+        ////            System.out.print(Integer.toHexString(b));
+        //            System.out.printf("0x%02X", b);
+        //            System.out.println(" ");
+        //        }
+        //        System.out.println("--------------------------------------------------------------------------------BYTES");
+        //        MessageDecoder messageDecoder = new MessageDecoder(m -> {
+        //            System.out.println(m.getHeaders());
+        //            System.out.println(new String(m.getPayload(), StandardCharsets.UTF_8));
+        //        });
+        //        messageDecoder.feed(BinaryUtils.copyBytesFrom(result.join().eventStream()));
+        //        client.createStream(CreateStreamRequest.builder()
+        //                                               .streamName(ALPHA_STREAM_NAME)
+        //                                               .shardCount(1)
+        //                                               .build())
+        //              .join();
+        //        describeStreams(client);
+
+        //        while (true) {
+        //            client.putRecord(PutRecordRequest.builder()
+        //                                             .streamName(ALPHA_STREAM_NAME)
+        //                                             .partitionKey(UUID.randomUUID().toString())
+        //                                             .data(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9}))
+        //                                             .build())
+        //                  .whenComplete((r, e) -> {
+        //                      if (r != null) {
+        //                          System.out.println("SUCCESS: " + r);
+        //                      } else if (!(e.getCause() instanceof KinesisException)) {
+        //                          e.printStackTrace();
+        //                      }
+        //                  }).join();
+        //            break;
+        //        }
         sdkHttpClient.close();
 
         //        List<Throwable> exceptions = new ArrayList<>();
@@ -131,6 +234,24 @@ public class H2Demo {
         //        executorService.shutdown();
         //        executorService.awaitTermination(30, TimeUnit.SECONDS);
         //        System.out.println("SHUTTING DOWN CLIENT");
+    }
+
+    private static void describeStreams(KinesisAsyncClient client) {
+        client.listStreams()
+              .join()
+              .streamNames()
+              .forEach(s -> {
+                  System.out.println("Describing stream - " + s);
+                  client.describeStream(
+                      DescribeStreamRequest.builder()
+                                           .streamName(s)
+                                           .build())
+                        .join()
+                        .streamDescription()
+                        .shards()
+                        .forEach(shard -> System.out.println(shard.shardId()));
+                  ;
+              });
     }
 
     private static KinesisAsyncClientBuilder alpha(KinesisAsyncClientBuilder builder) {
