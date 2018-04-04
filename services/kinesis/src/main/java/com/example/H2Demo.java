@@ -50,6 +50,7 @@ import software.amazon.awssdk.services.kinesis.KinesisAsyncClientBuilder;
 import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.KinesisException;
+import software.amazon.awssdk.services.kinesis.model.ListShardsRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.RecordBatchEvent;
@@ -63,18 +64,17 @@ import software.amazon.eventstream.MessageDecoder;
 
 public class H2Demo {
 
-    private static final String ALPHA_STREAM_NAME = "UpdateShardCountTest-00000";
+    private static final String ALPHA_STREAM_NAME = "foobar";
     private static final String DEVPERF_STREAM_NAME = "prashray-50";
 
     public static final int COUNT = 500_000;
     public static final int INTERVAL = 10;
 
     public static void main(String[] args) throws InterruptedException, UnsupportedEncodingException {
-        //        BasicConfigurator.configure();
+        BasicConfigurator.configure();
         NettySdkHttpClientFactory build = NettySdkHttpClientFactory.builder()
                                                                    .maxConnectionsPerEndpoint(200)
                                                                    .build();
-        System.out.println(build    );
 
         NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient(10);
         KinesisAsyncClient client = alpha(
@@ -92,71 +92,70 @@ public class H2Demo {
                                            .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
                                            .build())
         ).build();
-        AtomicReference<SdkPublisher<RecordBatchEvent>> publisherRef = new AtomicReference<>();
-        ResponseIterator<SubscribeToShardResponse, RecordBatchEvent> iterator = client.subscribeToShardBlocking(SubscribeToShardRequest.builder()
-                                                                                                                                       .consumerName("shorea")
-                                                                                                                                       .shardId("shardId-000000000001")
-                                                                                                                                       .shardIteratorType(ShardIteratorType.LATEST)
-                                                                                                                                       .streamARN("arn:aws:kinesis:us-east-1:052958737983:stream/UpdateShardCountTest-00000")
-                                                                                                                                       .build());
-        //        CompletableFuture<Integer> result = client.subscribeToShard(SubscribeToShardRequest.builder()
-        //                                                                                           .consumerName("shorea")
-        //                                                                                           .shardId("shardId-000000000001")
-        //                                                                                           .shardIteratorType(ShardIteratorType.LATEST)
-        //                                                                                           .streamARN("arn:aws:kinesis:us-east-1:052958737983:stream/UpdateShardCountTest-00000")
-        //                                                                                           .build(),
-        //                                                                    new SdkFlowResponseHandler<SubscribeToShardResponse, RecordBatchEvent, Integer>() {
-        //                                                                        AtomicInteger count = new AtomicInteger(0);
-        //
-        //                                                                        @Override
-        //                                                                        public void responseReceived(SubscribeToShardResponse response) {
-        //                                                                            System.out.println("Initial Response = " + response);
-        //                                                                        }
-        //
-        //                                                                        @Override
-        //                                                                        public void onStream(SdkPublisher<RecordBatchEvent> p) {
-        //                                                                            publisherRef.set(p);
-        //                                                                            //                                                                            publisher.forEach(c -> {
-        //                                                                            //                                                                                count.incrementAndGet();
-        //                                                                            //                                                                                System.out.println("RECORDS = " + c);
-        //                                                                            //                                                                            });
-        //                                                                            //publisher.subscribe(new Subscriber<RecordBatchEvent>() {
-        //                                                                            //    @Override
-        //                                                                            //    public void onSubscribe(Subscription subscription) {
-        //                                                                            //        subscription.request(Long.MAX_VALUE);
-        //                                                                            //    }
-        //                                                                            //
-        //                                                                            //    @Override
-        //                                                                            //    public void onNext(RecordBatchEvent recordBatchEvent) {
-        //                                                                            //        count.incrementAndGet();
-        //                                                                            //        System.out.println("RECORDS = " + recordBatchEvent);
-        //                                                                            //    }
-        //                                                                            //
-        //                                                                            //    @Override
-        //                                                                            //    public void onError(Throwable throwable) {
-        //                                                                            //
-        //                                                                            //    }
-        //                                                                            //
-        //                                                                            //    @Override
-        //                                                                            //    public void onComplete() {
-        //                                                                            //
-        //                                                                            //    }
-        //                                                                            //});
-        //
-        //                                                                        }
-        //
-        //                                                                        @Override
-        //                                                                        public void exceptionOccurred(Throwable throwable) {
-        //
-        //                                                                        }
-        //
-        //                                                                        @Override
-        //                                                                        public Integer complete() {
-        //                                                                            return count.get();
-        //                                                                        }
-        //                                                                    });
-        System.out.println("Intial Response = " + iterator.response());
-        iterator.forEachRemaining(r -> System.out.println("RECORDS = " + r));
+        client.listStreams().join().streamNames().forEach(System.out::println);
+        client.listShards(ListShardsRequest.builder()
+                                           .streamName("foobar")
+                                           .build()).join().shards().forEach(s -> System.out.println(s.shardId()));
+        //        ResponseIterator<SubscribeToShardResponse, RecordBatchEvent> iterator = client.subscribeToShardBlocking(SubscribeToShardRequest.builder()
+        //                                                                                                                                       .consumerARN(ALPHA_STREAM_NAME)
+        //                                                                                                                                       .shardId("shardId-000000000000")
+        //                                                                                                                                       .shardIteratorType(ShardIteratorType.LATEST)
+        //                                                                                                                                       .streamName(ALPHA_STREAM_NAME)
+        //                                                                                                                                       .build());
+        CompletableFuture<Integer> result = client.subscribeToShard(SubscribeToShardRequest.builder()
+                                                                                           .consumerARN(ALPHA_STREAM_NAME)
+                                                                                           .shardId("shardId-000000000000")
+                                                                                           .shardIteratorType(ShardIteratorType.LATEST)
+                                                                                           .streamName(ALPHA_STREAM_NAME)
+                                                                                           .build(),
+                                                                    new SdkFlowResponseHandler<SubscribeToShardResponse, RecordBatchEvent, Integer>() {
+                                                                        AtomicInteger count = new AtomicInteger(0);
+
+                                                                        @Override
+                                                                        public void responseReceived(SubscribeToShardResponse response) {
+                                                                            System.out.println("Initial Response = " + response);
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onStream(SdkPublisher<RecordBatchEvent> p) {
+                                                                            p.subscribe(new Subscriber<RecordBatchEvent>() {
+                                                                                @Override
+                                                                                public void onSubscribe(Subscription subscription) {
+                                                                                    subscription.request(Long.MAX_VALUE);
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onNext(RecordBatchEvent recordBatchEvent) {
+                                                                                    count.incrementAndGet();
+                                                                                    System.out.println("RECORDS = " + recordBatchEvent);
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onError(Throwable throwable) {
+
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onComplete() {
+
+                                                                                }
+                                                                            });
+
+                                                                        }
+
+                                                                        @Override
+                                                                        public void exceptionOccurred(Throwable throwable) {
+
+                                                                        }
+
+                                                                        @Override
+                                                                        public Integer complete() {
+                                                                            return count.get();
+                                                                        }
+                                                                    });
+        System.out.println(result.join());
+        //        System.out.println("Intial Response = " + iterator.response());
+        //        iterator.forEachRemaining(r -> System.out.println("RECORDS = " + r));
 
         //        byte[] bytes = BinaryUtils.copyBytesFrom(result.join().eventStream());
         //        System.out.println("--------------------------------------------------------------------------------BYTES");
