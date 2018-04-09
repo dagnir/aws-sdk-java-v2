@@ -1,41 +1,23 @@
 package com.example;
 
 import static java.util.Collections.singletonList;
-import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.log4j.BasicConfigurator;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import software.amazon.awssdk.core.AwsSystemSetting;
 import software.amazon.awssdk.core.auth.AwsCredentials;
-import software.amazon.awssdk.core.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.core.client.builder.ClientAsyncHttpConfiguration;
 import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.core.regions.Region;
-import software.amazon.awssdk.core.retry.PredefinedRetryPolicies;
-import software.amazon.awssdk.core.retry.RetryPolicyAdapter;
 import software.amazon.awssdk.core.util.ImmutableMapParameter;
-import software.amazon.awssdk.core.util.StringInputStream;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpResponse;
@@ -43,24 +25,16 @@ import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
-import software.amazon.awssdk.http.nio.netty.h2.H2MetricsCollector;
 import software.amazon.awssdk.http.nio.netty.h2.NettyH2AsyncHttpClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClientBuilder;
-import software.amazon.awssdk.services.kinesis.model.CreateStreamRequest;
 import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest;
-import software.amazon.awssdk.services.kinesis.model.KinesisException;
 import software.amazon.awssdk.services.kinesis.model.ListShardsRequest;
-import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
-import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.RecordBatchEvent;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
-import software.amazon.awssdk.utils.Base64Utils;
 import software.amazon.awssdk.utils.BinaryUtils;
-import software.amazon.awssdk.utils.FunctionalUtils;
-import software.amazon.eventstream.MessageDecoder;
 
 public class H2Demo {
 
@@ -89,7 +63,6 @@ public class H2Demo {
                                             .build())
                 .overrideConfiguration(ClientOverrideConfiguration
                                            .builder()
-                                           .retryPolicy(new RetryPolicyAdapter(PredefinedRetryPolicies.NO_RETRY_POLICY))
                                            .build())
         ).build();
         client.listStreams().join().streamNames().forEach(System.out::println);
@@ -153,7 +126,11 @@ public class H2Demo {
                                                                             return count.get();
                                                                         }
                                                                     });
-        System.out.println(result.join());
+        try {
+            System.out.println(result.join());
+        } catch (Exception e) {
+            client.close();
+        }
         //        System.out.println("Intial Response = " + iterator.response());
         //        iterator.forEachRemaining(r -> System.out.println("RECORDS = " + r));
 
@@ -256,13 +233,13 @@ public class H2Demo {
     private static KinesisAsyncClientBuilder alpha(KinesisAsyncClientBuilder builder) {
         return builder.endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
                       .region(Region.US_EAST_1)
-                      .credentialsProvider(() -> new AwsCredentials("AKIAFKNUZVAC6HDWUJRA", "YF/V6JcKVN30trTF5jqgXEVAJNkAOb/N20GXuHsq"));
+                      .credentialsProvider(() -> AwsCredentials.create("AKIAFKNUZVAC6HDWUJRA", "YF/V6JcKVN30trTF5jqgXEVAJNkAOb/N20GXuHsq"));
     }
 
     private static KinesisAsyncClientBuilder devPerf(KinesisAsyncClientBuilder builder) {
         return builder.endpointOverride(URI.create("https://kinesis-devperf2.us-east-1.amazon.com"))
                       .region(Region.US_EAST_1)
-                      .credentialsProvider(() -> new AwsCredentials("AKIAGTRV6ARSGLEGSSKQ", "3NiC+3IVBgVNValHyCiIkh2SamQWrAbtHrc9XS6O"));
+                      .credentialsProvider(() -> AwsCredentials.create("AKIAGTRV6ARSGLEGSSKQ", "3NiC+3IVBgVNValHyCiIkh2SamQWrAbtHrc9XS6O"));
     }
 
     private static void makeRequest(NettyH2AsyncHttpClient sdkHttpClient) {
