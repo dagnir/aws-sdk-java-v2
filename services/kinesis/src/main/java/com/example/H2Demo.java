@@ -16,6 +16,9 @@ import org.reactivestreams.Subscription;
 import software.amazon.awssdk.core.auth.AwsCredentials;
 import software.amazon.awssdk.core.client.builder.ClientAsyncHttpConfiguration;
 import software.amazon.awssdk.core.config.ClientOverrideConfiguration;
+import software.amazon.awssdk.core.flow.FlowPublisher;
+import software.amazon.awssdk.core.flow.FlowResponseTransformer;
+import software.amazon.awssdk.core.pagination.async.SdkPublisher;
 import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.core.util.ImmutableMapParameter;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
@@ -46,11 +49,7 @@ public class H2Demo {
 
     public static void main(String[] args) throws InterruptedException, UnsupportedEncodingException {
         BasicConfigurator.configure();
-        NettySdkHttpClientFactory build = NettySdkHttpClientFactory.builder()
-                                                                   .maxConnectionsPerEndpoint(200)
-                                                                   .build();
 
-        NettyH2AsyncHttpClient sdkHttpClient = new NettyH2AsyncHttpClient(10);
         KinesisAsyncClient client = alpha(
             KinesisAsyncClient
                 .builder()
@@ -81,7 +80,7 @@ public class H2Demo {
                                                                                            .shardIteratorType(ShardIteratorType.LATEST)
                                                                                            .streamName(ALPHA_STREAM_NAME)
                                                                                            .build(),
-                                                                    new SdkFlowResponseHandler<SubscribeToShardResponse, RecordBatchEvent, Integer>() {
+                                                                    new FlowResponseTransformer<SubscribeToShardResponse, RecordBatchEvent, Integer>() {
                                                                         AtomicInteger count = new AtomicInteger(0);
 
                                                                         @Override
@@ -90,7 +89,7 @@ public class H2Demo {
                                                                         }
 
                                                                         @Override
-                                                                        public void onStream(SdkPublisher<RecordBatchEvent> p) {
+                                                                        public void onStream(FlowPublisher<RecordBatchEvent> p) {
                                                                             p.subscribe(new Subscriber<RecordBatchEvent>() {
                                                                                 @Override
                                                                                 public void onSubscribe(Subscription subscription) {
