@@ -65,20 +65,12 @@ public class H2Demo {
                                             .build())
         ).build();
         String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME))
-                                      .join().streamDescription().streamARN();
-        client.describeStreamConsumer(DescribeStreamConsumerRequest.builder()
-                                                                        .consumerName("java-sdk-consumer")
-                                                                        .streamARN(streamArn)
-                                                                        .build());
-        if(true) {
-            System.exit(0);
-        }
-//        String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME)).join().streamDescription().streamARN();
+                                 .join().streamDescription().streamARN();
         String consumerArn = client.describeStreamConsumer(r -> r.streamARN(streamArn)
                                                                  .consumerName("shorea-consumer"))
                                    .join().consumerDescription().consumerARN();
 
-        ExecutorService recordProducer = startProducer(client);
+//        ExecutorService recordProducer = startProducer(client);
         ExecutorService subscriberExecutor = Executors.newFixedThreadPool(numSubscribers);
         for (int i = 1; i <= numSubscribers; i++) {
             int streamNum = i;
@@ -127,7 +119,7 @@ public class H2Demo {
         } catch (Exception e) {
             System.out.println("Closing client");
         }
-        recordProducer.shutdownNow();
+//        recordProducer.shutdownNow();
     }
 
     private static ExecutorService startProducer(KinesisAsyncClient client) {
