@@ -14,18 +14,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.BasicConfigurator;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-import software.amazon.awssdk.core.auth.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.client.builder.ClientAsyncHttpConfiguration;
-import software.amazon.awssdk.core.client.builder.ClientBuilder;
 import software.amazon.awssdk.core.flow.FlowPublisher;
 import software.amazon.awssdk.core.flow.FlowResponseTransformer;
-import software.amazon.awssdk.core.flow.ResponseIterator;
-import software.amazon.awssdk.core.regions.Region;
 import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamConsumerRequest;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.RecordBatchEvent;
-import software.amazon.awssdk.services.kinesis.model.RegisterStreamConsumerResponse;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
@@ -206,12 +203,12 @@ public class H2Demo {
         return bytes;
     }
 
-    private static <T extends ClientBuilder<?, ?>> T prod(T builder) {
+    private static <T extends AwsClientBuilder<?, ?>> T prod(T builder) {
         return (T) builder.region(Region.US_EAST_1)
                           .credentialsProvider(ProfileCredentialsProvider.create("personal"));
     }
 
-    private static <T extends ClientBuilder<?, ?>> T alpha(T builder) {
+    private static <T extends AwsClientBuilder<?, ?>> T alpha(T builder) {
         return (T) builder.endpointOverride(URI.create("https://aws-kinesis-alpha.corp.amazon.com"))
                           .region(Region.US_EAST_1)
                           .credentialsProvider(ProfileCredentialsProvider.create("kinesis-alpha"));
