@@ -22,7 +22,7 @@ import software.amazon.awssdk.core.flow.FlowResponseTransformer;
 import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
-import software.amazon.awssdk.services.kinesis.model.RecordBatchEvent;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
@@ -147,10 +147,10 @@ public class H2Demo {
         return client.subscribeToShard(SubscribeToShardRequest.builder()
                                                               .consumerARN(CONSUMER_ARN)
                                                               .shardId("shardId-000000000000")
-                                                              .shardIteratorType(ShardIteratorType.LATEST)
+                                                              .startingPosition(ShardIteratorType.LATEST)
                                                               .consumerARN(consumerArn)
                                                               .build(),
-                                       new FlowResponseTransformer<SubscribeToShardResponse, RecordBatchEvent, Integer>() {
+                                       new FlowResponseTransformer<SubscribeToShardResponse, SubscribeToShardEvent, Integer>() {
                                            AtomicInteger count = new AtomicInteger(0);
 
                                            @Override
@@ -159,15 +159,15 @@ public class H2Demo {
                                            }
 
                                            @Override
-                                           public void onStream(FlowPublisher<RecordBatchEvent> p) {
-                                               p.subscribe(new Subscriber<RecordBatchEvent>() {
+                                           public void onStream(FlowPublisher<SubscribeToShardEvent> p) {
+                                               p.subscribe(new Subscriber<SubscribeToShardEvent>() {
                                                    @Override
                                                    public void onSubscribe(Subscription subscription) {
                                                        subscription.request(Long.MAX_VALUE);
                                                    }
 
                                                    @Override
-                                                   public void onNext(RecordBatchEvent recordBatchEvent) {
+                                                   public void onNext(SubscribeToShardEvent subscribeToShardEvent) {
                                                        count.incrementAndGet();
                                                        //                                                       System.out.println(prefix + ": Records = " + recordBatchEvent);
                                                    }
