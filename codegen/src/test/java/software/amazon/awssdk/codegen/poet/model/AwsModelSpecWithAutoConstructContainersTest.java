@@ -35,44 +35,54 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
 
+/**
+ * Similar to {@link AwsModelSpecTest} but tests correct generation when auto construct containers are used.
+ */
 @RunWith(Parameterized.class)
-public class AwsModelSpecTest {
+public class AwsModelSpecWithAutoConstructContainersTest {
     private static IntermediateModel intermediateModel;
 
     private final ShapeModel shapeModel;
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> data() {
-        invokeSafely(AwsModelSpecTest::setUp);
+        invokeSafely(AwsModelSpecWithAutoConstructContainersTest::setUp);
         return intermediateModel.getShapes().values().stream().map(shape -> new Object[] { shape }).collect(toList());
     }
 
-    public AwsModelSpecTest(ShapeModel shapeModel) {
+    public AwsModelSpecWithAutoConstructContainersTest(ShapeModel shapeModel) {
         this.shapeModel = shapeModel;
     }
 
     @Test
-    public void basicGeneration() {
+    public void generationWithAutoConstructList() {
         assertThat(new AwsServiceModel(intermediateModel, shapeModel), generatesTo(referenceFileForShape()));
     }
 
     private String referenceFileForShape() {
-        return shapeModel.getShapeName().toLowerCase(Locale.ENGLISH) + ".java";
+        String name = shapeModel.getShapeName().toLowerCase(Locale.ENGLISH) + ".java";
+        String autoConstructVariant = "./autoconstructcontainers/" + name;
+        if (getClass().getResource(autoConstructVariant) != null) {
+            return autoConstructVariant;
+        }
+        return name;
     }
 
     private static void setUp() throws IOException {
-        File serviceModelFile = new File(AwsModelSpecTest.class.getResource("service-2.json").getFile());
-        File customizationConfigFile = new File(AwsModelSpecTest.class
-                                                    .getResource("customization.config")
-                                                    .getFile());
+        File serviceModelFile = new File(AwsModelSpecWithAutoConstructContainersTest.class.getResource("service-2.json").getFile());
+        File customizationConfigFile = new File(AwsModelSpecWithAutoConstructContainersTest.class
+                .getResource("customization.config")
+                .getFile());
         ServiceModel serviceModel = ModelLoaderUtils.loadModel(ServiceModel.class, serviceModelFile);
-        CustomizationConfig basicConfig = ModelLoaderUtils.loadModel(CustomizationConfig.class, customizationConfigFile);
+        CustomizationConfig autoConstructListConfig = ModelLoaderUtils.loadModel(CustomizationConfig.class, customizationConfigFile);
+        autoConstructListConfig.setUseAutoConstructList(true);
 
         intermediateModel = new IntermediateModelBuilder(
-            C2jModels.builder()
-                     .serviceModel(serviceModel)
-                     .customizationConfig(basicConfig)
-                     .build())
-            .build();
+                C2jModels.builder()
+                        .serviceModel(serviceModel)
+                        .customizationConfig(autoConstructListConfig)
+                        .build())
+                .build();
+
     }
 }

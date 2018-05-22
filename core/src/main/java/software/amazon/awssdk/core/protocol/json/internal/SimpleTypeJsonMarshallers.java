@@ -24,6 +24,7 @@ import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.core.protocol.MarshallLocation;
 import software.amazon.awssdk.core.protocol.StructuredPojo;
 import software.amazon.awssdk.core.protocol.json.StructuredJsonGenerator;
+import software.amazon.awssdk.core.util.SdkAutoConstructAwareList;
 
 @SdkInternalApi
 public final class SimpleTypeJsonMarshallers {
@@ -120,6 +121,14 @@ public final class SimpleTypeJsonMarshallers {
             }
             jsonGenerator.writeEndArray();
         }
+
+        @Override
+        protected boolean shouldEmit(List list) {
+            return !(list.isEmpty()
+                     && list instanceof SdkAutoConstructAwareList
+                     && ((SdkAutoConstructAwareList) list).isAutoConstructed());
+
+        }
     };
 
     /**
@@ -153,6 +162,9 @@ public final class SimpleTypeJsonMarshallers {
 
         @Override
         public final void marshall(T val, JsonMarshallerContext context, String paramName) {
+            if (!shouldEmit(val)) {
+                return;
+            }
             if (paramName != null) {
                 context.jsonGenerator().writeFieldName(paramName);
             }
@@ -160,6 +172,10 @@ public final class SimpleTypeJsonMarshallers {
         }
 
         public abstract void marshall(T val, StructuredJsonGenerator jsonGenerator, JsonMarshallerContext context);
+
+        protected boolean shouldEmit(T val) {
+            return true;
+        }
     }
 
 }

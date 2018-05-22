@@ -99,15 +99,15 @@ class MemberCopierSpec implements ClassSpec {
 
     private MethodSpec builderCopyMethod() {
         if (memberModel.isList()) {
-            return builderCopyMethodForMap();
+            return builderCopyMethodForList();
         }
         if (memberModel.isMap()) {
-            return builderCopyMethodForList();
+            return builderCopyMethodForMap();
         }
         throw new UnsupportedOperationException();
     }
 
-    private MethodSpec builderCopyMethodForList() {
+    private MethodSpec builderCopyMethodForMap() {
         TypeName keyType = typeProvider.getTypeNameForSimpleType(memberModel.getMapModel().getKeyModel()
                                                                             .getVariable().getVariableType());
         ClassName valueParameter = poetExtensions.getModelClass(memberModel.getMapModel().getValueModel().getC2jShape());
@@ -134,7 +134,7 @@ class MemberCopierSpec implements ClassSpec {
                          .build();
     }
 
-    private MethodSpec builderCopyMethodForMap() {
+    private MethodSpec builderCopyMethodForList() {
         ClassName listParameter = poetExtensions.getModelClass(memberModel.getListModel().getListMemberModel().getC2jShape());
         ClassName builderForParameter = listParameter.nestedClass("Builder");
 
@@ -177,15 +177,32 @@ class MemberCopierSpec implements ClassSpec {
         MemberModel listMember = memberModel.getListModel().getListMemberModel();
         String copyName = paramName + "Copy";
         CodeBlock.Builder builder = CodeBlock.builder()
-                .beginControlFlow("if ($N == null)", memberParamName())
-                .addStatement("return null")
-                .endControlFlow()
-                .add("$T $N = $N.stream()", typeProvider.fieldType(memberModel), copyName, paramName);
+                .beginControlFlow("if ($N == null)", memberParamName());
 
-        serviceModelCopiers.copierClassFor(listMember)
-                           .ifPresent(copyClass -> builder.add(".map($T::$N)", copyClass, serviceModelCopiers.copyMethodName()));
+        if (typeProvider.useAutoConstructLists()) {
+            builder.addStatement("return new $T<>()", typeProvider.listImplClassName());
+        } else {
+            builder.addStatement("return null");
+        }
+        builder.endControlFlow();
 
-        builder.add(".collect(toList());");
+        Optional<ClassName> elementCopier = serviceModelCopiers.copierClassFor(listMember);
+
+        // Just use constructor copy if there's no copier for the element
+        if (!elementCopier.isPresent()) {
+            builder.addStatement("$T $N = new $T<>($N)",
+                                 typeProvider.fieldType(memberModel),
+                                 copyName,
+                                 typeProvider.listImplClassName(),
+                                 paramName);
+        } else {
+            builder.addStatement("$T $N = new $T<>($N.size())",
+                    typeProvider.fieldType(memberModel), copyName, typeProvider.listImplClassName(), paramName)
+                    .beginControlFlow("for ($T e : $N)", typeProvider.parameterType(listMember), paramName)
+                    .addStatement("$N.add($T.copy(e))", copyName, elementCopier.get())
+                    .endControlFlow();
+        }
+
 
         return builder.addStatement("return $T.unmodifiableList($N)", Collections.class, copyName).build();
     }
