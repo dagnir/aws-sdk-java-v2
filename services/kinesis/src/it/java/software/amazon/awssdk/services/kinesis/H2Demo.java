@@ -17,13 +17,13 @@ import org.reactivestreams.Subscription;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.client.builder.ClientAsyncHttpConfiguration;
-import software.amazon.awssdk.core.flow.FlowPublisher;
 import software.amazon.awssdk.core.flow.FlowResponseTransformer;
+import software.amazon.awssdk.core.pagination.async.SdkPublisher;
 import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
-import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
 
@@ -61,13 +61,19 @@ public class H2Demo {
                                                                                         .build())
                                             .build())
         ).build();
-        String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME))
-                                 .join().streamDescription().streamARN();
-        String consumerArn = client.describeStreamConsumer(r -> r.streamARN(streamArn)
-                                                                 .consumerName("shorea-consumer"))
-                                   .join().consumerDescription().consumerARN();
+        //        String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME))
+        //                                 .join().streamDescription().streamARN();
+        //        String consumerArn = client.describeStreamConsumer(r -> r.streamARN(streamArn)
+        //                                                                 .consumerName("shorea-consumer"))
+        //                                   .join().consumerDescription().consumerARN();
+        String consumerArn = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/shorea-consumer:1525898737";
+        if (true) {
 
-//        ExecutorService recordProducer = startProducer(client);
+            subscribeToShardResponseHandler(client, "Stream-", consumerArn).join();
+            System.exit(0);
+        }
+
+        //        ExecutorService recordProducer = startProducer(client);
         ExecutorService subscriberExecutor = Executors.newFixedThreadPool(numSubscribers);
         for (int i = 1; i <= numSubscribers; i++) {
             int streamNum = i;
@@ -116,7 +122,7 @@ public class H2Demo {
         } catch (Exception e) {
             System.out.println("Closing client");
         }
-//        recordProducer.shutdownNow();
+        //        recordProducer.shutdownNow();
     }
 
     private static ExecutorService startProducer(KinesisAsyncClient client) {
@@ -159,7 +165,7 @@ public class H2Demo {
                                            }
 
                                            @Override
-                                           public void onStream(FlowPublisher<SubscribeToShardEvent> p) {
+                                           public void onStream(SdkPublisher<SubscribeToShardEvent> p) {
                                                p.subscribe(new Subscriber<SubscribeToShardEvent>() {
                                                    @Override
                                                    public void onSubscribe(Subscription subscription) {
@@ -169,7 +175,7 @@ public class H2Demo {
                                                    @Override
                                                    public void onNext(SubscribeToShardEvent subscribeToShardEvent) {
                                                        count.incrementAndGet();
-                                                       //                                                       System.out.println(prefix + ": Records = " + recordBatchEvent);
+                                                       System.out.println(prefix + ": Records = " + subscribeToShardEvent);
                                                    }
 
                                                    @Override
