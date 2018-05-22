@@ -16,6 +16,7 @@
 package software.amazon.awssdk.codegen.poet.model;
 
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.WildcardTypeName;
@@ -35,19 +36,32 @@ import software.amazon.awssdk.codegen.model.intermediate.ListModel;
 import software.amazon.awssdk.codegen.model.intermediate.MapModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructAwareList;
+import software.amazon.awssdk.core.util.SdkAutoConstructAwareList;
+
+import javax.lang.model.element.Modifier;
 
 /**
  * Helper class for resolving Poet {@link TypeName}s for use in model classes.
  */
 public class TypeProvider {
+    private final IntermediateModel intermediateModel;
     private final PoetExtensions poetExtensions;
 
     public TypeProvider(IntermediateModel intermediateModel) {
-        this.poetExtensions = new PoetExtensions(intermediateModel);
+        this.intermediateModel = intermediateModel;
+        this.poetExtensions = new PoetExtensions(this.intermediateModel);
     }
 
     public ClassName listImplClassName() {
+        if (useAutoConstructLists()) {
+            return ClassName.get(DefaultSdkAutoConstructAwareList.class);
+        }
         return ClassName.get(ArrayList.class);
+    }
+
+    public boolean useAutoConstructLists() {
+        return intermediateModel.getCustomizationConfig().isUseAutoConstructList();
     }
 
     public ClassName mapImplClassName() {
@@ -159,5 +173,16 @@ public class TypeProvider {
                 .map(ClassName::get)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Unsupported simple fieldType " + simpleType));
+    }
+
+    public FieldSpec asField(MemberModel memberModel, Modifier... modifiers) {
+        FieldSpec.Builder builder = FieldSpec.builder(fieldType(memberModel),
+                memberModel.getVariable().getVariableName());
+
+        if (modifiers != null) {
+            builder.addModifiers(modifiers);
+        }
+
+        return builder.build();
     }
 }
