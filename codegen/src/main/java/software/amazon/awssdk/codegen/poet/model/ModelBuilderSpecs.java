@@ -31,6 +31,7 @@ import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 
 /**
@@ -136,7 +137,7 @@ class ModelBuilderSpecs {
                     FieldSpec fieldSpec = typeProvider.asField(m, Modifier.PRIVATE);
                     if (m.isList() && typeProvider.useAutoConstructLists()) {
                         fieldSpec = fieldSpec.toBuilder()
-                                .initializer("new $T<>()", typeProvider.listImplClassName())
+                                .initializer("$T.getInstance()", DefaultSdkAutoConstructList.class)
                                 .build();
                     }
                     return fieldSpec;

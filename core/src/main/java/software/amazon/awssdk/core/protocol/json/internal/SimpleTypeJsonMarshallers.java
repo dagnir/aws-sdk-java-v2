@@ -24,7 +24,7 @@ import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.core.protocol.MarshallLocation;
 import software.amazon.awssdk.core.protocol.StructuredPojo;
 import software.amazon.awssdk.core.protocol.json.StructuredJsonGenerator;
-import software.amazon.awssdk.core.util.SdkAutoConstructAwareList;
+import software.amazon.awssdk.core.util.SdkAutoConstructList;
 
 @SdkInternalApi
 public final class SimpleTypeJsonMarshallers {
@@ -124,9 +124,7 @@ public final class SimpleTypeJsonMarshallers {
 
         @Override
         protected boolean shouldEmit(List list) {
-            return !(list.isEmpty()
-                     && list instanceof SdkAutoConstructAwareList
-                     && ((SdkAutoConstructAwareList) list).isAutoConstructed());
+            return !list.isEmpty() || !(list instanceof SdkAutoConstructList);
 
         }
     };

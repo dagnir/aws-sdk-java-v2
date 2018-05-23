@@ -13,7 +13,7 @@ import javax.annotation.Generated;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.core.protocol.ProtocolMarshaller;
 import software.amazon.awssdk.core.protocol.StructuredPojo;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructAwareList;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
 import software.amazon.awssdk.services.jsonprotocoltests.transform.RecursiveStructTypeMarshaller;
 import software.amazon.awssdk.utils.CollectionUtils;
 import software.amazon.awssdk.utils.ToString;
@@ -233,7 +233,7 @@ public class RecursiveStructType implements StructuredPojo, ToCopyableBuilder<Re
 
         private RecursiveStructType recursiveStruct;
 
-        private List<RecursiveStructType> recursiveList = new DefaultSdkAutoConstructAwareList<>();
+        private List<RecursiveStructType> recursiveList = DefaultSdkAutoConstructList.getInstance();
 
         private Map<String, RecursiveStructType> recursiveMap;
 

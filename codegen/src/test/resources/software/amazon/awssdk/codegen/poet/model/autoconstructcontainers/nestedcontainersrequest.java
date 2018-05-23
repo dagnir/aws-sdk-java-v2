@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import javax.annotation.Generated;
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfig;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructAwareList;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
 import software.amazon.awssdk.utils.ToString;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
@@ -182,9 +182,9 @@ public class NestedContainersRequest extends JsonProtocolTestsRequest implements
     }
 
     static final class BuilderImpl extends JsonProtocolTestsRequest.BuilderImpl implements Builder {
-        private List<List<String>> listOfListOfStrings = new DefaultSdkAutoConstructAwareList<>();
+        private List<List<String>> listOfListOfStrings = DefaultSdkAutoConstructList.getInstance();
 
-        private List<List<List<String>>> listOfListOfListOfStrings = new DefaultSdkAutoConstructAwareList<>();
+        private List<List<List<String>>> listOfListOfListOfStrings = DefaultSdkAutoConstructList.getInstance();
 
         private Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 

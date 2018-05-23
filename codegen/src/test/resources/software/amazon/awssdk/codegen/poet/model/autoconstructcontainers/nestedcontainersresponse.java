@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Generated;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructAwareList;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
 import software.amazon.awssdk.utils.ToString;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
@@ -174,9 +174,9 @@ public class NestedContainersResponse extends JsonProtocolTestsResponse implemen
     }
 
     static final class BuilderImpl extends JsonProtocolTestsResponse.BuilderImpl implements Builder {
-        private List<List<String>> listOfListOfStrings = new DefaultSdkAutoConstructAwareList<>();
+        private List<List<String>> listOfListOfStrings = DefaultSdkAutoConstructList.getInstance();
 
-        private List<List<List<String>>> listOfListOfListOfStrings = new DefaultSdkAutoConstructAwareList<>();
+        private List<List<List<String>>> listOfListOfListOfStrings = DefaultSdkAutoConstructList.getInstance();
 
         private Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 

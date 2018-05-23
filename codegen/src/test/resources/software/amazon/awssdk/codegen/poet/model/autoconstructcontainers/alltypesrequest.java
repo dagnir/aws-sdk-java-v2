@@ -17,7 +17,7 @@ import software.amazon.awssdk.awscore.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.runtime.StandardMemberCopier;
 import software.amazon.awssdk.core.runtime.TypeConverter;
 import software.amazon.awssdk.core.runtime.adapters.types.StringToByteBufferAdapter;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructAwareList;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
 import software.amazon.awssdk.utils.CollectionUtils;
 import software.amazon.awssdk.utils.ToString;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
@@ -1076,13 +1076,13 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
 
         private Long longMember;
 
-        private List<String> simpleList = new DefaultSdkAutoConstructAwareList<>();
+        private List<String> simpleList = DefaultSdkAutoConstructList.getInstance();
 
-        private List<String> listOfEnums = new DefaultSdkAutoConstructAwareList<>();
+        private List<String> listOfEnums = DefaultSdkAutoConstructList.getInstance();
 
-        private List<Map<String, String>> listOfMaps = new DefaultSdkAutoConstructAwareList<>();
+        private List<Map<String, String>> listOfMaps = DefaultSdkAutoConstructList.getInstance();
 
-        private List<SimpleStruct> listOfStructs = new DefaultSdkAutoConstructAwareList<>();
+        private List<SimpleStruct> listOfStructs = DefaultSdkAutoConstructList.getInstance();
 
         private Map<String, List<Integer>> mapOfStringToIntegerList;
 
@@ -1108,7 +1108,7 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
 
         private Map<String, ByteBuffer> blobMap;
 
-        private List<ByteBuffer> listOfBlobs = new DefaultSdkAutoConstructAwareList<>();
+        private List<ByteBuffer> listOfBlobs = DefaultSdkAutoConstructList.getInstance();
 
         private RecursiveStructType recursiveStruct;
 

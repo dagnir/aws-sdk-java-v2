@@ -37,7 +37,6 @@ import software.amazon.awssdk.codegen.model.intermediate.ListModel;
 import software.amazon.awssdk.codegen.model.intermediate.MapModel;
 import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructAwareList;
 
 /**
  * Helper class for resolving Poet {@link TypeName}s for use in model classes.
@@ -52,9 +51,6 @@ public class TypeProvider {
     }
 
     public ClassName listImplClassName() {
-        if (useAutoConstructLists()) {
-            return ClassName.get(DefaultSdkAutoConstructAwareList.class);
-        }
         return ClassName.get(ArrayList.class);
     }
 

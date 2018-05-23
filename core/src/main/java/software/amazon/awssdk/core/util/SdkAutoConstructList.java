@@ -17,15 +17,18 @@ package software.amazon.awssdk.core.util;
 
 import java.util.List;
 
+import software.amazon.awssdk.annotations.SdkInternalApi;
+
 /**
- * A {@link List} that distinguishes whether it was auto constructed; i.e. it
- * was constructed using its default, no-arg constructor.
+ * A list that was auto constructed by the SDK.
+ * <p />
+ * The main purpose of this class is to help distinguish explicitly empty lists
+ * set on requests by the user, as some services may treat {@code null} or
+ * missing lists and empty list members differently. As such, this class should
+ * not be used directly by the user.
  *
  * @param <T> The element type.
  */
-public interface SdkAutoConstructAwareList<T> extends List<T> {
-    /**
-     * @return {@code true} if this list was auto constructed.
-     */
-    boolean isAutoConstructed();
+@SdkInternalApi
+public interface SdkAutoConstructList<T> extends List<T> {
 }

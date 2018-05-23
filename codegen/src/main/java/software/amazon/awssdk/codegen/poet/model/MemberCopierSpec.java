@@ -36,6 +36,8 @@ import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.codegen.poet.StaticImport;
 import software.amazon.awssdk.core.runtime.StandardMemberCopier;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
+import software.amazon.awssdk.core.util.SdkAutoConstructList;
 
 class MemberCopierSpec implements ClassSpec {
     private final MemberModel memberModel;
@@ -176,15 +178,19 @@ class MemberCopierSpec implements ClassSpec {
         String paramName = memberParamName();
         MemberModel listMember = memberModel.getListModel().getListMemberModel();
         String copyName = paramName + "Copy";
-        CodeBlock.Builder builder = CodeBlock.builder()
-                .beginControlFlow("if ($N == null)", memberParamName());
+
+        CodeBlock.Builder builder = CodeBlock.builder();
 
         if (typeProvider.useAutoConstructLists()) {
-            builder.addStatement("return new $T<>()", typeProvider.listImplClassName());
+            builder.beginControlFlow("if ($1N == null || $1N instanceof $2T)", memberParamName(), SdkAutoConstructList.class)
+                   .addStatement("return $T.getInstance()", DefaultSdkAutoConstructList.class)
+                   .endControlFlow();
+
         } else {
-            builder.addStatement("return null");
+            builder.beginControlFlow("if ($N == null)", memberParamName())
+                   .addStatement("return null")
+                   .endControlFlow();
         }
-        builder.endControlFlow();
 
         Optional<ClassName> elementCopier = serviceModelCopiers.copierClassFor(listMember);
 
@@ -196,15 +202,18 @@ class MemberCopierSpec implements ClassSpec {
                                  typeProvider.listImplClassName(),
                                  paramName);
         } else {
-            builder.addStatement("$T $N = new $T<>($N.size())",
-                    typeProvider.fieldType(memberModel), copyName, typeProvider.listImplClassName(), paramName)
-                    .beginControlFlow("for ($T e : $N)", typeProvider.parameterType(listMember), paramName)
-                    .addStatement("$N.add($T.copy(e))", copyName, elementCopier.get())
-                    .endControlFlow();
+            ClassName copier = elementCopier.get();
+            builder.addStatement("$T $N = $N.stream().map($T::$N).collect(toList())",
+                                 typeProvider.fieldType(memberModel),
+                                 copyName,
+                                 paramName,
+                                 copier,
+                                 serviceModelCopiers.copyMethodName());
         }
 
+        builder.addStatement("return $T.unmodifiableList($N)", Collections.class, copyName);
 
-        return builder.addStatement("return $T.unmodifiableList($N)", Collections.class, copyName).build();
+        return builder.build();
     }
 
     private CodeBlock mapCopyBody() {
