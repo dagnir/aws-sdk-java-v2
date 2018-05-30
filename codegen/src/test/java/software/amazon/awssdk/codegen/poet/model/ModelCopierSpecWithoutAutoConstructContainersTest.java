@@ -22,7 +22,6 @@ import software.amazon.awssdk.codegen.C2jModels;
 import software.amazon.awssdk.codegen.IntermediateModelBuilder;
 import software.amazon.awssdk.codegen.model.config.customization.CustomizationConfig;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
-import software.amazon.awssdk.codegen.model.intermediate.MemberModel;
 import software.amazon.awssdk.codegen.model.service.ServiceModel;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.utils.ModelLoaderUtils;
@@ -31,22 +30,18 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static software.amazon.awssdk.codegen.poet.PoetMatchers.generatesTo;
 import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 /**
- * Similar to {@link ModelCopierSpecTest} but tests correct generation when auto construct containers are used.
+ * Similar to {@link ModelCopierSpecTest} but tests correct generation when auto construct containers are disabled.
  */
 @RunWith(Parameterized.class)
-public class ModelCopierSpecWithAutoConstructContainersTest {
+public class ModelCopierSpecWithoutAutoConstructContainersTest {
     private static File serviceModelFile;
     private static IntermediateModel intermediateModel;
     private final ClassSpec spec;
@@ -62,7 +57,7 @@ public class ModelCopierSpecWithAutoConstructContainersTest {
                 .getFile());
 
         CustomizationConfig customizationConfig = ModelLoaderUtils.loadModel(CustomizationConfig.class, customizationConfigFile);
-        customizationConfig.setUseAutoConstructList(true);
+        customizationConfig.setUseAutoConstructList(false);
 
         intermediateModel = new IntermediateModelBuilder(
                 C2jModels.builder()
@@ -74,13 +69,13 @@ public class ModelCopierSpecWithAutoConstructContainersTest {
 
     @Parameterized.Parameters(name = "{1}")
     public static Collection<Object[]> data() {
-        invokeSafely(ModelCopierSpecWithAutoConstructContainersTest::setUp);
+        invokeSafely(ModelCopierSpecWithoutAutoConstructContainersTest::setUp);
         return new ServiceModelCopiers(intermediateModel).copierSpecs().stream()
                                                          .map(spec -> new Object[] { spec, spec.className().simpleName().toLowerCase(Locale.ENGLISH) })
                                                          .collect(toList());
     }
 
-    public ModelCopierSpecWithAutoConstructContainersTest(ClassSpec spec, String specName) {
+    public ModelCopierSpecWithoutAutoConstructContainersTest(ClassSpec spec, String specName) {
         this.spec = spec;
         this.specName = specName;
     }
@@ -92,7 +87,7 @@ public class ModelCopierSpecWithAutoConstructContainersTest {
 
     private String expectedFile() {
         String name = specName + ".java";
-        String autoConstructVariant = "./autoconstructcontainers/" + name;
+        String autoConstructVariant = "./nonautoconstructcontainers/" + name;
         if (getClass().getResource(autoConstructVariant) != null) {
             return autoConstructVariant;
         }

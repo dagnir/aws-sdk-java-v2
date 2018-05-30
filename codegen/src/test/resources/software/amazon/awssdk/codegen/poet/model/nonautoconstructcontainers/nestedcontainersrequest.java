@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import javax.annotation.Generated;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
+import software.amazon.awssdk.awscore.AwsRequestOverrideConfig;
 import software.amazon.awssdk.utils.ToString;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
@@ -15,15 +16,15 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class NestedContainersResponse extends JsonProtocolTestsResponse implements
-        ToCopyableBuilder<NestedContainersResponse.Builder, NestedContainersResponse> {
+public class NestedContainersRequest extends JsonProtocolTestsRequest implements
+        ToCopyableBuilder<NestedContainersRequest.Builder, NestedContainersRequest> {
     private final List<List<String>> listOfListOfStrings;
 
     private final List<List<List<String>>> listOfListOfListOfStrings;
 
     private final Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 
-    private NestedContainersResponse(BuilderImpl builder) {
+    private NestedContainersRequest(BuilderImpl builder) {
         super(builder);
         this.listOfListOfStrings = builder.listOfListOfStrings;
         this.listOfListOfListOfStrings = builder.listOfListOfListOfStrings;
@@ -96,10 +97,10 @@ public class NestedContainersResponse extends JsonProtocolTestsResponse implemen
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof NestedContainersResponse)) {
+        if (!(obj instanceof NestedContainersRequest)) {
             return false;
         }
-        NestedContainersResponse other = (NestedContainersResponse) obj;
+        NestedContainersRequest other = (NestedContainersRequest) obj;
         return Objects.equals(listOfListOfStrings(), other.listOfListOfStrings())
                 && Objects.equals(listOfListOfListOfStrings(), other.listOfListOfListOfStrings())
                 && Objects.equals(mapOfStringToListOfListOfStrings(), other.mapOfStringToListOfListOfStrings());
@@ -107,7 +108,7 @@ public class NestedContainersResponse extends JsonProtocolTestsResponse implemen
 
     @Override
     public String toString() {
-        return ToString.builder("NestedContainersResponse").add("ListOfListOfStrings", listOfListOfStrings())
+        return ToString.builder("NestedContainersRequest").add("ListOfListOfStrings", listOfListOfStrings())
                 .add("ListOfListOfListOfStrings", listOfListOfListOfStrings())
                 .add("MapOfStringToListOfListOfStrings", mapOfStringToListOfListOfStrings()).build();
     }
@@ -125,7 +126,7 @@ public class NestedContainersResponse extends JsonProtocolTestsResponse implemen
         }
     }
 
-    public interface Builder extends JsonProtocolTestsResponse.Builder, CopyableBuilder<Builder, NestedContainersResponse> {
+    public interface Builder extends JsonProtocolTestsRequest.Builder, CopyableBuilder<Builder, NestedContainersRequest> {
         /**
          * Sets the value of the ListOfListOfStrings property for this object.
          *
@@ -171,19 +172,25 @@ public class NestedContainersResponse extends JsonProtocolTestsResponse implemen
          */
         Builder mapOfStringToListOfListOfStrings(
                 Map<String, ? extends Collection<? extends Collection<String>>> mapOfStringToListOfListOfStrings);
+
+        @Override
+        Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig);
+
+        @Override
+        Builder requestOverrideConfig(Consumer<AwsRequestOverrideConfig.Builder> builderConsumer);
     }
 
-    static final class BuilderImpl extends JsonProtocolTestsResponse.BuilderImpl implements Builder {
-        private List<List<String>> listOfListOfStrings = DefaultSdkAutoConstructList.getInstance();
+    static final class BuilderImpl extends JsonProtocolTestsRequest.BuilderImpl implements Builder {
+        private List<List<String>> listOfListOfStrings;
 
-        private List<List<List<String>>> listOfListOfListOfStrings = DefaultSdkAutoConstructList.getInstance();
+        private List<List<List<String>>> listOfListOfListOfStrings;
 
         private Map<String, List<List<String>>> mapOfStringToListOfListOfStrings;
 
         private BuilderImpl() {
         }
 
-        private BuilderImpl(NestedContainersResponse model) {
+        private BuilderImpl(NestedContainersRequest model) {
             super(model);
             listOfListOfStrings(model.listOfListOfStrings);
             listOfListOfListOfStrings(model.listOfListOfListOfStrings);
@@ -251,8 +258,20 @@ public class NestedContainersResponse extends JsonProtocolTestsResponse implemen
         }
 
         @Override
-        public NestedContainersResponse build() {
-            return new NestedContainersResponse(this);
+        public Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig) {
+            super.requestOverrideConfig(awsRequestOverrideConfig);
+            return this;
+        }
+
+        @Override
+        public Builder requestOverrideConfig(Consumer<AwsRequestOverrideConfig.Builder> builderConsumer) {
+            super.requestOverrideConfig(builderConsumer);
+            return this;
+        }
+
+        @Override
+        public NestedContainersRequest build() {
+            return new NestedContainersRequest(this);
         }
     }
 }

@@ -13,11 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Generated;
-import software.amazon.awssdk.awscore.AwsRequestOverrideConfig;
 import software.amazon.awssdk.core.runtime.StandardMemberCopier;
 import software.amazon.awssdk.core.runtime.TypeConverter;
 import software.amazon.awssdk.core.runtime.adapters.types.StringToByteBufferAdapter;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
 import software.amazon.awssdk.utils.CollectionUtils;
 import software.amazon.awssdk.utils.ToString;
 import software.amazon.awssdk.utils.builder.CopyableBuilder;
@@ -26,8 +24,8 @@ import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 /**
  */
 @Generated("software.amazon.awssdk:codegen")
-public class AllTypesRequest extends JsonProtocolTestsRequest implements
-        ToCopyableBuilder<AllTypesRequest.Builder, AllTypesRequest> {
+public class AllTypesResponse extends JsonProtocolTestsResponse implements
+        ToCopyableBuilder<AllTypesResponse.Builder, AllTypesResponse> {
     private final String stringMember;
 
     private final Integer integerMember;
@@ -82,7 +80,7 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
 
     private final String enumType;
 
-    private AllTypesRequest(BuilderImpl builder) {
+    private AllTypesResponse(BuilderImpl builder) {
         super(builder);
         this.stringMember = builder.stringMember;
         this.integerMember = builder.integerMember;
@@ -536,10 +534,10 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof AllTypesRequest)) {
+        if (!(obj instanceof AllTypesResponse)) {
             return false;
         }
-        AllTypesRequest other = (AllTypesRequest) obj;
+        AllTypesResponse other = (AllTypesResponse) obj;
         return Objects.equals(stringMember(), other.stringMember()) && Objects.equals(integerMember(), other.integerMember())
                 && Objects.equals(booleanMember(), other.booleanMember()) && Objects.equals(floatMember(), other.floatMember())
                 && Objects.equals(doubleMember(), other.doubleMember()) && Objects.equals(longMember(), other.longMember())
@@ -566,7 +564,7 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
 
     @Override
     public String toString() {
-        return ToString.builder("AllTypesRequest").add("StringMember", stringMember()).add("IntegerMember", integerMember())
+        return ToString.builder("AllTypesResponse").add("StringMember", stringMember()).add("IntegerMember", integerMember())
                 .add("BooleanMember", booleanMember()).add("FloatMember", floatMember()).add("DoubleMember", doubleMember())
                 .add("LongMember", longMember()).add("SimpleList", simpleList()).add("ListOfEnums", listOfEnumsStrings())
                 .add("ListOfMaps", listOfMaps()).add("ListOfStructs", listOfStructs())
@@ -642,7 +640,7 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
         }
     }
 
-    public interface Builder extends JsonProtocolTestsRequest.Builder, CopyableBuilder<Builder, AllTypesRequest> {
+    public interface Builder extends JsonProtocolTestsResponse.Builder, CopyableBuilder<Builder, AllTypesResponse> {
         /**
          * Sets the value of the StringMember property for this object.
          *
@@ -1055,15 +1053,9 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
          * @see EnumType
          */
         Builder enumType(EnumType enumType);
-
-        @Override
-        Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig);
-
-        @Override
-        Builder requestOverrideConfig(Consumer<AwsRequestOverrideConfig.Builder> builderConsumer);
     }
 
-    static final class BuilderImpl extends JsonProtocolTestsRequest.BuilderImpl implements Builder {
+    static final class BuilderImpl extends JsonProtocolTestsResponse.BuilderImpl implements Builder {
         private String stringMember;
 
         private Integer integerMember;
@@ -1076,13 +1068,13 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
 
         private Long longMember;
 
-        private List<String> simpleList = DefaultSdkAutoConstructList.getInstance();
+        private List<String> simpleList;
 
-        private List<String> listOfEnums = DefaultSdkAutoConstructList.getInstance();
+        private List<String> listOfEnums;
 
-        private List<Map<String, String>> listOfMaps = DefaultSdkAutoConstructList.getInstance();
+        private List<Map<String, String>> listOfMaps;
 
-        private List<SimpleStruct> listOfStructs = DefaultSdkAutoConstructList.getInstance();
+        private List<SimpleStruct> listOfStructs;
 
         private Map<String, List<Integer>> mapOfStringToIntegerList;
 
@@ -1108,7 +1100,7 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
 
         private Map<String, ByteBuffer> blobMap;
 
-        private List<ByteBuffer> listOfBlobs = DefaultSdkAutoConstructList.getInstance();
+        private List<ByteBuffer> listOfBlobs;
 
         private RecursiveStructType recursiveStruct;
 
@@ -1121,7 +1113,7 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
         private BuilderImpl() {
         }
 
-        private BuilderImpl(AllTypesRequest model) {
+        private BuilderImpl(AllTypesResponse model) {
             super(model);
             stringMember(model.stringMember);
             integerMember(model.integerMember);
@@ -1593,20 +1585,8 @@ public class AllTypesRequest extends JsonProtocolTestsRequest implements
         }
 
         @Override
-        public Builder requestOverrideConfig(AwsRequestOverrideConfig awsRequestOverrideConfig) {
-            super.requestOverrideConfig(awsRequestOverrideConfig);
-            return this;
-        }
-
-        @Override
-        public Builder requestOverrideConfig(Consumer<AwsRequestOverrideConfig.Builder> builderConsumer) {
-            super.requestOverrideConfig(builderConsumer);
-            return this;
-        }
-
-        @Override
-        public AllTypesRequest build() {
-            return new AllTypesRequest(this);
+        public AllTypesResponse build() {
+            return new AllTypesResponse(this);
         }
     }
 }

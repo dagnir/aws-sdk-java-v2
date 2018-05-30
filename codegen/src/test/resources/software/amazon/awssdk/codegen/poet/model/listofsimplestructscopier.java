@@ -7,12 +7,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Generated;
+import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
+import software.amazon.awssdk.core.util.SdkAutoConstructList;
 
 @Generated("software.amazon.awssdk:codegen")
 final class ListOfSimpleStructsCopier {
     static List<SimpleStruct> copy(Collection<SimpleStruct> listOfSimpleStructsParam) {
-        if (listOfSimpleStructsParam == null) {
-            return null;
+        if (listOfSimpleStructsParam == null || listOfSimpleStructsParam instanceof SdkAutoConstructList) {
+            return DefaultSdkAutoConstructList.getInstance();
         }
         List<SimpleStruct> listOfSimpleStructsParamCopy = new ArrayList<>(listOfSimpleStructsParam);
         return Collections.unmodifiableList(listOfSimpleStructsParamCopy);
@@ -25,4 +27,3 @@ final class ListOfSimpleStructsCopier {
         return copy(listOfSimpleStructsParam.stream().map(SimpleStruct.Builder::build).collect(toList()));
     }
 }
-

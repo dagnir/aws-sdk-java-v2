@@ -7,14 +7,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Generated;
-import software.amazon.awssdk.core.util.DefaultSdkAutoConstructList;
-import software.amazon.awssdk.core.util.SdkAutoConstructList;
 
 @Generated("software.amazon.awssdk:codegen")
 final class ListOfIntegersCopier {
     static List<Integer> copy(Collection<Integer> listOfIntegersParam) {
-        if (listOfIntegersParam == null || listOfIntegersParam instanceof SdkAutoConstructList) {
-            return DefaultSdkAutoConstructList.getInstance();
+        if (listOfIntegersParam == null) {
+            return null;
         }
         List<Integer> listOfIntegersParamCopy = new ArrayList<>(listOfIntegersParam);
         return Collections.unmodifiableList(listOfIntegersParamCopy);

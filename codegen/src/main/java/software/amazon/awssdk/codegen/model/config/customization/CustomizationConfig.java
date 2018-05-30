@@ -123,7 +123,7 @@ public class CustomizationConfig {
 
     private Map<String, String> modelMarshallerDefaultValueSupplier;
 
-    private boolean useAutoConstructList = false;
+    private boolean useAutoConstructList = true;
 
     private CustomizationConfig() {
     }
