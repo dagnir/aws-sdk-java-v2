@@ -16,10 +16,9 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
-import software.amazon.awssdk.core.client.builder.ClientAsyncHttpConfiguration;
 import software.amazon.awssdk.core.flow.FlowResponseTransformer;
 import software.amazon.awssdk.core.pagination.async.SdkPublisher;
-import software.amazon.awssdk.http.nio.netty.NettySdkHttpClientFactory;
+import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
@@ -54,12 +53,9 @@ public class H2Demo {
         KinesisAsyncClient client = alpha(
             KinesisAsyncClient
                 .builder()
-                .asyncHttpConfiguration(ClientAsyncHttpConfiguration
-                                            .builder()
-                                            .httpClientFactory(NettySdkHttpClientFactory.builder()
-                                                                                        .trustAllCertificates(true)
-                                                                                        .build())
-                                            .build())
+                .asyncHttpClientBuilder(
+                    NettyNioAsyncHttpClient.builder()
+                                           .trustAllCertificates(true))
         ).build();
         //        String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME))
         //                                 .join().streamDescription().streamARN();
