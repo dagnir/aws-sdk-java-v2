@@ -131,6 +131,10 @@ public class CustomizationConfig {
 
     private boolean useAutoConstructList = true;
 
+    private boolean marshallNonAutoConstructedEmptyListsForQuery = false;
+
+    private Map<String, List<String>> marshallAutoConstructListMembers;
+
     private CustomizationConfig() {
     }
 
@@ -345,5 +349,21 @@ public class CustomizationConfig {
 
     public void setUseAutoConstructList(boolean useAutoConstructList) {
         this.useAutoConstructList = useAutoConstructList;
+    }
+
+    public boolean isMarshallNonAutoConstructedEmptyListsForQuery() {
+        return marshallNonAutoConstructedEmptyListsForQuery;
+    }
+
+    public void setMarshallNonAutoConstructedEmptyListsForQuery(boolean marshallNonAutoConstructedEmptyListsForQuery) {
+        this.marshallNonAutoConstructedEmptyListsForQuery = marshallNonAutoConstructedEmptyListsForQuery;
+    }
+
+    public Map<String, List<String>> getMarshallAutoConstructListMembers() {
+        return marshallAutoConstructListMembers;
+    }
+
+    public void setMarshallAutoConstructListMembers(Map<String, List<String>> marshallAutoConstructListMembers) {
+        this.marshallAutoConstructListMembers = marshallAutoConstructListMembers;
     }
 }

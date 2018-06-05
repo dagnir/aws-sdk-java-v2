@@ -26,6 +26,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.util.SdkAutoConstructList;
 import software.amazon.awssdk.services.s3.model.DeleteBucketInventoryConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketInventoryConfigurationRequest;
 import software.amazon.awssdk.services.s3.model.InventoryConfiguration;
@@ -125,7 +126,7 @@ public class BucketInventoryConfigurationIntegrationTest extends S3IntegrationTe
                                                         .bucket(BUCKET_NAME)
                                                         .build())
                                                         .inventoryConfigurationList();
-        assertNull(configurations);
+        assertTrue(configurations instanceof SdkAutoConstructList);
     }
 
     @Test

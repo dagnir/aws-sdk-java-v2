@@ -16,9 +16,7 @@
 package software.amazon.awssdk.services.s3;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static software.amazon.awssdk.testutils.service.S3BucketUtils.temporaryBucketName;
 
 import java.util.List;
@@ -26,6 +24,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.util.SdkAutoConstructList;
 import software.amazon.awssdk.services.s3.model.AnalyticsConfiguration;
 import software.amazon.awssdk.services.s3.model.AnalyticsExportDestination;
 import software.amazon.awssdk.services.s3.model.AnalyticsFilter;
@@ -144,7 +143,7 @@ public class BucketAnalyticsConfigurationIntegrationTest extends S3IntegrationTe
                 s3.listBucketAnalyticsConfigurations(ListBucketAnalyticsConfigurationsRequest.builder()
                                                                                              .bucket(BUCKET_NAME)
                                                                                              .build());
-        assertNull(result.analyticsConfigurationList());
+        assertTrue(result.analyticsConfigurationList() instanceof SdkAutoConstructList);
     }
 
     @Test

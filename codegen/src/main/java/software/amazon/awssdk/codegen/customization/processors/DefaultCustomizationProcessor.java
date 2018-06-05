@@ -33,7 +33,8 @@ public final class DefaultCustomizationProcessor {
                 new ShapeSubstitutionsProcessor(config.getShapeSubstitutions()),
                 new OperationModifiersProcessor(config.getOperationModifiers()),
                 new RemoveExceptionMessagePropertyProcessor(),
-                new RenameShapesProcessor(config.getRenameShapes())
+                new RenameShapesProcessor(config.getRenameShapes()),
+                new MarshallAutoConstructListMembersProcessor()
         );
     }
 }

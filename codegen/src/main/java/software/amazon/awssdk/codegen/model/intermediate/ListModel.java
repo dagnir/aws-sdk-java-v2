@@ -34,6 +34,8 @@ public class ListModel {
 
     private String memberAdditionalUnmarshallingPath;
 
+    private boolean marshallAutoConstructList;
+
     public ListModel(
             @JsonProperty("memberType") String memberType,
             @JsonProperty("memberLocationName") String memberLocationName,
@@ -106,5 +108,13 @@ public class ListModel {
     public String getSimpleType() {
         int startIndex = memberType.lastIndexOf(".");
         return memberType.substring(startIndex + 1, memberType.length());
+    }
+
+    public boolean isMarshallAutoConstructList() {
+        return marshallAutoConstructList;
+    }
+
+    public void setMarshallAutoConstructList(boolean marshallAutoConstructList) {
+        this.marshallAutoConstructList = marshallAutoConstructList;
     }
 }
