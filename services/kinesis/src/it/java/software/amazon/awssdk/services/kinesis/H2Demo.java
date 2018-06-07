@@ -16,15 +16,15 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
-import software.amazon.awssdk.core.flow.FlowResponseTransformer;
-import software.amazon.awssdk.core.pagination.async.SdkPublisher;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardBaseEvent;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponseTransformer;
 
 public class H2Demo {
 
@@ -152,7 +152,7 @@ public class H2Demo {
                                                               .startingPosition(ShardIteratorType.LATEST)
                                                               .consumerARN(consumerArn)
                                                               .build(),
-                                       new FlowResponseTransformer<SubscribeToShardResponse, SubscribeToShardEvent, Integer>() {
+                                       new SubscribeToShardResponseTransformer<Integer>() {
                                            AtomicInteger count = new AtomicInteger(0);
 
                                            @Override
@@ -161,17 +161,17 @@ public class H2Demo {
                                            }
 
                                            @Override
-                                           public void onStream(SdkPublisher<SubscribeToShardEvent> p) {
-                                               p.subscribe(new Subscriber<SubscribeToShardEvent>() {
+                                           public void onStream(SubscribeToShardResponseTransformer.Publisher p) {
+                                               p.subscribe(new Subscriber<SubscribeToShardBaseEvent>() {
                                                    @Override
                                                    public void onSubscribe(Subscription subscription) {
                                                        subscription.request(Long.MAX_VALUE);
                                                    }
 
                                                    @Override
-                                                   public void onNext(SubscribeToShardEvent subscribeToShardEvent) {
+                                                   public void onNext(SubscribeToShardBaseEvent subscribeToShardEvent) {
+                                                       subscribeToShardEvent.visit(new MyVisitor());
                                                        count.incrementAndGet();
-                                                       System.out.println(prefix + ": Records = " + subscribeToShardEvent);
                                                    }
 
                                                    @Override
@@ -226,6 +226,14 @@ public class H2Demo {
         return builder.endpointOverride(URI.create("https://kinesis-hailstoneperf.pdx.amazon.com"))
                       .region(Region.US_EAST_1)
                       .credentialsProvider(ProfileCredentialsProvider.create("kinesis-hailstone"));
+    }
+
+    private static final class MyVisitor extends SubscribeToShardBaseEvent.Visitor {
+
+        @Override
+        public void visit(SubscribeToShardEvent event) {
+            System.out.println("Received records " + event.records());
+        }
     }
 
 }
