@@ -35,6 +35,7 @@ import io.netty.channel.pool.ChannelPoolMap;
 import io.netty.channel.pool.FixedChannelPool;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.net.URI;
 import java.time.Duration;
@@ -144,11 +145,19 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
     private SslContext sslContext(String scheme) {
         if (scheme.equalsIgnoreCase("https")) {
-            SslContextBuilder builder = SslContextBuilder.forClient().sslProvider(defaultClientProvider());
+            SslProvider provider = defaultClientProvider();
+            System.out.println("Default provider is: " + provider.name());
+            SslContextBuilder builder = SslContextBuilder.forClient().sslProvider(provider);
+
             if (configuration.trustAllCertificates()) {
                 builder.trustManager(InsecureTrustManagerFactory.INSTANCE);
             }
-            return invokeSafely(builder::build);
+            try {
+                SslContext ctx = builder.build();
+                return ctx;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
