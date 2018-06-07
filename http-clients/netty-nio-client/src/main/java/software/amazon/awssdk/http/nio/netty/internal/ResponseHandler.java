@@ -231,9 +231,6 @@ class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
             this.fullContent = fullContent;
         }
 
-        // FIXME: According to the spec,the publisher must call
-        // onSubscribe and wait for demand before calling onNext
-        // see item 1.1, 1.9: https://github.com/reactive-streams/reactive-streams-jvm/blob/v1.0.1/README.md#specification
         @Override
         public void subscribe(Subscriber<? super ByteBuffer> subscriber) {
             if (this.subscriber != null) {
