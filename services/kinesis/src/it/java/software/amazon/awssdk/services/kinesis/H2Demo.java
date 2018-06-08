@@ -2,56 +2,37 @@ package software.amazon.awssdk.services.kinesis;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.BasicConfigurator;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
-import software.amazon.awssdk.http.Protocol;
+import software.amazon.awssdk.core.async.SdkPublisher;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
-import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
+import software.amazon.awssdk.services.kinesis.model.ScalingType;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
-import software.amazon.awssdk.services.kinesis.model.SubscribeToShardBaseEvent;
+import software.amazon.awssdk.services.kinesis.model.ShardSubscriptionEventStream;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
-import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponseTransformer;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponseHandler;
 
 public class H2Demo {
 
-    private static final String STREAM_NAME = "foobar";
-    private static final String CONSUMER_ARN = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/consumer1:123456";
+    //    private static final String STREAM_NAME = "foobar";
+    private static final String STREAM_NAME = "pfifer-test";
+    private static final String ERROR_CONSUMER_ARN = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/joker:1527204892";
+    //    private static final String CONSUMER_ARN = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/shorea-consumer:1525898737";
+    private static final String CONSUMER_ARN = "arn:aws:kinesis:us-east-1:052958737983:stream/pfifer-test/consumer/shorea-consumer:1529977611";
 
-    public static final int COUNT = 500_000;
-    public static final int INTERVAL = 10;
     private static final Random random = new Random();
 
     public static void main(String[] args) throws InterruptedException, UnsupportedEncodingException {
         BasicConfigurator.configure();
-        //        KinesisAsyncClient client = alpha(
-        //            KinesisAsyncClient
-        //                .builder()
-        //                .asyncHttpConfiguration(ClientAsyncHttpConfiguration
-        //                                            .builder()
-        //                                            .httpClientFactory(NettySdkHttpClientFactory.builder()
-        //                                                                                        .trustAllCertificates(true)
-        //                                                                                        .build())
-        //                                            .build())
-        //        ).build();
 
-        int numSubscribers = 1;
-        CountDownLatch latch = new CountDownLatch(numSubscribers);
         KinesisAsyncClient client = alpha(
             KinesisAsyncClient
                 .builder()
@@ -59,153 +40,109 @@ public class H2Demo {
                     NettyNioAsyncHttpClient.builder()
                                            .trustAllCertificates(true))
         ).build();
-        CompletableFuture<DescribeStreamResponse> future = client.describeStream(r -> r.streamName(STREAM_NAME));
-//        future.whenComplete((r,e ) -> {
-//            if(e != null) {
-//                System.out.println("future error");
-//                e.printStackTrace();
-//            }else {
-//                System.out.println("future sucess");
-//            }
-//        }).join();
-        //        String consumerArn = client.describeStreamConsumer(r -> r.streamARN(streamArn)
-        //                                                                 .consumerName("shorea-consumer"))
-        //                                   .join().consumerDescription().consumerARN();
-        String consumerArn = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/shorea-consumer:1525898737";
-        if (true) {
 
-            subscribeToShardResponseHandler(client, "Stream-", consumerArn).join();
-            System.exit(0);
-        }
+//        client.listStreams()
+//              .join()
+//              .streamNames()
+//              .forEach(System.out::println);
 
-        //        ExecutorService recordProducer = startProducer(client);
-        ExecutorService subscriberExecutor = Executors.newFixedThreadPool(numSubscribers);
-        for (int i = 1; i <= numSubscribers; i++) {
-            int streamNum = i;
-            subscriberExecutor.submit(() -> {
-                try {
-                    subscribeToShardResponseHandler(client, "Stream-" + streamNum, consumerArn).join();
 
-                    //                    ResponseIterator<SubscribeToShardResponse, RecordBatchEvent> iterator =
-                    //                        client.subscribeToShardBlocking(SubscribeToShardRequest.builder()
-                    //                                                                               .consumerARN(STREAM_NAME)
-                    //                                                                               .shardId("shardId-000000000000")
-                    //                                                                               .shardIteratorType(ShardIteratorType.LATEST)
-                    //                                                                               .consumerARN(consumerArn)
-                    //                                                                               .build());
-                    //                    System.out.println("Has iterator");
-                    //                    iterator.forEachRemaining(System.out::println);
-                    System.out.println("Finished processing for stream " + streamNum);
-                    System.out.println("Closing client");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Stream " + streamNum + " failed");
-                } finally {
-                    latch.countDown();
-                }
+        client.listStreams().join();
 
-            });
-        }
-        latch.await();
-        System.out.println("Closing client");
+//        subscribeToShardResponseHandler(client).join();
         client.close();
-        System.out.println("All subscribers finished");
-        subscriberExecutor.shutdown();
-        subscriberExecutor.awaitTermination(1000, TimeUnit.SECONDS);
-
-        long start = System.nanoTime();
-        //                ResponseIterator<SubscribeToShardResponse, RecordBatchEvent> iterator =
-        //            client.subscribeToShardBlocking(SubscribeToShardRequest.builder()
-        //                                                                   .consumerARN(ALPHA_STREAM_NAME)
-        //                                                                   .shardId("shardId-000000000000")
-        //                                                                   .shardIteratorType(ShardIteratorType.LATEST)
-        //                                                                   .streamName(ALPHA_STREAM_NAME)
-        //                                                                   .build());
-        //        iterator.forEachRemaining(System.out::println);
-        try {
-            System.out.println("Total time = " + (System.nanoTime() - start));
-        } catch (Exception e) {
-            System.out.println("Closing client");
-        }
-        //        recordProducer.shutdownNow();
     }
 
-    private static ExecutorService startProducer(KinesisAsyncClient client) {
-        ExecutorService recordProducer = Executors.newSingleThreadExecutor();
-        recordProducer.submit(() -> {
-            while (true) {
-                System.out.println("Putting record");
-                client.putRecord(PutRecordRequest.builder()
-                                                 .streamName(STREAM_NAME)
-                                                 .partitionKey(UUID.randomUUID().toString())
-                                                 .data(ByteBuffer.wrap(randomBytes(1000 * 100)))
-                                                 .build())
-                      .join();
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException(e);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        return recordProducer;
-    }
+    private static CompletableFuture<Void> subscribeToShardResponseHandler(KinesisAsyncClient client) {
+        System.out.println("Invoking STS");
 
-    private static CompletableFuture<Integer> subscribeToShardResponseHandler(KinesisAsyncClient client, String prefix, String consumerArn) {
+        SubscribeToShardResponseHandler responseHandler =
+            SubscribeToShardResponseHandler.builder()
+                                           .onResponse(System.out::println)
+                                           .publisherTransformer(p -> p.limit(100))
+                                           // Supplier for Subscribe
+                                           // No collisions with Subscriber names on response handler
+                                           .subscriber(e -> System.out.println(e))
+                                           .build();
+
         return client.subscribeToShard(SubscribeToShardRequest.builder()
-                                                              .consumerARN(CONSUMER_ARN)
                                                               .shardId("shardId-000000000000")
                                                               .startingPosition(ShardIteratorType.LATEST)
-                                                              .consumerARN(consumerArn)
+                                                              .consumerARN(CONSUMER_ARN)
                                                               .build(),
-                                       new SubscribeToShardResponseTransformer<Integer>() {
-                                           AtomicInteger count = new AtomicInteger(0);
+                                       responseHandler);
+    }
 
-                                           @Override
-                                           public void responseReceived(SubscribeToShardResponse response) {
-                                               System.out.println(prefix + ": Initial Response = " + response);
-                                           }
+    private static SubscribeToShardResponseHandler createImplementingTransformer(String prefix) {
+        return new SubscribeToShardResponseHandler() {
 
-                                           @Override
-                                           public void onStream(SubscribeToShardResponseTransformer.Publisher p) {
-                                               p.subscribe(new Subscriber<SubscribeToShardBaseEvent>() {
-                                                   @Override
-                                                   public void onSubscribe(Subscription subscription) {
-                                                       subscription.request(Long.MAX_VALUE);
-                                                   }
+            @Override
+            public void responseReceived(SubscribeToShardResponse response) {
+                System.out.println(prefix + ": Initial Response = " + response);
+            }
 
-                                                   @Override
-                                                   public void onNext(SubscribeToShardBaseEvent subscribeToShardEvent) {
-                                                       subscribeToShardEvent.visit(new MyVisitor());
-                                                       count.incrementAndGet();
-                                                   }
+            @Override
+            public void onEventStream(SdkPublisher<ShardSubscriptionEventStream> p) {
+                p.subscribe(new Subscriber<ShardSubscriptionEventStream>() {
+                    @Override
+                    public void onSubscribe(Subscription subscription) {
 
-                                                   @Override
-                                                   public void onError(Throwable throwable) {
+                    }
 
-                                                   }
+                    @Override
+                    public void onNext(ShardSubscriptionEventStream shardSubscriptionEventStream) {
 
-                                                   @Override
-                                                   public void onComplete() {
+                    }
 
-                                                   }
-                                               });
+                    @Override
+                    public void onError(Throwable throwable) {
 
-                                           }
+                    }
 
-                                           @Override
-                                           public void exceptionOccurred(Throwable throwable) {
-                                               System.out.println("exception occurred");
-                                           }
+                    @Override
+                    public void onComplete() {
 
-                                           @Override
-                                           public Integer complete() {
-                                               return count.get();
-                                           }
-                                       });
+                    }
+                });
+            }
+
+            @Override
+            public void exceptionOccurred(Throwable throwable) {
+                System.out.println("exception occurred");
+                throwable.printStackTrace();
+            }
+
+            @Override
+            public void complete() {
+                System.out.println("complete called");
+            }
+        };
+    }
+
+    private static Subscriber<? super ShardSubscriptionEventStream> newSubscriber() {
+        return
+            new Subscriber<ShardSubscriptionEventStream>() {
+                @Override
+                public void onSubscribe(Subscription subscription) {
+                    subscription.request(Long.MAX_VALUE);
+                }
+
+                @Override
+                public void onNext(ShardSubscriptionEventStream subscribeToShardEvent) {
+                    System.out.println(subscribeToShardEvent);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    System.out.println("Subscriber#onError called");
+                    throwable.printStackTrace();
+                }
+
+                @Override
+                public void onComplete() {
+                    System.out.println("Subscriber#onComplete called");
+                }
+            };
     }
 
     private static byte[] randomBytes(int numBytes) {
@@ -237,7 +174,7 @@ public class H2Demo {
                       .credentialsProvider(ProfileCredentialsProvider.create("kinesis-hailstone"));
     }
 
-    private static final class MyVisitor extends SubscribeToShardBaseEvent.Visitor {
+    private static final class MyVisitor implements SubscribeToShardResponseHandler.Visitor {
 
         @Override
         public void visit(SubscribeToShardEvent event) {
