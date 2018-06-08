@@ -16,8 +16,10 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.http.Protocol;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.kinesis.model.DescribeStreamResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardBaseEvent;
@@ -57,8 +59,15 @@ public class H2Demo {
                     NettyNioAsyncHttpClient.builder()
                                            .trustAllCertificates(true))
         ).build();
-        //        String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME))
-        //                                 .join().streamDescription().streamARN();
+        CompletableFuture<DescribeStreamResponse> future = client.describeStream(r -> r.streamName(STREAM_NAME));
+//        future.whenComplete((r,e ) -> {
+//            if(e != null) {
+//                System.out.println("future error");
+//                e.printStackTrace();
+//            }else {
+//                System.out.println("future sucess");
+//            }
+//        }).join();
         //        String consumerArn = client.describeStreamConsumer(r -> r.streamARN(streamArn)
         //                                                                 .consumerName("shorea-consumer"))
         //                                   .join().consumerDescription().consumerARN();
@@ -189,7 +198,7 @@ public class H2Demo {
 
                                            @Override
                                            public void exceptionOccurred(Throwable throwable) {
-
+                                               System.out.println("exception occurred");
                                            }
 
                                            @Override
