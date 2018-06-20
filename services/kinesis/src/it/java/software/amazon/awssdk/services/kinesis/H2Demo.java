@@ -57,15 +57,22 @@ public class H2Demo {
                     NettyNioAsyncHttpClient.builder()
                                            .trustAllCertificates(true))
         ).build();
+
         //        String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME))
         //                                 .join().streamDescription().streamARN();
         //        String consumerArn = client.describeStreamConsumer(r -> r.streamARN(streamArn)
         //                                                                 .consumerName("shorea-consumer"))
         //                                   .join().consumerDescription().consumerARN();
         String consumerArn = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/shorea-consumer:1525898737";
+        client.putRecord(PutRecordRequest.builder()
+                                         .streamName(STREAM_NAME)
+                                         .partitionKey(UUID.randomUUID().toString())
+                                         .data(ByteBuffer.wrap(randomBytes(1000 * 100)))
+                                         .build())
+              .join();
         if (true) {
 
-            subscribeToShardResponseHandler(client, "Stream-", consumerArn).join();
+//            subscribeToShardResponseHandler(client, "Stream-", consumerArn).join();
             System.exit(0);
         }
 
