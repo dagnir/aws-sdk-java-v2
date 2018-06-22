@@ -9,7 +9,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.BasicConfigurator;
 import org.reactivestreams.Subscriber;
@@ -58,74 +57,14 @@ public class H2Demo {
                                            .trustAllCertificates(true))
         ).build();
 
-        //        String streamArn = client.describeStream(r -> r.streamName(STREAM_NAME))
-        //                                 .join().streamDescription().streamARN();
-        //        String consumerArn = client.describeStreamConsumer(r -> r.streamARN(streamArn)
-        //                                                                 .consumerName("shorea-consumer"))
-        //                                   .join().consumerDescription().consumerARN();
         String consumerArn = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/shorea-consumer:1525898737";
-        client.putRecord(PutRecordRequest.builder()
-                                         .streamName(STREAM_NAME)
-                                         .partitionKey(UUID.randomUUID().toString())
-                                         .data(ByteBuffer.wrap(randomBytes(1000 * 100)))
-                                         .build())
-              .join();
         if (true) {
 
-//            subscribeToShardResponseHandler(client, "Stream-", consumerArn).join();
+            subscribeToShardResponseHandler(client, "Stream-", consumerArn).join();
             System.exit(0);
         }
 
-        //        ExecutorService recordProducer = startProducer(client);
-        ExecutorService subscriberExecutor = Executors.newFixedThreadPool(numSubscribers);
-        for (int i = 1; i <= numSubscribers; i++) {
-            int streamNum = i;
-            subscriberExecutor.submit(() -> {
-                try {
-                    subscribeToShardResponseHandler(client, "Stream-" + streamNum, consumerArn).join();
-
-                    //                    ResponseIterator<SubscribeToShardResponse, RecordBatchEvent> iterator =
-                    //                        client.subscribeToShardBlocking(SubscribeToShardRequest.builder()
-                    //                                                                               .consumerARN(STREAM_NAME)
-                    //                                                                               .shardId("shardId-000000000000")
-                    //                                                                               .shardIteratorType(ShardIteratorType.LATEST)
-                    //                                                                               .consumerARN(consumerArn)
-                    //                                                                               .build());
-                    //                    System.out.println("Has iterator");
-                    //                    iterator.forEachRemaining(System.out::println);
-                    System.out.println("Finished processing for stream " + streamNum);
-                    System.out.println("Closing client");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Stream " + streamNum + " failed");
-                } finally {
-                    latch.countDown();
-                }
-
-            });
-        }
-        latch.await();
-        System.out.println("Closing client");
         client.close();
-        System.out.println("All subscribers finished");
-        subscriberExecutor.shutdown();
-        subscriberExecutor.awaitTermination(1000, TimeUnit.SECONDS);
-
-        long start = System.nanoTime();
-        //                ResponseIterator<SubscribeToShardResponse, RecordBatchEvent> iterator =
-        //            client.subscribeToShardBlocking(SubscribeToShardRequest.builder()
-        //                                                                   .consumerARN(ALPHA_STREAM_NAME)
-        //                                                                   .shardId("shardId-000000000000")
-        //                                                                   .shardIteratorType(ShardIteratorType.LATEST)
-        //                                                                   .streamName(ALPHA_STREAM_NAME)
-        //                                                                   .build());
-        //        iterator.forEachRemaining(System.out::println);
-        try {
-            System.out.println("Total time = " + (System.nanoTime() - start));
-        } catch (Exception e) {
-            System.out.println("Closing client");
-        }
-        //        recordProducer.shutdownNow();
     }
 
     private static ExecutorService startProducer(KinesisAsyncClient client) {
@@ -170,9 +109,13 @@ public class H2Demo {
                                            @Override
                                            public void onStream(SubscribeToShardResponseTransformer.Publisher p) {
                                                p.subscribe(new Subscriber<SubscribeToShardBaseEvent>() {
+                                                   public Subscription subscription;
+
                                                    @Override
                                                    public void onSubscribe(Subscription subscription) {
+                                                       this.subscription = subscription;
                                                        subscription.request(Long.MAX_VALUE);
+                                                       subscription.cancel();
                                                    }
 
                                                    @Override
@@ -188,7 +131,11 @@ public class H2Demo {
 
                                                    @Override
                                                    public void onComplete() {
-
+                                                       try {
+                                                           Thread.sleep(5000);
+                                                       } catch (InterruptedException e) {
+                                                           e.printStackTrace();
+                                                       }
                                                    }
                                                });
 
