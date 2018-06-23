@@ -15,6 +15,8 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.http.Protocol;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
@@ -24,6 +26,7 @@ import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponseTransformer;
+import software.amazon.awssdk.utils.AttributeMap;
 
 public class H2Demo {
 
@@ -52,9 +55,12 @@ public class H2Demo {
         KinesisAsyncClient client = alpha(
             KinesisAsyncClient
                 .builder()
-                .asyncHttpClientBuilder(
+                .asyncHttpClient(
                     NettyNioAsyncHttpClient.builder()
-                                           .trustAllCertificates(true))
+                                           .buildWithDefaults(AttributeMap.builder()
+                                                                          .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, true)
+                                                                          .put(SdkHttpConfigurationOption.PROTOCOL, Protocol.HTTP2)
+                                                                          .build()))
         ).build();
 
         String consumerArn = "arn:aws:kinesis:us-east-1:052958737983:stream/foobar/consumer/shorea-consumer:1525898737";
