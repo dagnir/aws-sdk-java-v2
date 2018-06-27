@@ -10,6 +10,9 @@ import org.reactivestreams.Subscription;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.async.SdkPublisher;
+import software.amazon.awssdk.core.interceptor.Context;
+import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
+import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
 import software.amazon.awssdk.http.Protocol;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
@@ -47,9 +50,12 @@ public class H2Demo {
         ).build();
 
 
-        client.listStreams().join();
-
-        subscribeToShardResponseHandler(client).join();
+        //        client.describeStream(r -> r.streamName("ladsjfa;")).join();
+        //        client.listStreams().join();
+        //
+        CompletableFuture<Void> future = subscribeToShardResponseHandler(client);
+        CompletableFuture<Void> future2 = subscribeToShardResponseHandler(client);
+        CompletableFuture.allOf(future, future2).join();
         client.close();
     }
 
@@ -58,6 +64,10 @@ public class H2Demo {
 
         SubscribeToShardResponseHandler responseHandler =
             SubscribeToShardResponseHandler.builder()
+                                           .onError(e -> {
+                                               System.out.println("SHOREA onExceptionOccurred");
+                                               e.printStackTrace();
+                                           })
                                            .onResponse(System.out::println)
                                            .publisherTransformer(p -> p.limit(100))
                                            // Supplier for Subscribe
