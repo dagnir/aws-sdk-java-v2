@@ -17,8 +17,9 @@ import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
-import software.amazon.awssdk.services.kinesis.model.ShardSubscriptionEventStream;
+import software.amazon.awssdk.services.kinesis.model.StartingPosition;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEvent;
+import software.amazon.awssdk.services.kinesis.model.SubscribeToShardEventStream;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponse;
 import software.amazon.awssdk.services.kinesis.model.SubscribeToShardResponseHandler;
@@ -57,7 +58,10 @@ public class H2Demo {
 
         SubscribeToShardRequest request = SubscribeToShardRequest.builder()
                                                                  .shardId("shardId-000000000000")
-                                                                 .startingPosition(ShardIteratorType.TRIM_HORIZON)
+                                                                 .startingPosition(
+                                                                     StartingPosition.builder()
+                                                                                     .type(ShardIteratorType.TRIM_HORIZON)
+                                                                                     .build())
                                                                  .consumerARN(CONSUMER_ARN)
                                                                  .build();
         responseHandlerBuilder_PublisherTransformer(client, request).join();
@@ -195,7 +199,7 @@ public class H2Demo {
             }
 
             @Override
-            public void onEventStream(SdkPublisher<ShardSubscriptionEventStream> publisher) {
+            public void onEventStream(SdkPublisher<SubscribeToShardEventStream> publisher) {
                 publisher
                     // Filter to only SubscribeToShardEvents
                     .filter(SubscribeToShardEvent.class)
@@ -245,7 +249,7 @@ public class H2Demo {
     /**
      * Simple subscriber implementation that prints events and cancels the subscription after 100 events.
      */
-    private static class MySubscriber implements Subscriber<ShardSubscriptionEventStream> {
+    private static class MySubscriber implements Subscriber<SubscribeToShardEventStream> {
 
         private Subscription subscription;
         private AtomicInteger eventCount = new AtomicInteger(0);
@@ -257,7 +261,7 @@ public class H2Demo {
         }
 
         @Override
-        public void onNext(ShardSubscriptionEventStream shardSubscriptionEventStream) {
+        public void onNext(SubscribeToShardEventStream shardSubscriptionEventStream) {
             System.out.println("Received event " + shardSubscriptionEventStream);
             if (eventCount.incrementAndGet() >= 100) {
                 // You can cancel the subscription at any time if you wish to stop receiving events.
@@ -294,7 +298,10 @@ public class H2Demo {
 
         return client.subscribeToShard(SubscribeToShardRequest.builder()
                                                               .shardId("shardId-000000000000")
-                                                              .startingPosition(ShardIteratorType.TRIM_HORIZON)
+                                                              .startingPosition(
+                                                                  StartingPosition.builder()
+                                                                                  .type(ShardIteratorType.TRIM_HORIZON)
+                                                                                  .build())
                                                               .consumerARN(CONSUMER_ARN)
                                                               .build(),
                                        responseHandler);
@@ -309,15 +316,15 @@ public class H2Demo {
             }
 
             @Override
-            public void onEventStream(SdkPublisher<ShardSubscriptionEventStream> p) {
-                p.subscribe(new Subscriber<ShardSubscriptionEventStream>() {
+            public void onEventStream(SdkPublisher<SubscribeToShardEventStream> p) {
+                p.subscribe(new Subscriber<SubscribeToShardEventStream>() {
                     @Override
                     public void onSubscribe(Subscription subscription) {
 
                     }
 
                     @Override
-                    public void onNext(ShardSubscriptionEventStream shardSubscriptionEventStream) {
+                    public void onNext(SubscribeToShardEventStream shardSubscriptionEventStream) {
                     }
 
                     @Override
@@ -345,16 +352,16 @@ public class H2Demo {
         };
     }
 
-    private static Subscriber<? super ShardSubscriptionEventStream> newSubscriber() {
+    private static Subscriber<? super SubscribeToShardEventStream> newSubscriber() {
         return
-            new Subscriber<ShardSubscriptionEventStream>() {
+            new Subscriber<SubscribeToShardEventStream>() {
                 @Override
                 public void onSubscribe(Subscription subscription) {
                     subscription.request(Long.MAX_VALUE);
                 }
 
                 @Override
-                public void onNext(ShardSubscriptionEventStream subscribeToShardEvent) {
+                public void onNext(SubscribeToShardEventStream subscribeToShardEvent) {
                     System.out.println(subscribeToShardEvent);
                 }
 
