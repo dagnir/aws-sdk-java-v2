@@ -346,6 +346,6 @@ public class MapperLoadingStrategyConfigIntegrationTest extends DynamoDBMapperIn
 
         testIterationOnlyPaginatedListOperations(queryList);
         testIterationOnlyPaginatedListOperations(scanList);
-        testIterationOnlyPaginatedListOperations(parallelScanList);
+//        testIterationOnlyPaginatedListOperations(parallelScanList);
     }
 }

@@ -36,6 +36,7 @@ import org.junit.runner.RunWith;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.core.exception.ErrorType;
 import software.amazon.awssdk.core.exception.SdkServiceException;
+import software.amazon.awssdk.core.util.SdkAutoConstructMap;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
@@ -387,7 +388,7 @@ public class DynamoServiceIntegrationTest extends DynamoDBTestBase {
         GetItemRequest itemsRequest = GetItemRequest.builder().tableName(tableName).key(mapKey(HASH_KEY_NAME, AttributeValue.builder().s("3").build()))
                 .consistentRead(true).build();
         GetItemResponse itemsResult = dynamo.getItem(itemsRequest);
-        assertNull(itemsResult.item());
+        assertTrue(itemsResult.item() instanceof SdkAutoConstructMap);
 
         // Get an item that doesn't have any attributes,
         itemsRequest = GetItemRequest.builder().tableName(tableName).key(mapKey(HASH_KEY_NAME, AttributeValue.builder().s("bar").build()))
