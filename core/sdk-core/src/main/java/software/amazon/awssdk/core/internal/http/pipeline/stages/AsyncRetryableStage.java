@@ -139,6 +139,7 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
         }
 
         private void executeRetry(CompletableFuture<Response<OutputT>> future) {
+            System.out.println("execute retry");
             final int retriesAttempted = requestCount - 2;
             Duration delay = retryHandler.computeDelayBeforeNextRetry();
 

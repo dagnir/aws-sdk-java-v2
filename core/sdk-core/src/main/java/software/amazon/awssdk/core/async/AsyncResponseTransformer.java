@@ -83,6 +83,10 @@ public interface AsyncResponseTransformer<ResponseT, ReturnT> {
      */
     ReturnT complete();
 
+    default void failed() {
+
+    }
+
     /**
      * Creates an {@link AsyncResponseTransformer} that writes all the content to the given file. In the event of an error,
      * the SDK will attempt to delete the file (whatever has been written to it so far). If the file already exists, an
