@@ -25,6 +25,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -38,6 +39,7 @@ import software.amazon.awssdk.codegen.model.intermediate.ShapeModel;
 import software.amazon.awssdk.codegen.model.intermediate.ShapeType;
 import software.amazon.awssdk.codegen.poet.PoetExtensions;
 import software.amazon.awssdk.core.client.handler.ClientExecutionParams;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.http.HttpResponseHandler;
 import software.amazon.awssdk.core.protocol.json.JsonClientMetadata;
 import software.amazon.awssdk.core.protocol.json.JsonErrorResponseMetadata;
@@ -133,29 +135,32 @@ public class JsonProtocolSpec implements ProtocolSpec {
         ClassName requestType = poetExtensions.getModelClass(opModel.getInput().getVariableType());
         ClassName marshaller = poetExtensions.getRequestTransformClass(opModel.getInputShape().getShapeName() + "Marshaller");
 
-        final CodeBlock.Builder codeBlock = CodeBlock
-                .builder()
-                .add("\n\nreturn clientHandler.execute(new $T<$T, $T>()\n" +
-                     ".withResponseHandler($N)\n" +
-                     ".withErrorResponseHandler($N)\n" +
-                     ".withInput($L)\n",
-                     ClientExecutionParams.class,
-                     requestType,
-                     responseType,
-                     "responseHandler",
-                     "errorResponseHandler",
-                     opModel.getInput().getVariableName());
+        final CodeBlock.Builder codeBlock = CodeBlock.builder()
+                .beginControlFlow("try")
+                .add("return clientHandler.execute(new $T<$T, $T>()", ClientExecutionParams.class, requestType, responseType)
+                .add(".withResponseHandler($N)", "responseHandler")
+                .add(".withErrorResponseHandler($N)", "errorResponseHandler")
+                .add(".withInput($L)", opModel.getInput().getVariableName());
 
         if (opModel.hasStreamingInput()) {
-            return codeBlock.add(".withMarshaller(new $T(new $T(protocolFactory), requestBody)));",
+            codeBlock.add(".withMarshaller(new $T(new $T(protocolFactory), requestBody)));",
                                  ParameterizedTypeName.get(ClassName.get(StreamingRequestMarshaller.class), requestType),
                                  marshaller)
                             .build();
+        } else {
+            codeBlock.add(".withMarshaller(new $T(protocolFactory))$L).get();", marshaller,
+                    opModel.hasStreamingOutput() ? ", responseTransformer" : "")
+                    .build();
         }
 
-        return codeBlock.add(".withMarshaller(new $T(protocolFactory))$L);", marshaller,
-                             opModel.hasStreamingOutput() ? ", responseTransformer" : "")
-                        .build();
+        return codeBlock.endControlFlow()
+                .beginControlFlow("catch ($T e)", InterruptedException.class)
+                .addStatement("throw $T.builder().cause($N).build()", SdkClientException.class, "e")
+                .endControlFlow()
+                .beginControlFlow("catch ($T e)", ExecutionException.class)
+                .addStatement("throw $T.builder().cause($N.getCause()).build()", SdkClientException.class, "e")
+                .endControlFlow()
+                .build();
     }
 
     @Override
