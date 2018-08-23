@@ -43,7 +43,7 @@ import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.AbortableRunnable;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.kinesis.model.KinesisException;
@@ -180,7 +180,7 @@ public class SubscribeToShardUnmarshallingTest {
         ArgumentCaptor<SdkHttpResponseHandler> captor = ArgumentCaptor.forClass(SdkHttpResponseHandler.class);
         when(sdkHttpClient.prepareRequest(any(SdkHttpRequest.class),
                                           any(SdkRequestContext.class),
-                                          any(SdkHttpRequestProvider.class),
+                                          any(SdkHttpContentPublisher.class),
                                           captor.capture()))
             .thenReturn(new AbortableRunnable() {
                 @Override

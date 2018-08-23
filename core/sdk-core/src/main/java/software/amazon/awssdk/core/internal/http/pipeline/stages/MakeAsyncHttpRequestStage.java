@@ -35,7 +35,7 @@ import software.amazon.awssdk.core.internal.Response;
 import software.amazon.awssdk.core.internal.http.HttpClientDependencies;
 import software.amazon.awssdk.core.internal.http.InterruptMonitor;
 import software.amazon.awssdk.core.internal.http.RequestExecutionContext;
-import software.amazon.awssdk.core.internal.http.async.SimpleRequestProvider;
+import software.amazon.awssdk.core.internal.http.async.SimpleHttpContentPublisher;
 import software.amazon.awssdk.core.internal.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.core.internal.http.timers.TimeoutTracker;
 import software.amazon.awssdk.http.Abortable;
@@ -46,7 +46,7 @@ import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.AbortableRunnable;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.Logger;
 import software.amazon.awssdk.utils.OptionalUtils;
@@ -96,8 +96,8 @@ public final class MakeAsyncHttpRequestStage<OutputT>
 
         SdkHttpResponseHandler<Response<OutputT>> handler = new ResponseHandler(completable);
 
-        SdkHttpRequestProvider requestProvider = context.requestProvider() == null
-                ? new SimpleRequestProvider(request, context.executionAttributes())
+        SdkHttpContentPublisher requestProvider = context.requestProvider() == null
+                ? new SimpleHttpContentPublisher(request, context.executionAttributes())
                 : context.requestProvider();
         // Set content length if it hasn't been set already.
         SdkHttpFullRequest requestWithContentLength = getRequestWithContentLength(request, requestProvider);
@@ -118,7 +118,7 @@ public final class MakeAsyncHttpRequestStage<OutputT>
         return completable.completableFuture;
     }
 
-    private SdkHttpFullRequest getRequestWithContentLength(SdkHttpFullRequest request, SdkHttpRequestProvider requestProvider) {
+    private SdkHttpFullRequest getRequestWithContentLength(SdkHttpFullRequest request, SdkHttpContentPublisher requestProvider) {
         if (shouldSetContentLength(request, requestProvider)) {
             return request.toBuilder()
                           .putHeader("Content-Length", String.valueOf(requestProvider.contentLength()))
@@ -127,7 +127,7 @@ public final class MakeAsyncHttpRequestStage<OutputT>
         return request;
     }
 
-    private boolean shouldSetContentLength(SdkHttpFullRequest request, SdkHttpRequestProvider requestProvider) {
+    private boolean shouldSetContentLength(SdkHttpFullRequest request, SdkHttpContentPublisher requestProvider) {
         return requestProvider != null
                && !request.firstMatchingHeader("Content-Length").isPresent()
                // Can cause issues with signing if content length is present for these method

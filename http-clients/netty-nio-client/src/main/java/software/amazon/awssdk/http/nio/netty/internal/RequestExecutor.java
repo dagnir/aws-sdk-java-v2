@@ -15,6 +15,7 @@
 
 package software.amazon.awssdk.http.nio.netty.internal;
 
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKey.EXECUTE_FUTURE_KEY;
 import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKey.REQUEST_CONTEXT_KEY;
 import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKey.RESPONSE_COMPLETE_KEY;
 
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
@@ -49,32 +51,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.http.Protocol;
-import software.amazon.awssdk.http.async.AbortableRunnable;
+import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
 import software.amazon.awssdk.http.nio.netty.internal.http2.Http2ToHttpInboundAdapter;
 import software.amazon.awssdk.http.nio.netty.internal.http2.HttpToHttp2OutboundAdapter;
 import software.amazon.awssdk.http.nio.netty.internal.utils.ChannelUtils;
 import software.amazon.awssdk.utils.FunctionalUtils.UnsafeRunnable;
 
 @SdkInternalApi
-public final class RunnableRequest implements AbortableRunnable {
-
-    private static final Logger log = LoggerFactory.getLogger(RunnableRequest.class);
+public final class RequestExecutor {
+    private static final Logger log = LoggerFactory.getLogger(RequestExecutor.class);
+    private static final RequestAdapter REQUEST_ADAPTER = new RequestAdapter();
+    private final CompletableFuture<Void> cf = new CompletableFuture<>();
     private final RequestContext context;
     private volatile Channel channel;
 
-    public RunnableRequest(RequestContext context) {
+    public RequestExecutor(RequestContext context) {
         this.context = context;
     }
 
-    @Override
-    public void run() {
+    public CompletableFuture<Void> execute() {
+        // Abort on any exception (this includes external cancellations which manifest as CancellationException)
+        cf.whenComplete((r, t) -> {
+            if (t != null) {
+                doAbort();
+            }
+        });
+
         context.channelPool().acquire().addListener((Future<Channel> channelFuture) -> {
             if (channelFuture.isSuccess()) {
                 try {
                     channel = channelFuture.getNow();
+                    channel.attr(EXECUTE_FUTURE_KEY).set(cf);
                     channel.attr(REQUEST_CONTEXT_KEY).set(context);
                     channel.attr(RESPONSE_COMPLETE_KEY).set(false);
-                    makeRequest(context.nettyRequest());
+                    makeRequest(REQUEST_ADAPTER.adapt(context.executeRequest().request()));
                 } catch (Exception e) {
                     handleFailure(() -> "Failed to make request to " + endpoint(), e);
                 }
@@ -82,13 +92,14 @@ public final class RunnableRequest implements AbortableRunnable {
                 handleFailure(() -> "Failed to create connection to " + endpoint(), channelFuture.cause());
             }
         });
+
+        return cf;
     }
 
-    @Override
-    public void abort() {
-        log.trace("aborting the request");
+    private void doAbort() {
+        log.trace("Cancelling the request");
         if (channel != null) {
-            closeAndRelease(channel);
+            runAndLogError(() -> closeAndRelease(channel), "Could not release channel back to the pool");
         }
     }
 
@@ -119,7 +130,7 @@ public final class RunnableRequest implements AbortableRunnable {
         channel.pipeline().addFirst(new WriteTimeoutHandler(context.configuration().writeTimeoutMillis(),
                                                             TimeUnit.MILLISECONDS));
 
-        channel.writeAndFlush(new StreamedRequest(request, context.sdkRequestProvider(), channel))
+        channel.writeAndFlush(new StreamedRequest(request, context.executeRequest().requestContentPublisher(), channel))
                .addListener(wireCall -> {
                    // Done writing so remove the idle write timeout handler
                    ChannelUtils.removeIfExists(channel.pipeline(), WriteTimeoutHandler.class);
@@ -136,7 +147,7 @@ public final class RunnableRequest implements AbortableRunnable {
     }
 
     private URI endpoint() {
-        return context.sdkRequest().getUri();
+        return context.executeRequest().request().getUri();
     }
 
     private void runOrFail(Runnable runnable, Supplier<String> errorMsgSupplier) {
@@ -149,13 +160,7 @@ public final class RunnableRequest implements AbortableRunnable {
 
     private void handleFailure(Supplier<String> msg, Throwable cause) {
         log.error(msg.get(), cause);
-        Throwable throwable = decorateException(cause);
-        runAndLogError("Exception thrown from AsyncResponseHandler",
-            () -> context.handler().exceptionOccurred(throwable));
-        if (channel != null) {
-            runAndLogError("Unable to release channel back to the pool.",
-                () -> closeAndRelease(channel));
-        }
+        cf.completeExceptionally(decorateException(cause));
     }
 
     private Throwable decorateException(Throwable originalCause) {
@@ -230,10 +235,10 @@ public final class RunnableRequest implements AbortableRunnable {
     /**
      * Runs a given {@link UnsafeRunnable} and logs an error without throwing.
      *
-     * @param errorMsg Message to log with exception thrown.
      * @param runnable Action to perform.
+     * @param errorMsg Message to log with exception thrown.
      */
-    private static void runAndLogError(String errorMsg, UnsafeRunnable runnable) {
+    private static void runAndLogError(UnsafeRunnable runnable, String errorMsg) {
         try {
             runnable.run();
         } catch (Exception e) {
@@ -327,7 +332,7 @@ public final class RunnableRequest implements AbortableRunnable {
 
     /**
      * Decorator around {@link StreamedHttpRequest} to adapt a publisher of {@link ByteBuffer} (i.e. {@link
-     * software.amazon.awssdk.http.async.SdkHttpRequestProvider}) to a publisher of {@link HttpContent}.
+     * SdkHttpContentPublisher}) to a publisher of {@link HttpContent}.
      * <p />
      * This publisher also prevents the adapted publisher from publishing more content to the subscriber than
      * the specified 'Content-Length' of the request.

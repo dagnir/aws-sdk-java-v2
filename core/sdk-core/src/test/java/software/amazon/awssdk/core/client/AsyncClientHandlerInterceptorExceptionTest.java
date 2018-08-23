@@ -58,7 +58,7 @@ import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.AbortableRunnable;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import utils.HttpTestUtils;
 
@@ -154,7 +154,7 @@ public class AsyncClientHandlerInterceptorExceptionTest {
 
         when(asyncHttpClient.prepareRequest(any(SdkHttpRequest.class),
                                             any(SdkRequestContext.class),
-                                            any(SdkHttpRequestProvider.class),
+                                            any(SdkHttpContentPublisher.class),
                                             any(SdkHttpResponseHandler.class)))
                                            .thenAnswer(prepareRequestAnswer);
     }

@@ -63,7 +63,7 @@ import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.http.SdkRequestContext;
 import software.amazon.awssdk.http.async.AbortableRunnable;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
-import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.AttributeMap;
 import software.amazon.awssdk.utils.Either;
@@ -401,7 +401,7 @@ public abstract class SdkDefaultClientBuilder<B extends SdkClientBuilder<B, C>, 
 
         @Override
         public AbortableRunnable prepareRequest(SdkHttpRequest request, SdkRequestContext context,
-                                                SdkHttpRequestProvider requestProvider, SdkHttpResponseHandler handler) {
+                                                SdkHttpContentPublisher requestProvider, SdkHttpResponseHandler handler) {
             return delegate.prepareRequest(request, context, requestProvider, handler);
         }
 

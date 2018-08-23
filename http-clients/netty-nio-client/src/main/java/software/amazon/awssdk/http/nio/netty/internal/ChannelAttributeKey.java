@@ -55,6 +55,8 @@ public final class ChannelAttributeKey {
 
     static final AttributeKey<Boolean> RESPONSE_COMPLETE_KEY = AttributeKey.newInstance("responseComplete");
 
+    static final AttributeKey<CompletableFuture<Void>> EXECUTE_FUTURE_KEY = AttributeKey.newInstance("aws.http.netty.async.executeFuture");
+
     private ChannelAttributeKey() {
     }
 

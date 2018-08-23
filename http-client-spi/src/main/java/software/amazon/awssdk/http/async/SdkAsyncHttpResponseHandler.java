@@ -15,19 +15,32 @@
 
 package software.amazon.awssdk.http.async;
 
-import java.nio.ByteBuffer;
 import org.reactivestreams.Publisher;
 import software.amazon.awssdk.annotations.SdkProtectedApi;
+import software.amazon.awssdk.http.SdkHttpResponse;
+
+import java.nio.ByteBuffer;
 
 /**
- * A {@link Publisher} of HTTP content data that allows streaming operations for asynchronous HTTP clients.
+ * Handles asynchronous HTTP responses.
  */
 @SdkProtectedApi
-public interface SdkHttpRequestProvider extends Publisher<ByteBuffer> {
+public interface SdkAsyncHttpResponseHandler {
+    /**
+     * Called when the headers have been received.
+     *
+     * @param headers The headers.
+     */
+    void onHeaders(SdkHttpResponse headers);
 
     /**
-     * @return The content length of the data being produced.
+     * Called when the streaming body is ready.
+     * <p>
+     * This method is always called. If the response does not have a body,
+     * then the publisher will complete the subscription without
+     * signalling any elements.
+     *
+     * @param stream The streaming body.
      */
-    long contentLength();
-
+    void onStream(Publisher<ByteBuffer> stream);
 }

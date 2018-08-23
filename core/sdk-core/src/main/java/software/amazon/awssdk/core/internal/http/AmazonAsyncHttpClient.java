@@ -44,7 +44,7 @@ import software.amazon.awssdk.core.internal.http.pipeline.stages.UnwrapResponseC
 import software.amazon.awssdk.core.internal.retry.SdkDefaultRetrySetting;
 import software.amazon.awssdk.core.internal.util.CapacityManager;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.SdkAutoCloseable;
 
@@ -91,12 +91,12 @@ public final class AmazonAsyncHttpClient implements SdkAutoCloseable {
     public interface RequestExecutionBuilder {
 
         /**
-         * Fluent setter for {@link SdkHttpRequestProvider}
+         * Fluent setter for {@link SdkHttpContentPublisher}
          *
          * @param requestProvider Request provider object
          * @return This builder for method chaining.
          */
-        RequestExecutionBuilder requestProvider(SdkHttpRequestProvider requestProvider);
+        RequestExecutionBuilder requestProvider(SdkHttpContentPublisher requestProvider);
 
         /**
          * Fluent setter for {@link SdkHttpFullRequest}
@@ -144,14 +144,14 @@ public final class AmazonAsyncHttpClient implements SdkAutoCloseable {
 
     private class RequestExecutionBuilderImpl implements RequestExecutionBuilder {
 
-        private SdkHttpRequestProvider requestProvider;
+        private SdkHttpContentPublisher requestProvider;
         private SdkHttpFullRequest request;
         private SdkHttpResponseHandler<? extends SdkException> errorResponseHandler;
         private SdkRequest originalRequest;
         private ExecutionContext executionContext;
 
         @Override
-        public RequestExecutionBuilder requestProvider(SdkHttpRequestProvider requestProvider) {
+        public RequestExecutionBuilder requestProvider(SdkHttpContentPublisher requestProvider) {
             this.requestProvider = requestProvider;
             return this;
         }

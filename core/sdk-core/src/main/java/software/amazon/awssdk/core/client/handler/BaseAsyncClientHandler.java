@@ -38,7 +38,7 @@ import software.amazon.awssdk.core.internal.util.ThrowableUtils;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponse;
-import software.amazon.awssdk.http.async.SdkHttpRequestProvider;
+import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
 import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.CompletableFutureUtils;
 
@@ -92,9 +92,9 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
             SdkHttpFullRequest marshalled = finalizeSdkHttpFullRequest(executionParams, executionContext, inputT,
                     clientConfiguration);
 
-            SdkHttpRequestProvider requestProvider = executionParams.getAsyncRequestBody() == null
+            SdkHttpContentPublisher requestProvider = executionParams.getAsyncRequestBody() == null
                     ? null
-                    : new SdkHttpRequestProviderAdapter(executionParams.getAsyncRequestBody());
+                    : new SdkHttpContentPublisherAdapter(executionParams.getAsyncRequestBody());
 
             SdkHttpResponseHandler<ReturnT> successResponseHandler = new InterceptorCallingHttpResponseHandler<>(
                 sdkHttpResponseHandler, executionContext);
@@ -142,7 +142,7 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
      **/
     private <InputT extends SdkRequest, OutputT> CompletableFuture<OutputT> invoke(
         SdkHttpFullRequest request,
-        SdkHttpRequestProvider requestProvider,
+        SdkHttpContentPublisher requestProvider,
         InputT originalRequest,
         ExecutionContext executionContext,
         SdkHttpResponseHandler<OutputT> responseHandler,
@@ -263,13 +263,13 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
     /**
      * When an operation has a streaming input, the customer must supply an {@link AsyncRequestBody} to
      * provide the request content in a non-blocking manner. This adapts that interface to the
-     * {@link SdkHttpRequestProvider} which the HTTP client SPI expects.
+     * {@link SdkHttpContentPublisher} which the HTTP client SPI expects.
      */
-    private static final class SdkHttpRequestProviderAdapter implements SdkHttpRequestProvider {
+    private static final class SdkHttpContentPublisherAdapter implements SdkHttpContentPublisher {
 
         private final AsyncRequestBody asyncRequestBody;
 
-        private SdkHttpRequestProviderAdapter(AsyncRequestBody asyncRequestBody) {
+        private SdkHttpContentPublisherAdapter(AsyncRequestBody asyncRequestBody) {
             this.asyncRequestBody = asyncRequestBody;
         }
 
