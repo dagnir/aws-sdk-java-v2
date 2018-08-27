@@ -171,7 +171,7 @@ public class QueryXmlProtocolSpec implements ProtocolSpec {
                                        // If it's a streaming operation we also need to notify the handler on exception
                                        opModel.hasStreamingOutput() ? ".whenComplete((r, e) -> {\n"
                                                                       + "    if (e != null) {\n"
-                                                                      + "        asyncResponseTransformer.exceptionOccurred(e);\n"
+                                                                      + "        asyncResponseTransformer.onError(e);\n"
                                                                       + "    }\n"
                                                                       + "})" : "")
                         .build();

@@ -191,7 +191,7 @@ public class EventStreamAsyncResponseTransformer<ResponseT, EventT>
     }
 
     @Override
-    public void responseReceived(SdkResponse response) {
+    public void onResponse(SdkResponse response) {
         // We use a void unmarshaller and unmarshall the actual response in the message
         // decoder when we receive the initial-response frame. TODO not clear
         // how we would handle REST protocol which would unmarshall the response from the HTTP headers
@@ -204,51 +204,52 @@ public class EventStreamAsyncResponseTransformer<ResponseT, EventT>
 
     @Override
     public void onStream(SdkPublisher<ByteBuffer> publisher) {
-        synchronized (this) {
-            // Reset to allow more exceptions to propagate for retries
-            isDone = false;
-        }
-        CompletableFuture<Subscription> dataSubscriptionFuture = new CompletableFuture<>();
-        publisher.subscribe(new ByteSubscriber(dataSubscriptionFuture));
-        dataSubscriptionFuture.thenAccept(dataSubscription -> {
-            SdkPublisher<EventT> eventPublisher = new EventPublisher(dataSubscription);
-            try {
-                eventStreamResponseHandler.onEventStream(eventPublisher);
-            } catch (Throwable t) {
-                exceptionOccurred(t);
-                dataSubscription.cancel();
-            }
-        });
+//        synchronized (this) {
+//            // Reset to allow more exceptions to propagate for retries
+//            isDone = false;
+//        }
+//        CompletableFuture<Subscription> dataSubscriptionFuture = new CompletableFuture<>();
+//        publisher.subscribe(new ByteSubscriber(dataSubscriptionFuture));
+//        dataSubscriptionFuture.thenAccept(dataSubscription -> {
+//            SdkPublisher<EventT> eventPublisher = new EventPublisher(dataSubscription);
+//            try {
+//                eventStreamResponseHandler.onEventStream(eventPublisher);
+//            } catch (Throwable t) {
+//                exceptionOccurred(t);
+//                dataSubscription.cancel();
+//            }
+//        });
     }
 
     @Override
-    public void exceptionOccurred(Throwable throwable) {
-        synchronized (this) {
-            if (!isDone) {
-                isDone = true;
-                error.set(throwable);
-                // If we have a Subscriber at this point notify it as well
-                if (subscriberRef.get() != null) {
-                    runAndLogError(log, "Error thrown from Subscriber#onError, ignoring.",
-                        () -> subscriberRef.get().onError(throwable));
-                }
-                eventStreamResponseHandler.exceptionOccurred(throwable);
-            }
-        }
+    public void onError(Throwable throwable) {
+//        synchronized (this) {
+//            if (!isDone) {
+//                isDone = true;
+//                error.set(throwable);
+//                // If we have a Subscriber at this point notify it as well
+//                if (subscriberRef.get() != null) {
+//                    runAndLogError(log, "Error thrown from Subscriber#onError, ignoring.",
+//                        () -> subscriberRef.get().onError(throwable));
+//                }
+//                eventStreamResponseHandler.exceptionOccurred(throwable);
+//            }
+//        }
     }
 
     @Override
-    public Void complete() {
-        if (error.get() == null) {
-            // Add the special on complete event to signal drainEvents to complete the subscriber
-            eventsToDeliver.add(ON_COMPLETE_EVENT);
-            drainEventsIfNotAlready();
-            return null;
-        } else {
-            // Need to propagate the failure up so the future is completed exceptionally. This should only happen
-            // when there is a frame level exception that the upper layers don't know about.
-            throw ThrowableUtils.failure(error.get());
-        }
+    public CompletableFuture<Void> transformResult() {
+        return null;
+//        if (error.get() == null) {
+//            // Add the special on complete event to signal drainEvents to complete the subscriber
+//            eventsToDeliver.add(ON_COMPLETE_EVENT);
+//            drainEventsIfNotAlready();
+//            return null;
+//        } else {
+//            // Need to propagate the failure up so the future is completed exceptionally. This should only happen
+//            // when there is a frame level exception that the upper layers don't know about.
+//            throw ThrowableUtils.failure(error.get());
+//        }
     }
 
     /**
@@ -270,27 +271,27 @@ public class EventStreamAsyncResponseTransformer<ResponseT, EventT>
      * @param m Decoded message.
      */
     private void handleMessage(Message m) {
-        try {
-            // TODO: Can we move all of the dispatching to a single unmarshaller?
-            if (isEvent(m)) {
-                if (m.getHeaders().get(":event-type").getString().equals("initial-response")) {
-                    eventStreamResponseHandler.responseReceived(
-                        initialResponseHandler.handle(adaptMessageToResponse(m, false),
-                                                      EMPTY_EXECUTION_ATTRIBUTES));
-                } else {
-                    // Add to queue to be delivered later by the executor
-                    eventsToDeliver.add(eventResponseHandler.handle(adaptMessageToResponse(m, false),
-                                                                    EMPTY_EXECUTION_ATTRIBUTES));
-                }
-            } else if (isError(m) || isException(m)) {
-                SdkHttpFullResponse errorResponse = adaptMessageToResponse(m, true);
-                Throwable exception = exceptionResponseHandler.handle(
-                    errorResponse, new ExecutionAttributes().putAttribute(SdkExecutionAttribute.SERVICE_NAME, serviceName));
-                runAndLogError(log, "Error thrown from exceptionOccurred, ignoring.", () -> exceptionOccurred(exception));
-            }
-        } catch (Exception e) {
-            throw SdkClientException.builder().cause(e).build();
-        }
+//        try {
+//            // TODO: Can we move all of the dispatching to a single unmarshaller?
+//            if (isEvent(m)) {
+//                if (m.getHeaders().get(":event-type").getString().equals("initial-response")) {
+//                    eventStreamResponseHandler.responseReceived(
+//                        initialResponseHandler.handle(adaptMessageToResponse(m, false),
+//                                                      EMPTY_EXECUTION_ATTRIBUTES));
+//                } else {
+//                    // Add to queue to be delivered later by the executor
+//                    eventsToDeliver.add(eventResponseHandler.handle(adaptMessageToResponse(m, false),
+//                                                                    EMPTY_EXECUTION_ATTRIBUTES));
+//                }
+//            } else if (isError(m) || isException(m)) {
+//                SdkHttpFullResponse errorResponse = adaptMessageToResponse(m, true);
+//                Throwable exception = exceptionResponseHandler.handle(
+//                    errorResponse, new ExecutionAttributes().putAttribute(SdkExecutionAttribute.SERVICE_NAME, serviceName));
+//                runAndLogError(log, "Error thrown from exceptionOccurred, ignoring.", () -> exceptionOccurred(exception));
+//            }
+//        } catch (Exception e) {
+//            throw SdkClientException.builder().cause(e).build();
+//        }
     }
 
     /**

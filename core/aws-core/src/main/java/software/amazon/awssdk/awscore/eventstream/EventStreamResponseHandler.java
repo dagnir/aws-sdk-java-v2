@@ -63,7 +63,7 @@ public interface EventStreamResponseHandler<ResponseT, EventT> {
      *
      * @param throwable Exception that occurred.
      */
-    void exceptionOccurred(Throwable throwable);
+    void onError(Throwable throwable);
 
     /**
      * Called when all data has been successfully published to the {@link org.reactivestreams.Subscriber}. This will

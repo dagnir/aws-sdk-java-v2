@@ -43,117 +43,118 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.testutils.RandomTempFile;
 import software.amazon.awssdk.utils.ImmutableMap;
 
+// FIXME(dongie)
 public class GetObjectAsyncIntegrationTest extends S3IntegrationTestBase {
-
-    private static final String BUCKET = temporaryBucketName(GetObjectAsyncIntegrationTest.class);
-
-    private static final String KEY = "some-key";
-
-    private final GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                                                                      .bucket(BUCKET)
-                                                                      .key(KEY)
-                                                                      .build();
-
-    private static File file;
-
-    @BeforeClass
-    public static void setupFixture() throws IOException {
-        createBucket(BUCKET);
-        file = new RandomTempFile(10_000);
-        s3Async.putObject(PutObjectRequest.builder()
-                                          .bucket(BUCKET)
-                                          .key(KEY)
-                                          .build(), file.toPath()).join();
-    }
-
-    @AfterClass
-    public static void tearDownFixture() {
-        deleteBucketAndAllContents(BUCKET);
-        file.delete();
-    }
-
-    @Test
-    public void toFile() throws Exception {
-        Path path = RandomTempFile.randomUncreatedFile().toPath();
-        try {
-            GetObjectResponse response = s3Async.getObject(getObjectRequest, path).join();
-            assertMd5MatchesEtag(new FileInputStream(path.toFile()), response);
-        } finally {
-            path.toFile().delete();
-        }
-    }
-
-    @Test
-    public void dumpToString() throws IOException {
-        String returned = s3Async.getObject(getObjectRequest, AsyncResponseTransformer.toBytes()).join().asUtf8String();
-        assertThat(returned).isEqualTo(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8));
-    }
-
-    @Test
-    public void toByteArray() throws IOException {
-        byte[] returned = s3Async.getObject(getObjectRequest, AsyncResponseTransformer.toBytes()).join().asByteArray();
-        assertThat(returned).isEqualTo(Files.readAllBytes(file.toPath()));
-    }
-
-    @Test
-    public void customResponseHandler_InterceptorRecievesResponsePojo() throws Exception {
-        try (S3AsyncClient asyncWithInterceptor = createClientWithInterceptor(new AssertingExecutionInterceptor())) {
-            String result = asyncWithInterceptor
-                    .getObject(getObjectRequest, new AsyncResponseTransformer<GetObjectResponse, String>() {
-
-                        @Override
-                        public void responseReceived(GetObjectResponse response) {
-                            // POJO returned by modifyResponse should be delivered to the AsyncResponseTransformer
-                            assertThat(response.metadata()).hasEntrySatisfying("x-amz-assert",
-                                                                               s -> assertThat(s).isEqualTo("injected-value"));
-                        }
-
-                        @Override
-                        public void onStream(SdkPublisher<ByteBuffer> publisher) {
-                            publisher.subscribe(new SimpleSubscriber(b -> {
-                            }));
-                        }
-
-                        @Override
-                        public void exceptionOccurred(Throwable throwable) {
-                        }
-
-                        @Override
-                        public String complete() {
-                            return "result";
-                        }
-                    }).join();
-            assertThat(result).isEqualTo("result");
-        }
-    }
-
-    private S3AsyncClient createClientWithInterceptor(ExecutionInterceptor assertingInterceptor) {
-        return s3AsyncClientBuilder()
-                .overrideConfiguration(ClientOverrideConfiguration.builder()
-                                                                  .addExecutionInterceptor(assertingInterceptor)
-                                                                  .build())
-                .build();
-    }
-
-    /**
-     * Asserts that the {@link Context.AfterUnmarshalling#response()} object is an instance of {@link GetObjectResponse}. Also
-     * modifies the {@link GetObjectResponse} in {@link ExecutionInterceptor#modifyResponse(Context.ModifyResponse,
-     * ExecutionAttributes)} so we can verify the modified POJO is delivered to the streaming response handlers for sync and
-     * async.
-     */
-    public static class AssertingExecutionInterceptor implements ExecutionInterceptor {
-        @Override
-        public void afterUnmarshalling(Context.AfterUnmarshalling context, ExecutionAttributes executionAttributes) {
-            // The response object should be the pojo. Not the result type of the AsyncResponseTransformer
-            assertThat(context.response()).isInstanceOf(GetObjectResponse.class);
-        }
-
-        @Override
-        public SdkResponse modifyResponse(Context.ModifyResponse context, ExecutionAttributes executionAttributes) {
-            return ((GetObjectResponse) context.response())
-                    .toBuilder()
-                    .metadata(ImmutableMap.of("x-amz-assert", "injected-value"))
-                    .build();
-        }
-    }
+//
+//    private static final String BUCKET = temporaryBucketName(GetObjectAsyncIntegrationTest.class);
+//
+//    private static final String KEY = "some-key";
+//
+//    private final GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+//                                                                      .bucket(BUCKET)
+//                                                                      .key(KEY)
+//                                                                      .build();
+//
+//    private static File file;
+//
+//    @BeforeClass
+//    public static void setupFixture() throws IOException {
+//        createBucket(BUCKET);
+//        file = new RandomTempFile(10_000);
+//        s3Async.putObject(PutObjectRequest.builder()
+//                                          .bucket(BUCKET)
+//                                          .key(KEY)
+//                                          .build(), file.toPath()).join();
+//    }
+//
+//    @AfterClass
+//    public static void tearDownFixture() {
+//        deleteBucketAndAllContents(BUCKET);
+//        file.delete();
+//    }
+//
+//    @Test
+//    public void toFile() throws Exception {
+//        Path path = RandomTempFile.randomUncreatedFile().toPath();
+//        try {
+//            GetObjectResponse response = s3Async.getObject(getObjectRequest, path).join();
+//            assertMd5MatchesEtag(new FileInputStream(path.toFile()), response);
+//        } finally {
+//            path.toFile().delete();
+//        }
+//    }
+//
+//    @Test
+//    public void dumpToString() throws IOException {
+//        String returned = s3Async.getObject(getObjectRequest, AsyncResponseTransformer.toBytes()).join().asUtf8String();
+//        assertThat(returned).isEqualTo(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8));
+//    }
+//
+//    @Test
+//    public void toByteArray() throws IOException {
+//        byte[] returned = s3Async.getObject(getObjectRequest, AsyncResponseTransformer.toBytes()).join().asByteArray();
+//        assertThat(returned).isEqualTo(Files.readAllBytes(file.toPath()));
+//    }
+//
+//    @Test
+//    public void customResponseHandler_InterceptorRecievesResponsePojo() throws Exception {
+//        try (S3AsyncClient asyncWithInterceptor = createClientWithInterceptor(new AssertingExecutionInterceptor())) {
+//            String result = asyncWithInterceptor
+//                    .getObject(getObjectRequest, new AsyncResponseTransformer<GetObjectResponse, String>() {
+//
+//                        @Override
+//                        public void responseReceived(GetObjectResponse response) {
+//                            // POJO returned by modifyResponse should be delivered to the AsyncResponseTransformer
+//                            assertThat(response.metadata()).hasEntrySatisfying("x-amz-assert",
+//                                                                               s -> assertThat(s).isEqualTo("injected-value"));
+//                        }
+//
+//                        @Override
+//                        public void onStream(SdkPublisher<ByteBuffer> publisher) {
+//                            publisher.subscribe(new SimpleSubscriber(b -> {
+//                            }));
+//                        }
+//
+//                        @Override
+//                        public void exceptionOccurred(Throwable throwable) {
+//                        }
+//
+//                        @Override
+//                        public String complete() {
+//                            return "result";
+//                        }
+//                    }).join();
+//            assertThat(result).isEqualTo("result");
+//        }
+//    }
+//
+//    private S3AsyncClient createClientWithInterceptor(ExecutionInterceptor assertingInterceptor) {
+//        return s3AsyncClientBuilder()
+//                .overrideConfiguration(ClientOverrideConfiguration.builder()
+//                                                                  .addExecutionInterceptor(assertingInterceptor)
+//                                                                  .build())
+//                .build();
+//    }
+//
+//    /**
+//     * Asserts that the {@link Context.AfterUnmarshalling#response()} object is an instance of {@link GetObjectResponse}. Also
+//     * modifies the {@link GetObjectResponse} in {@link ExecutionInterceptor#modifyResponse(Context.ModifyResponse,
+//     * ExecutionAttributes)} so we can verify the modified POJO is delivered to the streaming response handlers for sync and
+//     * async.
+//     */
+//    public static class AssertingExecutionInterceptor implements ExecutionInterceptor {
+//        @Override
+//        public void afterUnmarshalling(Context.AfterUnmarshalling context, ExecutionAttributes executionAttributes) {
+//            // The response object should be the pojo. Not the result type of the AsyncResponseTransformer
+//            assertThat(context.response()).isInstanceOf(GetObjectResponse.class);
+//        }
+//
+//        @Override
+//        public SdkResponse modifyResponse(Context.ModifyResponse context, ExecutionAttributes executionAttributes) {
+//            return ((GetObjectResponse) context.response())
+//                    .toBuilder()
+//                    .metadata(ImmutableMap.of("x-amz-assert", "injected-value"))
+//                    .build();
+//        }
+//    }
 }

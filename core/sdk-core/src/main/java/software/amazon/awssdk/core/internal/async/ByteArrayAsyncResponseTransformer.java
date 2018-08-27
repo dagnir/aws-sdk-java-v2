@@ -19,6 +19,8 @@ import static software.amazon.awssdk.utils.FunctionalUtils.invokeSafely;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.util.concurrent.CompletableFuture;
+
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.annotations.SdkInternalApi;
@@ -40,41 +42,38 @@ import software.amazon.awssdk.utils.BinaryUtils;
 public final class ByteArrayAsyncResponseTransformer<ResponseT> implements
         AsyncResponseTransformer<ResponseT, ResponseBytes<ResponseT>> {
 
-    private ResponseT response;
-    private ByteArrayOutputStream baos;
+    private final CompletableFuture<byte[]> cf = new CompletableFuture<>();
+    private volatile ResponseT response;
 
     @Override
-    public void responseReceived(ResponseT response) {
+    public void onResponse(ResponseT response) {
         this.response = response;
     }
 
     @Override
     public void onStream(SdkPublisher<ByteBuffer> publisher) {
-        baos = new ByteArrayOutputStream();
-        publisher.subscribe(new BaosSubscriber(baos));
+        publisher.subscribe(new BaosSubscriber(cf));
     }
 
     @Override
-    public void exceptionOccurred(Throwable throwable) {
-        baos = null;
+    public void onError(Throwable throwable) {
+        cf.completeExceptionally(throwable);
     }
 
     @Override
-    public ResponseBytes<ResponseT> complete() {
-        try {
-            return ResponseBytes.fromByteArray(response, baos.toByteArray());
-        } finally {
-            baos = null;
-        }
+    public CompletableFuture<ResponseBytes<ResponseT>> transformResult() {
+        return cf.thenApply(arr -> ResponseBytes.fromByteArray(response, arr));
     }
 
     static class BaosSubscriber implements Subscriber<ByteBuffer> {
-        private final ByteArrayOutputStream baos;
+        private final CompletableFuture<byte[]> resultFuture;
+
+        private ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         private Subscription subscription;
 
-        BaosSubscriber(ByteArrayOutputStream baos) {
-            this.baos = baos;
+        public BaosSubscriber(CompletableFuture<byte[]> resultFuture) {
+            this.resultFuture = resultFuture;
         }
 
         @Override
@@ -95,12 +94,13 @@ public final class ByteArrayAsyncResponseTransformer<ResponseT> implements
 
         @Override
         public void onError(Throwable throwable) {
-            // Handled by response transformer
+            baos = null;
+            resultFuture.completeExceptionally(throwable);
         }
 
         @Override
         public void onComplete() {
-            // Handled by response transformer
+            resultFuture.complete(baos.toByteArray());
         }
     }
 }

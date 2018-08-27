@@ -18,6 +18,8 @@ package software.amazon.awssdk.core.async;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 import software.amazon.awssdk.annotations.SdkPublicApi;
@@ -29,21 +31,11 @@ import software.amazon.awssdk.core.internal.async.FileAsyncResponseTransformer;
  * Callback interface to handle a streaming asynchronous response.
  *
  * @param <ResponseT> POJO response type.
- * @param <ReturnT>   Type this response handler produces. I.E. the type you are transforming the response into.
+ * @param <ResultT>   Type this response handler produces. I.E. the type you are transforming the response into.
  */
 @SdkPublicApi
-public interface AsyncResponseTransformer<ResponseT, ReturnT> {
-
-    /**
-     * Called when the initial response has been received and the POJO response has
-     * been unmarshalled. This is guaranteed to be called before onStream.
-     *
-     * <p>In the event of a retryable error, this callback may be called multiple times. It
-     * also may never be invoked if the request never succeeds.</p>
-     *
-     * @param response Unmarshalled POJO containing metadata about the streamed data.
-     */
-    void responseReceived(ResponseT response);
+public interface AsyncResponseTransformer<ResponseT, ResultT> {
+    void onResponse(ResponseT response);
 
     /**
      * Called when events are ready to be streamed. Implementations  must subscribe to the {@link Publisher} and request data via
@@ -72,16 +64,9 @@ public interface AsyncResponseTransformer<ResponseT, ReturnT> {
      *
      * @param throwable Exception that occurred.
      */
-    void exceptionOccurred(Throwable throwable);
+    void onError(Throwable error);
 
-    /**
-     * Called when all data has been successfully published to the {@link org.reactivestreams.Subscriber}. This will
-     * only be called once during the lifecycle of the request. Implementors should free up any resources they have
-     * opened and do final transformations to produce the return object.
-     *
-     * @return Transformed object as a result of the streamed data.
-     */
-    ReturnT complete();
+    CompletableFuture<ResultT> transformResult();
 
     /**
      * Creates an {@link AsyncResponseTransformer} that writes all the content to the given file. In the event of an error,

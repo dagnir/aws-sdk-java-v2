@@ -36,6 +36,7 @@ import software.amazon.awssdk.core.internal.http.HttpClientDependencies;
 import software.amazon.awssdk.core.internal.http.InterruptMonitor;
 import software.amazon.awssdk.core.internal.http.RequestExecutionContext;
 import software.amazon.awssdk.core.internal.http.async.SimpleHttpContentPublisher;
+import software.amazon.awssdk.core.internal.http.TransformingAsyncResponseHandler;
 import software.amazon.awssdk.core.internal.http.pipeline.RequestPipeline;
 import software.amazon.awssdk.core.internal.http.timers.TimeoutTracker;
 import software.amazon.awssdk.http.Abortable;
@@ -43,11 +44,9 @@ import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.SdkHttpResponse;
-import software.amazon.awssdk.http.SdkRequestContext;
-import software.amazon.awssdk.http.async.AbortableRunnable;
+import software.amazon.awssdk.http.async.AsyncExecuteRequest;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
-import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.Logger;
 import software.amazon.awssdk.utils.OptionalUtils;
 
@@ -61,14 +60,14 @@ public final class MakeAsyncHttpRequestStage<OutputT>
     private static final Logger log = Logger.loggerFor(MakeAsyncHttpRequestStage.class);
 
     private final SdkAsyncHttpClient sdkAsyncHttpClient;
-    private final SdkHttpResponseHandler<OutputT> responseHandler;
-    private final SdkHttpResponseHandler<? extends SdkException> errorResponseHandler;
+    private final TransformingAsyncResponseHandler<OutputT> responseHandler;
+    private final TransformingAsyncResponseHandler<? extends SdkException> errorResponseHandler;
     private final Executor futureCompletionExecutor;
     private final ScheduledExecutorService timeoutExecutor;
     private final Duration apiCallAttemptTimeout;
 
-    public MakeAsyncHttpRequestStage(SdkHttpResponseHandler<OutputT> responseHandler,
-                                     SdkHttpResponseHandler<? extends SdkException> errorResponseHandler,
+    public MakeAsyncHttpRequestStage(TransformingAsyncResponseHandler<OutputT> responseHandler,
+                                     TransformingAsyncResponseHandler<? extends SdkException> errorResponseHandler,
                                      HttpClientDependencies dependencies) {
         this.responseHandler = responseHandler;
         this.errorResponseHandler = errorResponseHandler;
@@ -92,9 +91,9 @@ public final class MakeAsyncHttpRequestStage<OutputT>
                                                                     RequestExecutionContext context) throws Exception {
 
         long timeout = apiCallAttemptTimeoutInMillis(context.requestConfig());
-        Completable completable = new Completable(timeout);
+//        Completable completable = new Completable(timeout);
 
-        SdkHttpResponseHandler<Response<OutputT>> handler = new ResponseHandler(completable);
+        ResponseHandler handler = new ResponseHandler();
 
         SdkHttpContentPublisher requestProvider = context.requestProvider() == null
                 ? new SimpleHttpContentPublisher(request, context.executionAttributes())
@@ -102,20 +101,25 @@ public final class MakeAsyncHttpRequestStage<OutputT>
         // Set content length if it hasn't been set already.
         SdkHttpFullRequest requestWithContentLength = getRequestWithContentLength(request, requestProvider);
 
-        AbortableRunnable abortableRunnable = sdkAsyncHttpClient.prepareRequest(requestWithContentLength, SdkRequestContext
-                                                                                    .builder().build(),
-                                                                                requestProvider,
-                                                                                handler);
+        AsyncExecuteRequest executeRequest = AsyncExecuteRequest.builder()
+                .request(requestWithContentLength)
+                .requestContentPublisher(requestProvider)
+                .responseHandler(handler)
+                .build();
 
-        // Set the abortable so that the abortable request can be aborted after timeout if timeout is enabled
-        completable.abortable(abortableRunnable);
+        CompletableFuture<Void> executeFuture = sdkAsyncHttpClient.execute(executeRequest);
 
-        if (context.apiCallTimeoutTracker() != null && context.apiCallTimeoutTracker().isEnabled()) {
-            context.apiCallTimeoutTracker().abortable(abortableRunnable);
-        }
+        return executeFuture.thenCompose(ignored -> handler.transformResult());
 
-        abortableRunnable.run();
-        return completable.completableFuture;
+
+//        // Set the abortable so that the abortable request can be aborted after timeout if timeout is enabled
+//        completable.abortable(abortableRunnable);
+//
+//        if (context.apiCallTimeoutTracker() != null && context.apiCallTimeoutTracker().isEnabled()) {
+//            context.apiCallTimeoutTracker().abortable(abortableRunnable);
+//        }
+//
+//        abortableRunnable.run();
     }
 
     private SdkHttpFullRequest getRequestWithContentLength(SdkHttpFullRequest request, SdkHttpContentPublisher requestProvider) {
@@ -139,30 +143,21 @@ public final class MakeAsyncHttpRequestStage<OutputT>
     /**
      * Detects whether the response succeeded or failed and delegates to appropriate response handler.
      */
-    private class ResponseHandler implements SdkHttpResponseHandler<Response<OutputT>> {
-        private final Completable completable;
-
-        private volatile SdkHttpResponse response;
+    private class ResponseHandler implements TransformingAsyncResponseHandler<Response<OutputT>> {
         private volatile boolean isSuccess = false;
-
-        /**
-         * @param completable   Future to notify when response has been handled.
-         */
-        private ResponseHandler(Completable completable) {
-            this.completable = completable;
-        }
+        private SdkHttpFullResponse response;
 
         @Override
-        public void headersReceived(SdkHttpResponse response) {
+        public void onHeaders(SdkHttpResponse response) {
             if (response.isSuccessful()) {
                 SdkStandardLogger.REQUEST_LOGGER.debug(() -> "Received successful response: " + response.statusCode());
                 isSuccess = true;
-                responseHandler.headersReceived(response);
+                responseHandler.onHeaders(response);
             } else {
                 SdkStandardLogger.REQUEST_LOGGER.debug(() -> "Received error response: " + response.statusCode());
-                errorResponseHandler.headersReceived(response);
+                errorResponseHandler.onHeaders(response);
             }
-            this.response = response;
+            this.response = (SdkHttpFullResponse) response;
         }
 
         @Override
@@ -176,34 +171,14 @@ public final class MakeAsyncHttpRequestStage<OutputT>
         }
 
         @Override
-        public void exceptionOccurred(Throwable throwable) {
-            // Note that we don't notify the response handler here, we do that in AsyncRetryableStage where we
-            // have more context of what's going on and can deliver exceptions more reliably.
-            completable.completeExceptionally(throwable);
-        }
-
-        @Override
-        public Response<OutputT> complete() {
-            try {
-                SdkHttpFullResponse httpFullResponse = (SdkHttpFullResponse) this.response;
-                Response<OutputT> toReturn = handleResponse(httpFullResponse);
-                completable.complete(toReturn);
-                return toReturn;
-            } catch (Exception e) {
-                completable.completeExceptionally(e);
-                throw e;
-            }
-        }
-
-        private Response<OutputT> handleResponse(SdkHttpFullResponse httpResponse) {
+        public CompletableFuture<Response<OutputT>> transformResult() {
             if (isSuccess) {
-                OutputT response = responseHandler.complete();
-                return Response.fromSuccess(response, httpResponse);
-            } else {
-                return Response.fromFailure(errorResponseHandler.complete(), httpResponse);
+                return responseHandler.transformResult()
+                                      .thenApply(r -> Response.fromSuccess(r, response));
             }
+            return errorResponseHandler.transformResult()
+                                       .thenApply(e -> Response.fromFailure(e, response));
         }
-
     }
 
     /**

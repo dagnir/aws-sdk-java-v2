@@ -20,11 +20,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import org.reactivestreams.Publisher;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.core.http.HttpResponseHandler;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
+import software.amazon.awssdk.core.internal.http.TransformingAsyncResponseHandler;
 import software.amazon.awssdk.core.internal.util.ThrowableUtils;
 import software.amazon.awssdk.http.AbortableInputStream;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
@@ -41,7 +43,7 @@ import software.amazon.awssdk.utils.BinaryUtils;
  * @param <T> Type that the response handler produces.
  */
 @SdkInternalApi
-public final class SyncResponseHandlerAdapter<T> implements SdkHttpResponseHandler<T> {
+public final class SyncResponseHandlerAdapter<T> implements TransformingAsyncResponseHandler<T> {
 
     private final HttpResponseHandler<T> responseHandler;
     private ByteArrayOutputStream baos;
@@ -58,7 +60,7 @@ public final class SyncResponseHandlerAdapter<T> implements SdkHttpResponseHandl
     }
 
     @Override
-    public void headersReceived(SdkHttpResponse response) {
+    public void onHeaders(SdkHttpResponse response) {
         this.httpResponse = ((SdkHttpFullResponse) response).toBuilder();
     }
 
@@ -74,12 +76,9 @@ public final class SyncResponseHandlerAdapter<T> implements SdkHttpResponseHandl
         }));
     }
 
-    @Override
-    public void exceptionOccurred(Throwable throwable) {
-    }
 
     @Override
-    public T complete() {
+    public CompletableFuture<T> transformResult() {
         try {
             // Once we've buffered all the content we can invoke the response handler
             if (baos != null) {
@@ -88,7 +87,7 @@ public final class SyncResponseHandlerAdapter<T> implements SdkHttpResponseHandl
                 AbortableInputStream abortableContent = AbortableInputStream.create(content);
                 httpResponse.content(abortableContent);
             }
-            return responseHandler.handle(crc32Validator.apply(httpResponse.build()), executionAttributes);
+            return CompletableFuture.completedFuture(responseHandler.handle(crc32Validator.apply(httpResponse.build()), executionAttributes));
         } catch (Exception e) {
             throw ThrowableUtils.failure(e);
         }

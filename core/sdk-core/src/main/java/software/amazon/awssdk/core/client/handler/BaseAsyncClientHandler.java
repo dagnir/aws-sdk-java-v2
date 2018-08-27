@@ -32,6 +32,7 @@ import software.amazon.awssdk.core.http.HttpResponseHandler;
 import software.amazon.awssdk.core.internal.client.config.SdkClientConfiguration;
 import software.amazon.awssdk.core.internal.http.AmazonAsyncHttpClient;
 import software.amazon.awssdk.core.internal.http.Crc32Validation;
+import software.amazon.awssdk.core.internal.http.TransformingAsyncResponseHandler;
 import software.amazon.awssdk.core.internal.http.async.SyncResponseHandlerAdapter;
 import software.amazon.awssdk.core.internal.interceptor.InterceptorContext;
 import software.amazon.awssdk.core.internal.util.ThrowableUtils;
@@ -39,7 +40,6 @@ import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.SdkHttpFullResponse;
 import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
-import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.CompletableFutureUtils;
 
 @SdkProtectedApi
@@ -64,8 +64,8 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
         HttpResponseHandler<OutputT> decoratedResponseHandlers =
             decorateResponseHandlers(executionParams.getResponseHandler(), executionContext);
 
-        SdkHttpResponseHandler<OutputT> sdkHttpResponseHandler =
-            new SyncResponseHandlerAdapter<>(decoratedResponseHandlers, crc32Validator, executionContext.executionAttributes());
+        TransformingAsyncResponseHandler<OutputT> sdkHttpResponseHandler =
+                new SyncResponseHandlerAdapter<>(decoratedResponseHandlers, crc32Validator, executionContext.executionAttributes());
 
         return execute(executionParams, executionContext, sdkHttpResponseHandler);
     }
@@ -84,7 +84,7 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
     private <InputT extends SdkRequest, OutputT, ReturnT> CompletableFuture<ReturnT> execute(
         ClientExecutionParams<InputT, OutputT> executionParams,
         ExecutionContext executionContext,
-        SdkHttpResponseHandler<ReturnT> sdkHttpResponseHandler) {
+        TransformingAsyncResponseHandler<ReturnT> sdkHttpResponseHandler) {
 
         try {
             InputT inputT = finalizeSdkRequest(executionContext);
@@ -96,11 +96,10 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
                     ? null
                     : new SdkHttpContentPublisherAdapter(executionParams.getAsyncRequestBody());
 
-            SdkHttpResponseHandler<ReturnT> successResponseHandler = new InterceptorCallingHttpResponseHandler<>(
+            TransformingAsyncResponseHandler<ReturnT> successResponseHandler = new InterceptorCallingHttpResponseHandler<>(
                 sdkHttpResponseHandler, executionContext);
 
-            SdkHttpResponseHandler<? extends SdkException> errorHandler =
-                    resolveErrorResponseHandler(executionParams, executionContext, crc32Validator);
+            TransformingAsyncResponseHandler<? extends SdkException> errorHandler = null;
 
             return invoke(marshalled, requestProvider, inputT,
                     executionContext, successResponseHandler, errorHandler)
@@ -125,7 +124,7 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
      *
      * @return Async handler for error responses.
      */
-    private SdkHttpResponseHandler<? extends SdkException> resolveErrorResponseHandler(
+    private TransformingAsyncResponseHandler<? extends SdkException> resolveErrorResponseHandler(
         ClientExecutionParams<?, ?> executionParams,
         ExecutionContext executionContext,
         Function<SdkHttpFullResponse, SdkHttpFullResponse> responseAdapter) {
@@ -145,8 +144,8 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
         SdkHttpContentPublisher requestProvider,
         InputT originalRequest,
         ExecutionContext executionContext,
-        SdkHttpResponseHandler<OutputT> responseHandler,
-        SdkHttpResponseHandler<? extends SdkException> errorResponseHandler) {
+        TransformingAsyncResponseHandler<OutputT> responseHandler,
+        TransformingAsyncResponseHandler<? extends SdkException> errorResponseHandler) {
         return client.requestExecutionBuilder()
                      .requestProvider(requestProvider)
                      .request(request)
@@ -156,11 +155,11 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
                      .execute(responseHandler);
     }
 
-    private static final class InterceptorCallingHttpResponseHandler<T> implements SdkHttpResponseHandler<T> {
-        private final SdkHttpResponseHandler<T> delegate;
+    private static final class InterceptorCallingHttpResponseHandler<T> implements TransformingAsyncResponseHandler<T> {
+        private final TransformingAsyncResponseHandler<T> delegate;
         private final ExecutionContext context;
 
-        private InterceptorCallingHttpResponseHandler(SdkHttpResponseHandler<T> delegate, ExecutionContext context) {
+        private InterceptorCallingHttpResponseHandler(TransformingAsyncResponseHandler<T> delegate, ExecutionContext context) {
             this.delegate = delegate;
             this.context = context;
         }
@@ -186,8 +185,8 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
         }
 
         @Override
-        public void headersReceived(SdkHttpResponse response) {
-            delegate.headersReceived(beforeUnmarshalling((SdkHttpFullResponse) response, context)); // TODO: Ew
+        public void onHeaders(SdkHttpResponse response) {
+            delegate.onHeaders(beforeUnmarshalling((SdkHttpFullResponse) response, context)); // TODO: Ew
         }
 
         @Override
@@ -196,13 +195,8 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
         }
 
         @Override
-        public void exceptionOccurred(Throwable throwable) {
-            delegate.exceptionOccurred(throwable);
-        }
-
-        @Override
-        public T complete() {
-            return delegate.complete();
+        public CompletableFuture<T> transformResult() {
+            return delegate.transformResult();
         }
     }
 
@@ -215,7 +209,7 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
      * @param <ReturnT> Return type of {@link AsyncResponseTransformer}
      */
     private class UnmarshallingSdkHttpResponseHandler<OutputT extends SdkResponse, ReturnT>
-        implements SdkHttpResponseHandler<ReturnT> {
+        implements TransformingAsyncResponseHandler<ReturnT> {
 
         private final AsyncResponseTransformer<OutputT, ReturnT> asyncResponseTransformer;
         private final ExecutionContext executionContext;
@@ -230,7 +224,7 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
         }
 
         @Override
-        public void headersReceived(SdkHttpResponse response) {
+        public void onHeaders(SdkHttpResponse response) {
             try {
                 // TODO would be better to pass in AwsExecutionAttributes to the async response handler so we can
                 // provide them to HttpResponseHandler
@@ -238,7 +232,7 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
                     decorateResponseHandlers(responseHandler, executionContext)
                         .handle((SdkHttpFullResponse) response, null);
 
-                asyncResponseTransformer.responseReceived(resp);
+                asyncResponseTransformer.onResponse(resp);
             } catch (Exception e) {
                 throw ThrowableUtils.failure(e);
             }
@@ -249,14 +243,10 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
             asyncResponseTransformer.onStream(SdkPublisher.adapt(publisher));
         }
 
-        @Override
-        public void exceptionOccurred(Throwable throwable) {
-            asyncResponseTransformer.exceptionOccurred(throwable);
-        }
 
         @Override
-        public ReturnT complete() {
-            return asyncResponseTransformer.complete();
+        public CompletableFuture<ReturnT> transformResult() {
+            return asyncResponseTransformer.transformResult();
         }
     }
 

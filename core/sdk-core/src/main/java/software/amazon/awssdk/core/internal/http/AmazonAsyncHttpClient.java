@@ -45,7 +45,6 @@ import software.amazon.awssdk.core.internal.retry.SdkDefaultRetrySetting;
 import software.amazon.awssdk.core.internal.util.CapacityManager;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
 import software.amazon.awssdk.http.async.SdkHttpContentPublisher;
-import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.SdkAutoCloseable;
 
 @ThreadSafe
@@ -113,7 +112,7 @@ public final class AmazonAsyncHttpClient implements SdkAutoCloseable {
          * @return This builder for method chaining.
          */
         RequestExecutionBuilder errorResponseHandler(
-                SdkHttpResponseHandler<? extends SdkException> errorResponseHandler);
+                TransformingAsyncResponseHandler<? extends SdkException> errorResponseHandler);
 
         /**
          * Fluent setter for the execution context
@@ -139,14 +138,14 @@ public final class AmazonAsyncHttpClient implements SdkAutoCloseable {
          * @param <OutputT>       Result type
          * @return Unmarshalled result type.
          */
-        <OutputT> CompletableFuture<OutputT> execute(SdkHttpResponseHandler<OutputT> responseHandler);
+        <OutputT> CompletableFuture<OutputT> execute(TransformingAsyncResponseHandler<OutputT> responseHandler);
     }
 
     private class RequestExecutionBuilderImpl implements RequestExecutionBuilder {
 
         private SdkHttpContentPublisher requestProvider;
         private SdkHttpFullRequest request;
-        private SdkHttpResponseHandler<? extends SdkException> errorResponseHandler;
+        private TransformingAsyncResponseHandler<? extends SdkException> errorResponseHandler;
         private SdkRequest originalRequest;
         private ExecutionContext executionContext;
 
@@ -164,7 +163,7 @@ public final class AmazonAsyncHttpClient implements SdkAutoCloseable {
 
         @Override
         public RequestExecutionBuilder errorResponseHandler(
-                SdkHttpResponseHandler<? extends SdkException> errorResponseHandler) {
+                TransformingAsyncResponseHandler<? extends SdkException> errorResponseHandler) {
             this.errorResponseHandler = errorResponseHandler;
             return this;
         }
@@ -183,7 +182,7 @@ public final class AmazonAsyncHttpClient implements SdkAutoCloseable {
         }
 
         @Override
-        public <OutputT> CompletableFuture<OutputT> execute(SdkHttpResponseHandler<OutputT> responseHandler) {
+        public <OutputT> CompletableFuture<OutputT> execute(TransformingAsyncResponseHandler<OutputT> responseHandler) {
             try {
                 return RequestPipelineBuilder
                     .first(RequestPipelineBuilder
