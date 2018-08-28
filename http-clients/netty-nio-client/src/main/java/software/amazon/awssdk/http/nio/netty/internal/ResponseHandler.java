@@ -35,6 +35,8 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.util.AttributeKey;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -68,12 +70,6 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelContext, HttpObject msg) throws Exception {
-        CompletableFuture<Void> cf = channelContext.channel().attr(EXECUTE_FUTURE_KEY).get();
-
-        if (cf.isCancelled()) {
-            return;
-        }
-
         RequestContext requestContext = channelContext.channel().attr(REQUEST_CONTEXT_KEY).get();
 
         if (msg instanceof HttpResponse) {
@@ -87,8 +83,9 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
             requestContext.executeRequest().responseHandler().onHeaders(sdkResponse);
         }
 
+        final CompletableFuture<Void> ef = executeFuture(channelContext);
         if (msg instanceof StreamedHttpResponse) {
-            requestContext.executeRequest().responseHandler().onStream(new PublisherAdapter((StreamedHttpResponse) msg, channelContext, requestContext));
+            requestContext.executeRequest().responseHandler().onStream(new PublisherAdapter((StreamedHttpResponse) msg, channelContext, requestContext, ef));
         } else if (msg instanceof FullHttpResponse) {
             // Be prepared to take care of (ignore) a trailing LastHttpResponse
             // from the HttpClientCodec if there is one.
@@ -98,13 +95,14 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
             ByteBuf fullContent = ((FullHttpResponse) msg).content();
             final ByteBuffer bb = copyToByteBuffer(fullContent);
             fullContent.release();
-            requestContext.executeRequest().responseHandler().onStream(new FullResponseContentPublisher(channelContext, bb, cf));
+            requestContext.executeRequest().responseHandler().onStream(new FullResponseContentPublisher(channelContext, bb, ef));
             finalizeRequest(requestContext, channelContext);
         }
     }
 
     private static void finalizeRequest(RequestContext requestContext, ChannelHandlerContext channelContext) {
         channelContext.channel().attr(RESPONSE_COMPLETE_KEY).set(true);
+        executeFuture(channelContext).complete(null);
         if (!channelContext.channel().attr(KEEP_ALIVE).get()) {
             closeAndRelease(channelContext);
         } else {
@@ -114,12 +112,10 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("Seeing exception");
-        cause.printStackTrace();
+        System.out.println("ExceptionCaught");
         RequestContext requestContext = ctx.channel().attr(REQUEST_CONTEXT_KEY).get();
-        //log.error("Exception processing request: {}", requestContext.sdkRequest(), cause);
-//        runAndLogError("SdkHttpResponseHandler threw an exception",
-//            () -> requestContext.handler().exceptionOccurred(cause));
+        log.error("Exception processing request: {}", requestContext.executeRequest().request(), cause);
+        executeFuture(ctx).completeExceptionally(cause);
         runAndLogError("Could not release channel back to the pool", () -> closeAndRelease(ctx));
     }
 
@@ -128,8 +124,7 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
         RequestContext requestCtx = handlerCtx.channel().attr(REQUEST_CONTEXT_KEY).get();
         boolean responseCompleted = handlerCtx.channel().attr(RESPONSE_COMPLETE_KEY).get();
         if (!responseCompleted) {
-//            runAndLogError("SdkHttpResponseHandler threw an exception when calling exceptionOccurred",
-//                () -> requestCtx.handler().exceptionOccurred(new IOException("Server failed to send complete response")));
+                executeFuture(handlerCtx).completeExceptionally(new IOException("Server failed to send complete response"));
             runAndLogError("Could not release channel",
                 () -> requestCtx.channelPool().release(handlerCtx.channel()));
         }
@@ -173,17 +168,23 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
         return bb;
     }
 
+    private static CompletableFuture<Void> executeFuture(ChannelHandlerContext ctx) {
+        return ctx.channel().attr(EXECUTE_FUTURE_KEY).get();
+    }
+
     private static class PublisherAdapter implements Publisher<ByteBuffer> {
         private final StreamedHttpResponse response;
         private final ChannelHandlerContext channelContext;
         private final RequestContext requestContext;
+        private final CompletableFuture<Void> cf;
         private final AtomicBoolean isCancelled = new AtomicBoolean(false);
 
         private PublisherAdapter(StreamedHttpResponse response, ChannelHandlerContext channelContext,
-                                 RequestContext requestContext) {
+                                 RequestContext requestContext, CompletableFuture<Void> cf) {
             this.response = response;
             this.channelContext = channelContext;
             this.requestContext = requestContext;
+            this.cf = cf;
         }
 
         @Override
@@ -209,8 +210,8 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
                 private void onCancel() {
                     try {
                         isCancelled.set(true);
-//                        requestContext.handler().exceptionOccurred(
-//                            new RuntimeException("Subscriber cancelled before all events were published"));
+                        cf.completeExceptionally(
+                            new RuntimeException("Subscriber cancelled before all events were published"));
                     } finally {
                         runAndLogError("Could not release channel back to the pool",
                             () -> closeAndRelease(channelContext));
@@ -234,7 +235,7 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
                     try {
                         runAndLogError(String.format("Subscriber %s threw an exception in onError.", subscriber.toString()),
                             () -> subscriber.onError(t));
-//                        requestContext.handler().exceptionOccurred(t);
+                        cf.completeExceptionally(t);
                     } finally {
                         runAndLogError("Could not release channel back to the pool",
                             () -> closeAndRelease(channelContext));
@@ -251,7 +252,6 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
                     try {
                         runAndLogError(String.format("Subscriber %s threw an exception in onComplete.", subscriber.toString()),
                                        subscriber::onComplete);
-//                        requestContext.handler().complete();
                     } finally {
                         finalizeRequest(requestContext, channelContext);
                     }

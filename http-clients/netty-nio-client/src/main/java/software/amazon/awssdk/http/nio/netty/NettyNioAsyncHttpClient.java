@@ -28,7 +28,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.pool.ChannelPool;
 import io.netty.channel.pool.ChannelPoolMap;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http2.Http2SecurityUtil;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -51,10 +50,10 @@ import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.internal.ChannelPipelineInitializer;
 import software.amazon.awssdk.http.nio.netty.internal.HandlerRemovingChannelPool;
 import software.amazon.awssdk.http.nio.netty.internal.NettyConfiguration;
+import software.amazon.awssdk.http.nio.netty.internal.NettyRequestExecutor;
 import software.amazon.awssdk.http.nio.netty.internal.NonManagedEventLoopGroup;
 import software.amazon.awssdk.http.nio.netty.internal.ReleaseOnceChannelPool;
 import software.amazon.awssdk.http.nio.netty.internal.RequestContext;
-import software.amazon.awssdk.http.nio.netty.internal.RequestExecutor;
 import software.amazon.awssdk.http.nio.netty.internal.SdkChannelPoolMap;
 import software.amazon.awssdk.http.nio.netty.internal.SharedSdkEventLoopGroup;
 import software.amazon.awssdk.http.nio.netty.internal.http2.HttpOrHttp2ChannelPool;
@@ -86,7 +85,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
     @Override
     public CompletableFuture<Void> execute(AsyncExecuteRequest request) {
         RequestContext ctx = createRequestContext(request);
-        return new RequestExecutor(ctx).execute();
+        return new NettyRequestExecutor(ctx).execute();
     }
 
     public static Builder builder() {

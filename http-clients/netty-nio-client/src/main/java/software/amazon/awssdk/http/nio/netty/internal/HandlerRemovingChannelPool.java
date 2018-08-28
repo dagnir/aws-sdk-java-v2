@@ -68,10 +68,11 @@ public class HandlerRemovingChannelPool implements ChannelPool {
     }
 
     private void removePerRequestHandlers(Channel channel) {
-        removeIfExists(channel.pipeline(),
-                       HttpStreamsClientHandler.class,
-                       ResponseHandler.class,
-                       ReadTimeoutHandler.class,
-                       WriteTimeoutHandler.class);
+        for (String h : channel.pipeline().names()) {
+            if ("SslHandler#0".equals(h) || "HttpClientCodec#0".equals(h)) {
+                continue;
+            }
+            channel.pipeline().remove(h);
+        }
     }
 }

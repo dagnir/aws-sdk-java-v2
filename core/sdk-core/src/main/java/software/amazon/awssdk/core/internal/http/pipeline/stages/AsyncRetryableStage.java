@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import software.amazon.awssdk.core.RequestOverrideConfiguration;
 import software.amazon.awssdk.core.SdkStandardLogger;
 import software.amazon.awssdk.core.client.config.SdkClientOption;
 import software.amazon.awssdk.core.exception.ApiCallTimeoutException;
+import software.amazon.awssdk.core.exception.NonRetryableException;
 import software.amazon.awssdk.core.exception.ResetException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
@@ -48,7 +51,6 @@ import software.amazon.awssdk.core.internal.util.ClockSkewUtil;
 import software.amazon.awssdk.core.retry.RetryPolicy;
 import software.amazon.awssdk.core.retry.RetryUtils;
 import software.amazon.awssdk.http.SdkHttpFullRequest;
-import software.amazon.awssdk.http.async.SdkHttpResponseHandler;
 import software.amazon.awssdk.utils.OptionalUtils;
 
 /**
@@ -136,12 +138,12 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
 
         public void execute(CompletableFuture<Response<OutputT>> future) throws Exception {
             beforeExecute();
-            doExecute().handle((resp, err) -> handle(future, resp, err));
+            doExecute().whenComplete((resp, err) -> maybeRetry(future, resp, err));
         }
 
-        private Void handle(CompletableFuture<Response<OutputT>> future,
-                            Response<OutputT> resp,
-                            Throwable err) {
+        private void maybeRetry(CompletableFuture<Response<OutputT>> future,
+                                Response<OutputT> resp,
+                                Throwable err) {
             try {
                 if (resp != null && resp.isSuccess()) {
                     retryHandler.releaseRetryCapacity();
@@ -156,9 +158,19 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
 //                    deliverExceptionToResponseHandler(retryableException);
                     executeRetry(future);
                 } else {
+                    if (err instanceof CompletionException || err instanceof ExecutionException) {
+                        err = err.getCause();
+                    }
+
+                    if (err instanceof NonRetryableException) {
+                        throw (NonRetryableException) err;
+                    }
+
                     // Don't wrap if we've already got a SdkException
                     SdkException throwable = err instanceof SdkException ?
                                              (SdkException) err : SdkClientException.builder().cause(err).build();
+
+
                     SdkException retryableException = handleSdkException(
                         Response.fromFailure(throwable, null));
                     retryHandler.setLastRetriedException(retryableException);
@@ -167,12 +179,12 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
                     // any exceptions that happen before we get to the retryable stage are also delivered to the
                     // response handler
 //                    deliverExceptionToResponseHandler(retryableException);
+                    System.out.println("Executing retry");
                     executeRetry(future);
                 }
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }
-            return null;
         }
 
 //        /**
