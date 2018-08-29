@@ -61,7 +61,7 @@ public final class ByteArrayAsyncResponseTransformer<ResponseT> implements
     }
 
     @Override
-    public CompletableFuture<ResponseBytes<ResponseT>> transformResult() {
+    public CompletableFuture<ResponseBytes<ResponseT>> newTransformResult() {
         return cf.thenApply(arr -> ResponseBytes.fromByteArray(response, arr));
     }
 

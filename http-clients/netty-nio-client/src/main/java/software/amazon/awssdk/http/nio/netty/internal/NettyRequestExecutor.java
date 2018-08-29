@@ -91,7 +91,6 @@ public final class NettyRequestExecutor {
     private static CompletableFuture<Void> createFuture(final Future<Channel> channelAcquireFuture) {
         CompletableFuture<Void> executeFuture = new CompletableFuture<>();
         executeFuture.whenComplete((r, t) -> {
-            System.out.println("completed");
             if (t instanceof CancellationException) {
                 channelAcquireFuture.addListener((Future<Channel> f) -> {
                     if (f.isSuccess()) {

@@ -75,7 +75,7 @@ public final class FileAsyncResponseTransformer<ResponseT> implements AsyncRespo
     }
 
     @Override
-    public CompletableFuture<ResponseT> transformResult() {
+    public CompletableFuture<ResponseT> newTransformResult() {
         return cf.thenApply(r -> {
             if (fileChannel != null) {
                 invokeSafely(fileChannel::close);

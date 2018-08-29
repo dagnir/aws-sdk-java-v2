@@ -238,7 +238,7 @@ public class EventStreamAsyncResponseTransformer<ResponseT, EventT>
     }
 
     @Override
-    public CompletableFuture<Void> transformResult() {
+    public CompletableFuture<Void> newTransformResult() {
         return null;
 //        if (error.get() == null) {
 //            // Add the special on complete event to signal drainEvents to complete the subscriber

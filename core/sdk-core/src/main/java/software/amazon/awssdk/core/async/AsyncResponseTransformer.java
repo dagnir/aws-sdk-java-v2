@@ -26,6 +26,8 @@ import software.amazon.awssdk.annotations.SdkPublicApi;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.internal.async.ByteArrayAsyncResponseTransformer;
 import software.amazon.awssdk.core.internal.async.FileAsyncResponseTransformer;
+import software.amazon.awssdk.http.SdkHttpResponse;
+import software.amazon.awssdk.http.async.SdkAsyncHttpResponseHandler;
 
 /**
  * Callback interface to handle a streaming asynchronous response.
@@ -35,25 +37,31 @@ import software.amazon.awssdk.core.internal.async.FileAsyncResponseTransformer;
  */
 @SdkPublicApi
 public interface AsyncResponseTransformer<ResponseT, ResultT> {
+    /**
+     * Return the future holding the transformed response.
+     * <p>
+     * Note that this will be called for each request attempt, up to the number
+     * of retries allowed by the configured {@link
+     * software.amazon.awssdk.core.retry.RetryPolicy}.
+     * <p>
+     * This method is guaranteed to be called before the request is executed,
+     * and before {@link #onResponse(Object)} is signaled.
+     *
+     * @return The future holding the transformed response.
+     */
+    CompletableFuture<ResultT> newTransformResult();
+
+    /**
+     * Called when the unmarshalled response object is ready.
+     *
+     * @param response The unmarshalled response.
+     */
     void onResponse(ResponseT response);
 
     /**
-     * Called when events are ready to be streamed. Implementations  must subscribe to the {@link Publisher} and request data via
-     * a {@link org.reactivestreams.Subscription} as they can handle it.
+     * Called when the response stream is ready.
      *
-     * <p>
-     * If at any time the subscriber wishes to stop receiving data, it may call {@link Subscription#cancel()}. This
-     * will be treated as a failure of the response and the {@link #exceptionOccurred(Throwable)} callback will be invoked.
-     * </p>
-     *
-     * <p>This callback may never be called if the response has no content or if an error occurs.</p>
-     *
-     * <p>
-     * In the event of a retryable error, this callback may be called multiple times with different Publishers.
-     * If this method is called more than once, implementation must either reset any state to prepare for another
-     * stream of data or must throw an exception indicating they cannot reset. If any exception is thrown then no
-     * automatic retry is performed.
-     * </p>
+     * @param publisher The publisher.
      */
     void onStream(SdkPublisher<ByteBuffer> publisher);
 
@@ -62,11 +70,9 @@ public interface AsyncResponseTransformer<ResponseT, ResultT> {
      * should free up any resources in this method. This method may be called multiple times during the lifecycle
      * of a request if automatic retries are enabled.
      *
-     * @param throwable Exception that occurred.
+     * @param error Error that occurred.
      */
     void onError(Throwable error);
-
-    CompletableFuture<ResultT> transformResult();
 
     /**
      * Creates an {@link AsyncResponseTransformer} that writes all the content to the given file. In the event of an error,

@@ -18,6 +18,7 @@ package software.amazon.awssdk.core.internal.http.pipeline;
 import static software.amazon.awssdk.utils.FunctionalUtils.safeFunction;
 import static software.amazon.awssdk.utils.FunctionalUtils.toFunction;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -224,7 +225,8 @@ public final class RequestPipelineBuilder<InputT, OutputT> {
         @Override
         public CompletableFuture<OutputT> execute(CompletableFuture<InputT> inputFuture, RequestExecutionContext context)
                 throws Exception {
-            return inputFuture.thenApply(safeFunction(input -> delegate.execute(input, context)));
+            return inputFuture
+                    .thenApply(safeFunction(input -> delegate.execute(input, context)));
         }
     }
 

@@ -33,6 +33,8 @@ public interface SdkAsyncHttpResponseHandler {
      */
     void onHeaders(SdkHttpResponse headers);
 
+    void onError(Throwable error);
+
     /**
      * Called when the streaming body is ready.
      * <p>

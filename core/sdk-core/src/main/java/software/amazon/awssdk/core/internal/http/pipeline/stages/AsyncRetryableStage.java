@@ -20,6 +20,7 @@ import static software.amazon.awssdk.core.internal.http.timers.TimerUtils.timeCo
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
@@ -64,7 +65,6 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
 
     private final RequestPipeline<SdkHttpFullRequest, CompletableFuture<Response<OutputT>>> requestPipeline;
     private final ScheduledExecutorService scheduledExecutor;
-    private final TransformingAsyncResponseHandler<OutputT> responseHandler;
     private final HttpClientDependencies dependencies;
     private final CapacityManager retryCapacity;
     private final RetryPolicy retryPolicy;
@@ -73,7 +73,6 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
     public AsyncRetryableStage(TransformingAsyncResponseHandler<OutputT> responseHandler,
                                HttpClientDependencies dependencies,
                                RequestPipeline<SdkHttpFullRequest, CompletableFuture<Response<OutputT>>> requestPipeline) {
-        this.responseHandler = responseHandler;
         this.dependencies = dependencies;
         this.scheduledExecutor = dependencies.clientConfiguration().option(SdkClientOption.SCHEDULED_EXECUTOR_SERVICE);
         this.retryPolicy = dependencies.clientConfiguration().option(SdkClientOption.RETRY_POLICY);
@@ -132,18 +131,19 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
                                                                   apiCallTimeoutInMillis);
             context.apiCallTimeoutTracker(timeoutTracker);
 
-            execute(future);
-            return future;
+            return execute(future);
         }
 
-        public void execute(CompletableFuture<Response<OutputT>> future) throws Exception {
+        public CompletableFuture<Response<OutputT>> execute(CompletableFuture<Response<OutputT>> future) throws Exception {
             beforeExecute();
             doExecute().whenComplete((resp, err) -> maybeRetry(future, resp, err));
+            return future;
         }
 
         private void maybeRetry(CompletableFuture<Response<OutputT>> future,
                                 Response<OutputT> resp,
                                 Throwable err) {
+            System.out.println("in maybeRetry");
             try {
                 if (resp != null && resp.isSuccess()) {
                     retryHandler.releaseRetryCapacity();
@@ -151,11 +151,6 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
                 } else if (resp != null) {
                     SdkException retryableException = handleSdkException(resp);
                     retryHandler.setLastRetriedException(retryableException);
-                    // Notify the response handler on each retry. Note that this does not notify
-                    // on the last attempt by design. This is done in the generated client code so that
-                    // any exceptions that happen before we get to the retryable stage are also delivered to the
-                    // response handler
-//                    deliverExceptionToResponseHandler(retryableException);
                     executeRetry(future);
                 } else {
                     if (err instanceof CompletionException || err instanceof ExecutionException) {
@@ -170,15 +165,9 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
                     SdkException throwable = err instanceof SdkException ?
                                              (SdkException) err : SdkClientException.builder().cause(err).build();
 
-
                     SdkException retryableException = handleSdkException(
                         Response.fromFailure(throwable, null));
                     retryHandler.setLastRetriedException(retryableException);
-                    // Notify the response handler on each retry. Note that this does not notify
-                    // on the last attempt by design. This is done in the generated client code so that
-                    // any exceptions that happen before we get to the retryable stage are also delivered to the
-                    // response handler
-//                    deliverExceptionToResponseHandler(retryableException);
                     System.out.println("Executing retry");
                     executeRetry(future);
                 }
@@ -186,15 +175,6 @@ public final class AsyncRetryableStage<OutputT> implements RequestPipeline<SdkHt
                 future.completeExceptionally(e);
             }
         }
-
-//        /**
-//         * Notify the response handler on each retry. Note that this does not notify on the last attempt by design. This is done
-//         * in the generated client code so that any exceptions that happen before we get to the retryable stage are also
-//         * delivered to the response handler.
-//         */
-//        private void deliverExceptionToResponseHandler(SdkException retryableException) {
-//            responseHandler.exceptionOccurred(retryableException);
-//        }
 
         private void executeRetry(CompletableFuture<Response<OutputT>> future) {
             final int retriesAttempted = requestCount - 2;

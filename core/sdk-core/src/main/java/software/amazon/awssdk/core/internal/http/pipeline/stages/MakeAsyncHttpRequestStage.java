@@ -21,13 +21,11 @@ import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.core.RequestOverrideConfiguration;
 import software.amazon.awssdk.core.SdkStandardLogger;
@@ -93,7 +91,7 @@ public final class MakeAsyncHttpRequestStage<OutputT>
 
     private CompletableFuture<Response<OutputT>> executeHttpRequest(SdkHttpFullRequest request,
                                                                     RequestExecutionContext context) throws Exception {
-        final ResponseHandler handler = new ResponseHandler();
+        final ResponseHandler handler = new ResponseHandler(responseHandler.transformResult(), null);
 
         SdkHttpContentPublisher requestProvider = context.requestProvider() == null
                 ? new SimpleHttpContentPublisher(request, context.executionAttributes())
@@ -110,7 +108,6 @@ public final class MakeAsyncHttpRequestStage<OutputT>
         CompletableFuture<Void> executeFuture = sdkAsyncHttpClient.execute(executeRequest);
 
         return executeFuture.exceptionally(t -> {
-            // System.out.println("Stream in progress: " + handler.isStreamInProgress());
             // We only want to rethrow the exception thrown by the async client
             // if it hasn't started streaming the body yet. Otherwise any
             // errors will also be reported through the Publisher and the
@@ -124,8 +121,6 @@ public final class MakeAsyncHttpRequestStage<OutputT>
                 }
                 throw SdkClientException.builder().cause(t).build();
             }
-            // Already streaming so swallow this exception and defer to the
-            // transformer
             return null;
         }).thenCompose(ignored -> handler.transformResult())
           // Preserve cancel behavior
@@ -157,10 +152,18 @@ public final class MakeAsyncHttpRequestStage<OutputT>
     /**
      * Detects whether the response succeeded or failed and delegates to appropriate response handler.
      */
+
     private class ResponseHandler implements TransformingAsyncResponseHandler<Response<OutputT>> {
         private final CompletableFuture<Boolean> isSuccessFuture = new CompletableFuture<>();
+        private final CompletableFuture<OutputT> transformFuture;
+        private final CompletableFuture<? extends SdkException> errorTransformFuture;
         private volatile boolean streamInProgress = false;
         private volatile SdkHttpFullResponse response;
+
+        public ResponseHandler(CompletableFuture<OutputT> transformFuture, CompletableFuture<? extends SdkException> errorTransformFuture) {
+            this.transformFuture = transformFuture;
+            this.errorTransformFuture = errorTransformFuture;
+        }
 
         @Override
         public void onHeaders(SdkHttpResponse response) {
@@ -178,6 +181,11 @@ public final class MakeAsyncHttpRequestStage<OutputT>
         }
 
         @Override
+        public void onError(Throwable error) {
+
+        }
+
+        @Override
         public void onStream(Publisher<ByteBuffer> publisher) {
             streamInProgress = true;
             // response guaranteed to be present at this point
@@ -190,16 +198,11 @@ public final class MakeAsyncHttpRequestStage<OutputT>
 
         @Override
         public CompletableFuture<Response<OutputT>> transformResult() {
-            System.out.println("transformResult");
             return isSuccessFuture.thenCompose(success -> {
                 if (success) {
-                    System.out.println("Returning success response handler transform future");
-                    return responseHandler.transformResult()
-                                          .thenApply(r -> Response.fromSuccess(r, response));
+                    return transformFuture.thenApply(r -> Response.fromSuccess(r, response));
                 } else {
-                    System.out.println("Returning error response handler transform future");
-                    return errorResponseHandler.transformResult()
-                                               .thenApply(e -> Response.fromFailure(e, response));
+                    return errorTransformFuture.thenApply(e -> Response.fromFailure(e, response));
                 }
             });
         }

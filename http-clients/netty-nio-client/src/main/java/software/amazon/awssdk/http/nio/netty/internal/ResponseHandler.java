@@ -112,7 +112,7 @@ public class ResponseHandler extends SimpleChannelInboundHandler<HttpObject> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("ExceptionCaught");
+        System.out.println("Exception caught");
         RequestContext requestContext = ctx.channel().attr(REQUEST_CONTEXT_KEY).get();
         log.error("Exception processing request: {}", requestContext.executeRequest().request(), cause);
         executeFuture(ctx).completeExceptionally(cause);

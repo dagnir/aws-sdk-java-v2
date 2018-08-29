@@ -99,7 +99,8 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
             TransformingAsyncResponseHandler<ReturnT> successResponseHandler = new InterceptorCallingHttpResponseHandler<>(
                 sdkHttpResponseHandler, executionContext);
 
-            TransformingAsyncResponseHandler<? extends SdkException> errorHandler = null;
+            TransformingAsyncResponseHandler<? extends SdkException> errorHandler =
+                    resolveErrorResponseHandler(executionParams, executionContext, crc32Validator);
 
             return invoke(marshalled, requestProvider, inputT,
                     executionContext, successResponseHandler, errorHandler)
@@ -190,6 +191,11 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
         }
 
         @Override
+        public void onError(Throwable error) {
+            delegate.onError(error);
+        }
+
+        @Override
         public void onStream(Publisher<ByteBuffer> publisher) {
             delegate.onStream(publisher);
         }
@@ -243,10 +249,14 @@ public abstract class BaseAsyncClientHandler extends BaseClientHandler implement
             asyncResponseTransformer.onStream(SdkPublisher.adapt(publisher));
         }
 
+        @Override
+        public void onError(Throwable error) {
+            asyncResponseTransformer.onError(error);
+        }
 
         @Override
         public CompletableFuture<ReturnT> transformResult() {
-            return asyncResponseTransformer.transformResult();
+            return asyncResponseTransformer.newTransformResult();
         }
     }
 
