@@ -19,7 +19,6 @@ import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.awscore.retry.AwsRetryPolicy;
 import software.amazon.awssdk.core.retry.RetryPolicy;
 import software.amazon.awssdk.core.retry.conditions.AndRetryCondition;
-import software.amazon.awssdk.services.kinesis.model.SubscribeToShardRequest;
 
 /**
  * Default retry policy for the Kinesis Client.
@@ -33,7 +32,7 @@ public class KinesisRetryPolicy {
     private static final RetryPolicy DEFAULT =
         AwsRetryPolicy.defaultRetryPolicy().toBuilder()
                       .retryCondition(AndRetryCondition.create(
-                          c -> !(c.originalRequest() instanceof SubscribeToShardRequest),
+                          c -> true,
                           AwsRetryPolicy.defaultRetryCondition()))
                       .build();
 
