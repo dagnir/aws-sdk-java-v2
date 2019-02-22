@@ -62,7 +62,7 @@ public final class MultiplexedChannelRecord {
                              BiConsumer<Channel, MultiplexedChannelRecord> channelReleaser) {
         this.connectionFuture = connectionFuture;
         this.availableStreams = new AtomicLong(maxConcurrencyPerConnection);
-        this.childChannels = new ConcurrentHashMap<>(saturatedCast(maxConcurrencyPerConnection));
+        this.childChannels = new ConcurrentHashMap<>();
         this.channelReleaser = channelReleaser;
     }
 
@@ -72,7 +72,7 @@ public final class MultiplexedChannelRecord {
                              long maxConcurrencyPerConnection,
                              BiConsumer<Channel, MultiplexedChannelRecord> channelReleaser) {
         this.connectionFuture = connectionFuture;
-        this.childChannels = new ConcurrentHashMap<>(saturatedCast(maxConcurrencyPerConnection));
+        this.childChannels = new ConcurrentHashMap<>();
         this.availableStreams = new AtomicLong(maxConcurrencyPerConnection);
         this.channelReleaser = channelReleaser;
         this.connection = connection;
