@@ -171,7 +171,22 @@ public class HttpOrHttp2ChannelPool implements ChannelPool {
 
     @Override
     public void close() {
-        doInEventLoop(eventLoop, protocolImpl::close);
+        doInEventLoop(eventLoop, this::close0);
     }
 
+    private void close0() {
+        if (protocolImplPromise == null) {
+            return;
+        }
+
+        protocolImplPromise.addListener((Future<ChannelPool> f) -> {
+            if (f.isSuccess()) {
+                f.getNow().close();
+            } else {
+                // Closing protocolImpl would have closed this. Since we don't
+                // have protocolImpl, close the delegate pool directly.
+                delegatePool.close();
+            }
+        });
+    }
 }
