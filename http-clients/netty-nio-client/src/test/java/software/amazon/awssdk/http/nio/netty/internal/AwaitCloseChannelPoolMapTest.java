@@ -29,7 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import software.amazon.awssdk.http.Protocol;
 import software.amazon.awssdk.http.nio.netty.SdkEventLoopGroup;
-import software.amazon.awssdk.http.nio.netty.internal.AwaitCloseChannelPoolMap.SimpleChannelPoolAwareChannelPool;
 
 public class AwaitCloseChannelPoolMapTest {
 

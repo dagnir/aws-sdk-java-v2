@@ -91,6 +91,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                              .maxStreams(maxStreams)
                                              .sdkEventLoopGroup(sdkEventLoopGroup)
                                              .sslProvider(resolveSslProvider(builder))
+                                             .proxyConfiguration(builder.proxyConfiguration)
                                              .build();
     }
 
@@ -343,6 +344,8 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
          * @return the builder of the method chaining.
          */
         Builder sslProvider(SslProvider sslProvider);
+
+        Builder proxyConfiguration(ProxyConfiguration proxyConfiguration);
     }
 
     /**
@@ -359,6 +362,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
         private SdkEventLoopGroup.Builder eventLoopGroupBuilder;
         private Integer maxHttp2Streams;
         private SslProvider sslProvider;
+        private ProxyConfiguration proxyConfiguration;
 
         private DefaultBuilder() {
         }
@@ -513,6 +517,16 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
         public void setSslProvider(SslProvider sslProvider) {
             sslProvider(sslProvider);
+        }
+
+        @Override
+        public Builder proxyConfiguration(ProxyConfiguration proxyConfiguration) {
+            this.proxyConfiguration = proxyConfiguration;
+            return this;
+        }
+
+        public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
+            proxyConfiguration(proxyConfiguration);
         }
 
         @Override
