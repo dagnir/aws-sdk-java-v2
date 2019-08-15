@@ -48,6 +48,8 @@ import software.amazon.awssdk.annotations.SdkTestInternalApi;
 import software.amazon.awssdk.http.Protocol;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.http.SystemPropertyTlsKeyManagersProvider;
+import software.amazon.awssdk.http.TlsKeyManagersProvider;
 import software.amazon.awssdk.http.async.AsyncExecuteRequest;
 import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
 import software.amazon.awssdk.http.nio.netty.internal.AwaitCloseChannelPoolMap;
@@ -92,6 +94,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
                                              .sdkEventLoopGroup(sdkEventLoopGroup)
                                              .sslProvider(resolveSslProvider(builder))
                                              .proxyConfiguration(builder.proxyConfiguration)
+                                             .tlsKeyManagersProvider(builder.tlsKeyManagersProvider)
                                              .build();
     }
 
@@ -354,6 +357,17 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
          * @see ProxyConfiguration#nonProxyHosts()
          */
         Builder proxyConfiguration(ProxyConfiguration proxyConfiguration);
+
+        /**
+         * Set the {@link TlsKeyManagersProvider} for this client. The {@code KeyManager}s will be used by the client to
+         * authenticate itself with the remote server if necessary when establishing the TLS connection.
+         * <p>
+         * By default the configured provider is {@link SystemPropertyTlsKeyManagersProvider}.
+         *
+         * @param keyManagersProvider The {@code TlsKeyManagersProvider}.
+         * @return The builder for method chaining.
+         */
+        Builder tlsKeyManagersProvider(TlsKeyManagersProvider keyManagersProvider);
     }
 
     /**
@@ -371,6 +385,7 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
         private Integer maxHttp2Streams;
         private SslProvider sslProvider;
         private ProxyConfiguration proxyConfiguration;
+        private TlsKeyManagersProvider tlsKeyManagersProvider = SystemPropertyTlsKeyManagersProvider.create();
 
         private DefaultBuilder() {
         }
@@ -535,6 +550,12 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
         public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
             proxyConfiguration(proxyConfiguration);
+        }
+
+        @Override
+        public Builder tlsKeyManagersProvider(TlsKeyManagersProvider tlsKeyManagersProvider) {
+            this.tlsKeyManagersProvider = tlsKeyManagersProvider;
+            return this;
         }
 
         @Override

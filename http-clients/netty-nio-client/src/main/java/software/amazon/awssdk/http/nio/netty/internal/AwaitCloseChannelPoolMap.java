@@ -40,11 +40,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManagerFactory;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.annotations.SdkTestInternalApi;
 import software.amazon.awssdk.http.Protocol;
+import software.amazon.awssdk.http.TlsKeyManagersProvider;
 import software.amazon.awssdk.http.nio.netty.ProxyConfiguration;
 import software.amazon.awssdk.http.nio.netty.SdkEventLoopGroup;
 import software.amazon.awssdk.http.nio.netty.internal.http2.HttpOrHttp2ChannelPool;
@@ -82,6 +85,7 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
     private final long maxStreams;
     private final SslProvider sslProvider;
     private final ProxyConfiguration proxyConfiguration;
+    private final TlsKeyManagersProvider tlsKeyManagersProvider;
 
     private AwaitCloseChannelPoolMap(Builder builder) {
         this.sdkChannelOptions = builder.sdkChannelOptions;
@@ -91,6 +95,7 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
         this.maxStreams = builder.maxStreams;
         this.sslProvider = builder.sslProvider;
         this.proxyConfiguration = builder.proxyConfiguration;
+        this.tlsKeyManagersProvider = builder.tlsKeyManagersProvider;
     }
 
     @SdkTestInternalApi
@@ -260,6 +265,7 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
                                     .sslProvider(sslProvider)
                                     .ciphers(Http2SecurityUtil.CIPHERS, SupportedCipherSuiteFilter.INSTANCE)
                                     .trustManager(getTrustManager())
+                                    .keyManager(getKeyManager())
                                     .build();
         } catch (SSLException e) {
             throw new RuntimeException(e);
@@ -268,6 +274,16 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
 
     private TrustManagerFactory getTrustManager() {
         return configuration.trustAllCertificates() ? InsecureTrustManagerFactory.INSTANCE : null;
+    }
+
+    private KeyManagerFactory getKeyManager() {
+        if (tlsKeyManagersProvider != null) {
+            KeyManager[] keyManagers = tlsKeyManagersProvider.keyManagers();
+            if (keyManagers != null) {
+                return StaticKeyManagerFactory.create(keyManagers);
+            }
+        }
+        return null;
     }
 
     public static class Builder {
@@ -279,6 +295,7 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
         private long maxStreams;
         private SslProvider sslProvider;
         private ProxyConfiguration proxyConfiguration;
+        private TlsKeyManagersProvider tlsKeyManagersProvider;
 
         private Builder() {
         }
@@ -315,6 +332,11 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
 
         public Builder proxyConfiguration(ProxyConfiguration proxyConfiguration) {
             this.proxyConfiguration = proxyConfiguration;
+            return this;
+        }
+
+        public Builder tlsKeyManagersProvider(TlsKeyManagersProvider tlsKeyManagersProvider) {
+            this.tlsKeyManagersProvider = tlsKeyManagersProvider;
             return this;
         }
 
