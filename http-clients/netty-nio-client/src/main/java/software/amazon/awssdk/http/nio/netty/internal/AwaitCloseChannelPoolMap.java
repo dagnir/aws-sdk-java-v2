@@ -98,7 +98,7 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
 
     @Override
     protected SimpleChannelPoolAwareChannelPool newPool(URI key) {
-        SslContext sslContext = sslContext(key.getScheme());
+        SslContext sslContext = sslContext(key);
         
         Bootstrap bootstrap = createBootstrap(key);
 
@@ -196,8 +196,13 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
             return null;
         }
 
+        String scheme = proxyConfiguration.scheme();
+        if (scheme == null) {
+            scheme = "http";
+        }
+
         try {
-            return new URI(proxyConfiguration.scheme(), null, proxyConfiguration.host(), proxyConfiguration.port(), null, null,
+            return new URI(scheme, null, proxyConfiguration.host(), proxyConfiguration.port(), null, null,
                     null);
         } catch (URISyntaxException e) {
             throw new RuntimeException("Unable to construct proxy URI", e);
@@ -233,10 +238,16 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
         return channelPool;
     }
 
-    private SslContext sslContext(String protocol) {
-        if (!protocol.equalsIgnoreCase("https")) {
+    private SslContext sslContext(URI targetAddress) {
+        URI proxyAddress = proxyAddress(targetAddress);
+
+        boolean needContext = targetAddress.getScheme().equalsIgnoreCase("https")
+                || proxyAddress != null && proxyAddress.getScheme().equalsIgnoreCase("https");
+
+        if (!needContext) {
             return null;
         }
+
         try {
             return SslContextBuilder.forClient()
                                     .sslProvider(sslProvider)
