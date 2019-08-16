@@ -18,7 +18,6 @@ package software.amazon.awssdk.http.nio.netty.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -43,6 +42,7 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Promise;
 import java.io.IOException;
 import java.net.URI;
+import java.util.function.Supplier;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -87,9 +87,14 @@ public class ProxyTunnelInitHandlerTest {
 
     @Test
     public void addedToPipeline_addsCodec() {
-        ProxyTunnelInitHandler handler = new ProxyTunnelInitHandler(mockChannelPool, REMOTE_HOST, null);
+        HttpClientCodec codec = new HttpClientCodec();
+        Supplier<HttpClientCodec> codecSupplier = () -> codec;
+        when(mockCtx.name()).thenReturn("foo");
+
+        ProxyTunnelInitHandler handler = new ProxyTunnelInitHandler(mockChannelPool, REMOTE_HOST, null, codecSupplier);
         handler.handlerAdded(mockCtx);
-        verify(mockPipeline).addBefore(anyString(), eq(null), any(HttpClientCodec.class));
+
+        verify(mockPipeline).addBefore(eq("foo"), eq(null), eq(codec));
     }
 
     @Test

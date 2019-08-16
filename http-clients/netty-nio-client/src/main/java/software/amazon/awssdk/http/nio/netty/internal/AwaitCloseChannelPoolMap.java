@@ -33,6 +33,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +48,6 @@ import software.amazon.awssdk.http.nio.netty.ProxyConfiguration;
 import software.amazon.awssdk.http.nio.netty.SdkEventLoopGroup;
 import software.amazon.awssdk.http.nio.netty.internal.http2.HttpOrHttp2ChannelPool;
 import software.amazon.awssdk.utils.Logger;
-import software.amazon.awssdk.utils.StringUtils;
 
 /**
  * Implementation of {@link SdkChannelPoolMap} that awaits channel pools to be closed upon closing.
@@ -69,6 +70,9 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
         public void channelCreated(Channel ch) throws Exception {
         }
     };
+
+    private final Map<URI, Boolean> shouldProxyForHostCache = new HashMap<>();
+
 
     private final SdkChannelOptions sdkChannelOptions;
     private final SdkEventLoopGroup sdkEventLoopGroup;
@@ -105,7 +109,7 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
 
         BetterSimpleChannelPool tcpChannelPool;
         ChannelPool baseChannelPool;
-        if (useProxyForHost(key)) {
+        if (shouldUseProxyForHost(key)) {
             tcpChannelPool = new BetterSimpleChannelPool(bootstrap, NOOP_HANDLER);
             baseChannelPool = new Http1TunnelConnectionPool(bootstrap.config().group().next(), tcpChannelPool,
                                                             sslContext, proxyAddress(key), key, pipelineInitializer);
@@ -162,37 +166,33 @@ public final class AwaitCloseChannelPoolMap extends SdkChannelPoolMap<URI, Simpl
     }
 
 
-    private boolean useProxyForHost(URI remoteAddr) {
+    private boolean shouldUseProxyForHost(URI remoteAddr) {
         if (proxyConfiguration == null) {
             return false;
         }
 
-        String remoteHost = StringUtils.lowerCase(remoteAddr.getHost());
-        for (String hostPattern : proxyConfiguration.nonProxyHosts()) {
-            if (remoteHost.matches(hostPattern)) {
-                return false;
-            }
-        }
 
-        return true;
+        return shouldProxyForHostCache.computeIfAbsent(remoteAddr, (uri) ->
+           proxyConfiguration.nonProxyHosts().stream().noneMatch(h -> uri.getHost().matches(h))
+        );
     }
 
     private String bootstrapHost(URI remoteHost) {
-        if (useProxyForHost(remoteHost)) {
+        if (shouldUseProxyForHost(remoteHost)) {
             return proxyConfiguration.host();
         }
         return remoteHost.getHost();
     }
 
     private int bootstrapPort(URI remoteHost) {
-        if (useProxyForHost(remoteHost)) {
+        if (shouldUseProxyForHost(remoteHost)) {
             return proxyConfiguration.port();
         }
         return remoteHost.getPort();
     }
 
     private URI proxyAddress(URI remoteHost) {
-        if (!useProxyForHost(remoteHost)) {
+        if (!shouldUseProxyForHost(remoteHost)) {
             return null;
         }
 

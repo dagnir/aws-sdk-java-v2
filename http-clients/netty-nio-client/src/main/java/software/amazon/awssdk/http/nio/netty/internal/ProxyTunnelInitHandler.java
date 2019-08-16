@@ -31,7 +31,9 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.concurrent.Promise;
 import java.io.IOException;
 import java.net.URI;
+import java.util.function.Supplier;
 import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.annotations.SdkTestInternalApi;
 
 /**
  * Handler that initializes the HTTP tunnel.
@@ -41,23 +43,31 @@ public final class ProxyTunnelInitHandler extends ChannelDuplexHandler {
     private final ChannelPool sourcePool;
     private final URI remoteHost;
     private final Promise<Channel> initPromise;
+    private final Supplier<HttpClientCodec> httpCodecSupplier;
 
     public ProxyTunnelInitHandler(ChannelPool sourcePool, URI remoteHost, Promise<Channel> initPromise) {
+        this(sourcePool, remoteHost, initPromise, HttpClientCodec::new);
+    }
+
+    @SdkTestInternalApi
+    public ProxyTunnelInitHandler(ChannelPool sourcePool, URI remoteHost, Promise<Channel> initPromise,
+                                  Supplier<HttpClientCodec> httpCodecSupplier) {
         this.sourcePool = sourcePool;
         this.remoteHost = remoteHost;
         this.initPromise = initPromise;
+        this.httpCodecSupplier = httpCodecSupplier;
     }
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
         ChannelPipeline pipeline = ctx.pipeline();
-        pipeline.addBefore(ctx.name(), null, new HttpClientCodec());
+        pipeline.addBefore(ctx.name(), null, httpCodecSupplier.get());
         HttpRequest connectRequest = connectRequest();
         ctx.channel().writeAndFlush(connectRequest).addListener(f -> {
             if (!f.isSuccess()) {
                 ctx.close();
                 sourcePool.release(ctx.channel());
-                initPromise.setFailure(new IOException("Unable send CONNECT request to proxy", f.cause()));
+                initPromise.setFailure(new IOException("Unable to send CONNECT request to proxy", f.cause()));
             }
         });
     }

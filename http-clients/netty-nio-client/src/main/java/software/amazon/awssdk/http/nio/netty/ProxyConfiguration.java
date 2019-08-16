@@ -23,7 +23,10 @@ import software.amazon.awssdk.utils.builder.CopyableBuilder;
 import software.amazon.awssdk.utils.builder.ToCopyableBuilder;
 
 /**
- * Proxy configuration for {@link NettyNioAsyncHttpClient}.
+ * Proxy configuration for {@link NettyNioAsyncHttpClient}. This class is used to configure an HTTP proxy to be used by
+ * the {@link NettyNioAsyncHttpClient}.
+ *
+ * @see NettyNioAsyncHttpClient.Builder#proxyConfiguration(ProxyConfiguration)
  */
 @SdkPublicApi
 public final class ProxyConfiguration implements ToCopyableBuilder<ProxyConfiguration.Builder, ProxyConfiguration> {
@@ -68,6 +71,43 @@ public final class ProxyConfiguration implements ToCopyableBuilder<ProxyConfigur
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ProxyConfiguration that = (ProxyConfiguration) o;
+
+        if (port != that.port) {
+            return false;
+        }
+
+        if (scheme != null ? !scheme.equals(that.scheme) : that.scheme != null) {
+            return false;
+        }
+
+        if (host != null ? !host.equals(that.host) : that.host != null) {
+            return false;
+        }
+
+        return nonProxyHosts.equals(that.nonProxyHosts);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = scheme != null ? scheme.hashCode() : 0;
+        result = 31 * result + (host != null ? host.hashCode() : 0);
+        result = 31 * result + port;
+        result = 31 * result + nonProxyHosts.hashCode();
+        return result;
+    }
+
+    @Override
     public Builder toBuilder() {
         return new BuilderImpl(this);
     }
@@ -82,28 +122,30 @@ public final class ProxyConfiguration implements ToCopyableBuilder<ProxyConfigur
     public interface Builder extends CopyableBuilder<Builder, ProxyConfiguration> {
 
         /**
-         * Set the proxy host.
+         * Set the hostname of the proxy.
          * @param host The proxy host.
          * @return This object for method chaining.
          */
         Builder host(String host);
 
         /**
-         * Set the proxy port.
+         * Set the port that the proxy expects connections on.
          * @param port The proxy port.
          * @return This object for method chaining.
          */
         Builder port(int port);
 
         /**
-         * Set the proxy scheme.
+         * The HTTP scheme to use for connecting to the proxy. Valid values are {@code http} and {@code https}.
          * @param scheme The proxy scheme.
          * @return This object for method chaining.
          */
         Builder scheme(String scheme);
 
         /**
-         * Set the set of hosts that should not be proxied.
+         * Set the set of hosts that should not be proxied. Any request whose host portion matches any of the patterns
+         * given in the set will be sent to the remote host directly instead of through the proxy.
+         *
          * @param nonProxyHosts The set of hosts that should not be proxied.
          * @return This object for method chaining.
          */
