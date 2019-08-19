@@ -347,11 +347,11 @@ public final class NettyNioAsyncHttpClient implements SdkAsyncHttpClient {
 
         /**
          * Set the proxy configuration for this client. The configured proxy will be used to proxy any HTTP request
-         * destined for any host that does not match any of the hosts in {@link ProxyConfiguration#nonProxyHosts() the
-         * configured non proxy hosts}.
+         * destined for any host that does not match any of the hosts in configured non proxy hosts.
          *
          * @param proxyConfiguration The proxy configuration.
          * @return The builder for method chaining.
+         * @see ProxyConfiguration#nonProxyHosts()
          */
         Builder proxyConfiguration(ProxyConfiguration proxyConfiguration);
     }
