@@ -1,3 +1,25 @@
+# __2.7.27__ __2019-08-19__
+## __AWS App Mesh__
+  - ### Features
+    - Fix for HttpMethod enum
+
+## __AWS Cost and Usage Report Service__
+  - ### Features
+    - New IAM permission required for editing AWS Cost and Usage Reports - Starting today, you can allow or deny IAM users permission to edit Cost & Usage Reports through the API and the Billing and Cost Management console. To allow users to edit Cost & Usage Reports, ensure that they have 'cur: ModifyReportDefinition' permission. Refer to the technical documentation (https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_cur_ModifyReportDefinition.html) for additional details.
+
+# __2.7.26__ __2019-08-16__
+## __AWS RoboMaker__
+  - ### Features
+    - Two feature release: 1. AWS RoboMaker introduces log-based simulation. Log-based simulation allows you to play back pre-recorded log data such as sensor streams for testing robotic functions like localization, mapping, and object detection. Use the AWS RoboMaker SDK to test your robotic applications. 2. AWS RoboMaker allow customer to setup a robot deployment timeout when CreateDeploymentJob.
+
+## __Amazon EC2 Container Service__
+  - ### Features
+    - This release of Amazon Elastic Container Service (Amazon ECS) introduces support for controlling the usage of swap space on a per-container basis for Linux containers.
+
+## __Amazon Elastic MapReduce__
+  - ### Features
+    - Amazon EMR has introduced an account level configuration called Block Public Access that allows you to block clusters with ports open to traffic from public IP sources (i.e. 0.0.0.0/0 for IPv4 and ::/0 for IPv6) from launching. Individual ports or port ranges can be added as exceptions to allow public access.
+
 # __2.7.25__ __2019-08-15__
 ## __AWS App Mesh__
   - ### Features
