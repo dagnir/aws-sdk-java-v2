@@ -125,12 +125,17 @@ public final class ChannelPipelineInitializer extends AbstractChannelPoolHandler
     private void configureHttp2(Channel ch, ChannelPipeline pipeline) {
         // Using Http2FrameCodecBuilder and Http2MultiplexHandler based on 4.1.37 release notes
         // https://netty.io/news/2019/06/28/4-1-37-Final.html
+
+        DongieFrameLogger frameLogger = new DongieFrameLogger(ch, LogLevel.DEBUG);
+
         Http2FrameCodec codec =
             Http2FrameCodecBuilder.forClient()
                                   .headerSensitivityDetector((name, value) -> lowerCase(name.toString()).equals("authorization"))
                                   .initialSettings(Http2Settings.defaultSettings().initialWindowSize(clientInitialWindowSize))
-                                  .frameLogger(new Http2FrameLogger(LogLevel.DEBUG))
+                                  .frameLogger(frameLogger)
                                   .build();
+
+        frameLogger.h2ConnectionSupplier(codec::connection);
 
         // Connection listeners have higher priority than handlers, in the eyes of the Http2FrameCodec. The Http2FrameCodec will
         // close any connections when a GOAWAY is received, but we'd like to send a "GOAWAY happened" exception instead of just

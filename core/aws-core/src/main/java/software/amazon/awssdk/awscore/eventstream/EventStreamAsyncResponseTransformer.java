@@ -62,6 +62,8 @@ import software.amazon.eventstream.MessageDecoder;
 @SdkProtectedApi
 public final class EventStreamAsyncResponseTransformer<ResponseT, EventT>
     implements AsyncResponseTransformer<SdkResponse, Void> {
+    private static final String STREAM_ID_HEADER = "x-http2-stream-id";
+    public static final String CHANNEL_ID_HEADER = "x-javav2-channel-id";
 
     private static final Logger log = LoggerFactory.getLogger(EventStreamAsyncResponseTransformer.class);
 
@@ -164,6 +166,10 @@ public final class EventStreamAsyncResponseTransformer<ResponseT, EventT>
      */
     private String extendedRequestId = null;
 
+    private String streamId;
+
+    private String channelId;
+
     private EventStreamAsyncResponseTransformer(
         EventStreamResponseHandler<ResponseT, EventT> eventStreamResponseHandler,
         HttpResponseHandler<? extends ResponseT> initialResponseHandler,
@@ -199,6 +205,12 @@ public final class EventStreamAsyncResponseTransformer<ResponseT, EventT>
             this.extendedRequestId = response.sdkHttpResponse()
                                              .firstMatchingHeader(X_AMZ_ID_2_HEADER)
                                              .orElse(null);
+            this.streamId = response.sdkHttpResponse()
+                                    .firstMatchingHeader(STREAM_ID_HEADER)
+                                    .orElse(null);
+            this.channelId = response.sdkHttpResponse()
+                                     .firstMatchingHeader(CHANNEL_ID_HEADER)
+                                     .orElse(null);
         }
     }
 
@@ -322,6 +334,14 @@ public final class EventStreamAsyncResponseTransformer<ResponseT, EventT>
 
         if (extendedRequestId != null) {
             headers.put(X_AMZ_ID_2_HEADER, singletonList(extendedRequestId));
+        }
+
+        if (streamId != null) {
+            headers.put(STREAM_ID_HEADER, singletonList(streamId));
+        }
+
+        if (channelId != null) {
+            headers.put(CHANNEL_ID_HEADER, singletonList(channelId));
         }
 
         SdkHttpFullResponse.Builder builder =

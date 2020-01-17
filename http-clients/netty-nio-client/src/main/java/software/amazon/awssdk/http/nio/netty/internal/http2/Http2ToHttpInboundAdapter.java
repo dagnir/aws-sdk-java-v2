@@ -37,6 +37,7 @@ import software.amazon.awssdk.annotations.SdkInternalApi;
  */
 @SdkInternalApi
 public class Http2ToHttpInboundAdapter extends SimpleChannelInboundHandler<Http2Frame> {
+    public static final String CHANNEL_ID_HEADER = "x-javav2-channel-id";
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Http2Frame frame) throws Exception {
@@ -54,6 +55,7 @@ public class Http2ToHttpInboundAdapter extends SimpleChannelInboundHandler<Http2
     }
 
     private void onHeadersRead(Http2HeadersFrame headersFrame, ChannelHandlerContext ctx) throws Http2Exception {
+        headersFrame.headers().add(CHANNEL_ID_HEADER, ctx.channel().parent().toString());
         ctx.fireChannelRead(HttpConversionUtil.toHttpResponse(headersFrame.stream().id(), headersFrame.headers(), true));
     }
 
