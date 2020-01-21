@@ -173,9 +173,9 @@ public final class NettyRequestExecutor {
         }
 
         pipeline.addLast(LastHttpContentHandler.create());
-        if (Protocol.HTTP2.equals(protocol)) {
-            pipeline.addLast(FlushOnReadHandler.getInstance());
-        }
+//        if (Protocol.HTTP2.equals(protocol)) {
+//            pipeline.addLast(FlushOnReadHandler.getInstance());
+//        }
         pipeline.addLast(new HttpStreamsClientHandler());
         pipeline.addLast(ResponseHandler.getInstance());
 
