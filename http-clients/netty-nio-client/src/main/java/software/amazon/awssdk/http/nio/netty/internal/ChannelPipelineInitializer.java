@@ -146,7 +146,10 @@ public final class ChannelPipelineInitializer extends AbstractChannelPoolHandler
         pipeline.addLast(codec);
         pipeline.addLast(new Http2MultiplexHandler(new NoOpChannelInitializer()));
         pipeline.addLast(new Http2SettingsFrameHandler(ch, clientMaxStreams, channelPoolRef));
-        pipeline.addLast(new Http2PingHandler(HTTP2_CONNECTION_PING_TIMEOUT_SECONDS * 1_000));
+
+        if (enablePeriodicPing()) {
+            pipeline.addLast(new Http2PingHandler(HTTP2_CONNECTION_PING_TIMEOUT_SECONDS * 1_000));
+        }
     }
 
     private void configureHttp11(Channel ch, ChannelPipeline pipeline) {
@@ -158,6 +161,10 @@ public final class ChannelPipelineInitializer extends AbstractChannelPoolHandler
         @Override
         protected void initChannel(Channel ch) {
         }
+    }
+
+    private static boolean enablePeriodicPing() {
+        return "true".equalsIgnoreCase(System.getProperty("com.dongieagnir.enablePeriodicPing", "true"));
     }
 
 }
