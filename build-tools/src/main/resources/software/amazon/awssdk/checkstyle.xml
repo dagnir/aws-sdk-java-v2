@@ -69,12 +69,6 @@
             <property name="allowNonPrintableEscapes" value="true"/>
         </module>
 
-        <!-- Enforce maximum line lengths. -->
-        <module name="LineLength">
-            <property name="max" value="130"/>
-            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
-        </module>
-
         <!-- Stars must not be used in import statements. -->
         <module name="AvoidStarImport"/>
 
@@ -299,6 +293,7 @@
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="true"/>
             <property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE"/>
+            <!-- <property name="thirdPartyPackageRegExp" value="^(org\.slf4j|org\.junit|org\.mockito|org\.apache|org\.reactivestreams|com\.fasterxml|io\.netty|com\.squareup|com\.github\.tomakehurst|org\.hamcrest)\." /> -->
         </module>
 
         <!-- Method names must be specified on the same line as their parameter list. -->
@@ -386,4 +381,11 @@
         <!-- Checks that no 'final' are added on local variables -->
         <module name="software.amazon.awssdk.buildtools.checkstyle.UnnecessaryFinalOnLocalVariableCheck" />
     </module>
+
+        <!-- Enforce maximum line lengths. -->
+    <module name="LineLength">
+        <property name="max" value="130"/>
+        <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+    </module>
+
 </module>
