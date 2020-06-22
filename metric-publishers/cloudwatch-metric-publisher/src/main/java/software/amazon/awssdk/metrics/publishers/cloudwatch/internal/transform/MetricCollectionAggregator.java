@@ -168,7 +168,7 @@ public class MetricCollectionAggregator {
                                            SummaryMetricAggregator metric) {
         StatisticSet stats = StatisticSet.builder()
                                          .minimum(metric.min())
-                                         .maximum(metric.max())
+                                         .maximum(metric.max() == Double.MIN_VALUE ? 0.0 : metric.max())
                                          .sum(metric.sum())
                                          .sampleCount((double) metric.count())
                                          .build();

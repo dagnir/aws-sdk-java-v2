@@ -214,7 +214,8 @@ public final class ApacheHttpClient implements SdkHttpClient {
 
     @Override
     public ExecutableHttpRequest prepareRequest(HttpExecuteRequest request) {
-        MetricCollector metricCollector = request.metricCollector().orElseGet(NoOpMetricCollector::create);
+        MetricCollector metricCollector = request.metricCollector()
+                .orElseGet(NoOpMetricCollector::create);
         metricCollector.reportMetric(HTTP_CLIENT_NAME, clientName());
         HttpRequestBase apacheRequest = toApacheRequest(request);
         return new ExecutableHttpRequest() {

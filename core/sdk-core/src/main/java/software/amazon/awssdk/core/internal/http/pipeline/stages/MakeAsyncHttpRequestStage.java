@@ -143,11 +143,14 @@ public final class MakeAsyncHttpRequestStage<OutputT>
         // Set content length if it hasn't been set already.
         SdkHttpFullRequest requestWithContentLength = getRequestWithContentLength(request, requestProvider);
 
+        MetricCollector httpMetricCollector = context.metricCollector().createChild("HttpClient");
+
         AsyncExecuteRequest executeRequest = AsyncExecuteRequest.builder()
                                                                 .request(requestWithContentLength)
                                                                 .requestContentPublisher(requestProvider)
                                                                 .responseHandler(wrappedResponseHandler)
                                                                 .fullDuplex(isFullDuplex(context.executionAttributes()))
+                                                                .metricCollector(httpMetricCollector)
                                                                 .build();
 
         CompletableFuture<Void> httpClientFuture = doExecuteHttpRequest(context, executeRequest);
