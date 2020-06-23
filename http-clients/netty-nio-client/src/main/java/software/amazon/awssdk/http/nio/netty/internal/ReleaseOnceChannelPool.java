@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.http.nio.netty.internal.http2.Http2MultiplexedChannelPool;
 import software.amazon.awssdk.metrics.MetricCollector;
+import software.amazon.awssdk.http.nio.netty.internal.utils.NettyUtils;
 
 /**
  * Wrapper around a {@link ChannelPool} to protect it from having the same channel released twice. This can
@@ -37,7 +38,8 @@ import software.amazon.awssdk.metrics.MetricCollector;
 @SdkInternalApi
 public class ReleaseOnceChannelPool implements SdkChannelPool {
 
-    private static final AttributeKey<AtomicBoolean> IS_RELEASED = AttributeKey.newInstance("isReleased");
+    private static final AttributeKey<AtomicBoolean> IS_RELEASED = NettyUtils.getOrCreateAttributeKey(
+            "software.amazon.awssdk.http.nio.netty.internal.http2.ReleaseOnceChannelPool.isReleased");
 
     private final SdkChannelPool delegate;
 
