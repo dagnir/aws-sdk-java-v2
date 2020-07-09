@@ -7,9 +7,6 @@ dist: xenial
 install: /bin/true
 env:
   - AWS_REGION=us-west-2
-notifications:
-  email:
-    - github-awsforjava@amazon.com
 script: mvn -q install
 
 after_success:
