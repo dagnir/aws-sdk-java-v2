@@ -35,11 +35,11 @@ import io.netty.handler.codec.http2.Http2FrameCodecBuilder;
 import io.netty.handler.codec.http2.Http2HeadersFrame;
 import io.netty.handler.codec.http2.Http2Settings;
 import io.netty.handler.codec.http2.Http2StreamFrame;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.util.ReferenceCountUtil;
 import java.net.URI;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import software.amazon.awssdk.http.Http2Metric;
 import software.amazon.awssdk.http.HttpMetric;
@@ -53,6 +53,7 @@ import software.amazon.awssdk.metrics.MetricCollection;
 import software.amazon.awssdk.metrics.MetricCollector;
 
 public class Http2MetricsTest {
+    private static final int H2_DEFAULT_WINDOW_SIZE = 65535;
     private static final int SERVER_MAX_CONCURRENT_STREAMS = 2;
     private static final int SERVER_INITIAL_WINDOW_SIZE = 65535 * 2;
 
@@ -73,6 +74,7 @@ public class Http2MetricsTest {
         try (SdkAsyncHttpClient client = NettyNioAsyncHttpClient.builder()
                                                                 .protocol(Protocol.HTTP2)
                                                                 .maxConcurrency(10)
+                                                                .sslProvider(SslProvider.JDK)
                                                                 .http2Configuration(c -> c.maxStreams(1L)
                                                                                           .initialWindowSize(65535 * 3))
                                                                 .build()) {
@@ -85,7 +87,7 @@ public class Http2MetricsTest {
             assertThat(metrics.metricValues(HttpMetric.LEASED_CONCURRENCY).get(0)).isBetween(0, 1);
             assertThat(metrics.metricValues(HttpMetric.PENDING_CONCURRENCY_ACQUIRES).get(0)).isBetween(0, 1);
             assertThat(metrics.metricValues(HttpMetric.AVAILABLE_CONCURRENCY)).containsExactly(0);
-            assertThat(metrics.metricValues(Http2Metric.LOCAL_STREAM_WINDOW_SIZE_IN_BYTES)).containsExactly(65535 * 3);
+            assertThat(metrics.metricValues(Http2Metric.LOCAL_STREAM_WINDOW_SIZE_IN_BYTES).get(0)).isIn(H2_DEFAULT_WINDOW_SIZE, 65535 * 3);
             assertThat(metrics.metricValues(Http2Metric.REMOTE_STREAM_WINDOW_SIZE_IN_BYTES)).containsExactly(SERVER_INITIAL_WINDOW_SIZE);
         }
     }
@@ -95,6 +97,7 @@ public class Http2MetricsTest {
         try (SdkAsyncHttpClient client = NettyNioAsyncHttpClient.builder()
                                                                 .protocol(Protocol.HTTP2)
                                                                 .maxConcurrency(10)
+                                                                .sslProvider(SslProvider.JDK)
                                                                 .http2Configuration(c -> c.maxStreams(3L)
                                                                                           .initialWindowSize(65535 * 3))
                                                                 .build()) {
@@ -107,7 +110,7 @@ public class Http2MetricsTest {
             assertThat(metrics.metricValues(HttpMetric.LEASED_CONCURRENCY).get(0)).isBetween(0, 1);
             assertThat(metrics.metricValues(HttpMetric.PENDING_CONCURRENCY_ACQUIRES).get(0)).isBetween(0, 1);
             assertThat(metrics.metricValues(HttpMetric.AVAILABLE_CONCURRENCY).get(0)).isIn(0, 2, 3);
-            assertThat(metrics.metricValues(Http2Metric.LOCAL_STREAM_WINDOW_SIZE_IN_BYTES)).containsExactly(65535 * 3);
+            assertThat(metrics.metricValues(Http2Metric.LOCAL_STREAM_WINDOW_SIZE_IN_BYTES).get(0)).isIn(H2_DEFAULT_WINDOW_SIZE, 65535 * 3);
             assertThat(metrics.metricValues(Http2Metric.REMOTE_STREAM_WINDOW_SIZE_IN_BYTES)).containsExactly(SERVER_INITIAL_WINDOW_SIZE);
         }
     }

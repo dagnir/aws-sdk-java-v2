@@ -238,7 +238,9 @@ public final class NettyRequestExecutor {
                    // Done writing so remove the idle write timeout handler
                    ChannelUtils.removeIfExists(channel.pipeline(), WriteTimeoutHandler.class);
                    if (wireCall.isSuccess()) {
-                       NettyRequestMetrics.publishHttp2StreamMetrics(context.metricCollector(), channel);
+
+                       channel.eventLoop().submit(() ->
+                               NettyRequestMetrics.publishHttp2StreamMetrics(context.metricCollector(), channel));
 
                        if (context.executeRequest().fullDuplex()) {
                            return;
