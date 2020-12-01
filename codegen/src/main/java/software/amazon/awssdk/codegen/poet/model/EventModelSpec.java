@@ -72,6 +72,7 @@ public final class EventModelSpec implements ClassSpec {
                 .addMethod(toBuilderMethod())
                 .addMethod(builderMethod())
                 .addMethods(acceptMethods())
+                .addMethod(sdkEventTypeMethodSpec())
                 .addTypes(Arrays.asList(builderSpecs.builderInterface(), builderSpecs.beanStyleBuilder()))
                 .build();
     }
@@ -149,6 +150,17 @@ public final class EventModelSpec implements ClassSpec {
                 .addParameter(responseHandlerClass
                         .nestedClass("Visitor"), "visitor")
                 .addStatement("visitor.$N(this)", visitMethodName)
+                .build();
+    }
+
+    private MethodSpec sdkEventTypeMethodSpec() {
+        ClassName eventTypeEnumClass = eventStreamSpecHelper.eventTypeEnumClassName();
+        String eventTypeValue = eventStreamSpecHelper.eventTypeEnumValue(eventModel);
+        return MethodSpec.methodBuilder("sdkEventType")
+                .addAnnotation(Override.class)
+                .addModifiers(PUBLIC)
+                .returns(eventTypeEnumClass)
+                .addStatement("return $T.$N", eventTypeEnumClass, eventTypeValue)
                 .build();
     }
 }

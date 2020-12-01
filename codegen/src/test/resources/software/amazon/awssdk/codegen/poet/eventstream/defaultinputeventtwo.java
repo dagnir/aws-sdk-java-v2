@@ -2,6 +2,7 @@ package software.amazon.awssdk.services.jsonprotocoltests.model.inputeventstream
 
 import software.amazon.awssdk.annotations.Generated;
 import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.services.jsonprotocoltests.model.InputEventStreamTwo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.InputEventTwo;
 
 /**
@@ -25,6 +26,11 @@ public final class DefaultInputEventTwo extends InputEventTwo {
 
     public static Builder builder() {
         return new BuilderImpl();
+    }
+
+    @Override
+    public InputEventStreamTwo.EventType sdkEventType() {
+        return InputEventStreamTwo.EventType.INPUT_EVENT_TWO;
     }
 
     public interface Builder extends InputEventTwo.Builder {

@@ -3,6 +3,7 @@ package software.amazon.awssdk.services.jsonprotocoltests.model.inputeventstream
 import software.amazon.awssdk.annotations.Generated;
 import software.amazon.awssdk.annotations.SdkInternalApi;
 import software.amazon.awssdk.services.jsonprotocoltests.model.InputEvent;
+import software.amazon.awssdk.services.jsonprotocoltests.model.InputEventStream;
 
 /**
  * A specialization of {@code software.amazon.awssdk.services.jsonprotocoltests.model.InputEvent} that represents the
@@ -25,6 +26,11 @@ public final class DefaultInputEvent extends InputEvent {
 
     public static Builder builder() {
         return new BuilderImpl();
+    }
+
+    @Override
+    public InputEventStream.EventType sdkEventType() {
+        return InputEventStream.EventType.INPUT_EVENT;
     }
 
     public interface Builder extends InputEvent.Builder {

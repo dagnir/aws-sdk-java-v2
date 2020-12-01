@@ -2,6 +2,7 @@ package software.amazon.awssdk.services.jsonprotocoltests.model.eventstream;
 
 import software.amazon.awssdk.annotations.Generated;
 import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.services.jsonprotocoltests.model.EventStream;
 import software.amazon.awssdk.services.jsonprotocoltests.model.EventStreamOperationResponseHandler;
 import software.amazon.awssdk.services.jsonprotocoltests.model.EventTwo;
 
@@ -31,6 +32,11 @@ public final class DefaultSecondEventTwo extends EventTwo {
     @Override
     public void accept(EventStreamOperationResponseHandler.Visitor visitor) {
         visitor.visitSecondEventTwo(this);
+    }
+
+    @Override
+    public EventStream.EventType sdkEventType() {
+        return EventStream.EventType.SECOND_EVENT_TWO;
     }
 
     public interface Builder extends EventTwo.Builder {
