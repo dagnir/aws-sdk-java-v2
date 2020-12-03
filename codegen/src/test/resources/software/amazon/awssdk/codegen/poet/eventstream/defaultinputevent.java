@@ -7,7 +7,7 @@ import software.amazon.awssdk.services.jsonprotocoltests.model.InputEventStream;
 
 /**
  * A specialization of {@code software.amazon.awssdk.services.jsonprotocoltests.model.InputEvent} that represents the
- * {@code InputEventStream#InputEvent} event. Do not use this class directly. Instead, use the static builder methods on
+ * {@code InputEventStream$InputEvent} event. Do not use this class directly. Instead, use the static builder methods on
  * {@link software.amazon.awssdk.services.jsonprotocoltests.model.InputEventStream}.
  */
 @SdkInternalApi

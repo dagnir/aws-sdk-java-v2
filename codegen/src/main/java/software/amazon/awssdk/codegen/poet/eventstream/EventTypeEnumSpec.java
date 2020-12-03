@@ -48,7 +48,7 @@ public class EventTypeEnumSpec extends AbstractEnumClass {
         getShape().getMembers().stream()
                 .filter(m -> m.getShape().isEvent())
                 .forEach(m -> {
-                    String value = m.getName();
+                    String value = m.getC2jName();
                     String name = namingStrategy.getEnumValueName(value);
                     enumBuilder.addEnumConstant(name, TypeSpec.anonymousClassBuilder("$S", value).build());
                 });

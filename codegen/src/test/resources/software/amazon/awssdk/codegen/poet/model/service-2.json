@@ -416,6 +416,9 @@
         },
         "SecondEventTwo": {
           "shape": "EventTwo"
+        },
+        "third_event_One": {
+          "shape": "EventOne"
         }
       },
       "eventstream": true

@@ -8,7 +8,7 @@ import software.amazon.awssdk.services.jsonprotocoltests.model.EventStreamOperat
 
 /**
  * A specialization of {@code software.amazon.awssdk.services.jsonprotocoltests.model.EventOne} that represents the
- * {@code EventStream#EventOne} event. Do not use this class directly. Instead, use the static builder methods on
+ * {@code EventStream$EventOne} event. Do not use this class directly. Instead, use the static builder methods on
  * {@link software.amazon.awssdk.services.jsonprotocoltests.model.EventStream}.
  */
 @SdkInternalApi

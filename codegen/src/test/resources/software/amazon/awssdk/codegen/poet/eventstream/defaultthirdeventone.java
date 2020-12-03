@@ -8,15 +8,15 @@ import software.amazon.awssdk.services.jsonprotocoltests.model.EventStreamOperat
 
 /**
  * A specialization of {@code software.amazon.awssdk.services.jsonprotocoltests.model.EventOne} that represents the
- * {@code EventStream$SecondEventOne} event. Do not use this class directly. Instead, use the static builder methods on
+ * {@code EventStream$third_event_One} event. Do not use this class directly. Instead, use the static builder methods on
  * {@link software.amazon.awssdk.services.jsonprotocoltests.model.EventStream}.
  */
 @SdkInternalApi
 @Generated("software.amazon.awssdk:codegen")
-public final class DefaultSecondEventOne extends EventOne {
+public final class DefaultThirdEventOne extends EventOne {
     private static final long serialVersionUID = 1L;
 
-    DefaultSecondEventOne(BuilderImpl builderImpl) {
+    DefaultThirdEventOne(BuilderImpl builderImpl) {
         super(builderImpl);
     }
 
@@ -31,30 +31,30 @@ public final class DefaultSecondEventOne extends EventOne {
 
     @Override
     public void accept(EventStreamOperationResponseHandler.Visitor visitor) {
-        visitor.visitSecondEventOne(this);
+        visitor.visitThirdEventOne(this);
     }
 
     @Override
     public EventStream.EventType sdkEventType() {
-        return EventStream.EventType.SECOND_EVENT_ONE;
+        return EventStream.EventType.THIRD_EVENT_ONE;
     }
 
     public interface Builder extends EventOne.Builder {
         @Override
-        DefaultSecondEventOne build();
+        DefaultThirdEventOne build();
     }
 
     private static final class BuilderImpl extends EventOne.BuilderImpl implements Builder {
         private BuilderImpl() {
         }
 
-        private BuilderImpl(DefaultSecondEventOne event) {
+        private BuilderImpl(DefaultThirdEventOne event) {
             super(event);
         }
 
         @Override
-        public DefaultSecondEventOne build() {
-            return new DefaultSecondEventOne(this);
+        public DefaultThirdEventOne build() {
+            return new DefaultThirdEventOne(this);
         }
     }
 }
