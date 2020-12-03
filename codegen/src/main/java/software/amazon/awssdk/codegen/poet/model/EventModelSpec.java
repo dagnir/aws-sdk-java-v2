@@ -79,7 +79,7 @@ public final class EventModelSpec implements ClassSpec {
 
     private CodeBlock classJavadoc() {
         return CodeBlock.builder()
-                .add("A specialization of {@code $L} that represents the {@code $L#$L} event. Do not use this class " +
+                .add("A specialization of {@code $L} that represents the {@code $L$$$L} event. Do not use this class " +
                         "directly. Instead, use the static builder methods on {@link $L}.",
                         baseShapeModelSpec.className().canonicalName(), eventStream.getC2jName(),
                         eventModel.getC2jName(), poetExtensions.getModelClass(eventStream.getShapeName()))

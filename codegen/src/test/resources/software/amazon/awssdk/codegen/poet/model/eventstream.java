@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.Defau
 import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultEventTwo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultSecondEventOne;
 import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultSecondEventTwo;
+import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultThirdEventOne;
 
 /**
  * Base interface for all event types in EventStream.
@@ -64,6 +65,13 @@ public interface EventStream extends SdkPojo {
     }
 
     /**
+     * Create a builder for the {@code third_event_One} event type for this stream.
+     */
+    static EventOne.Builder thirdEventOneBuilder() {
+        return DefaultThirdEventOne.builder();
+    }
+
+    /**
      * The type of this event. Corresponds to the {@code :event-type} header on the Message.
      */
     default EventType sdkEventType() {
@@ -90,6 +98,8 @@ public interface EventStream extends SdkPojo {
         EVENT_TWO("EventTwo"),
 
         SECOND_EVENT_TWO("SecondEventTwo"),
+
+        THIRD_EVENT_ONE("third_event_One"),
 
         UNKNOWN_TO_SDK_VERSION(null);
 
