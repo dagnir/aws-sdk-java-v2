@@ -1,14 +1,14 @@
-package software.amazon.awssdk.services.jsonprotocoltests.model.inputeventstreamtwo;
+package software.amazon.awssdk.services.json.model.inputeventstreamtwo;
 
 import software.amazon.awssdk.annotations.Generated;
 import software.amazon.awssdk.annotations.SdkInternalApi;
-import software.amazon.awssdk.services.jsonprotocoltests.model.InputEventStreamTwo;
-import software.amazon.awssdk.services.jsonprotocoltests.model.InputEventTwo;
+import software.amazon.awssdk.services.json.model.InputEventStreamTwo;
+import software.amazon.awssdk.services.json.model.InputEventTwo;
 
 /**
- * A specialization of {@code software.amazon.awssdk.services.jsonprotocoltests.model.InputEventTwo} that represents the
+ * A specialization of {@code software.amazon.awssdk.services.json.model.InputEventTwo} that represents the
  * {@code InputEventStreamTwo$InputEventTwo} event. Do not use this class directly. Instead, use the static builder
- * methods on {@link software.amazon.awssdk.services.jsonprotocoltests.model.InputEventStreamTwo}.
+ * methods on {@link software.amazon.awssdk.services.json.model.InputEventStreamTwo}.
  */
 @SdkInternalApi
 @Generated("software.amazon.awssdk:codegen")

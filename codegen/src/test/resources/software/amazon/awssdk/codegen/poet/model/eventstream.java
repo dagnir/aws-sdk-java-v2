@@ -11,9 +11,9 @@ import software.amazon.awssdk.core.SdkField;
 import software.amazon.awssdk.core.SdkPojo;
 import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultEventOne;
 import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultEventTwo;
+import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultEventthree;
 import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultSecondEventOne;
 import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultSecondEventTwo;
-import software.amazon.awssdk.services.jsonprotocoltests.model.eventstream.DefaultThirdEventOne;
 
 /**
  * Base interface for all event types in EventStream.
@@ -65,10 +65,10 @@ public interface EventStream extends SdkPojo {
     }
 
     /**
-     * Create a builder for the {@code third_event_One} event type for this stream.
+     * Create a builder for the {@code eventthree} event type for this stream.
      */
-    static EventOne.Builder thirdEventOneBuilder() {
-        return DefaultThirdEventOne.builder();
+    static EventTwo.Builder eventthreeBuilder() {
+        return DefaultEventthree.builder();
     }
 
     /**
@@ -99,7 +99,7 @@ public interface EventStream extends SdkPojo {
 
         SECOND_EVENT_TWO("SecondEventTwo"),
 
-        THIRD_EVENT_ONE("third_event_One"),
+        EVENTTHREE("eventthree"),
 
         UNKNOWN_TO_SDK_VERSION(null);
 

@@ -71,7 +71,7 @@ public final class EventStreamSpecHelper {
         if (useLegacyGenerationScheme(eventModel)) {
             return poetExtensions.getModelClass(eventModel.getShape().getShapeName());
         }
-        String simpleName = "Default" + intermediateModel.getNamingStrategy().getJavaClassName(eventModel.getName());
+        String simpleName = "Default" + intermediateModel.getNamingStrategy().getShapeClassName(eventModel.getName());
         return ClassName.get(eventPackageName(), simpleName);
     }
 

@@ -699,7 +699,7 @@ public class AwsServiceModel implements ClassSpec {
             returnType = baseClass.nestedClass("Builder");
         }
 
-        String eventClass = intermediateModel.getNamingStrategy().getJavaClassName(event.getName());
+        String eventClass = intermediateModel.getNamingStrategy().getShapeClassName(event.getName());
         String methodName = String.format("%sBuilder", StringUtils.uncapitalize(eventClass));
 
         return MethodSpec.methodBuilder(methodName)

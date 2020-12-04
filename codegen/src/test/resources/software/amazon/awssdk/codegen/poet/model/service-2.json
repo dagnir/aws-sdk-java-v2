@@ -418,8 +418,8 @@
         "SecondEventTwo": {
           "shape": "EventTwo"
         },
-        "third_event_One": {
-          "shape": "EventOne"
+        "eventthree": {
+          "shape": "EventTwo"
         }
       },
       "eventstream": true
