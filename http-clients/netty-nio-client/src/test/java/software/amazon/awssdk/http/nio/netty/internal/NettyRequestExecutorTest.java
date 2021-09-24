@@ -18,20 +18,35 @@ package software.amazon.awssdk.http.nio.netty.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static software.amazon.awssdk.http.SdkHttpConfigurationOption.WRITE_TIMEOUT;
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKey.IN_USE;
+import static software.amazon.awssdk.http.nio.netty.internal.ChannelAttributeKey.PROTOCOL_FUTURE;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelConfig;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.DefaultChannelPromise;
 import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Promise;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
+import software.amazon.awssdk.http.Protocol;
+import software.amazon.awssdk.http.SdkHttpFullRequest;
+import software.amazon.awssdk.http.SdkHttpMethod;
 import software.amazon.awssdk.http.async.AsyncExecuteRequest;
 import software.amazon.awssdk.utils.AttributeMap;
 
@@ -51,10 +66,19 @@ public class NettyRequestExecutorTest {
 
         eventLoopGroup = new NioEventLoopGroup();
 
+        AttributeMap attributeMap = AttributeMap.builder()
+            .put(WRITE_TIMEOUT, Duration.ofSeconds(3))
+            .build();
+
         requestContext = new RequestContext(mockChannelPool,
                                             eventLoopGroup,
-                                            AsyncExecuteRequest.builder().build(),
-                                            new NettyConfiguration(AttributeMap.empty()));
+                                            AsyncExecuteRequest.builder().request(SdkHttpFullRequest.builder()
+                                                                                                    .method(SdkHttpMethod.GET)
+                                                                                                    .host("amazonaws.com")
+                                                                                                    .protocol("https")
+                                                                                                    .build())
+                                                               .build(),
+                                            new NettyConfiguration(attributeMap));
         nettyRequestExecutor = new NettyRequestExecutor(requestContext);
     }
 
@@ -79,10 +103,50 @@ public class NettyRequestExecutorTest {
     }
 
     @Test
-    public void cancelExecuteFuture_channelAcquired_submitsRunnable() {
+    public void cancelExecuteFuture_channelAcquired_submitsRunnable() throws InterruptedException {
         EventLoop mockEventLoop = mock(EventLoop.class);
         Channel mockChannel = mock(Channel.class);
+        ChannelPipeline mockPipeline = mock(ChannelPipeline.class);
+
+        when(mockChannel.pipeline()).thenReturn(mockPipeline);
         when(mockChannel.eventLoop()).thenReturn(mockEventLoop);
+        when(mockChannel.isActive()).thenReturn(true);
+
+        Attribute<Boolean> mockInUseAttr = mock(Attribute.class);
+        when(mockInUseAttr.get()).thenReturn(Boolean.TRUE);
+
+        CompletableFuture<Protocol> protocolFuture = CompletableFuture.completedFuture(Protocol.HTTP1_1);
+        Attribute<CompletableFuture<Protocol>> mockProtocolFutureAttr = mock(Attribute.class);
+        when(mockProtocolFutureAttr.get()).thenReturn(protocolFuture);
+
+        when(mockChannel.attr(any(AttributeKey.class))).thenAnswer(i -> {
+            AttributeKey argumentAt = i.getArgumentAt(0, AttributeKey.class);
+            if (argumentAt == IN_USE) {
+                return mockInUseAttr;
+            }
+            if (argumentAt == PROTOCOL_FUTURE) {
+                return mockProtocolFutureAttr;
+            }
+            return mock(Attribute.class);
+        });
+
+        when(mockChannel.writeAndFlush(any(Object.class))).thenReturn(new DefaultChannelPromise(mockChannel));
+
+        ChannelConfig mockChannelConfig = mock(ChannelConfig.class);
+
+        when(mockChannel.config()).thenReturn(mockChannelConfig);
+
+        when(mockEventLoop.submit(any(Runnable.class))).thenAnswer(i -> {
+            i.getArgumentAt(0, Runnable.class).run();
+            return null;
+        });
+
+
+        CountDownLatch fireFutureCancelExceptionLatch = new CountDownLatch(1);
+        when(mockPipeline.fireExceptionCaught(any(FutureCancelledException.class))).thenAnswer(i -> {
+            fireFutureCancelExceptionLatch.countDown();
+            return mockPipeline;
+        });
 
         when(mockChannelPool.acquire(any(Promise.class))).thenAnswer((Answer<Promise>) invocationOnMock -> {
             Promise p = invocationOnMock.getArgumentAt(0, Promise.class);
@@ -94,6 +158,8 @@ public class NettyRequestExecutorTest {
 
         executeFuture.cancel(true);
 
-        verify(mockEventLoop).submit(any(Runnable.class));
+        fireFutureCancelExceptionLatch.await(1, TimeUnit.SECONDS);
+
+        verify(mockEventLoop, times(2)).submit(any(Runnable.class));
     }
 }

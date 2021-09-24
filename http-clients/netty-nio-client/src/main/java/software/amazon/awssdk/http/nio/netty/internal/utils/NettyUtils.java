@@ -130,13 +130,19 @@ public final class NettyUtils {
      *
      * @param eventExecutor Executor to run task in.
      * @param runnable Task to run.
+     *
+     * @return The {@code Future} from from the executor.
      */
-    public static void doInEventLoop(EventExecutor eventExecutor, Runnable runnable) {
+    public static Future<?> doInEventLoop(EventExecutor eventExecutor, Runnable runnable) {
         if (eventExecutor.inEventLoop()) {
-            runnable.run();
-        } else {
-            eventExecutor.submit(runnable);
+            try {
+                runnable.run();
+                return eventExecutor.newSucceededFuture(null);
+            } catch (Throwable t) {
+                return eventExecutor.newFailedFuture(t);
+            }
         }
+        return eventExecutor.submit(runnable);
     }
 
     /**
@@ -196,6 +202,23 @@ public final class NettyUtils {
         SslHandler sslHandler = sslContext.newHandler(alloc, peerHost, peerPort);
         configureSslEngine(sslHandler.engine());
         return sslHandler;
+    }
+
+    /**
+     * Helper for {@link Future#sync()}. This method returns the result of calling {@code sync()}, otherwise reinterrupts the
+     * thread and throws a {@link RuntimeException} that wraps the {@link InterruptedException}.
+     *
+     * @param future The future to sync on.
+     * @param <T> The type of the future.
+     * @return The result of {@code sync()}.
+     */
+    public static <T> Future<T> syncOrReinterrupt(Future<T> future) {
+        try {
+            return future.sync();
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(ie);
+        }
     }
 
     /**
