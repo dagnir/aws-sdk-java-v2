@@ -142,7 +142,7 @@ public class NettyRequestExecutorTest {
         });
 
 
-        CountDownLatch fireFutureCancelExceptionLatch = new CountDownLatch(1);
+        CountDownLatch fireFutureCancelExceptionLatch = new CountDownLatch(2);
         when(mockPipeline.fireExceptionCaught(any(FutureCancelledException.class))).thenAnswer(i -> {
             fireFutureCancelExceptionLatch.countDown();
             return mockPipeline;
@@ -151,12 +151,11 @@ public class NettyRequestExecutorTest {
         when(mockChannelPool.acquire(any(Promise.class))).thenAnswer((Answer<Promise>) invocationOnMock -> {
             Promise p = invocationOnMock.getArgumentAt(0, Promise.class);
             p.setSuccess(mockChannel);
+            fireFutureCancelExceptionLatch.countDown();
             return p;
         });
 
         CompletableFuture<Void> executeFuture = nettyRequestExecutor.execute();
-
-        Thread.sleep(50);
 
         executeFuture.cancel(true);
 
