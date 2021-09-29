@@ -156,6 +156,8 @@ public class NettyRequestExecutorTest {
 
         CompletableFuture<Void> executeFuture = nettyRequestExecutor.execute();
 
+        Thread.sleep(50);
+
         executeFuture.cancel(true);
 
         fireFutureCancelExceptionLatch.await(1, TimeUnit.SECONDS);
