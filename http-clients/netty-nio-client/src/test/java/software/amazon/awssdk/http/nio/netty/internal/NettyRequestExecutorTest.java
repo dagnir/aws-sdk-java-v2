@@ -37,7 +37,7 @@ import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Promise;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
@@ -142,24 +142,23 @@ public class NettyRequestExecutorTest {
         });
 
 
-        CountDownLatch fireFutureCancelExceptionLatch = new CountDownLatch(2);
+        Phaser phaser = new Phaser(1);
         when(mockPipeline.fireExceptionCaught(any(FutureCancelledException.class))).thenAnswer(i -> {
-            fireFutureCancelExceptionLatch.countDown();
+            phaser.arrive();
             return mockPipeline;
         });
 
         when(mockChannelPool.acquire(any(Promise.class))).thenAnswer((Answer<Promise>) invocationOnMock -> {
             Promise p = invocationOnMock.getArgumentAt(0, Promise.class);
             p.setSuccess(mockChannel);
-            fireFutureCancelExceptionLatch.countDown();
+            phaser.arrive();
             return p;
         });
 
         CompletableFuture<Void> executeFuture = nettyRequestExecutor.execute();
-
+        phaser.awaitAdvance(0);
         executeFuture.cancel(true);
-
-        fireFutureCancelExceptionLatch.await(1, TimeUnit.SECONDS);
+        phaser.awaitAdvance(1);
 
         verify(mockEventLoop, times(2)).submit(any(Runnable.class));
     }
