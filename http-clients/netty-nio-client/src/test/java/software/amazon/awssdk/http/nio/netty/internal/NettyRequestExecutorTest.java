@@ -37,7 +37,7 @@ import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Promise;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Phaser;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
@@ -136,29 +136,29 @@ public class NettyRequestExecutorTest {
 
         when(mockChannel.config()).thenReturn(mockChannelConfig);
 
+        CountDownLatch submitLatch = new CountDownLatch(1);
         when(mockEventLoop.submit(any(Runnable.class))).thenAnswer(i -> {
             i.getArgumentAt(0, Runnable.class).run();
+            submitLatch.countDown();
             return null;
-        });
-
-
-        Phaser phaser = new Phaser(1);
-        when(mockPipeline.fireExceptionCaught(any(FutureCancelledException.class))).thenAnswer(i -> {
-            phaser.arrive();
-            return mockPipeline;
         });
 
         when(mockChannelPool.acquire(any(Promise.class))).thenAnswer((Answer<Promise>) invocationOnMock -> {
             Promise p = invocationOnMock.getArgumentAt(0, Promise.class);
             p.setSuccess(mockChannel);
-            phaser.arrive();
             return p;
         });
 
+        CountDownLatch exceptionFiredLatch = new CountDownLatch(1);
+        when(mockPipeline.fireExceptionCaught(any(FutureCancelledException.class))).thenAnswer(i -> {
+            exceptionFiredLatch.countDown();
+            return mockPipeline;
+        });
+
         CompletableFuture<Void> executeFuture = nettyRequestExecutor.execute();
-        phaser.awaitAdvance(0);
+        submitLatch.await(1, TimeUnit.SECONDS);
         executeFuture.cancel(true);
-        phaser.awaitAdvance(1);
+        exceptionFiredLatch.await(1, TimeUnit.SECONDS);
 
         verify(mockEventLoop, times(2)).submit(any(Runnable.class));
     }
