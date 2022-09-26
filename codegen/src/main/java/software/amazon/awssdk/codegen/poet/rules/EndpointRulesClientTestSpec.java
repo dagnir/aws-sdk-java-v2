@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import javax.lang.model.element.Modifier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -169,6 +170,8 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
 
         while (testIter.hasNext()) {
             EndpointTestModel test = testIter.next();
+
+            System.out.printf("Generating test: \"%s\"%n", test.getDocumentation());
 
             if (test.getOperationInputs() != null) {
                 test.getOperationInputs().forEach(opInput -> {
@@ -313,10 +316,12 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
 
         ShapeModel inputShape = opModel.getInputShape();
 
-        opParams.forEach((n, v) -> {
-            MemberModel memberModel = opModel.getInputShape().getMemberByName(n);
-            b.add(".$N($L)", memberModel.getFluentSetterMethodName(), endpointRulesSpecUtils.treeNodeToLiteral(v));
-        });
+        if (opParams != null) {
+            opParams.forEach((n, v) -> {
+                MemberModel memberModel = opModel.getInputShape().getMemberByName(n);
+                b.add(".$N($L)", memberModel.getFluentSetterMethodName(), endpointRulesSpecUtils.treeNodeToLiteral(v));
+            });
+        }
 
         if (canBeEmpty(opModel)) {
             return b.add(".build()").build();
@@ -413,6 +418,40 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
 
     private CodeBlock setClientParams(String builderName, Map<String, TreeNode> params) {
         CodeBlock.Builder b = CodeBlock.builder();
+
+        if (hasS3ConfigParams(params)) {
+            CodeBlock.Builder config = CodeBlock.builder();
+
+            config.add("$T.builder()", configClass());
+
+            params.forEach((n, v) -> {
+                CodeBlock valueLiteral = endpointRulesSpecUtils.treeNodeToLiteral(v);
+                switch (n) {
+                    case "UseDualStack":
+                        config.add(".dualstackEnabled($L)", valueLiteral);
+                        break;
+                    case "Accelerate":
+                        config.add(".accelerateModeEnabled($L)", valueLiteral);
+                        break;
+                    case "ForcePathStyle":
+                        config.add(".pathStyleAccessEnabled($L)", valueLiteral);
+                        break;
+                    case "UseArnRegion":
+                        config.add(".useArnRegionEnabled($L)", valueLiteral);
+                        break;
+                    case "DisableMultiRegionAccessPoints":
+                        config.add(".multiRegionEnabled(!$L)", valueLiteral);
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            config.add(".build()");
+
+            b.addStatement("$N.serviceConfiguration($L)", builderName, config.build());
+        }
+
         params.forEach((n, v) -> {
             if (!isClientParam(n)) {
                 return;
@@ -427,7 +466,10 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
                         b.addStatement("$N.region($T.of($L))", builderName, Region.class, valueLiteral);
                         break;
                     case AWS_USE_DUAL_STACK:
-                        b.addStatement("$N.dualstackEnabled($L)", builderName, valueLiteral);
+                        // If this is S3, it will be set in S3Configuration instead
+                        if (!hasS3ConfigParams(params)) {
+                            b.addStatement("$N.dualstackEnabled($L)", builderName, valueLiteral);
+                        }
                         break;
                     case AWS_USE_FIPS:
                         b.addStatement("$N.fipsEnabled($L)", builderName, valueLiteral);
@@ -497,7 +539,27 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
                     .anyMatch(o -> !(o.hasEventStreamOutput() || o.hasEventStreamInput()));
     }
 
+    private boolean hasS3ConfigParams(Map<String, TreeNode> params) {
+        String[] s3ConfigurationParams = {
+            "ForcePathStyle",
+            "Accelerate",
+            "UseArnRegion",
+            "DisableMultiRegionAccessPoints",
+            "UseDualStack"
+        };
+
+        if (!isS3()) {
+            return false;
+        }
+
+        return Stream.of(s3ConfigurationParams).anyMatch(params.keySet()::contains);
+    }
+
     private boolean isS3() {
         return "S3".equals(model.getMetadata().getServiceName());
+    }
+
+    private ClassName configClass() {
+        return poetExtension.getClientClass(model.getCustomizationConfig().getServiceConfig().getClassName());
     }
 }
