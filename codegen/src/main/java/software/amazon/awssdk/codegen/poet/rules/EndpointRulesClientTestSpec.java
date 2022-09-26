@@ -49,12 +49,14 @@ import software.amazon.awssdk.codegen.model.service.Location;
 import software.amazon.awssdk.codegen.poet.ClassSpec;
 import software.amazon.awssdk.codegen.poet.PoetExtension;
 import software.amazon.awssdk.codegen.poet.PoetUtils;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.core.rules.testing.AsyncTestCase;
 import software.amazon.awssdk.core.rules.testing.BaseRuleSetClientTest;
 import software.amazon.awssdk.core.rules.testing.SyncTestCase;
 import software.amazon.awssdk.core.rules.testing.model.Endpoint;
 import software.amazon.awssdk.core.rules.testing.model.Expect;
 import software.amazon.awssdk.core.rules.testing.util.EmptyPublisher;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 
 public class EndpointRulesClientTestSpec implements ClassSpec {
@@ -216,7 +218,7 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
                        poetExtension.getModelClass(opModel.getInputShape().getShapeName()),
                        requestCreation(opModel, opParams));
 
-        b.addStatement("builder.build().$N(request)", opModel.getMethodName());
+        b.addStatement("builder.build().$L", syncOperationInvocation(opModel));
 
         b.endControlFlow();
 
@@ -246,6 +248,22 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
         return b.build();
     }
 
+    private CodeBlock syncOperationInvocation(OperationModel opModel) {
+        CodeBlock.Builder b = CodeBlock.builder();
+
+        b.add("$N(", opModel.getMethodName());
+
+        b.add("$N", "request");
+
+        if (opModel.hasStreamingInput()) {
+            b.add(", $T.fromString($S)", RequestBody.class, "hello");
+        }
+
+        b.add(")");
+
+        return b.build();
+    }
+
     private CodeBlock asyncOperationInvocation(OperationModel opModel) {
         CodeBlock.Builder b = CodeBlock.builder();
 
@@ -256,9 +274,14 @@ public class EndpointRulesClientTestSpec implements ClassSpec {
         if (opModel.hasEventStreamInput()) {
             b.add(", new $T()", EmptyPublisher.class);
             b.add(", $T.mock($T.class)", Mockito.class, poetExtension.eventStreamResponseHandlerType(opModel));
-        } else if (opModel.hasStreamingOutput()) {
+        } else if (opModel.hasStreamingInput()) {
+            b.add(", $T.fromString($S)", AsyncRequestBody.class, "hello");
+        }
+
+        if (opModel.hasStreamingOutput()) {
             b.add(", $T.get($S)", Paths.class, "test.dat");
         }
+
 
         b.add(")");
         return b.build();

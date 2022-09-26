@@ -5939,184 +5939,185 @@
                "Bucket": "arn:aws:s3-object-lambda:us-west-2:123456789012:accesspoint/mybanner",
                "Endpoint": "https://my-endpoint.com"
            }
+       },
+       {
+           "documentation": "WriteGetObjectResponse @ us-west-2",
+           "expect": {
+               "endpoint": {
+                   "properties": {
+                       "authSchemes": [
+                           {
+                               "name": "sigv4",
+                               "signingName": "s3-object-lambda",
+                               "signingRegion": "us-west-2",
+                               "disableDoubleEncoding": true
+                           }
+                       ]
+                   },
+                   "url": "https://s3-object-lambda.us-west-2.amazonaws.com"
+               }
+           },
+           "operationInputs": [
+               {
+                   "builtInParams": {
+                       "AWS::Region": "us-west-2"
+                   },
+                   "operationName": "WriteGetObjectResponse",
+                   "operationParams": {
+                       "RequestRoute": "RequestRoute",
+                       "RequestToken": "RequestToken"
+                   }
+               }
+           ],
+           "params": {
+               "Accelerate": false,
+               "UseObjectLambdaEndpoint": true,
+               "Region": "us-west-2",
+               "UseDualStack": false,
+               "UseFIPS": false
+           }
+       },
+       {
+           "documentation": "WriteGetObjectResponse with custom endpoint",
+           "expect": {
+               "endpoint": {
+                   "properties": {
+                       "authSchemes": [
+                           {
+                               "name": "sigv4",
+                               "signingName": "s3-object-lambda",
+                               "signingRegion": "us-west-2",
+                               "disableDoubleEncoding": true
+                           }
+                       ]
+                   },
+                   "url": "https://my-endpoint.com"
+               }
+           },
+           "operationInputs": [
+               {
+                   "builtInParams": {
+                       "AWS::Region": "us-west-2",
+                       "SDK::Endpoint": "https://my-endpoint.com"
+                   },
+                   "operationName": "WriteGetObjectResponse",
+                   "operationParams": {
+                       "RequestRoute": "RequestRoute",
+                       "RequestToken": "RequestToken"
+                   }
+               }
+           ],
+           "params": {
+               "Accelerate": false,
+               "UseObjectLambdaEndpoint": true,
+               "Endpoint": "https://my-endpoint.com",
+               "Region": "us-west-2",
+               "UseDualStack": false,
+               "UseFIPS": false
+           }
+       },
+       {
+           "documentation": "WriteGetObjectResponse @ us-east-1",
+           "expect": {
+               "endpoint": {
+                   "properties": {
+                       "authSchemes": [
+                           {
+                               "name": "sigv4",
+                               "signingName": "s3-object-lambda",
+                               "signingRegion": "us-east-1",
+                               "disableDoubleEncoding": true
+                           }
+                       ]
+                   },
+                   "url": "https://s3-object-lambda.us-east-1.amazonaws.com"
+               }
+           },
+           "operationInputs": [
+               {
+                   "builtInParams": {
+                       "AWS::Region": "us-east-1"
+                   },
+                   "operationName": "WriteGetObjectResponse",
+                   "operationParams": {
+                       "RequestRoute": "RequestRoute",
+                       "RequestToken": "RequestToken"
+                   }
+               }
+           ],
+           "params": {
+               "Accelerate": false,
+               "UseObjectLambdaEndpoint": true,
+               "Region": "us-east-1",
+               "UseDualStack": false,
+               "UseFIPS": false
+           }
+       },
+       {
+           "documentation": "WriteGetObjectResponse with fips",
+           "expect": {
+               "endpoint": {
+                   "properties": {
+                       "authSchemes": [
+                           {
+                               "name": "sigv4",
+                               "signingName": "s3-object-lambda",
+                               "signingRegion": "us-east-1",
+                               "disableDoubleEncoding": true
+                           }
+                       ]
+                   },
+                   "url": "https://s3-object-lambda-fips.us-east-1.amazonaws.com"
+               }
+           },
+           "operationInputs": [
+               {
+                   "builtInParams": {
+                       "AWS::Region": "us-east-1",
+                       "AWS::UseFIPS": true
+                   },
+                   "operationName": "WriteGetObjectResponse",
+                   "operationParams": {
+                       "RequestRoute": "RequestRoute",
+                       "RequestToken": "RequestToken"
+                   }
+               }
+           ],
+           "params": {
+               "Accelerate": false,
+               "UseObjectLambdaEndpoint": true,
+               "Region": "us-east-1",
+               "UseDualStack": false,
+               "UseFIPS": true
+           }
+       },
+       {
+           "documentation": "WriteGetObjectResponse with dualstack",
+           "expect": {
+               "error": "S3 Object Lambda does not support Dual-stack"
+           },
+           "operationInputs": [
+               {
+                   "builtInParams": {
+                       "AWS::Region": "us-east-1",
+                       "AWS::UseDualStack": true
+                   },
+                   "operationName": "WriteGetObjectResponse",
+                   "operationParams": {
+                       "RequestRoute": "RequestRoute",
+                       "RequestToken": "RequestToken"
+                   }
+               }
+           ],
+           "params": {
+               "Accelerate": false,
+               "UseObjectLambdaEndpoint": true,
+               "Region": "us-east-1",
+               "UseDualStack": true,
+               "UseFIPS": false
+           }
        }
-       // {
-       //     "documentation": "WriteGetObjectResponse @ us-west-2",
-       //     "expect": {
-       //         "endpoint": {
-       //             "properties": {
-       //                 "authSchemes": [
-       //                     {
-       //                         "name": "sigv4",
-       //                         "signingName": "s3-object-lambda",
-       //                         "signingRegion": "us-west-2",
-       //                         "disableDoubleEncoding": true
-       //                     }
-       //                 ]
-       //             },
-       //             "url": "https://s3-object-lambda.us-west-2.amazonaws.com"
-       //         }
-       //     },
-       //     "operationInputs": [
-       //         {
-       //             "builtInParams": {
-       //                 "AWS::Region": "us-west-2"
-       //             },
-       //             "operationName": "WriteGetObjectResponse",
-       //             "operationParams": {
-       //                 "RequestRoute": "RequestRoute",
-       //                 "RequestToken": "RequestToken"
-       //             }
-       //         }
-       //     ],
-       //     "params": {
-       //         "Accelerate": false,
-       //         "UseObjectLambdaEndpoint": true,
-       //         "Region": "us-west-2",
-       //         "UseDualStack": false,
-       //         "UseFIPS": false
-       //     }
-       // },
-       // {
-       //     "documentation": "WriteGetObjectResponse with custom endpoint",
-       //     "expect": {
-       //         "endpoint": {
-       //             "properties": {
-       //                 "authSchemes": [
-       //                     {
-       //                         "name": "sigv4",
-       //                         "signingName": "s3-object-lambda",
-       //                         "signingRegion": "us-west-2",
-       //                         "disableDoubleEncoding": true
-       //                     }
-       //                 ]
-       //             },
-       //             "url": "https://my-endpoint.com"
-       //         }
-       //     },
-       //     "operationInputs": [
-       //         {
-       //             "builtInParams": {
-       //                 "AWS::Region": "us-west-2",
-       //                 "SDK::Endpoint": "https://my-endpoint.com"
-       //             },
-       //             "operationName": "WriteGetObjectResponse",
-       //             "operationParams": {
-       //                 "RequestRoute": "RequestRoute",
-       //                 "RequestToken": "RequestToken"
-       //             }
-       //         }
-       //     ],
-       //     "params": {
-       //         "Accelerate": false,
-       //         "UseObjectLambdaEndpoint": true,
-       //         "Endpoint": "https://my-endpoint.com",
-       //         "Region": "us-west-2",
-       //         "UseDualStack": false,
-       //         "UseFIPS": false
-       //     }
-       // },
-       // {
-       //     "documentation": "WriteGetObjectResponse @ us-east-1",
-       //     "expect": {
-       //         "endpoint": {
-       //             "properties": {
-       //                 "authSchemes": [
-       //                     {
-       //                         "name": "sigv4",
-       //                         "signingName": "s3-object-lambda",
-       //                         "signingRegion": "us-east-1",
-       //                         "disableDoubleEncoding": true
-       //                     }
-       //                 ]
-       //             },
-       //             "url": "https://s3-object-lambda.us-east-1.amazonaws.com"
-       //         }
-       //     },
-       //     "operationInputs": [
-       //         {
-       //             "builtInParams": {
-       //                 "AWS::Region": "us-east-1"
-       //             },
-       //             "operationName": "WriteGetObjectResponse",
-       //             "operationParams": {
-       //                 "RequestRoute": "RequestRoute",
-       //                 "RequestToken": "RequestToken"
-       //             }
-       //         }
-       //     ],
-       //     "params": {
-       //         "Accelerate": false,
-       //         "UseObjectLambdaEndpoint": true,
-       //         "Region": "us-east-1",
-       //         "UseDualStack": false,
-       //         "UseFIPS": false
-       //     }
-       // },
-       // {
-       //     "documentation": "WriteGetObjectResponse with fips",
-       //     "expect": {
-       //         "endpoint": {
-       //             "properties": {
-       //                 "authSchemes": [
-       //                     {
-       //                         "name": "sigv4",
-       //                         "signingName": "s3-object-lambda",
-       //                         "signingRegion": "us-east-1",
-       //                         "disableDoubleEncoding": true
-       //                     }
-       //                 ]
-       //             },
-       //             "url": "https://s3-object-lambda-fips.us-east-1.amazonaws.com"
-       //         }
-       //     },
-       //     "operationInputs": [
-       //         {
-       //             "builtInParams": {
-       //                 "AWS::Region": "us-east-1",
-       //                 "AWS::UseFIPS": true
-       //             },
-       //             "operationName": "WriteGetObjectResponse",
-       //             "operationParams": {
-       //                 "RequestRoute": "RequestRoute",
-       //                 "RequestToken": "RequestToken"
-       //             }
-       //         }
-       //     ],
-       //     "params": {
-       //         "Accelerate": false,
-       //         "UseObjectLambdaEndpoint": true,
-       //         "Region": "us-east-1",
-       //         "UseDualStack": false,
-       //         "UseFIPS": true
-       //     }
-       // },
-       // {
-       //     "documentation": "WriteGetObjectResponse with dualstack",
-       //     "expect": {
-       //         "error": "S3 Object Lambda does not support Dual-stack"
-       //     },
-       //     "operationInputs": [
-       //         {
-       //             "builtInParams": {
-       //                 "AWS::Region": "us-east-1",
-       //                 "AWS::UseDualStack": true
-       //             },
-       //             "operationName": "WriteGetObjectResponse",
-       //             "operationParams": {
-       //                 "RequestRoute": "RequestRoute",
-       //                 "RequestToken": "RequestToken"
-       //             }
-       //         }
-       //     ],
-       //     "params": {
-       //         "Accelerate": false,
-       //         "UseObjectLambdaEndpoint": true,
-       //         "Region": "us-east-1",
-       //         "UseDualStack": true,
-       //         "UseFIPS": false
-       //     }
-       // },
+       // SDK does not support UseObjectLambdaEndpoint
        // {
        //     "documentation": "WriteGetObjectResponse with accelerate",
        //     "expect": {
@@ -6130,6 +6131,7 @@
        //         "UseFIPS": false
        //     }
        // },
+       // SDK does not support UseObjectLambdaEndpoint
        // {
        //     "documentation": "WriteGetObjectResponse with fips in CN",
        //     "expect": {
@@ -6143,6 +6145,7 @@
        //         "UseFIPS": true
        //     }
        // },
+       // SDK does not support UseObjectLambdaEndpoint
        // {
        //     "documentation": "WriteGetObjectResponse with invalid partition",
        //     "expect": {
@@ -6156,6 +6159,7 @@
        //         "UseFIPS": false
        //     }
        // },
+       // SDK does not support UseObjectLambdaEndpoint
        // {
        //     "documentation": "WriteGetObjectResponse with an unknown partition",
        //     "expect": {
