@@ -85,6 +85,7 @@ public abstract class BaseRuleSetClientTest {
 
             assertThat(requestUri.getScheme()).isEqualTo(expectedEndpoint.url().getScheme());
             assertThat(requestUri.getHost()).isEqualTo(expectedEndpoint.url().getHost());
+            assertThat(requestUri.getRawPath()).startsWith(expectedEndpoint.url().getRawPath());
         }
     }
 

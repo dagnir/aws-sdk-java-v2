@@ -23,6 +23,7 @@ import software.amazon.awssdk.core.interceptor.SdkExecutionAttribute;
 import software.amazon.awssdk.core.interceptor.SdkInternalExecutionAttribute;
 import software.amazon.awssdk.core.rules.model.Endpoint;
 import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.utils.http.SdkHttpUtils;
 
 @SdkInternalApi
 public final class ProviderUtils {
@@ -61,10 +62,20 @@ public final class ProviderUtils {
     }
 
     public static SdkHttpRequest setUri(SdkHttpRequest request, URI newUri) {
+        String newPath = newUri.getRawPath();
+        String existingPath = request.getUri().getRawPath();
+
+        if (newPath.endsWith("/") || existingPath.startsWith("/")) {
+            newPath += existingPath;
+        } else {
+            newPath = newPath + "/" + existingPath;
+        }
+
         return request.toBuilder()
             .protocol(newUri.getScheme())
             .host(newUri.getHost())
             .port(newUri.getPort())
+            .encodedPath(newPath)
             .build();
     }
 }
