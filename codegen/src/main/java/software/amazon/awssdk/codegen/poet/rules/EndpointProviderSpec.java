@@ -20,12 +20,12 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import java.util.HashMap;
 import java.util.Map;
 import javax.lang.model.element.Modifier;
 import software.amazon.awssdk.annotations.SdkInternalApi;
+import software.amazon.awssdk.awscore.rules.AwsProviderUtils;
 import software.amazon.awssdk.codegen.model.intermediate.IntermediateModel;
 import software.amazon.awssdk.codegen.model.intermediate.Metadata;
 import software.amazon.awssdk.codegen.model.rules.endpoints.BuiltInParameter;
@@ -35,7 +35,6 @@ import software.amazon.awssdk.codegen.poet.PoetUtils;
 import software.amazon.awssdk.core.rules.DefaultRuleEngine;
 import software.amazon.awssdk.core.rules.EndpointRuleset;
 import software.amazon.awssdk.core.rules.Identifier;
-import software.amazon.awssdk.core.rules.ProviderUtils;
 import software.amazon.awssdk.core.rules.Value;
 import software.amazon.awssdk.core.rules.model.Endpoint;
 
@@ -140,7 +139,7 @@ public class EndpointProviderSpec implements ClassSpec {
         b.addStatement("$T res = new $T().evaluate($N, toIdentifierValueMap($N))",
                        Value.class, DefaultRuleEngine.class, RULE_SET_FIELD_NAME, paramsName);
 
-        b.addStatement("return $T.valueAsEndpointOrThrow($N)", ProviderUtils.class, "res");
+        b.addStatement("return $T.valueAsEndpointOrThrow($N)", AwsProviderUtils.class, "res");
 
         return b.build();
     }

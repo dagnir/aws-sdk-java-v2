@@ -41,7 +41,6 @@ import software.amazon.awssdk.core.interceptor.Context;
 import software.amazon.awssdk.core.interceptor.ExecutionAttributes;
 import software.amazon.awssdk.core.interceptor.ExecutionInterceptor;
 import software.amazon.awssdk.core.interceptor.SdkInternalExecutionAttribute;
-import software.amazon.awssdk.core.rules.ProviderUtils;
 import software.amazon.awssdk.core.rules.model.Endpoint;
 import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.utils.AttributeMap;
@@ -98,14 +97,14 @@ public class EndpointProviderInterceptorSpec implements ClassSpec {
 
         // We skip resolution if the source of the endpoint is the endpoint discovery call
         b.beginControlFlow("if ($1T.endpointIsDiscovered(executionAttributes))",
-                           ProviderUtils.class)
+                           AwsProviderUtils.class)
          .addStatement("return context.httpRequest()")
          .endControlFlow();
 
         b.addStatement("$1T $2N = ($1T) executionAttributes.getAttribute($3T.ENDPOINT_PROVIDER)",
                        endpointRulesSpecUtils.providerInterfaceName(), providerVar, SdkInternalExecutionAttribute.class);
         b.addStatement("$T result = $N.resolveEndpoint(ruleParams(context, executionAttributes))", Endpoint.class, providerVar);
-        b.addStatement("return $T.setUri(context.httpRequest(), result.url())", ProviderUtils.class);
+        b.addStatement("return $T.setUri(context.httpRequest(), result.url())", AwsProviderUtils.class);
         return b.build();
     }
 

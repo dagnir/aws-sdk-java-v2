@@ -160,7 +160,7 @@ public final class AwsProviderUtils {
 
                     Value disableDoubleEncoding = scheme.get(Identifier.of("disableDoubleEncoding"));
                     if (disableDoubleEncoding != null) {
-                        schemeBuilder.disableDoubleUrlEncoding(disableDoubleEncoding.expectBool());
+                        schemeBuilder.disableDoubleEncoding(disableDoubleEncoding.expectBool());
                     }
 
                     authSchemes.add(schemeBuilder.build());
@@ -181,7 +181,7 @@ public final class AwsProviderUtils {
 
                     Value disableDoubleEncoding = scheme.get(Identifier.of("disableDoubleEncoding"));
                     if (disableDoubleEncoding != null) {
-                        schemeBuilder.disableDoubleUrlEncoding(disableDoubleEncoding.expectBool());
+                        schemeBuilder.disableDoubleEncoding(disableDoubleEncoding.expectBool());
                     }
 
                     authSchemes.add(schemeBuilder.build());

@@ -29,7 +29,8 @@ public class BaseEndpointProviderTest {
         if (expect.error() != null) {
             assertThatThrownBy(testMethod::get).hasMessageContaining(expect.error());
         } else {
-            assertThat(testMethod.get().url()).isEqualTo(expect.endpoint().url());
+            Endpoint e = testMethod.get();
+            assertThat(e.url()).isEqualTo(expect.endpoint().url());
         }
     }
 }
