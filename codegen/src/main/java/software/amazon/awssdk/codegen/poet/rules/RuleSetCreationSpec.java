@@ -44,10 +44,13 @@ import software.amazon.awssdk.core.rules.EndpointRuleset;
 import software.amazon.awssdk.core.rules.Expr;
 import software.amazon.awssdk.core.rules.FnNode;
 import software.amazon.awssdk.core.rules.Identifier;
+import software.amazon.awssdk.core.rules.Literal;
 import software.amazon.awssdk.core.rules.Parameter;
 import software.amazon.awssdk.core.rules.ParameterType;
 import software.amazon.awssdk.core.rules.Parameters;
 import software.amazon.awssdk.core.rules.Rule;
+import software.amazon.awssdk.core.rules.Value;
+import software.amazon.awssdk.utils.MapUtils;
 
 public class RuleSetCreationSpec {
     private static final String RULE_METHOD_PREFIX = "endpointRule_";
@@ -68,9 +71,9 @@ public class RuleSetCreationSpec {
         CodeBlock.Builder b = CodeBlock.builder();
 
         b.add("$T.builder()", EndpointRuleset.class)
-            .add(".version($S)", ruleSetModel.getVersion())
-            .add(".serviceId($S)", ruleSetModel.getServiceId())
-            .add(".parameters($L)", parameters(ruleSetModel.getParameters()));
+         .add(".version($S)", ruleSetModel.getVersion())
+         .add(".serviceId($S)", ruleSetModel.getServiceId())
+         .add(".parameters($L)", parameters(ruleSetModel.getParameters()));
 
         ruleSetModel.getRules().stream()
                     .map(this::rule)
@@ -102,9 +105,9 @@ public class RuleSetCreationSpec {
         CodeBlock.Builder b = CodeBlock.builder();
 
         b.add("$T.builder()", Parameter.class)
-            .add(".name($S)", name)
-            .add(".type($T.fromValue($S))", ParameterType.class, model.getType())
-            .add(".required($L)", Boolean.TRUE.equals(model.isRequired()));
+         .add(".name($S)", name)
+         .add(".type($T.fromValue($S))", ParameterType.class, model.getType())
+         .add(".required($L)", Boolean.TRUE.equals(model.isRequired()));
 
         if (model.getBuiltIn() != null) {
             b.add(".builtIn($S)", model.getBuiltIn());
@@ -193,6 +196,69 @@ public class RuleSetCreationSpec {
         TreeNode url = model.getUrl();
         b.add(".url($L)", expr(url));
 
+        model.getHeaders().forEach((name, valueList) -> {
+            valueList.forEach(value -> b.add(".addHeaderValue($S, $L)", name, expr(value)));
+        });
+
+        // Explicitly only support authSchemes property
+        model.getProperties().forEach((name, property) -> {
+            switch (name) {
+                case "authSchemes":
+                    b.add(".addProperty($T.of($S), $T.fromTuple($T.asList(",
+                          Identifier.class,
+                          "authSchemes",
+                          Literal.class,
+                          Arrays.class);
+
+                    Iterator<JrsValue> authSchemesIter = ((JrsArray) property).elements();
+
+                    while (authSchemesIter.hasNext()) {
+                        b.add("$T.fromRecord($T.of(", Literal.class, MapUtils.class);
+                        JrsObject authScheme = (JrsObject) authSchemesIter.next();
+
+                        Iterator<String> authSchemeFieldsIter = authScheme.fieldNames();
+                        while (authSchemeFieldsIter.hasNext()) {
+                            String schemeProp = authSchemeFieldsIter.next();
+                            JrsValue propValue = authScheme.get(schemeProp);
+                            b.add("$T.of($S), ", Identifier.class, schemeProp);
+                            if ("signingRegionSet".equalsIgnoreCase(schemeProp)) {
+                                b.add("$T.fromTuple($T.asList(", Literal.class, Arrays.class);
+                                Iterator<JrsValue> signingRegions = ((JrsArray) propValue).elements();
+
+                                while (signingRegions.hasNext()) {
+                                    JrsString region = (JrsString) signingRegions.next();
+                                    b.add("$T.fromStr($S)", Literal.class, region.getValue());
+
+                                    if (signingRegions.hasNext()) {
+                                        b.add(", ");
+                                    }
+                                }
+                                b.add("))");
+                            } else if ("disableDoubleEncoding".equalsIgnoreCase(schemeProp)) {
+                                b.add("$T.fromBool($L)", Literal.class, ((JrsBoolean) propValue).booleanValue());
+                            } else {
+                                b.add("$T.fromStr($S)", Literal.class, ((JrsString) propValue).getValue());
+                            }
+
+                            if (authSchemeFieldsIter.hasNext()) {
+                                b.add(", ");
+                            }
+                        }
+
+                        if (authSchemesIter.hasNext()) {
+                            b.add(", ");
+                        }
+
+                        b.add("))");
+                    }
+                    b.add(")))");
+
+                    break;
+                default:
+                    break;
+            }
+        });
+
         b.add(".build()");
         return b.build();
     }
@@ -201,7 +267,7 @@ public class RuleSetCreationSpec {
         CodeBlock.Builder b = CodeBlock.builder();
 
         b.add("$T.builder()", Condition.class)
-            .add(".fn($L.validate())", fnNode(model));
+         .add(".fn($L.validate())", fnNode(model));
 
         if (model.getAssign() != null) {
             b.add(".result($S)", model.getAssign());
@@ -216,8 +282,8 @@ public class RuleSetCreationSpec {
         CodeBlock.Builder b = CodeBlock.builder();
 
         b.add("$T.builder()", FnNode.class)
-            .add(".fn($S)", model.getFn())
-            .add(".argv($T.asList(", Arrays.class);
+         .add(".fn($S)", model.getFn())
+         .add(".argv($T.asList(", Arrays.class);
 
         List<TreeNode> args = model.getArgv();
         for (int i = 0; i < args.size(); ++i) {

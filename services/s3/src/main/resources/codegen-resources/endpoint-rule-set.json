@@ -6740,7 +6740,9 @@
                                                                 }
                                                               ]
                                                             },
-                                                            "headers": {}
+                                                            "headers": {
+                                                              "test_header": ["foo", "{Region}"]
+                                                            }
                                                           },
                                                           "type": "endpoint"
                                                         },
