@@ -14,12 +14,12 @@ updates:
       - dependency-name: "nl.jqno.equalsverifier:*"
       - dependency-name: "org.assertj:*"
       - dependency-name: "com.google.guava:*"
-      - dependency-name: "org.junit:*"
+      - dependency-name: "org.junit.jupiter:*"
       - dependency-name: "junit:*"
       - dependency-name: "org.testng:*"
       - dependency-name: "org.hamcrest:*"
       - dependency-name: "com.almworks.sqlite4java:*"
       - dependency-name: "org.eclipse.jetty:*"
-      # Maven/build systems don't have to track very latest. Again, to reduce
-      # noisiness
+      # Maven/build system updates don't have to track very latest. Again, to
+      # reduce noisiness
       - dependency-name: "org.apache.maven*"
