@@ -23,6 +23,7 @@ updates:
       - dependency-name: "com.almworks.sqlite4java:*"
       - dependency-name: "org.eclipse.jetty:*"
       - dependency-name: "javax.servlet:*"
+      - dependency-name: "io.reactivex.rxjava3:rxjava"
 
       # Non runtime dependencies
       # Eclipse JDT deps used at codegen time
