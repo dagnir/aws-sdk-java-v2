@@ -4,7 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
     ignore:
       # Ignore test dependencies to reduce PR noisiness. We don't need to stay
       # on top of them as much as compile/runtime dependencies
