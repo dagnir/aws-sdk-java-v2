@@ -6,6 +6,10 @@ updates:
     schedule:
       interval: daily
     open-pull-requests-limit: 10
+    groups:
+      netty:
+        patterns:
+          - "io.netty:*"
     ignore:
       # Ignore test dependencies to reduce PR noisiness. We don't need to stay
       # on top of them as much as compile/runtime dependencies
