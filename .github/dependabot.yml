@@ -23,6 +23,10 @@ updates:
       - dependency-name: "com.almworks.sqlite4java:*"
       - dependency-name: "org.eclipse.jetty:*"
       - dependency-name: "javax.servlet:*"
+
+      # Non runtime dependencies
+      - dependency-name: " org.eclipse.jdt:*"
+
       # Maven/build system updates don't have to track very latest. Again, to
       # reduce noisiness
       - dependency-name: "org.apache.maven.plugins:*"
