@@ -22,4 +22,5 @@ updates:
       - dependency-name: "org.eclipse.jetty:*"
       # Maven/build system updates don't have to track very latest. Again, to
       # reduce noisiness
-      - dependency-name: "org.apache.maven*"
+      - dependency-name: "org.apache.maven.plugins:*"
+      - dependency-name: "org.sonatype.plugins:*"
