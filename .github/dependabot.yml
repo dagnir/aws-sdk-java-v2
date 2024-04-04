@@ -27,11 +27,4 @@ updates:
       # reduce noisiness
       - dependency-name: "org.apache.maven.plugins:*"
       - dependency-name: "org.sonatype.plugins:*"
-  # SDK Archetypes
-  - package-ecosystem: maven
-    directory: "/archetypes"
-    schedule:
-      interval: daily
-    open-pull-requests-limit: 10
-    ignore:
       - dependency-name: "org.apache.maven.plugins:maven-archetype-plugin"
