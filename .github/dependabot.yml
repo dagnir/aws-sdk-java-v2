@@ -9,6 +9,7 @@ updates:
       # Ignore test dependencies to reduce PR noisiness. We don't need to stay
       # on top of them as much as compile/runtime dependencies
       - dependency-name: "com.amazonaws:aws-java-sdk*"
+      - dependency-name: "com.amazonaws:aws-java-sdk*"
       - dependency-name: "com.github.tomakehurst:*"
       - dependency-name: "org.mockito:*"
       - dependency-name: "nl.jqno.equalsverifier:*"
@@ -20,6 +21,7 @@ updates:
       - dependency-name: "org.hamcrest:*"
       - dependency-name: "com.almworks.sqlite4java:*"
       - dependency-name: "org.eclipse.jetty:*"
+      - dependency-name: "javax.servlet:*"
       # Maven/build system updates don't have to track very latest. Again, to
       # reduce noisiness
       - dependency-name: "org.apache.maven.plugins:*"
