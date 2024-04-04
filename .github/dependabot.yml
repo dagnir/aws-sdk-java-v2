@@ -25,7 +25,7 @@ updates:
       - dependency-name: "javax.servlet:*"
 
       # Non runtime dependencies
-      - dependency-name: " org.eclipse.jdt:*"
+      - dependency-name: "org.eclipse.jdt:*"
 
       # Maven/build system updates don't have to track very latest. Again, to
       # reduce noisiness
