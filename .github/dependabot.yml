@@ -21,5 +21,5 @@ updates:
       - dependency-name: "com.almworks.sqlite4java:*"
       - dependency-name: "org.eclipse.jetty:*"
       # Maven/build systems don't have to track very latest. Again, to reduce
-      noisiness
+      # noisiness
       - dependency-name: "org.apache.maven*"
