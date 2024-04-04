@@ -9,6 +9,7 @@ updates:
       # Ignore test dependencies to reduce PR noisiness. We don't need to stay
       # on top of them as much as compile/runtime dependencies
       - dependency-name: "com.amazonaws:aws-java-sdk*"
+      - dependency-name: "com.amazonaws:DynamoDBLocal"
       - dependency-name: "com.github.tomakehurst:*"
       - dependency-name: "org.mockito:*"
       - dependency-name: "nl.jqno.equalsverifier:*"
